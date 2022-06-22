@@ -6,22 +6,20 @@ using DataFrames
 　　　文字列接続はjoin()又は、string()でやる
 ==#
 #fname = join([@__DIR__,"testdata/test.csv"],"/")
-fname = string( @__DIR__,"/","testdata/test.csv")
+csvfname = "test.csv"
+fname = string( @__DIR__,"/","testdata/",csvfname )
 df = CSV.read( fname, DataFrame )
-#show_df( df )
 
-function show_df( df )
-    #==
-    println( df )
-    println( df[!,2], typeof(df[!,2]) )
-    println( df[!,3], propertynames(df) )
-    println( df[1,2] )
-    println( df[2,4] )
-    ==#
-    last = ncol(df)
+#　今はただ表示しているだけの関数
+show_df( df )
 
-    for i = 1:last
-        println( typeof(df[!,i]) )
-    end
+# csvfnameのsqlite DBファイルがlib直下に作成される
+db = SQLite.DB( csvfname )
 
-end
+# DataFrameのデータをSQLiteに書き込む
+df2sqldb( df, db )
+
+# SQLiteに書き込まれたデータを操作する
+sql_select = "select * from df"
+query = DBInterface.execute( db, sql_select ) 
+DataFrame( query )
