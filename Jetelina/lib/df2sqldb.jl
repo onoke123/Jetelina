@@ -1,3 +1,6 @@
+# 指定されたDataFrameデータをDBに書き込む
+# これはSQLiteを対象としている
+
 using DataFrames
 using SQLite
 

@@ -1,4 +1,5 @@
-# read the csv file in order to confirm the structure of containing data
+# 指定されたcsvファイルをDataFrameに読み込んで、その後DBに書き込む
+
 using CSV
 using DataFrames
 
@@ -19,7 +20,3 @@ db = SQLite.DB( csvfname )
 # DataFrameのデータをSQLiteに書き込む
 df2sqldb( df, db )
 
-# SQLiteに書き込まれたデータを操作する
-sql_select = "select * from df"
-query = DBInterface.execute( db, sql_select ) 
-DataFrame( query )

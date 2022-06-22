@@ -1,3 +1,6 @@
+# 指定されたDataFrameを表示する
+# いろいろやれるハズだけど、今はまだ「表示する」だけ
+
 using DataFrames
 
 function show_df( df )
