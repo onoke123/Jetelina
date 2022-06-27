@@ -4,6 +4,7 @@
 using DataFrames
 using SQLite
 
-db = SQLite.DB( "test.csv" )
-res = select_data( db )
-println( DataFrame( res ) )
+function readdatafromdb()
+    db = SQLite.DB( "test.csv" )
+    return select_data( db )
+end

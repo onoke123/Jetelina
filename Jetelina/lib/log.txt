@@ -1,0 +1,4 @@
+┌ Info: test log
+└ @ Main C:\Users\user\Jetelina\Jetelina\lib\customlog.jl:12
+┌ Info: test log
+└ @ Main C:\Users\user\Jetelina\Jetelina\lib\customlog.jl:12
