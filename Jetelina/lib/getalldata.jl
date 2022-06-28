@@ -2,7 +2,9 @@ using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json, SQLite
 
 function getalldata()
     writetoLogfile( "test log")
-    json( Dict( "alldata" => readdatafromdb() ))
+    #json( Dict( "alldata" => readdatafromdb() ))
+
+    json( Dict( "alldata" => "columns" => copy.( eachrow( readdatafromdb() ))))
 end
 
 function readdatafromdb()
