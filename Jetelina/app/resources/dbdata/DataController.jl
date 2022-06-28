@@ -1,14 +1,18 @@
+module DataController
+
 using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json, SQLite
+#using RowDBAccess
+
+
 
 function getalldata()
-    writetoLogfile( "test log")
-    #json( Dict( "alldata" => readdatafromdb() ))
+    #writetoLogfile( "test log")
 
     json( Dict( "alldata" => "columns" => copy.( eachrow( readdatafromdb() ))))
 end
 
 function readdatafromdb()
-    db = SQLite.DB( "test.csv" )
+    db = SQLite.DB( @__DIR__,"/lib/test.csv" )
     return select_data( db )
 end
 
@@ -19,4 +23,6 @@ function select_data( db )
 
     #　このdfにselectデータがあるので、呼び出し元に返してやればよさそう
     return DataFrame( query )
+end
+
 end
