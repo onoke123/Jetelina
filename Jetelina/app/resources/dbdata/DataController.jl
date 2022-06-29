@@ -12,7 +12,8 @@ function getalldata()
 end
 
 function readdatafromdb()
-    db = SQLite.DB( @__DIR__,"/lib/test.csv" )
+    dbfile = string( joinpath( "lib", "test.csv" ) )
+    db = SQLite.DB( dbfile )
     return select_data( db )
 end
 
