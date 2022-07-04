@@ -3,13 +3,14 @@ module DBDataController
     using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json, SQLite
 
     function getalldbdata()
-        #writetoLogfile( "test log")
+        #JetelinaLog.writetoLogfile( "test log")
 
         json( Dict( "alldata" => "columns" => copy.( eachrow( readdatafromdb() ))))
     end
 
     function readdatafromdb()
-        dbfile = string( joinpath( "lib", "test.csv" ) )
+        dbfile = string( joinpath( "c:\\Users","user","Jetelina","Jetelina","app","resources", "test.db" ) );
+        println(" dbfile: ", dbfile )
         db = SQLite.DB( dbfile )
         return select_data( db )
     end

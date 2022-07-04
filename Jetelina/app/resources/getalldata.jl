@@ -1,14 +1,14 @@
 using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json, SQLite
 
 function getalldata()
-    writetoLogfile( "test log")
+    JetelinaLog.writetoLogfile( "test log")
     #json( Dict( "alldata" => readdatafromdb() ))
 
     json( Dict( "alldata" => "columns" => copy.( eachrow( readdatafromdb() ))))
 end
 
 function readdatafromdb()
-    db = SQLite.DB( "test.csv" )
+    db = SQLite.DB( "test.db" )
     return select_data( db )
 end
 
