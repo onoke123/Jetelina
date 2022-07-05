@@ -1,6 +1,9 @@
 using Genie.Router
 using DBDataController
-using JetelinaLog
+using JetelinaReadconfig
+
+#Genie初期化時に自動実行
+JetelinaReadconfig.ini()
 
 route("/") do
   serve_static_file("welcome.html")

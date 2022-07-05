@@ -1,9 +1,11 @@
 module JetelinaLog
 
     using Logging
+    using JetelinaReadconfig
 
     function logfileOpen()
-        logfile = string( joinpath( "log","log.txt") )
+        #logfile = string( joinpath( "log","log.txt") )
+        logfile = JetelinaReadconfig.getLogfile()
         io = open( logfile, "a+")
         logger = SimpleLogger( io )
         return io, logger
