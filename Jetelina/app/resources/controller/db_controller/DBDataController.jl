@@ -1,16 +1,17 @@
 module DBDataController
 
     using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json, SQLite
+    using JetelinaLog
 
     function getalldbdata()
-        #JetelinaLog.writetoLogfile( "test log")
+        JetelinaLog.writetoLogfile( "test 7/5 log")
 
-        json( Dict( "alldata" => "columns" => copy.( eachrow( readdatafromdb() ))))
+        json( Dict( "alldata" => "df" => copy.( eachrow( readdatafromdb() ))))
     end
 
     function readdatafromdb()
         dbfile = string( joinpath( "c:\\Users","user","Jetelina","Jetelina","app","resources", "test.db" ) );
-        println(" dbfile: ", dbfile )
+        JetelinaLog.writetoLogfile(" dbfile: " * dbfile )
         db = SQLite.DB( dbfile )
         return select_data( db )
     end

@@ -1,5 +1,6 @@
 using Genie.Router
 using DBDataController
+using JetelinaLog
 
 route("/") do
   serve_static_file("welcome.html")

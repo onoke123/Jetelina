@@ -3,7 +3,8 @@ module JetelinaLog
     using Logging
 
     function logfileOpen()
-        io = open("log.txt", "a+")
+        logfile = string( joinpath( "log","log.txt") )
+        io = open( logfile, "a+")
         logger = SimpleLogger( io )
         return io, logger
     end
