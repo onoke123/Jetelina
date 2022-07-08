@@ -4,14 +4,15 @@ module DBDataController
     using JetelinaLog
 
     function getalldbdata()
-        JetelinaLog.writetoLogfile( "test 7/5 log")
+        JetelinaLog.writetoLogfile( "test 7/8 log")
 
-        json( Dict( "alldata" => "df" => copy.( eachrow( readdatafromdb() ))))
+        #json( Dict( "alldata" => "df" => copy.( eachrow( readdatafromdb() ))))
+        json( Dict( "Jetelina" => copy.( eachrow( readdatafromdb() ))))
     end
 
     function readdatafromdb()
         dbfile = string( joinpath( "c:\\Users","user","Jetelina","Jetelina","app","resources", "test.db" ) );
-        JetelinaLog.writetoLogfile(" dbfile: " * dbfile )
+        #JetelinaLog.writetoLogfile(" dbfile: " * dbfile )
         db = SQLite.DB( dbfile )
         return select_data( db )
     end

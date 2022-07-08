@@ -2,13 +2,17 @@ using Genie.Router
 using DBDataController
 using JetelinaReadconfig
 
-#Genie初期化時に自動実行
-JetelinaReadconfig.ini()
-
+# welcome page
 route("/") do
   serve_static_file("welcome.html")
 end
 
+# アップロードされたファイルのデータを表示し、データ編集するページ
+route( "/edit" ) do
+  serve_static_file( "data_edit.html" )
+end
+
+# DBから取得した全データをjsonで返すサンプル
 route( "/getalldbdata", DBDataController.getalldbdata )
 
 route( "/showdbdata" ) do 

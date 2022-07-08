@@ -4,8 +4,10 @@ module JetelinaLog
     using JetelinaReadconfig
 
     function logfileOpen()
-        #logfile = string( joinpath( "log","log.txt") )
-        logfile = JetelinaReadconfig.getLogfile()
+        logfile = JetelinaLogfile
+        
+        #println("JetelinaLog.jl logfile: ", logfile)
+        
         io = open( logfile, "a+")
         logger = SimpleLogger( io )
         return io, logger

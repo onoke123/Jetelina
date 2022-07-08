@@ -3,31 +3,28 @@
 ===#
 
 module JetelinaReadconfig
+    export  JetelinaLogfile, getLogfile
 
-    global JetelinaLogfile
-    
-    function ini()
+    function __init__()
         configfile = string( joinpath( "config", "JetelinaConfig.cnf" ))
         f = open( configfile, "r" )
         l = readlines( f )
 
         for i = 1:size(l)[1]
-            println( l[i] )
-
             if !startswith( l[i],"*" )
                 if startswith( l[i],"logfile")
                     t = split( l[i], "=" )
                     tt = strip( t[2] )
-                    println( "logfile: ", tt )
-                    JetelinaLogfile = tt
+                    
+                    #println( "JetelinaReadCOnfig.jl logfile: ", tt )
+                    
+                    global JetelinaLogfile = tt
                 end
             else
                 # ignore as comment
             end
+
         end
     end
 
-    function getLogfile()
-        return JetelinaLogfile
-    end
 end
