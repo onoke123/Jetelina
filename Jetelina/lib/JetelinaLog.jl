@@ -1,7 +1,7 @@
 module JetelinaLog
 
     using Logging
-    using JetelinaReadconfig
+    using JetelinaReadConfig
 
     function logfileOpen()
         logfile = JetelinaLogfile

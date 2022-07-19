@@ -1,6 +1,6 @@
 using Genie.Router
 using DBDataController
-using JetelinaReadconfig
+using JetelinaReadConfig
 
 # welcome page
 route("/") do
