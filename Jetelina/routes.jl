@@ -1,5 +1,5 @@
 using Genie.Router
-using DBDataController
+using DBDataController, CSVFileController
 using JetelinaReadConfig
 
 # welcome page
@@ -18,3 +18,6 @@ route( "/getalldbdata", DBDataController.getalldbdata )
 route( "/showdbdata" ) do 
   serve_static_file( "showdbdata.html" )  
 end
+
+# csvファイルを読み込んで画面に表示する
+route( "/getcsvdata", CSVFileController.read );

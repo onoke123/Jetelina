@@ -18,7 +18,7 @@ $( function(){
 
                             });
 
-                            // showdbdata.htmlのd_dataにデータをバインドする
+                            // data_edit.htmlのd_dataにデータをバインドする
                             $( "#d_data" ).append( `${str}<br>` );
                         }
                     })
@@ -34,11 +34,12 @@ $( function(){
     */
     const getAjaxData = () => {
         $.ajax( {
-            url: "/getalldbdata",
+            url: "/getcsvdata",
             type: "GET",
             data: "",
             dataType: "json",
         }).done(function(result, textStatus, jqXHR) {
+            console.log( result );
             // data parseに行く
             getdata( result );
         }).fail( function( result ){
