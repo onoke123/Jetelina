@@ -7,21 +7,24 @@ $( function(){
             Object.keys( o ).forEach( function( key ) {
                 //’Jetelina’をシンボルにしているからこうしている
                 if( key == "Jetelina" && o[key].length > 0 ){
+                    let str = "";
                     $.each( o[key], function(k,v){
                         if( v != null ){
                             /* オブジェクトを配列にしているのでここまでやって
                             　　初めてname/valueのデータが取得できる。
                             */
-                            let str = "";
                             $.each( v, function( name, value ){
-                                str += `${name}:${value}`;
-
+                                //str += `${name}:${value}`;
+                                str += `<div class="item"><p>${name}</p></div>`;
                             });
 
-                            // data_edit.htmlのd_dataにデータをバインドする
-                            $( "#d_data" ).append( `${str}<br>` );
+                            // data_edit.htmlに表示するが、1行だけあればいいのでここでブレイク
+                            return false;
                         }
                     })
+
+                    //csvファイルの「項目」を表示する
+                    $( "#container .item_area" ).append( `${str}`);
                 }
 
             });
