@@ -77,6 +77,9 @@
   </div>
 </div>
 
+<div>
+    <button id="post">POST</button>
+</div>
 <script type=""text/javascript" src="js/genie/jquery.min.js"></script>
 <script type=""text/javascript" src="js/jquery-ui-1.13.2/jquery-ui.min.js"></script>
 <script type="text/javascript" src="js/csvdatashow.js"></script>
@@ -158,6 +161,22 @@
         selectedItemsArr.push(item);
         console.log( "obj: ", selectedItemsArr);
       }
+    });
+
+    $( "#post" ).on( "click", function(){
+        let pd = {};
+        pd["item"] = JSON.stringify( selectedItemsArr );
+        console.log("post: ", selectedItemsArr, " -> ", pd );
+
+        $.ajax( {
+            url: "/putitems",
+            type: "POST",
+            data: pd,
+            dataType: "json",
+        }).done(function(result, textStatus, jqXHR) {
+            console.log( result );
+        }).fail( function( result ){
+        });
     });
   });
 </script>

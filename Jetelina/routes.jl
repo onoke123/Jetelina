@@ -1,5 +1,5 @@
 using Genie.Router
-using DBDataController, CSVFileController
+using DBDataController, CSVFileController, PostDataController
 using JetelinaReadConfig
 
 # welcome page
@@ -21,3 +21,6 @@ end
 
 # csvファイルを読み込んで画面に表示する
 route( "/getcsvdata", CSVFileController.read );
+
+# post dataを取得
+route( "/putitems", PostDataController.get, method = POST );
