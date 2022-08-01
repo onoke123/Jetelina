@@ -10,7 +10,7 @@ module JetelinaReadConfig
 
     function __init__()
         #configfile = string( joinpath( "config", "JetelinaConfig.cnf" ))
-        configfile = string( "C:\\Users\\user\\Jetelina\\Jetelina\\config\\JetelinaCOnfig.cnf")
+        configfile = string( "C:\\Users\\user\\Jetelina\\Jetelina\\config\\JetelinaConfig.cnf")
         f = open( configfile, "r" )
         l = readlines( f )
 
