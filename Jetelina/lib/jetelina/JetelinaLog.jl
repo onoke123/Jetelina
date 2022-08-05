@@ -5,9 +5,11 @@ module JetelinaLog
 
     function logfileOpen()
         logfile = JetelinaLogfile
-        
-        #println("JetelinaLog.jl logfile: ", logfile)
-        
+
+        if debugflg
+            println("JetelinaLog.jl logfile: ", logfile)
+        end
+
         io = open( logfile, "a+")
         logger = SimpleLogger( io )
         return io, logger

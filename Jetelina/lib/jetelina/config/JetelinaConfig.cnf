@@ -3,3 +3,4 @@
 *
 
 logfile = log\\log.txt
+debug = true

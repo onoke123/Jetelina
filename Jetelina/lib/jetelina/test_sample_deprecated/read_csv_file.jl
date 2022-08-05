@@ -1,5 +1,5 @@
 # 指定されたcsvファイルをDataFrameに読み込んで、その後DBに書き込む
-# depreacted: 2022/7/20 file_controller/csvfile_controller.jlに移行
+# deprecated: 2022/7/20 file_controller/csvfile_controller.jlに移行
 
 using CSV
 using DataFrames

@@ -4,7 +4,7 @@ module DBDataController
     using JetelinaLog
 
     function getalldbdata()
-        JetelinaLog.writetoLogfile( "test 7/8 log")
+        JetelinaLog.writetoLogfile( "test 8/5 log")
 
         #json( Dict( "alldata" => "df" => copy.( eachrow( readdatafromdb() ))))
         json( Dict( "Jetelina" => copy.( eachrow( readdatafromdb() ))))
