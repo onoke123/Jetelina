@@ -2,6 +2,7 @@ module DBDataController
 
     using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json, SQLite
     using JetelinaLog
+    using ExeSql
 
     function getalldbdata()
         JetelinaLog.writetoLogfile( "test 8/5 log")
@@ -19,7 +20,8 @@ module DBDataController
 
     function select_data( db )
         # SQLiteに書き込まれたデータを操作する
-        sql_select = "select * from df"
+        #sql_select = "select * from df"
+        sql_select = ExeSql.select_tbl1()
         query = DBInterface.execute( db, sql_select ) 
 
         #　このdfにselectデータがあるので、呼び出し元に返してやればよさそう
