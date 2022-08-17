@@ -4,3 +4,4 @@
 
 logfile = log.txt
 debug = true
+dbpath = c:\\Users\\user\\Jetelina\\Jetelina\\app\\resources\\test.db

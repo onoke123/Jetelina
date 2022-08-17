@@ -12,10 +12,8 @@ module CSVFileController
         #== テストデータがjetelina配下にある場合、@__DIR__でカレントディレクトリを示せる
         　　　文字列接続はjoin()又は、string()でやる
         ==#
-        #fname = join([@__DIR__,"testdata/test.csv"],"/")
         csvfname = joinpath( "testdata", "test.csv" )
-        #fname = string( joinpath( @__DIR__, csvfname ) )
-        fname = string( joinpath( "c:\\Users","user","Jetelina","Jetelina","app","resources", csvfname ) );
+        fname = string( joinpath( @__DIR__, csvfname ) )
         
         if debugflg
             debugmsg = "csv file: $fname"

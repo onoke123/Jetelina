@@ -4,3 +4,17 @@
 └ @ JetelinaLog C:\Users\user\Jetelina\jetelina\lib\jetelina\JetelinaLog.jl:23
 ┌ Info: post data: ["age","address"]
 └ @ JetelinaLog C:\Users\user\Jetelina\jetelina\lib\jetelina\JetelinaLog.jl:23
+┌ Info: csv file: C:\Users\user\Jetelina\jetelina\lib\jetelina\testdata\test.csv
+└ @ JetelinaLog C:\Users\user\Jetelina\jetelina\lib\jetelina\JetelinaLog.jl:23
+┌ Info: dbfile: c:\Users\user\Jetelina\Jetelina\app\resources\test.db
+└ @ JetelinaLog C:\Users\user\Jetelina\jetelina\lib\jetelina\JetelinaLog.jl:23
+┌ Info: dbfile: c:\Users\user\Jetelina\Jetelina\app\resources\test.db
+└ @ JetelinaLog C:\Users\user\Jetelina\jetelina\lib\jetelina\JetelinaLog.jl:23
+┌ Info: dbfile: "c:\\Users\\user\\Jetelina\\Jetelina\\app\\resources\\test.db"
+└ @ JetelinaLog C:\Users\user\Jetelina\jetelina\lib\jetelina\JetelinaLog.jl:23
+┌ Info: dbfile: "c:\\Users\\user\\Jetelina\\Jetelina\\app\\resources\\test.db"
+└ @ JetelinaLog C:\Users\user\Jetelina\jetelina\lib\jetelina\JetelinaLog.jl:23
+┌ Info: dbfile: c:\\Users\\user\\Jetelina\\Jetelina\\app\\resources\\test.db
+└ @ JetelinaLog C:\Users\user\Jetelina\jetelina\lib\jetelina\JetelinaLog.jl:23
+┌ Info: dbfile: c:\\Users\\user\\Jetelina\\Jetelina\\app\\resources\\test.db
+└ @ JetelinaLog C:\Users\user\Jetelina\jetelina\lib\jetelina\JetelinaLog.jl:23

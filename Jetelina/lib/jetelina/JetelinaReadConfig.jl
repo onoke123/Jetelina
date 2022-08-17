@@ -9,7 +9,7 @@
 ===#
 
 module JetelinaReadConfig
-    export  JetelinaLogfile, debugflg
+    export  JetelinaLogfile, debugflg, JetelinaDBPath
 
     #===
         @m: JetelinaReadConfig
@@ -53,6 +53,13 @@ module JetelinaReadConfig
                         global debugflg = false
                     end
 
+                elseif startswith( l[i], "dbpath" )
+                    #===
+                        database path
+                    ===#
+                    t = split( l[i], "=" )
+                    tt = strip( t[2] )
+                    global JetelinaDBPath = tt
                 end
             else
                 # ignore as comment

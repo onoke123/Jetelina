@@ -10,8 +10,13 @@ module DBDataController
     end
 
     function readdatafromdb()
-        dbfile = string( joinpath( "c:\\Users","user","Jetelina","Jetelina","app","resources", "test.db" ) );
-        #JetelinaLog.writetoLogfile(" dbfile: " * dbfile )
+        dbfile = JetelinaDBPath
+        
+        if debugflg
+            dbgmsg = "dbfile: $dbfile" 
+            writetoLogfile( dbgmsg )
+        end
+
         db = SQLite.DB( dbfile )
         return select_data( db )
     end
