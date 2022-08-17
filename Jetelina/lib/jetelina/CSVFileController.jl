@@ -7,6 +7,7 @@ module CSVFileController
     using SQLite
     using Genie, Genie.Renderer, Genie.Renderer.Json
     using JetelinaReadConfig, JetelinaLog
+    using ExeSql
 
     function read()
         #== テストデータがjetelina配下にある場合、@__DIR__でカレントディレクトリを示せる
@@ -27,10 +28,23 @@ module CSVFileController
         json( Dict( "Jetelina" => copy.( eachrow( df ))))
     end
 
-    # csvfnameのsqlite DBファイルがresource/testdata直下に作成される
-    # 
-    #db = SQLite.DB( "test.db" )
+    function insert2DB( csvf )
+        csvfname = joinpath( "testdata", csvf )
+        fname = string( joinpath( @__DIR__, csvfname ) )
+        
+        if debugflg
+            debugmsg = "csv file: $fname"
+            writetoLogfile( debugmsg )
+        end
 
-    # DataFrameのデータをSQLiteに書き込む
-    #SQLite.load!( df, db, "df" )
+        df = CSV.read( fname, DataFrame )
+
+        # csvfnameのsqlite DBファイルがJetelinaDBPathで指定されたパスに作成される
+        db = SQLite.DB( JetelinaDBPath )
+
+        # DataFrameのデータをSQLiteに書き込む
+        SQLite.load!( df, db, "df" )
+
+        # DB作成後、一連のSQL文を作成するためにExeSql.jlを作成する
+    end
 end
