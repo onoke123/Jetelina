@@ -1,12 +1,10 @@
 module DBDataController
 
     using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json, SQLite
-    using JetelinaLog
+    using JetelinaLog, JetelinaReadConfig
     using ExeSql
 
     function getalldbdata()
-        JetelinaLog.writetoLogfile( "test 8/5 log")
-
         #json( Dict( "alldata" => "df" => copy.( eachrow( readdatafromdb() ))))
         json( Dict( "Jetelina" => copy.( eachrow( readdatafromdb() ))))
     end

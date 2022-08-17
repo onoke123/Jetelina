@@ -1,0 +1,2 @@
+┌ Info: csv file: c:\Users\user\Jetelina\Jetelina\app\resources\testdata\test.csv
+└ @ JetelinaLog C:\Users\user\Jetelina\Jetelina\lib\jetelina\JetelinaLog.jl:24

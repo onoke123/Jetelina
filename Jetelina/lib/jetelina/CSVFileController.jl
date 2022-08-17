@@ -6,6 +6,7 @@ module CSVFileController
     using DataFrames
     using SQLite
     using Genie, Genie.Renderer, Genie.Renderer.Json
+    using JetelinaReadConfig, JetelinaLog
 
     function read()
         #== テストデータがjetelina配下にある場合、@__DIR__でカレントディレクトリを示せる
@@ -15,13 +16,17 @@ module CSVFileController
         csvfname = joinpath( "testdata", "test.csv" )
         #fname = string( joinpath( @__DIR__, csvfname ) )
         fname = string( joinpath( "c:\\Users","user","Jetelina","Jetelina","app","resources", csvfname ) );
-        println( "csv file: ", fname );
+        
+        if debugflg
+            debugmsg = "csv file: $fname"
+            writetoLogfile( debugmsg )
+        end
 
         df = CSV.read( fname, DataFrame )
 
         #　表示しているだけ
         #println( df )
-        json( Dict( "Jetelina" => copy.( eachrow( df ))));
+        json( Dict( "Jetelina" => copy.( eachrow( df ))))
     end
 
     # csvfnameのsqlite DBファイルがresource/testdata直下に作成される

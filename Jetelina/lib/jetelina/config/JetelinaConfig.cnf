@@ -2,5 +2,5 @@
 *  Jetelina configuration
 *
 
-logfile = log\\log.txt
+logfile = log.txt
 debug = true

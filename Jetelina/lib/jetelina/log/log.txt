@@ -1,0 +1,6 @@
+┌ Info: csv file: c:\Users\user\Jetelina\Jetelina\app\resources\testdata\test.csv
+└ @ JetelinaLog C:\Users\user\Jetelina\Jetelina\lib\jetelina\JetelinaLog.jl:24
+┌ Info: csv file: c:\Users\user\Jetelina\Jetelina\app\resources\testdata\test.csv
+└ @ JetelinaLog C:\Users\user\Jetelina\jetelina\lib\jetelina\JetelinaLog.jl:23
+┌ Info: post data: ["age","address"]
+└ @ JetelinaLog C:\Users\user\Jetelina\jetelina\lib\jetelina\JetelinaLog.jl:23

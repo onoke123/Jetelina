@@ -3,8 +3,10 @@ module JetelinaLog
     using Logging
     using JetelinaReadConfig
 
+    export writetoLogfile
+
     function logfileOpen()
-        logfile = JetelinaLogfile
+        logfile = string( joinpath( @__DIR__, "log", JetelinaLogfile ) )
 
         if debugflg
             println("JetelinaLog.jl logfile: ", logfile)
