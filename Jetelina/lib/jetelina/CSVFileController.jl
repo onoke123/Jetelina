@@ -24,11 +24,11 @@ module CSVFileController
         df = CSV.read( fname, DataFrame )
 
         #　表示しているだけ
-        #println( df )
         json( Dict( "Jetelina" => copy.( eachrow( df ))))
+
     end
 
-    function insert2DB( csvf )
+    function inserttoDB( csvf )
         csvfname = joinpath( "testdata", csvf )
         fname = string( joinpath( @__DIR__, csvfname ) )
         
@@ -45,6 +45,9 @@ module CSVFileController
         # DataFrameのデータをSQLiteに書き込む
         SQLite.load!( df, db, "df" )
 
-        # DB作成後、一連のSQL文を作成するためにExeSql.jlを作成する
+        #===
+            DB作成後、一連のSQL文を作成する。
+            SQL文はこのファイル内に作成
+        ===#
     end
 end
