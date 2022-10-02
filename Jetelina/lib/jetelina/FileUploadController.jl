@@ -7,7 +7,7 @@ module FileUploadController
         if infilespayload(:yourfile)
             files = Genie.Requests.filespayload()
             for f in files
-                write(joinpath("test/", f[2].name), f[2].data)
+                write(joinpath( JetelinaFileUploadPath, f[2].name), f[2].data)
                 @info "Uploading: " * f[2].name
             end
             if length(files) == 0

@@ -5,6 +5,9 @@
 logfile = log.txt
 debug = true
 
+* File Upload Path
+fileuploadpath = test/
+
 * PostgreSQL
 host = 127.0.0.1
 user = postgresql

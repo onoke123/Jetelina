@@ -9,7 +9,7 @@
 ===#
 
 module JetelinaReadConfig
-    export  JetelinaLogfile, debugflg, JetelinaDBPath
+    export  JetelinaLogfile, debugflg, JetelinaFileUploadPath, JetelinaDBPath
 
     #===
         @m: JetelinaReadConfig
@@ -52,6 +52,14 @@ module JetelinaReadConfig
                     else
                         global debugflg = false
                     end
+
+                elseif startswith( l[i], "fileuploadpath" )
+                    #===
+                        CSV file upload path
+                    ===#
+                    t = split( l[i], "=" )
+                    tt = strip( t[2] )
+                    global JetelinaFileUploadPath = tt
 
                 elseif startswith( l[i], "dbpath" )
                     #===
