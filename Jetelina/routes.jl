@@ -1,5 +1,5 @@
 using Genie.Router
-using DBDataController, CSVFileController, PostDataController
+using DBDataController, CSVFileController, PostDataController, FileUploadController
 using JetelinaReadConfig
 
 # welcome page
@@ -24,3 +24,10 @@ route( "/getcsvdata", CSVFileController.read );
 
 # post dataを取得
 route( "/putitems", PostDataController.get, method = POST );
+
+# file upload
+route( "/fileupload" ) do
+  serve_static_file( "jetelina/fileupload.html" ) 
+end
+
+route("/dofup", FileUploadController.fup, method = POST);

@@ -4,4 +4,11 @@
 
 logfile = log.txt
 debug = true
+
+* PostgreSQL
+host = 127.0.0.1
+user = postgresql
+password = 
+
+* SQLite
 dbpath = c:\\Users\\user\\Jetelina\\Jetelina\\app\\resources\\test.db
