@@ -9,19 +9,16 @@ module CSVFileController
     using JetelinaReadConfig, JetelinaLog
     using ExeSql
 
-    function read()
+    function read( csvfname::String )
         #== テストデータがjetelina配下にある場合、@__DIR__でカレントディレクトリを示せる
         　　　文字列接続はjoin()又は、string()でやる
         ==#
-        csvfname = joinpath( "testdata", "test.csv" )
-        fname = string( joinpath( @__DIR__, csvfname ) )
-        
         if debugflg
-            debugmsg = "csv file: $fname"
+            debugmsg = "csv file: $csvfname"
             writetoLogfile( debugmsg )
         end
 
-        df = CSV.read( fname, DataFrame )
+        df = CSV.read( csvfname, DataFrame )
 
         #　表示しているだけ
         json( Dict( "Jetelina" => copy.( eachrow( df ))))

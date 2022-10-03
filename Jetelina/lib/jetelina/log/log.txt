@@ -38,3 +38,13 @@
 └ @ JetelinaLog C:\Users\user\Jetelina\jetelina\lib\jetelina\JetelinaLog.jl:23
 ┌ Info: dbfile: c:\\Users\\user\\Jetelina\\Jetelina\\app\\resources\\test.db
 └ @ JetelinaLog C:\Users\user\Jetelina\jetelina\lib\jetelina\JetelinaLog.jl:23
+┌ Info: csv file: /home/onoke/Jetelina/Jetelina/lib/jetelina/test/fuptest.txt
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: /home/onoke/Jetelina/Jetelina/lib/jetelina/lib/jetelina/testdata/fuptest.txt
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: /home/onoke/Jetelina/Jetelina/lib/jetelina/lib/jetelina/testdata/fuptest.txt
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/fuptest.txt
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/fuptest.txt
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23

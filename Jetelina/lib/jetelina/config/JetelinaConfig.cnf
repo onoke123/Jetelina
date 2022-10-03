@@ -6,7 +6,7 @@ logfile = log.txt
 debug = true
 
 * File Upload Path
-fileuploadpath = test/
+fileuploadpath = lib/jetelina/testdata
 
 * PostgreSQL
 host = 127.0.0.1
