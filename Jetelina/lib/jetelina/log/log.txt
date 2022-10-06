@@ -48,3 +48,7 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
 ┌ Info: csv file: lib/jetelina/testdata/fuptest.txt
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/fuptest.txt
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/fuptest.txt
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23

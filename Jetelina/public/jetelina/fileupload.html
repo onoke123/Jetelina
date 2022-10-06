@@ -1,9 +1,17 @@
 <html>
-    <head></head>
+    <head>
+        <script type="text/javascript" src="js/genie/jquery.min.js"></script>
+    </head>
     <body>
-        <form action="/dofup" method="POST" enctype="multipart/form-data">
-            <input type="file" name="yourfile" /><br/>
-            <input type="submit" value="Submit" />
-        </form>        
+        <form id="my_form">
+            <!-- caution:
+                should change the parameter of 'name' in FileUploadController.jl
+                if it's changed to other. 
+            -->
+            <input type="file" name="upfile">
+            <button type="button" id="upbtn">up</button>
+        </form>  
     </body>
+
+    <script type="text/javascript" src="jetelina/js/fileupload.js"></script>
 </html>  

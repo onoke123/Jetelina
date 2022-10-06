@@ -1,3 +1,6 @@
+#==
+    csv file upload controller
+==#
 module FileUploadController
 
     using Genie, Genie.Requests
@@ -5,7 +8,10 @@ module FileUploadController
     using CSVFileController
 
     function fup()
-        if infilespayload(:yourfile)
+        #==
+            caution: :upfile is depend on fileupload.html
+        ==#
+        if infilespayload(:upfile)
             csvfilename = ""
             files = Genie.Requests.filespayload()
             for f in files
