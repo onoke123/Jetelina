@@ -18,6 +18,8 @@ $(function () {
             dataType: "html",
         }).done(function (result) {
             console.log("upload success:" + result);
+            let o = JSON.parse( result );
+            console.log( "id:", o.Jetelina[0].id );
         }).fail(function (result) {
             // something error happened
         });
