@@ -25,7 +25,16 @@ module FileUploadController
             end
         
             #stat(filename(filespayload(:yourfile)))
-            CSVFileController.read( csvfilename )
+
+            #===
+             only the first row is read and responsed to
+             change this number if you wanna read multi rows
+                ex. r = 2   read 2rows from the first
+
+             why uses 'local', beacause of making clear it as local variable
+            ===#
+            local r = 1
+            CSVFileController.read( csvfilename, r )
         else
             "No file uploaded"
         end

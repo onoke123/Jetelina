@@ -9,7 +9,7 @@ module CSVFileController
     using JetelinaReadConfig, JetelinaLog
     using ExeSql
 
-    function read( csvfname::String )
+    function read( csvfname::String, row::Int )
         #== テストデータがjetelina配下にある場合、@__DIR__でカレントディレクトリを示せる
         　　　文字列接続はjoin()又は、string()でやる
         ==#
@@ -18,7 +18,7 @@ module CSVFileController
             writetoLogfile( debugmsg )
         end
 
-        df = CSV.read( csvfname, DataFrame )
+        df = CSV.read( csvfname, DataFrame, limit=row )
 
         #　表示しているだけ
         json( Dict( "Jetelina" => copy.( eachrow( df ))))
