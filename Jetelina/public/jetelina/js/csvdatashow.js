@@ -49,6 +49,8 @@ $( function(){
         });
     }
 
-    getAjaxData();
+    //getAjaxData();
+    let data = '{"Jetelina":[{"id":1,"name":"AAA","sex":"m","age":10}]}';
+    getdata( JSON.parse(data) );
 
 });

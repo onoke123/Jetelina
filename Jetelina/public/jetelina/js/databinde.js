@@ -45,6 +45,6 @@ $( function(){
         });
     }
 
-    getAjaxData();
+    //getAjaxData();
 
 });
