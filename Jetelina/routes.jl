@@ -12,10 +12,11 @@ route("/jetelina") do
   serve_static_file("jetelina/jetelina_dashboard.html")
 end
 
-# アップロードされたファイルのデータを表示し、データ編集するページ
+#=== アップロードされたファイルのデータを表示し、データ編集するページ
 route( "/edit" ) do
   serve_static_file( "jetelina/data_edit.html" )
 end
+===#
 
 # DBから取得した全データをjsonで返すサンプル
 route( "/getalldbdata", DBDataController.getalldbdata )
@@ -30,9 +31,9 @@ route( "/getcsvdata", CSVFileController.read );
 # post dataを取得
 route( "/putitems", PostDataController.get, method = POST );
 
-# file upload
+#== file upload
 route( "/fileupload" ) do
   serve_static_file( "jetelina/fileupload.html" ) 
 end
-
+===#
 route("/dofup", FileUploadController.fup, method = POST);

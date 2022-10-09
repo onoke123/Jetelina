@@ -20,15 +20,26 @@ module CSVFileController
 
         df = CSV.read( csvfname, DataFrame, limit=row )
 
+        #===
+            ここでinserttoPostgre()を呼んで、成功したら第一行だけ
+            返して表示する
+        ===#
+
         #　表示しているだけ
         json( Dict( "Jetelina" => copy.( eachrow( df ))))
 
     end
 
+    function inserttoPostgre( df )
+        str_connect = "dbname= "postgres" host=127.0.0.1 user=postgres password= port=5432"
+        conn = LibPQ.Connection(str_connect)
+        LibPQ.load!( df, db, "df" )
+    end
+
     function inserttoDB( csvf )
         csvfname = joinpath( "testdata", csvf )
         fname = string( joinpath( @__DIR__, csvfname ) )
-        
+
         if debugflg
             debugmsg = "csv file: $fname"
             writetoLogfile( debugmsg )
