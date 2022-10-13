@@ -31,9 +31,11 @@ module CSVFileController
     end
 
     function inserttoPostgre( df )
+#===
         str_connect = "dbname= "postgres" host=127.0.0.1 user=postgres password= port=5432"
         conn = LibPQ.Connection(str_connect)
         LibPQ.load!( df, db, "df" )
+===#
     end
 
     function inserttoDB( csvf )
