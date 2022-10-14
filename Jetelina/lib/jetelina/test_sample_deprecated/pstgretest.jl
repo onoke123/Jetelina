@@ -13,17 +13,19 @@ column_name = names(df)
 column_type = eltype.(eachcol(df))
 @info column_type
 
-@info column_name[1], column_type[1]
+@info column_name[1], column_type[1], size(column_name)
 
-if column_type[1] <:Int64  column_type_string1 = "integer" end
-if column_type[2] <:String3  column_type_string2 = "varchar(3)" end
-if column_type[3] <:String1  column_type_string3 = "varchar(1)" end
-if column_type[4] <:Int64  column_type_string4 = "integer" end
+column_type_string = Array{Union{Nothing,String}}(nothing,size(column_name))
 
-column_str = string( column_name[1]," ", column_type_string1," ", "primary key,",
-                     column_name[2]," ", column_type_string2,",",
-                     column_name[3]," ", column_type_string3,",",
-                     column_name[4]," ", column_type_string4 )
+if column_type[1] <:Int64  column_type_string[1] = "integer" end
+if column_type[2] <:String3  column_type_string[2] = "varchar(3)" end
+if column_type[3] <:String1  column_type_string[3] = "varchar(1)" end
+if column_type[4] <:Int64  column_type_string[4] = "integer" end
+
+column_str = string( column_name[1]," ", column_type_string[1]," ", "primary key,",
+                     column_name[2]," ", column_type_string[2],",",
+                     column_name[3]," ", column_type_string[3],",",
+                     column_name[4]," ", column_type_string[4] )
 @info column_str
 
 create_table_str = """
@@ -39,7 +41,6 @@ user = 'postgres'
 password = 'postgres'
 sslmode = prefer dbname = 'postgres' """)
 
-#createtbl = "create temporary table if not exists libpqjl_test()"
 execute( conn, create_table_str )
 
 #=== data insert not yet
