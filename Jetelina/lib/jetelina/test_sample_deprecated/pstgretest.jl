@@ -1,4 +1,4 @@
-using CSV, LibPQ, DataFrames, IterTools
+using CSV, LibPQ, DataFrames, IterTools, Tables
 
 csvfname = string( "ftest.csv" )
 fname = string( joinpath( @__DIR__, csvfname ) )
@@ -17,15 +17,26 @@ column_type = eltype.(eachcol(df))
 
 column_type_string = Array{Union{Nothing,String}}(nothing,size(column_name))
 
-if column_type[1] <:Int64  column_type_string[1] = "integer" end
-if column_type[2] <:String3  column_type_string[2] = "varchar(3)" end
-if column_type[3] <:String1  column_type_string[3] = "varchar(1)" end
-if column_type[4] <:Int64  column_type_string[4] = "integer" end
+column_str = string()
 
-column_str = string( column_name[1]," ", column_type_string[1]," ", "primary key,",
-                     column_name[2]," ", column_type_string[2],",",
-                     column_name[3]," ", column_type_string[3],",",
-                     column_name[4]," ", column_type_string[4] )
+for i = 1:length(column_name)
+    ct = string( column_type[i] )
+    if startswith( ct, "Int" ) 
+        column_type_string[i] = "integer"
+    elseif startswith( ct, "Float" )
+        column_type_string[i] = "double precision"
+    elseif startswith( ct, "String" )
+        vc_n = SubString( ct, length("String")+1, length(ct) )
+        column_type_string[i] = "varchar( $vc_n )"
+    end
+
+    global column_str = string( column_str," ", column_name[i]," ", column_type_string[i] )
+    if 0 < i < length( column_name )
+        column_str = string( column_str * "," )
+    elseif i == length( column_name )
+    end
+end
+
 @info column_str
 
 create_table_str = """
@@ -43,18 +54,38 @@ sslmode = prefer dbname = 'postgres' """)
 
 execute( conn, create_table_str )
 
-#=== data insert not yet
+sql = """   
+   SELECT
+        *
+    from ftest
+    LIMIT 1
+    """        
+df0 = DataFrame(columntable(LibPQ.execute(conn, sql)))  
+cols = map(x -> x, names(df0))
+select!(df, cols)
+#select(df, cols)
+
+# create rows (maybe "," are not the best choice)
 row_strings = imap(eachrow(df)) do row
+    join((ismissing(x) ? "null" : x for x in row), ",")*"\n"
+end
+
+#===
+row_strings = imap(eachrow(df)) do row
+    "$(row[$column_name[1]]),$(row[colun_name[2]]),$(row[colun_name[3]]),$(row[colun_name[4]])\n"
+    #"$(row[:id]),$(row[:name]),$(row[:sex]),$(row[:age])\n"
+    #===
     if ismissing(row[:yes_nulls])
         "$(row[:no_nulls]),\n"
     else
         "$(row[:no_nulls]),$(row[:yes_nulls])\n"
     end
+    ===#
 end
+===#
 
-copyin = LibPQ.CopyIn("COPY libpqjl_test FROM STDIN (FORMAT CSV);", row_strings)
+copyin = LibPQ.CopyIn("COPY ftest FROM STDIN (FORMAT CSV);", row_strings)
 
 execute(conn, copyin)
-===#
 
 close(conn)
