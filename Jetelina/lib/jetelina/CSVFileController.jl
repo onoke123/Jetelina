@@ -7,7 +7,7 @@ module CSVFileController
     using SQLite
     using Genie, Genie.Renderer, Genie.Renderer.Json
     using JetelinaReadConfig, JetelinaLog
-    using ExeSql
+    using ExeSql, PgDBController
 
     function read( csvfname::String, row::Int )
         #== テストデータがjetelina配下にある場合、@__DIR__でカレントディレクトリを示せる
@@ -24,13 +24,14 @@ module CSVFileController
             ここでinserttoPostgre()を呼んで、成功したら第一行だけ
             返して表示する
         ===#
+        PgDBController.dataInsertFromCSV( csvfname )
 
         #　表示しているだけ
         json( Dict( "Jetelina" => copy.( eachrow( df ))))
 
     end
 
-    function inserttoPostgre( df )
+    function inserttoPostgre( csvf )
 #===
         str_connect = "dbname= "postgres" host=127.0.0.1 user=postgres password= port=5432"
         conn = LibPQ.Connection(str_connect)
