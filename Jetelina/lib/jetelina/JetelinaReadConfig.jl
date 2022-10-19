@@ -38,7 +38,7 @@ module JetelinaReadConfig
         l = readlines( f )
 
         for i = 1:size(l)[1]
-            if !startswith( l[i],"*" )
+            if !startswith( l[i],"#" )
                 if startswith( l[i],"logfile" )
                     #===
                        logfile path attribute

@@ -1,14 +1,14 @@
-*
-*  Jetelina configuration
-*
+#
+#  Jetelina configuration
+#
 
 logfile = log.txt
 debug = true
 
-* File Upload Path
+# File Upload Path
 fileuploadpath = lib/jetelina/testdata
 
-* PostgreSQL
+# PostgreSQL
 host = localhost
 port = 5432
 user = postgres
@@ -16,5 +16,5 @@ password = postgres
 sslmode = prefer
 dbname = postgres
 
-* SQLite
-dbpath = c:\\Users\\user\\Jetelina\\Jetelina\\app\\resources\\test.db
+# SQLite
+#dbpath = c:\\Users\\user\\Jetelina\\Jetelina\\app\\resources\\test.db
