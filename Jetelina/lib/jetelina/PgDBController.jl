@@ -2,17 +2,33 @@ module PgDBController
 
     using CSV, LibPQ, DataFrames, IterTools, Tables
     using PgDataTypeList
+    using JetelinaReadConfig
 
     #===
     Data Base Connection
     ===#
     function open_connection()
+        @info "host = '$JetelinaDBhost' 
+        port = '$JetelinaDBport'
+        user = '$JetelinaDBuser'
+        password = '$JetelinaDBpassword'
+        sslmode = '$JetelinaDBsslmode'
+        dbname = '$JetelinaDBname' "
+        
+        conn = LibPQ.Connection("""host = '$JetelinaDBhost' 
+            port = '$JetelinaDBport'
+            user = '$JetelinaDBuser'
+            password = '$JetelinaDBpassword'
+            sslmode = '$JetelinaDBsslmode'
+            dbname = '$JetelinaDBname' """)    
+#===
         DATABASE_USER = "postgres"
         conn = LibPQ.Connection("""host = 'localhost' 
             port = '5432'
             user = 'postgres'
             password = 'postgres'
-            sslmode = prefer dbname = 'postgres' """)    
+            sslmode = prefer dbname = 'postgres' """)
+===#
     end
 
     #===
