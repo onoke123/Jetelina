@@ -1,5 +1,6 @@
 module PgDBController
 
+    using Genie, Genie.Renderer, Genie.Renderer.Json
     using CSV, LibPQ, DataFrames, IterTools, Tables
     using PgDataTypeList
     using JetelinaReadConfig
@@ -36,6 +37,20 @@ module PgDBController
     ===#
     function close_connection( conn )
         close( conn )
+    end
+
+    #===
+        get db table list
+    ===#
+    function getTableList()
+        conn = open_connection()
+        # schemanameをpublicに固定している。これはプロトコルでいいかな。
+        # システムはpublicで作るとして、importも"publicで"としようか。
+        table_str = "select tablename from pg_tables where schemaname='public'"
+        df0 = DataFrame(columntable(LibPQ.execute(conn, table_str)))  
+        ret = json( Dict( "Jetelina" => copy.( eachrow( df0 ))))
+        close_connection( conn )
+        return ret
     end
 
     #===
