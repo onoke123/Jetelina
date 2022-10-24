@@ -2,13 +2,24 @@
 #  Jetelina configuration
 #
 
+#
+#  section of system configuration
+#      logfile: logfile name path is fixed in lib/jetelina/log
+#      debug  : define debug mode  true->debug mode false->run mode
+#      fileuploadpath: define csv file upload path
 logfile = log.txt
 debug = true
-
-# File Upload Path
 fileuploadpath = lib/jetelina/testdata
 
-# PostgreSQL
+#
+#  section of database
+#      dbtype: type of database   
+#                PostgreSQL -> portgresql
+#                MariaDB    -> mariadb
+#                Oracle     -> oracle
+dbtype = postgresql
+
+# PostgreSQL setting
 host = localhost
 port = 5432
 user = postgres
@@ -16,4 +27,6 @@ password = postgres
 sslmode = prefer
 dbname = postgres
 
-# SQLite
+# MariaDB setting
+
+# Oracle setting
