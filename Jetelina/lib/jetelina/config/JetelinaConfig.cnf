@@ -17,4 +17,3 @@ sslmode = prefer
 dbname = postgres
 
 # SQLite
-#dbpath = c:\\Users\\user\\Jetelina\\Jetelina\\app\\resources\\test.db
