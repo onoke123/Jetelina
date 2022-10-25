@@ -1,36 +1,45 @@
-#===
-    @m: JetelinaReadConfig
-    @v: 0.1
-    @q: non
-    @r: global variables: JetelinaLogfile(log file path&name), debugflg(true/false)
-    @d: Jetelina read configuration file, then set them to Glogal variables
-    @e:
-    @s:
-===#
+"""
+    module: JetelinaReadConfig
+
+read configuration parameters from Jetelina.cnf file
+then set them to global variables
+    JetelinaLogfile: log file name
+    debugflg: debug mode or not
+    JetelinaFileUploadPath: csv file upload path
+    JetelinaDBhost: DB host name
+    JetelinaDBport: DB port number
+    JetelinaDBuser: DB access user account
+    JetelinaDBpassword: DB access user password
+    JetelinaDBsslmode: DB access ssl mode (in PostgreSQL)
+    JetelinaDBname: DB database name
+
+contain functions
+    __init__()
+    readConfig()
+    getSetting(s)
+    setPostgres(l,c)
+"""
 
 module JetelinaReadConfig
-    export  JetelinaLogfile, debugflg, JetelinaFileUploadPath,
-     JetelinaDBPath,JetelinaDBhost,JetelinaDBport,JetelinaDBuser,JetelinaDBpassword,JetelinaDBsslmode,JetelinaDBname
+    export  JetelinaLogfile, debugflg, JetelinaFileUploadPath,JetelinaDBhost,
+    JetelinaDBport,JetelinaDBuser,JetelinaDBpassword,JetelinaDBsslmode,JetelinaDBname
 
-    #===
-        @m: JetelinaReadConfig
-        @f: __init__()
-        @v: 0.1
-        @q: non
-        @r: non
-        @d: Jetelina read configuration file, then set them to Glogal variables
-        @e:
-        @s:
-    ===#
+    """
+        function __init__()
+
+    auto start this when the server starting.
+    this function calls readConfig function.
+    """
     function __init__()
         readConfig()
     end
 
-    #===
-        Configファイル読み込みの実体
-        JetelinaConfig.cnfが変更されたらこの関数を実行して設定値を有効にする
-        __init__()と分けることでGenie再起動が不要になる
-    ===#
+    """
+        function readConfig()
+
+    read configuration parameters from JetelinaConfig.cnf file,
+    then set them to the global variables.
+    """
     function readConfig()
         configfile = string( joinpath( @__DIR__, "config", "JetelinaConfig.cnf" ))
 
@@ -67,18 +76,30 @@ module JetelinaReadConfig
         end
     end
 
-    #===
-        get the parameter from the string
-    ===#
+    """
+        function getSetting(s)
+    
+    # Arguments
+    - `s: String`:  ex. 'debug = true'
+    return: configuration parameter   ex. 'debug = true' parses and gets 'true' 
+    
+    parses s with '=' then gets and returns the paramter.
+    """
     function getSetting(s)
         t = split( s, "=" )
         tt = strip( t[2] )
         return tt
     end
 
-    #===
-        PostgreSQL
-    ===#
+    """
+        function setPostgres(l,c)
+    
+    # Arguments
+    - `l: String`: configuration file strings
+    - `c: Integer`: file line number 
+
+            parses and gets then set PostgreSQL connection parameterss to the global variables
+    """
     function setPostgres(l,c)
         for i = c:size(l)[1]
             if !startswith( l[i],"#" )
