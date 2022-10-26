@@ -75,26 +75,16 @@ module PgDBController
     # Arguments
     - `fname: String`: csv file name
     """
-    #===
-        create table & data insert to DB from reading csv file
-    ===#
     function dataInsertFromCSV( fname )
-        if debugflg == true
-            @info "csv file: $fname"
-        end
-
         df = CSV.read( fname, DataFrame )
-        if debugflg == true
-            @info df
-        end
 
         column_name = names(df)
-        if debugflg == true
-            @info column_name
-        end
 
         column_type = eltype.(eachcol(df))
         if debugflg == true
+            @info "csv file: $fname"
+            @info df
+            @info column_name
             @info column_type
             @info column_name[1], column_type[1], size(column_name)
         end
@@ -117,13 +107,12 @@ module PgDBController
             @info column_str
         end
 
-        #===
-            new table name is the csv file name
-        ===#
+        # new table name is the csv file name
         tn = splitdir( fname )
+        tableName = tn[2]
 
         create_table_str = """
-            create table if not exists $tn[2](
+            create table if not exists $tableName(
                 $column_str   
             );
         """
@@ -135,7 +124,7 @@ module PgDBController
         sql = """   
             SELECT
                 *
-            from $tn[2]
+            from $tableName
             LIMIT 1
             """        
         df0 = DataFrame(columntable(LibPQ.execute(conn, sql)))  
@@ -148,7 +137,7 @@ module PgDBController
             join((ismissing(x) ? "null" : x for x in row), ",")*"\n"
         end
 
-        copyin = LibPQ.CopyIn("COPY $tn[2] FROM STDIN (FORMAT CSV);", row_strings)
+        copyin = LibPQ.CopyIn("COPY $tableName FROM STDIN (FORMAT CSV);", row_strings)
 
         execute(conn, copyin)
 
