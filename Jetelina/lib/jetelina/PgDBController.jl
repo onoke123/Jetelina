@@ -143,4 +143,42 @@ module PgDBController
 
         close_connection( conn )
     end
+
+    """
+        function getalldbdata( tablename )
+        
+    # Arguments
+    - `tablename: String`: table name
+
+    get all data from the table
+    """
+    function getalldbdata( tablename )
+        json( Dict( "Jetelina" => copy.( eachrow( select_data( tablename, "" ) ))))
+    end
+
+    """
+        function select_data( tablename, condition )
+
+    # Arguments
+    - `tablename: String`: table name
+    - `condition: String`: where sentence in SQL
+
+    execute select sentence in SQL order by the table name and where condition.
+    condition variable expects like
+          ex. where a = b
+              where (1<a)and(b<5)
+    """
+    function select_data( tablename, condition )
+        conn = open_connection()
+
+        where_sentence::String = ""
+        if 0 < length( condition )
+            where_sentence = "where $condition"
+        end
+
+        sql = "select * from $tablename $where_sentence"
+        df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+        close_connection( conn )
+        return df
+    end
 end
