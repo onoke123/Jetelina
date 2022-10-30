@@ -1,7 +1,9 @@
 /*
-引数に渡されたオブジェクトを分解取得する。
+    引数に渡されたオブジェクトを分解取得する。
+    @o: object
+    @t: type  0->db table list, 1->table columns list or csv file columns
 */
-const getdata = (o) => {
+const getdata = (o, t) => {
     if (o != null) {
         Object.keys(o).forEach(function (key) {
             //’Jetelina’をシンボルにしているからこうしている
@@ -13,12 +15,21 @@ const getdata = (o) => {
                         */
                         let str = "";
                         $.each(v, function (name, value) {
-                            str += `${name}:${value}`;
-
+                            if( t == 0 ){
+                                str += `<option value=${value}>${value}</option>`;
+                            }else if( t == 1 ){
+                                str += `<div class="item"><p>${value}</p></div>`;
+                            }
                         });
 
-                        // d_tablelistにデータをバインドする
-                        $("#d_tablelist").append(`${str}<br>`);
+                        let tagid = "";
+                        if (t == 0) {
+                            tagid = "#d_tablelist";
+                        } else if (t == 1) {
+                            tagid = "#container .item_area";
+                        }
+
+                        $( tagid ).append(`${str}`);
                     }
                 })
             }
@@ -39,7 +50,7 @@ const getAjaxData = (url) => {
             dataType: "json",
         }).done(function (result, textStatus, jqXHR) {
             // data parseに行く
-            getdata(result);
+            getdata(result, 0);
         }).fail(function (result) {
         });
     } else {
@@ -47,10 +58,12 @@ const getAjaxData = (url) => {
     }
 }
 
-
+/*
+    CSV file upload
+*/
 const fileupload = () => {
     let fd = new FormData($("#my_form").get(0));
-    $("#upbtn").prop("disabled",true);
+    $("#upbtn").prop("disabled", true);
 
     $.ajax({
         url: "/dofup",
@@ -61,7 +74,9 @@ const fileupload = () => {
         processData: false,
         dataType: "json",
     }).done(function (result) {
-        $("#upbtn").prop("disabled",false);
+        $("#upbtn").prop("disabled", false);
+        getdata( result, 1 );
+        /*
         let o = result;
         let str = "";
 
@@ -70,9 +85,9 @@ const fileupload = () => {
             if (key == "Jetelina" && o[key].length > 0) {
                 $.each(o[key], function (k, v) {
                     if (v != null) {
-                        /* オブジェクトを配列にしているのでここまでやって
-                          初めてname/valueのデータが取得できる。
-                        */
+                        // オブジェクトを配列にしているのでここまでやって
+                        //  初めてname/valueのデータが取得できる。
+                        //
                         let str = "";
                         $.each(v, function (name, value) {
                             str += `<div class="item"><p>${name}</p></div>`;
@@ -83,9 +98,30 @@ const fileupload = () => {
                     }
                 })
             }
-        });
+        });*/
     }).fail(function (result) {
         // something error happened
     });
 }
 
+/*
+    指定されたtableのcolumnを取得する
+*/
+const getColumn = (tablename) => {
+    if (0 < tablename.length || tablename != undefined) {
+        tablename = trim(tablename);
+
+        $.ajax({
+            url: "/getColumn",
+            type: "post",
+            data: "",
+            dataType: "json",
+        }).done(function (result, textStatus, jqXHR) {
+            // data parseに行く
+            getdata(result, 1);
+        }).fail(function (result) {
+        });
+    } else {
+        console.error("ajax url is not defined");
+    }
+}

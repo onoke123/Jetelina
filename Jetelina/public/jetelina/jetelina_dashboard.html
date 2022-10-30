@@ -9,12 +9,6 @@
         <script type="text/javascript" src="js/jquery-ui-1.13.2/jquery-ui.min.js"></script>
         
         <script type="text/javascript" src="jetelina/js/jetelinalib.js"></script>
-        
-        <!--script type="text/javascript" src="jetelina/js/fileupload.js"></script-->
-        <!--script type="text/javascript" src="jetelina/js/databinde.js"></script-->
-        <!--
-        <script type="text/javascript" src="jetelina/js/csvdatashow.js"></script>
-        -->
         <script type="text/javascript" src="jetelina/js/draganddropitems.js"></script>
     </head>
     <body>
@@ -27,9 +21,11 @@
             <button type="button" id="upbtn">up</button>
         </form>
 
-        <text>here you are</text>
-        <!--div id="d_data"/-->
-        <div id="d_tablelist"></div>
+        <label>Table List</label>
+        <br>
+        <select id="d_tablelist">
+            <option hidden>Select your DB Table from below</option>
+        </select>
 
         <!-- drag & drop data area -->
         <div id="container">
@@ -47,4 +43,4 @@
           
     </body>
     <script type="text/javascript" src="jetelina/js/dashboard.js"></script>
-</html>
+ </html>
