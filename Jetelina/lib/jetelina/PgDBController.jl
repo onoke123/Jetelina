@@ -153,10 +153,11 @@ module PgDBController
     end
 
     """
-        function dataInsertFromCSV( fname )
+        function getColumns( conn, fname )
 
     # Arguments
-    - `fname: String`: csv file name
+    - `conn: Object`: Data Base connection object
+    - `tableName: String`: DB table name
     """
     function getColumns( conn, tableName )
         sql = """   
