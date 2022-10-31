@@ -8,6 +8,7 @@ contain functions
     close_connection( conn )
     getTableList()
     dataInsertFromCSV( fname )
+    getColumns()
 """
 module PgDBController
 
@@ -23,13 +24,14 @@ module PgDBController
     connection parameters are set by global variables.
     """
     function open_connection()
+        #===
         @info "host = '$JetelinaDBhost' 
         port = '$JetelinaDBport'
         user = '$JetelinaDBuser'
         password = '$JetelinaDBpassword'
         sslmode = '$JetelinaDBsslmode'
         dbname = '$JetelinaDBname' "
-        
+        ===#
         conn = LibPQ.Connection("""host = '$JetelinaDBhost' 
             port = '$JetelinaDBport'
             user = '$JetelinaDBuser'
@@ -81,7 +83,7 @@ module PgDBController
         column_name = names(df)
 
         column_type = eltype.(eachcol(df))
-        if debugflg == true
+        if debugflg
             @info "csv file: $fname"
             @info df
             @info column_name
@@ -103,13 +105,15 @@ module PgDBController
             end
         end
 
-        if debugflg == true
+        if debugflg
             @info column_str
         end
 
-        # new table name is the csv file name
-        tn = splitdir( fname )
-        tableName = tn[2]
+        #===
+            new table name is the csv file name with deleting the suffix  
+                ex. /home/upload/test.csv -> splitdir() -> ("/home/upload","test.csv") -> splitext() -> ("test",".csv")
+        ===#
+        tableName = splitext( splitdir( fname )[2] )[1]
 
         create_table_str = """
             create table if not exists $tableName(
@@ -141,6 +145,31 @@ module PgDBController
 
         execute(conn, copyin)
 
+        columns = getColumns( conn, tableName )
+
         close_connection( conn )
+
+        return columns
+    end
+
+    """
+        function dataInsertFromCSV( fname )
+
+    # Arguments
+    - `fname: String`: csv file name
+    """
+    function getColumns( conn, tableName )
+        sql = """   
+            SELECT
+                *
+            from $tableName
+            LIMIT 1
+            """        
+        df = DataFrame(columntable(LibPQ.execute(conn, sql)))  
+        cols = map(x -> x, names(df))
+        @info "cols:", cols
+        select!(df, cols)
+        
+        return json( Dict( "Jetelina" => copy.( eachrow( df ))))
     end
 end

@@ -18,7 +18,7 @@ const getdata = (o, t) => {
                             if( t == 0 ){
                                 str += `<option value=${value}>${value}</option>`;
                             }else if( t == 1 ){
-                                str += `<div class="item"><p>${value}</p></div>`;
+                                str += `<div class="item"><p>${name}</p></div>`;
                             }
                         });
 

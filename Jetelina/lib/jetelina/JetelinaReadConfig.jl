@@ -21,7 +21,7 @@ contain functions
 """
 
 module JetelinaReadConfig
-    export  JetelinaLogfile, debugflg, JetelinaFileUploadPath,JetelinaDBhost,
+    export  JetelinaLogfile, debugflg, JetelinaDBtype,JetelinaFileUploadPath,JetelinaDBhost,
     JetelinaDBport,JetelinaDBuser,JetelinaDBpassword,JetelinaDBsslmode,JetelinaDBname
 
     """
@@ -53,7 +53,7 @@ module JetelinaReadConfig
                     global JetelinaLogfile = getSetting(l[i])
                 elseif startswith( l[i], "debug" )
                     # debug configuration true/false
-                    global debugflg = getSetting(l[i])
+                    global debugflg = parse( Bool, getSetting(l[i]) )
                 elseif startswith( l[i], "fileuploadpath" )
                     # CSV file upload path
                     global JetelinaFileUploadPath = getSetting(l[i])
@@ -108,7 +108,7 @@ module JetelinaReadConfig
                     global JetelinaDBhost = getSetting(l[i])
                 elseif startswith( l[i], "port")
                     # DB port
-                    global JetelinaDBport = getSetting(l[i])
+                    global JetelinaDBport = parse( Int16, getSetting(l[i]) )
                 elseif startswith( l[i], "user")
                     # DB host 
                     global JetelinaDBuser = getSetting(l[i])
