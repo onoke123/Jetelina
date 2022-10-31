@@ -1,0 +1,68 @@
+<html>
+    <head>
+        <style>
+div#pop-up {
+   display: none;
+   position: absolute;
+   width: 280px;
+   padding: 10px;
+   background: #eeeeee;
+   color: #000000;
+   border: 1px solid #1a1a1a;
+   font-size: 90%;
+ }        </style>
+        <script type="text/javascript" src="../js/genie/jquery.min.js"></script>
+    </head>
+    <body>
+        <div class="item" d="1">AAA</div>
+        <div class="item" d="2">BBB</div>
+        <div class="item" d="3">CCC</div>
+
+            <!-- HIDDEN / POP-UP DIV -->
+    <div id="pop-up">
+        <text></text>
+     </div>
+ 
+    </body>
+    <script>
+        $(function(){
+            /*
+            $( ".item" ).on( "mouseover", function(){
+                let d = $( this ).attr( "d" );
+                console.log("onmouseover", d );
+                $('div#pop-up').show();
+            });
+
+            $(".item").on( "mouseout", function() {
+                console.log("mouseout");
+                $(".tooltip").fadeOut();
+            });
+            */
+            
+            $(document).on({mouseenter: function() {
+                let d = $( this ).attr( "d" );
+                
+                $('div#pop-up').text( d ).show();
+            },
+            mouseleave: function() {
+                $('div#pop-up').hide();
+            }
+        },".item");
+/*            $('.item').hover(function(e) {
+            let d = $( this ).attr( "d" );
+                
+                $('div#pop-up').text( d ).show();
+            }, function() {
+                $('div#pop-up').hide();
+            });
+*///        });
+            var moveLeft = 20;
+           var moveDown = 10;
+            $('.item').mousemove(function(e) {
+                $("div#pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
+            });
+
+            $("body").append('<div class="item" d="10">ZZZ</div>').trigger("create");
+        });
+    </script>
+</html>
