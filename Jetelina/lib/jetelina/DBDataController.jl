@@ -1,34 +1,53 @@
+"""
+    module: DBDataCOntroller
+
+DB controller
+
+contain functions
+    doInsert()
+    doSelect()
+    doUpdate()
+    doDelete()
+"""
 module DBDataController
 
-    using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json, SQLite
+    using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json
     using JetelinaLog, JetelinaReadConfig
-    using ExeSql
+    using PgDBController
 
-    function getalldbdata()
-        #json( Dict( "alldata" => "df" => copy.( eachrow( readdatafromdb() ))))
-        json( Dict( "Jetelina" => copy.( eachrow( readdatafromdb() ))))
-    end
-
-    function readdatafromdb()
-        dbfile = JetelinaDBPath
-        
-        if debugflg
-            dbgmsg = "dbfile: $dbfile" 
-            writetoLogfile( dbgmsg )
+    function doInsert()
+        if JetelinaDBtype == "postgresql"
+            # Case in PostgreSQL
+            PgDBController.doInsert()
+        elseif JetelinaDBtype == "mariadb"
+        elseif JetelinaDBtype == "oracle"
         end
-
-        db = SQLite.DB( dbfile )
-        return select_data( db )
     end
-
-    function select_data( db )
-        # SQLiteに書き込まれたデータを操作する
-        # select_tbl1()はExeSql.jlでexportされていないから
-        sql_select = ExeSql.select_tbl1()
-        query = DBInterface.execute( db, sql_select ) 
-
-        #　このdfにselectデータがあるので、呼び出し元に返してやればよさそう
-        return DataFrame( query )
+    
+    function doSelect()
+        if JetelinaDBtype == "postgresql"
+            # Case in PostgreSQL
+            PgDBController.doSelect()
+        elseif JetelinaDBtype == "mariadb"
+        elseif JetelinaDBtype == "oracle"
+        end
     end
-
+    
+    function doUpdate()
+        if JetelinaDBtype == "postgresql"
+            # Case in PostgreSQL
+            PgDBController.doUpdate()
+        elseif JetelinaDBtype == "mariadb"
+        elseif JetelinaDBtype == "oracle"
+        end
+    end
+    
+    function doDelete()
+        if JetelinaDBtype == "postgresql"
+            # Case in PostgreSQL
+            PgDBController.doDelete()
+        elseif JetelinaDBtype == "mariadb"
+        elseif JetelinaDBtype == "oracle"
+        end
+    end
 end

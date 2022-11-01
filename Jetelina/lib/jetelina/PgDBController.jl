@@ -9,13 +9,17 @@ contain functions
     getTableList()
     dataInsertFromCSV( fname )
     getColumns()
+    doInsert()
+    doSelect()
+    doUpdate()
+    doDelete()
 """
 module PgDBController
 
     using Genie, Genie.Renderer, Genie.Renderer.Json
     using CSV, LibPQ, DataFrames, IterTools, Tables
+    using JetelinaLog, JetelinaReadConfig
     using PgDataTypeList
-    using JetelinaReadConfig
 
     """
         function open_connection()
@@ -92,12 +96,9 @@ module PgDBController
         end
 
         column_type_string = Array{Union{Nothing,String}}(nothing,size(column_name))
-
         column_str = string()
-
         for i = 1:length(column_name)
             column_type_string[i] = PgDataTypeList.getDataType( column_type[i] )
-
             column_str = string( column_str," ", column_name[i]," ", column_type_string[i] )
             if 0 < i < length( column_name )
                 column_str = string( column_str * "," )
@@ -114,17 +115,13 @@ module PgDBController
                 ex. /home/upload/test.csv -> splitdir() -> ("/home/upload","test.csv") -> splitext() -> ("test",".csv")
         ===#
         tableName = splitext( splitdir( fname )[2] )[1]
-
         create_table_str = """
             create table if not exists $tableName(
                 $column_str   
             );
         """
-
         conn = open_connection()
-
         execute( conn, create_table_str )
-
         sql = """   
             SELECT
                 *
@@ -134,7 +131,6 @@ module PgDBController
         df0 = DataFrame(columntable(LibPQ.execute(conn, sql)))  
         cols = map(x -> x, names(df0))
         select!(df, cols)
-        #select(df, cols)
 
         # create rows
         row_strings = imap(eachrow(df)) do row
@@ -142,11 +138,8 @@ module PgDBController
         end
 
         copyin = LibPQ.CopyIn("COPY $tableName FROM STDIN (FORMAT CSV);", row_strings)
-
         execute(conn, copyin)
-
         columns = getColumns( conn, tableName )
-
         close_connection( conn )
 
         return columns
@@ -172,5 +165,17 @@ module PgDBController
         select!(df, cols)
         
         return json( Dict( "Jetelina" => copy.( eachrow( df ))))
+    end
+
+    function doInsert()
+    end
+
+    function doSelect()
+    end
+
+    function doUpdate()
+    end
+
+    function doDelete()
     end
 end
