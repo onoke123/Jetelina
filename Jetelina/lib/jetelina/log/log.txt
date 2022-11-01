@@ -188,3 +188,21 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
 ┌ Info: csv file: lib/jetelina/testdata/ftest.csv
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: post data: ["id"]
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: post data: ["id"]
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: post data: ["id","name"]
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: post data: ["id"]
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: post data: ["id","name"]
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: post data: ["id","ave"]
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: post data: ["sex","id"]
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23

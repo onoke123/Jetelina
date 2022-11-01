@@ -5,7 +5,7 @@ module PostDataController
 
     function get()
         item = postpayload( :item )
-
+        @info "post: ", item
         if debugflg
             debugmsg = "post data: $item"
             writetoLogfile( debugmsg )
