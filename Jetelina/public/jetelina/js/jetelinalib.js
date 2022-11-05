@@ -74,6 +74,7 @@ const fileupload = () => {
         processData: false,
         dataType: "json",
     }).done(function (result) {
+        $('input[type=file]').val('');
         $("#upbtn").prop("disabled", false);
         getdata( result, 1 );
         /*
