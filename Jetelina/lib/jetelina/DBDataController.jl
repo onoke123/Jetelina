@@ -4,6 +4,7 @@
 DB controller
 
 contain functions
+    getTableList()
     doInsert()
     doSelect()
     doUpdate()
@@ -14,6 +15,15 @@ module DBDataController
     using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json
     using JetelinaLog, JetelinaReadConfig
     using PgDBController
+
+    function getTableList()
+        if JetelinaDBtype == "postgresql"
+            # Case in PostgreSQL
+            PgDBController.getTableList()
+        elseif JetelinaDBtype == "mariadb"
+        elseif JetelinaDBtype == "oracle"
+        end
+    end
 
     function doInsert()
         if JetelinaDBtype == "postgresql"

@@ -82,17 +82,22 @@ module PgDBController
     - `fname: String`: csv file name
     """
     function dataInsertFromCSV( fname )
-        df = CSV.read( fname, DataFrame )
+        df = DataFrame( CSV.File(fname) )
+        #df = CSV.read( fname, DataFrame )
 
+        # add unique columns 
+        jetelina_id = "j1" # ここは後でちゃんとユニークなindex文字として設定すること11/5
+        insertcols!( df, :jetelina_id=>jetelina_id, :jetelina_delete_flg=>0 )
+        
         column_name = names(df)
 
         column_type = eltype.(eachcol(df))
         if debugflg
             @info "csv file: $fname"
-            @info df
-            @info column_name
-            @info column_type
-            @info column_name[1], column_type[1], size(column_name)
+            @info "df:", df
+            @info "col name:", column_name
+            @info "col type:", column_type
+            @info "col sample: name/type/num_of_cols is ", column_name[1], column_type[1], size(column_name)
         end
 
         column_type_string = Array{Union{Nothing,String}}(nothing,size(column_name))
@@ -107,7 +112,7 @@ module PgDBController
         end
 
         if debugflg
-            @info column_str
+            @info "col str to create table: ", column_str
         end
 
         #===

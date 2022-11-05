@@ -1,6 +1,6 @@
 using Genie.Router
 using DBDataController, CSVFileController, PostDataController, FileUploadController
-using JetelinaReadConfig, PgDBController
+using JetelinaReadConfig
 
 # welcome page
 route("/") do
@@ -18,11 +18,11 @@ route( "/edit" ) do
 end
 ===#
 
-# DBから取得した全データをjsonで返すサンプル
-route( "/getalldbdata", DBDataController.getalldbdata )
+# DBから取得した全データをjsonで返す
+#route( "/getalldbdata", DBDataController.getalldbdata )
 
-# DBから取得した全tableをjsonで返すサンプル
-route( "/getalldbtable", PgDBController.getTableList )
+# DBから取得した全tableをjsonで返す
+route( "/getalldbtable", DBDataController.getTableList )
 
 route( "/showdbdata" ) do 
   serve_static_file( "jetelina/showdbdata.html" )  

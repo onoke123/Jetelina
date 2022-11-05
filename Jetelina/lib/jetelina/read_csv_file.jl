@@ -14,11 +14,29 @@ csvfname = joinpath( "testdata", "test.csv" )
 fname = string( joinpath( @__DIR__, csvfname ) )
 println( "csv file: ", fname );
 
-df = CSV.read( fname, DataFrame )
+# df = CSV.read( fname, DataFrame )
+df = DataFrame(CSV.File(fname))
+@info df
 
-#　表示しているだけ
-#println( df )
-json( Dict( "Jetelina" => copy.( eachrow( df ))));
+#===
+    DataFrameから指定したデータを取得する方法
+===#
+# 特定データを指定する
+kn = df[in(["Edita"]).(df.name),:]
+@info kn 
+# 特定されたデータのあるカラムのデータを取得する
+kv = kn.address
+@info kv[1]
+# 取得したデータをstring型にして比較してみる
+@info string.(kv[1]) == "Slovakia"
+
+# データを追加する
+push!( df, (id=10,name="Jelena",address="Servia",age="32",sex="f"))
+@info df
+# データを削除する
+
+# csv出力するならこれ
+#json( Dict( "Jetelina" => copy.( eachrow( df ))));
 
 # csvfnameのsqlite DBファイルがresource/testdata直下に作成される
 # 
