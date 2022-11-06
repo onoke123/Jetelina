@@ -36,9 +36,5 @@ module CSVFileController
         elseif JetelinaDBtype == "mariadb"
         elseif JetelinaDBtype == "oracle"
         end
-
-        #　Dataを表示しているだけ
-        #json( Dict( "Jetelina" => copy.( eachrow( df ))))
-
     end
 end

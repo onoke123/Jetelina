@@ -199,30 +199,30 @@ module PgDBController
 
         copyin = LibPQ.CopyIn("COPY $tableName FROM STDIN (FORMAT CSV);", row_strings)
         execute(conn, copyin)
-        columns = getColumns( conn, tableName )
+        # これは
+        #columns = getColumns( conn, tableName )
         close_connection( conn )
 
         # manage to jetelina_table_manager
         insert2JetelinaTableManager( tableName, names(df0) )
-
-        return columns
     end
 
     """
-        function getColumns( conn, fname )
+        function getColumns( fname )
 
     # Arguments
-    - `conn: Object`: Data Base connection object
     - `tableName: String`: DB table name
     """
-    function getColumns( conn, tableName )
+    function getColumns( tableName )
         sql = """   
             SELECT
                 *
             from $tableName
             LIMIT 1
             """        
+        conn = open_connection()
         df = DataFrame(columntable(LibPQ.execute(conn, sql)))  
+        close_connection( conn )
         cols = map(x -> x, names(df))
         @info "cols:", cols
         select!(df, cols)
