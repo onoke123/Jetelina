@@ -10,7 +10,7 @@ module CSVFileController
     using SQLite
     using Genie, Genie.Renderer, Genie.Renderer.Json
     using JetelinaReadConfig, JetelinaLog
-    using ExeSql, PgDBController
+    using ExeSql, DBDataController
 
     """
         function read( csvfname::String )
@@ -32,7 +32,7 @@ module CSVFileController
 
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
-            PgDBController.dataInsertFromCSV( csvfname )
+            DBDataController.dataInsertFromCSV( csvfname )
         elseif JetelinaDBtype == "mariadb"
         elseif JetelinaDBtype == "oracle"
         end
