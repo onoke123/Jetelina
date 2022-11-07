@@ -14,6 +14,13 @@ from jetelina_table_manager
 """        
 #df = DataFrame(columntable(LibPQ.execute(conn, sql)))  
 df = DataFrame(LibPQ.execute(conn, sql))  
+
+sql = """
+select nextval('jetelina_id');
+"""
+sequence_number = LibPQ.execute( conn, sql )
+
 close( conn )
 
 @info "df:" df
+@info "se n:" columntable(sequence_number)[1]

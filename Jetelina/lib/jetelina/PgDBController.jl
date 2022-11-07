@@ -15,7 +15,10 @@ contain functions
     doDelete()
 
     create_jetelina_tables()
+    create_jetelina_id_sequence()
     insert2JetelinaTableManager( tableName, columns )
+    readJetelinatable()
+    getJetelinaID( conn )
 """
 module PgDBController
 
@@ -34,6 +37,17 @@ module PgDBController
         """
         conn = open_connection()
         execute( conn, create_jetelina_table_manager_str )
+        close_connection( conn )
+    end
+
+    """
+    """
+    function create_jetelina_id_sequence()
+        create_jetelina_id_sequence = """
+            create sequence jetelina_id;
+        """
+        conn = open_connection()
+        execute( conn, create_jetelina_id_sequence )
         close_connection( conn )
     end
 
@@ -113,6 +127,24 @@ module PgDBController
     end
 
     """
+        function getJetelinaID( conn )
+        
+    # Arguments
+    - `conn: Object`: connection object
+
+    get seaquence number from jetelina_id table
+    """
+    function getJetelinaID( conn )
+        sql = """
+            select nextval('jetelina_id');
+        """
+        sequence_number = LibPQ.execute( conn, sql )
+@info "seq: " sequence_number
+@info "seq__: " columntable(sequence_number)[1], typeof(columntable(sequence_number)[1])
+        return "j" * string( columntable(sequence_number)[1] )
+    end
+
+    """
     function insert2JetelinaTableManager( tableName, columns )
 
         # Arguments
@@ -122,9 +154,9 @@ module PgDBController
         columns of tableName insert into Jetelina_table_manager  
     """
     function insert2JetelinaTableManager( tableName, columns )
-        jetelina_id = "j2" # ここはユニークでなければならない。後でちゃんと番号を取ろう。とりあえず今は固定。
-
         conn = open_connection()
+
+        jetelina_id = getJetelinaID( conn )
 
         for i = 1:length(columns)
             c = columns[i]
