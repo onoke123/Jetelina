@@ -73,6 +73,27 @@ module PgDBController
     end
 
     """
+        function readJetelinatable()
+
+    read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame 
+    """
+    function readJetelinatable()
+        sql = """   
+            select
+                *
+            from jetelina_table_manager
+        """        
+        conn = open_connection()
+        global Df_JetelinaTableManager = DataFrame(columntable(LibPQ.execute(conn, sql)))  
+        close_connection( conn )
+        if debugflg
+            @info "Df_JetelinaTableManager: " Df_JetelinaTableManager
+        end
+
+#        return df
+    end
+
+    """
         function getTableList()
 
     # Arguments
@@ -101,7 +122,7 @@ module PgDBController
         columns of tableName insert into Jetelina_table_manager  
     """
     function insert2JetelinaTableManager( tableName, columns )
-        jetelina_id = "j1" # ここはユニークでなければならない。後でちゃんと番号を取ろう。とりあえず今は固定。
+        jetelina_id = "j2" # ここはユニークでなければならない。後でちゃんと番号を取ろう。とりあえず今は固定。
 
         conn = open_connection()
 
@@ -120,6 +141,9 @@ module PgDBController
         end
 
         close_connection( conn )
+
+        # Df_JetelinaTableManagerを更新する
+        readJetelinatable()
     end
 
     """

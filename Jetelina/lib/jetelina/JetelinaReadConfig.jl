@@ -24,7 +24,7 @@ module JetelinaReadConfig
     using DBDataController
 
     export  JetelinaLogfile, debugflg, JetelinaDBtype,JetelinaFileUploadPath,JetelinaDBhost,
-    JetelinaDBport,JetelinaDBuser,JetelinaDBpassword,JetelinaDBsslmode,JetelinaDBname
+    JetelinaDBport,JetelinaDBuser,JetelinaDBpassword,JetelinaDBsslmode,JetelinaDBname,Df_JetelinaTableManager
 
     """
         function __init__()

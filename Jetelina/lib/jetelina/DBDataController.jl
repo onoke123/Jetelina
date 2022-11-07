@@ -18,13 +18,18 @@ module DBDataController
     using JetelinaLog, JetelinaReadConfig
     using PgDBController
 
+#    export Df_JetelinaTableManager
+
     function init_Jetelina_table()
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.create_jetelina_table()
+ #           global Df_JetelinaTableManager = PgDBController.readJetelinatable()
+            PgDBController.readJetelinatable()
         elseif JetelinaDBtype == "mariadb"
         elseif JetelinaDBtype == "oracle"
         end
+
     end
 
     function dataInsertFromCSV( csvfname )
