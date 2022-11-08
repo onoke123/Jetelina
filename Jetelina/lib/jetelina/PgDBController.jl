@@ -116,14 +116,20 @@ module PgDBController
     get all table name from public 'schemaname'
     """
     function getTableList()
+        df = _getTableList()
+        ret = json( Dict( "Jetelina" => copy.( eachrow( df ))))
+        return ret
+    end
+
+    function _getTableList()
         conn = open_connection()
         # schemanameをpublicに固定している。これはプロトコルでいいかな。
         # システムはpublicで作るとして、importも"publicで"としようか。
         table_str = "select tablename from pg_tables where schemaname='public'"
-        df0 = DataFrame(columntable(LibPQ.execute(conn, table_str)))  
-        ret = json( Dict( "Jetelina" => copy.( eachrow( df0 ))))
+        df = DataFrame(columntable(LibPQ.execute(conn, table_str)))  
         close_connection( conn )
-        return ret
+
+        return df
     end
 
     """
@@ -203,14 +209,6 @@ module PgDBController
 
         column_type = eltype.(eachcol(df))
 
-        if debugflg
-            @info "csv file: $fname"
-            @info "df:", df
-            @info "col name:" column_name, typeof(column_name)
-            @info "col type:" column_type, typeof(column_type)
-            @info "col sample: name/type/num_of_cols is " column_name[1], column_type[1], size(column_name)
-        end
-
         column_type_string = Array{Union{Nothing,String}}(nothing,size(column_name))
         column_str = string()
         #===
@@ -234,13 +232,33 @@ module PgDBController
                 ex. /home/upload/test.csv -> splitdir() -> ("/home/upload","test.csv") -> splitext() -> ("test",".csv")
         ===#
         tableName = splitext( splitdir( fname )[2] )[1]
-        create_table_str = """
+
+        #===
+            ここで一度、同じ名前のtableの存在を確認する。
+            でもそれはcreate tableのためではなくて(だって、not existsしてるし)、
+            その後の insert2JetelinaTableManager() 処理のため。
+        ===#
+        df_tl = _getTableList()
+        DataFrames.filter!( row-> row.tablename == tableName,df_tl )
+
+        #===
+            "not exists"条件をつけてtableを作成する。
+            その後csvファイルデータをinsertするが、これは同一tableに「追加」
+            を認めているから。もし「追加」を認めない場合は、insert2JetelinaTableManager()
+            実行処理条件のところと同じく isempty( df_tl ) 判定を入れればいい。
+        ===#
+        create_table_str = """up
             create table if not exists $tableName(
                 $column_str   
             );
         """
         conn = open_connection()
-        execute( conn, create_table_str )
+        try
+            execute( conn, create_table_str )
+        catch
+            err
+            println(err)
+        end
         #===
             then get column from the created table, because the columns are order by csv file, thus they can get after
             created the table
@@ -266,8 +284,10 @@ module PgDBController
         #columns = getColumns( conn, tableName )
         close_connection( conn )
 
-        # manage to jetelina_table_manager
-        insert2JetelinaTableManager( tableName, names(df0) )
+        if isempty( df_tl )
+            # manage to jetelina_table_manager
+            insert2JetelinaTableManager( tableName, names(df0) )
+        end
     end
 
     """
