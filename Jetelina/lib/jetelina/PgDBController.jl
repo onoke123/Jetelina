@@ -138,10 +138,17 @@ module PgDBController
         sql = """
             select nextval('jetelina_id');
         """
-        sequence_number = LibPQ.execute( conn, sql )
-@info "seq: " sequence_number
-@info "seq__: " columntable(sequence_number)[1], typeof(columntable(sequence_number)[1])
-        return "j" * string( columntable(sequence_number)[1] )
+        sequence_number = columntable(execute( conn, sql ))
+
+        #===
+            ここはちょっと説明が要る。
+            sequence_numberは Union{Missing, Int64}[51]　になっていて
+            nextval()の値は[51]の51になっている。なので、
+            sequence_number[1] -> Union{Int64}[51]
+            sequence_number[1][1] -> 51
+            というわけ。メンドウだな。
+        ===#
+        return "j" * string( sequence_number[1][1] )
     end
 
     """
