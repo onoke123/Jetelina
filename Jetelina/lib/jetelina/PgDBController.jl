@@ -247,7 +247,7 @@ module PgDBController
             を認めているから。もし「追加」を認めない場合は、insert2JetelinaTableManager()
             実行処理条件のところと同じく isempty( df_tl ) 判定を入れればいい。
         ===#
-        create_table_str = """up
+        create_table_str = """
             create table if not exists $tableName(
                 $column_str   
             );

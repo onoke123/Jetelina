@@ -9,6 +9,8 @@ $(window).load(function () {
    */
   $("#upbtn").on("click", function () {
     fileupload();
+    // clean up d&d items
+    $( ".item_area .item" ).remove();
   });
 
   /*
