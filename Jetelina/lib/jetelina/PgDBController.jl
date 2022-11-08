@@ -126,7 +126,10 @@ module PgDBController
         # schemanameをpublicに固定している。これはプロトコルでいいかな。
         # システムはpublicで作るとして、importも"publicで"としようか。
         table_str = "select tablename from pg_tables where schemaname='public'"
-        df = DataFrame(columntable(LibPQ.execute(conn, table_str)))  
+        df = DataFrame(columntable(LibPQ.execute(conn, table_str)))
+        # クライアントに提供するtable listには jetelina_table_manager　は含まない。
+        DataFrames.filter!( row-> row.tablename != "jetelina_table_manager",df )
+  
         close_connection( conn )
 
         return df

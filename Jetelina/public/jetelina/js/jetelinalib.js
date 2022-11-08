@@ -16,7 +16,7 @@ const getdata = (o, t) => {
                         let str = "";
                         $.each(v, function (name, value) {
                             if( t == 0 ){
-                                str += `<option value=${value}>${value}</option>`;
+                                str += `<option class="tables" value=${value}>${value}</option>`;
                             }else if( t == 1 ){
                                 str += `<div class="item" d=${value}><p>${name}</p></div>`;
                             }
@@ -38,7 +38,7 @@ const getdata = (o, t) => {
     }
 }
 
-// 画面起動時にDBのtableリストを取得する
+// 汎用的なajaxコール関数
 const getAjaxData = (url) => {
     if (0 < url.length || url != undefined) {
         if (!url.startsWith("/")) url = "/" + url;
@@ -77,6 +77,8 @@ const fileupload = () => {
         $('input[type=file]').val('');
         $("#upbtn").prop("disabled", false);
         getdata( result, 1 );
+        // talbe list 更新
+        getAjaxData("getalldbtable");
         /*
         let o = result;
         let str = "";

@@ -11,6 +11,8 @@ $(window).load(function () {
     fileupload();
     // clean up d&d items
     $( ".item_area .item" ).remove();
+    // clean up selectbox of the table list
+    $( "#d_tablelist .tables" ).remove();
   });
 
   /*
