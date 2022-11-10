@@ -39,4 +39,11 @@ module PostDataController
         @info "getcolumns: " tableName
         DBDataController.getColumns( tableName )
     end
+
+    function deleteTable()
+        tableName = jsonpayload( "tablename" )
+        @info "dropTable: " tableName
+#        DBDataController.dropTable( tableName )
+    end
+
 end

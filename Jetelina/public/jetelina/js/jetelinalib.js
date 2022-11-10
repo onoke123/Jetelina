@@ -15,9 +15,9 @@ const getdata = (o, t) => {
                         */
                         let str = "";
                         $.each(v, function (name, value) {
-                            if( t == 0 ){
+                            if (t == 0) {
                                 str += `<option class="tables" value=${value}>${value}</option>`;
-                            }else if( t == 1 ){
+                            } else if (t == 1) {
                                 str += `<div class="item" d=${value}><p>${name}</p></div>`;
                             }
                         });
@@ -29,16 +29,15 @@ const getdata = (o, t) => {
                             tagid = "#container .item_area";
                         }
 
-                        $( tagid ).append(`${str}`);
+                        $(tagid).append(`${str}`);
                     }
                 })
             }
-
         });
     }
 }
 
-// 汎用的なajaxコール関数
+// 汎用的なajax getコール関数
 const getAjaxData = (url) => {
     if (0 < url.length || url != undefined) {
         if (!url.startsWith("/")) url = "/" + url;
@@ -51,6 +50,25 @@ const getAjaxData = (url) => {
         }).done(function (result, textStatus, jqXHR) {
             // data parseに行く
             getdata(result, 0);
+        }).fail(function (result) {
+        });
+    } else {
+        console.error("ajax url is not defined");
+    }
+}
+
+// 汎用的なajax postコール関数
+const postAjaxData = (url, data) => {
+    if (0 < url.length || url != undefined) {
+        if (!url.startsWith("/")) url = "/" + url;
+
+        $.ajax({
+            url: url,
+            type: "post",
+            contentType: false,
+            data: data,
+            dataType: "json"
+        }).done(function (result, textStatus, jqXHR) {
         }).fail(function (result) {
         });
     } else {
@@ -76,7 +94,7 @@ const fileupload = () => {
     }).done(function (result) {
         $('input[type=file]').val('');
         $("#upbtn").prop("disabled", false);
-        getdata( result, 1 );
+        getdata(result, 1);
         // talbe list 更新
         getAjaxData("getalldbtable");
     }).fail(function (result) {
@@ -89,13 +107,13 @@ const fileupload = () => {
 */
 const getColumn = (tablename) => {
     if (0 < tablename.length || tablename != undefined) {
-//        let data = [];
-//        data.push( $.trim(tablename));
+        //        let data = [];
+        //        data.push( $.trim(tablename));
 
         let pd = {};
         pd["tablename"] = $.trim(tablename);
         let dd = JSON.stringify(pd);
-        console.log("post: ", pd ," -> ", dd );
+        console.log("post: ", pd, " -> ", dd);
 
 
         $.ajax({
@@ -106,10 +124,41 @@ const getColumn = (tablename) => {
             dataType: "json"
         }).done(function (result, textStatus, jqXHR) {
             // data parseに行く
-            getdata(result, 1);
+            return getdata(result, 1);
         }).fail(function (result) {
         });
     } else {
         console.error("ajax url is not defined");
     }
+}
+
+const deleteThisTable = (tablename) => {
+    if (0 < tablename.length || tablename != undefined) {
+        //        let data = [];
+        //        data.push( $.trim(tablename));
+
+        let pd = {};
+        pd["tablename"] = $.trim(tablename);
+        let dd = JSON.stringify(pd);
+        console.log("post: ", pd, " -> ", dd);
+
+
+        $.ajax({
+            url: "/deletetable",
+            type: "post",
+            data: dd,
+            contentType: 'application/json',
+            dataType: "json"
+        }).done(function (result, textStatus, jqXHR) {
+            // table list 更新
+            //return getdata(result, 1);
+        }).fail(function (result) {
+        });
+    } else {
+        console.error("ajax url is not defined");
+    }
+}
+
+const dotest = () => {
+    console.log("test: ", tt());
 }

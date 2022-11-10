@@ -24,6 +24,9 @@ end
 # DBから取得した全tableをjsonで返す
 route( "/getalldbtable", DBDataController.getTableList )
 
+# 指定されたtableをdropする
+route( "/deletetable", PostDataController.deleteTable, method = POST )
+
 # 指定されたtableのカラムをjsonで返す
 route( "getcolumns", PostDataController.getcolumns, method = POST )
 

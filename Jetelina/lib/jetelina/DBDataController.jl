@@ -52,6 +52,15 @@ module DBDataController
         end
     end
 
+    function dropTable()
+        if JetelinaDBtype == "postgresql"
+            # Case in PostgreSQL
+            PgDBController.dropTable()
+        elseif JetelinaDBtype == "mariadb"
+        elseif JetelinaDBtype == "oracle"
+        end
+    end
+
     function getColumns( tableName )
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
