@@ -80,9 +80,14 @@
 <div>
     <button id="post">POST</button>
 </div>
-<script type="text/javascript" src="../js/genie/jquery.min.js"></script>
-<script type="text/javascript" src="../js/jquery-ui-1.13.2/jquery-ui.min.js"></script>
-<script type="text/javascript" src="js/csvdatashow.js"></script>
+
+<form action="/putitems" method="post">
+  <input name="item" value="aaaa">
+  <input type="submit">SIMPLE POST</input>
+</form>
+<script type="text/javascript" src="js/genie/jquery.min.js"></script>
+<script type="text/javascript" src="js/jquery-ui-1.13.2/jquery-ui.min.js"></script>
+<script type="text/javascript" src="jetelina/js/csvdatashow.js"></script>
 
 <!--
 <script src="/js/jquery-3.3.1.min.js"></script>
@@ -164,21 +169,34 @@
     });
 
     $( "#post" ).on( "click", function(){
-        let pd = {};
-        pd["item"] = JSON.stringify( selectedItemsArr );
+
+      let pd = {};
+//        pd["item"] = JSON.stringify( selectedItemsArr );
+        pd["item"] = selectedItemsArr;
         console.log("post: ", selectedItemsArr, " -> ", pd );
+        let dd = JSON.stringify(pd);
+        console.log("json?", dd );
+//      pd = '{ "item":"name" }';
 
         $.ajax( {
             url: "/putitems",
             type: "POST",
-            data: pd,
+            data: dd,
+            contentType: 'application/json',
             dataType: "json",
         }).done(function(result, textStatus, jqXHR) {
             console.log( result );
         }).fail( function( result ){
         });
+
+      });
+
+    $( "#post2" ).on( "click", function(){
+        
+        $.post( "/putitems", $("#postdataform").val() );
     });
-  });
+
+});
 </script>
 </body>
 </html>

@@ -52,6 +52,16 @@ module DBDataController
         end
     end
 
+    function getColumns( tableName )
+        if JetelinaDBtype == "postgresql"
+            # Case in PostgreSQL
+            @info "getCo..: " tableName 
+            PgDBController.getColumns( tableName )
+        elseif JetelinaDBtype == "mariadb"
+        elseif JetelinaDBtype == "oracle"
+        end
+    end
+
     function doInsert()
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL

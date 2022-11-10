@@ -19,7 +19,11 @@ $(window).load(function () {
     select DB table then get the columns and be defined SQL(API) list
   */
   $("#d_tablelist").change(function () {
-    console.log("selected");
+    let tablename = $( "#d_tablelist" ).val();
+    console.log("selected", tablename);
+    getColumn( tablename );
+    // clean up d&d items
+    $( ".item_area .item" ).remove();
 
     // get the column list
     // get the SQL(API) list

@@ -24,19 +24,22 @@ end
 # DBから取得した全tableをjsonで返す
 route( "/getalldbtable", DBDataController.getTableList )
 
+# 指定されたtableのカラムをjsonで返す
+route( "getcolumns", PostDataController.getcolumns, method = POST )
+
 route( "/showdbdata" ) do 
   serve_static_file( "jetelina/showdbdata.html" )  
 end
 
 # csvファイルを読み込んで画面に表示する
-route( "/getcsvdata", CSVFileController.read );
+route( "/getcsvdata", CSVFileController.read )
 
 # post dataを取得
-route( "/putitems", PostDataController.get, method = POST );
+route( "/putitems", PostDataController.get, method = POST )
 
 #== file upload
 route( "/fileupload" ) do
   serve_static_file( "jetelina/fileupload.html" ) 
 end
 ===#
-route("/dofup", FileUploadController.fup, method = POST);
+route("/dofup", FileUploadController.fup, method = POST)
