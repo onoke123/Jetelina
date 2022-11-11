@@ -83,6 +83,10 @@ const fileupload = () => {
     let fd = new FormData($("#my_form").get(0));
     $("#upbtn").prop("disabled", true);
 
+    const uploadFilename = $("input[type=file]").prop("files")[0].name;
+    const tablename = uploadFilename.split( "." )[0];
+    console.log("filename 2 tablename: " ,tablename );
+
     $.ajax({
         url: "/dofup",
         type: "post",
@@ -92,11 +96,15 @@ const fileupload = () => {
         processData: false,
         dataType: "json"
     }).done(function (result) {
-        $('input[type=file]').val('');
+        // clean up
+        $("input[type=file]").val("");
         $("#upbtn").prop("disabled", false);
         getdata(result, 1);
-        // talbe list 更新
-        getAjaxData("getalldbtable");
+        // talbe list に追加してfocusを当てる
+            console.log("set table to select:", tablename );
+            const addop = `<option class="tables" value=${tablename}>${tablename}</option>`;
+            $( "#d_tablelist" ).prepend( addop );
+            $( "#d_tablelist" ).val( tablename );
     }).fail(function (result) {
         // something error happened
     });
@@ -113,8 +121,6 @@ const getColumn = (tablename) => {
         let pd = {};
         pd["tablename"] = $.trim(tablename);
         let dd = JSON.stringify(pd);
-        console.log("post: ", pd, " -> ", dd);
-
 
         $.ajax({
             url: "/getcolumns",
@@ -140,8 +146,6 @@ const deleteThisTable = (tablename) => {
         let pd = {};
         pd["tablename"] = $.trim(tablename);
         let dd = JSON.stringify(pd);
-        console.log("post: ", pd, " -> ", dd);
-
 
         $.ajax({
             url: "/deletetable",
@@ -150,9 +154,16 @@ const deleteThisTable = (tablename) => {
             contentType: 'application/json',
             dataType: "json"
         }).done(function (result, textStatus, jqXHR) {
-            // table list 更新
-            //return getdata(result, 1);
         }).fail(function (result) {
+        }).always(function( jqXHR, textStatus ) {
+            // table list 更新
+            // clean up selectbox of the table list
+            //$( "#d_tablelist .tables" ).remove();
+            // clean up d&d items
+            $( ".item_area .item" ).remove();
+            // select から当該tableを削除する
+            $( "#d_tablelist" ).children(`option[value=${tablename}]`).remove();
+//            getAjaxData("getalldbtable");
         });
     } else {
         console.error("ajax url is not defined");

@@ -43,7 +43,7 @@ module PostDataController
     function deleteTable()
         tableName = jsonpayload( "tablename" )
         @info "dropTable: " tableName
-#        DBDataController.dropTable( tableName )
+        DBDataController.dropTable( tableName )
     end
 
 end

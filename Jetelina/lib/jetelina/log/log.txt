@@ -406,3 +406,53 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
 ┌ Info: post data: name
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest2.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest2.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest3.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest2.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest3.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest2.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest2.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest2.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest2.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest2.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest3.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest3.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest2.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest2.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest3.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest2.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23
+┌ Info: csv file: lib/jetelina/testdata/ftest3.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:23

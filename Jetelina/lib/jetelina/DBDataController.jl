@@ -6,6 +6,7 @@ DB controller
 contain functions
     init_Jetelina_table()
     dataInsertFromCSV()
+    dropTable()
     getTableList()
     doInsert()
     doSelect()
@@ -52,10 +53,10 @@ module DBDataController
         end
     end
 
-    function dropTable()
+    function dropTable( tableName )
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
-            PgDBController.dropTable()
+            PgDBController.dropTable( tableName )
         elseif JetelinaDBtype == "mariadb"
         elseif JetelinaDBtype == "oracle"
         end

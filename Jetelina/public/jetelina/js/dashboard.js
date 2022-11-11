@@ -15,7 +15,7 @@ $(window).load(function () {
     // clean up d&d items
     $( ".item_area .item" ).remove();
     // clean up selectbox of the table list
-    $( "#d_tablelist .tables" ).remove();
+//    $( "#d_tablelist .tables" ).remove();
   });
 
   /*

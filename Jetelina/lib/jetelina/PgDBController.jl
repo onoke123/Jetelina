@@ -8,6 +8,7 @@ contain functions
     close_connection( conn )
     getTableList()
     dataInsertFromCSV( fname )
+    dropTable( tableName )
     getColumns()
     doInsert()
     doSelect()
@@ -294,6 +295,38 @@ module PgDBController
     end
 
     """
+    function dropTable( tableName )
+
+    # Arguments
+    - `tableName: String`: name of the table
+
+    drop the table and delete its related data from jetelina_table_manager table
+    """
+    function dropTable( tableName )
+        # drop the tableName
+        drop_table_str = """
+            drop table $tableName
+        """
+
+        # delete the related data from jetelina_table_manager
+        delete_data_str = """
+            delete from jetelina_table_manager where table_name = '$tableName'
+        """
+        conn = open_connection()
+
+        try
+            execute(conn, drop_table_str)
+            execute(conn, delete_data_str)    
+        catch
+            err
+            println(err)
+        end
+
+        close_connection( conn )
+
+    end
+
+    """
         function getColumns( fname )
 
     # Arguments
@@ -313,7 +346,7 @@ module PgDBController
         @info "cols:", cols
         select!(df, cols)
         
-        return json( Dict( "Jetelina" => copy.( eachrow( df ))))
+        return json( Dict( "Jetelina" => copy.( eachrow( df ))) )
     end
 
     function doInsert()
