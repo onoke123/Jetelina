@@ -74,14 +74,16 @@ $(function() {
 
     $( "#post" ).on( "click", function(){
         let pd = {};
-        pd["item"] = JSON.stringify( selectedItemsArr );
+        pd["item"] = selectedItemsArr;
         console.log("post: ", selectedItemsArr, " -> ", pd );
-
+        let dd = JSON.stringify( pd );
+        
         $.ajax( {
             url: "/putitems",
             type: "POST",
-            data: pd,
-            dataType: "json",
+            data: dd,
+            contentType: 'application/json',
+            dataType: "json"
         }).done(function(result, textStatus, jqXHR) {
             console.log( result );
         }).fail( function( result ){

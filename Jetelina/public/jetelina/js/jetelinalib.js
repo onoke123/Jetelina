@@ -164,12 +164,10 @@ const deleteThisTable = (tablename) => {
             // select から当該tableを削除する
             $( "#d_tablelist" ).children(`option[value=${tablename}]`).remove();
 //            getAjaxData("getalldbtable");
+            // deleteボタンを非表示にする
+            $( "#table_delete" ).hide();
         });
     } else {
         console.error("ajax url is not defined");
     }
-}
-
-const dotest = () => {
-    console.log("test: ", tt());
 }
