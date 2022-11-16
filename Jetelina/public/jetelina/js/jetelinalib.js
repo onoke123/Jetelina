@@ -6,19 +6,25 @@
 const getdata = (o, t) => {
     if (o != null) {
         Object.keys(o).forEach(function (key) {
-            //’Jetelina’をシンボルにしているからこうしている
+            /*
+                最初にこのカラムのtable nameを取得する
+                table list表示のとき(t=0)は'undefined'になるだけ
+            */
+            const targetTable = o["tablename"];
+            
+            //’Jetelina’のvalueはオブジェクトになっているからこうしている  name=>key value=>o[key]
             if (key == "Jetelina" && o[key].length > 0) {
                 $.each(o[key], function (k, v) {
                     if (v != null) {
-                        /* オブジェクトを配列にしているのでここまでやって
-                          初めてname/valueのデータが取得できる。
-                        */
                         let str = "";
                         $.each(v, function (name, value) {
                             if (t == 0) {
                                 str += `<option class="tables" value=${value}>${value}</option>`;
                             } else if (t == 1) {
-                                str += `<div class="item" d=${value}><p>${name}</p></div>`;
+                                // jetelina_delte_flgは表示対象外
+                                if( name != "jetelina_delete_flg" ){
+                                    str += `<div class="item" d=${value}><p>${targetTable}:${name}</p></div>`;
+                                }
                             }
                         });
 
@@ -34,6 +40,7 @@ const getdata = (o, t) => {
                 })
             }
         });
+
     }
 }
 
@@ -84,8 +91,8 @@ const fileupload = () => {
     $("#upbtn").prop("disabled", true);
 
     const uploadFilename = $("input[type=file]").prop("files")[0].name;
-    const tablename = uploadFilename.split( "." )[0];
-    console.log("filename 2 tablename: " ,tablename );
+    const tablename = uploadFilename.split(".")[0];
+    console.log("filename 2 tablename: ", tablename);
 
     $.ajax({
         url: "/dofup",
@@ -101,10 +108,10 @@ const fileupload = () => {
         $("#upbtn").prop("disabled", false);
         getdata(result, 1);
         // talbe list に追加してfocusを当てる
-            console.log("set table to select:", tablename );
-            const addop = `<option class="tables" value=${tablename}>${tablename}</option>`;
-            $( "#d_tablelist" ).prepend( addop );
-            $( "#d_tablelist" ).val( tablename );
+        console.log("set table to select:", tablename);
+        const addop = `<option class="tables" value=${tablename}>${tablename}</option>`;
+        $("#d_tablelist").prepend(addop);
+        $("#d_tablelist").val(tablename);
     }).fail(function (result) {
         // something error happened
     });
@@ -155,17 +162,17 @@ const deleteThisTable = (tablename) => {
             dataType: "json"
         }).done(function (result, textStatus, jqXHR) {
         }).fail(function (result) {
-        }).always(function( jqXHR, textStatus ) {
+        }).always(function (jqXHR, textStatus) {
             // table list 更新
             // clean up selectbox of the table list
             //$( "#d_tablelist .tables" ).remove();
             // clean up d&d items
-            $( ".item_area .item" ).remove();
+            $(".item_area .item").remove();
             // select から当該tableを削除する
-            $( "#d_tablelist" ).children(`option[value=${tablename}]`).remove();
-//            getAjaxData("getalldbtable");
+            $("#d_tablelist").children(`option[value=${tablename}]`).remove();
+            //            getAjaxData("getalldbtable");
             // deleteボタンを非表示にする
-            $( "#table_delete" ).hide();
+            $("#table_delete").hide();
         });
     } else {
         console.error("ajax url is not defined");

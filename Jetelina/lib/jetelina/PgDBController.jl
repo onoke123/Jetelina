@@ -346,7 +346,7 @@ module PgDBController
         @info "cols:", cols
         select!(df, cols)
         
-        return json( Dict( "Jetelina" => copy.( eachrow( df ))) )
+        return json( Dict( "tablename"=>"$tableName", "Jetelina" => copy.( eachrow( df ))) )
     end
 
     function doInsert()

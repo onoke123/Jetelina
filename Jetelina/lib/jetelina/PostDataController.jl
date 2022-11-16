@@ -5,33 +5,22 @@ module PostDataController
     using JetelinaReadConfig, JetelinaLog
 
     function get()
-        item_d = rawpayload()
-        @info "post1: " item_d
-#===
-
-        item = postpayload()["item"]
-        @info "post2: " item
-
-        item = jsonpayload()
-        @info "post3: " item
-===#
-        item_d = jsonpayload()["item"]
-        @info "post4: " jsonpayload()["item"]
-#===#
+        #==
+          dashboard.htmlからのcolumn post dataは以下のjson形式で来る
+             { 'item':'["<table name>:<column name>","<table name>:<column name>",...]' }
+          で来る。これをjsonpayload("item")で受けると
+             item_d -> ["<table name>:<column name1>","<table name>:<column name2>",...]
+          になるので、後は配列処理で
+             [1] -> <table name>:<column name1>
+          とするが、さらにtable名とカラム名に分けるので ':'　で文字分解して
+             table name  -> <table name>
+             column name -> <column name1>
+          としてsql文作成に使用する
+        ==#
         item_d = jsonpayload("item")
-        @info "post5: " item_d
+        @info "post: " item_d
 
-        @show """this is the data $item_d"""
-#===
-        item = jsonpayload( :item )
-        @info "post6: " item
-===#
-#===
-        if debugflg
-            debugmsg = "post data: $item"
-            writetoLogfile( debugmsg )
-        end
-===#
+
     end
 
     function getcolumns()
