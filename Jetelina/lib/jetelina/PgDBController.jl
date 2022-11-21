@@ -19,7 +19,7 @@ contain functions
     create_jetelina_id_sequence()
     insert2JetelinaTableManager( tableName, columns )
     readJetelinatable()
-    getJetelinaID( conn )
+    getJetelinaSequenceNumber( conn, t )
 """
 module PgDBController
 
@@ -136,18 +136,34 @@ module PgDBController
         return df
     end
 
+    function getJetelinaSequenceNumber( t )
+        conn = open_connection()
+        ret = _getJetelinaSequenceNumber( conn, t )
+        close_connection( conn )
+        return ret
+    end
+
     """
-        function getJetelinaID( conn )
+        function _getJetelinaSequenceNumber( conn, t )
         
     # Arguments
     - `conn: Object`: connection object
-
+    - `t: Integer`  : type order  0-> jetelina_id, 1-> jetelian_sql_sequence
     get seaquence number from jetelina_id table
     """
-    function getJetelinaID( conn )
-        sql = """
-            select nextval('jetelina_id');
-        """
+    function _getJetelinaSequenceNumber( conn, t )
+        sql = ""
+        
+        if t == 0
+            sql = """
+                select nextval('jetelina_id');
+            """
+        elseif t == 1
+            sql = """
+                select nextval('jetelina_sql_sequence');
+            """
+        end
+
         sequence_number = columntable(execute( conn, sql ))
 
         #===
@@ -158,7 +174,11 @@ module PgDBController
             sequence_number[1][1] -> 51
             というわけ。メンドウだな。
         ===#
-        return "j" * string( sequence_number[1][1] )
+        if t == 0
+            return "j" * string( sequence_number[1][1] )
+        elseif t == 1
+            return "js" * string( sequence_number[1][1] )
+        end
     end
 
     """
@@ -173,7 +193,7 @@ module PgDBController
     function insert2JetelinaTableManager( tableName, columns )
         conn = open_connection()
 
-        jetelina_id = getJetelinaID( conn )
+        jetelina_id = _getJetelinaSequenceNumber( conn, 0 )
 
         for i = 1:length(columns)
             c = columns[i]

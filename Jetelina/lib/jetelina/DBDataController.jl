@@ -8,6 +8,7 @@ contain functions
     dataInsertFromCSV()
     dropTable()
     getTableList()
+    getSequenceNumber(t)
     doInsert()
     doSelect()
     doUpdate()
@@ -48,6 +49,15 @@ module DBDataController
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.getTableList()
+        elseif JetelinaDBtype == "mariadb"
+        elseif JetelinaDBtype == "oracle"
+        end
+    end
+
+    function getSequenceNumber(t)
+        if JetelinaDBtype == "postgresql"
+            # Case in PostgreSQL
+            PgDBController.getJetelinaSequenceNumber(t)
         elseif JetelinaDBtype == "mariadb"
         elseif JetelinaDBtype == "oracle"
         end

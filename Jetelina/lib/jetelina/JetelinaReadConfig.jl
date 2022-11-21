@@ -49,7 +49,6 @@ module JetelinaReadConfig
         f = open( configfile, "r" )
         l = readlines( f )
 
-        debf::Bool = false
         for i = 1:size(l)[1]
             if !startswith( l[i],"#" )
                 if startswith( l[i],"logfile" )
@@ -78,6 +77,8 @@ module JetelinaReadConfig
                 # ignore as comment
             end
         end
+
+        close(f)
     end
 
     """

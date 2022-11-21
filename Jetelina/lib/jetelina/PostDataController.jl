@@ -18,9 +18,40 @@ module PostDataController
           としてsql文作成に使用する
         ==#
         item_d = jsonpayload("item")
-        @info "post: " item_d
+        @info "post: " item_d, size(item_d)
+        #===
+            なぜsize(..)[1]かというと、上の@info出力でみるとsize(item_d)->(n,) とTupleになっていて
+            最初の"n"が配列の長さなので、ってこと
+        ===#
+        selectSql = ""
+        tableName = ""
+        for i = 1:size(item_d)[1]
+            @info "data $i->", item_d[i]
 
+            t = split( item_d[i], ":" )
+            t1 = strip( t[1] )
+            t2 = strip( t[2] )
+            if 0<length(selectSql)
+                selectSql = """$selectSql, $t2"""
+            else
+                selectSql = t2
+            end
 
+            tableName = t1
+
+            @info "t1, t2: ", t1, t2
+        end
+
+        # get the sequence name then create the sql sentence
+        seq_no = DBDataController.getSequenceNumber(1)
+        selectSql = """$seq_no:select $selectSql from $tableName\n"""
+        @info "sql: ", selectSql
+
+        # write the sql to the file
+        sqlFile = string( joinpath( @__DIR__, "config", "JetelinaSqlList" ))
+        f = open( sqlFile, "a" )
+        write(f, selectSql)
+        close(f)
     end
 
     function getcolumns()
