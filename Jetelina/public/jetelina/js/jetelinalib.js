@@ -11,7 +11,7 @@ const getdata = (o, t) => {
                 table list表示のとき(t=0)は'undefined'になるだけ
             */
             const targetTable = o["tablename"];
-            
+
             //’Jetelina’のvalueはオブジェクトになっているからこうしている  name=>key value=>o[key]
             if (key == "Jetelina" && o[key].length > 0) {
                 $.each(o[key], function (k, v) {
@@ -22,7 +22,7 @@ const getdata = (o, t) => {
                                 str += `<option class="tables" value=${value}>${value}</option>`;
                             } else if (t == 1) {
                                 // jetelina_delte_flgは表示対象外
-                                if( name != "jetelina_delete_flg" ){
+                                if (name != "jetelina_delete_flg") {
                                     str += `<div class="item" d=${value}><p>${targetTable}:${name}</p></div>`;
                                 }
                             }
@@ -42,6 +42,18 @@ const getdata = (o, t) => {
         });
 
     }
+}
+
+let selectedItemsArr = [];
+/*
+    cleanUp
+
+    droped items & columns of selecting table
+*/
+const cleanUp = () => {
+    selectedItemsArr.splice(0);
+    // clean up d&d items
+    $(".item_area .item").remove();
 }
 
 // 汎用的なajax getコール関数
@@ -166,8 +178,11 @@ const deleteThisTable = (tablename) => {
             // table list 更新
             // clean up selectbox of the table list
             //$( "#d_tablelist .tables" ).remove();
+
+
             // clean up d&d items
-            $(".item_area .item").remove();
+            //            $(".item_area .item").remove();
+            cleanUp();
             // select から当該tableを削除する
             $("#d_tablelist").children(`option[value=${tablename}]`).remove();
             //            getAjaxData("getalldbtable");

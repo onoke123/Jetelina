@@ -23,7 +23,7 @@ contain functions
 module JetelinaReadConfig
     using DBDataController
 
-    export  JetelinaLogfile, debugflg, JetelinaDBtype,JetelinaFileUploadPath,JetelinaDBhost,
+    export  debugflg,JetelinaLogfile,JetelinaDBtype,JetelinaFileUploadPath,JetelinaDBhost,
     JetelinaDBport,JetelinaDBuser,JetelinaDBpassword,JetelinaDBsslmode,JetelinaDBname,Df_JetelinaTableManager
 
     """
@@ -49,6 +49,7 @@ module JetelinaReadConfig
         f = open( configfile, "r" )
         l = readlines( f )
 
+        debf::Bool = false
         for i = 1:size(l)[1]
             if !startswith( l[i],"#" )
                 if startswith( l[i],"logfile" )

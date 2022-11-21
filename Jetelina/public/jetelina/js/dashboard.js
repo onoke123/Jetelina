@@ -13,7 +13,8 @@ $(window).load(function () {
   $("#upbtn").on("click", function () {
     fileupload();
     // clean up d&d items
-    $( ".item_area .item" ).remove();
+//    $( ".item_area .item" ).remove();
+    cleanUp();
     // clean up selectbox of the table list
 //    $( "#d_tablelist .tables" ).remove();
   });
@@ -24,7 +25,8 @@ $(window).load(function () {
   $("#d_tablelist").on("change",function () {
     let tablename = $( "#d_tablelist" ).val();
     // clean up d&d items
-    $( ".item_area .item" ).remove();
+//    $( ".item_area .item" ).remove();
+    cleanUp();
     // get the column list
     $( "#container .item_area" ).append( getColumn( tablename ) );
     // show table delete button
