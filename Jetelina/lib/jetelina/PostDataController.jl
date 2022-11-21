@@ -2,7 +2,7 @@ module PostDataController
 
     using Genie, Genie.Requests,Genie.Renderer.Json
     using DBDataController
-    using JetelinaReadConfig, JetelinaLog
+    using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
 
     function get()
         #==
@@ -44,14 +44,21 @@ module PostDataController
 
         # get the sequence name then create the sql sentence
         seq_no = DBDataController.getSequenceNumber(1)
-        selectSql = """$seq_no:select $selectSql from $tableName\n"""
+        selectSql = """$seq_no,\"select $selectSql from $tableName\"\n"""
         @info "sql: ", selectSql
 
         # write the sql to the file
         sqlFile = string( joinpath( @__DIR__, "config", "JetelinaSqlList" ))
         f = open( sqlFile, "a" )
-        write(f, selectSql)
+        if isfile( sqlFile )
+            write(f, selectSql)
+        else
+            write(f,"no,sql")
+            write(f,selectSql)
+        end
         close(f)
+
+        JetelinaReadSqlList.readSqlList2DataFrame()
     end
 
     function getcolumns()

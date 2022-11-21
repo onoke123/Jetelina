@@ -1,2 +1,6 @@
-js2:select id, name from ftest2
-js3:select id, name from ftest
+no,sql
+js2,"select id, name from ftest2"
+js3,"select id, name from ftest"
+js4,"select id, sex, age from ftest"
+js5,"select id, sex, age from ftest"
+js6,"select id, dumy, age from ftest3"

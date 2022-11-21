@@ -21,7 +21,7 @@ contain functions
 """
 
 module JetelinaReadConfig
-    using DBDataController
+    using DBDataController, JetelinaReadSqlList
 
     export  debugflg,JetelinaLogfile,JetelinaDBtype,JetelinaFileUploadPath,JetelinaDBhost,
     JetelinaDBport,JetelinaDBuser,JetelinaDBpassword,JetelinaDBsslmode,JetelinaDBname,Df_JetelinaTableManager
@@ -35,6 +35,7 @@ module JetelinaReadConfig
     function __init__()
         readConfig()
         DBDataController.init_Jetelina_table()
+        JetelinaReadSqlList.readSqlList2DataFrame()
     end
 
     """
