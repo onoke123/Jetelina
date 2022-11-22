@@ -32,9 +32,9 @@ module PostDataController
             t1 = strip( t[1] )
             t2 = strip( t[2] )
             if 0<length(selectSql)
-                selectSql = """$selectSql, $t2"""
+                selectSql = """$selectSql, $t1.$t2"""
             else
-                selectSql = t2
+                selectSql = """$t1.$t2"""
             end
 
             tableName = t1
@@ -44,7 +44,7 @@ module PostDataController
 
         # get the sequence name then create the sql sentence
         seq_no = DBDataController.getSequenceNumber(1)
-        selectSql = """$seq_no,\"select $selectSql from $tableName\"\n"""
+        selectSql = """$seq_no,\"select $selectSql from $tableName as $tableName\"\n"""
         @info "sql: ", selectSql
 
         # write the sql to the file
