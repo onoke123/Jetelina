@@ -61,10 +61,19 @@ module PostDataController
         JetelinaReadSqlList.readSqlList2DataFrame()
     end
 
-    function getcolumns()
+    function getColumns()
         tableName = jsonpayload( "tablename" )
-        @info "getcolumns: " tableName
+        @info "getColumns: " tableName
         DBDataController.getColumns( tableName )
+    end
+
+    function getApiList()
+        tableName = jsonpayload( "tablename" )
+        @info "getApiList: " tableName
+        target = contains( tableName )
+        get_sql_list = filter( :sql => target, Df_JetelinaSqlList )
+        @info "get_sql_list: " get_sql_list
+
     end
 
     function deleteTable()

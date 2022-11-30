@@ -33,6 +33,8 @@ $(window).load(function () {
     $( "#table_delete" ).show();
 
     // get the SQL(API) list
+    let sql_list = postAjaxData( "/getapi",`{"tablename":"${tablename}"}` );
+    console.log("API List:", sql_list);
   });
   /*
   */

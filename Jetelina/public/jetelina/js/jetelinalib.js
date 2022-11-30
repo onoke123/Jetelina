@@ -84,10 +84,11 @@ const postAjaxData = (url, data) => {
         $.ajax({
             url: url,
             type: "post",
-            contentType: false,
+            contentType: 'application/json',
             data: data,
             dataType: "json"
         }).done(function (result, textStatus, jqXHR) {
+            return result;
         }).fail(function (result) {
         });
     } else {
