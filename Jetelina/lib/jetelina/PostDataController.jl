@@ -71,9 +71,17 @@ module PostDataController
         tableName = jsonpayload( "tablename" )
         @info "getApiList: " tableName
         target = contains( tableName )
-        get_sql_list = filter( :sql => target, Df_JetelinaSqlList )
-        @info "get_sql_list: " get_sql_list
-
+        #===
+          DataFrame Df_JetelinaSqlListから、指定したtableNameが含まれる"sql"カラムを
+          filter()で絞り込んでいる。
+          次は絞り込みをVectorにしてJson化したい。
+          Caution: filter!()は使わない。なぜならDf_Jete...はそのままにしておくから。
+        ===#
+        sql_list = filter( :sql => target, Df_JetelinaSqlList )
+        @info "sql_list: " sql_list
+        ret = json( Dict( "Jetelina" => copy.( eachrow( sql_list ))))
+        @info "sql list ret: " ret
+        return ret
     end
 
     function deleteTable()

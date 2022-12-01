@@ -1,7 +1,7 @@
 /*
     引数に渡されたオブジェクトを分解取得する。
     @o: object
-    @t: type  0->db table list, 1->table columns list or csv file columns
+    @t: type  0->db table list, 1->table columns list or csv file columns 2-> sql list
 */
 const getdata = (o, t) => {
     if (o != null) {
@@ -17,22 +17,36 @@ const getdata = (o, t) => {
                 $.each(o[key], function (k, v) {
                     if (v != null) {
                         let str = "";
-                        $.each(v, function (name, value) {
-                            if (t == 0) {
-                                str += `<option class="tables" value=${value}>${value}</option>`;
-                            } else if (t == 1) {
-                                // jetelina_delte_flgは表示対象外
-                                if (name != "jetelina_delete_flg") {
-                                    str += `<div class="item" d=${value}><p>${targetTable}:${name}</p></div>`;
+                        if (t < 2) {
+                            /*
+                              t=0/1即ちtableリストとカラムリストは単純オブジェクトなので、以下のループで
+                              データを取得してリスト表示にする。
+                           */
+                            $.each(v, function (name, value) {
+                                if (t == 0) {
+                                    str += `<option class="tables" value=${value}>${value}</option>`;
+                                } else if (t == 1) {
+                                    // jetelina_delte_flgは表示対象外
+                                    if (name != "jetelina_delete_flg") {
+                                        str += `<div class="item" d=${value}><p>${targetTable}:${name}</p></div>`;
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        } else {
+                            /*
+                              t=2即ちSQLリストはオブジェクト内に複数のデータがあり得て且つ、表示上は一行にしたいので
+                              こんな感じ。
+                            */
+                            str += `<div class="list"><p>${v.no}:${v.sql}</p></div>`;
+                        }
 
                         let tagid = "";
                         if (t == 0) {
                             tagid = "#d_tablelist";
                         } else if (t == 1) {
                             tagid = "#container .item_area";
+                        } else if (t == 2) {
+                            tagid = "#sqllist";
                         }
 
                         $(tagid).append(`${str}`);
@@ -54,6 +68,8 @@ const cleanUp = () => {
     selectedItemsArr.splice(0);
     // clean up d&d items
     $(".item_area .item").remove();
+    // clean up sql list
+    $("#sqllist .list").remove();
 }
 
 // 汎用的なajax getコール関数
@@ -88,7 +104,11 @@ const postAjaxData = (url, data) => {
             data: data,
             dataType: "json"
         }).done(function (result, textStatus, jqXHR) {
-            return result;
+            console.log("getAjaxData result: ", result);
+            if (url == "/getapi") {
+                //rendering sql list
+                getdata(result, 2);
+            }
         }).fail(function (result) {
         });
     } else {
@@ -149,6 +169,7 @@ const getColumn = (tablename) => {
             contentType: 'application/json',
             dataType: "json"
         }).done(function (result, textStatus, jqXHR) {
+            console.log("getColumn result: ", result);
             // data parseに行く
             return getdata(result, 1);
         }).fail(function (result) {
