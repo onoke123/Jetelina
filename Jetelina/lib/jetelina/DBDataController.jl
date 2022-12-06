@@ -75,7 +75,6 @@ module DBDataController
     function getColumns( tableName )
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
-            @info "getCo..: " tableName 
             PgDBController.getColumns( tableName )
         elseif JetelinaDBtype == "mariadb"
         elseif JetelinaDBtype == "oracle"

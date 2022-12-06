@@ -28,7 +28,7 @@ const getdata = (o, t) => {
                                 } else if (t == 1) {
                                     // jetelina_delte_flgは表示対象外
                                     if (name != "jetelina_delete_flg") {
-                                        str += `<div class="item" d=${value}><p>${targetTable}:${name}</p></div>`;
+                                        str += `<div class="item" d=${value}><p>${targetTable}.${name}</p></div>`;
                                     }
                                 }
                             });

@@ -12,6 +12,11 @@ route("/jetelina") do
   serve_static_file("jetelina/jetelina_dashboard.html")
 end
 
+# Jetelina dashboard2 page
+route("/jetelina2") do
+  serve_static_file("jetelina/jetelina_dashboard2.html")
+end
+
 #=== アップロードされたファイルのデータを表示し、データ編集するページ
 route( "/edit" ) do
   serve_static_file( "jetelina/data_edit.html" )

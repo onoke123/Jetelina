@@ -28,7 +28,7 @@ module PostDataController
         for i = 1:size(item_d)[1]
             @info "data $i->", item_d[i]
 
-            t = split( item_d[i], ":" )
+            t = split( item_d[i], "." )
             t1 = strip( t[1] )
             t2 = strip( t[2] )
             if 0<length(selectSql)
@@ -83,6 +83,11 @@ module PostDataController
         @info "sql list ret: " ret
         return ret
     end
+
+    function _checkTable( s ){
+        p = split( s, "from" )
+        p[2].chop
+    }
 
     function deleteTable()
         tableName = jsonpayload( "tablename" )
