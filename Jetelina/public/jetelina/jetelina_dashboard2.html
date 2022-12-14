@@ -1,111 +1,68 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-<!--
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
-        <link rel="stylesheet" href="jetelina/css/dashboard.css">
 
-        <script type="text/javascript" src="js/genie/jquery.min.js"></script>
-        <script type="text/javascript" src="js/jquery-ui-1.13.2/jquery-ui.min.js"></script>
-        
-        <script type="text/javascript" src="jetelina/js/jetelinalib.js"></script>
-        <script type="text/javascript" src="jetelina/js/draganddropitems.js"></script>
--->
-    <script src="js/vue.js"></script>
-    </head>
-    <body>
-        <div id="app">
-            {{ message }}
-        </div>
-        <div id="app-5">
-            <p>{{ message }}</p>
-            <button v-on:click="reverseMessage">Reverse Message</button>
-        </div>
-        <div id="app-7">
-            <ol>
-                <todo-item
-                    v-for="item in groceryList"
-                    v-bind:todo="item"
-                    v-bind:key="item.id"
-                ></todo-item>
-            </ol>
-        </div>
-    
-        <form id="my_form">
-            <!-- caution:
-                should change the parameter of 'name' in FileUploadController.jl
-                if it's changed to other. 
-            -->
-            <input type="file" name="upfile">
-            <button type="button" id="upbtn">up</button>
-        </form>
-
-        <label>Table List</label>
-        <br>
-        <select id="d_tablelist">
-            <option hidden>Select your DB Table from below</option>
-        </select>
-        <button id="table_delete">delete this table</button>
-
-        <div id="sqllist">
-            <!--sql for each tables-->
-        </div>
-        
-        <!-- tooltip for columns list -->
-        <div id="pop-up">
-            <text></text>
-         </div>
-        <!-- drag & drop data area -->
-        <div id="container">
-            <div class="item_area">
-            </div>
-            <div class="drop_area">
-              <p>hear the drop area</p>
-            </div>
-        </div>
-     
-        <div>
-              <button id="post">POST</button>
-        </div>
-    </body>
-<!--
-    <script type="text/javascript" src="jetelina/js/dashboard.js"></script>
--->
-</html>
-<script>    
-    var app = new Vue({
-        el: '#app',
-        data: {
-            message: 'Hello Vue'
+<head>
+    <meta charset="utf-8">
+      <style>
+        body{
+          text-align: center;
+          width: 100%;
+          height: 100%;
         }
-    })
+        div.sample {
+            position:absolute;
+            width:400px; height:300px;
+            margin:5px; padding:10px;
+            background-color:lightgray;
+            box-shadow: 10px 10px 15px -10px;
+            margin: auto;
+            /* border:1px solid black; */
+            -webkit-transform : translate(-50%,-50%);
+            transform : translate(-50%,-50%);
+              top:50%;
+            left:50%;
+          }
+      </style>
+      <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+      <script src="https://unpkg.com/vue-typer/dist/vue-typer.min.js"></script>
+</head>
 
-    var app5 = new Vue({
-        el: '#app-5',
-        data: {
-            message: 'Hello Vue.js'
-        },
-        methods: {
-            reverseMessage: function(){
-                this.message = this.message.split('').reverse().join('')
-            }
+<body>
+    <div class="sample">
+      <!--vue-typer id="box_text" :text="message"></vue-typer-->
+      <text id="box_text">{{ message }}</text>
+    </div>
+</body>
+<script>
+  const { createApp } = Vue
+  var VueTyperPlugin = window.VueTyper.default
+//  Vue.use(VueTyperPlugin)
+
+  const app = createApp({
+    data(){
+      return {
+        /*message: 'hello'*/
+      }
+    },
+    computed:{
+
+      message: function type( i ){
+        const m = 'Hello, welcome and who are you?'
+        let ii = i;
+        if( m.length < i ){
+          ii++;
+          return m[i];
+        }else{
+          return;
         }
-    })
 
-    Vue.component( 'todo-item', {
-        props: ['todo'],
-        template: '<li>{{ todo.text }}</li>'
-    })
-
-    var app7 = new Vue({
-        el: '#app-7',
-        data:{
-            groceryList:[
-                {id:0,text:'vegetables'},
-                {id:1,text:'Cheese'},
-                {id:2,text:'Whatever'}
-            ]
-        }
-    })
+        setTimeout( this.type(ii), 100 );
+      }
+    }
+  })
+  
+  app.use(VueTyperPlugin)
+  app.mount('#box_text')
 </script>
+
+</html>

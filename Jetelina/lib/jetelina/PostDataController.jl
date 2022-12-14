@@ -83,12 +83,12 @@ module PostDataController
         @info "sql list ret: " ret
         return ret
     end
-
+#===
     function _checkTable( s ){
         p = split( s, "from" )
         p[2].chop
     }
-
+===#
     function deleteTable()
         tableName = jsonpayload( "tablename" )
         @info "dropTable: " tableName
