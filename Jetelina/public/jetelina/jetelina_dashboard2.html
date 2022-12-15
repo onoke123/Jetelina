@@ -41,17 +41,17 @@
   const app = createApp({
     data(){
       return {
-        /*message: 'hello'*/
+        message: ''
       }
     },
     computed:{
 
-      message: function type( i ){
+      ttt:function type( i ){
         const m = 'Hello, welcome and who are you?'
         let ii = i;
         if( m.length < i ){
           ii++;
-          return m[i];
+          data.message = m[i];
         }else{
           return;
         }
