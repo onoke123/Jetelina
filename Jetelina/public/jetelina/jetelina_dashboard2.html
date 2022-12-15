@@ -39,24 +39,31 @@
 //  Vue.use(VueTyperPlugin)
 
   const app = createApp({
+
     data(){
       return {
         message: ''
-      }
+      };
     },
-    computed:{
+    mounted(){
+      window.onload = () =>{
+        this.typing( 0 );
+      };
+    },
+    methods:{
 
-      ttt:function type( i ){
+      typing: function( i ){
         const m = 'Hello, welcome and who are you?'
         let ii = i;
-        if( m.length < i ){
+//        console.log("length: ", m.length, "->", i );
+        if( i < m.length ){
           ii++;
           data.message = m[i];
         }else{
           return;
         }
 
-        setTimeout( this.type(ii), 100 );
+        setTimeout( this.typing(ii), 100 );
       }
     }
   })
