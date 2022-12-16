@@ -1,103 +1,21 @@
 <!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <meta charset="utf-8">
-      <style>
-        body{
-          text-align: center;
-          width: 100%;
-          height: 100%;
-        }
-        div.sample {
-            position:absolute;
-            width:400px; height:300px;
-            margin:5px; padding:10px;
-            background-color:lightgray;
-            box-shadow: 10px 10px 15px -10px;
-            margin: auto;
-            /* border:1px solid black; */
-            -webkit-transform : translate(-50%,-50%);
-            transform : translate(-50%,-50%);
-              top:50%;
-            left:50%;
-          }
-      </style>
-      <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-      <script src="https://unpkg.com/vue-typer/dist/vue-typer.min.js"></script>
-</head>
+    <link rel="stylesheet" href="jetelina/css/dashboard2.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  </head>
 
-<body>
+  <body>
     <div class="sample" id="jetelina">
-      <!--vue-typer id="box_text" :text="message"></vue-typer-->
       <text id="box_text">{{message}}</text>
+      <div>
+        &nbsp;
+      </div>
+      <div>
+        <input type="text" ref="userInput" class="user-input" v-on:keydown.enter="onKeyDown"></input>
+      </div>
     </div>
-
-    <div id="shopping-list">
-      <h1>{{header}}</h1>
-    </div>
-</body>
-<script>
-  const { createApp } = Vue
-  var VueTyperPlugin = window.VueTyper.default
-//  Vue.use(VueTyperPlugin)
-
-  const app = createApp({
-
-    data(){
-      return {
-        message: 'hi'
-      };
-    },
-    mounted(){
-      window.onload = () =>{
-        this.typing( 0 );
-      };
-    },
-    methods:{
-
-      typing: function( i ){
-        const m = 'Hello, welcome and who are you?';
-        let ii = i;
-//        console.log("length: ", m.length, "->", i );
-        if( i < m.length ){
-          ii++;
-          console.log( "chk: ", app.message, " " ,m[i] );
-          /*
-            m[i]をmessageにバインドする方法がわか
-            
-            
-            
-            
-            
-            
-            
-            
-            らない
-            vueってめんどくさい、jqueryならサクッとできるのに
-          */
-          app.message = app.message + m[i]
-        }else{
-          return;
-        }
-
-        setTimeout(this.typing, 100, ii );
-      }
-    }
-  }).mount("#jetelina")
-  
-//  app.use(VueTyperPlugin)
-//  app.mount('#box_text')
-
-
-  const shoppingList = Vue.createApp({
-    data(){
-      return{
-        header: 'Vie is ready to'
-
-      }
-    }
-  }).mount("#shopping-list")
-</script>
-
-</html>
+  </body>
+  <script src="jetelina/js/dashboard2.js"></script>
+  </html>
