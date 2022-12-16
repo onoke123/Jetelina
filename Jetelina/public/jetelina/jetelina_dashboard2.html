@@ -13,7 +13,7 @@
         &nbsp;
       </div>
       <div>
-        <input type="text" ref="userInput" class="user-input" v-on:keydown.enter="onKeyDown"></input>
+        <input type="text" v-model="userText" ref="userInput" class="user-input" v-on:keydown.enter="onKeyDown"></input>
       </div>
     </div>
   </body>

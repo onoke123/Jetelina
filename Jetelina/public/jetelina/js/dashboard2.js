@@ -3,7 +3,9 @@ const { createApp } = Vue
 const app = createApp({
   data() {
     return {
-      message: 'Hi. '
+        enterNumber: 0,
+      message: 'Hi. ',
+      usertext: ''
     };
   },
   mounted() {
@@ -27,9 +29,26 @@ const app = createApp({
     },
 
     onKeyDown:function(){
-      app.message = "";
-      const m="hi keiji, how are you?";
-      this.typing(0,m);
+        if( this.enterNumber == 0 ){
+            app.message = "";
+            this.enterNumber++;
+            let ut = this.userText.trim();
+            let chunk = "";
+            if( 0 < ut.length ){
+                if( ut.indexOf( ' ' ) != -1 ){
+                    let p = ut.split( ' ' );
+                    chunk = p[p.length-1];
+                }else{
+                    chunk = ut;
+                }
+            }
+
+            const m = `Hi ${chunk}, how are you?`;
+            this.typing(0,m);
+        }else{
+            this.$refs["userInput"].value = "";
+            this.enterNumber = 0;
+        }
     }
   }
 }).mount('#jetelina') /* 実行タイミングの問題か、mount()はここでやるべきらしい */
