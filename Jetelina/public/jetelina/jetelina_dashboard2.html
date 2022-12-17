@@ -8,9 +8,12 @@
 
   <body>
     <div class="sample" id="jetelina">
-      <text id="box_text">{{message}}</text>
+      <text id="box_text">{{jetelinamessage}}</text>
       <div>
         &nbsp;
+      </div>
+      <div>
+        <text></text>&gt;{{ yourchat }}</text>
       </div>
       <div>
         <input type="text" v-model="userText" ref="userInput" class="user-input" v-on:keydown.enter="onKeyDown"></input>
@@ -18,4 +21,5 @@
     </div>
   </body>
   <script src="jetelina/js/dashboard2.js"></script>
+  <script src="jetelina/js/scenario.js"></script>
   </html>
