@@ -1,15 +1,15 @@
-const { createApp } = Vue
+const { createApp } = Vue;
 
 const app = createApp({
     data() {
         return {
-            enterNumber: 0, /* enter keyを押した回数 */
-            jetelinamessage: '', /* ユーザに表示するチャットメッセージ */
-            yourchat: '', /* ユーザが入力したチャットメッセージ text*/
-            userText: '', /* ユーザが入力したチャットメッセージ input*/
+            enterNumber: 0 /* enter keyを押した回数 */,
+            jetelinamessage: "" /* ユーザに表示するチャットメッセージ */,
+            yourchat: "" /* ユーザが入力したチャットメッセージ text*/,
+            userText: "" /* ユーザが入力したチャットメッセージ input*/,
             /* 現状の作業ステージ
-               0:ログイン前 */
-            stage: 0
+                     0:ログイン前 */
+            stage: 0,
         };
     },
     mounted() {
@@ -23,12 +23,12 @@ const app = createApp({
     },
     methods: {
         /* チャットに表示するメッセージを js/scenario.jsから選択する
-            i:scenarioの配列番号
-            m:メッセージに追加する文字列
-            p:選択されたチャットメッセージにmを繋げる位置　 b->before, その他->after
-        */
+                i:scenarioの配列番号
+                m:メッセージに追加する文字列
+                p:選択されたチャットメッセージにmを繋げる位置　 b->before, その他->after
+            */
         chooseMsg: function (i, m, p) {
-            const n = Math.floor(Math.random() * scenario[0].length);
+            const n = Math.floor(Math.random() * scenario[i].length);
             let s = scenario[i][n];
             if (0 < m.legnth) {
                 if (p == "b") {
@@ -42,16 +42,15 @@ const app = createApp({
         },
 
         /* チャットメッセージをタイピング風に表示する
-            i:次に表示する文字番号
-            m:表示する文字列
-        */
+                i:次に表示する文字番号
+                m:表示する文字列
+            */
         typing: function (i, m) {
-            console.log("m: ", m);
-            const t = 100;/* typing delay time */
+            const t = 100; /* typing delay time */
             let ii = i;
             if (m != null && i < m.length) {
                 ii++;
-                app.jetelinamessage = app.jetelinamessage + m[i]
+                this.jetelinamessage = this.jetelinamessage + m[i];
             } else {
                 return;
             }
@@ -66,44 +65,42 @@ const app = createApp({
             if (ut != null && 0 < ut.length) {
                 ut = ut.trim();
                 if (0 < ut.length) {
-                    app.jetelinamessage = "";
-                    app.yourchat = ut;
-                    /*
-                                        let chunk = "";
-                                        let m = "";
-                                        if (0 < ut.length) {
-                                            if (ut.indexOf(' ') != -1) {
-                                                let p = ut.split(' ');
-                                                chunk = p[p.length - 1];
-                                            } else {
-                                                chunk = ut;
-                                            }
-                                        }
-                    */
+                    this.enterNumber++;
+                    this.jetelinamessage = "";
+                    this.yourchat = ut;
+                    let chunk = "";
+                    let m = "";
+                    if (0 < ut.length) {
+                        if (ut.indexOf(" ") != -1) {
+                            let p = ut.split(" ");
+                            chunk = p[p.length - 1];
+                        } else {
+                            chunk = ut;
+                        }
+                    }
+
                     if (this.stage == 0) {
-                        console.log("chk1");
                         m = this.chooseMsg(1, "", "");
-                        console.log("m1:", m);
-                        this.typing(0, m);
-                        /*  
-                                                if (0 < chunk.length) {
-                                                    console.log("chk2");
-                                                    m = this.chooseMsg(2, chunk, "b");
-                                                }
-                        */
+                        if (0 < chunk.length) {
+                            m = this.chooseMsg(2, chunk, "b");
+                        }
                     } else {
-                        console.log("chk3");
                         m = this.chooseMsg(2, "", "");
                     }
 
-                    console.log("chk4");
+                    if( 0<this.enterNumber ){
+                        this.userText = "";
+                        this.enterNumber = 0;
+                    }
+                    
                     this.typing(0, m);
                 }
-
             } else {
                 this.$refs["userInput"].value = "";
                 this.enterNumber = 0;
             }
-        }
-    }
-}).mount('#jetelina') /* 実行タイミングの問題か、mount()はここでやるべきらしい */
+        },
+    },
+}).mount(
+    "#jetelina"
+); /* 実行タイミングの問題か、mount()はここでやるべきらしい */
