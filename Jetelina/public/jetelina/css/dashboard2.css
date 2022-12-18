@@ -26,3 +26,8 @@ input.user-input{
     background: rgb(212, 223, 213);
     width: 300px;
 }
+
+.yourText{
+  font-size: 6px;
+  color: blue;
+}

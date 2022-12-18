@@ -12,10 +12,8 @@
       <div>
         &nbsp;
       </div>
-      <div align="left">
-        <text></text>&gt;{{ yourchat }}</text>
-      </div>
       <div>
+        <text class="yourText">{{ yourchat }}</text><br>
         <input type="text" v-model="userText" ref="userInput" class="user-input" v-on:keydown.enter="onKeyDown"></input>
       </div>
     </div>

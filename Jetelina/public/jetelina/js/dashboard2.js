@@ -8,7 +8,9 @@ const app = createApp({
             yourchat: "" /* ユーザが入力したチャットメッセージ text*/,
             userText: "" /* ユーザが入力したチャットメッセージ input*/,
             /* 現状の作業ステージ
-                     0:ログイン前 */
+                     0:ログイン前
+                     1:ログイン直後
+            */
             stage: 0,
         };
     },
@@ -17,7 +19,9 @@ const app = createApp({
         window.onload = () => {
             /* input tagにフォーカスを当てる */
             this.$refs.userInput.focus();
-            /* 最初のチャットメッセージを表示する　*/
+            /* 最初のチャットメッセージを表示する
+               大体が"Hi"で始める
+            */
             this.typing(0, this.chooseMsg(0, "", ""));
         };
     },
@@ -30,7 +34,7 @@ const app = createApp({
         chooseMsg: function (i, m, p) {
             const n = Math.floor(Math.random() * scenario[i].length);
             let s = scenario[i][n];
-            if (0 < m.legnth) {
+            if (0 < m.length) {
                 if (p == "b") {
                     s = `${m} ${s}`;
                 } else {
@@ -58,41 +62,64 @@ const app = createApp({
             setTimeout(this.typing, t, ii, m);
         },
 
+        /* ユーザレスポンスがuserresponse[]に期待されたものであるかチェックする
+            true: 期待通り
+            false:　意外な答え
+        */
+        chkUResponse: function(n,s){
+            for( let i=0; i<userresponse[n].length; i++ ){
+                if( userresponse[n][i] == s.toLowerCase() ){
+                    return true;
+                }
+            }
+            
+            return false;
+        },
+
         /* ユーザが入力するチャットボックス(input tag)でenter keyが押されたときの処理 */
         onKeyDown: function () {
             let ut = this.userText;
 
             if (ut != null && 0 < ut.length) {
                 ut = ut.trim();
-                if (0 < ut.length) {
+                let m = "";
+                if ( 0 < ut.length ) {
                     this.enterNumber++;
                     this.jetelinamessage = "";
                     this.yourchat = ut;
-                    let chunk = "";
-                    let m = "";
-                    if (0 < ut.length) {
-                        if (ut.indexOf(" ") != -1) {
-                            let p = ut.split(" ");
-                            chunk = p[p.length - 1];
-                        } else {
-                            chunk = ut;
-                        }
-                    }
 
-                    if (this.stage == 0) {
-                        m = this.chooseMsg(1, "", "");
-                        if (0 < chunk.length) {
-                            m = this.chooseMsg(2, chunk, "b");
-                        }
-                    } else {
-                        m = this.chooseMsg(2, "", "");
+                    console.log("stage: ", this.stage);
+
+                    switch (this.stage){
+                        case 1:/*login*/
+                            m = this.chooseMsg(2,"","");
+                            this.stage = 2;
+                            break;
+                        case 2:/*success to login*/
+                            let chunk = "";
+                            if (ut.indexOf(" ") != -1) {
+                                let p = ut.split(" ");
+                                chunk = p[p.length - 1];
+                            } else {
+                                chunk = ut;
+                            }
+                            m = this.chooseMsg(4, chunk, "a");
+                            break;
+                        default:/*before login*/
+                            if( this.chkUResponse(0,ut) ){
+                                // greeting
+                                m = this.chooseMsg(1, "","");
+                                this.stage = 1;/* into the login stage */
+                            }else{
+                                m = this.chooseMsg(3, "","");
+                            }
                     }
 
                     if( 0<this.enterNumber ){
                         this.userText = "";
                         this.enterNumber = 0;
                     }
-                    
+
                     this.typing(0, m);
                 }
             } else {
