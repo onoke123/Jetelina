@@ -95,4 +95,11 @@ module PostDataController
         DBDataController.dropTable( tableName )
     end
 
+    function login()
+        userName = jsonpayload( "username" )
+        @info "login: " userName
+        DBDataController.getUserAccount( userName )
+#        if userName == "keiji"
+#        return json(Dict("name" => "keiji"))
+    end
 end

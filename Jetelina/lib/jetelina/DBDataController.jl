@@ -13,6 +13,7 @@ contain functions
     doSelect()
     doUpdate()
     doDelete()
+    getUserAccount(s)
 """
 module DBDataController
 
@@ -112,6 +113,15 @@ module DBDataController
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.doDelete()
+        elseif JetelinaDBtype == "mariadb"
+        elseif JetelinaDBtype == "oracle"
+        end
+    end
+
+    function getUserAccount( s )
+        if JetelinaDBtype == "postgresql"
+            # Case in PostgreSQL
+            PgDBController.getUserAccount(s)
         elseif JetelinaDBtype == "mariadb"
         elseif JetelinaDBtype == "oracle"
         end

@@ -17,6 +17,8 @@ route("/jetelina2") do
   serve_static_file("jetelina/jetelina_dashboard2.html")
 end
 
+route("/chkacount", PostDataController.login, method = POST )
+
 #=== アップロードされたファイルのデータを表示し、データ編集するページ
 route( "/edit" ) do
   serve_static_file( "jetelina/data_edit.html" )

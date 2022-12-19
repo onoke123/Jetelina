@@ -97,13 +97,54 @@ const app = createApp({
                             break;
                         case 2:/*success to login*/
                             let chunk = "";
+                            let scenarioNumber = 4;
+
                             if (ut.indexOf(" ") != -1) {
                                 let p = ut.split(" ");
                                 chunk = p[p.length - 1];
                             } else {
                                 chunk = ut;
                             }
-                            m = this.chooseMsg(4, chunk, "a");
+
+                            const un = JSON.stringify({username:`${chunk}`});
+                            const customConfig = {
+                                headers: {
+                                'Content-Type': 'application/json'
+                                }
+                            };
+
+                            axios.post(
+                                '/chkacount', un, customConfig 
+                                ).then(function(result){
+                                    console.log("result: ", result.data, result.data.Jetelina, result.data.Jetelina.length);
+
+                                    const o = result.data.Jetelina;
+                                    if( o.length == 1 ){
+                                        //ユーザが特定できた
+                                        const oo = o[0];
+                                        Object.keys(oo).forEach(function (key) {
+                                            console.log("key:", key, oo[key]);
+                                            if( oo['sex'] == "m" ){
+                                                m = "Mr. ";
+                                            }else{
+                                                m = "Ms. ";
+                                            }
+
+                                            m += o[0]['firstname'];
+                                            scenarioNumber = 5;
+                                        });
+                                    }else if( 1<o.length ){
+                                        //候補が複数いる
+                                        m = "please tell me more detail.";
+                                    }else{
+                                        //候補がいない
+                                        m = "you are not registered.";
+                                    }
+
+                                    m = app.chooseMsg(scenarioNumber, m, "a");
+                                    app.typing(0, m);
+                                });
+
                             break;
                         default:/*before login*/
                             if( this.chkUResponse(0,ut) ){

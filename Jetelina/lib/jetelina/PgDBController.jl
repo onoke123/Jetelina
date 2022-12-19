@@ -20,6 +20,7 @@ contain functions
     insert2JetelinaTableManager( tableName, columns )
     readJetelinatable()
     getJetelinaSequenceNumber( conn, t )
+    getUserAccount( s )
 """
 module PgDBController
 
@@ -379,5 +380,19 @@ module PgDBController
     end
 
     function doDelete()
+    end
+
+    function getUserAccount( s )
+        sql = """   
+        SELECT
+            *
+        from usertable
+        where (login = '$s')or(firstname='$s')or(lastname='$s')
+        """        
+        conn = open_connection()
+        df = DataFrame(columntable(LibPQ.execute(conn, sql)))  
+        close_connection( conn )
+        
+        return json( Dict( "Jetelina" => copy.( eachrow( df ))) )
     end
 end
