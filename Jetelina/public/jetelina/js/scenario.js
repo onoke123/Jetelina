@@ -5,6 +5,7 @@ scenario[0] = ['Hi','Hola'];
 userresponse[0] = ["hi","hello"]
 /* greeting */
 scenario[1] = ['Nice to see you', 'How are you?'];
+scenario['1a'] = ['Nice to hear it', 'Wow, super'];
 /* login */
 scenario[2] = ['Could you give me your name?',"Let me know your name, please","May I ask your name?"];
 /* etc */
