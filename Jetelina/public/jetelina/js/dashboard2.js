@@ -12,6 +12,7 @@ const app = createApp({
                      1:ログイン直後
             */
             stage: 0,
+            deubg: true, /* true:debug mode false:real mode */
         };
     },
     mounted() {
@@ -33,7 +34,7 @@ const app = createApp({
             */
         chooseMsg: function (i, m, p) {
             const n = Math.floor(Math.random() * scenario[i].length);
-            let s = scenario[i][n];
+            let s = scenario[`${i}`][n];
             if (0 < m.length) {
                 if (p == "b") {
                     s = `${m} ${s}`;
@@ -67,7 +68,7 @@ const app = createApp({
             false:　意外な答え
         */
         chkUResponse: function(n,s){
-            for( let i=0; i<userresponse[n].length; i++ ){
+            for( let i=0; i<userresponse[`${n}`].length; i++ ){
                 if( userresponse[n][i] == s.toLowerCase() ){
                     return true;
                 }
@@ -78,29 +79,31 @@ const app = createApp({
 
         /* ユーザが入力するチャットボックス(input tag)でenter keyが押されたときの処理 */
         onKeyDown: function () {
+            /* userTextはユーザのチャット入力文字列 */
             let ut = this.userText;
 
             if (ut != null && 0 < ut.length) {
                 ut = ut.trim();
                 let m = "";
+                /* ユーザのチャット入力文字列がある時だけ処理を実行する　*/
                 if ( 0 < ut.length ) {
                     this.enterNumber++;
                     this.jetelinamessage = "";
                     this.yourchat = ut;
 
-                    console.log("stage: ", this.stage);
+                    if( this.debug ) console.info("stage: ", this.stage);
 
                     switch (this.stage){
-                        case 1:/*login*/
-                            console.log("ut:", ut);
-                            if( ut.indexOf('fine') == -1 ){
+                        case 1:/*login時のやりとり*/
+                            if( !this.chkUResponse(1, ut ) ){
                                 m = this.chooseMsg(2,"","");
                                 this.stage = 2;
                             }else{
+                                /* 'fine'とか言われたら気持ちよく返そう */
                                 m = this.chooseMsg('1a',"","");
                             }
                             break;
-                        case 2:/*success to login*/
+                        case 2:/*login処理結果のやりとり*/
                             let chunk = "";
                             let scenarioNumber = 4;
 
