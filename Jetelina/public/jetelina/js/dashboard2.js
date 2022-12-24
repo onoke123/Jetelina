@@ -116,6 +116,9 @@ const app = createApp({
 
                             this.ajaxpost( '/chkacount', chunk, scenarioNumber );
                             break;
+                        case 3:/* after login */
+                            console.log("here you are");
+                            break;
                         default:/*before login*/
                             if( this.chkUResponse(0,ut) ){
                                 // greeting
@@ -150,14 +153,16 @@ const app = createApp({
             axios.post(
                 posturl, un, customConfig 
                 ).then(function(result){
-                    console.log("result: ", result.data, result.data.Jetelina, result.data.Jetelina.length);
+                    if( app.debug ) console.log("result: ", result.data, result.data.Jetelina, result.data.Jetelina.length);
 
                     const o = result.data.Jetelina;
                     if( o.length == 1 ){
                         //ユーザが特定できた
                         const oo = o[0];
                         Object.keys(oo).forEach(function (key) {
-                            console.log("key:", key, oo[key]);
+                            
+                            if( app.debug ) console.log("key:", key, oo[key]);
+                            
                             if( oo['sex'] == "m" ){
                                 m = "Mr. ";
                             }else{
@@ -165,7 +170,8 @@ const app = createApp({
                             }
 
                             m += o[0]['firstname'];
-                            scenarioNumber = 5;
+                            app.scenarioNumber = 5;
+                            app.stage = 3;
                         });
                     }else if( 1<o.length ){
                         //候補が複数いる
@@ -177,7 +183,7 @@ const app = createApp({
                         app.scenarioNumber = 1;
                     }
 
-                    m = app.chooseMsg(scenarioNumber, m, "a");
+                    m = app.chooseMsg(app.scenarioNumber, m, "a");
                     app.typing(0, m);
                 });
 

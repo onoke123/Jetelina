@@ -4,7 +4,7 @@ body {
   height: 100%;
 }
 
-div.sample {
+div.telling {
   position: absolute;
   width: 400px;
   height: 100px;
@@ -18,6 +18,12 @@ div.sample {
   transform: translate(-50%, -50%);
   top: 50%;
   left: 50%;
+  opacity: 0.6;
+}
+
+#box_text{
+  color: rgb(7, 232, 232);
+  font-style: italic;
 }
 
 input.user-input{
