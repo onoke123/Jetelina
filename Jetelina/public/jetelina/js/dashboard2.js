@@ -12,7 +12,8 @@ const app = createApp({
                      1:ログイン直後
             */
             stage: 0,
-            deubg: true, /* true:debug mode false:real mode */
+            isTelling: true,
+            isTopView: false,
         };
     },
     mounted() {
@@ -27,12 +28,17 @@ const app = createApp({
         };
     },
     methods: {
+        /* true:debug mode false:real mode */
+        debug(){
+            return true;
+        },
+
         /* チャットに表示するメッセージを js/scenario.jsから選択する
                 i:scenarioの配列番号
                 m:メッセージに追加する文字列
                 p:選択されたチャットメッセージにmを繋げる位置　 b->before, その他->after
             */
-        chooseMsg: function (i, m, p) {
+        chooseMsg(i, m, p) {
             const n = Math.floor(Math.random() * scenario[i].length);
             let s = scenario[`${i}`][n];
             if (0 < m.length) {
@@ -50,7 +56,7 @@ const app = createApp({
                 i:次に表示する文字番号
                 m:表示する文字列
             */
-        typing: function (i, m) {
+        typing(i, m) {
             const t = 100; /* typing delay time */
             let ii = i;
             if (m != null && i < m.length) {
@@ -67,18 +73,16 @@ const app = createApp({
             true: 期待通り
             false:　意外な答え
         */
-        chkUResponse: function(n,s){
-            for( let i=0; i<userresponse[`${n}`].length; i++ ){
-                if( userresponse[n][i] == s.toLowerCase() ){
-                    return true;
-                }
+        chkUResponse(n,s){
+                if( userresponse[n].includes(s) ){
+                return true;
             }
             
             return false;
         },
 
         /* ユーザが入力するチャットボックス(input tag)でenter keyが押されたときの処理 */
-        onKeyDown: function () {
+        onKeyDown() {
             /* userTextはユーザのチャット入力文字列 */
             let ut = this.userText;
 
@@ -91,21 +95,21 @@ const app = createApp({
                     this.jetelinamessage = "";
                     this.yourchat = ut;
 
-                    if( this.debug ) console.info("stage: ", this.stage);
+                    console.info("stage: ", this.stage, " ", ut );
 
                     switch (this.stage){
                         case 1:/*login時のやりとり*/
                             if( !this.chkUResponse(1, ut ) ){
                                 m = this.chooseMsg(2,"","");
-                                this.stage = 2;
+                                this.stage = 'login';
                             }else{
                                 /* 'fine'とか言われたら気持ちよく返そう */
                                 m = this.chooseMsg('1a',"","");
                             }
                             break;
-                        case 2:/*login処理結果のやりとり*/
+                        case 'login':/*login処理結果のやりとり*/
                             let chunk = "";
-                            let scenarioNumber = 4;
+                            this.scenarioNumber = 4;
 
                             if (ut.indexOf(" ") != -1) {
                                 let p = ut.split(" ");
@@ -114,10 +118,26 @@ const app = createApp({
                                 chunk = ut;
                             }
 
-                            this.ajaxpost( '/chkacount', chunk, scenarioNumber );
+                            this.ajaxpost( '/chkacount', chunk, this.scenarioNumber );
                             break;
-                        case 3:/* after login */
-                            console.log("here you are");
+                        case 'login_success':/* after login */
+                        m = this.chooseMsg(6, "","");
+
+                            if ( ut.indexOf('csv') != -1 ){
+                                this.stage = 'csv';
+                            }else if( ut.indexOf( 'api' ) != -1 ){
+                                this.stage = 'api';
+                            }
+                            break;
+                        case 'csv':/* csv */
+                            m = this.chooseMsg('6csv', "","");
+                            if( ut.indexOf('yes') != -1 ){
+                                console.log("start csv menu please");
+                                this.isTopView = true;
+                            }
+                            break;
+                        case 'api':/* api */
+                            m = this.chooseMsg('6api', "","");
                             break;
                         default:/*before login*/
                             if( this.chkUResponse(0,ut) ){
@@ -156,6 +176,7 @@ const app = createApp({
                     if( app.debug ) console.log("result: ", result.data, result.data.Jetelina, result.data.Jetelina.length);
 
                     const o = result.data.Jetelina;
+                    app.scenarioNumber = 4;
                     if( o.length == 1 ){
                         //ユーザが特定できた
                         const oo = o[0];
@@ -171,16 +192,14 @@ const app = createApp({
 
                             m += o[0]['firstname'];
                             app.scenarioNumber = 5;
-                            app.stage = 3;
+                            app.stage = 'login_success';
                         });
                     }else if( 1<o.length ){
                         //候補が複数いる
                         m = "please tell me more detail.";
-                        app.scenarioNumber = 1;
                     }else{
                         //候補がいない
                         m = "you are not registered, try again.";
-                        app.scenarioNumber = 1;
                     }
 
                     m = app.chooseMsg(app.scenarioNumber, m, "a");
