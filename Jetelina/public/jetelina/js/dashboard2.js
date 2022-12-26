@@ -1,5 +1,5 @@
 const { createApp } = Vue;
-
+import '../css/dashboard2.css'
 const app = createApp({
     data() {
         return {
@@ -12,8 +12,10 @@ const app = createApp({
                      1:ログイン直後
             */
             stage: 0,
-            isTelling: true,
-            isTopView: false,
+            topViewClass: 'topview',
+            isTopViewClass: true,
+//            isTelling: true,
+//            isTopView: false,
         };
     },
     mounted() {
@@ -26,6 +28,11 @@ const app = createApp({
             */
             this.typing(0, this.chooseMsg(0, "", ""));
         };
+    },
+    computed:{
+        classObj(){
+            return { topview: true };
+        },
     },
     methods: {
         /* true:debug mode false:real mode */
