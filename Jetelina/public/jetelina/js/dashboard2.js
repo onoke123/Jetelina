@@ -1,5 +1,5 @@
 const { createApp } = Vue;
-import '../css/dashboard2.css'
+//import '../css/dashboard2.css';
 const app = createApp({
     data() {
         return {

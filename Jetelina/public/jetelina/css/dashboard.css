@@ -48,3 +48,44 @@ div#pop-up {
   font-size: 90%;
   z-index: 10;
 }
+
+.telling {
+  position: absolute;
+  width: 400px;
+  height: 100px;
+  margin: 5px;
+  padding: 10px;
+  background-color: lightgray;
+  box-shadow: 10px 10px 15px -10px;
+  margin: auto;
+  /* border:1px solid black; */
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  opacity: 0.6;
+  text-align: center;
+}
+
+.topview{
+  opacity: 0.6;
+  top: 10%;
+  left: 30%;
+}
+
+.box_text{
+  color: rgb(7, 232, 232);
+  font-style: italic;
+}
+
+input.user-input{
+    outline: none;
+    border: none;
+    background: rgb(212, 223, 213);
+    width: 300px;
+}
+
+.yourText{
+  font-size: 6px;
+  color: blue;
+}
