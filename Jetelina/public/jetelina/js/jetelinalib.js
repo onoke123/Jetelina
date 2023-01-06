@@ -369,6 +369,16 @@ const chatKeyDown = () => {
                     } else if (ut.indexOf('api') != -1) {
                         stage = 'api';
                     }
+
+                    if( stage == 'csv' || stage == 'api' ){
+                        $("#jetelina_panel").animate({
+                                                        height:"70px",
+                                                        top:"45px",
+                                                        left:"210px"
+                                                    });
+
+                    }
+
                     break;
                 case 'csv':/* csv */
                     m = chooseMsg('6csv', "", "");
