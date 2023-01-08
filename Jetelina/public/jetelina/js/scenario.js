@@ -19,6 +19,6 @@ scenario[4] = ['I am sorry, but ', 'Something wrong, hum, '];
 scenario[5] = [`Welcome `, `I missed you, `];
 /* after login */
 scenario[6] = ['How can I help you today?', 'What do you do now?'];
-scenario['6csv'] = ['Do you wanna open the csv screen?'];
-scenario['6api'] = ['Do you wanna open the api screen?'];
+scenario['6func'] = ['Do you wanna open the function panel?'];
+scenario['6cond'] = ['Do you wanna open the condition panel?'];
 scenario['6a'] = ['OK, here you are'];

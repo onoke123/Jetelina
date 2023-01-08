@@ -364,31 +364,38 @@ const chatKeyDown = () => {
                 case 'login_success':/* after login */
                     m = chooseMsg(6, "", "");
 
-                    if (ut.indexOf('csv') != -1) {
-                        stage = 'csv';
-                    } else if (ut.indexOf('api') != -1) {
-                        stage = 'api';
+                    if (ut.indexOf('func') != -1) {
+                        stage = 'function_panel';
+                    } else if (ut.indexOf('cond') != -1) {
+                        stage = 'condition_panel';
                     }
 
-                    if( stage == 'csv' || stage == 'api' ){
+                    if( stage == 'function_panel' || stage == 'condition_panel' ){
+                        const panelTop =  window.innerHeight -80;
                         $("#jetelina_panel").animate({
                                                         height:"70px",
-                                                        top:"45px",
+                                                        top:`${panelTop}px`,
                                                         left:"210px"
                                                     });
 
                     }
 
                     break;
-                case 'csv':/* csv */
-                    m = chooseMsg('6csv', "", "");
+                case 'function_panel':/* function panel */
+                    m = chooseMsg('6func', "", "");
                     if (ut.indexOf('yes') != -1) {
-                        console.log("start csv menu please");
-
+                        console.log("start function panel please");
+                        $("#condition_panel").hide();
+                        $("#function_panel").show();
                     }
+
                     break;
-                case 'api':/* api */
-                    m = chooseMsg('6api', "", "");
+                case 'condition_panel':/* condition panel */
+                    m = chooseMsg('6cond', "", "");
+                    if( ut.indexOf('yes') != -1 ){
+                        $("#function_panel").hide();
+                        $("#condition_panel").show();
+                    }
                     break;
                 default:/*before login*/
                     if (chkUResponse(0, ut)) {
