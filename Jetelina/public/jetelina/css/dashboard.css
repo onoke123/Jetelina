@@ -1,6 +1,7 @@
 body {
   margin: 20px;
-  background-image: url("../img/genie.png");
+  background-color: #6aabe4;
+/*  background-image: url("../img/genie.png");*/
 }
 
 }
@@ -97,14 +98,15 @@ border: 1px solid rgba( 255, 255, 255, 0.18 );
 }
 
 .box_text{
-  color: rgb(7, 232, 232);
+  color: rgb(193, 206, 206);
   font-style: italic;
 }
 
 input.user-input{
     outline: none;
     border: none;
-    background: rgb(212, 223, 213);
+    color:#a8ce49;
+    background:  rgb(53, 41, 94, 0.1)/*rgb(212, 223, 213)*/;
     width: 300px;
 }
 
