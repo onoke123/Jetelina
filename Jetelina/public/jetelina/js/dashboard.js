@@ -1,7 +1,13 @@
 let stage = 0;
 
 $(window).load(function () {
-  $("#jetelina_panel").show();
+  $("#jetelina_panel").show().draggable({
+    /*
+    start: function(event, ui) {  }, //at drag start
+    drag: function( event, ui ) { }, //at during drag
+    */
+    stop: function(event, ui) { console.log("move"); } 
+  });
   $("#condition_panel").hide();
   $("#function_panel").hide();
 

@@ -371,13 +371,23 @@ const chatKeyDown = () => {
                     }
 
                     if( stage == 'function_panel' || stage == 'condition_panel' ){
-                        const panelTop =  window.innerHeight -80;
+                        const panelTop =  window.innerHeight -110;
                         $("#jetelina_panel").animate({
                                                         height:"70px",
                                                         top:`${panelTop}px`,
                                                         left:"210px"
+                                                    },
+                                                    {
+                                                        duration: 4000 
                                                     });
-
+/*
+                        $("#jetelina_panel").animate({
+                                                        width: "600px",
+                                                        height:"500px",
+                                                        top: "5%",
+                                                        left: "5%"
+                                                    });
+*/
                     }
 
                     break;
