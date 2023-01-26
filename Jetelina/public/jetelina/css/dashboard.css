@@ -98,8 +98,10 @@ border: 1px solid rgba( 255, 255, 255, 0.18 );
 }
 
 .box_text{
+  
   color: rgb(193, 206, 206);
   font-style: italic;
+	text-shadow: 0 0 10px rgb(193, 206, 206),0 0 15px rgb(193, 206, 206);
 }
 
 input.user-input{
