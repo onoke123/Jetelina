@@ -335,6 +335,7 @@ const chatKeyDown = () => {
             enterNumber++;
             $("#jetelina_panel [name='jetelina_tell']").text("");
             $("#jetelina_panel [name='chat_input']").val("");
+            $("#jetelina_panel [name='your_tell']").text(ut);
 
             console.info("stage: ", stage, " ", ut);
 

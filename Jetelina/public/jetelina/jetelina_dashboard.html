@@ -13,20 +13,6 @@
     </head>
     <body>
         <!--
-            Jetelinaと会話するチャットパネル
-        -->
-        <div class="telling" id="jetelina_panel">
-            <text name="jetelina_tell" class="box_text"></text>
-            <div>
-              &nbsp;
-            </div>
-            <div>
-                <text class="yourText"></text><br>
-                <input type="text" name="chat_input" class="user-input"></input>
-            </div>
-        </div>
-
-        <!--
             各種ステータスを表示・解析するパネル
         -->
         <div id="condition_panel">
@@ -35,7 +21,7 @@
         <!--
             機能を実現するパネル
         -->
-        <div id="function_panel">
+        <div id="function_panel" class="commonpanel" style="width:1000px;height:800px;top:10%;left:10%">
             <form id="my_form">
                 <!-- caution:
                     should change the parameter of 'name' in FileUploadController.jl
@@ -71,6 +57,19 @@
         
             <div>
                 <button id="post">POST</button>
+            </div>
+        </div>
+        <!--
+            Jetelinaと会話するチャットパネル
+        -->
+        <div class="commonpanel" id="jetelina_panel" style="width:400px;height:100px;top:40%;left:40%">
+            <text name="jetelina_tell" class="box_text"></text>
+            <div>
+              &nbsp;
+            </div>
+            <div>
+                <text name="your_tell" class="yourText"></text><br>
+                <input type="text" name="chat_input" class="user-input"></input>
             </div>
         </div>
     </body>

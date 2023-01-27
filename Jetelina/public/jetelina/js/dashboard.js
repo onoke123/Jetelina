@@ -8,8 +8,8 @@ $(window).load(function () {
     */
     stop: function(event, ui) { console.log("move"); } 
   });
-  $("#condition_panel").hide();
-  $("#function_panel").hide();
+  $("#condition_panel").hide().draggable();
+  $("#function_panel").hide().draggable();
 
   /* input tagにフォーカスを当てる */
   $("#jetelina_panel [name='chat_input']").focus();
