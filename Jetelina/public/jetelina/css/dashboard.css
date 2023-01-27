@@ -67,7 +67,8 @@ div#pop-up {
   /*  opacity: 0.6;*/
   text-align: center;
 
-  background: rgba(16, 190, 117, 0.15);
+/*  background: rgba(16, 190, 117, 0.15);*/
+  background: rgba(109, 98, 226, 0.15);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   backdrop-filter: blur(1.5px);
   -webkit-backdrop-filter: blur(1.5px);
