@@ -1,15 +1,39 @@
 let stage = 0;
 
 $(window).load(function () {
+  const activePanel = ( p ) =>{
+    $( p ).removeClass( "commonpanelborderoff" );
+    $( p ).addClass( "commonpanelborderon" );
+  }
+  const inactivePanel = ( p ) =>{
+    $( p ).removeClass( "commonpanelborderon" );
+    $( p ).addClass( "commonpanelborderoff" );
+  }
+
   $("#jetelina_panel").show().draggable({
     /*
     start: function(event, ui) {  }, //at drag start
     drag: function( event, ui ) { }, //at during drag
     */
     stop: function(event, ui) { console.log("move"); } 
+  }).mouseover(function(){
+    activePanel( "#jetelina_panel" );
+  }).mouseout(function(){
+    inactivePanel( "#jetelina_panel" );
   });
-  $("#condition_panel").hide().draggable();
-  $("#function_panel").hide().draggable();
+
+  $("#condition_panel").hide().draggable().mouseover(function(){
+    activePanel( "#condition_panel" );
+  }).mouseout(function(){
+    inactivePanel( "#condition_panel" );
+  });
+
+  $("#function_panel").hide().draggable().mouseover(function(){
+    activePanel( "#function_panel" );
+  }).mouseout(function(){
+    inactivePanel( "#function_panel" );
+  });
+
 
   /* input tagにフォーカスを当てる */
   $("#jetelina_panel [name='chat_input']").focus();
