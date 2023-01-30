@@ -377,18 +377,7 @@ const chatKeyDown = () => {
                                                         height:"70px",
                                                         top:`${panelTop}px`,
                                                         left:"210px"
-                                                    },
-                                                    {
-                                                        duration: 4000 
-                                                    });
-/*
-                        $("#jetelina_panel").animate({
-                                                        width: "600px",
-                                                        height:"500px",
-                                                        top: "5%",
-                                                        left: "5%"
-                                                    });
-*/
+                                                    }, animateDuration );
                     }
 
                     break;
@@ -397,7 +386,12 @@ const chatKeyDown = () => {
                     if (ut.indexOf('yes') != -1) {
                         console.log("start function panel please");
                         $("#condition_panel").hide();
-                        $("#function_panel").show();
+                        $("#function_panel").show().animate({
+                            width:"1000px",
+                            height:"800px",
+                            top:"10%",
+                            left:"10%"
+                        }, animateDuration );
                     }
 
                     break;
