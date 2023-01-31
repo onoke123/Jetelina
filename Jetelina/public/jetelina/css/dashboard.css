@@ -123,3 +123,16 @@ input.user-input {
   color: #a8ce49;
   text-shadow: 0 0 10px rgb(14, 225, 31), 0 0 15px rgb(229, 232, 198);
 }
+
+input[name="upfile"] {
+  display: none;
+}
+
+#my_form > label[name="filelabel"]{
+  padding: 10px 40px;
+  color: #a8ce49;
+  text-shadow: 0 0 10px rgb(14, 225, 31), 0 0 15px rgb(229, 232, 198);
+  background: rgba(222, 233, 13, 0.1);
+  cursor: pointer;
+}
+
