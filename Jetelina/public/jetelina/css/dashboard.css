@@ -24,10 +24,12 @@ body {
   width: 200px;
   height: 200px;
   border: 1px solid #3a945b;
-  background: #f0fff0;
+  /*background: #f0fff0;*/
 }
-.drop_area p {
+.drop_area > p {
   margin: 10px;
+  color: #a8ce49;
+  text-shadow: 0 0 10px rgb(14, 225, 31), 0 0 15px rgb(229, 232, 198);
 }
 .ui-selected {
   background-color: #1cc7ff;
