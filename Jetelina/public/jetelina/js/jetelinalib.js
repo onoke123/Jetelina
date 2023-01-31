@@ -24,7 +24,7 @@ const getdata = (o, t) => {
                            */
                             $.each(v, function (name, value) {
                                 if (t == 0) {
-                                    str += `<option class="tables" value=${value}>${value}</option>`;
+                                    str += `<option value=${value}>${value}</option>`;
                                 } else if (t == 1) {
                                     // jetelina_delte_flgは表示対象外
                                     if (name != "jetelina_delete_flg") {
@@ -37,7 +37,7 @@ const getdata = (o, t) => {
                               t=2即ちSQLリストはオブジェクト内に複数のデータがあり得て且つ、表示上は一行にしたいので
                               こんな感じ。
                             */
-                            str += `<div class="list"><p>${v.no}:${v.sql}</p></div>`;
+                            str += `<div class="sqllist"><p>${v.no}:${v.sql}</p></div>`;
                         }
 
                         let tagid = "";
@@ -197,7 +197,7 @@ const fileupload = () => {
         getdata(result, 1);
         // talbe list に追加してfocusを当てる
         console.log("set table to select:", tablename);
-        const addop = `<option class="tables" value=${tablename}>${tablename}</option>`;
+        const addop = `<option value=${tablename}>${tablename}</option>`;
         $("#d_tablelist").prepend(addop);
         $("#d_tablelist").val(tablename);
     }).fail(function (result) {

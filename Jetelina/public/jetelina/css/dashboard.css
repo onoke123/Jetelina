@@ -109,10 +109,15 @@ input.user-input {
   color: rgb(199, 199, 227);
 }
 
-.functionpanel-parts {
+.functionpanel-parts > input, button, select, option, label {
   outline: none;
   border: none;
   color: #a8ce49;
   text-shadow: 0 0 10px rgb(14, 225, 31), 0 0 15px rgb(229, 232, 198);
   background: rgb(53, 41, 94, 0.1);
+}
+
+.sqllist > p {
+  color: #a8ce49;
+  text-shadow: 0 0 10px rgb(14, 225, 31), 0 0 15px rgb(229, 232, 198);
 }
