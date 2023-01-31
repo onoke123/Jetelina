@@ -129,10 +129,11 @@ input[name="upfile"] {
 }
 
 #my_form > label[name="filelabel"]{
-  padding: 10px 40px;
+  /*padding: 10px 40px;*/
+  font-size: 10px;
   color: #a8ce49;
-  text-shadow: 0 0 10px rgb(14, 225, 31), 0 0 15px rgb(229, 232, 198);
-  background: rgba(222, 233, 13, 0.1);
+  text-shadow: 0 0 10px rgba(211, 222, 212, 0.964), 0 0 15px rgb(229, 232, 198);
+  background: rgb(53, 41, 94, 0.1);
   cursor: pointer;
 }
 
