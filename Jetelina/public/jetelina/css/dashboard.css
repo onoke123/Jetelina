@@ -13,6 +13,7 @@ body {
   border: 1px solid #2e6da4;
   background-color: #7da8c3;
   color: #ffffff;
+  border-radius: 9999px;
 }
 
 .item p {
@@ -31,6 +32,7 @@ body {
   color: #a8ce49;
   text-shadow: 0 0 10px rgb(14, 225, 31), 0 0 15px rgb(229, 232, 198);
 }
+
 .ui-selected {
   background-color: #1cc7ff;
 }
