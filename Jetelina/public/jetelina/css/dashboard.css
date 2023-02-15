@@ -1,9 +1,10 @@
 body {
   margin: 20px;
-  background-color: #697f92;
+  background-color: #0a1e0f;
+/*  background-color: #697f92;
   background-image: url("../img/sf2-1280x720.png");
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: cover; */
 }
 
 .item {
