@@ -1,81 +1,142 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
-        <link rel="stylesheet" href="jetelina/css/dashboard.css">
 
-        <script type="text/javascript" src="js/genie/jquery.min.js"></script>
-        <script type="text/javascript" src="js/jquery-ui-1.13.2/jquery-ui.min.js"></script>
-        
-        <script type="text/javascript" src="jetelina/js/jetelinalib.js"></script>
-        <script type="text/javascript" src="jetelina/js/draganddropitems.js"></script>
-    </head>
-    <body>
-        <!--
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+    <link rel="stylesheet" href="jetelina/css/dashboard.css">
+
+    <script type="text/javascript" src="js/genie/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.13.2/jquery-ui.min.js"></script>
+
+    <script type="text/javascript" src="jetelina/js/jetelinalib.js"></script>
+    <script type="text/javascript" src="jetelina/js/draganddropitems.js"></script>
+</head>
+
+<body>
+    <!--
             各種ステータスを表示・解析するパネル
         -->
-        <div id="condition_panel">
-
-        </div>
-        <!--
+    <div id="condition_panel">
+        <div id="plot" style="background-color:red;"></div>
+    </div>
+    <!--
             機能を実現するパネル
         <div id="function_panel" class="commonpanel squarepanel" style="width:1000px;height:800px;top:10%;left:10%">
         -->
-        <div id="function_panel" class="functionpanel-parts commonpanel squarepanel">
-            <form id="my_form">
-                <!-- caution:
+    <div id="function_panel" class="functionpanel-parts commonpanel squarepanel">
+        <form id="my_form">
+            <!-- caution:
                     should change the parameter of 'name' in FileUploadController.jl
                     if it's changed to other. 
                 -->
-                <label name="filelabel">
-                    <input type="file" name="upfile">Select CSV File
-                </label>
-                <button type="button" id="upbtn">up</button>
-            </form>
+            <label name="filelabel">
+                <input type="file" name="upfile">Select CSV File
+            </label>
+            <button type="button" id="upbtn">up</button>
+        </form>
 
-            <label>Table List</label>
-            <br>
-            <select id="d_tablelist">
-                <option hidden>Select your DB Table from below</option>
-            </select>
-            <button id="table_delete">delete this table</button>
+        <label>Table List</label>
+        <br>
+        <select id="d_tablelist">
+            <option hidden>Select your DB Table from below</option>
+        </select>
+        <button id="table_delete">delete this table</button>
 
-            <div id="sqllist">
-                <!--sql for each tables-->
+        <div id="sqllist">
+            <!--sql for each tables-->
+        </div>
+
+        <!-- tooltip for columns list -->
+        <div id="pop-up">
+            <text></text>
+        </div>
+        <!-- drag & drop data area -->
+        <div id="container">
+            <div class="item_area">
             </div>
-            
-            <!-- tooltip for columns list -->
-            <div id="pop-up">
-                <text></text>
-            </div>
-            <!-- drag & drop data area -->
-            <div id="container">
-                <div class="item_area">
-                </div>
-                <div class="drop_area">
+            <div class="drop_area">
                 <p>hear the drop area</p>
-                </div>
-            </div>
-        
-            <div>
-                <button id="post">POST</button>
             </div>
         </div>
-        <!--
+
+        <div>
+            <button id="post">POST</button>
+        </div>
+    </div>
+    <!--
             Jetelinaと会話するチャットパネル
         -->
-        <div class="commonpanel squarepanel" id="jetelina_panel" style="width:400px;height:100px;top:40%;left:40%">
-            <text name="jetelina_tell" class="box_text"></text>
-            <div>
-              &nbsp;
-            </div>
-            <div>
-                <text name="your_tell" class="yourText"></text><br>
-                <input type="text" name="chat_input" class="user-input"></input>
-            </div>
+    <div class="commonpanel squarepanel" id="jetelina_panel" style="width:400px;height:100px;top:40%;left:40%">
+        <text name="jetelina_tell" class="box_text"></text>
+        <div>
+            &nbsp;
         </div>
-    </body>
-    <script type="text/javascript" src="jetelina/js/dashboard.js"></script>
-    <script src="jetelina/js/scenario.js"></script>
- </html>
+        <div>
+            <text name="your_tell" class="yourText"></text><br>
+            <input type="text" name="chat_input" class="user-input"></input>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="jetelina/js/dashboard.js"></script>
+<script src="jetelina/js/scenario.js"></script>
+<!--Plotly.js よさげならローカルにライブラリを置こう。まずはお試しで。-->
+<script src="https://cdn.plot.ly/plotly-2.18.2.min.js" charset="utf-8"></script>
+<script>
+    function getrandom(num, mul) {
+        var value = []
+        for (i = 0; i <= num; i++) {
+            rand = Math.random() * mul;
+            value.push(rand);
+        }
+        return value;
+    }
+
+    var data = [
+        {
+            opacity: 0.4, type: 'scatter3d',
+            x: getrandom(50, 75),
+            y: getrandom(50, 75),
+            z: getrandom(50, 75),
+            mode: 'markers'
+        },
+        {
+            opacity: 0.5,
+            type: 'scatter3d',
+            x: getrandom(75, 75),
+            y: getrandom(75, 75),
+            z: getrandom(75, 75),
+            mode: 'markers'
+        },
+        {
+            opacity: 0.5,
+            type: 'scatter3d',
+            x: getrandom(75, 100),
+            y: getrandom(75, 100),
+            z: getrandom(75, 100),
+            mode: 'markers'
+        }
+    ];
+    var layout = {
+        plot_bgcolor: "rgb(0,0,0)",
+        paper_bgcolor: "rgb(0,0,0)",
+        scene: {
+            xaxis: {
+                backgroundcolor: "rgb(255,0,0)",
+                showbackground: false,
+            },
+            yaxis: {
+                backgroundcolor: "rgb(255,0,0)",
+                showbackground: false
+                ,
+            },
+            zaxis: {
+                backgroundcolor: "rgb(255,0,0)",
+                showbackground: false,
+            }
+        }
+    };
+    Plotly.newPlot('plot', data, layout);
+</script>
+
+</html>
