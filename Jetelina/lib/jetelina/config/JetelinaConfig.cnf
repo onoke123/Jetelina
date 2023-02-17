@@ -7,9 +7,11 @@
 #      logfile: logfile name path is fixed in lib/jetelina/log
 #      debug  : define debug mode  true->debug mode false->run mode
 #      fileuploadpath: define csv file upload path
+#      sqllogfile: be executed SQL sentences log file
 logfile = log.txt
 debug = true
 fileuploadpath = lib/jetelina/testdata
+sqllogfile = sql.log
 
 #
 #  section of database

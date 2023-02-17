@@ -6,6 +6,7 @@ then set them to global variables
     JetelinaLogfile: log file name
     debugflg: debug mode or not
     JetelinaFileUploadPath: csv file upload path
+    JetelinaSQLLogfile: SQL log file name
     JetelinaDBhost: DB host name
     JetelinaDBport: DB port number
     JetelinaDBuser: DB access user account
@@ -23,7 +24,7 @@ contain functions
 module JetelinaReadConfig
     using DBDataController, JetelinaReadSqlList
 
-    export  debugflg,JetelinaLogfile,JetelinaDBtype,JetelinaFileUploadPath,JetelinaDBhost,
+    export  debugflg,JetelinaLogfile,JetelinaDBtype,JetelinaFileUploadPath,JetelinaSQLLogfile,JetelinaDBhost,
     JetelinaDBport,JetelinaDBuser,JetelinaDBpassword,JetelinaDBsslmode,JetelinaDBname,Df_JetelinaTableManager
 
     """
@@ -61,6 +62,9 @@ module JetelinaReadConfig
                 elseif startswith( l[i], "fileuploadpath" )
                     # CSV file upload path
                     global JetelinaFileUploadPath = getSetting(l[i])
+                elseif startswith( l[i], "sqllogfile" )
+                    # SQL log file name
+                    global JetelinaSQLLogfile = getSetting(l[i])
                 elseif startswith( l[i], "dbtype")
                     # DB type
                     global JetelinaDBtype = getSetting(l[i])

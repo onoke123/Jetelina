@@ -13,11 +13,14 @@ module SQLAnalyzer
     using Genie, Genie.Renderer, Genie.Renderer.Json
     using JetelinaReadConfig, JetelinaLog
     using ExeSql, DBDataController
+    using DelimitedFiles
 
     """
         read sql.log file
             log/sql.log ex. select ftest2.id,ftest2.name from ftest2
     """
+    sqllogfile = string( joinpath( @__DIR__, "log", JetelinaSQLLogfile ) )
+    df = readdlm( sqllogfile, ' ', String, '\n')
 
     """
         get uniqeness
@@ -30,6 +33,7 @@ module SQLAnalyzer
                 select ftest2.id,ftest2.name from ftest2
                 select ftest.id,ftest.name from ftest
     """
+    u = unique( df[:,[:2]] )
 
     """
         count the access number in each sql
@@ -37,7 +41,21 @@ module SQLAnalyzer
                                               sql                              access number
             select ftest3.id,ftest2.name from ftest3 as ftest3, ftest2 as ftest2    2
     """
+    u_size = size( u )[1]
+    df_size = size(df[:,[:2]])[1]
 
+    # uにはユニークなSQL文が入っているので、sql.logの中のマッチングでアクセス数を取得する ex. u[i] === ....
+    for i = 1:u_size
+        ac = 0
+        for ii = 1:df_size
+
+            if u[i] == df[:,[:2]][ii]
+                ac += 1
+            end
+        end
+
+        @info "ac is ", u[i], ac
+    end
     """
         shape the data
             ex. 
@@ -95,3 +113,5 @@ module SQLAnalyzer
             function panelのajaxはこの関数を呼び出すので、解析結果で変更が不要の時には
             1,2では”状態OK”を返し、3,4のみのデータを返す。
     """
+
+end
