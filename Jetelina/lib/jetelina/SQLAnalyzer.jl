@@ -36,16 +36,19 @@ module SQLAnalyzer
     u = unique( df[:,[:2]] )
 
     """
-        count the access number in each sql
+        1.make unique sql statements
+        2.pick only the columns part
+        3.count the access number in each sql
+        4.put it into DataFrame alike
             ex. 
-                                              sql                              access number
-            select ftest3.id,ftest2.name from ftest3 as ftest3, ftest2 as ftest2    2
+                column_name      access_number
+            ftest3.id,ftest2.name    2
     """
     u_size = size( u )[1]
     df_size = size(df[:,[:2]])[1]
 
     # uにはユニークなSQL文が入っているので、sql.logの中のマッチングでアクセス数を取得する ex. u[i] === ....
-    sql_df = DataFrame( column_name=String[], access_number=Int[] )
+    sql_df = DataFrame( column_name=String[], combination=String[], access_number=Int[] )
     for i = 1:u_size
         ac = 0
         for ii = 1:df_size
@@ -55,9 +58,23 @@ module SQLAnalyzer
             end
         end
 
-        push!( sql_df,[u[i], ac] )
+        table_arr = String[]
+        c = split( u[i], "," )
+        for j = 1:size(c)[1]
+            """
+                cc[1]//table name
+                cc[2]//column name 
+            """
+            cc = split( c[j], "." )
+            chk = findall(isempty,cc[1])
+            if chk != true
+                @info "chk:", c[j], cc[1], cc[2]
+            end
+        end
+
+#        push!( sql_df,[u[i], ac] )
 #        @info "ac is ", u[i], ac
-        @info sql_df
+#        @info sql_df
     end
     """
         shape the data
