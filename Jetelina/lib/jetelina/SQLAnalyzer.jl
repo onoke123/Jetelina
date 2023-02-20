@@ -45,6 +45,7 @@ module SQLAnalyzer
     df_size = size(df[:,[:2]])[1]
 
     # uにはユニークなSQL文が入っているので、sql.logの中のマッチングでアクセス数を取得する ex. u[i] === ....
+    sql_df = DataFrame( column_name=String[], access_number=Int[] )
     for i = 1:u_size
         ac = 0
         for ii = 1:df_size
@@ -54,7 +55,9 @@ module SQLAnalyzer
             end
         end
 
-        @info "ac is ", u[i], ac
+        push!( sql_df,[u[i], ac] )
+#        @info "ac is ", u[i], ac
+        @info sql_df
     end
     """
         shape the data
