@@ -49,9 +49,24 @@ module SQLAnalyzer
 
     # uにはユニークなSQL文が入っているので、sql.logの中のマッチングでアクセス数を取得する ex. u[i] === ....
     sql_df = DataFrame( column_name=String[], combination=[], access_number=Int[] )
-#    sql_df = DataFrame( column_name=String[], access_number=Int[] )
+
+    """
+        shape the data
+            ex. 
+                column    combination    access number
+            ftest3.id     ftest3+ftest2      2
+            ftest2.name   ftest3+ftest2      2
+            ftest3.id     ftest4+ftest2      5
+            ftest2.name   ftest2            10
+
+            then 
+            ftest3.idが一番呼ばれたのはftet4+ftest2なので、ftest3.idはこれを採用
+            ftest2.name        〃      ftestなので、ftest2.nameはこれを採用→table変更は必要なさそう
+    """
+
     for i = 1:u_size
         ac = 0
+        # collect access number for each unique SQL. make "access_number"
         for ii = 1:df_size
 
             if u[i] == df[:,[:2]][ii]
@@ -61,23 +76,21 @@ module SQLAnalyzer
 
         table_arr = String[]
         c = split( u[i], "," )
+        # make "column_name" and "combination" 
         for j = 1:size(c)[1]
             """
                 cc[1]//table name
                 cc[2]//column name 
             """
             cc = split( c[j], "." )
-            chk = findall(isempty,cc[1])
+            # table_arrにcc[1]が入っているかどうか見ている。論理否定。これが書きたかったからJulia。
             if cc[1] ∉ table_arr
                 push!( table_arr, cc[1] )
-#                @info "chk:", c[j], cc[1], cc[2]
             end
+
+            push!( sql_df,[c[j], table_arr, ac] )
         end
         
-#        @info "table arr type:", table_arr, typeof(table_arr), typeof( convert(String,table_arr))
-        push!( sql_df,[u[i], table_arr, ac] )
-#        push!( sql_df,[u[i], ac] )
-#        @info "ac is ", u[i], ac
         @info sql_df
     end
     """
