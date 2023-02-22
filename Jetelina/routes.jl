@@ -1,5 +1,5 @@
 using Genie.Router
-using DBDataController, CSVFileController, PostDataController, FileUploadController
+using DBDataController, CSVFileController, PostDataController, GetDataController, FileUploadController
 using JetelinaReadConfig
 
 # welcome page
@@ -29,7 +29,7 @@ end
 #route( "/getalldbdata", DBDataController.getalldbdata )
 
 # DBから取得した全tableをjsonで返す
-route( "/getalldbtable", DBDataController.getTableList )
+route( "/getalldbtable", GetDataController.getTableList )
 
 # 指定されたtableをdropする
 route( "/deletetable", PostDataController.deleteTable, method = POST )
@@ -48,7 +48,7 @@ end
 route( "/getcsvdata", CSVFileController.read )
 
 # post dataを取得
-route( "/putitems", PostDataController.get, method = POST )
+route( "/putitems", PostDataController.postDataAcquire, method = POST )
 
 #== file upload
 route( "/fileupload" ) do

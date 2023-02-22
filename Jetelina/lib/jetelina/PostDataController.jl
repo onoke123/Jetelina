@@ -4,7 +4,7 @@ module PostDataController
     using DBDataController
     using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
 
-    function get()
+    function postDataAcquire()
         #==
           dashboard.htmlからのcolumn post dataは以下のjson形式で来る
              { 'item':'["<table name>:<column name>","<table name>:<column name>",...]' }

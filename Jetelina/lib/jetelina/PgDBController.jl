@@ -113,14 +113,19 @@ module PgDBController
         function getTableList()
 
     # Arguments
+    s:String: 'json' -> return is JSON form
+              'dataframe' -> return is DataFrames form
     return: json data of table list
 
     get all table name from public 'schemaname'
     """
-    function getTableList()
+    function getTableList(s::String)
         df = _getTableList()
-        ret = json( Dict( "Jetelina" => copy.( eachrow( df ))))
-        return ret
+        if s == "json"
+            return json( Dict( "Jetelina" => copy.( eachrow( df ))))
+        elseif s == "dataframe"
+            return df
+        end
     end
 
     function _getTableList()

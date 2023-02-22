@@ -7,7 +7,7 @@ contain functions
     init_Jetelina_table()
     dataInsertFromCSV()
     dropTable()
-    getTableList()
+    getTableList(s)
     getSequenceNumber(t)
     doInsert()
     doSelect()
@@ -46,10 +46,14 @@ module DBDataController
         end
     end
 
-    function getTableList()
+    function getTableList(s::String)
+        if isnothing(s)
+            s = "json"
+        end
+
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
-            PgDBController.getTableList()
+            PgDBController.getTableList( s )
         elseif JetelinaDBtype == "mariadb"
         elseif JetelinaDBtype == "oracle"
         end
