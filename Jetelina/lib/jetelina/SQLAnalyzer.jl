@@ -93,19 +93,6 @@ module SQLAnalyzer
         
         @info sql_df
     end
-    """
-        shape the data
-            ex. 
-                column    combination    access number
-            ftest3.id     ftest3+ftest2      2
-            ftest2.name   ftest3+ftest2      2
-            ftest3.id     ftest4+ftest2      5
-            ftest2.name   ftest2            10
-
-            then 
-               ftest3.idが一番呼ばれたのはftet4+ftest2なので、ftest3.idはこれを採用
-               ftest2.name        〃      ftestなので、ftest2.nameはこれを採用→table変更は必要なさそう
-    """
 
     """
         analyze
