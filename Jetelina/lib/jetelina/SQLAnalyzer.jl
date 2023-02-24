@@ -94,6 +94,8 @@ module SQLAnalyzer
         @info sql_df
     end
 
+    table_df = DBDataController.getTableList( "dataframe" )#この処理は上の処理に含めよう
+    @info table_df
     """
         analyze
             ex.
@@ -113,7 +115,7 @@ module SQLAnalyzer
                 最終的に、カラム名とカラム座標値のMatrixをファイルに格納する(一旦ね)。
 
     """
-    
+
     """
         Table Layout Change
             analyzeに基づいてTableレイアウト変更を仮実行する。
