@@ -96,6 +96,13 @@ module SQLAnalyzer
 
     table_df = DBDataController.getTableList( "dataframe" )#この処理は上の処理に含めよう
     @info table_df
+
+    d = Dict( table_df.tablename .=> axes( table_df, 1 ) )
+    @info "d:" d
+    sql_df.combination = [getindex.(Ref(d),x) for x in sql_df.combination]
+
+    @info sql_df
+
     """
         analyze
             ex.
