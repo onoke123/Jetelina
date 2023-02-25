@@ -94,27 +94,22 @@ module SQLAnalyzer
         @info sql_df
     end
 
-    table_df = DBDataController.getTableList( "dataframe" )#この処理は上の処理に含めよう
-    @info table_df
-
-    d = Dict( table_df.tablename .=> axes( table_df, 1 ) )
-    @info "d:" d
-    sql_df.combination = [getindex.(Ref(d),x) for x in sql_df.combination]
-
-    @info sql_df
-
     """
         analyze
             ex.
-                各tableに任意のユニークintを割り振る
-                    ftest1: 1
-                    ftest2: 2
-                    ftest3: 3
-                    ftest4: 4   ....
+                各tableのRow No.でcombinationを置き換える
+                     Row │ column_name  combination  access_number
+            │           │ String       Array…       Int64
+            │ ─────┼─────────────────────────────────────────
+            │    1 │ ftest2.id          [4]            2
+            │    2 │ ftest2.name        [4]            2
+            │    3 │ ftest.id           [1]            1
+            │    4 │ ftest3.id          [3, 4]         1
+            └    5 │ ftest2.name        [3, 4]         2
 
-                    ftest3.idはftest4+ftest2が代表値なので → {4(ftest4)+2(ftest2)}/2(tableが２つだから)=3 ←y座標になる
                     ftest3.idはftest3にあるので→x座標:3(ftest3)
-                    よって、ftest3.idの座標は(3,3)
+                    ftest3.idはftest4+ftest2が代表値なので → (3+4)/2(tableが2つだから)=3.5 ←y座標になる
+                    よって、ftest3.idの座標は(3,3.5)
 
                     ”access number”はk-means法の"重み"として考えているけど、上記座標取得方法なら不要になる、が一応保持しておく、念のため。
 
@@ -122,6 +117,16 @@ module SQLAnalyzer
                 最終的に、カラム名とカラム座標値のMatrixをファイルに格納する(一旦ね)。
 
     """
+    table_df = DBDataController.getTableList( "dataframe" )#この処理は上の処理に含めよう
+
+    @info table_df
+
+    # by Ph. Kaminski
+    # table_df.tablenameがユニークだからできる技。
+    d = Dict( table_df.tablename .=> axes( table_df, 1 ) )
+    # d("ftest"=>1 "ftest2=>4...と入っている)　を参照してindexを取得し、それをcombinationに当てはめていく
+    sql_df.combination = [getindex.(Ref(d),x) for x in sql_df.combination]
+    @info sql_df
 
     """
         Table Layout Change
