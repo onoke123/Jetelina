@@ -162,9 +162,12 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
                 } else {
                     //候補がいない
                     m = "you are not registered, try again.";
+                    stage = 'login';
                 }
 
                 m = chooseMsg(scenarioNumber, m, "a");
+
+                if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
                 typing(0, m);
             });
         }
@@ -292,7 +295,8 @@ const chooseMsg = (i, m, p) => {
 /* チャットメッセージをタイピング風に表示する
         i:次に表示する文字番号
         m:表示する文字列
-    */
+*/
+let typingTimeoutID;
 const typing = (i, m) => {
     const t = 100; /* typing delay time */
     let ii = i;
@@ -304,13 +308,14 @@ const typing = (i, m) => {
         return;
     }
 
-    setTimeout(typing, t, ii, m);
+    typingTimeoutID = setTimeout(typing, t, ii, m);
 }
 
 /* ユーザレスポンスがuserresponse[]に期待されたものであるかチェックする
+    userresponse[]はsenario.jsで定義されている
             true: 期待通り
             false:　意外な答え
-        */
+*/
 const chkUResponse = (n, s) => {
     if (userresponse[n].includes(s)) {
         return true;
@@ -325,7 +330,7 @@ const chatKeyDown = () => {
     /* userTextはユーザのチャット入力文字列 */
     let ut = $("#jetelina_panel [name='chat_input']").val();
 
-    console.log("ut: ", ut);
+    if (debug) console.log("ut: ", ut);
 
     if (ut != null && 0 < ut.length) {
         ut = ut.trim();
@@ -337,7 +342,7 @@ const chatKeyDown = () => {
             $("#jetelina_panel [name='chat_input']").val("");
             $("#jetelina_panel [name='your_tell']").text(ut);
 
-            console.info("stage: ", stage, " ", ut);
+            if (debug) console.info("stage: ", stage, " ", ut);
 
             switch (stage) {
                 case 1:/*login時のやりとり*/
@@ -371,13 +376,13 @@ const chatKeyDown = () => {
                         stage = 'condition_panel';
                     }
 
-                    if( stage == 'function_panel' || stage == 'condition_panel' ){
-                        const panelTop =  window.innerHeight -110;
+                    if (stage == 'function_panel' || stage == 'condition_panel') {
+                        const panelTop = window.innerHeight - 110;
                         $("#jetelina_panel").animate({
-                                                        height:"70px",
-                                                        top:`${panelTop}px`,
-                                                        left:"210px"
-                                                    }, animateDuration );
+                            height: "70px",
+                            top: `${panelTop}px`,
+                            left: "210px"
+                        }, animateDuration);
                     }
 
                     break;
@@ -387,17 +392,17 @@ const chatKeyDown = () => {
                         console.log("start function panel please");
                         $("#condition_panel").hide();
                         $("#function_panel").show().animate({
-                            width:"1000px",
-                            height:"800px",
-                            top:"10%",
-                            left:"10%"
-                        }, animateDuration );
+                            width: "1000px",
+                            height: "800px",
+                            top: "10%",
+                            left: "10%"
+                        }, animateDuration);
                     }
 
                     break;
                 case 'condition_panel':/* condition panel */
                     m = chooseMsg('6cond', "", "");
-                    if( ut.indexOf('yes') != -1 ){
+                    if (ut.indexOf('yes') != -1) {
                         $("#function_panel").hide();
                         $("#condition_panel").show();
                     }
@@ -417,6 +422,7 @@ const chatKeyDown = () => {
                 enterNumber = 0;
             }
 
+            if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
             typing(0, m);
         }
     } else {

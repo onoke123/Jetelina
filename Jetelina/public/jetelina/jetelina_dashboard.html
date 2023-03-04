@@ -17,8 +17,10 @@
     <!--
             各種ステータスを表示・解析するパネル
         -->
-    <div id="condition_panel">
-        <div id="plot" style="background-color:red;"></div>
+    <div id="condition_panel" class="functionpanel-parts commonpanel squarepanel">
+        <div name="figure" >
+            <div id="plot"></div>
+        </div>
     </div>
     <!--
             機能を実現するパネル
@@ -80,7 +82,7 @@
 </body>
 <script type="text/javascript" src="jetelina/js/dashboard.js"></script>
 <script src="jetelina/js/scenario.js"></script>
-<!--Plotly.js よさげならローカルにライブラリを置こう。まずはお試しで
+<!--Plotly.js よさげならローカルにライブラリを置こう。まずはお試しで-->
 <script src="https://cdn.plot.ly/plotly-2.18.2.min.js" charset="utf-8"></script>
 <script>
     function getrandom(num, mul) {
@@ -93,7 +95,7 @@
     }
 
     var data = [
-        {
+        /*{
             opacity: 0.4, type: 'scatter3d',
             x: getrandom(50, 75),
             y: getrandom(50, 75),
@@ -107,14 +109,15 @@
             y: getrandom(75, 75),
             z: getrandom(75, 75),
             mode: 'markers'
-        },
+        },*/
         {
             opacity: 0.5,
             type: 'scatter3d',
-            x: getrandom(75, 100),
-            y: getrandom(75, 100),
-            z: getrandom(75, 100),
-            mode: 'markers'
+            x: [1,5,6],
+            y: [1,2,3],
+            z: [1,3,8],
+            text:["a","b","c"],
+            mode: 'markers+text'
         }
     ];
     var layout = {
@@ -138,6 +141,6 @@
     };
     Plotly.newPlot('plot', data, layout);
 </script>
--->
+
 <!-- Three.jsを使ってみよう-->
 </html>

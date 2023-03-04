@@ -56,3 +56,8 @@ route( "/fileupload" ) do
 end
 ===#
 route("/dofup", FileUploadController.fup, method = POST)
+
+# test for three.js
+route( "/3" ) do
+  serve_static_file( "jetelina/threejstest.html")
+end

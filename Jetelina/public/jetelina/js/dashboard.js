@@ -1,5 +1,6 @@
 let stage = 0;// action stage number ex. 1:before login  'login':at login
 const animateDuration = 1500;// animate() duration
+const debug = true;
 
 $(window).load(function () {
   // focust on the input tag of jetelina panel
@@ -29,8 +30,8 @@ $(window).load(function () {
     /*
     start: function(event, ui) {  }, //at drag start
     drag: function( event, ui ) { }, //at during drag
-    */
     stop: function (event, ui) { }
+    */
   });
 
   // condition panel
@@ -127,7 +128,7 @@ $('.item').mousemove(function (e) {
   $("div#pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
 });
 */
-
+// chatting with Jetelina
 $("#jetelina_panel [name='chat_input']").keypress(function (e) {
   if (e.keyCode == 13) {
     chatKeyDown();
