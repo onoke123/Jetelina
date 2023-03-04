@@ -116,6 +116,13 @@ const postAjaxData = (url, data) => {
     }
 }
 
+const typingControll = (m) =>{
+                //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく
+                if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
+                console.log("m:", m);
+                typing(0, m);
+
+}
 /*
     Authentication ajax call
 */
@@ -167,8 +174,10 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
 
                 m = chooseMsg(scenarioNumber, m, "a");
 
-                if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
-                typing(0, m);
+                typingControll(m);
+                //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく
+//                if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
+//                typing(0, m);
             });
         }
     });
@@ -371,12 +380,12 @@ const chatKeyDown = () => {
                     m = chooseMsg(6, "", "");
 
                     if (ut.indexOf('func') != -1) {
-                        stage = 'function_panel';
+                        stage = 'into_function_panel';
                     } else if (ut.indexOf('cond') != -1) {
-                        stage = 'condition_panel';
+                        stage = 'into_condition_panel';
                     }
 
-                    if (stage == 'function_panel' || stage == 'condition_panel') {
+                    if (stage == 'into_function_panel' || stage == 'into_condition_panel') {
                         const panelTop = window.innerHeight - 110;
                         $("#jetelina_panel").animate({
                             height: "70px",
@@ -386,10 +395,10 @@ const chatKeyDown = () => {
                     }
 
                     break;
-                case 'function_panel':/* function panel */
-                    m = chooseMsg('6func', "", "");
+                case 'into_function_panel':/* into function panel */
+                    m = chooseMsg('6func_in', "", "");
                     if (ut.indexOf('yes') != -1) {
-                        console.log("start function panel please");
+                        if(debug) console.log("start function panel please");
                         $("#condition_panel").hide();
                         $("#function_panel").show().animate({
                             width: "1000px",
@@ -397,11 +406,18 @@ const chatKeyDown = () => {
                             top: "10%",
                             left: "10%"
                         }, animateDuration);
+
+                        stage = "function_panel";
                     }
 
+
                     break;
-                case 'condition_panel':/* condition panel */
-                    m = chooseMsg('6cond', "", "");
+                case 'function_panel':/* function panel */
+                    m = chooseMsg('6func', "", "");
+
+                    break;
+                case 'into_condition_panel':/* into condition panel */
+                    m = chooseMsg('6cond_in', "", "");
                     if (ut.indexOf('yes') != -1) {
                         $("#function_panel").hide();
                         $("#condition_panel").show();
@@ -422,8 +438,10 @@ const chatKeyDown = () => {
                 enterNumber = 0;
             }
 
-            if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
-            typing(0, m);
+            typingControll(m);
+            //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく
+//            if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
+//            typing(0, m);
         }
     } else {
         $("#jetelina_panel [name='chat_input']").val("");
