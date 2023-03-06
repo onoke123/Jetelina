@@ -13,6 +13,7 @@ const getdata = (o, t) => {
             const targetTable = o["tablename"];
 
             //’Jetelina’のvalueはオブジェクトになっているからこうしている  name=>key value=>o[key]
+            let row=1,col=1;
             if (key == "Jetelina" && o[key].length > 0) {
                 $.each(o[key], function (k, v) {
                     if (v != null) {
@@ -24,7 +25,19 @@ const getdata = (o, t) => {
                            */
                             $.each(v, function (name, value) {
                                 if (t == 0) {
-                                    str += `<option value=${value}>${value}</option>`;
+                                    if( col == 5 ){//5列で改行
+                                        row++;
+                                        col=1;
+                                    }
+
+                                    /*'title','declare','data','x postion','y position'*/
+                                    //str += `<option value=${value}>${value}</option>`;
+                                    table.push( `${value}`);console.log("table name:", value);
+                                    table.push( `${value}`);
+                                    table.push( `${value}`);
+                                    table.push( `${row}`);
+                                    table.push( `${col}`);
+                                    col++;
                                 } else if (t == 1) {
                                     // jetelina_delte_flgは表示対象外
                                     if (name != "jetelina_delete_flg") {

@@ -20,6 +20,6 @@ scenario[5] = [`Welcome `, `I missed you, `];
 /* after login */
 scenario[6] = ['How can I help you today?', 'What do you do now?'];
 scenario['6func_in'] = ['Do you wanna open the function panel?'];
-scenario['6func'] = ['Let me your order, if you need']
+scenario['6func'] = ['Let me your command, if you need']
 scenario['6cond_in'] = ['Do you wanna open the condition panel?'];
 scenario['6a'] = ['OK, here you are'];
