@@ -25,19 +25,7 @@ const getdata = (o, t) => {
                            */
                             $.each(v, function (name, value) {
                                 if (t == 0) {
-                                    if( col == 5 ){//5列で改行
-                                        row++;
-                                        col=1;
-                                    }
-
-                                    /*'title','declare','data','x postion','y position'*/
-                                    //str += `<option value=${value}>${value}</option>`;
-                                    table.push( `${value}`);console.log("table name:", value);
-                                    table.push( `${value}`);
-                                    table.push( `${value}`);
-                                    table.push( `${row}`);
-                                    table.push( `${col}`);
-                                    col++;
+                                    str += `<button onclick="getColumn('${value}')">${value}</button><br><br>`;
                                 } else if (t == 1) {
                                     // jetelina_delte_flgは表示対象外
                                     if (name != "jetelina_delete_flg") {
@@ -55,7 +43,7 @@ const getdata = (o, t) => {
 
                         let tagid = "";
                         if (t == 0) {
-                            tagid = "#d_tablelist";
+                            tagid = "#table_container";
                         } else if (t == 1) {
                             tagid = "#container .item_area";
                         } else if (t == 2) {

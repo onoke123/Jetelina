@@ -140,3 +140,8 @@ input[name="upfile"] {
   cursor: pointer;
 }
 
+#table_container div{
+  position: relative;
+  font-size:16px;
+}
+
