@@ -1,7 +1,7 @@
 let stage = 0;// action stage number ex. 1:before login  'login':at login
 const animateDuration = 1500;// animate() duration
 const debug = true;
-const table = [];
+//const table = [];
 
 $(window).load(function () {
   // focust on the input tag of jetelina panel

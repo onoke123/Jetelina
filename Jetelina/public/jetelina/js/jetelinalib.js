@@ -45,7 +45,8 @@ const getdata = (o, t) => {
                         if (t == 0) {
                             tagid = "#table_container";
                         } else if (t == 1) {
-                            tagid = "#container .item_area";
+//                            tagid = "#container .item_area";
+                            tagid = "#columns .item_area";
                         } else if (t == 2) {
                             tagid = "#sqllist";
                         }
@@ -290,6 +291,8 @@ const deleteThisTable = (tablename) => {
         p:選択されたチャットメッセージにmを繋げる位置　 b->before, その他->after
     */
 const chooseMsg = (i, m, p) => {
+    if(debug) console.log("scenario number: ",i);
+
     const n = Math.floor(Math.random() * scenario[i].length);
     let s = scenario[`${i}`][n];
     if (0 < m.length) {
@@ -363,6 +366,7 @@ const chatKeyDown = () => {
                         /* 'fine'とか言われたら気持ちよく返そう */
                         m = chooseMsg('1a', "", "");
                     }
+
                     break;
                 case 'login':/*login処理結果のやりとり*/
                     let chunk = "";
@@ -402,13 +406,22 @@ const chatKeyDown = () => {
                         if(debug) console.log("start function panel please");
                         $("#condition_panel").hide();
                         $("#function_panel").show().animate({
-                            width: "1000px",
-                            height: "800px",
+//                            width: "1000px",
+//                            height: "800px",
                             top: "10%",
                             left: "10%"
                         }, animateDuration);
 
                         stage = "function_panel";
+
+                        if( $("#columns").is(":visible") ){
+                            $("#columns").draggable();
+                            $("#fileup").draggable();
+                            $("#tables").draggable();
+                            $("#columns").draggable();
+                        }
+
+
                     }
 
 
@@ -416,14 +429,30 @@ const chatKeyDown = () => {
                 case 'function_panel':/* function panel */
                     m = chooseMsg('6func', "", "");
 
+                    if(ut.indexOf("cond") != -1 ) stage = "into_condition_panel";
+
                     break;
                 case 'into_condition_panel':/* into condition panel */
                     m = chooseMsg('6cond_in', "", "");
                     if (ut.indexOf('yes') != -1) {
-                        $("#function_panel").hide();
-                        $("#condition_panel").show();
+                        $("#function_panel").hide().animate({},animateDuration);
+                        $("#condition_panel").show().animate({
+//                            width: "1000px",
+//                            height: "800px",
+//                            top: "10%",
+//                            left: "10%"
+                        }, animateDuration);;
+                        stage = "condition_panel";
                     }
+
                     break;
+
+                case 'condition_panel':/* condition panel */
+                    m = chooseMsg('6cond', "", "");
+
+                    if(ut.indexOf("func") != -1 ) stage = "into_function_panel";
+
+                break;
                 default:/*before login*/
                     if (chkUResponse(0, ut)) {
                         // greeting
