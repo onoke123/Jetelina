@@ -406,8 +406,8 @@ const chatKeyDown = () => {
                         if(debug) console.log("start function panel please");
                         $("#condition_panel").hide();
                         $("#function_panel").show().animate({
-//                            width: "1000px",
-//                            height: "800px",
+                            width: window.innerWidth*0.8 /*"1000px"*/,
+                            height: window.innerHeight*0.8 /*"800px"*/,
                             top: "10%",
                             left: "10%"
                         }, animateDuration);
@@ -415,10 +415,18 @@ const chatKeyDown = () => {
                         stage = "function_panel";
 
                         if( $("#columns").is(":visible") ){
-                            $("#columns").draggable();
-                            $("#fileup").draggable();
-                            $("#tables").draggable();
-                            $("#columns").draggable();
+                            $("#fileup").draggable().animate({
+                                top: "2%",
+                                left: "80%"
+                            },animateDuration);
+                            $("#tables").draggable().animate({
+                                top: "10%",
+                                left: "5%"
+                            },animateDuration);
+                            $("#columns").draggable().animate({
+                                top: "10%",
+                                left: "30%"
+                            },animateDuration);
                         }
 
 
