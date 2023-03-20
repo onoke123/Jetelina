@@ -37,6 +37,12 @@ $(window).load(function () {
 
   // condition panel
   $("#condition_panel").hide().draggable();
+  $("#plot").mouseover(function () {
+    $("#condition_panel").draggable("disable");
+  }).mouseout(function () {
+    $("#condition_panel").draggable("enable");
+  });
+
   // function panel
   $("#function_panel").hide().draggable();
 
@@ -52,7 +58,6 @@ $(window).load(function () {
     /* panelをclickしたときに画面中央にpanelを移動させる。
        panelサイズを考慮した移動にしないといけない。
     */
-    console.log("clicked");
     moveTotheCenter();
   });
 

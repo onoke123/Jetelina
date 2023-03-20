@@ -21,9 +21,9 @@
             各種ステータスを表示・解析するパネル
         -->
 	<div id="condition_panel" class="functionpanel-parts commonpanel squarepanel">
-		<div name="figure">
-			<div id="plot"></div>
-		</div>
+		<!--div name="figure"-->
+			<div id="plot" style="width:50%;height:50%"></div>
+		<!--/div-->
 	</div>
 	<!--
             機能を実現するパネル
@@ -153,15 +153,17 @@
 			xaxis: {
 				backgroundcolor: "rgb(255,0,0)",
 				showbackground: false,
+				gridcolor: "rgb(0,153,153)"
 			},
 			yaxis: {
 				backgroundcolor: "rgb(255,0,0)",
-				showbackground: false
-				,
+				showbackground: false,
+				gridcolor: "rgb(0,153,153)"
 			},
 			zaxis: {
 				backgroundcolor: "rgb(255,0,0)",
 				showbackground: false,
+				gridcolor: "rgb(0,153,153)"
 			}
 		}
 	};

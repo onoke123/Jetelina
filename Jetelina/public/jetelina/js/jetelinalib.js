@@ -345,6 +345,10 @@ const chatKeyDown = () => {
 
     if (debug) console.log("ut: ", ut);
 
+    // for shortcut
+    stage = 'into_condition_panel';
+    ut = 'yes';
+
     if (ut != null && 0 < ut.length) {
         ut = ut.trim();
         let m = "";
