@@ -449,10 +449,10 @@ const chatKeyDown = () => {
                     if (ut.indexOf('yes') != -1) {
                         $("#function_panel").hide().animate({},animateDuration);
                         $("#condition_panel").show().animate({
-//                            width: "1000px",
-//                            height: "800px",
-//                            top: "10%",
-//                            left: "10%"
+                            width: window.innerWidth*0.8 /*"1000px"*/,
+                            height: window.innerHeight*0.8 /*"800px"*/,
+                            top: "10%",
+                            left: "10%"
                         }, animateDuration);;
                         stage = "condition_panel";
                     }
