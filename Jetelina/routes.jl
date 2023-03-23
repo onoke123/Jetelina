@@ -1,5 +1,5 @@
 using Genie.Router
-using DBDataController, CSVFileController, PostDataController, GetDataController, FileUploadController
+using DBDataController, CSVFileController, PostDataController, GetDataController, FileUploadController, SQLAnalyzer
 using JetelinaReadConfig
 
 # welcome page
@@ -61,3 +61,6 @@ route("/dofup", FileUploadController.fup, method = POST)
 route( "/3" ) do
   serve_static_file( "jetelina/threejstest.html")
 end
+
+# SQL analyze data を取得する
+route( "/getanalyzedata", SQLAnalyzer.getAnalyzeData )

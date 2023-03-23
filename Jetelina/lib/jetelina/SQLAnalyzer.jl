@@ -48,7 +48,7 @@ module SQLAnalyzer
     df_size = size(df[:,[:2]])[1]
 
     # uにはユニークなSQL文が入っているので、sql.logの中のマッチングでアクセス数を取得する ex. u[i] === ....
-    sql_df = DataFrame( column_name=String[], combination=[], access_number=Int[] )
+    sql_df = DataFrame( column_name=String[], combination=[], access_number=Float64[] )
 
     """
         shape the data
@@ -99,7 +99,7 @@ module SQLAnalyzer
             ex.
                 各tableのRow No.でcombinationを置き換える
                      Row │ column_name  combination  access_number
-            │           │ String       Array…       Int64
+            │           │ String       Array…       Float64
             │ ─────┼─────────────────────────────────────────
             │    1 │ ftest2.id          [4]            2
             │    2 │ ftest2.name        [4]            2
@@ -127,6 +127,24 @@ module SQLAnalyzer
     # d("ftest"=>1 "ftest2=>4...と入っている)　を参照してindexを取得し、それをcombinationに当てはめていく
     sql_df.combination = [getindex.(Ref(d),x) for x in sql_df.combination]
     @info sql_df
+ #   @info sql_df.combination
+    @info sql_df.access_number
+    @info "max access no: " findmax(sql_df.access_number )[1]
+    @info "max combination: " findmax(sql_df.combination)[1]
+ #   @info "min combination: " findmin(sql_df.combination[1])
+
+    sql_df.access_number .*= inv(findmax(sql_df.access_number)[1])
+    sql_df.combination .*= inv(findmax(sql_df.combination)[1])
+
+    @info sql_df
+
+
+#    @info json( Dict( "Jetelina" => copy.( eachrow( sql_df ))))
+    """
+        json or csv形式にする前に、データのnormalizeを行いたい。
+        combination:[x,y] -> x=当該table NO/全table数　y=y/max(y)
+        access_number: c=c/max(c)
+    """
 
     """
         Table Layout Change

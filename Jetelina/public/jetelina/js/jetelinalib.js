@@ -464,7 +464,9 @@ const chatKeyDown = () => {
 
                     if(ut.indexOf("func") != -1 ) stage = "into_function_panel";
 
-                break;
+                    // get analyze data
+
+                    break;
                 default:/*before login*/
                     if (chkUResponse(0, ut)) {
                         // greeting
