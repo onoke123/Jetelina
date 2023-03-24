@@ -91,8 +91,8 @@ module SQLAnalyzer
             push!( sql_df,[c[j], table_arr, ac] )
         end
         
-        @info sql_df
     end
+    @info sql_df
 
     """
         analyze
@@ -130,13 +130,13 @@ module SQLAnalyzer
  #   @info sql_df.combination
     @info sql_df.access_number
     @info "max access no: " findmax(sql_df.access_number )[1]
-    @info "max combination: " findmax(sql_df.combination)[1]
+    @info "max combination: " findmax(sql_df.combination)
  #   @info "min combination: " findmin(sql_df.combination[1])
 
     sql_df.access_number .*= inv(findmax(sql_df.access_number)[1])
-    sql_df.combination .*= inv(findmax(sql_df.combination)[1])
+#    sql_df.combination .*= inv(findmax(sql_df.combination)[1])
 
-    @info sql_df
+#    @info sql_df
 
 
 #    @info json( Dict( "Jetelina" => copy.( eachrow( sql_df ))))
