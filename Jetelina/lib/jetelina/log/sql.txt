@@ -1,0 +1,10 @@
+select ftest2.id,ftest2.name from ftest2
+select ftest2.id,ftest2.name from ftest2
+select ftest.id,ftest.name from ftest
+select ftest.id,ftest.sex,ftest.age from ftest
+select ftest.id,ftest.sex,ftest.age from ftest
+select ftest3.id,ftest3.dumy,ftest3.age from ftest3
+select ftest3.id,ftest2.name from ftest3 as ftest3, ftest2 as ftest2
+select ftest3.id,ftest2.name from ftest3 as ftest3, ftest2 as ftest2
+select ftest3.id,ftest.name,ftest2.name from ftest3 as ftest3, ftest as ftest, ftest2 as ftest2
+select ftest3.id,ftest.name from ftest3 as ftest3, ftest as ftest
