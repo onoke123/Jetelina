@@ -11,7 +11,7 @@
 logfile = log.txt
 debug = true
 fileuploadpath = lib/jetelina/testdata
-sqllogfile = sql.log
+sqllogfile = sql.txt
 
 #
 #  section of database
