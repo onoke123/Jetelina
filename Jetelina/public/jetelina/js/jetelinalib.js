@@ -121,7 +121,7 @@ const postAjaxData = (url, data) => {
 const typingControll = (m) =>{
                 //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく
                 if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
-                console.log("m:", m);
+                console.log("typingControll():", m);
                 typing(0, m);
 
 }
@@ -138,7 +138,7 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
         data: data,
         dataType: "json"
     }).done(function (result, textStatus, jqXHR) {
-        console.log("result: ", result);
+        if( debug ) console.log("authAjax() result: ", result);
 
         scenarioNumber = 4;
         if (result != null) {
@@ -168,6 +168,7 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
                 } else if (1 < o[key].length) {
                     //候補が複数いる
                     m = "please tell me more detail.";
+                    stage = 'login';
                 } else {
                     //候補がいない
                     m = "you are not registered, try again.";
@@ -194,7 +195,7 @@ const fileupload = () => {
 
     const uploadFilename = $("input[type=file]").prop("files")[0].name;
     const tablename = uploadFilename.split(".")[0];
-    console.log("filename 2 tablename: ", tablename);
+    if( debug ) console.log("filename 2 tablename: ", tablename);
 
     $.ajax({
         url: "/dofup",
@@ -210,7 +211,7 @@ const fileupload = () => {
         $("#upbtn").prop("disabled", false);
         getdata(result, 1);
         // talbe list に追加してfocusを当てる
-        console.log("set table to select:", tablename);
+        if( debug ) console.log("set table to select:", tablename);
         const addop = `<option value=${tablename}>${tablename}</option>`;
         $("#d_tablelist").prepend(addop);
         $("#d_tablelist").val(tablename);
@@ -238,7 +239,7 @@ const getColumn = (tablename) => {
             contentType: 'application/json',
             dataType: "json"
         }).done(function (result, textStatus, jqXHR) {
-            console.log("getColumn result: ", result);
+            if( debug ) console.log("getColumn result: ", result);
             // data parseに行く
             return getdata(result, 1);
         }).fail(function (result) {
@@ -352,7 +353,7 @@ const chatKeyDown = () => {
     ut = 'yes';
 */
     if (ut != null && 0 < ut.length) {
-        ut = ut.trim();
+        ut = ut.toLowerCase().trim();
         let m = "";
         /* ユーザのチャット入力文字列がある時だけ処理を実行する　*/
         if (0 < ut.length) {
@@ -396,86 +397,67 @@ const chatKeyDown = () => {
                     break;
                 case 'login_success':/* after login */
                     m = chooseMsg(6, "", "");
+                    stage ='chose_func_or_cond';
+                    break;
+                case 'chose_func_or_cond':
+                    let panel;
 
                     if (ut.indexOf('func') != -1) {
-                        stage = 'into_function_panel';
+                        panel = 'func';
                     } else if (ut.indexOf('cond') != -1) {
-                        stage = 'into_condition_panel';
+                        panel = 'cond';
                     }
-
-                    if (stage == 'into_function_panel' || stage == 'into_condition_panel') {
+                    //move Jetelina Chatpanel
+                    if (panel == 'func' || panel == 'cond') {
                         const panelTop = window.innerHeight - 110;
                         $("#jetelina_panel").animate({
                             height: "70px",
                             top: `${panelTop}px`,
                             left: "210px"
                         }, animateDuration);
+                        m = chooseMsg('6a', "", "");
+                    }else{
+                        m = chooseMsg('6b', "", "");
                     }
+                    // show func panel
+                    if( panel == 'func' ){
 
-                    break;
-                case 'into_function_panel':/* into function panel */
-                    m = chooseMsg('6func_in', "", "");
-                    if (ut.indexOf('yes') != -1) {
-                        if(debug) console.log("start function panel please");
                         $("#condition_panel").hide();
-                        $("#function_panel").show().animate({
-                            width: window.innerWidth*0.8 /*"1000px"*/,
-                            height: window.innerHeight*0.8 /*"800px"*/,
-                            top: "10%",
-                            left: "10%"
-                        }, animateDuration);
-
-                        stage = "function_panel";
-
-                        if( $("#columns").is(":visible") ){
-                            $("#fileup").draggable().animate({
-                                top: "2%",
-                                left: "80%"
-                            },animateDuration);
-                            $("#tables").draggable().animate({
+                            $("#function_panel").show().animate({
+                                width: window.innerWidth*0.8 /*"1000px"*/,
+                                height: window.innerHeight*0.8 /*"800px"*/,
                                 top: "10%",
-                                left: "5%"
-                            },animateDuration);
-                            $("#columns").draggable().animate({
+                                left: "10%"
+                            }, animateDuration);
+
+                            if( $("#columns").is(":visible") ){
+                                $("#fileup").draggable().animate({
+                                    top: "2%",
+                                    left: "80%"
+                                },animateDuration);
+                                $("#tables").draggable().animate({
+                                    top: "10%",
+                                    left: "5%"
+                                },animateDuration);
+                                $("#columns").draggable().animate({
+                                    top: "10%",
+                                    left: "30%"
+                                },animateDuration);
+                            }
+
+
+                    }else if( panel == 'cond' ){
+                            $("#function_panel").hide().animate({},animateDuration);
+                            $("#condition_panel").show().animate({
+                                width: window.innerWidth*0.8 /*"1000px"*/,
+                                height: window.innerHeight*0.8 /*"800px"*/,
                                 top: "10%",
-                                left: "30%"
-                            },animateDuration);
-                        }
-
-
-                    }
-
-
-                    break;
-                case 'function_panel':/* function panel */
-                    m = chooseMsg('6func', "", "");
-
-                    if(ut.indexOf("cond") != -1 ) stage = "into_condition_panel";
-
-                    break;
-                case 'into_condition_panel':/* into condition panel */
-                    m = chooseMsg('6cond_in', "", "");
-                    if (ut.indexOf('yes') != -1) {
-                        $("#function_panel").hide().animate({},animateDuration);
-                        $("#condition_panel").show().animate({
-                            width: window.innerWidth*0.8 /*"1000px"*/,
-                            height: window.innerHeight*0.8 /*"800px"*/,
-                            top: "10%",
-                            left: "10%"
-                        }, animateDuration);;
-                        stage = "condition_panel";
+                                left: "10%"
+                            }, animateDuration);;
                     }
 
                     break;
 
-                case 'condition_panel':/* condition panel */
-                    m = chooseMsg('6cond', "", "");
-
-                    if(ut.indexOf("func") != -1 ) stage = "into_function_panel";
-
-                    // get analyze data
-
-                    break;
                 default:/*before login*/
                     if (chkUResponse(0, ut)) {
                         // greeting
