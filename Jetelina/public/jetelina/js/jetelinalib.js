@@ -342,13 +342,15 @@ let enterNumber = 0;
 const chatKeyDown = () => {
     /* userTextはユーザのチャット入力文字列 */
     let ut = $("#jetelina_panel [name='chat_input']").val();
+    let logoutflg = false;
 
     if (debug) console.log("ut: ", ut);
 
     // for shortcut
+    /*
     stage = 'into_condition_panel';
     ut = 'yes';
-
+*/
     if (ut != null && 0 < ut.length) {
         ut = ut.trim();
         let m = "";
@@ -360,6 +362,13 @@ const chatKeyDown = () => {
             $("#jetelina_panel [name='your_tell']").text(ut);
 
             if (debug) console.info("stage: ", stage, " ", ut);
+
+            // logout
+            if( logoutChk(ut) ){
+                logout();
+                m = chooseMsg('afterlogout', "", "");
+                logoutflg = true;
+            }
 
             switch (stage) {
                 case 1:/*login時のやりとり*/
@@ -473,7 +482,9 @@ const chatKeyDown = () => {
                         m = chooseMsg(1, "", "");
                         stage = 1;/* into the login stage */
                     } else {
-                        m = chooseMsg(3, "", "");
+                        if( !logoutflg ){
+                            m = chooseMsg(3, "", "");
+                        }
                     }
             }
 
@@ -491,4 +502,27 @@ const chatKeyDown = () => {
         $("#jetelina_panel [name='chat_input']").val("");
         enterNumber = 0;
     }
+}
+/*
+    logout check
+*/
+const logoutChk = (s) =>{
+    return scenario['logout'].includes(s); 
+}
+/*
+   logout 
+*/
+const logout = () =>{
+    enterNumber = 0;
+    stage = 0;
+
+    $("#jetelina_panel").animate({
+        width: "400px",
+        height: "100px",
+        top: "40%",
+        left: "40%"
+    }, animateDuration);
+
+    $("#function_panel").hide();
+    $("#condition_panel").hide();
 }

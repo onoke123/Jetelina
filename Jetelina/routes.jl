@@ -63,4 +63,4 @@ route( "/3" ) do
 end
 
 # SQL analyze data を取得する
-route( "/getanalyzedata", SQLAnalyzer.getAnalyzeData )
+#route( "/getanalyzedata", SQLAnalyzer.getAnalyzeData )

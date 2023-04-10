@@ -24,3 +24,6 @@ scenario['6func'] = ['Let me your command, if you need']
 scenario['6cond_in'] = ['Do you wanna open the condition panel?'];
 scenario['6cond'] = ['Let me your command, if you need']
 scenario['6a'] = ['OK, here you are'];
+/* log out */
+scenario['logout'] = ['logout','exit'];
+scenario['afterlogout'] = ['Bye', 'Have a good day','Hope you will back soon','I am looking forward you'];
