@@ -59,7 +59,7 @@ route("/dofup", FileUploadController.fup, method = POST)
 
 # test for three.js
 route( "/3" ) do
-  serve_static_file( "jetelina/threejstest.html")
+  serve_static_file( "jetelina/3d4jet.html")
 end
 
 # SQL analyze data を取得する
