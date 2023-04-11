@@ -114,6 +114,11 @@ const fileupload = () => {
 /*
     指定されたtableのcolumnを取得する
 */
+$(document).on("click",".table",function(){
+  console.log("class: ", $(this).attr("class"));
+  $(this).toggleClass("activeTable");
+});
+
 const getColumn = (tablename) => {
     if (0 < tablename.length || tablename != undefined) {
         //        let data = [];
