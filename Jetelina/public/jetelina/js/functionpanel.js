@@ -1,5 +1,6 @@
 // table delete button
 $("#table_delete").hide();
+let selectedItemsArr = [];
 
 /* jetelinalib.jsのgetAjaxData()を呼び出して、DB上の全tableリストを取得する
    ajaxのurlは'getalldbtable'
@@ -53,40 +54,43 @@ $(document).on({
   mouseleave: function () {
     $('div#pop-up').hide();
   },
-  click: function(){
-//    $(this).removeClass("item");
-    $(this).addClass("selectedItem");
-    $(this).detach().appendTo("#container");
+  click: function () {
+    let cl = $(this).attr("class");
+    let item = $(this).text();
+
+    if (cl.indexOf("selectedItem") != -1) {
+      //削除
+      selectedItemsArr.filter(function (d) {
+        return d != item;
+      });
+
+      $(this).removeClass("selectedItem");
+      $(this).detach().appendTo("#columns div");
+    } else {
+      //追加
+      if( $.inArray(item,selectedItemsArr) != -1 ){
+        $(this).detach();
+      }else{
+        $(this).addClass("selectedItem");
+        $(this).detach().appendTo("#container");
+      }
+
+      selectedItemsArr.push(item);
+    }
   }
 }, ".item");
 
-//let moveLeft = -150/*20*/;
-//let moveDown = -90/*10*/;
-/*
-$(document).on({
-  mousemove: function (e) {
-    $("div#pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
-  }
-}, ".item");
-*/
-
-/*
-$('.item_area').mousemove(function (e) {
-  $("#pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
-});*/
-
-let selectedItemsArr = [];
 /*
     cleanUp
 
     droped items & columns of selecting table
 */
 const cleanUp = () => {
-    selectedItemsArr.splice(0);
-    // clean up d&d items
-    $(".item_area .item").remove();
-    // clean up sql list
-    $("#sqllist .list").remove();
+  selectedItemsArr.splice(0);
+  // clean up d&d items
+  $(".item_area .item").remove();
+  // clean up sql list
+  $("#sqllist .list").remove();
 }
 
 
@@ -94,34 +98,34 @@ const cleanUp = () => {
     CSV file upload
 */
 const fileupload = () => {
-    let fd = new FormData($("#my_form").get(0));
-    $("#upbtn").prop("disabled", true);
+  let fd = new FormData($("#my_form").get(0));
+  $("#upbtn").prop("disabled", true);
 
-    const uploadFilename = $("input[type=file]").prop("files")[0].name;
-    const tablename = uploadFilename.split(".")[0];
-    if( debug ) console.log("filename 2 tablename: ", tablename);
+  const uploadFilename = $("input[type=file]").prop("files")[0].name;
+  const tablename = uploadFilename.split(".")[0];
+  if (debug) console.log("filename 2 tablename: ", tablename);
 
-    $.ajax({
-        url: "/dofup",
-        type: "post",
-        data: fd,
-        cache: false,
-        contentType: false,
-        processData: false,
-        dataType: "json"
-    }).done(function (result) {
-        // clean up
-        $("input[type=file]").val("");
-        $("#upbtn").prop("disabled", false);
-        getdata(result, 1);
-        // talbe list に追加してfocusを当てる
-        if( debug ) console.log("set table to select:", tablename);
-        const addop = `<option value=${tablename}>${tablename}</option>`;
-        $("#d_tablelist").prepend(addop);
-        $("#d_tablelist").val(tablename);
-    }).fail(function (result) {
-        // something error happened
-    });
+  $.ajax({
+    url: "/dofup",
+    type: "post",
+    data: fd,
+    cache: false,
+    contentType: false,
+    processData: false,
+    dataType: "json"
+  }).done(function (result) {
+    // clean up
+    $("input[type=file]").val("");
+    $("#upbtn").prop("disabled", false);
+    getdata(result, 1);
+    // talbe list に追加してfocusを当てる
+    if (debug) console.log("set table to select:", tablename);
+    const addop = `<option value=${tablename}>${tablename}</option>`;
+    $("#d_tablelist").prepend(addop);
+    $("#d_tablelist").val(tablename);
+  }).fail(function (result) {
+    // something error happened
+  });
 }
 
 /*
@@ -131,18 +135,19 @@ const fileupload = () => {
     １度目のクリック後　　　　　 ：table activeTable
     この"activeTable"を見てcolumn取得実行の判定を行っている
 */
-$(document).on("click",".table",function(){
+$(document).on("click", ".table", function () {
   let tn = $(this).text();
   let cl = $(this).attr("class");
 
-  if( debug ){
-    console.log("clicked table: ", tn );
-    console.log("clicked class: ", cl );
+  if (debug) {
+    console.log("clicked table: ", tn);
+    console.log("clicked class: ", cl);
   }
-  
-  if( cl.indexOf("activeTable") != -1 ){
-    removeColumn(tn);
-  }else{
+
+  removeColumn(tn);
+  if (cl.indexOf("activeTable") != -1) {
+//    removeColumn(tn);
+  } else {
     getColumn(tn);
   }
 
@@ -150,29 +155,29 @@ $(document).on("click",".table",function(){
 });
 
 const getColumn = (tablename) => {
-    if (0 < tablename.length || tablename != undefined) {
-        //        let data = [];
-        //        data.push( $.trim(tablename));
+  if (0 < tablename.length || tablename != undefined) {
+    //        let data = [];
+    //        data.push( $.trim(tablename));
 
-        let pd = {};
-        pd["tablename"] = $.trim(tablename);
-        let dd = JSON.stringify(pd);
+    let pd = {};
+    pd["tablename"] = $.trim(tablename);
+    let dd = JSON.stringify(pd);
 
-        $.ajax({
-            url: "/getcolumns",
-            type: "post",
-            data: dd,
-            contentType: 'application/json',
-            dataType: "json"
-        }).done(function (result, textStatus, jqXHR) {
-            if( debug ) console.log("getColumn result: ", result);
-            // data parseに行く
-            return getdata(result, 1);
-        }).fail(function (result) {
-        });
-    } else {
-        console.error("ajax url is not defined");
-    }
+    $.ajax({
+      url: "/getcolumns",
+      type: "post",
+      data: dd,
+      contentType: 'application/json',
+      dataType: "json"
+    }).done(function (result, textStatus, jqXHR) {
+      if (debug) console.log("getColumn result: ", result);
+      // data parseに行く
+      return getdata(result, 1);
+    }).fail(function (result) {
+    });
+  } else {
+    console.error("ajax url is not defined");
+  }
 }
 
 /*
@@ -186,38 +191,55 @@ const removeColumn = (tablename) => {
 }
 
 const deleteThisTable = (tablename) => {
-    if (0 < tablename.length || tablename != undefined) {
-        //        let data = [];
-        //        data.push( $.trim(tablename));
+  if (0 < tablename.length || tablename != undefined) {
+    //        let data = [];
+    //        data.push( $.trim(tablename));
 
-        let pd = {};
-        pd["tablename"] = $.trim(tablename);
-        let dd = JSON.stringify(pd);
+    let pd = {};
+    pd["tablename"] = $.trim(tablename);
+    let dd = JSON.stringify(pd);
 
-        $.ajax({
-            url: "/deletetable",
-            type: "post",
-            data: dd,
-            contentType: 'application/json',
-            dataType: "json"
-        }).done(function (result, textStatus, jqXHR) {
-        }).fail(function (result) {
-        }).always(function (jqXHR, textStatus) {
-            // table list 更新
-            // clean up selectbox of the table list
-            //$( "#d_tablelist .tables" ).remove();
+    $.ajax({
+      url: "/deletetable",
+      type: "post",
+      data: dd,
+      contentType: 'application/json',
+      dataType: "json"
+    }).done(function (result, textStatus, jqXHR) {
+    }).fail(function (result) {
+    }).always(function (jqXHR, textStatus) {
+      // table list 更新
+      // clean up selectbox of the table list
+      //$( "#d_tablelist .tables" ).remove();
 
 
-            // clean up d&d items
-            //            $(".item_area .item").remove();
-            cleanUp();
-            // select から当該tableを削除する
-            $("#d_tablelist").children(`option[value=${tablename}]`).remove();
-            //            getAjaxData("getalldbtable");
-            // deleteボタンを非表示にする
-            $("#table_delete").hide();
-        });
-    } else {
-        console.error("ajax url is not defined");
-    }
+      // clean up d&d items
+      //            $(".item_area .item").remove();
+      cleanUp();
+      // select から当該tableを削除する
+      $("#d_tablelist").children(`option[value=${tablename}]`).remove();
+      //            getAjaxData("getalldbtable");
+      // deleteボタンを非表示にする
+      $("#table_delete").hide();
+    });
+  } else {
+    console.error("ajax url is not defined");
+  }
 }
+$("#post").on("click", function () {
+  let pd = {};
+  pd["item"] = selectedItemsArr;
+  console.log("post: ", selectedItemsArr, " -> ", pd);
+  let dd = JSON.stringify(pd);
+
+  $.ajax({
+    url: "/putitems",
+    type: "POST",
+    data: dd,
+    contentType: 'application/json',
+    dataType: "json"
+  }).done(function (result, textStatus, jqXHR) {
+    console.log(result);
+  }).fail(function (result) {
+  });
+});
