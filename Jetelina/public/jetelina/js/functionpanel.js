@@ -40,18 +40,28 @@ $("#table_delete").on("click", function () {
   tooltip for columns list
 */
 $(document).on({
-  mouseenter: function () {
+  mouseenter: function (e) {
+    let moveLeft = -150/*20*/;
+    let moveDown = -90/*10*/;
+
+    $("#pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
+
     let d = $(this).attr("d");
 
     $('div#pop-up').text(d).show();
   },
   mouseleave: function () {
     $('div#pop-up').hide();
+  },
+  click: function(){
+//    $(this).removeClass("item");
+    $(this).addClass("selectedItem");
+    $(this).detach().appendTo("#container");
   }
 }, ".item");
 
-let moveLeft = -150/*20*/;
-let moveDown = -90/*10*/;
+//let moveLeft = -150/*20*/;
+//let moveDown = -90/*10*/;
 /*
 $(document).on({
   mousemove: function (e) {
@@ -59,9 +69,11 @@ $(document).on({
   }
 }, ".item");
 */
+
+/*
 $('.item_area').mousemove(function (e) {
   $("#pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
-});
+});*/
 
 let selectedItemsArr = [];
 /*

@@ -33,6 +33,11 @@ body {
   transform: scale(1.1);
 }
 
+.item.selectedItem {
+  background-color: #280cca;
+  color: #c5da0b;
+}
+
 .table {
   display: inline-block;
   padding: 5px;
