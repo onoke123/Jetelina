@@ -113,9 +113,26 @@ const fileupload = () => {
 
 /*
     指定されたtableのcolumnを取得する
+    一度クリックされると当該tableのclass属性が変わる
+    クリック前&２度めのクリック後：table 
+    １度目のクリック後　　　　　 ：table activeTable
+    この"activeTable"を見てcolumn取得実行の判定を行っている
 */
 $(document).on("click",".table",function(){
-  console.log("class: ", $(this).attr("class"));
+  let tn = $(this).text();
+  let cl = $(this).attr("class");
+
+  if( debug ){
+    console.log("clicked table: ", tn );
+    console.log("clicked class: ", cl );
+  }
+  
+  if( cl.indexOf("activeTable") != -1 ){
+    removeColumn(tn);
+  }else{
+    getColumn(tn);
+  }
+
   $(this).toggleClass("activeTable");
 });
 
@@ -143,6 +160,16 @@ const getColumn = (tablename) => {
     } else {
         console.error("ajax url is not defined");
     }
+}
+
+/*
+  カラム表示されている要素を指定して表示から削除する
+*/
+const removeColumn = (tablename) => {
+  if (0 < tablename.length || tablename != undefined) {
+    $(".item").remove(`:contains(${tablename}.)`);
+
+  }
 }
 
 const deleteThisTable = (tablename) => {

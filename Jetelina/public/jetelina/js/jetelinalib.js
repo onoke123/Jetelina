@@ -25,7 +25,8 @@ const getdata = (o, t) => {
                            */
                             $.each(v, function (name, value) {
                                 if (t == 0) {
-                                    str += `<span class="table" onclick="getColumn('${value}')">${value}</span>`;
+                                    str += `<span class="table">${value}</span>`;
+//                                    str += `<span class="table" onclick="getColumn('${value}')">${value}</span>`;
                                     
                                     //str += `<button onclick="getColumn('${value}')">${value}</button><br><br>`;
                                 } else if (t == 1) {
