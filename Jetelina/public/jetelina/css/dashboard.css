@@ -130,6 +130,10 @@ body {
   /*border: 1px solid rgba(255, 255, 255, 0.18);*/
 }
 
+.commonpanel.itempanel{
+  text-align: left;
+}
+
 .commonpanelborderon {
   border: 1px solid rgba(12, 236, 12, 0.831);
 }

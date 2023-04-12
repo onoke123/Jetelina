@@ -180,7 +180,7 @@ const getColumn = (tablename) => {
 */
 const removeColumn = (tablename) => {
   if (0 < tablename.length || tablename != undefined) {
-    $(".item").remove(`:contains(${tablename}.)`);
+    $(".item").not(".selectedItem").remove(`:contains(${tablename}.)`);
 
   }
 }
