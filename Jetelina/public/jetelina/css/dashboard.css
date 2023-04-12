@@ -8,12 +8,13 @@ body {
 }
 
 .item {
-  padding: 10px;
+  display: inline-block;
+  padding: 5px;
   width: 80px;
-  height: 20px;
+  height: 15px;
   border: 1px solid #2e6da4;
-  background-color: #7da8c3;
-  color: #ffffff;
+  background-color: #09859e;
+  color: #eeeeee;
   border-radius: 9999px;
 
   display: inline-block;
@@ -25,6 +26,11 @@ body {
   opacity: 0.6;
   text-align: center;
 
+}
+
+.item:hover {
+  color: #e32910;
+  transform: scale(1.1);
 }
 
 .table {
@@ -80,16 +86,18 @@ body {
 }
 
 /* columns sample data pop up */
-div#pop-up {
+.tooltip {
   display: none;
   position: absolute;
-  width: 280px;
-  padding: 10px;
-  background: #eeeeee;
+  width: 100px;
+  padding: 5px;
+  background: #dceb0c;
   color: #000000;
   border: 1px solid #1a1a1a;
   font-size: 90%;
   z-index: 10;
+  opacity: 0.6;
+  border-radius: 9999px;
 }
 
 .commonpanel {

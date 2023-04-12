@@ -50,18 +50,19 @@ $(document).on({
   }
 }, ".item");
 
-let moveLeft = 20;
-let moveDown = 10;
+let moveLeft = -150/*20*/;
+let moveDown = -90/*10*/;
+/*
 $(document).on({
   mousemove: function (e) {
     $("div#pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
   }
 }, ".item");
-/*
-$('.item').mousemove(function (e) {
-  $("div#pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
-});
 */
+$('.item_area').mousemove(function (e) {
+  $("#pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
+});
+
 let selectedItemsArr = [];
 /*
     cleanUp
