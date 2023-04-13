@@ -58,7 +58,7 @@ $(document).on({
     let cl = $(this).attr("class");
     let item = $(this).text();
 
-    if (cl.indexOf("selectedItem") != -1) {
+    if( $(this).hasClass("selectedItem") ){
       //削除
       selectedItemsArr.filter(function (d) {
         return d != item;

@@ -198,3 +198,6 @@ input[name="upfile"] {
   font-size:16px;
 }
 
+.panelbutton {
+  cursor: not-allowed;
+}

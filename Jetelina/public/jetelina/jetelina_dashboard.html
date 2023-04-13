@@ -20,7 +20,7 @@
 	<!--
             各種ステータスを表示・解析するパネル
         -->
-	<div id="condition_panel" class="functionpanel-parts commonpanel squarepanel">
+	<div id="condition_panel" class="functionpanel-parts commonpanel squarepanel" hidden>
 		<!--div name="figure"-->
 			<div id="plot" style="width:50%;height:50%"></div>
 		<!--/div-->
@@ -30,7 +30,7 @@
         <div id="function_panel" class="commonpanel squarepanel" style="width:1000px;height:800px;top:10%;left:10%">
         -->
 	<!--div id="function_panel" class="functionpanel-parts commonpanel squarepanel"-->
-	<div id="function_panel" class="functionpanel-parts commonpanel squarepanel">
+	<div id="function_panel" class="functionpanel-parts commonpanel squarepanel" hidden>
 		<div id="fileup" style="width:200px;height:20px" class="functionpanel-parts commonpanel squarepanel">
 			<form id="my_form">
 				<!-- caution:
@@ -40,7 +40,7 @@
 				<label name="filelabel">
 					<input type="file" name="upfile">Select CSV File
 				</label>
-				<button type="button" id="upbtn">up</button>
+				<button type="button" id="upbtn" disabled class="panelbutton">UP</button>
 			</form>
 		</div>
 
@@ -69,20 +69,14 @@
 		<div id="pop-up" class="tooltip">
 			<text></text>
 		</div>
-		<!-- drag & drop data area -->
+		<!-- selected columns list area -->
 		<div id="container" style="width:700px;height:120px" class="functionpanel-parts commonpanel squarepanel itempanel">
-<!--
-			<div class="item_area">
+			<div id="functionpanelpost" style="margin-bottom: 5px;">
+				<button name="post" disabled class="panelbutton">POST</button>
+				<button name="clear" disabled class="panelbutton">CREAR</button>
 			</div>
-			<div class="drop_area">
-				<p>hear the drop area</p>
-			</div>
-		-->
 		</div>
 
-		<div>
-			<button id="post">POST</button>
-		</div>
 	</div>
 	<!--
             Jetelinaと会話するチャットパネル
