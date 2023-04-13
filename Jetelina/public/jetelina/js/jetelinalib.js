@@ -13,7 +13,7 @@ const getdata = (o, t) => {
             const targetTable = o["tablename"];
 
             //’Jetelina’のvalueはオブジェクトになっているからこうしている  name=>key value=>o[key]
-            let row=1,col=1;
+            let row = 1, col = 1;
             if (key == "Jetelina" && o[key].length > 0) {
                 $.each(o[key], function (k, v) {
                     if (v != null) {
@@ -26,14 +26,14 @@ const getdata = (o, t) => {
                             $.each(v, function (name, value) {
                                 if (t == 0) {
                                     str += `<span class="table">${value}</span>`;
-//                                    str += `<span class="table" onclick="getColumn('${value}')">${value}</span>`;
-                                    
+                                    //                                    str += `<span class="table" onclick="getColumn('${value}')">${value}</span>`;
+
                                     //str += `<button onclick="getColumn('${value}')">${value}</button><br><br>`;
                                 } else if (t == 1) {
                                     // jetelina_delte_flgは表示対象外
                                     if (name != "jetelina_delete_flg") {
                                         str += `<span class="item" d=${value}><p>${targetTable}.${name}</p></span>`;
-//                                        str += `<div class="item" d=${value}><p>${targetTable}.${name}</p></div>`;
+                                        //                                        str += `<div class="item" d=${value}><p>${targetTable}.${name}</p></div>`;
                                     }
                                 }
                             });
@@ -49,7 +49,7 @@ const getdata = (o, t) => {
                         if (t == 0) {
                             tagid = "#table_container";
                         } else if (t == 1) {
-//                            tagid = "#container .item_area";
+                            //                            tagid = "#container .item_area";
                             tagid = "#columns .item_area";
                         } else if (t == 2) {
                             tagid = "#sqllist";
@@ -108,11 +108,11 @@ const postAjaxData = (url, data) => {
     }
 }
 
-const typingControll = (m) =>{
-                //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく
-                if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
-                console.log("typingControll():", m);
-                typing(0, m);
+const typingControll = (m) => {
+    //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく
+    if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
+    console.log("typingControll():", m);
+    typing(0, m);
 
 }
 /*
@@ -128,7 +128,7 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
         data: data,
         dataType: "json"
     }).done(function (result, textStatus, jqXHR) {
-        if( debug ) console.log("authAjax() result: ", result);
+        if (debug) console.log("authAjax() result: ", result);
 
         scenarioNumber = 4;
         if (result != null) {
@@ -169,8 +169,8 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
 
                 typingControll(m);
                 //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく
-//                if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
-//                typing(0, m);
+                //                if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
+                //                typing(0, m);
             });
         }
     });
@@ -182,7 +182,7 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
         p:選択されたチャットメッセージにmを繋げる位置　 b->before, その他->after
     */
 const chooseMsg = (i, m, p) => {
-    if(debug) console.log("scenario number: ",i);
+    if (debug) console.log("scenario number: ", i);
 
     const n = Math.floor(Math.random() * scenario[i].length);
     let s = scenario[`${i}`][n];
@@ -230,18 +230,24 @@ const chkUResponse = (n, s) => {
 
 let enterNumber = 0;
 /* ユーザが入力するチャットボックス(input tag)でenter keyが押されたときの処理 */
-const chatKeyDown = () => {
+const chatKeyDown = (cmd) => {
     /* userTextはユーザのチャット入力文字列 */
-    let ut = $("#jetelina_panel [name='chat_input']").val();
+    let ut;
+    if( cmd == null ){
+        ut = $("#jetelina_panel [name='chat_input']").val().toLowerCase();
+    }else{
+        ut = cmd.toLowerCase();
+    }
+
     let logoutflg = false;
 
     if (debug) console.log("ut: ", ut);
 
     // for shortcut
-    /* */
+    /* 
     stage = 'chose_func_or_cond';
     ut = 'func';
-/**/
+    */
     if (ut != null && 0 < ut.length) {
         ut = ut.toLowerCase().trim();
         let m = "";
@@ -255,7 +261,7 @@ const chatKeyDown = () => {
             if (debug) console.info("stage: ", stage, " ", ut);
 
             // logout
-            if( logoutChk(ut) ){
+            if (logoutChk(ut)) {
                 logout();
                 m = chooseMsg('afterlogout', "", "");
                 logoutflg = true;
@@ -287,7 +293,7 @@ const chatKeyDown = () => {
                     break;
                 case 'login_success':/* after login */
                     m = chooseMsg(6, "", "");
-                    stage ='chose_func_or_cond';
+                    stage = 'chose_func_or_cond';
                     break;
                 case 'chose_func_or_cond':
                     let panel;
@@ -297,6 +303,9 @@ const chatKeyDown = () => {
                     } else if (ut.indexOf('cond') != -1) {
                         panel = 'cond';
                     }
+                    
+                    stage = panel;
+
                     //move Jetelina Chatpanel
                     if (panel == 'func' || panel == 'cond') {
                         const panelTop = window.innerHeight - 110;
@@ -306,59 +315,78 @@ const chatKeyDown = () => {
                             left: "210px"
                         }, animateDuration);
                         m = chooseMsg('6a', "", "");
-                    }else{
+                    } else {
                         m = chooseMsg('6b', "", "");
                     }
                     // show func panel
-                    if( panel == 'func' ){
+                    if (panel == 'func') {
 
                         $("#condition_panel").hide();
-                            $("#function_panel").show().animate({
-                                width: window.innerWidth*0.8 /*"1000px"*/,
-                                height: window.innerHeight*0.8 /*"800px"*/,
-                                top: "10%",
-                                left: "10%"
+                        $("#function_panel").show().animate({
+                            width: window.innerWidth * 0.8 /*"1000px"*/,
+                            height: window.innerHeight * 0.8 /*"800px"*/,
+                            top: "10%",
+                            left: "10%"
+                        }, animateDuration);
+
+                        if ($("#columns").is(":visible")) {
+                            $("#fileup").draggable().animate({
+                                top: "4%",
+                                left: "5%"
                             }, animateDuration);
-
-                            if( $("#columns").is(":visible") ){
-                                $("#fileup").draggable().animate({
-                                    top: "4%",
-                                    left: "5%"
-                                },animateDuration);
-                                $("#tables").draggable().animate({
-                                    top: "10%",
-                                    left: "5%"
-                                },animateDuration);
-                                $("#columns").draggable().animate({
-                                    top: "10%",
-                                    left: "30%"
-                                },animateDuration);
-                                $("#container").draggable().animate({
-                                    bottom: "10%",
-                                    left: "30%"
-                                },animateDuration);
-                            }
-
-
-                    }else if( panel == 'cond' ){
-                            $("#function_panel").hide().animate({},animateDuration);
-                            $("#condition_panel").show().animate({
-                                width: window.innerWidth*0.8 /*"1000px"*/,
-                                height: window.innerHeight*0.8 /*"800px"*/,
+                            $("#tables").draggable().animate({
                                 top: "10%",
-                                left: "10%"
-                            }, animateDuration);;
+                                left: "5%"
+                            }, animateDuration);
+                            $("#columns").draggable().animate({
+                                top: "10%",
+                                left: "30%"
+                            }, animateDuration);
+                            $("#container").draggable().animate({
+                                bottom: "10%",
+                                left: "30%"
+                            }, animateDuration);
+                        }
+                    } else if (panel == 'cond') {
+                        $("#function_panel").hide().animate({}, animateDuration);
+                        $("#condition_panel").show().animate({
+                            width: window.innerWidth * 0.8 /*"1000px"*/,
+                            height: window.innerHeight * 0.8 /*"800px"*/,
+                            top: "10%",
+                            left: "10%"
+                        }, animateDuration);;
                     }
 
                     break;
+                case 'func':
+                    if (ut.indexOf('cond') != -1 ){
+                        stage = 'chose_func_or_cond';
+                        chatKeyDown(ut);
+                    }else{
+                        switch(ut){
+                            case 'post':
+                                console.log("post?");
+                                break;
+                            default:
+                                break;
+                        }
+                    }
 
+                    break;
+                case 'cond':
+                    if (ut.indexOf('func') != -1 ){
+                        stage = 'chose_func_or_cond';
+                        chatKeyDown(ut);
+                    }
+
+                    break;
                 default:/*before login*/
                     if (chkUResponse(0, ut)) {
                         // greeting
                         m = chooseMsg(1, "", "");
                         stage = 1;/* into the login stage */
                     } else {
-                        if( !logoutflg ){
+                        if (!logoutflg) {
                             m = chooseMsg(3, "", "");
                         }
                     }
@@ -371,8 +399,8 @@ const chatKeyDown = () => {
 
             typingControll(m);
             //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく
-//            if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
-//            typing(0, m);
+            //            if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
+            //            typing(0, m);
         }
     } else {
         $("#jetelina_panel [name='chat_input']").val("");
@@ -382,13 +410,13 @@ const chatKeyDown = () => {
 /*
     logout check
 */
-const logoutChk = (s) =>{
-    return scenario['logout'].includes(s); 
+const logoutChk = (s) => {
+    return scenario['logout'].includes(s);
 }
 /*
    logout 
 */
-const logout = () =>{
+const logout = () => {
     enterNumber = 0;
     stage = 0;
 
