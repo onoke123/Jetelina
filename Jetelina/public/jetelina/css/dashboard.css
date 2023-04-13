@@ -67,29 +67,33 @@ body {
 /*.item p {
   display: inline-block;
 }*/
-
+/*
 .drop_area {
   margin-top: 50px;
   width: 200px;
   height: 200px;
   border: 1px solid #3a945b;
-  /*background: #f0fff0;*/
 }
+*/
+/*
 .drop_area > p {
   margin: 10px;
   color: #a8ce49;
   text-shadow: 0 0 10px rgb(14, 225, 31), 0 0 15px rgb(229, 232, 198);
 }
-
+*/
+/*
 .ui-selected {
   background-color: #1cc7ff;
 }
+*/
+/*
 .ui-selectable-helper {
   position: absolute;
   z-index: 100;
   border: 1px dotted black;
 }
-
+*/
 /* columns sample data pop up */
 .tooltip {
   display: none;
@@ -107,27 +111,16 @@ body {
 
 .commonpanel {
   position: absolute;
-  /*
-  width: 400px;
-  height: 100px;
-  */
   margin: 5px;
   padding: 10px;
   background-color: lightgray;
-  /*
-  top: 40%;
-  left: 40%;
-  */
-  /*  opacity: 0.6;*/
   text-align: center;
 
-/*  background: rgba(16, 190, 117, 0.15);*/
   background: rgba(109, 98, 226, 0.15);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   backdrop-filter: blur(1.5px);
   -webkit-backdrop-filter: blur(1.5px);
   border-radius: 10px;
-  /*border: 1px solid rgba(255, 255, 255, 0.18);*/
 }
 
 .commonpanel.itempanel{
@@ -179,13 +172,12 @@ input.user-input {
   color: #a8ce49;
   text-shadow: 0 0 10px rgb(14, 225, 31), 0 0 15px rgb(229, 232, 198);
 }
-
+/*
 input[name="upfile"] {
   display: none;
 }
-
+*/
 #my_form > label[name="filelabel"]{
-  /*padding: 10px 40px;*/
   font-size: 10px;
   color: #a8ce49;
   text-shadow: 0 0 10px rgba(211, 222, 212, 0.964), 0 0 15px rgb(229, 232, 198);

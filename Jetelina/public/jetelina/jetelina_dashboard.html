@@ -31,14 +31,14 @@
         -->
 	<!--div id="function_panel" class="functionpanel-parts commonpanel squarepanel"-->
 	<div id="function_panel" class="functionpanel-parts commonpanel squarepanel" hidden>
-		<div id="fileup" style="width:200px;height:20px" class="functionpanel-parts commonpanel squarepanel">
+		<div id="fileup" style="width:200px;height:20px;" class="functionpanel-parts commonpanel squarepanel">
 			<form id="my_form">
 				<!-- caution:
                     should change the parameter of 'name' in FileUploadController.jl
                     if it's changed to other. 
                 -->
 				<label name="filelabel">
-					<input type="file" name="upfile">Select CSV File
+					<input type="file" name="upfile" style="display: none;"><span style="font-size: 14px;">Select CSV File</span>
 				</label>
 				<!--
 				<button type="button" id="upbtn" disabled class="panelbutton">UP</button>

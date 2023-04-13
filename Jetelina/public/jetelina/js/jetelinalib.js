@@ -322,8 +322,8 @@ const chatKeyDown = () => {
 
                             if( $("#columns").is(":visible") ){
                                 $("#fileup").draggable().animate({
-                                    top: "2%",
-                                    left: "80%"
+                                    top: "4%",
+                                    left: "5%"
                                 },animateDuration);
                                 $("#tables").draggable().animate({
                                     top: "10%",
