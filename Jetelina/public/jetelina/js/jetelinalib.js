@@ -233,21 +233,16 @@ let enterNumber = 0;
 const chatKeyDown = (cmd) => {
     /* userTextはユーザのチャット入力文字列 */
     let ut;
-    if( cmd == null ){
+    if (cmd == null) {
         ut = $("#jetelina_panel [name='chat_input']").val().toLowerCase();
-    }else{
+    } else {
         ut = cmd.toLowerCase();
     }
 
     let logoutflg = false;
 
     if (debug) console.log("ut: ", ut);
-
-    // for shortcut
-    /* 
-    stage = 'chose_func_or_cond';
-    ut = 'func';
-    */
+    
     if (ut != null && 0 < ut.length) {
         ut = ut.toLowerCase().trim();
         let m = "";
@@ -303,7 +298,7 @@ const chatKeyDown = (cmd) => {
                     } else if (ut.indexOf('cond') != -1) {
                         panel = 'cond';
                     }
-                    
+
                     stage = panel;
 
                     //move Jetelina Chatpanel
@@ -359,13 +354,26 @@ const chatKeyDown = (cmd) => {
 
                     break;
                 case 'func':
-                    if (ut.indexOf('cond') != -1 ){
+                    if (ut.indexOf('cond') != -1) {
                         stage = 'chose_func_or_cond';
                         chatKeyDown(ut);
-                    }else{
-                        switch(ut){
+                    } else {
+                        switch (ut) {
+                            case 'table':
+                                /* jetelinalib.jsのgetAjaxData()を呼び出して、DB上の全tableリストを取得する
+                                    ajaxのurlは'getalldbtable'
+                                */
+                                getAjaxData("getalldbtable");
+                                m = chooseMsg('6a', "", "");
+                                break;
                             case 'post':
-                                console.log("post?");
+                                if( 0<selectedItemsArr.length ){
+                                    postSelectedColumns();
+                                }else{
+                                    m = chooseMsg('6func_post_err', "", "");
+                                }
+                                break;
+                            case 'cancel':
                                 break;
                             default:
                                 break;
@@ -374,7 +382,7 @@ const chatKeyDown = (cmd) => {
 
                     break;
                 case 'cond':
-                    if (ut.indexOf('func') != -1 ){
+                    if (ut.indexOf('func') != -1) {
                         stage = 'chose_func_or_cond';
                         chatKeyDown(ut);
                     }

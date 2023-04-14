@@ -2,11 +2,6 @@
 $("#table_delete").hide();
 let selectedItemsArr = [];
 
-/* jetelinalib.jsのgetAjaxData()を呼び出して、DB上の全tableリストを取得する
-   ajaxのurlは'getalldbtable'
- */
-getAjaxData("getalldbtable");
-
 /*
    action by button click, then do fileupload()
  */
@@ -60,8 +55,8 @@ $(document).on({
 
     if( $(this).hasClass("selectedItem") ){
       //削除
-      selectedItemsArr.filter(function (d) {
-        return d != item;
+      selectedItemsArr = selectedItemsArr.filter(elm => {
+        return elm !== item;
       });
 
       $(this).removeClass("selectedItem");
@@ -226,12 +221,16 @@ const deleteThisTable = (tablename) => {
     console.error("ajax url is not defined");
   }
 }
-$("#post").on("click", function () {
+
+/*
+  post selected columns
+*/
+const postSelectedColumns = () =>{ console.log("postSele...");
   let pd = {};
   pd["item"] = selectedItemsArr;
   console.log("post: ", selectedItemsArr, " -> ", pd);
   let dd = JSON.stringify(pd);
-
+/*
   $.ajax({
     url: "/putitems",
     type: "POST",
@@ -241,5 +240,5 @@ $("#post").on("click", function () {
   }).done(function (result, textStatus, jqXHR) {
     console.log(result);
   }).fail(function (result) {
-  });
-});
+  });*/
+}
