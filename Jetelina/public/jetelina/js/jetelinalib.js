@@ -374,6 +374,7 @@ const chatKeyDown = (cmd) => {
                                 }
                                 break;
                             case 'cancel':
+                                deleteSelectedItems();
                                 break;
                             default:
                                 break;

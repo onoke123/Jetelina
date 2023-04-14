@@ -55,12 +55,7 @@ $(document).on({
 
     if( $(this).hasClass("selectedItem") ){
       //削除
-      selectedItemsArr = selectedItemsArr.filter(elm => {
-        return elm !== item;
-      });
-
-      $(this).removeClass("selectedItem");
-      $(this).detach().appendTo("#columns div");
+      deleteSelectedItems(this);
     } else {
       //追加
       if( $.inArray(item,selectedItemsArr) != -1 ){
@@ -74,7 +69,26 @@ $(document).on({
     }
   }
 }, ".item");
+/*
+  選択されているcolumnsを#containerから削除する
+*/
+const deleteSelectedItems = (p) =>{
+  if( p != null ){
+    //指定項目削除
+    let item = $(p).text();
+    selectedItemsArr = selectedItemsArr.filter(elm => {
+      return elm !== item;
+    });
 
+    $(p).removeClass("selectedItem");
+    $(p).detach().appendTo("#columns div");
+  }else{
+    //全削除
+    selectedItemsArr.length = 0;
+    $("#container span").removeClass("selectedItem");
+    $("#container span").detach().appendTo("#columns div");
+  }
+}
 /*
     cleanUp
 
