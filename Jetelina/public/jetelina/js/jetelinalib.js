@@ -25,12 +25,13 @@ const getdata = (o, t) => {
                            */
                             $.each(v, function (name, value) {
                                 if (t == 0) {
+                                    // table list
                                     str += `<span class="table">${value}</span>`;
                                     //                                    str += `<span class="table" onclick="getColumn('${value}')">${value}</span>`;
 
                                     //str += `<button onclick="getColumn('${value}')">${value}</button><br><br>`;
                                 } else if (t == 1) {
-                                    // jetelina_delte_flgは表示対象外
+                                    // column list. jetelina_delte_flgは表示対象外
                                     if (name != "jetelina_delete_flg") {
                                         str += `<span class="item" d=${value}><p>${targetTable}.${name}</p></span>`;
                                         //                                        str += `<div class="item" d=${value}><p>${targetTable}.${name}</p></div>`;
@@ -42,7 +43,9 @@ const getdata = (o, t) => {
                               t=2即ちSQLリストはオブジェクト内に複数のデータがあり得て且つ、表示上は一行にしたいので
                               こんな感じ。
                             */
-                            str += `<div class="sqllist"><p>${v.no}:${v.sql}</p></div>`;
+                                    // api list
+                            str += `<span class="table">${v.no}</span>`;
+                            //str += `<div class="sqllist"><p>${v.no}:${v.sql}</p></div>`;
                         }
 
                         let tagid = "";
@@ -52,7 +55,8 @@ const getdata = (o, t) => {
                             //                            tagid = "#container .item_area";
                             tagid = "#columns .item_area";
                         } else if (t == 2) {
-                            tagid = "#sqllist";
+                            tagid = "#table_container";
+//                            tagid = "#sqllist";
                         }
 
                         $(tagid).append(`${str}`);
@@ -99,6 +103,7 @@ const postAjaxData = (url, data) => {
             console.log("getAjaxData result: ", result);
             if (url == "/getapi") {
                 //rendering sql list
+                console.log("getapi: ", result);
                 getdata(result, 2);
             }
         }).fail(function (result) {
@@ -375,6 +380,9 @@ const chatKeyDown = (cmd) => {
                                 break;
                             case 'cancel':
                                 deleteSelectedItems();
+                                break;
+                            case 'apilist':
+                                postAjaxData("/getapi");
                                 break;
                             default:
                                 break;

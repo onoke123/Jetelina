@@ -73,6 +73,9 @@ module PostDataController
         DBDataController.getColumns( tableName )
     end
 
+#==
+    tableを指定してそれに関連するapiを返す関数。
+    なにかに使いそうなのでコメントアウトして残しておく。
     function getApiList()
         tableName = jsonpayload( "tablename" )
         @info "getApiList: " tableName
@@ -89,6 +92,15 @@ module PostDataController
         @info "sql list ret: " ret
         return ret
     end
+==#
+    #==
+        APIのリストを返す。
+        単純にDf_JetelinaSqlListをJSON形式にして返す。
+    ==#
+    function getApiList()
+        return json( Dict( "Jetelina" => copy.( eachrow( Df_JetelinaSqlList ))))
+    end
+
 #===
     function _checkTable( s ){
         p = split( s, "from" )
