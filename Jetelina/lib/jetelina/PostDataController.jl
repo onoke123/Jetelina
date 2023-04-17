@@ -50,7 +50,7 @@ module PostDataController
 
         # get the sequence name then create the sql sentence
         seq_no = DBDataController.getSequenceNumber(1)
-        selectSql = """$seq_no,\"select $selectSql from $tableName as $tableName\"\n"""
+        selectSql = """$seq_no,\"select $selectSql from $tableName\"\n"""
         @info "sql: ", selectSql
 
         # write the sql to the file
