@@ -368,7 +368,7 @@ const chatKeyDown = (cmd) => {
                                 break;
                             case 'post':
                                 if( 0<selectedItemsArr.length ){
-                                    postSelectedColumns();
+                                    console.log("post ret: ", postSelectedColumns());
                                 }else{
                                     m = chooseMsg('6func_post_err', "", "");
                                 }

@@ -37,7 +37,13 @@ module PostDataController
                 selectSql = """$t1.$t2"""
             end
 
-            tableName = t1
+            if( 0<length(tableName) )
+                if( !contains(tableName, t1 ) )
+                    tableName = """$tableName,$t1 as $t1"""
+                end
+            else
+                tableName = """$t1 as $t1"""
+            end
 
             @info "t1, t2: ", t1, t2
         end

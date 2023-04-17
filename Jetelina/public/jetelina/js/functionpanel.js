@@ -239,20 +239,23 @@ const deleteThisTable = (tablename) => {
 /*
   post selected columns
 */
-const postSelectedColumns = () =>{ console.log("postSele...");
+const postSelectedColumns = () =>{
   let pd = {};
   pd["item"] = selectedItemsArr;
-  console.log("post: ", selectedItemsArr, " -> ", pd);
+  if( debug ) console.log("post: ", selectedItemsArr, " -> ", pd);
   let dd = JSON.stringify(pd);
-/*
+
   $.ajax({
     url: "/putitems",
     type: "POST",
     data: dd,
     contentType: 'application/json',
-    dataType: "json"
+    dataType: "json",
+    async: false
   }).done(function (result, textStatus, jqXHR) {
-    console.log(result);
+    return true;
+//    console.log(result);
   }).fail(function (result) {
-  });*/
+    return false;
+  });
 }
