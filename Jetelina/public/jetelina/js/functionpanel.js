@@ -8,7 +8,7 @@ let selectedItemsArr = [];
 $("#upbtn").on("click", function () {
   fileupload();
   // clean up d&d items, selectbox of the table list
-  cleanUp();
+  cleanUp("items");
 });
 
 /*
@@ -17,7 +17,7 @@ $("#upbtn").on("click", function () {
 $("#d_tablelist").on("change", function () {
   let tablename = $("#d_tablelist").val();
   // clean up d&d items
-  cleanUp();
+  cleanUp("items");
   // get the column list
   $("#container .item_area").append(getColumn(tablename));
   // show table delete button
@@ -94,12 +94,19 @@ const deleteSelectedItems = (p) =>{
 
     droped items & columns of selecting table
 */
-const cleanUp = () => {
+const cleanUp = (s) => {
   selectedItemsArr.splice(0);
-  // clean up d&d items
-  $(".item_area .item").remove();
-  // clean up sql list
-  $("#sqllist .list").remove();
+
+  if( s == "items" ){
+    // clean up items
+    $(".item_area .item").remove();
+  }else if( s == "tables" ){
+    // clean up tables
+    $("#table_container .table").remove();
+  }else if( s == "apis" ){
+  // clean up API list
+  $("#api_container .api").remove();
+  }
 }
 
 
@@ -224,7 +231,7 @@ const deleteThisTable = (tablename) => {
 
       // clean up d&d items
       //            $(".item_area .item").remove();
-      cleanUp();
+      cleanUp("items");
       // select から当該tableを削除する
       $("#d_tablelist").children(`option[value=${tablename}]`).remove();
       //            getAjaxData("getalldbtable");

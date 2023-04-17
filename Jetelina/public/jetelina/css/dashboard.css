@@ -38,7 +38,7 @@ body {
   color: #c5da0b;
 }
 
-.table {
+.table, .api {
   display: inline-block;
   padding: 5px;
   width: 80px;

@@ -44,7 +44,7 @@ const getdata = (o, t) => {
                               こんな感じ。
                             */
                                     // api list
-                            str += `<span class="table">${v.no}</span>`;
+                            str += `<span class="api">${v.no}</span>`;
                             //str += `<div class="sqllist"><p>${v.no}:${v.sql}</p></div>`;
                         }
 
@@ -55,7 +55,7 @@ const getdata = (o, t) => {
                             //                            tagid = "#container .item_area";
                             tagid = "#columns .item_area";
                         } else if (t == 2) {
-                            tagid = "#table_container";
+                            tagid = "#api_container";
 //                            tagid = "#sqllist";
                         }
 
@@ -334,7 +334,7 @@ const chatKeyDown = (cmd) => {
                                 top: "4%",
                                 left: "5%"
                             }, animateDuration);
-                            $("#tables").draggable().animate({
+                            $("#left_panel").draggable().animate({
                                 top: "10%",
                                 left: "5%"
                             }, animateDuration);
@@ -368,6 +368,12 @@ const chatKeyDown = (cmd) => {
                                 /* jetelinalib.jsのgetAjaxData()を呼び出して、DB上の全tableリストを取得する
                                     ajaxのurlは'getalldbtable'
                                 */
+                               if( $("#api_container").is(":visible") ){
+                                $("#api_container").hide();
+                                $("#panel_left").text("Table List");
+                                $("#table_container").show();
+                               }
+                               cleanUp("tables");
                                 getAjaxData("getalldbtable");
                                 m = chooseMsg('6a', "", "");
                                 break;
@@ -382,7 +388,14 @@ const chatKeyDown = (cmd) => {
                                 deleteSelectedItems();
                                 break;
                             case 'apilist':
-                                postAjaxData("/getapi");
+                               if( $("#table_container").is(":visible") ){
+                                $("#table_container").hide();
+                                $("#panel_left").text("API List");
+                                $("#api_container").show();
+                               }
+
+                               cleanUp("apis");
+                               postAjaxData("/getapi");
                                 break;
                             default:
                                 break;
