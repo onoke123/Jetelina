@@ -43,7 +43,7 @@ const getdata = (o, t) => {
                               t=2即ちSQLリストはオブジェクト内に複数のデータがあり得て且つ、表示上は一行にしたいので
                               こんな感じ。
                             */
-                                    // api list
+                            // api list
                             str += `<span class="api">${v.no}</span>`;
                             //str += `<div class="sqllist"><p>${v.no}:${v.sql}</p></div>`;
                         }
@@ -56,7 +56,7 @@ const getdata = (o, t) => {
                             tagid = "#columns .item_area";
                         } else if (t == 2) {
                             tagid = "#api_container";
-//                            tagid = "#sqllist";
+                            //                            tagid = "#sqllist";
                         }
 
                         $(tagid).append(`${str}`);
@@ -247,7 +247,7 @@ const chatKeyDown = (cmd) => {
     let logoutflg = false;
 
     if (debug) console.log("ut: ", ut);
-    
+
     if (ut != null && 0 < ut.length) {
         ut = ut.toLowerCase().trim();
         let m = "";
@@ -363,39 +363,82 @@ const chatKeyDown = (cmd) => {
                         stage = 'chose_func_or_cond';
                         chatKeyDown(ut);
                     } else {
-                        switch (ut) {
+                        let cmd = preferent;
+                        //　table drop command判定
+                        let dropTable;
+                        for (let i = 0; i < scenario['6func-tabledrop'].length; i++) {
+                            if (ut.indexOf(scenario['6func-tabledrop'][i]) != -1) {
+                                let dpm = ut.split(scenario['6func-tabledrop'][i]);
+                                console.log("drop table split: ", scenario['6func-tabledrop'][i], dpm[0], dpm[1]);
+                                dropTable = dpm[1].trim();
+                                cmd = 'droptable';
+                                break;
+                            }
+                        }
+
+                        //優先されるべきコマンドがないときは入力データが生きる
+                        if ( cmd == null || cmd.length <= 0) {
+                            cmd = ut;
+                        }
+
+                        switch (cmd) {
                             case 'table':
                                 /* jetelinalib.jsのgetAjaxData()を呼び出して、DB上の全tableリストを取得する
                                     ajaxのurlは'getalldbtable'
                                 */
-                               if( $("#api_container").is(":visible") ){
-                                $("#api_container").hide();
-                                $("#panel_left").text("Table List");
-                                $("#table_container").show();
-                               }
-                               cleanUp("tables");
+                                if ($("#api_container").is(":visible")) {
+                                    $("#api_container").hide();
+                                    $("#panel_left").text("Table List");
+                                    $("#table_container").show();
+                                }
+
+                                cleanUp("tables");
                                 getAjaxData("getalldbtable");
                                 m = chooseMsg('6a', "", "");
                                 break;
                             case 'post':
-                                if( 0<selectedItemsArr.length ){
+                                if (0 < selectedItemsArr.length) {
                                     console.log("post ret: ", postSelectedColumns());
-                                }else{
+                                } else {
                                     m = chooseMsg('6func_post_err', "", "");
                                 }
+
                                 break;
                             case 'cancel':
                                 deleteSelectedItems();
                                 break;
-                            case 'apilist':
-                               if( $("#table_container").is(":visible") ){
-                                $("#table_container").hide();
-                                $("#panel_left").text("API List");
-                                $("#api_container").show();
-                               }
+                            case 'api':
+                                if ($("#table_container").is(":visible")) {
+                                    $("#table_container").hide();
+                                    $("#panel_left").text("API List");
+                                    $("#api_container").show();
+                                }
 
-                               cleanUp("apis");
-                               postAjaxData("/getapi");
+                                cleanUp("apis");
+                                postAjaxData("/getapi");
+                                break;
+                            case 'droptable':
+                                if (dropTable != null && 0<dropTable.length) {
+                                    //削除確認メッセージ
+                                    let p = $(`#table_container span:contains(${dropTable})`).filter(function(){
+                                        return $(this).text() === dropTable;
+                                    });
+
+                                    console.log("p:", p.length );
+
+                                    if( p != null && 0<p.length ){
+                                        m = 'Deleted ' + p.text() + " table";
+                                    }else{
+                                        m = 'Delete unknown table';
+                                    }
+                                } else {
+                                    //table指定催促メッセージ
+                                    //preferent = cmd;
+
+
+                                }
+
+                                console.log("drop table:", dropTable);
                                 break;
                             default:
                                 break;
@@ -459,4 +502,9 @@ const logout = () => {
 
     $("#function_panel").hide();
     $("#condition_panel").hide();
+}
+
+//優先コマンドのクリア
+const clearPreferent = () =>{
+    preferent = '';
 }

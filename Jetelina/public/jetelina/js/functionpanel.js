@@ -27,11 +27,12 @@ $("#d_tablelist").on("change", function () {
   postAjaxData("/getapi", `{"tablename":"${tablename}"}`);
 });
 /*
-*/
+
 $("#table_delete").on("click", function () {
   let tablename = $("#d_tablelist").val();
   deleteThisTable(tablename);
 });
+*/
 /*
   tooltip for columns list
 */
