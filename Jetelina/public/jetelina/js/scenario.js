@@ -26,7 +26,9 @@ scenario['6func_post_err'] = ['Hey, no columns','You should select post data','B
 scenario['6cond'] = ['Let me your command, if you need']
 scenario['6a'] = ['OK, here you are'];
 scenario['6b'] = ['Command me, if you need'];
-scenario['6func-tabledrop'] = ['drop table','table drop','tabledrop','droptable'];
+scenario['6func-tabledrop'] = ['drop','drop table','table drop','tabledrop','droptable'];
+scenario['6func-tabledrop-msg'] = ['Which table do you want to drop?'];
+scenario['6func-tabledrop-confirm'] = ['Sure?'];
 /* log out */
 scenario['logout'] = ['logout','exit','log out','out','return'];
 scenario['afterlogout'] = ['Bye', 'Have a good day','Hope you will back soon','I am looking forward you'];

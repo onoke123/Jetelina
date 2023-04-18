@@ -223,6 +223,7 @@ const deleteThisTable = (tablename) => {
       contentType: 'application/json',
       dataType: "json"
     }).done(function (result, textStatus, jqXHR) {
+      console.log("delteThisTable: tablename -> ", result);
     }).fail(function (result) {
     }).always(function (jqXHR, textStatus) {
       // table list 更新
