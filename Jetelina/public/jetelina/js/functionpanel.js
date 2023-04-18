@@ -226,19 +226,14 @@ const deleteThisTable = (tablename) => {
       console.log("delteThisTable: tablename -> ", result);
     }).fail(function (result) {
     }).always(function (jqXHR, textStatus) {
-      // table list 更新
-      // clean up selectbox of the table list
-      //$( "#d_tablelist .tables" ).remove();
-
-
       // clean up d&d items
-      //            $(".item_area .item").remove();
-      cleanUp("items");
-      // select から当該tableを削除する
-      $("#d_tablelist").children(`option[value=${tablename}]`).remove();
-      //            getAjaxData("getalldbtable");
-      // deleteボタンを非表示にする
-      $("#table_delete").hide();
+//      cleanUp("items");
+      $(`#table_container span:contains(${tablename})`).filter(function(){
+        if( $(this).text() === tablename ){
+          $(this).remove();
+          return;
+        }
+      });
     });
   } else {
     console.error("ajax url is not defined");

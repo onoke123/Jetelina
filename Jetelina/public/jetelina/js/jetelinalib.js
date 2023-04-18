@@ -380,9 +380,10 @@ const chatKeyDown = (cmd) => {
                         for (let i = 0; i < scenario['6func-tabledrop'].length; i++) {
                             if (ut.indexOf(scenario['6func-tabledrop'][i]) != -1) {
                                 let dpm = ut.split(scenario['6func-tabledrop'][i]);
-                                dropTable = dpm[1].trim();
+                                dropTable = dpm[dpm.length-1].trim();
+                                console.log("dt:", dropTable);
                                 cmd = 'droptable';
-                                break;
+                                //break;
                             }
                         }
 
