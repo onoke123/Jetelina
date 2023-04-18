@@ -363,13 +363,23 @@ const chatKeyDown = (cmd) => {
                         stage = 'chose_func_or_cond';
                         chatKeyDown(ut);
                     } else {
-                        let cmd = preferent;
-                        //　table drop command判定
+                        let cmd;
+                        //優先コマンドがあればそっちを使う
+                        if( preferent.cmd != null && 0<preferent.cmd.length ){
+                            cmd = preferent.cmd;
+                        }
+
                         let dropTable;
+                        //すでにdrop tableが指定されているかもしれない
+                        if( preferent.droptable != null && 0<preferent.droptable.length ){
+                            
+                            dropTable = preferent.droptable;
+                        }
+
+                        //　table drop command判定
                         for (let i = 0; i < scenario['6func-tabledrop'].length; i++) {
                             if (ut.indexOf(scenario['6func-tabledrop'][i]) != -1) {
                                 let dpm = ut.split(scenario['6func-tabledrop'][i]);
-                                console.log("drop table split: ", scenario['6func-tabledrop'][i], dpm[0], dpm[1]);
                                 dropTable = dpm[1].trim();
                                 cmd = 'droptable';
                                 break;
@@ -418,27 +428,37 @@ const chatKeyDown = (cmd) => {
                                 postAjaxData("/getapi");
                                 break;
                             case 'droptable':
-                                if (dropTable != null && 0<dropTable.length) {
-                                    //削除確認メッセージ
-                                    let p = $(`#table_container span:contains(${dropTable})`).filter(function(){
-                                        return $(this).text() === dropTable;
-                                    });
+                                    if (dropTable != null && 0<dropTable.length) {
+                                        //該当table存在確認
+                                        let p = $(`#table_container span:contains(${dropTable})`).filter(function(){
+                                            return $(this).text() === dropTable;
+                                        });
 
-                                    console.log("p:", p.length );
+                                        if( p != null && 0<p.length ){
+                                            //あった。よし削除確認メッセージ
+                                            m = chooseMsg('6func-tabledrop-confirm',"","");
+                                            preferent.cmd = cmd;
+                                            preferent.droptable = dropTable;
+                                        }else{console.log("chk:");
+                                            //ないぞ。tableを指定して。
+                                            m = chooseMsg('6func-tabledrop-msg', "", "");
+                                            preferent.cmd = cmd;
+                                        }
 
-                                    if( p != null && 0<p.length ){
-                                        m = 'Deleted ' + p.text() + " table";
-                                    }else{
-                                        m = 'Delete unknown table';
+                                        if( ut.indexOf('yes') != -1 ){
+                                            let tmp = preferent.droptable;
+
+                                            delete preferent.cmd;
+                                            delete preferent.droptable;
+
+                                            deleteThisTable(tmp);
+                                        }
+                                    } else {
+                                        //table指定催促メッセージ
+                                        m = chooseMsg('6func-tabledrop-msg', "", "");
+                                        preferent.cmd = cmd;
                                     }
-                                } else {
-                                    //table指定催促メッセージ
-                                    //preferent = cmd;
 
-
-                                }
-
-                                console.log("drop table:", dropTable);
                                 break;
                             default:
                                 break;
@@ -502,9 +522,4 @@ const logout = () => {
 
     $("#function_panel").hide();
     $("#condition_panel").hide();
-}
-
-//優先コマンドのクリア
-const clearPreferent = () =>{
-    preferent = '';
 }
