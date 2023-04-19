@@ -342,6 +342,12 @@ module PgDBController
 
         try
             execute(conn, drop_table_str)
+        catch
+            err
+            println(err)
+        end
+
+        try
             execute(conn, delete_data_str)    
         catch
             err

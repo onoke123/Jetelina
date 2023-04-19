@@ -375,9 +375,9 @@ const chatKeyDown = (cmd) => {
                         let cmd = getPreferentPropertie('cmd');
                         //優先されるべきコマンドがないときは入力データが生きる
                         if (cmd == null || cmd.length <= 0) {
-                            if( $.inArray(ut,scenario['6func-fileupload']) != -1 ){
+                            if ($.inArray(ut, scenario['6func-fileupload']) != -1) {
                                 cmd = 'fileupload';
-                            }else{
+                            } else {
                                 cmd = ut;
                             }
                         }
@@ -466,7 +466,7 @@ const chatKeyDown = (cmd) => {
                                         delete preferent.cmd;
                                         delete preferent.droptable;
 
-                                        deleteThisTable(t);
+                                        deleteThisTable(t);                                        
                                     }
                                 } else {
                                     //table指定催促メッセージ
@@ -475,17 +475,16 @@ const chatKeyDown = (cmd) => {
                                 }
                                 break;
                             case 'fileupload'://csv file upload
-                                const f = $("input[type=file]").prop("files"); 
-                                if(  f != null && 0<f.length ){
-                                    console.log("file up: ", $("input[type=file]").prop("files"));
-                                    const uploadFilename = $("input[type=file]").prop("files")[0].name;
+                                const f = $("input[type=file]").prop("files");
+                                if (f != null && 0 < f.length) {
+                                    if( debug ) console.log("file up: ", f[0].name);
+
+//                                    const uploadFilename = f[0].name;
                                     fileupload();
-                                    // clean up d&d items, selectbox of the table list
-//                                    cleanUp("items");
-                                }else{
-                                    m = chooseMsg('6func-fileupload-msg',"","");
+                                } else {
+                                    m = chooseMsg('6func-fileupload-msg', "", "");
                                 }
-                            break;
+                                break;
                             default:
                                 break;
                         }
@@ -516,7 +515,9 @@ const chatKeyDown = (cmd) => {
                 enterNumber = 0;
             }
 
-            typingControll(m);
+            if( 0<m.length){
+                typingControll(m);
+            }
             //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく
             //            if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
             //            typing(0, m);

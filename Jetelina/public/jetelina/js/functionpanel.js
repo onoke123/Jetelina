@@ -3,17 +3,14 @@ $("#table_delete").hide();
 let selectedItemsArr = [];
 
 /*
-   action by button click, then do fileupload()
- 
-$("#upbtn").on("click", function () {
-  fileupload();
-  // clean up d&d items, selectbox of the table list
-  cleanUp("items");
-});
+   change label when selected a file
 */
+$("input[name='upfile']").on("change", function () {
+  $("#my_form label span").text($("input[type=file]").prop("files")[0].name);
+});
 /*
   select DB table then get the columns and be defined SQL(API) list
-*/
+
 $("#d_tablelist").on("change", function () {
   let tablename = $("#d_tablelist").val();
   // clean up d&d items
@@ -26,6 +23,7 @@ $("#d_tablelist").on("change", function () {
   // get the SQL(API) list
   postAjaxData("/getapi", `{"tablename":"${tablename}"}`);
 });
+*/
 /*
 
 $("#table_delete").on("click", function () {
@@ -54,14 +52,14 @@ $(document).on({
     let cl = $(this).attr("class");
     let item = $(this).text();
 
-    if( $(this).hasClass("selectedItem") ){
+    if ($(this).hasClass("selectedItem")) {
       //削除
       deleteSelectedItems(this);
     } else {
       //追加
-      if( $.inArray(item,selectedItemsArr) != -1 ){
+      if ($.inArray(item, selectedItemsArr) != -1) {
         $(this).detach();
-      }else{
+      } else {
         $(this).addClass("selectedItem");
         $(this).detach().appendTo("#container");
       }
@@ -73,8 +71,8 @@ $(document).on({
 /*
   選択されているcolumnsを#containerから削除する
 */
-const deleteSelectedItems = (p) =>{
-  if( p != null ){
+const deleteSelectedItems = (p) => {
+  if (p != null) {
     //指定項目削除
     let item = $(p).text();
     selectedItemsArr = selectedItemsArr.filter(elm => {
@@ -83,7 +81,7 @@ const deleteSelectedItems = (p) =>{
 
     $(p).removeClass("selectedItem");
     $(p).detach().appendTo("#columns div");
-  }else{
+  } else {
     //全削除
     selectedItemsArr.length = 0;
     $("#container span").removeClass("selectedItem");
@@ -98,15 +96,15 @@ const deleteSelectedItems = (p) =>{
 const cleanUp = (s) => {
   selectedItemsArr.splice(0);
 
-  if( s == "items" ){
+  if (s == "items") {
     // clean up items
     $(".item_area .item").remove();
-  }else if( s == "tables" ){
+  } else if (s == "tables") {
     // clean up tables
     $("#table_container .table").remove();
-  }else if( s == "apis" ){
-  // clean up API list
-  $("#api_container .api").remove();
+  } else if (s == "apis") {
+    // clean up API list
+    $("#api_container .api").remove();
   }
 }
 
@@ -120,7 +118,7 @@ const fileupload = () => {
 
   const uploadFilename = $("input[type=file]").prop("files")[0].name;
   const tablename = uploadFilename.split(".")[0];
-  if (debug) console.log("filename 2 tablename: ", tablename);
+  if (debug) console.log("fileupload(): ", tablename);
 
   $.ajax({
     url: "/dofup",
@@ -134,14 +132,23 @@ const fileupload = () => {
     // clean up
     $("input[type=file]").val("");
     $("#upbtn").prop("disabled", false);
-    getdata(result, 1);
-    // talbe list に追加してfocusを当てる
-    if (debug) console.log("set table to select:", tablename);
-    const addop = `<option value=${tablename}>${tablename}</option>`;
-    $("#d_tablelist").prepend(addop);
-    $("#d_tablelist").val(tablename);
+    console.log("f up result:", result);
+    if ( result.length != 0) {
+      console.log("fup chk");
+      $("#my_form label span").text("Upload CSV File");
+      //refresh table list 
+      if ($("#table_container").is(":visible")) {
+        cleanUp("tables");
+        getAjaxData("getalldbtable");
+      }
+
+      typingControll(chooseMsg('success', "", ""));
+    } else {
+      console.log("fup here");
+    }
   }).fail(function (result) {
     // something error happened
+    console.error("fileupload() failed");
   });
 }
 
@@ -163,7 +170,7 @@ $(document).on("click", ".table", function () {
 
   removeColumn(tn);
   if (cl.indexOf("activeTable") != -1) {
-//    removeColumn(tn);
+    //    removeColumn(tn);
   } else {
     getColumn(tn);
   }
@@ -209,9 +216,6 @@ const removeColumn = (tablename) => {
 
 const deleteThisTable = (tablename) => {
   if (0 < tablename.length || tablename != undefined) {
-    //        let data = [];
-    //        data.push( $.trim(tablename));
-
     let pd = {};
     pd["tablename"] = $.trim(tablename);
     let dd = JSON.stringify(pd);
@@ -224,29 +228,28 @@ const deleteThisTable = (tablename) => {
       dataType: "json"
     }).done(function (result, textStatus, jqXHR) {
       console.log("delteThisTable: tablename -> ", result);
-    }).fail(function (result) {
-    }).always(function (jqXHR, textStatus) {
-      // clean up d&d items
-//      cleanUp("items");
-      $(`#table_container span:contains(${tablename})`).filter(function(){
-        if( $(this).text() === tablename ){
+      $(`#table_container span:contains(${tablename})`).filter(function () {
+        if ($(this).text() === tablename) {
           $(this).remove();
           return;
         }
       });
+      typingControll(chooseMsg('success', "", ""));
+    }).fail(function (result) {
+      console.error("deletetable() faild: ", result);
     });
   } else {
-    console.error("ajax url is not defined");
+    console.error("deletetable: table is not defined");
   }
 }
 
 /*
   post selected columns
 */
-const postSelectedColumns = () =>{
+const postSelectedColumns = () => {
   let pd = {};
   pd["item"] = selectedItemsArr;
-  if( debug ) console.log("post: ", selectedItemsArr, " -> ", pd);
+  if (debug) console.log("post: ", selectedItemsArr, " -> ", pd);
   let dd = JSON.stringify(pd);
 
   $.ajax({
@@ -258,7 +261,7 @@ const postSelectedColumns = () =>{
     async: false
   }).done(function (result, textStatus, jqXHR) {
     return true;
-//    console.log(result);
+    //    console.log(result);
   }).fail(function (result) {
     return false;
   });

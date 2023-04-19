@@ -40,6 +40,7 @@ module DBDataController
             # Case in PostgreSQL
             PgDBController.dataInsertFromCSV( csvfname )
             tableName = splitext( splitdir( csvfname )[2] )[1]
+             
             return PgDBController.getColumns( tableName)
         elseif JetelinaDBtype == "mariadb"
         elseif JetelinaDBtype == "oracle"
