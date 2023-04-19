@@ -285,9 +285,8 @@ module PgDBController
         conn = open_connection()
         try
             execute( conn, create_table_str )
-        catch
-            err
-            println(err)
+        catch e
+            println(e)
         end
         #===
             then get column from the created table, because the columns are order by csv file, thus they can get after
@@ -342,15 +341,8 @@ module PgDBController
 
         try
             execute(conn, drop_table_str)
-        catch
-            err
-            println(err)
-        end
-
-        try
             execute(conn, delete_data_str)    
-        catch
-            err
+        catch e
             println(err)
         end
 

@@ -69,7 +69,7 @@ module PostDataController
 
     function getColumns()
         tableName = jsonpayload( "tablename" )
-        @info "getColumns: " tableName
+        @info "PostDataController.getColumns(): " tableName
         DBDataController.getColumns( tableName )
     end
 
@@ -109,13 +109,13 @@ module PostDataController
 ===#
     function deleteTable()
         tableName = jsonpayload( "tablename" )
-        @info "dropTable: " tableName
+        @info "PostDataController.deleteTable() dropTable: " tableName
         DBDataController.dropTable( tableName )
     end
 
     function login()
         userName = jsonpayload( "username" )
-        @info "login: " userName
+        @info "PostDataController.login(): " userName
         DBDataController.getUserAccount( userName )
 #        if userName == "keiji"
 #        return json(Dict("name" => "keiji"))

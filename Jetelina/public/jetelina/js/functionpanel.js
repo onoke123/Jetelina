@@ -128,14 +128,14 @@ const fileupload = () => {
     contentType: false,
     processData: false,
     dataType: "json"
-  }).done(function (result) {
+  }).done(function (result, textStatus, jqXHR) {
     // clean up
     $("input[type=file]").val("");
     $("#upbtn").prop("disabled", false);
-    console.log("f up result:", result);
+
     if ( result.length != 0) {
-      console.log("fup chk");
       $("#my_form label span").text("Upload CSV File");
+
       //refresh table list 
       if ($("#table_container").is(":visible")) {
         cleanUp("tables");
@@ -227,16 +227,23 @@ const deleteThisTable = (tablename) => {
       contentType: 'application/json',
       dataType: "json"
     }).done(function (result, textStatus, jqXHR) {
-      console.log("delteThisTable: tablename -> ", result);
+      /*
+        本当はここに来るはずなのに、何故かこのajax処理はfail()してしまう。
+        サーバサイドのDB処理は一応正常に終了しているので、原因がわかるまでは
+        done()の処理をalways()で行うようにしている。
+      */
+      console.log("deleteThisTable: tablename result -> ", result);
+    }).fail(function (result) {
+      console.error("deletetable() faild: ", result);
+    }).always(function(){
       $(`#table_container span:contains(${tablename})`).filter(function () {
         if ($(this).text() === tablename) {
           $(this).remove();
           return;
         }
       });
+
       typingControll(chooseMsg('success', "", ""));
-    }).fail(function (result) {
-      console.error("deletetable() faild: ", result);
     });
   } else {
     console.error("deletetable: table is not defined");
