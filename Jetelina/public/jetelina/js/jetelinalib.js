@@ -266,7 +266,15 @@ const chatKeyDown = (cmd) => {
                 m = chooseMsg('afterlogout', "", "");
                 logoutflg = true;
             }
-
+            /*
+                switch 1:login時のやりとり
+                       login:login処理結果のやりとり
+                       login_success: after login
+                       chose_func_or_cond: login_success後のstage
+                       func: function panelのstage
+                       cond: condition panelのstage
+                       default:before login
+            */
             switch (stage) {
                 case 1:/*login時のやりとり*/
                     if (!chkUResponse(1, ut)) {
@@ -363,35 +371,40 @@ const chatKeyDown = (cmd) => {
                         stage = 'chose_func_or_cond';
                         chatKeyDown(ut);
                     } else {
-                        let cmd;
-                        //優先コマンドがあればそっちを使う
-                        if( preferent.cmd != null && 0<preferent.cmd.length ){
-                            cmd = preferent.cmd;
-                        }
-
-                        let dropTable;
-                        //すでにdrop tableが指定されているかもしれない
-                        if( preferent.droptable != null && 0<preferent.droptable.length ){
-                            
-                            dropTable = preferent.droptable;
-                        }
-
-                        //　table drop command判定
-                        for (let i = 0; i < scenario['6func-tabledrop'].length; i++) {
-                            if (ut.indexOf(scenario['6func-tabledrop'][i]) != -1) {
-                                let dpm = ut.split(scenario['6func-tabledrop'][i]);
-                                dropTable = dpm[dpm.length-1].trim();
-                                console.log("dt:", dropTable);
-                                cmd = 'droptable';
-                                //break;
+                        // 優先オブジェクトがあればそれを使う
+                        let cmd = getPreferentPropertie('cmd');
+                        //優先されるべきコマンドがないときは入力データが生きる
+                        if (cmd == null || cmd.length <= 0) {
+                            if( $.inArray(ut,scenario['6func-fileupload']) != -1 ){
+                                cmd = 'fileupload';
+                            }else{
+                                cmd = ut;
                             }
                         }
 
-                        //優先されるべきコマンドがないときは入力データが生きる
-                        if ( cmd == null || cmd.length <= 0) {
-                            cmd = ut;
+                        let dropTable = getPreferentPropertie('cmd');
+                        //優先されるべきtable nameがないときは入力データが生きる
+                        if (dropTable == null || dropTable.length <= 0) {
+                            for (let i = 0; i < scenario['6func-tabledrop'].length; i++) {
+                                if (ut.indexOf(scenario['6func-tabledrop'][i]) != -1) {
+                                    let dpm = ut.split(scenario['6func-tabledrop'][i]);
+                                    dropTable = dpm[dpm.length - 1].trim();
+                                    console.log("dt:", dropTable);
+                                    cmd = 'droptable';
+                                }
+                            }
                         }
 
+                        if (debug) console.log("in func: ", cmd, dropTable);
+
+                        /*
+                            switch table: table list表示
+                                   api: api list表示
+                                   post: post selected items
+                                   cancel: cancel all selected items
+                                   droptable: drop table(post)
+                                   default: non
+                        */
                         switch (cmd) {
                             case 'table':
                                 /* jetelinalib.jsのgetAjaxData()を呼び出して、DB上の全tableリストを取得する
@@ -407,6 +420,16 @@ const chatKeyDown = (cmd) => {
                                 getAjaxData("getalldbtable");
                                 m = chooseMsg('6a', "", "");
                                 break;
+                            case 'api':
+                                if ($("#table_container").is(":visible")) {
+                                    $("#table_container").hide();
+                                    $("#panel_left").text("API List");
+                                    $("#api_container").show();
+                                }
+
+                                cleanUp("apis");
+                                postAjaxData("/getapi");
+                                break;
                             case 'post':
                                 if (0 < selectedItemsArr.length) {
                                     console.log("post ret: ", postSelectedColumns());
@@ -418,49 +441,51 @@ const chatKeyDown = (cmd) => {
                             case 'cancel':
                                 deleteSelectedItems();
                                 break;
-                            case 'api':
-                                if ($("#table_container").is(":visible")) {
-                                    $("#table_container").hide();
-                                    $("#panel_left").text("API List");
-                                    $("#api_container").show();
-                                }
-
-                                cleanUp("apis");
-                                postAjaxData("/getapi");
-                                break;
                             case 'droptable':
-                                    if (dropTable != null && 0<dropTable.length) {
-                                        //該当table存在確認
-                                        let p = $(`#table_container span:contains(${dropTable})`).filter(function(){
-                                            return $(this).text() === dropTable;
-                                        });
+                                if (dropTable != null && 0 < dropTable.length) {
+                                    //該当table存在確認
+                                    let p = $(`#table_container span:contains(${dropTable})`).filter(function () {
+                                        return $(this).text() === dropTable;
+                                    });
 
-                                        if( p != null && 0<p.length ){
-                                            //あった。よし削除確認メッセージ
-                                            m = chooseMsg('6func-tabledrop-confirm',"","");
-                                            preferent.cmd = cmd;
-                                            preferent.droptable = dropTable;
-                                        }else{console.log("chk:");
-                                            //ないぞ。tableを指定して。
-                                            m = chooseMsg('6func-tabledrop-msg', "", "");
-                                            preferent.cmd = cmd;
-                                        }
-
-                                        if( ut.indexOf('yes') != -1 ){
-                                            let tmp = preferent.droptable;
-
-                                            delete preferent.cmd;
-                                            delete preferent.droptable;
-
-                                            deleteThisTable(tmp);
-                                        }
+                                    if (p != null && 0 < p.length) {
+                                        //あった。よし削除確認メッセージ
+                                        m = chooseMsg('6func-tabledrop-confirm', "", "");
+                                        preferent.cmd = cmd;
+                                        preferent.droptable = dropTable;
                                     } else {
-                                        //table指定催促メッセージ
+                                        //ないぞ。ちゃんとtableを指定して。
                                         m = chooseMsg('6func-tabledrop-msg', "", "");
                                         preferent.cmd = cmd;
                                     }
 
+                                    // 6func-tabledrop-confirmに対して'yes'と言われたら実行される
+                                    if (ut.indexOf('yes') != -1) {
+                                        let t = preferent.droptable;
+
+                                        delete preferent.cmd;
+                                        delete preferent.droptable;
+
+                                        deleteThisTable(t);
+                                    }
+                                } else {
+                                    //table指定催促メッセージ
+                                    m = chooseMsg('6func-tabledrop-msg', "", "");
+                                    preferent.cmd = cmd;
+                                }
                                 break;
+                            case 'fileupload'://csv file upload
+                                const f = $("input[type=file]").prop("files"); 
+                                if(  f != null && 0<f.length ){
+                                    console.log("file up: ", $("input[type=file]").prop("files"));
+                                    const uploadFilename = $("input[type=file]").prop("files")[0].name;
+                                    fileupload();
+                                    // clean up d&d items, selectbox of the table list
+//                                    cleanUp("items");
+                                }else{
+                                    m = chooseMsg('6func-fileupload-msg',"","");
+                                }
+                            break;
                             default:
                                 break;
                         }
@@ -523,4 +548,28 @@ const logout = () => {
 
     $("#function_panel").hide();
     $("#condition_panel").hide();
+}
+/*
+    優先オブジェクト preferentのプロパティがあれば返す
+*/
+const getPreferentPropertie = (p) => {
+    let c = "";
+
+    switch (p) {
+        case 'cmd':
+            if (preferent.cmd != null && 0 < preferent.cmd.length) {
+                c = preferent.cmd;
+            }
+            break;
+        case 'droptable':// table drop target table name
+            //すでにdrop tableが指定されているかもしれない
+            if (preferent.droptable != null && 0 < preferent.droptable.length) {
+                c = preferent.droptable;
+            }
+            break;
+        default:
+            break;
+    }
+
+    return c;
 }

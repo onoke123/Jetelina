@@ -29,6 +29,8 @@ scenario['6b'] = ['Command me, if you need'];
 scenario['6func-tabledrop'] = ['drop','drop table','table drop','tabledrop','droptable'];
 scenario['6func-tabledrop-msg'] = ['Which table do you want to drop?'];
 scenario['6func-tabledrop-confirm'] = ['Sure?'];
+scenario['6func-fileupload'] = ['file up','upload','up load','file up load','fileup load','fileupload',]
+scenario['6func-fileupload-msg'] = ['File?'];
 /* log out */
 scenario['logout'] = ['logout','exit','log out','out','return'];
 scenario['afterlogout'] = ['Bye', 'Have a good day','Hope you will back soon','I am looking forward you'];

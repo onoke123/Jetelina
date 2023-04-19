@@ -4,13 +4,13 @@ let selectedItemsArr = [];
 
 /*
    action by button click, then do fileupload()
- */
+ 
 $("#upbtn").on("click", function () {
   fileupload();
   // clean up d&d items, selectbox of the table list
   cleanUp("items");
 });
-
+*/
 /*
   select DB table then get the columns and be defined SQL(API) list
 */
