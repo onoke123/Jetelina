@@ -27,14 +27,10 @@ const getdata = (o, t) => {
                                 if (t == 0) {
                                     // table list
                                     str += `<span class="table">${value}</span>`;
-                                    //                                    str += `<span class="table" onclick="getColumn('${value}')">${value}</span>`;
-
-                                    //str += `<button onclick="getColumn('${value}')">${value}</button><br><br>`;
                                 } else if (t == 1) {
                                     // column list. jetelina_delte_flgは表示対象外
                                     if (name != "jetelina_delete_flg") {
                                         str += `<span class="item" d=${value}><p>${targetTable}.${name}</p></span>`;
-                                        //                                        str += `<div class="item" d=${value}><p>${targetTable}.${name}</p></div>`;
                                     }
                                 }
                             });
@@ -45,7 +41,6 @@ const getdata = (o, t) => {
                             */
                             // api list
                             str += `<span class="api">${v.no}</span>`;
-                            //str += `<div class="sqllist"><p>${v.no}:${v.sql}</p></div>`;
                         }
 
                         let tagid = "";
@@ -101,9 +96,10 @@ const postAjaxData = (url, data) => {
             dataType: "json"
         }).done(function (result, textStatus, jqXHR) {
             console.log("getAjaxData result: ", result);
-            if (url == "/getapi") {
+            if (url == "/getapilist") {
                 //rendering sql list
-                console.log("getapi: ", result);
+                console.log("getapilist: ", result);
+                preferent.apilist = result;
                 getdata(result, 2);
             }
         }).fail(function (result) {
@@ -432,7 +428,10 @@ const chatKeyDown = (cmd) => {
                                 }
 
                                 cleanUp("apis");
-                                postAjaxData("/getapi");
+
+                                //postAjaxData()でapilistを取得してpreferent.apilistに格納するので、一旦キレイにしておく
+                                delete preferent.apilist;
+                                postAjaxData("/getapilist");
                                 break;
                             case 'post':
                                 if (0 < selectedItemsArr.length) {
