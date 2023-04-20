@@ -30,7 +30,9 @@ scenario['6b'] = ['Command me, if you need'];
 scenario['6func-tabledrop'] = ['drop','drop table','table drop','tabledrop','droptable'];
 scenario['6func-tabledrop-msg'] = ['Which table do you want to drop?'];
 scenario['6func-tabledrop-confirm'] = ['Sure?'];
-scenario['6func-fileupload'] = ['file up','upload','up load','file up load','fileup load','fileupload','up'];
+scenario['6func-fileupload-open-cmd'] = ['open','file open','open the file box','open file box','open filebox','file box','csv file','csv file select','choose csv file'];
+scenario['6func-fileupload-open-msg'] = ['Which file?'];
+scenario['6func-fileupload-cmd'] = ['file up','upload','up load','file up load','fileup load','fileupload','up'];
 scenario['6func-fileupload-msg'] = ['File?'];
 /* log out */
 scenario['logout'] = ['logout','exit','log out','out','return'];

@@ -160,13 +160,20 @@ const fileupload = () => {
     この"activeTable"を見てcolumn取得実行の判定を行っている
 */
 $(document).on("click", ".table", function () {
-  let tn = $(this).text();
+  tableClick($(this));
+/*  let tn = $(this).text();
   let cl = $(this).attr("class");
 
   if (debug) {
     console.log("clicked table: ", tn);
     console.log("clicked class: ", cl);
   }
+*/
+});
+
+const tableClick = (p) =>{
+  let tn = p.text();
+  let cl = p.attr("class");
 
   removeColumn(tn);
   if (cl.indexOf("activeTable") != -1) {
@@ -175,8 +182,9 @@ $(document).on("click", ".table", function () {
     getColumn(tn);
   }
 
-  $(this).toggleClass("activeTable");
-});
+//  $(this).toggleClass("activeTable");
+  p.toggleClass("activeTable");
+}
 
 const getColumn = (tablename) => {
   if (0 < tablename.length || tablename != undefined) {
@@ -267,9 +275,15 @@ const postSelectedColumns = () => {
     dataType: "json",
     async: false
   }).done(function (result, textStatus, jqXHR) {
-    return true;
-    //    console.log(result);
+       /*
+        本当はここに来るはずなのに、何故かこのajax処理はfail()してしまう。
+        サーバサイドのDB処理は一応正常に終了しているので、原因がわかるまでは
+        done()の処理をalways()で行うようにしている。
+      */
+        console.log("postSele... :", result);
   }).fail(function (result) {
-    return false;
+    console.log("postSele... fail");
+  }).always(function(){
+    typingControll(chooseMsg('success', "", ""));
   });
 }

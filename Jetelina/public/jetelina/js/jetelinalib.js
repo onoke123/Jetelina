@@ -377,6 +377,8 @@ const chatKeyDown = (cmd) => {
                         if (cmd == null || cmd.length <= 0) {
                             if ($.inArray(ut, scenario['6func-fileupload']) != -1) {
                                 cmd = 'fileupload';
+                            }else if ($.inArray(ut, scenario['6func-fileupload-open-cmd']) != -1) {
+                                cmd = 'fileselectoropen';
                             } else {
                                 cmd = ut;
                             }
@@ -403,6 +405,8 @@ const chatKeyDown = (cmd) => {
                                    post: post selected items
                                    cancel: cancel all selected items
                                    droptable: drop table(post)
+                                   fileselectoropen: open file selector
+                                   fileupload: csv file upload
                                    default: non
                         */
                         switch (cmd) {
@@ -474,12 +478,14 @@ const chatKeyDown = (cmd) => {
                                     preferent.cmd = cmd;
                                 }
                                 break;
+                            case 'fileselectoropen'://open file selector
+                                $("#my_form input[name='upfile']").click();
+                                m = chooseMsg('6func-fileupload-open-msg',"","");
+                                break;
                             case 'fileupload'://csv file upload
                                 const f = $("input[type=file]").prop("files");
                                 if (f != null && 0 < f.length) {
                                     if( debug ) console.log("file up: ", f[0].name);
-
-//                                    const uploadFilename = f[0].name;
                                     fileupload();
                                 } else {
                                     m = chooseMsg('6func-fileupload-msg', "", "");
