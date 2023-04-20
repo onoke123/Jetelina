@@ -38,7 +38,7 @@ route( "/deletetable", PostDataController.deleteTable, method = POST )
 route( "getcolumns", PostDataController.getColumns, method = POST )
 
 # API(SQL) Listをjsonで返す
-route( "getapi", PostDataController.getApiList, method = POST )
+route( "getapilist", PostDataController.getApiList, method = POST )
 
 route( "/showdbdata" ) do 
   serve_static_file( "jetelina/showdbdata.html" )  

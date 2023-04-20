@@ -133,7 +133,7 @@ const fileupload = () => {
     $("input[type=file]").val("");
     $("#upbtn").prop("disabled", false);
 
-    if ( result.length != 0) {
+    if (result.length != 0) {
       $("#my_form label span").text("Upload CSV File");
 
       //refresh table list 
@@ -159,31 +159,71 @@ const fileupload = () => {
     １度目のクリック後　　　　　 ：table activeTable
     この"activeTable"を見てcolumn取得実行の判定を行っている
 */
-$(document).on("click", ".table", function () {
-  tableClick($(this));
-/*  let tn = $(this).text();
-  let cl = $(this).attr("class");
-
-  if (debug) {
-    console.log("clicked table: ", tn);
-    console.log("clicked class: ", cl);
-  }
-*/
+$(document).on("click", ".table,.api", function () {
+  listClick($(this));
+  /*  let tn = $(this).text();
+    let cl = $(this).attr("class");
+  
+    if (debug) {
+      console.log("clicked table: ", tn);
+      console.log("clicked class: ", cl);
+    }
+  */
 });
 
-const tableClick = (p) =>{
-  let tn = p.text();
-  let cl = p.attr("class");
+/*
+  指定されたJsonデータから指定されたデータを取得する
+  o:Json object
+  k:取得対象データ
 
-  removeColumn(tn);
-  if (cl.indexOf("activeTable") != -1) {
+  return　対象データ
+*/
+const getdataFromJson = (o, k) => {
+  const Jkey = 'Jetelina';
+  let ret = "";
+  Object.keys(o).forEach(function (key) {
+    //’Jetelina’のvalueはオブジェクトになっているからこうしている  name=>key value=>o[key]
+    let row = 1, col = 1;
+    if (key == Jkey && o[key].length > 0) {
+      $.each(o[key], function (n, v) {
+        $.each(v, function (name, value) {
+          if (value == k) {
+            ret = v.sql;
+            return false;
+          }
+        });
+      });
+    }
+  });
+
+  return ret;
+}
+
+const listClick = (p) => {
+  let t = p.text();
+  let c = p.attr("class");
+
+  removeColumn(t);
+  if (c.indexOf("activeTable") != -1) {
     //    removeColumn(tn);
   } else {
-    getColumn(tn);
-  }
+    if (c.indexOf("table") != -1) {
+      //get&show table columns
+      getColumn(t);
+    } else {
+      // get the SQL(API) 
+      // API ListはpostAjaxData("/getapilist",...)で取得されてpreferent.apilistにあるので、ここから該当SQLを取得する
+      if (preferent.apilist != null && preferent.apilist.length != 0) {
+        let s = getdataFromJson(preferent.apilist, t);
+        if( 0<s.length ){
+          $("#columns .item_area").append(`<span><p>${s}</p></span>`);
+        }
+      }
+    }
 
-//  $(this).toggleClass("activeTable");
-  p.toggleClass("activeTable");
+    //  $(this).toggleClass("activeTable");
+    p.toggleClass("activeTable");
+  }
 }
 
 const getColumn = (tablename) => {
@@ -243,7 +283,7 @@ const deleteThisTable = (tablename) => {
       console.log("deleteThisTable: tablename result -> ", result);
     }).fail(function (result) {
       console.error("deletetable() faild: ", result);
-    }).always(function(){
+    }).always(function () {
       $(`#table_container span:contains(${tablename})`).filter(function () {
         if ($(this).text() === tablename) {
           $(this).remove();
@@ -275,15 +315,15 @@ const postSelectedColumns = () => {
     dataType: "json",
     async: false
   }).done(function (result, textStatus, jqXHR) {
-       /*
-        本当はここに来るはずなのに、何故かこのajax処理はfail()してしまう。
-        サーバサイドのDB処理は一応正常に終了しているので、原因がわかるまでは
-        done()の処理をalways()で行うようにしている。
-      */
-        console.log("postSele... :", result);
+    /*
+     本当はここに来るはずなのに、何故かこのajax処理はfail()してしまう。
+     サーバサイドのDB処理は一応正常に終了しているので、原因がわかるまでは
+     done()の処理をalways()で行うようにしている。
+   */
+    console.log("postSele... :", result);
   }).fail(function (result) {
     console.log("postSele... fail");
-  }).always(function(){
+  }).always(function () {
     typingControll(chooseMsg('success', "", ""));
   });
 }
