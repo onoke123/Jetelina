@@ -206,12 +206,17 @@ const listClick = (p) => {
   removeColumn(t);
   if (c.indexOf("activeTable") != -1) {
     //    removeColumn(tn);
+    console.log("class here");
+    p.toggleClass("activeTable");
   } else {
     if (c.indexOf("table") != -1) {
       //get&show table columns
       getColumn(t);
     } else {
-      // get the SQL(API) 
+      // reset all activeTable class and sql
+      $("#api_container span").removeClass("activeTable"); 
+      $("#columns span").remove();
+      
       // API ListはpostAjaxData("/getapilist",...)で取得されてpreferent.apilistにあるので、ここから該当SQLを取得する
       if (preferent.apilist != null && preferent.apilist.length != 0) {
         let s = getdataFromJson(preferent.apilist, t);
