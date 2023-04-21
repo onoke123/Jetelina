@@ -411,7 +411,11 @@ const chatKeyDown = (cmd) => {
                                     ajaxのurlは'getalldbtable'
                                 */
                                 if ($("#api_container").is(":visible")) {
+                                    //一旦画面をキレイにしてから
+                                    cleanupItems4Switching();
+                                    cleanupContainers();
                                     $("#api_container").hide();
+                                    //table listを表示する
                                     $("#panel_left").text("Table List");
                                     $("#table_container").show();
                                 }
@@ -422,7 +426,11 @@ const chatKeyDown = (cmd) => {
                                 break;
                             case 'api':
                                 if ($("#table_container").is(":visible")) {
+                                    //一旦画面をキレイにしてから
+                                    cleanupItems4Switching();
+                                    cleanupContainers();
                                     $("#table_container").hide();
+                                    //api listを表示する
                                     $("#panel_left").text("API List");
                                     $("#api_container").show();
                                 }
@@ -578,4 +586,21 @@ const getPreferentPropertie = (p) => {
     }
 
     return c;
+}
+/*
+    table list/api list表示切り替えに伴い、activeItem Classなんかをクリアする
+*/
+const cleanupItems4Switching = () =>{
+    if( $("#table_container").is(":visible") ){
+        $("#table_container span").removeClass("activeItem"); 
+    }else if( $("#api_container").is(":visible") ){
+        $("#api_container span").removeClass("activeItem"); 
+        $("#container span").remove();
+    }
+}
+/*
+   table list/api list表示切り替えに伴い、詳細画面をクリアする
+*/
+const cleanupContainers = () =>{
+    $("#container span,#columns span").remove();
 }

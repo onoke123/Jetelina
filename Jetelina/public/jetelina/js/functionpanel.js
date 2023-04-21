@@ -156,8 +156,8 @@ const fileupload = () => {
     指定されたtableのcolumnを取得する
     一度クリックされると当該tableのclass属性が変わる
     クリック前&２度めのクリック後：table 
-    １度目のクリック後　　　　　 ：table activeTable
-    この"activeTable"を見てcolumn取得実行の判定を行っている
+    １度目のクリック後　　　　　 ：table activeItem
+    この"activeItem"を見てcolumn取得実行の判定を行っている
 */
 $(document).on("click", ".table,.api", function () {
   listClick($(this));
@@ -204,30 +204,30 @@ const listClick = (p) => {
   let c = p.attr("class");
 
   removeColumn(t);
-  if (c.indexOf("activeTable") != -1) {
+  if (c.indexOf("activeItem") != -1) {
     //    removeColumn(tn);
-    console.log("class here");
-    p.toggleClass("activeTable");
+    p.toggleClass("activeItem");
   } else {
     if (c.indexOf("table") != -1) {
       //get&show table columns
       getColumn(t);
     } else {
-      // reset all activeTable class and sql
-      $("#api_container span").removeClass("activeTable"); 
-      $("#columns span").remove();
-      
+      // reset all activeItem class and sql
+      cleanupItems4Switching();
+//      $("#api_container span").removeClass("activeItem"); 
+//      $("#container span").remove();
+
       // API ListはpostAjaxData("/getapilist",...)で取得されてpreferent.apilistにあるので、ここから該当SQLを取得する
       if (preferent.apilist != null && preferent.apilist.length != 0) {
         let s = getdataFromJson(preferent.apilist, t);
         if( 0<s.length ){
-          $("#columns .item_area").append(`<span><p>${s}</p></span>`);
+          $("#container").append(`<span class="apisql"><p>${s}</p></span>`);
         }
       }
     }
 
-    //  $(this).toggleClass("activeTable");
-    p.toggleClass("activeTable");
+    //  $(this).toggleClass("activeItem");
+    p.toggleClass("activeItem");
   }
 }
 
