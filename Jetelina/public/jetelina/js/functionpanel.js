@@ -214,6 +214,7 @@ const listClick = (p) => {
     } else {
       // reset all activeItem class and sql
       cleanupItems4Switching();
+      cleanupContainers();
 //      $("#api_container span").removeClass("activeItem"); 
 //      $("#container span").remove();
 
@@ -224,9 +225,9 @@ const listClick = (p) => {
           $("#container").append(`<span class="apisql"><p>${s}</p></span>`);
           // api in/out json
           let in_if = setApiIF_In(t,s);
-          $("#columns .item_area").append(`<div class="apisql apiin">${in_if}</div>`);
+          $("#columns .item_area").append(`<span class="apisql apiin"><bold>IN:</bold>${in_if}</span>`);
           let in_out = setApiIF_Out(t,s);
-          $("#columns .item_area").append(`<div class="apisql apiout">${in_out}</div>`);
+          $("#columns .item_area").append(`<span class="apisql apiout"><bold>OUT:</bold>${in_out}</span>`);
         }
       }
     }
@@ -239,13 +240,35 @@ const listClick = (p) => {
 const setApiIF_In =(t,s) =>{
   return "AAA";
 }
-
+/*
+   基本、select文しかOutはない。
+*/
 const setApiIF_Out =(t,s) =>{
+  let ret = "";
+
   if( t.toLowerCase().startsWith("js") ){
-    console.log("api out ");
+    let pb = s.split("select");
+    let pf = pb[1].split("from");
+    // pf[0]にselect項目があるはず
+    if( pf[0] != null && 0<pf[0].length ){
+      let c = pf[0].split(",");
+      for( let i=0; i< c.length; i++ ){
+        let cn = c[i].split('.');
+        if(ret.length == 0 ){
+          ret = "{Jetelina:[{";
+        }else{
+          ret = `${ret}\"${cn[1].trim()}:\"&lt;your data&gt;\",`;
+        }
+      }
+    }
   }
 
-  return "OUT";
+  if( 0<ret.length ){
+    ret = ret.slice(0,ret.length-1);//冗長な最後の","から前を使う
+    ret = `${ret}]}`;
+  }
+
+  return ret;
 }
 
 const getColumn = (tablename) => {
