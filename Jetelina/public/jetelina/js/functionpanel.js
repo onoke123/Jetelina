@@ -222,6 +222,11 @@ const listClick = (p) => {
         let s = getdataFromJson(preferent.apilist, t);
         if( 0<s.length ){
           $("#container").append(`<span class="apisql"><p>${s}</p></span>`);
+          // api in/out json
+          let in_if = setApiIF_In(t,s);
+          $("#columns .item_area").append(`<div class="apisql apiin">${in_if}</div>`);
+          let in_out = setApiIF_Out(t,s);
+          $("#columns .item_area").append(`<div class="apisql apiout">${in_out}</div>`);
         }
       }
     }
@@ -229,6 +234,18 @@ const listClick = (p) => {
     //  $(this).toggleClass("activeItem");
     p.toggleClass("activeItem");
   }
+}
+
+const setApiIF_In =(t,s) =>{
+  return "AAA";
+}
+
+const setApiIF_Out =(t,s) =>{
+  if( t.toLowerCase().startsWith("js") ){
+    console.log("api out ");
+  }
+
+  return "OUT";
 }
 
 const getColumn = (tablename) => {

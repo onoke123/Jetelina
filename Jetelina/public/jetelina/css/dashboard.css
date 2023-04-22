@@ -203,3 +203,11 @@ input[name="upfile"] {
   position: absolute;
   transform: translate(+10%,-50%);
 }
+
+.apisql.apiin {
+  top:30%;
+}
+
+.apisql.apiout {
+  top:50%;
+}
