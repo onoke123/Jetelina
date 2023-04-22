@@ -347,7 +347,7 @@ const chatKeyDown = (cmd) => {
                                 left: "30%"
                             }, animateDuration);
                             $("#container").draggable().animate({
-                                bottom: "10%",
+                                bottom: "5%" /*"10%"*/,
                                 left: "30%"
                             }, animateDuration);
                         }
