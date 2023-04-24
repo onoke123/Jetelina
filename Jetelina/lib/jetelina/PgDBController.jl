@@ -28,6 +28,7 @@ module PgDBController
     using CSV, LibPQ, DataFrames, IterTools, Tables
     using JetelinaLog, JetelinaReadConfig
     using PgDataTypeList
+    using SQLSentenceManager
 
     """
     """
@@ -179,12 +180,14 @@ module PgDBController
             sequence_number[1] -> Union{Int64}[51]
             sequence_number[1][1] -> 51
             というわけ。メンドウだな。
-        ===#
+        ===
         if t == 0
             return "j" * string( sequence_number[1][1] )
         elseif t == 1
             return "js" * string( sequence_number[1][1] )
         end
+        ===#
+        return sequence_number[1][1]
     end
 
     """
@@ -241,14 +244,30 @@ module PgDBController
 
         column_type_string = Array{Union{Nothing,String}}(nothing,size(column_name))
         column_str = string()
+        insert_str = string()
+        update_str = string()
         #===
             要は、create table文の　"id integer, name varchar(36)...の文を作るための処理であるぞと
         ===#
         for i = 1:length(column_name)
+            cn = column_name[i]
+            @info "cn: " cn
             column_type_string[i] = PgDataTypeList.getDataType( column_type[i] )
             column_str = string( column_str," ", column_name[i]," ", column_type_string[i] )
+            if startswith(column_type_string[i],"varchar")
+                #string data
+                insert_str = string( insert_str,"'$cn'" )
+                update_str = string( update_str, "$cn='d_$cn'" )
+            else
+                #number data
+                insert_str = string( insert_str,"$cn" )
+                   update_str = string( update_str,"$cn=d_$cn" )
+            end
+
             if 0 < i < length( column_name )
                 column_str = string( column_str * "," )
+                insert_str = string( insert_str * "," )
+                update_str = string( update_str * "," )
 #            elseif i == length( column_name )
             end
         end
@@ -300,7 +319,7 @@ module PgDBController
             """        
         df0 = DataFrame(columntable(LibPQ.execute(conn, sql)))  
         cols = map(x -> x, names(df0))
-        select!(df, cols)
+        select!(df, cols)        
 
         # create rows
         row_strings = imap(eachrow(df)) do row
@@ -312,6 +331,32 @@ module PgDBController
         # これは
         #columns = getColumns( conn, tableName )
         close_connection( conn )
+
+        # cols: ["id", "name", "sex", "age", "ave", "jetelina_delete_flg"]みたいに入っているのでカラムを使いたいときはこれを使おう
+        # と思ったけど、insert文もupdate文もデータのタイプを判断しないといけないから、colsではなくその上の
+        # select文の書き込みはPostDataCOntroller.postDataAcquire()　でやっている
+        insert_str = """insert into $tableName values($insert_str)"""
+        if debugflg
+            @info "insert sql: " insert_str
+        end
+
+        SQLSentenceManager.writeTolist(insert_str,tableName)
+
+        # update
+        update_str = """update $tableName set $update_str"""
+        if debugflg
+            @info "update sql: " update_str
+        end
+
+        SQLSentenceManager.writeTolist(update_str,tableName)
+
+        # delete
+        delete_str = """delete from $tableName"""
+        if debugflg
+            @info "delete sql: " delete_str
+        end
+
+        SQLSentenceManager.writeTolist(delete_str,tableName)
 
         if isempty( df_tl )
             # manage to jetelina_table_manager
@@ -367,7 +412,6 @@ module PgDBController
         df = DataFrame(columntable(LibPQ.execute(conn, sql)))  
         close_connection( conn )
         cols = map(x -> x, names(df))
-        @info "cols:", cols
         select!(df, cols)
         
         return json( Dict( "tablename"=>"$tableName", "Jetelina" => copy.( eachrow( df ))) )

@@ -3,22 +3,28 @@ module PostDataController
     using Genie, Genie.Requests,Genie.Renderer.Json
     using DBDataController
     using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
+    using SQLSentenceManager
 
+    #===
+        postデータからselect文を組み立てる
+    ===#
     function postDataAcquire()
         #==
           dashboard.htmlからのcolumn post dataは以下のjson形式で来る
-             { 'item':'["<table name>:<column name>","<table name>:<column name>",...]' }
+             { 'item'.'["<table name>.<column name>","<table name>.<column name>",...]' }
           で来る。これをjsonpayload("item")で受けると
-             item_d -> ["<table name>:<column name1>","<table name>:<column name2>",...]
+             item_d -> ["<table name>.<column name1>","<table name>.<column name2>",...]
           になるので、後は配列処理で
-             [1] -> <table name>:<column name1>
-          とするが、さらにtable名とカラム名に分けるので ':'　で文字分解して
+             [1] -> <table name>.<column name1>
+          とするが、さらにtable名とカラム名に分けるので '.'　で文字分解して
              table name  -> <table name>
              column name -> <column name1>
           としてsql文作成に使用する
         ==#
         item_d = jsonpayload("item")
-        @info "post: " item_d, size(item_d)
+        if debugflg
+            @info "post: " item_d, size(item_d)
+        end
         #===
             なぜsize(..)[1]かというと、上の@info出力でみるとsize(item_d)->(n,) とTupleになっていて
             最初の"n"が配列の長さなので、ってこと
@@ -26,7 +32,9 @@ module PostDataController
         selectSql = ""
         tableName = ""
         for i = 1:size(item_d)[1]
-            @info "data $i->", item_d[i]
+            if debugflg
+                @info "data $i->", item_d[i]
+            end
 
             t = split( item_d[i], "." )
             t1 = strip( t[1] )
@@ -44,10 +52,15 @@ module PostDataController
             else
                 tableName = """$t1 as $t1"""
             end
-
-            @info "t1, t2: ", t1, t2
+            
+            if debugflg 
+                @info "t1, t2: ", t1, t2
+            end
         end
 
+        selectSql = """select $selectSql from $tableName"""
+        SQLSentenceManager.writeTolist(selectSql,tableName)
+#===        
         # get the sequence name then create the sql sentence
         seq_no = DBDataController.getSequenceNumber(1)
         selectSql = """$seq_no,\"select $selectSql from $tableName\"\n"""
@@ -65,11 +78,15 @@ module PostDataController
         close(f)
 
         JetelinaReadSqlList.readSqlList2DataFrame()
-    end
+===#
+end
 
     function getColumns()
         tableName = jsonpayload( "tablename" )
-        @info "PostDataController.getColumns(): " tableName
+        if debugflg
+            @info "PostDataController.getColumns(): " tableName
+        end
+
         DBDataController.getColumns( tableName )
     end
 
@@ -109,13 +126,19 @@ module PostDataController
 ===#
     function deleteTable()
         tableName = jsonpayload( "tablename" )
-        @info "PostDataController.deleteTable() dropTable: " tableName
+        if debugflg
+            @info "PostDataController.deleteTable() dropTable: " tableName
+        end
+
         DBDataController.dropTable( tableName )
     end
 
     function login()
         userName = jsonpayload( "username" )
-        @info "PostDataController.login(): " userName
+        if debugflg
+            @info "PostDataController.login(): " userName
+        end
+
         DBDataController.getUserAccount( userName )
 #        if userName == "keiji"
 #        return json(Dict("name" => "keiji"))

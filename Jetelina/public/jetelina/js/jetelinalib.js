@@ -371,7 +371,7 @@ const chatKeyDown = (cmd) => {
                         let cmd = getPreferentPropertie('cmd');
                         //優先されるべきコマンドがないときは入力データが生きる
                         if (cmd == null || cmd.length <= 0) {
-                            if ($.inArray(ut, scenario['6func-fileupload']) != -1) {
+                            if ($.inArray(ut, scenario['6func-fileupload-cmd']) != -1) {
                                 cmd = 'fileupload';
                             }else if ($.inArray(ut, scenario['6func-fileupload-open-cmd']) != -1) {
                                 cmd = 'fileselectoropen';

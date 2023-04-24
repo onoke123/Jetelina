@@ -39,9 +39,9 @@ module DBDataController
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.dataInsertFromCSV( csvfname )
-            tableName = splitext( splitdir( csvfname )[2] )[1]
+#            tableName = splitext( splitdir( csvfname )[2] )[1]
              
-            return PgDBController.getColumns( tableName)
+#            return PgDBController.getColumns( tableName)
         elseif JetelinaDBtype == "mariadb"
         elseif JetelinaDBtype == "oracle"
         end
