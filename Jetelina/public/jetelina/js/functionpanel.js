@@ -238,7 +238,23 @@ const listClick = (p) => {
 }
 
 const setApiIF_In =(t,s) =>{
-  return "AAA";
+  let ta = t.toLowerCase();
+  let ret = "";
+
+  if( ta.startsWith("js") ){
+    //select
+    ret = `{"apino":\"${t}\"}`;
+  }else if( ta.startsWith("ji") ){
+    //insert
+  }else if( ta.startsWith("ju") ){
+    //update
+  }else if( ta.startsWith("jd") ){
+    //delete
+  }else{
+
+  }
+
+  return ret;
 }
 /*
    基本、select文しかOutはない。
