@@ -304,8 +304,8 @@ module PgDBController
         conn = open_connection()
         try
             execute( conn, create_table_str )
-        catch e
-            println(e)
+        catch err
+            println(err)
         end
         #===
             then get column from the created table, because the columns are order by csv file, thus they can get after
@@ -327,7 +327,11 @@ module PgDBController
         end
 
         copyin = LibPQ.CopyIn("COPY $tableName FROM STDIN (FORMAT CSV);", row_strings)
-        execute(conn, copyin)
+        try
+            execute(conn, copyin)
+        catch err
+            println(err)
+        end
         # これは
         #columns = getColumns( conn, tableName )
         close_connection( conn )
@@ -387,7 +391,7 @@ module PgDBController
         try
             execute(conn, drop_table_str)
             execute(conn, delete_data_str)    
-        catch e
+        catch err
             println(err)
         end
 
