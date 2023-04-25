@@ -13,6 +13,8 @@ module SQLSentenceManager
             suffix = "ju"
         elseif startswith(sql,"select")
             suffix = "js"
+        elseif startswith(sql,"delete")
+            suffix = "jd"
         end
 
 #        sqlsentence = """$suffix$seq_no,\"select $sql from $tablename\"\n"""

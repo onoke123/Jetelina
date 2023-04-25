@@ -246,12 +246,21 @@ const setApiIF_In =(t,s) =>{
     ret = `{"apino":\"${t}\"}`;
   }else if( ta.startsWith("ji") ){
     //insert
+    // insert into table values(a,b,...) -> a,b,...
+    let i_sql = s.split("values(");
+    i_sql[1] = i_sql[1].slice(0,i_sql[1].length-1);
+    ret = buildJetelinaJsonForm(t,i_sql[1]);
   }else if( ta.startsWith("ju") ){
     //update
+    // update table set a=d_a,b=d_b..... -> a=d_a,b=d_b...
+    let u_sql = s.split("set");
+    ret = buildJetelinaJsonForm(t,u_sql[1]);
   }else if( ta.startsWith("jd") ){
     //delete
+    let d_sql = s.split("from");
+    ret = buildJetelinaJsonForm(t,d_sql[1]);
   }else{
-
+    // who knows
   }
 
   return ret;
@@ -267,26 +276,51 @@ const setApiIF_Out =(t,s) =>{
     let pf = pb[1].split("from");
     // pf[0]にselect項目があるはず
     if( pf[0] != null && 0<pf[0].length ){
-      let c = pf[0].split(",");
-      for( let i=0; i< c.length; i++ ){
-        let cn = c[i].split('.');
-        if(ret.length == 0 ){
-          ret = "{Jetelina:[{";
+      ret = buildJetelinaJsonForm(t,pf[0]);
+    }
+  }
+
+
+  return ret;
+}
+
+const buildJetelinaJsonForm = (t,s) =>{
+  let ret = "";
+
+  let c = s.split(",");
+  for( let i=0; i< c.length; i++ ){
+    let cn = c[i].split('.');
+    if(ret.length == 0 ){
+      ret = `{"apino":\"${t}\",`;
+    }else{
+      let ss="";
+      if( cn[1] != null && 0<cn[1].length ){
+        // select
+        ss = cn[1];
+      }else{
+        //insert update delete
+        if(c[i].indexOf("=") != -1 ){
+          //update
+          ss = c[i].split("=")[0];
         }else{
-          ret = `${ret}\"${cn[1].trim()}:\"&lt;your data&gt;\",`;
+          //insert delte
+          ss = c[i];
         }
+      }
+
+      if( ss != "jetelina_delete_flg" ){
+        ret = `${ret}\"${ss.trim()}:\"&lt;your data&gt;\",`;
       }
     }
   }
 
   if( 0<ret.length ){
     ret = ret.slice(0,ret.length-1);//冗長な最後の","から前を使う
-    ret = `${ret}]}`;
+    ret = `${ret}}`;
   }
 
   return ret;
 }
-
 const getColumn = (tablename) => {
   if (0 < tablename.length || tablename != undefined) {
     //        let data = [];
