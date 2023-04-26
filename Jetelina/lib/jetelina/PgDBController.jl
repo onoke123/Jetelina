@@ -315,7 +315,6 @@ module PgDBController
             SELECT
                 *
             from $tableName
-            LIMIT 1
             """        
         df0 = DataFrame(columntable(LibPQ.execute(conn, sql)))  
         cols = map(x -> x, names(df0))
@@ -396,6 +395,9 @@ module PgDBController
         end
 
         close_connection( conn )
+
+        # SQLリストを処理する
+        SQLSentenceManager.deleteFromlist(tableName)
 
     end
 
