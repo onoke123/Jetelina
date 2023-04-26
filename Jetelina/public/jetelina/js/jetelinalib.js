@@ -618,7 +618,7 @@ const cleanupContainers = () =>{
 */
 const instractionMode = (s) =>{
     if( s.indexOf("say:") != -1 ){
-        let data = `{"sayjetelina":"${s.split("say:")[1]}","ar":"${scenario_name}"}`;
+        let data = `{"sayjetelina":"${s.split("say:")[1]}","arr":"${scenario_name}"}`;
         postAjaxData("/jetelinawords", data);
         typingControll( chooseMsg("success","","") );
     }

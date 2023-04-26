@@ -149,7 +149,7 @@ end
 ===#
 function addJetelinaWords()
     newwords = jsonpayload("sayjetelina")
-    arr = jsonpayload("ar")
+    arr = jsonpayload("arr")
 
     # adding scenario
     #        scenarioFile = string( joinpath( "..","..","public","jetelina","js","scenario.js" ))
@@ -160,23 +160,25 @@ function addJetelinaWords()
         @info "scenario path: " scenarioFile
     end
 
-    @info "target: " * "scenario['$arr']"
+    target_scenario = "scenario['$arr']"
     rewritestring = ""
 
     open(scenarioTmpFile, "w") do tf
         open(scenarioFile, "r") do f
             # keep=falseにして改行文字を取り除いておく。そしてprintln()する
             for ss in eachline(f, keep=false)
-                if startswith(ss, "scenario['$arr']")
+                if startswith(ss, target_scenario)
                     @info "hit: " ss
                     #ここで入れ替える
-                else
-                    println(tf, ss)
+                    ss = ss[1:length(ss)-2] * ",'$newwords'];"                    
                 end
+
+                println(tf, ss)
             end
         end
     end
 
     #全部終わったら scenarioTmpFile->scenarioFileとする
+    mv( scenarioTmpFile,scenarioFile,force=true)
 end
 end
