@@ -1,5 +1,6 @@
 let stage = 0;// action stage number ex. 1:before login  'login':at login
 let preferent = {};// 優先されるべきコマンドを格納する
+let scenario_name = "";//scenario
 const animateDuration = 1500;// animate() duration
 const debug = true;
 //const table = [];

@@ -47,7 +47,7 @@ end
 # csvファイルを読み込んで画面に表示する
 route( "/getcsvdata", CSVFileController.read )
 
-# post dataを取得
+# db table columns の選択されたpost dataを取得
 route( "/putitems", PostDataController.postDataAcquire, method = POST )
 
 #== file upload
@@ -58,9 +58,13 @@ end
 route("/dofup", FileUploadController.fup, method = POST)
 
 # test for three.js
+#===
 route( "/3" ) do
   serve_static_file( "jetelina/3d4jet.html")
 end
-
+===#
 # SQL analyze data を取得する
 #route( "/getanalyzedata", SQLAnalyzer.getAnalyzeData )
+
+# chat 
+route( "/jetelinawords", PostDataController.addJetelinaWords, method = POST)

@@ -101,6 +101,8 @@ const postAjaxData = (url, data) => {
                 console.log("getapilist: ", result);
                 preferent.apilist = result;
                 getdata(result, 2);
+            }else if( url == "/jetelinawords" ){
+                // nothing do
             }
         }).fail(function (result) {
         });
@@ -185,6 +187,8 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
 const chooseMsg = (i, m, p) => {
     if (debug) console.log("scenario number: ", i);
 
+    scenario_name = i;// scenario追加に備えて対象番号を控えておく
+
     const n = Math.floor(Math.random() * scenario[i].length);
     let s = scenario[`${i}`][n];
     if (0 < m.length) {
@@ -262,6 +266,10 @@ const chatKeyDown = (cmd) => {
                 m = chooseMsg('afterlogout', "", "");
                 logoutflg = true;
             }
+
+            // Jetelinaに言葉を教えているかどうか調べる
+            instractionMode(ut);
+
             /*
                 switch 1:login時のやりとり
                        login:login処理結果のやりとり
@@ -603,4 +611,15 @@ const cleanupItems4Switching = () =>{
 */
 const cleanupContainers = () =>{
     $("#container span,#columns span").remove();
+}
+/*
+    Jetelinaのscenario追加確認
+    俺だけの機能
+*/
+const instractionMode = (s) =>{
+    if( s.indexOf("say:") != -1 ){
+        let data = `{"sayjetelina":"${s.split("say:")[1]}","ar":"${scenario_name}"}`;
+        postAjaxData("/jetelinawords", data);
+        typingControll( chooseMsg("success","","") );
+    }
 }
