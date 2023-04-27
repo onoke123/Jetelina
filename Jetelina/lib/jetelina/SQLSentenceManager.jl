@@ -1,5 +1,6 @@
 module SQLSentenceManager
 using DBDataController
+using Dates
 using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
 
 # sqli list file
@@ -57,16 +58,27 @@ end
 ===#
 function deleteFromlist(tablename)
     sqlTmpFile = string(joinpath(@__DIR__, "config", "JetelinaSqlList.tmp"))
+    tableapiTmpFile = string(joinpath(@__DIR__, "config", "JetelinaTableApi.tmp"))
 
     # 該当tableと関係するApiを取得する
     targetapi = []
-    open(tableapiFile, "r") do taf
-        # keep=falseにして改行文字を取り除いておく。そしてprintln()する
-        for ss in eachline(taf, keep=false)
-            p = split(ss, ":") # api_name:table,table,....
-            tmparr = split(p[2],',')
-            if tablename ∈ tmparr
-                push!(targetapi, p[1]) # ["js1","ji2,.....]
+    # 対象ファイル類のバックアップをとっておく
+    backupfilesuffix = Dates.format(now(), "yyyymmdd-HHMMSS")
+    cp(tableapiFile, string(tableapiFile, backupfilesuffix), force=true)
+    cp(sqlFile, string(sqlFile, backupfilesuffix), force=true)
+
+    open(tableapiTmpFile, "w") do ttaf
+        open(tableapiFile, "r") do taf
+            # keep=falseにして改行文字を取り除いておく。そしてprintln()する
+            for ss in eachline(taf, keep=false)
+                p = split(ss, ":") # api_name:table,table,....
+                tmparr = split(p[2], ',')
+                if tablename ∈ tmparr
+                    push!(targetapi, p[1]) # ["js1","ji2,.....]
+                else
+                    # 対象外はファイルに残す
+                    println(ttaf,ss)
+                end
             end
         end
     end
@@ -74,12 +86,10 @@ function deleteFromlist(tablename)
     open(sqlTmpFile, "w") do tf
         open(sqlFile, "r") do f
             for ss in eachline(f, keep=false)
-                p = split(ss,"\"") # js1,"select..."
-                @info "chk target: " rstrip(p[1],','), targetapi 
-                if rstrip(p[1],',') ∈ targetapi # これこれぇ＼(^o^)／
-                    # 含まれるのでスキップ
+                p = split(ss, "\"") # js1,"select..."
+                if rstrip(p[1], ',') ∈ targetapi # これこれぇ＼(^o^)／
+                # 含まれるのでスキップ
                 else
-                    @info "hit: " ss
                     #対象tableを含まないものだけ書き出す
                     println(tf, ss)
                 end
@@ -88,8 +98,9 @@ function deleteFromlist(tablename)
     end
 
     # 全部終わったら scenarioTmpFile->scenarioFileとする
-    mv( sqlTmpFile,sqlFile,force=true)
-    
+    mv(sqlTmpFile, sqlFile, force=true)
+    mv(tableapiTmpFile,tableapiFile,force=true)
+
     # DataFrameを更新する
     JetelinaReadSqlList.readSqlList2DataFrame()
 end
