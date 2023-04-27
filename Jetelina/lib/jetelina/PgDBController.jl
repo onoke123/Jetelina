@@ -246,6 +246,7 @@ module PgDBController
         column_str = string()
         insert_str = string()
         update_str = string()
+        tablename_arr = []
         #===
             要は、create table文の　"id integer, name varchar(36)...の文を作るための処理であるぞと
         ===#
@@ -338,12 +339,13 @@ module PgDBController
         # cols: ["id", "name", "sex", "age", "ave", "jetelina_delete_flg"]みたいに入っているのでカラムを使いたいときはこれを使おう
         # と思ったけど、insert文もupdate文もデータのタイプを判断しないといけないから、colsではなくその上の
         # select文の書き込みはPostDataCOntroller.postDataAcquire()　でやっている
+        push!(tablename_arr,tableName)
         insert_str = """insert into $tableName values($insert_str)"""
         if debugflg
             @info "insert sql: " insert_str
         end
 
-        SQLSentenceManager.writeTolist(insert_str,tableName)
+        SQLSentenceManager.writeTolist(insert_str,tablename_arr)
 
         # update
         update_str = """update $tableName set $update_str"""
@@ -351,7 +353,7 @@ module PgDBController
             @info "update sql: " update_str
         end
 
-        SQLSentenceManager.writeTolist(update_str,tableName)
+        SQLSentenceManager.writeTolist(update_str,tablename_arr)
 
         # delete
         delete_str = """delete from $tableName"""
@@ -359,7 +361,7 @@ module PgDBController
             @info "delete sql: " delete_str
         end
 
-        SQLSentenceManager.writeTolist(delete_str,tableName)
+        SQLSentenceManager.writeTolist(delete_str,tablename_arr)
 
         if isempty( df_tl )
             # manage to jetelina_table_manager

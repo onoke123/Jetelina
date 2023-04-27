@@ -31,6 +31,7 @@ function postDataAcquire()
     ===#
     selectSql = ""
     tableName = ""
+    tablename_arr = []
     for i = 1:size(item_d)[1]
         if debugflg
             @info "data $i->", item_d[i]
@@ -48,10 +49,13 @@ function postDataAcquire()
         if (0 < length(tableName))
             if (!contains(tableName, t1))
                 tableName = """$tableName,$t1 as $t1"""
+                push!(tablename_arr,t1)
             end
         else
             tableName = """$t1 as $t1"""
+            push!(tablename_arr,t1)
         end
+
 
         if debugflg
             @info "t1, t2: ", t1, t2
@@ -59,7 +63,7 @@ function postDataAcquire()
     end
 
     selectSql = """select $selectSql from $tableName"""
-    SQLSentenceManager.writeTolist(selectSql, tableName)
+    SQLSentenceManager.writeTolist(selectSql, tablename_arr)
     #===        
             # get the sequence name then create the sql sentence
             seq_no = DBDataController.getSequenceNumber(1)
