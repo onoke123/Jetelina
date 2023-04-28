@@ -1,3 +1,24 @@
+/*
+    JS library for Jetelina Function Panel
+    ver 1
+    Author : Ono Keiji
+    
+    Functions:
+      deleteSelectedItems(p) 選択されているcolumnsを#containerから削除する
+      cleanUp(s) cleanUp droped items & columns of selecting table
+      fileupload() CSV file upload
+      getdataFromJson(o,k) 指定されたJsonデータから指定されたデータを取得する
+      listClick(p)   Table list / API listをクリックした時の処理 
+      setApiIF_In(t,s) API　IN Json
+      setApiIF_Out(t,s) API OUT Json
+      buildJetelinaJsonForm(t,s)  API IN/OUT　Json
+      getColumn(tablename) 指定されたtableのカラムデータを取得する
+      removeColumn(tablename) カラム表示されている要素を指定して表示から削除する
+      deleteThisTable(tablename)　指定されたtableをDBから削除する
+      postSelectedColumns() post selected columns
+      functionPanelFunctions(ut, cmd)　Function Panel 機能操作
+      procTableApiList(s) チャットでtable/apiの操作を行う
+*/
 // table delete button
 $("#table_delete").hide();
 let selectedItemsArr = [];
@@ -8,29 +29,6 @@ let selectedItemsArr = [];
 $("input[name='upfile']").on("change", function () {
   $("#my_form label span").text($("input[type=file]").prop("files")[0].name);
 });
-/*
-  select DB table then get the columns and be defined SQL(API) list
-
-$("#d_tablelist").on("change", function () {
-  let tablename = $("#d_tablelist").val();
-  // clean up d&d items
-  cleanUp("items");
-  // get the column list
-  $("#container .item_area").append(getColumn(tablename));
-  // show table delete button
-  $("#table_delete").show();
-
-  // get the SQL(API) list
-  postAjaxData("/getapi", `{"tablename":"${tablename}"}`);
-});
-*/
-/*
-
-$("#table_delete").on("click", function () {
-  let tablename = $("#d_tablelist").val();
-  deleteThisTable(tablename);
-});
-*/
 /*
   tooltip for columns list
 */
@@ -48,7 +46,10 @@ $(document).on({
   mouseleave: function () {
     $('div#pop-up').hide();
   },
-  click: function () {
+  click: 
+  function () {
+    itemSelect($(this))
+  /*
     let cl = $(this).attr("class");
     let item = $(this).text();
 
@@ -65,9 +66,29 @@ $(document).on({
       }
 
       selectedItemsArr.push(item);
-    }
+    }*/
   }
 }, ".item");
+
+const itemSelect = (p) =>{
+  let cl = p.attr("class");
+  let item = p.text();
+
+  if (p.hasClass("selectedItem")) {
+    //削除
+    deleteSelectedItems(this);
+  } else {
+    //追加
+    if ($.inArray(item, selectedItemsArr) != -1) {
+      p.detach();
+    } else {
+      p.addClass("selectedItem");
+      p.detach().appendTo("#container");
+    }
+
+    selectedItemsArr.push(item);
+  }
+}
 /*
   選択されているcolumnsを#containerから削除する
 */
@@ -107,8 +128,6 @@ const cleanUp = (s) => {
     $("#api_container .api").remove();
   }
 }
-
-
 /*
     CSV file upload
 */
@@ -198,7 +217,9 @@ const getdataFromJson = (o, k) => {
 
   return ret;
 }
-
+/*
+   Table list / API listをクリックした時の処理 
+*/
 const listClick = (p) => {
   let t = p.text();
   let c = p.attr("class");
@@ -215,18 +236,18 @@ const listClick = (p) => {
       // reset all activeItem class and sql
       cleanupItems4Switching();
       cleanupContainers();
-//      $("#api_container span").removeClass("activeItem"); 
-//      $("#container span").remove();
+      //      $("#api_container span").removeClass("activeItem"); 
+      //      $("#container span").remove();
 
       // API ListはpostAjaxData("/getapilist",...)で取得されてpreferent.apilistにあるので、ここから該当SQLを取得する
       if (preferent.apilist != null && preferent.apilist.length != 0) {
         let s = getdataFromJson(preferent.apilist, t);
-        if( 0<s.length ){
+        if (0 < s.length) {
           $("#container").append(`<span class="apisql"><p>${s}</p></span>`);
           // api in/out json
-          let in_if = setApiIF_In(t,s);
+          let in_if = setApiIF_In(t, s);
           $("#columns .item_area").append(`<span class="apisql apiin"><bold>IN:</bold>${in_if}</span>`);
-          let in_out = setApiIF_Out(t,s);
+          let in_out = setApiIF_Out(t, s);
           $("#columns .item_area").append(`<span class="apisql apiout"><bold>OUT:</bold>${in_out}</span>`);
         }
       }
@@ -236,91 +257,98 @@ const listClick = (p) => {
     p.toggleClass("activeItem");
   }
 }
-
-const setApiIF_In =(t,s) =>{
+/*
+  API　IN Json
+*/
+const setApiIF_In = (t, s) => {
   let ta = t.toLowerCase();
   let ret = "";
 
-  if( ta.startsWith("js") ){
+  if (ta.startsWith("js")) {
     //select
     ret = `{"apino":\"${t}\"}`;
-  }else if( ta.startsWith("ji") ){
+  } else if (ta.startsWith("ji")) {
     //insert
     // insert into table values(a,b,...) -> a,b,...
     let i_sql = s.split("values(");
-    i_sql[1] = i_sql[1].slice(0,i_sql[1].length-1);
-    ret = buildJetelinaJsonForm(t,i_sql[1]);
-  }else if( ta.startsWith("ju") ){
+    i_sql[1] = i_sql[1].slice(0, i_sql[1].length - 1);
+    ret = buildJetelinaJsonForm(t, i_sql[1]);
+  } else if (ta.startsWith("ju")) {
     //update
     // update table set a=d_a,b=d_b..... -> a=d_a,b=d_b...
     let u_sql = s.split("set");
-    ret = buildJetelinaJsonForm(t,u_sql[1]);
-  }else if( ta.startsWith("jd") ){
+    ret = buildJetelinaJsonForm(t, u_sql[1]);
+  } else if (ta.startsWith("jd")) {
     //delete
     let d_sql = s.split("from");
-    ret = buildJetelinaJsonForm(t,d_sql[1]);
-  }else{
+    ret = buildJetelinaJsonForm(t, d_sql[1]);
+  } else {
     // who knows
   }
 
   return ret;
 }
 /*
-   基本、select文しかOutはない。
+  API OUT Json 
+  基本、select文しかOutはない。
 */
-const setApiIF_Out =(t,s) =>{
+const setApiIF_Out = (t, s) => {
   let ret = "";
 
-  if( t.toLowerCase().startsWith("js") ){
+  if (t.toLowerCase().startsWith("js")) {
     let pb = s.split("select");
     let pf = pb[1].split("from");
     // pf[0]にselect項目があるはず
-    if( pf[0] != null && 0<pf[0].length ){
-      ret = buildJetelinaJsonForm(t,pf[0]);
+    if (pf[0] != null && 0 < pf[0].length) {
+      ret = buildJetelinaJsonForm(t, pf[0]);
     }
   }
 
-
   return ret;
 }
-
-const buildJetelinaJsonForm = (t,s) =>{
+/*
+  API IN/OUT　Json
+*/
+const buildJetelinaJsonForm = (t, s) => {
   let ret = "";
 
   let c = s.split(",");
-  for( let i=0; i< c.length; i++ ){
+  for (let i = 0; i < c.length; i++) {
     let cn = c[i].split('.');
-    if(ret.length == 0 ){
+    if (ret.length == 0) {
       ret = `{"apino":\"${t}\",`;
-    }else{
-      let ss="";
-      if( cn[1] != null && 0<cn[1].length ){
+    } else {
+      let ss = "";
+      if (cn[1] != null && 0 < cn[1].length) {
         // select
         ss = cn[1];
-      }else{
+      } else {
         //insert update delete
-        if(c[i].indexOf("=") != -1 ){
+        if (c[i].indexOf("=") != -1) {
           //update
           ss = c[i].split("=")[0];
-        }else{
+        } else {
           //insert delte
           ss = c[i];
         }
       }
 
-      if( ss != "jetelina_delete_flg" ){
+      if (ss != "jetelina_delete_flg") {
         ret = `${ret}\"${ss.trim()}:\"&lt;your data&gt;\",`;
       }
     }
   }
 
-  if( 0<ret.length ){
-    ret = ret.slice(0,ret.length-1);//冗長な最後の","から前を使う
+  if (0 < ret.length) {
+    ret = ret.slice(0, ret.length - 1);//冗長な最後の","から前を使う
     ret = `${ret}}`;
   }
 
   return ret;
 }
+/*
+  指定されたtableのカラムデータを取得する
+*/
 const getColumn = (tablename) => {
   if (0 < tablename.length || tablename != undefined) {
     //        let data = [];
@@ -356,7 +384,9 @@ const removeColumn = (tablename) => {
 
   }
 }
-
+/*
+  指定されたtableをDBから削除する
+*/
 const deleteThisTable = (tablename) => {
   if (0 < tablename.length || tablename != undefined) {
     let pd = {};
@@ -421,4 +451,197 @@ const postSelectedColumns = () => {
   }).always(function () {
     typingControll(chooseMsg('success', "", ""));
   });
+}
+/*
+  Function Panel 機能操作
+*/
+const functionPanelFunctions = (ut, cmd) => {
+  if(presentaction == null || presentaction.length == 0 ){
+    presentaction.push('func');
+  }
+
+  if (ut.indexOf('cond') != -1) {
+    delete preferent;
+    delete presentaction;
+    stage = 'chose_func_or_cond';
+    chatKeyDown(ut);
+  } else {
+    // 優先オブジェクトがあればそれを使う
+    let cmd = getPreferentPropertie('cmd');
+    //優先されるべきコマンドがないときは入力データが生きる
+    if (cmd == null || cmd.length <= 0) {
+      if ($.inArray(ut, scenario['6func-fileupload-cmd']) != -1) {
+        cmd = 'fileupload';
+      } else if ($.inArray(ut, scenario['6func-fileupload-open-cmd']) != -1) {
+        cmd = 'fileselectoropen';
+      } else if (ut.indexOf('table') != -1 ) {
+        cmd = 'table';
+      } else if (ut.indexOf('api') != -1 ) {
+        cmd = 'api';
+      }else{
+        cmd = ut;
+      }
+    }
+
+    if( cmd == 'table' || cmd == 'api' ){
+      presentaction.stage = "func";
+      presentaction.cmd = cmd;
+    }
+
+    //チャットコマンドでtable/apiを操作する
+    procTableApiList(cmd);
+
+    let dropTable = getPreferentPropertie('cmd');
+    //優先されるべきtable nameがないときは入力データが生きる
+    if (dropTable == null || dropTable.length <= 0) {
+      for (let i = 0; i < scenario['6func-tabledrop'].length; i++) {
+        if (ut.indexOf(scenario['6func-tabledrop'][i]) != -1) {
+          let dpm = ut.split(scenario['6func-tabledrop'][i]);
+          dropTable = dpm[dpm.length - 1].trim();
+          console.log("dt:", dropTable);
+          cmd = 'droptable';
+        }
+      }
+    }
+
+    /*
+        switch table: table list表示
+               api: api list表示
+               post: post selected items
+               cancel: cancel all selected items
+               droptable: drop table(post)
+               fileselectoropen: open file selector
+               fileupload: csv file upload
+               default: non
+    */
+    switch (cmd) {
+      case 'table':
+        /* jetelinalib.jsのgetAjaxData()を呼び出して、DB上の全tableリストを取得する
+            ajaxのurlは'getalldbtable'
+        */
+        if ($("#api_container").is(":visible")) {
+          //一旦画面をキレイにしてから
+          cleanupItems4Switching();
+          cleanupContainers();
+          $("#api_container").hide();
+          //table listを表示する
+          $("#panel_left").text("Table List");
+          $("#table_container").show();
+        }
+
+        cleanUp("tables");
+        getAjaxData("getalldbtable");
+        m = chooseMsg('6a', "", "");
+        break;
+      case 'api':
+        if ($("#table_container").is(":visible")) {
+          //一旦画面をキレイにしてから
+          cleanupItems4Switching();
+          cleanupContainers();
+          $("#table_container").hide();
+          //api listを表示する
+          $("#panel_left").text("API List");
+          $("#api_container").show();
+        }
+
+        cleanUp("apis");
+
+        //postAjaxData()でapilistを取得してpreferent.apilistに格納するので、一旦キレイにしておく
+        delete preferent.apilist;
+        postAjaxData("/getapilist");
+        break;
+      case 'post':
+        if (0 < selectedItemsArr.length) {
+          console.log("post ret: ", postSelectedColumns());
+        } else {
+          m = chooseMsg('6func_post_err', "", "");
+        }
+
+        break;
+      case 'cancel':
+        deleteSelectedItems();
+        break;
+      case 'droptable':
+        if (dropTable != null && 0 < dropTable.length) {
+          //該当table存在確認
+          let p = $(`#table_container span:contains(${dropTable})`).filter(function () {
+            return $(this).text() === dropTable;
+          });
+
+          if (p != null && 0 < p.length) {
+            //あった。よし削除確認メッセージ
+            m = chooseMsg('6func-tabledrop-confirm', "", "");
+            preferent.cmd = cmd;
+            preferent.droptable = dropTable;
+          } else {
+            //ないぞ。ちゃんとtableを指定して。
+            m = chooseMsg('6func-tabledrop-msg', "", "");
+            preferent.cmd = cmd;
+          }
+
+          // 6func-tabledrop-confirmに対して'yes'と言われたら実行される
+          if (ut.indexOf('yes') != -1) {
+            let t = preferent.droptable;
+
+            delete preferent.cmd;
+            delete preferent.droptable;
+
+            deleteThisTable(t);
+          }
+        } else {
+          //table指定催促メッセージ
+          m = chooseMsg('6func-tabledrop-msg', "", "");
+          preferent.cmd = cmd;
+        }
+        break;
+      case 'fileselectoropen'://open file selector
+        $("#my_form input[name='upfile']").click();
+        m = chooseMsg('6func-fileupload-open-msg', "", "");
+        break;
+      case 'fileupload'://csv file upload
+        const f = $("input[type=file]").prop("files");
+        if (f != null && 0 < f.length) {
+          if (debug) console.log("file up: ", f[0].name);
+          fileupload();
+        } else {
+          m = chooseMsg('6func-fileupload-msg', "", "");
+        }
+        break;
+      default:
+        break;
+    }
+  }
+}
+/*
+  チャットでtable/apiの操作を行う
+*/
+const procTableApiList = (s) =>{
+  let targetlist = "";
+  if( presentaction.cmd == 'table' ){
+    targetlist = "#table_container .table";
+  }else if( presentaction.cmd == 'api' ){
+    targetlist = "#api_container .api";
+  }
+
+  if( s.indexOf('open') != -1 ){
+    s.trim();
+    let t;
+    if( s.indexOf(':') != -1){
+      t = s.split(':');
+    }else if( s.indexOf(' ') != -1){
+      t = s.split(' ');
+    }else{
+    }
+
+    if( t[1] != null && 0<t[1].length){
+console.log("procTa... chk2");
+      $(targetlist).find("span").each( function(i,v){
+console.log("procTa... chk3 ", t[1]," ", i,"->", v.textContent);
+        if( v.textContent == t[1] ){
+          console.log("hit item: ", t[1]);
+          listClick($(this));
+        }
+      });  
+    }
+  }
 }
