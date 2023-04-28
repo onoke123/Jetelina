@@ -101,7 +101,7 @@ const postAjaxData = (url, data) => {
                 console.log("getapilist: ", result);
                 preferent.apilist = result;
                 getdata(result, 2);
-            }else if( url == "/jetelinawords" ){
+            } else if (url == "/jetelinawords") {
                 // nothing do
             }
         }).fail(function (result) {
@@ -371,149 +371,13 @@ const chatKeyDown = (cmd) => {
 
                     break;
                 case 'func':
-                    if (ut.indexOf('cond') != -1) {
-                        stage = 'chose_func_or_cond';
-                        chatKeyDown(ut);
-                    } else {
-                        // 優先オブジェクトがあればそれを使う
-                        let cmd = getPreferentPropertie('cmd');
-                        //優先されるべきコマンドがないときは入力データが生きる
-                        if (cmd == null || cmd.length <= 0) {
-                            if ($.inArray(ut, scenario['6func-fileupload-cmd']) != -1) {
-                                cmd = 'fileupload';
-                            }else if ($.inArray(ut, scenario['6func-fileupload-open-cmd']) != -1) {
-                                cmd = 'fileselectoropen';
-                            } else {
-                                cmd = ut;
-                            }
-                        }
-
-                        let dropTable = getPreferentPropertie('cmd');
-                        //優先されるべきtable nameがないときは入力データが生きる
-                        if (dropTable == null || dropTable.length <= 0) {
-                            for (let i = 0; i < scenario['6func-tabledrop'].length; i++) {
-                                if (ut.indexOf(scenario['6func-tabledrop'][i]) != -1) {
-                                    let dpm = ut.split(scenario['6func-tabledrop'][i]);
-                                    dropTable = dpm[dpm.length - 1].trim();
-                                    console.log("dt:", dropTable);
-                                    cmd = 'droptable';
-                                }
-                            }
-                        }
-
-                        if (debug) console.log("in func: ", cmd, dropTable);
-
-                        /*
-                            switch table: table list表示
-                                   api: api list表示
-                                   post: post selected items
-                                   cancel: cancel all selected items
-                                   droptable: drop table(post)
-                                   fileselectoropen: open file selector
-                                   fileupload: csv file upload
-                                   default: non
-                        */
-                        switch (cmd) {
-                            case 'table':
-                                /* jetelinalib.jsのgetAjaxData()を呼び出して、DB上の全tableリストを取得する
-                                    ajaxのurlは'getalldbtable'
-                                */
-                                if ($("#api_container").is(":visible")) {
-                                    //一旦画面をキレイにしてから
-                                    cleanupItems4Switching();
-                                    cleanupContainers();
-                                    $("#api_container").hide();
-                                    //table listを表示する
-                                    $("#panel_left").text("Table List");
-                                    $("#table_container").show();
-                                }
-
-                                cleanUp("tables");
-                                getAjaxData("getalldbtable");
-                                m = chooseMsg('6a', "", "");
-                                break;
-                            case 'api':
-                                if ($("#table_container").is(":visible")) {
-                                    //一旦画面をキレイにしてから
-                                    cleanupItems4Switching();
-                                    cleanupContainers();
-                                    $("#table_container").hide();
-                                    //api listを表示する
-                                    $("#panel_left").text("API List");
-                                    $("#api_container").show();
-                                }
-
-                                cleanUp("apis");
-
-                                //postAjaxData()でapilistを取得してpreferent.apilistに格納するので、一旦キレイにしておく
-                                delete preferent.apilist;
-                                postAjaxData("/getapilist");
-                                break;
-                            case 'post':
-                                if (0 < selectedItemsArr.length) {
-                                    console.log("post ret: ", postSelectedColumns());
-                                } else {
-                                    m = chooseMsg('6func_post_err', "", "");
-                                }
-
-                                break;
-                            case 'cancel':
-                                deleteSelectedItems();
-                                break;
-                            case 'droptable':
-                                if (dropTable != null && 0 < dropTable.length) {
-                                    //該当table存在確認
-                                    let p = $(`#table_container span:contains(${dropTable})`).filter(function () {
-                                        return $(this).text() === dropTable;
-                                    });
-
-                                    if (p != null && 0 < p.length) {
-                                        //あった。よし削除確認メッセージ
-                                        m = chooseMsg('6func-tabledrop-confirm', "", "");
-                                        preferent.cmd = cmd;
-                                        preferent.droptable = dropTable;
-                                    } else {
-                                        //ないぞ。ちゃんとtableを指定して。
-                                        m = chooseMsg('6func-tabledrop-msg', "", "");
-                                        preferent.cmd = cmd;
-                                    }
-
-                                    // 6func-tabledrop-confirmに対して'yes'と言われたら実行される
-                                    if (ut.indexOf('yes') != -1) {
-                                        let t = preferent.droptable;
-
-                                        delete preferent.cmd;
-                                        delete preferent.droptable;
-
-                                        deleteThisTable(t);                                        
-                                    }
-                                } else {
-                                    //table指定催促メッセージ
-                                    m = chooseMsg('6func-tabledrop-msg', "", "");
-                                    preferent.cmd = cmd;
-                                }
-                                break;
-                            case 'fileselectoropen'://open file selector
-                                $("#my_form input[name='upfile']").click();
-                                m = chooseMsg('6func-fileupload-open-msg',"","");
-                                break;
-                            case 'fileupload'://csv file upload
-                                const f = $("input[type=file]").prop("files");
-                                if (f != null && 0 < f.length) {
-                                    if( debug ) console.log("file up: ", f[0].name);
-                                    fileupload();
-                                } else {
-                                    m = chooseMsg('6func-fileupload-msg', "", "");
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-
+                    // defined in functionpanel.js
+                    functionPanelFunctions(ut, cmd);
                     break;
                 case 'cond':
                     if (ut.indexOf('func') != -1) {
+                        delete preferent;
+                        delete presentaction;
                         stage = 'chose_func_or_cond';
                         chatKeyDown(ut);
                     }
@@ -536,7 +400,7 @@ const chatKeyDown = (cmd) => {
                 enterNumber = 0;
             }
 
-            if( 0<m.length){
+            if (0 < m.length) {
                 typingControll(m);
             }
             //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく
@@ -570,6 +434,11 @@ const logout = () => {
 
     $("#function_panel").hide();
     $("#condition_panel").hide();
+
+    // global variables initialize
+    stage = 0;
+    delete preferent;
+    delete plesentaction;
 }
 /*
     優先オブジェクト preferentのプロパティがあれば返す
@@ -598,28 +467,28 @@ const getPreferentPropertie = (p) => {
 /*
     table list/api list表示切り替えに伴い、activeItem Classなんかをクリアする
 */
-const cleanupItems4Switching = () =>{
-    if( $("#table_container").is(":visible") ){
-        $("#table_container span").removeClass("activeItem"); 
-    }else if( $("#api_container").is(":visible") ){
-        $("#api_container span").removeClass("activeItem"); 
+const cleanupItems4Switching = () => {
+    if ($("#table_container").is(":visible")) {
+        $("#table_container span").removeClass("activeItem");
+    } else if ($("#api_container").is(":visible")) {
+        $("#api_container span").removeClass("activeItem");
         $("#container span").remove();
     }
 }
 /*
    table list/api list表示切り替えに伴い、詳細画面をクリアする
 */
-const cleanupContainers = () =>{
+const cleanupContainers = () => {
     $("#container span,#columns span").remove();
 }
 /*
     Jetelinaのscenario追加確認
     俺だけの機能
 */
-const instractionMode = (s) =>{
-    if( s.indexOf("say:") != -1 ){
+const instractionMode = (s) => {
+    if (s.indexOf("say:") != -1) {
         let data = `{"sayjetelina":"${s.split("say:")[1]}","arr":"${scenario_name}"}`;
         postAjaxData("/jetelinawords", data);
-        typingControll( chooseMsg("success","","") );
+        typingControll(chooseMsg("success", "", ""));
     }
 }
