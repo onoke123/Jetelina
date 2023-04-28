@@ -46,31 +46,31 @@ $(document).on({
   mouseleave: function () {
     $('div#pop-up').hide();
   },
-  click: 
-  function () {
-    itemSelect($(this))
-  /*
-    let cl = $(this).attr("class");
-    let item = $(this).text();
-
-    if ($(this).hasClass("selectedItem")) {
-      //削除
-      deleteSelectedItems(this);
-    } else {
-      //追加
-      if ($.inArray(item, selectedItemsArr) != -1) {
-        $(this).detach();
-      } else {
-        $(this).addClass("selectedItem");
-        $(this).detach().appendTo("#container");
-      }
-
-      selectedItemsArr.push(item);
-    }*/
-  }
+  click:
+    function () {
+      itemSelect($(this));
+      /*
+        let cl = $(this).attr("class");
+        let item = $(this).text();
+    
+        if ($(this).hasClass("selectedItem")) {
+          //削除
+          deleteSelectedItems(this);
+        } else {
+          //追加
+          if ($.inArray(item, selectedItemsArr) != -1) {
+            $(this).detach();
+          } else {
+            $(this).addClass("selectedItem");
+            $(this).detach().appendTo("#container");
+          }
+    
+          selectedItemsArr.push(item);
+        }*/
+    }
 }, ".item");
 
-const itemSelect = (p) =>{
+const itemSelect = (p) => {
   let cl = p.attr("class");
   let item = p.text();
 
@@ -456,7 +456,7 @@ const postSelectedColumns = () => {
   Function Panel 機能操作
 */
 const functionPanelFunctions = (ut, cmd) => {
-  if(presentaction == null || presentaction.length == 0 ){
+  if (presentaction == null || presentaction.length == 0) {
     presentaction.push('func');
   }
 
@@ -474,16 +474,16 @@ const functionPanelFunctions = (ut, cmd) => {
         cmd = 'fileupload';
       } else if ($.inArray(ut, scenario['6func-fileupload-open-cmd']) != -1) {
         cmd = 'fileselectoropen';
-      } else if (ut.indexOf('table') != -1 ) {
+      } else if (ut.indexOf('table') != -1) {
         cmd = 'table';
-      } else if (ut.indexOf('api') != -1 ) {
+      } else if (ut.indexOf('api') != -1) {
         cmd = 'api';
-      }else{
+      } else {
         cmd = ut;
       }
     }
 
-    if( cmd == 'table' || cmd == 'api' ){
+    if (cmd == 'table' || cmd == 'api') {
       presentaction.stage = "func";
       presentaction.cmd = cmd;
     }
@@ -615,33 +615,52 @@ const functionPanelFunctions = (ut, cmd) => {
 /*
   チャットでtable/apiの操作を行う
 */
-const procTableApiList = (s) =>{
+const procTableApiList = (s) => {
   let targetlist = "";
-  if( presentaction.cmd == 'table' ){
-    targetlist = "#table_container .table";
-  }else if( presentaction.cmd == 'api' ){
-    targetlist = "#api_container .api";
+  if (presentaction.cmd == 'table') {
+    targetlist = "#table_container";
+  } else if (presentaction.cmd == 'api') {
+    targetlist = "#api_container";
   }
 
-  if( s.indexOf('open') != -1 ){
-    s.trim();
-    let t;
-    if( s.indexOf(':') != -1){
-      t = s.split(':');
-    }else if( s.indexOf(' ') != -1){
-      t = s.split(' ');
-    }else{
-    }
+  const cmdlist = ['open', 'close', 'select', 'cancel'];
+  s.trim();
+  let t;
+  if (s.indexOf(':') != -1) {
+    t = s.split(':');
+  } else if (s.indexOf(' ') != -1) {
+    t = s.split(' ');
+  } else {
+  }
 
-    if( t[1] != null && 0<t[1].length){
-console.log("procTa... chk2");
-      $(targetlist).find("span").each( function(i,v){
-console.log("procTa... chk3 ", t[1]," ", i,"->", v.textContent);
-        if( v.textContent == t[1] ){
-          console.log("hit item: ", t[1]);
-          listClick($(this));
-        }
-      });  
+  if (t != null && 0 < t.length) {
+    if ($.inArray(t[0], cmdlist) != -1) {
+      switch (t[0]) {
+        case 'open':
+        case 'close':
+          $(targetlist).find("span").each(function (i, v) {
+            if (v.textContent == t[1]) {
+              listClick($(this));
+            }
+          });
+          break;
+        case 'select':
+          if (presentaction.cmd == 'table') {
+            $("#columns").find("span").each(function (i, v) {
+              if (v.textContent == t[1] ) {
+                itemSelect($(this));
+              }
+            });
+          }
+          break;
+        case 'cancel':
+          if (presentaction.cmd == 'table') {
+            deleteSelectedItems();
+          }
+          break;
+        default:
+          break;
+      }
     }
   }
 }
