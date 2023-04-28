@@ -76,7 +76,7 @@ const itemSelect = (p) => {
 
   if (p.hasClass("selectedItem")) {
     //削除
-    deleteSelectedItems(this);
+    deleteSelectedItems(p);
   } else {
     //追加
     if ($.inArray(item, selectedItemsArr) != -1) {
@@ -655,7 +655,16 @@ const procTableApiList = (s) => {
           break;
         case 'cancel':
           if (presentaction.cmd == 'table') {
-            deleteSelectedItems();
+            let p;
+            if( t[1] != null && 0<t[1].length ){
+              $("#container").find("span").each(function (i, v) {
+                if (v.textContent == t[1] ) {
+                  p = $(this);
+                }
+              });  
+            }
+
+              deleteSelectedItems(p);
           }
           break;
         default:
