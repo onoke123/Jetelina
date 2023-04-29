@@ -372,7 +372,7 @@ const chatKeyDown = (cmd) => {
                     break;
                 case 'func':
                     // defined in functionpanel.js
-                    functionPanelFunctions(ut, cmd);
+                    m = functionPanelFunctions(ut, cmd);
                     break;
                 case 'cond':
                     if (ut.indexOf('func') != -1) {

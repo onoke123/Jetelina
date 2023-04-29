@@ -456,6 +456,7 @@ const postSelectedColumns = () => {
   Function Panel 機能操作
 */
 const functionPanelFunctions = (ut, cmd) => {
+  let m = "";
   if (presentaction == null || presentaction.length == 0) {
     presentaction.push('func');
   }
@@ -473,8 +474,10 @@ const functionPanelFunctions = (ut, cmd) => {
       if ($.inArray(ut, scenario['6func-fileupload-cmd']) != -1) {
         cmd = 'fileupload';
       } else if ($.inArray(ut, scenario['6func-fileupload-open-cmd']) != -1) {
+        //ここではコマンドだけ期待しているので$.inArrayを使う
         cmd = 'fileselectoropen';
       } else if (ut.indexOf('table') != -1) {
+        //ここではコマンド+table名の可能性がるのでindexOfを使う　以下そういうこと
         cmd = 'table';
       } else if (ut.indexOf('api') != -1) {
         cmd = 'api';
@@ -491,12 +494,13 @@ const functionPanelFunctions = (ut, cmd) => {
     //チャットコマンドでtable/apiを操作する
     procTableApiList(cmd);
 
+    // drop はちょっと特殊な処理
     let dropTable = getPreferentPropertie('cmd');
     //優先されるべきtable nameがないときは入力データが生きる
     if (dropTable == null || dropTable.length <= 0) {
-      for (let i = 0; i < scenario['6func-tabledrop'].length; i++) {
-        if (ut.indexOf(scenario['6func-tabledrop'][i]) != -1) {
-          let dpm = ut.split(scenario['6func-tabledrop'][i]);
+      for (let i = 0; i < scenario['6func-tabledrop-cmd'].length; i++) {
+        if (ut.indexOf(scenario['6func-tabledrop-cmd'][i]) != -1) {
+          let dpm = ut.split(scenario['6func-tabledrop-cmd'][i]);
           dropTable = dpm[dpm.length - 1].trim();
           console.log("dt:", dropTable);
           cmd = 'droptable';
@@ -562,37 +566,42 @@ const functionPanelFunctions = (ut, cmd) => {
         deleteSelectedItems();
         break;
       case 'droptable':
-        if (dropTable != null && 0 < dropTable.length) {
-          //該当table存在確認
-          let p = $(`#table_container span:contains(${dropTable})`).filter(function () {
-            return $(this).text() === dropTable;
-          });
+        if ($("#table_container").is(":visible")) {
+          if (dropTable != null && 0 < dropTable.length) {
+            //該当table存在確認
+            let p = $(`#table_container span:contains(${dropTable})`).filter(function () {
+              return $(this).text() === dropTable;
+            });
 
-          if (p != null && 0 < p.length) {
-            //あった。よし削除確認メッセージ
-            m = chooseMsg('6func-tabledrop-confirm', "", "");
-            preferent.cmd = cmd;
-            preferent.droptable = dropTable;
+            if (p != null && 0 < p.length) {
+              //あった。よし削除確認メッセージ
+              m = chooseMsg('6func-tabledrop-confirm', "", "");
+              preferent.cmd = cmd;
+              preferent.droptable = dropTable;
+            } else {
+              //ないぞ。ちゃんとtableを指定して。
+              m = chooseMsg('6func-tabledrop-msg', "", "");
+              preferent.cmd = cmd;
+            }
+
+            // 6func-tabledrop-confirmに対して'yes'と言われたら実行される
+            if (ut.indexOf('yes') != -1) {
+              let t = preferent.droptable;
+
+              delete preferent.cmd;
+              delete preferent.droptable;
+
+              deleteThisTable(t);
+            }
           } else {
-            //ないぞ。ちゃんとtableを指定して。
+            //table指定催促メッセージ
             m = chooseMsg('6func-tabledrop-msg', "", "");
             preferent.cmd = cmd;
           }
-
-          // 6func-tabledrop-confirmに対して'yes'と言われたら実行される
-          if (ut.indexOf('yes') != -1) {
-            let t = preferent.droptable;
-
-            delete preferent.cmd;
-            delete preferent.droptable;
-
-            deleteThisTable(t);
-          }
         } else {
-          //table指定催促メッセージ
-          m = chooseMsg('6func-tabledrop-msg', "", "");
-          preferent.cmd = cmd;
+          m = chooseMsg('6func-tabledrop-ng-msg', "", "");
         }
+
         break;
       case 'fileselectoropen'://open file selector
         $("#my_form input[name='upfile']").click();
@@ -611,6 +620,8 @@ const functionPanelFunctions = (ut, cmd) => {
         break;
     }
   }
+
+  return m;
 }
 /*
   チャットでtable/apiの操作を行う
@@ -634,6 +645,7 @@ const procTableApiList = (s) => {
   }
 
   if (t != null && 0 < t.length) {
+    t[1].trim();
     if ($.inArray(t[0], cmdlist) != -1) {
       switch (t[0]) {
         case 'open':
@@ -647,7 +659,7 @@ const procTableApiList = (s) => {
         case 'select':
           if (presentaction.cmd == 'table') {
             $("#columns").find("span").each(function (i, v) {
-              if (v.textContent == t[1] ) {
+              if (v.textContent == t[1]) {
                 itemSelect($(this));
               }
             });
@@ -656,15 +668,15 @@ const procTableApiList = (s) => {
         case 'cancel':
           if (presentaction.cmd == 'table') {
             let p;
-            if( t[1] != null && 0<t[1].length ){
+            if (t[1] != null && 0 < t[1].length) {
               $("#container").find("span").each(function (i, v) {
-                if (v.textContent == t[1] ) {
+                if (v.textContent == t[1]) {
                   p = $(this);
                 }
-              });  
+              });
             }
 
-              deleteSelectedItems(p);
+            deleteSelectedItems(p);
           }
           break;
         default:
