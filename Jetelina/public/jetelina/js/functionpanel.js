@@ -49,24 +49,6 @@ $(document).on({
   click:
     function () {
       itemSelect($(this));
-      /*
-        let cl = $(this).attr("class");
-        let item = $(this).text();
-    
-        if ($(this).hasClass("selectedItem")) {
-          //削除
-          deleteSelectedItems(this);
-        } else {
-          //追加
-          if ($.inArray(item, selectedItemsArr) != -1) {
-            $(this).detach();
-          } else {
-            $(this).addClass("selectedItem");
-            $(this).detach().appendTo("#container");
-          }
-    
-          selectedItemsArr.push(item);
-        }*/
     }
 }, ".item");
 
@@ -93,6 +75,8 @@ const itemSelect = (p) => {
   選択されているcolumnsを#containerから削除する
 */
 const deleteSelectedItems = (p) => {
+  let ret = false;
+
   if (p != null) {
     //指定項目削除
     let item = $(p).text();
@@ -102,12 +86,16 @@ const deleteSelectedItems = (p) => {
 
     $(p).removeClass("selectedItem");
     $(p).detach().appendTo("#columns div");
+    ret = true;
   } else {
     //全削除
     selectedItemsArr.length = 0;
     $("#container span").removeClass("selectedItem");
     $("#container span").detach().appendTo("#columns div");
+    ret = true;
   }
+
+  return ret;
 }
 /*
     cleanUp
@@ -334,7 +322,7 @@ const buildJetelinaJsonForm = (t, s) => {
       }
 
       if (ss != "jetelina_delete_flg") {
-        ret = `${ret}\"${ss.trim()}:\"&lt;your data&gt;\",`;
+        ret = `${ret}\"${$.trim(ss)}:\"&lt;your data&gt;\",`;
       }
     }
   }
@@ -351,9 +339,6 @@ const buildJetelinaJsonForm = (t, s) => {
 */
 const getColumn = (tablename) => {
   if (0 < tablename.length || tablename != undefined) {
-    //        let data = [];
-    //        data.push( $.trim(tablename));
-
     let pd = {};
     pd["tablename"] = $.trim(tablename);
     let dd = JSON.stringify(pd);
@@ -492,8 +477,7 @@ const functionPanelFunctions = (ut, cmd) => {
     }
 
     //チャットコマンドでtable/apiを操作する
-    procTableApiList(cmd);
-
+    m = procTableApiList(cmd);
     // drop はちょっと特殊な処理
     let dropTable = getPreferentPropertie('cmd');
     //優先されるべきtable nameがないときは入力データが生きる
@@ -501,8 +485,7 @@ const functionPanelFunctions = (ut, cmd) => {
       for (let i = 0; i < scenario['6func-tabledrop-cmd'].length; i++) {
         if (ut.indexOf(scenario['6func-tabledrop-cmd'][i]) != -1) {
           let dpm = ut.split(scenario['6func-tabledrop-cmd'][i]);
-          dropTable = dpm[dpm.length - 1].trim();
-          console.log("dt:", dropTable);
+          dropTable = $.trim(dpm[dpm.length - 1]);
           cmd = 'droptable';
         }
       }
@@ -627,7 +610,9 @@ const functionPanelFunctions = (ut, cmd) => {
   チャットでtable/apiの操作を行う
 */
 const procTableApiList = (s) => {
+  let m = "";
   let targetlist = "";
+
   if (presentaction.cmd == 'table') {
     targetlist = "#table_container";
   } else if (presentaction.cmd == 'api') {
@@ -635,7 +620,7 @@ const procTableApiList = (s) => {
   }
 
   const cmdlist = ['open', 'close', 'select', 'cancel'];
-  s.trim();
+  s = $.trim(s);
   let t;
   if (s.indexOf(':') != -1) {
     t = s.split(':');
@@ -645,14 +630,18 @@ const procTableApiList = (s) => {
   }
 
   if (t != null && 0 < t.length) {
-    t[1].trim();
+    t[0] = $.trim(t[0]);
+    t[1] = $.trim(t[1]);
     if ($.inArray(t[0], cmdlist) != -1) {
       switch (t[0]) {
         case 'open':
         case 'close':
+          m = chooseMsg('unknown-msg',"","");
           $(targetlist).find("span").each(function (i, v) {
             if (v.textContent == t[1]) {
               listClick($(this));
+              m = chooseMsg('success', "", "");
+              return;
             }
           });
           break;
@@ -661,9 +650,15 @@ const procTableApiList = (s) => {
             $("#columns").find("span").each(function (i, v) {
               if (v.textContent == t[1]) {
                 itemSelect($(this));
+                m = chooseMsg('success', "", "");
               }
             });
           }
+
+          if (m.length == 0) {
+            m = chooseMsg('unknown-msg', "", "");
+          }
+
           break;
         case 'cancel':
           if (presentaction.cmd == 'table') {
@@ -676,12 +671,22 @@ const procTableApiList = (s) => {
               });
             }
 
-            deleteSelectedItems(p);
+            if (deleteSelectedItems(p)) {
+              m = chooseMsg('success', "", "");
+            } else {
+              m = chooseMsg('unknown-msg', "", "");
+            }
+          } else {
+            m = chooseMsg(3, "", "");
           }
+
           break;
         default:
+          console.log("mmmmmm");
           break;
       }
     }
   }
+
+  return m;
 }

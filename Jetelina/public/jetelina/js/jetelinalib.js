@@ -249,7 +249,7 @@ const chatKeyDown = (cmd) => {
     if (debug) console.log("ut: ", ut);
 
     if (ut != null && 0 < ut.length) {
-        ut = ut.toLowerCase().trim();
+        ut = $.trim(ut.toLowerCase());
         let m = "";
         /* ユーザのチャット入力文字列がある時だけ処理を実行する　*/
         if (0 < ut.length) {
@@ -316,7 +316,7 @@ const chatKeyDown = (cmd) => {
                         panel = 'cond';
                     }
 
-                    stage = panel;
+//                    stage = panel;
 
                     //move Jetelina Chatpanel
                     if (panel == 'func' || panel == 'cond') {
@@ -328,11 +328,11 @@ const chatKeyDown = (cmd) => {
                         }, animateDuration);
                         m = chooseMsg('6a', "", "");
                     } else {
-                        m = chooseMsg('6b', "", "");
+                        m = chooseMsg(3, "", "");
                     }
                     // show func panel
                     if (panel == 'func') {
-
+                        stage = 'func';
                         $("#condition_panel").hide();
                         $("#function_panel").show().animate({
                             width: window.innerWidth * 0.8 /*"1000px"*/,
@@ -360,6 +360,7 @@ const chatKeyDown = (cmd) => {
                             }, animateDuration);
                         }
                     } else if (panel == 'cond') {
+                        stage = 'cond';
                         $("#function_panel").hide().animate({}, animateDuration);
                         $("#condition_panel").show().animate({
                             width: window.innerWidth * 0.8 /*"1000px"*/,
@@ -399,9 +400,13 @@ const chatKeyDown = (cmd) => {
                 $("#jetelina_panel [name='jetelina_tell']").val("");
                 enterNumber = 0;
             }
-
-            if (0 < m.length) {
+console.log("mmm:", m, m.length);
+            if ( 0<m.length ) {
                 typingControll(m);
+            }else{
+                //何言ってるかわかんない時
+                console.log("aaaaaa");
+                typingControll(chooseMsg('unknown-msg',"",""));
             }
             //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく
             //            if (typingTimeoutID != null) clearTimeout(typingTimeoutID);

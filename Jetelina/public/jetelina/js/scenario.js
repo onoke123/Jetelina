@@ -19,7 +19,7 @@ scenario[4] = ['I am sorry, but ', 'Something wrong, hum, '];
 scenario[5] = [`Welcome `, `I missed you, `];
 /* after login */
 scenario[6] = ['How can I help you today?', 'What do you do now?'];
-scenario['success'] = ['Done','Success','i am so happy'];
+scenario['success'] = ['Done','Success','I am so happy','Yes'];
 //scenario['6func_in'] = ['Do you wanna open the function panel?'];
 scenario['6func'] = ['Let me your command, if you need'];
 scenario['6func_post_err'] = ['Hey, no columns','You should select post data','Boo'];
@@ -38,3 +38,5 @@ scenario['6func-fileupload-msg'] = ['File?'];
 /* log out */
 scenario['logout'] = ['logout','exit','log out','out','return'];
 scenario['afterlogout'] = ['Bye', 'Have a good day','Hope you will back soon','I am looking forward you'];
+/* unknow command */
+scenario['unknown-msg'] = ['Hey hey hey','Ah.... what?','Could not catch yours, what?','Oh oh oh, what?'];
