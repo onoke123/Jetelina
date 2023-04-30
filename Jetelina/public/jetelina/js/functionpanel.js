@@ -207,6 +207,9 @@ const listClick = (p) => {
   if (c.indexOf("activeItem") != -1) {
     //    removeColumn(tn);
     p.toggleClass("activeItem");
+    if ($("#api_container").is(":visible")) {
+      cleanupContainers();
+    }
   } else {
     if (c.indexOf("table") != -1) {
       //get&show table columns
@@ -215,8 +218,6 @@ const listClick = (p) => {
       // reset all activeItem class and sql
       cleanupItems4Switching();
       cleanupContainers();
-      //      $("#api_container span").removeClass("activeItem"); 
-      //      $("#container span").remove();
 
       // API ListはpostAjaxData("/getapilist",...)で取得されてpreferent.apilistにあるので、ここから該当SQLを取得する
       if (preferent.apilist != null && preferent.apilist.length != 0) {
@@ -355,11 +356,8 @@ const getColumn = (tablename) => {
 /*
   カラム表示されている要素を指定して表示から削除する
 */
-const removeColumn = (tablename) => {
-  if (0 < tablename.length || tablename != undefined) {
-    $(".item").not(".selectedItem").remove(`:contains(${tablename}.)`);
-
-  }
+const removeColumn = (p) => {
+  $(".item").not(".selectedItem").remove(`:contains(${p}.)`);
 }
 /*
   指定されたtableをDBから削除する
@@ -508,7 +506,8 @@ const functionPanelFunctions = (ut, cmd) => {
 
         cleanUp("tables");
         getAjaxData("getalldbtable");
-        m = chooseMsg('6a', "", "");
+        //        m = chooseMsg('6a', "", "");
+        m = 'ignore';
         break;
       case 'api':
         if ($("#table_container").is(":visible")) {
@@ -526,6 +525,7 @@ const functionPanelFunctions = (ut, cmd) => {
         //postAjaxData()でapilistを取得してpreferent.apilistに格納するので、一旦キレイにしておく
         delete preferent.apilist;
         postAjaxData("/getapilist");
+
         break;
       case 'post':
         if (0 < selectedItemsArr.length) {
@@ -633,9 +633,12 @@ const procTableApiList = (s) => {
           m = chooseMsg('unknown-msg', "", "");
           $(targetlist).find("span").each(function (i, v) {
             if (v.textContent == t[1]) {
-              listClick($(this));
-              m = chooseMsg('success', "", "");
-              return;
+              if ((t[0] == 'close' && $(this).hasClass("activeItem")) ||
+                (t[0] == 'open' && !$(this).hasClass("activeItem"))) {
+                listClick($(this));
+                m = chooseMsg('success', "", "");
+                return;
+              }
             }
           });
           break;

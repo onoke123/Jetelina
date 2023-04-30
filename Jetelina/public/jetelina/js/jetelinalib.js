@@ -76,10 +76,14 @@ const getAjaxData = (url) => {
         }).done(function (result, textStatus, jqXHR) {
             // data parseに行く
             getdata(result, 0);
+            typingControll(chooseMsg("success", "", ""));
         }).fail(function (result) {
+            console.error("getAjaxData() fail");
+            typingControll(chooseMsg("fail", "", ""));
         });
     } else {
         console.error("getAjaxData() ajax url is not defined");
+        typingControll(chooseMsg("unknown-msg", "", ""));
     }
 }
 
@@ -102,10 +106,15 @@ const postAjaxData = (url, data) => {
             } else if (url == "/jetelinawords") {
                 // nothing do
             }
+
+            typingControll(chooseMsg("success", "", ""));
         }).fail(function (result) {
+            console.error("postAjaxData() fail");
+            typingControll(chooseMsg("fail", "", ""));
         });
     } else {
         console.error("postAjaxData() ajax url is not defined");
+        typingControll(chooseMsg("unknown-msg", "", ""));
     }
 }
 
@@ -171,9 +180,6 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
                 m = chooseMsg(scenarioNumber, m, "a");
 
                 typingControll(m);
-                //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく
-                //                if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
-                //                typing(0, m);
             });
         }
     });
@@ -302,6 +308,7 @@ const chatKeyDown = (cmd) => {
                     }
 
                     authAjax('/chkacount', chunk, scenarioNumber);
+                    m = 'ignore';
                     break;
                 case 'login_success':/* after login */
                     m = chooseMsg(6, "", "");
@@ -493,6 +500,5 @@ const instractionMode = (s) => {
     if (s.indexOf("say:") != -1) {
         let data = `{"sayjetelina":"${s.split("say:")[1]}","arr":"${scenario_name}"}`;
         postAjaxData("/jetelinawords", data);
-        typingControll(chooseMsg("success", "", ""));
     }
 }
