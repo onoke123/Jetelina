@@ -1,4 +1,7 @@
 no,sql
+ji176,"insert into ftest2 values(id,'name','sex',age,ave,jetelina_delete_flg)"
+ju177,"update ftest2 set id=d_id,name='d_name',sex='d_sex',age=d_age,ave=d_ave,jetelina_delete_flg=d_jetelina_delete_flg"
+jd178,"delete from ftest2"
 ji179,"insert into ftest5 values(id,'name','sex',age,ave,jetelina_delete_flg)"
 ju180,"update ftest5 set id=d_id,name='d_name',sex='d_sex',age=d_age,ave=d_ave,jetelina_delete_flg=d_jetelina_delete_flg"
 jd181,"delete from ftest5"

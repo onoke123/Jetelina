@@ -140,21 +140,23 @@ const fileupload = () => {
     $("input[type=file]").val("");
     $("#upbtn").prop("disabled", false);
 
-    if (result.length != 0) {
+    if (result) {
       $("#my_form label span").text("Upload CSV File");
 
       //refresh table list 
       if ($("#table_container").is(":visible")) {
         cleanUp("tables");
         getAjaxData("getalldbtable");
+      } else {
+        typingControll(chooseMsg('success', "", ""));
       }
-
-      typingControll(chooseMsg('success', "", ""));
     } else {
+      typingControll(chooseMsg('fail', "", ""));
     }
   }).fail(function (result) {
     // something error happened
     console.error("fileupload() failed");
+    typingControll(chooseMsg('fail', "", ""));
   });
 }
 
@@ -467,7 +469,7 @@ const functionPanelFunctions = (ut, cmd) => {
     */
     m = procTableApiList(cmd);
     // drop はちょっと特殊な処理
-    let dropTable = getPreferentPropertie('cmd');
+    let dropTable = getPreferentPropertie('droptable');
     //優先されるべきtable nameがないときは入力データが生きる
     if (dropTable == null || dropTable.length <= 0) {
       for (let i = 0; i < scenario['6func-tabledrop-cmd'].length; i++) {
@@ -551,16 +553,6 @@ const functionPanelFunctions = (ut, cmd) => {
               return $(this).text() === dropTable;
             });
 
-            if (p != null && 0 < p.length) {
-              //あった。よし削除確認メッセージ
-              m = chooseMsg('6func-tabledrop-confirm', "", "");
-              preferent.cmd = cmd;
-              preferent.droptable = dropTable;
-            } else {
-              //ないぞ。ちゃんとtableを指定して。
-              m = chooseMsg('6func-tabledrop-msg', "", "");
-              preferent.cmd = cmd;
-            }
 
             // 6func-tabledrop-confirmに対して'yes'と言われたら実行される
             if (ut.indexOf('yes') != -1) {
@@ -570,6 +562,18 @@ const functionPanelFunctions = (ut, cmd) => {
               delete preferent.droptable;
 
               deleteThisTable(t);
+              m = 'ignore';
+            } else {
+              if (p != null && 0 < p.length) {
+                //あった。よし削除確認メッセージ
+                m = chooseMsg('6func-tabledrop-confirm', "", "");
+                preferent.cmd = cmd;
+                preferent.droptable = dropTable;
+              } else {
+                //ないぞ。ちゃんとtableを指定して。
+                m = chooseMsg('6func-tabledrop-msg', "", "");
+                preferent.cmd = cmd;
+              }
             }
           } else {
             //table指定催促メッセージ
@@ -588,6 +592,7 @@ const functionPanelFunctions = (ut, cmd) => {
       case 'fileupload'://csv file upload
         const f = $("input[type=file]").prop("files");
         if (f != null && 0 < f.length) {
+          m = 'ignore';
           fileupload();
         } else {
           m = chooseMsg('6func-fileupload-msg', "", "");
