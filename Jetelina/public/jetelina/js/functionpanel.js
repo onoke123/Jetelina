@@ -508,7 +508,6 @@ const functionPanelFunctions = (ut, cmd) => {
 
         cleanUp("tables");
         getAjaxData("getalldbtable");
-        //        m = chooseMsg('6a', "", "");
         m = 'ignore';
         break;
       case 'api':
@@ -527,7 +526,7 @@ const functionPanelFunctions = (ut, cmd) => {
         //postAjaxData()でapilistを取得してpreferent.apilistに格納するので、一旦キレイにしておく
         delete preferent.apilist;
         postAjaxData("/getapilist");
-
+        m = 'ignore';
         break;
       case 'post':
         if (0 < selectedItemsArr.length) {
