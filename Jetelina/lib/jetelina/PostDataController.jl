@@ -63,26 +63,16 @@ function postDataAcquire()
     end
 
     selectSql = """select $selectSql from $tableName"""
-    SQLSentenceManager.writeTolist(selectSql, tablename_arr)
-    #===        
-            # get the sequence name then create the sql sentence
-            seq_no = DBDataController.getSequenceNumber(1)
-            selectSql = """$seq_no,\"select $selectSql from $tableName\"\n"""
-            @info "sql: ", selectSql
-
-            # write the sql to the file
-            sqlFile = string( joinpath( @__DIR__, "config", "JetelinaSqlList" ))
-            f = open( sqlFile, "a" )
-            if isfile( sqlFile )
-                write(f, selectSql)
-            else
-                write(f,"no,sql")
-                write(f,selectSql)
-            end
-            close(f)
-
-            JetelinaReadSqlList.readSqlList2DataFrame()
+    ret = SQLSentenceManager.writeTolist(selectSql, tablename_arr)
+    #===
+        SQLSente..()のreturnをtable型({true/false,apino/null})で返してもらい、
+        trueならapinoをjson形式で返す。
     ===#
+    if ret[1] 
+        return json(Dict("apino" => ret[2]))
+    else
+        return ret[1]
+    end
 end
 
 function getColumns()
@@ -144,8 +134,6 @@ function login()
     end
 
     DBDataController.getUserAccount(userName)
-    #        if userName == "keiji"
-    #        return json(Dict("name" => "keiji"))
 end
 
 #===

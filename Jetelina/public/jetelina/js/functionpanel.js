@@ -56,6 +56,11 @@ const itemSelect = (p) => {
   let cl = p.attr("class");
   let item = p.text();
 
+  // column data post後にapi noが表示されているので、まずは消しておく
+  if ($("#container span").hasClass('apisql')) {
+    $("#container span").remove();
+  }
+
   if (p.hasClass("selectedItem")) {
     //削除
     deleteSelectedItems(p);
@@ -411,11 +416,9 @@ const postSelectedColumns = () => {
     contentType: 'application/json',
     dataType: "json"
   }).done(function (result, textStatus, jqXHR) {
-    /*
-     本当はここに来るはずなのに、何故かこのajax処理はfail()してしまう。
-     サーバサイドのDB処理は一応正常に終了しているので、原因がわかるまでは
-     done()の処理をalways()で行うようにしている。
-   */
+    $("#container span").remove();
+    $("#container").append(`<span class="apisql"><p>api no is ${result.apino}</p></span>`);
+
     typingControll(chooseMsg('success', "", ""));
   }).fail(function (result) {
     console.error("postSelectedColumns() fail");

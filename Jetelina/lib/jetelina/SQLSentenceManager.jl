@@ -46,7 +46,7 @@ function writeTolist(sql, tablename_arr)
         end
     catch err
         JetelinaLog.writetoLogfile("SQLSentenceManager.writeTolist() error: $err")
-        return false
+        return false, nothing
     end
 
     # write the relation between tables and api to the file
@@ -56,13 +56,13 @@ function writeTolist(sql, tablename_arr)
         end
     catch err
         JetelinaLog.writetoLogfile("SQLSentenceManager.writeTolist() error: $err")
-        return false
+        return false, nothing
     end
 
     # DataFrameを更新する
     JetelinaReadSqlList.readSqlList2DataFrame()
 
-    return true
+    return true, string(suffix, seq_no) 
 end
 
 #===
