@@ -35,22 +35,34 @@ function writeTolist(sql, tablename_arr)
         thefirstflg = false
     end
 
-    open(sqlFile, "a") do f
-        if !thefirstflg
-            println(f, "no,sql")
+    try
+        open(sqlFile, "a") do f
+            if !thefirstflg
+                println(f, "no,sql")
+            end
+
+
+            println(f, sqlsentence)
         end
-
-
-        println(f, sqlsentence)
+    catch err
+        JetelinaLog.writetoLogfile("SQLSentenceManager.writeTolist() error: $err")
+        return false
     end
 
     # write the relation between tables and api to the file
-    open(tableapiFile, "a") do ff
-        println(ff, string(suffix, seq_no, ":", join(tablename_arr, ",")))
+    try
+        open(tableapiFile, "a") do ff
+            println(ff, string(suffix, seq_no, ":", join(tablename_arr, ",")))
+        end
+    catch err
+        JetelinaLog.writetoLogfile("SQLSentenceManager.writeTolist() error: $err")
+        return false
     end
 
     # DataFrameを更新する
     JetelinaReadSqlList.readSqlList2DataFrame()
+
+    return true
 end
 
 #===
@@ -67,42 +79,55 @@ function deleteFromlist(tablename)
     cp(tableapiFile, string(tableapiFile, backupfilesuffix), force=true)
     cp(sqlFile, string(sqlFile, backupfilesuffix), force=true)
 
-    open(tableapiTmpFile, "w") do ttaf
-        open(tableapiFile, "r") do taf
-            # keep=falseにして改行文字を取り除いておく。そしてprintln()する
-            for ss in eachline(taf, keep=false)
-                p = split(ss, ":") # api_name:table,table,....
-                tmparr = split(p[2], ',')
-                if tablename ∈ tmparr
-                    push!(targetapi, p[1]) # ["js1","ji2,.....]
-                else
-                    # 対象外はファイルに残す
-                    println(ttaf,ss)
+    try
+        open(tableapiTmpFile, "w") do ttaf
+            open(tableapiFile, "r") do taf
+                # keep=falseにして改行文字を取り除いておく。そしてprintln()する
+                for ss in eachline(taf, keep=false)
+                    p = split(ss, ":") # api_name:table,table,....
+                    tmparr = split(p[2], ',')
+                    if tablename ∈ tmparr
+                        push!(targetapi, p[1]) # ["js1","ji2,.....]
+                    else
+                        # 対象外はファイルに残す
+                        println(ttaf, ss)
+                    end
                 end
             end
         end
+    catch err
+        JetelinaLog.writetoLogfile("SQLSentenceManager.deleteFromlist() error: $err")
+        return false
     end
+
     # targetapiに含まれないSQLだけ残す
-    open(sqlTmpFile, "w") do tf
-        open(sqlFile, "r") do f
-            for ss in eachline(f, keep=false)
-                p = split(ss, "\"") # js1,"select..."
-                if rstrip(p[1], ',') ∈ targetapi # これこれぇ＼(^o^)／
-                # 含まれるのでスキップ
-                else
-                    #対象tableを含まないものだけ書き出す
-                    println(tf, ss)
+    try
+        open(sqlTmpFile, "w") do tf
+            open(sqlFile, "r") do f
+                for ss in eachline(f, keep=false)
+                    p = split(ss, "\"") # js1,"select..."
+                    if rstrip(p[1], ',') ∈ targetapi # これこれぇ＼(^o^)／
+                    # 含まれるのでスキップ
+                    else
+                        #対象tableを含まないものだけ書き出す
+                        println(tf, ss)
+                    end
                 end
             end
         end
+    catch err
+        JetelinaLog.writetoLogfile("SQLSentenceManager.deleteFromlist() error: $err")
+        return false
     end
 
     # 全部終わったら scenarioTmpFile->scenarioFileとする
     mv(sqlTmpFile, sqlFile, force=true)
-    mv(tableapiTmpFile,tableapiFile,force=true)
+    mv(tableapiTmpFile, tableapiFile, force=true)
 
     # DataFrameを更新する
     JetelinaReadSqlList.readSqlList2DataFrame()
+
+    return true
 end
 
 end

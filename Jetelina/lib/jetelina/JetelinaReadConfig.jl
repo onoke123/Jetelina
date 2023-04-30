@@ -22,56 +22,57 @@ contain functions
 """
 
 module JetelinaReadConfig
-    using DBDataController, JetelinaReadSqlList
+using DBDataController, JetelinaReadSqlList
 
-    export  debugflg,JetelinaLogfile,JetelinaDBtype,JetelinaFileUploadPath,JetelinaSQLLogfile,JetelinaDBhost,
-    JetelinaDBport,JetelinaDBuser,JetelinaDBpassword,JetelinaDBsslmode,JetelinaDBname,Df_JetelinaTableManager
+export debugflg, JetelinaLogfile, JetelinaDBtype, JetelinaFileUploadPath, JetelinaSQLLogfile, JetelinaDBhost,
+    JetelinaDBport, JetelinaDBuser, JetelinaDBpassword, JetelinaDBsslmode, JetelinaDBname, Df_JetelinaTableManager
 
-    """
-        function __init__()
-
-    auto start this when the server starting.
-    this function calls readConfig function.
-    """
+"""
     function __init__()
-        readConfig()
-        DBDataController.init_Jetelina_table()
-        JetelinaReadSqlList.readSqlList2DataFrame()
-    end
 
-    """
-        function readConfig()
+auto start this when the server starting.
+this function calls readConfig function.
+"""
+function __init__()
+    readConfig()
+    DBDataController.init_Jetelina_table()
+    JetelinaReadSqlList.readSqlList2DataFrame()
+end
 
-    read configuration parameters from JetelinaConfig.cnf file,
-    then set them to the global variables.
-    """
+"""
     function readConfig()
-        configfile = string( joinpath( @__DIR__, "config", "JetelinaConfig.cnf" ))
 
-        f = open( configfile, "r" )
-        l = readlines( f )
+read configuration parameters from JetelinaConfig.cnf file,
+then set them to the global variables.
+"""
+function readConfig()
+    configfile = string(joinpath(@__DIR__, "config", "JetelinaConfig.cnf"))
+
+    try
+        f = open(configfile, "r")
+        l = readlines(f)
 
         for i = 1:size(l)[1]
-            if !startswith( l[i],"#" )
-                if startswith( l[i],"logfile" )
+            if !startswith(l[i], "#")
+                if startswith(l[i], "logfile")
                     # logfile path attribute
                     global JetelinaLogfile = getSetting(l[i])
-                elseif startswith( l[i], "debug" )
+                elseif startswith(l[i], "debug")
                     # debug configuration true/false
-                    global debugflg = parse( Bool, getSetting(l[i]) )
-                elseif startswith( l[i], "fileuploadpath" )
+                    global debugflg = parse(Bool, getSetting(l[i]))
+                elseif startswith(l[i], "fileuploadpath")
                     # CSV file upload path
                     global JetelinaFileUploadPath = getSetting(l[i])
-                elseif startswith( l[i], "sqllogfile" )
+                elseif startswith(l[i], "sqllogfile")
                     # SQL log file name
                     global JetelinaSQLLogfile = getSetting(l[i])
-                elseif startswith( l[i], "dbtype")
+                elseif startswith(l[i], "dbtype")
                     # DB type
                     global JetelinaDBtype = getSetting(l[i])
                     @info "dbtype:", JetelinaDBtype
                     if JetelinaDBtype == "postgresql"
                         # for PostgreSQL
-                        setPostgres(l,i+1)
+                        setPostgres(l, i + 1)
                     elseif JetelinaDBtype == "mariadb"
                         # for MariaDB
                     elseif JetelinaDBtype == "oracle"
@@ -84,55 +85,61 @@ module JetelinaReadConfig
         end
 
         close(f)
+    catch err
+        JetelinaLog.writetoLogfile("JetelinaReadConfig.readConfig() error: $err")
+        return false
     end
 
-    """
-        function getSetting(s)
-    
-    # Arguments
-    - `s: String`:  ex. 'debug = true'
-    return: configuration parameter   ex. 'debug = true' parses and gets 'true' 
-    
-    parses s with '=' then gets and returns the paramter.
-    """
+    return true
+end
+
+"""
     function getSetting(s)
-        t = split( s, "=" )
-        tt = strip( t[2] )
-        return tt
-    end
 
-    """
-        function setPostgres(l,c)
-    
-    # Arguments
-    - `l: String`: configuration file strings
-    - `c: Integer`: file line number 
+# Arguments
+- `s: String`:  ex. 'debug = true'
+return: configuration parameter   ex. 'debug = true' parses and gets 'true' 
 
-            parses and gets then set PostgreSQL connection parameterss to the global variables
-    """
+parses s with '=' then gets and returns the paramter.
+"""
+function getSetting(s)
+    t = split(s, "=")
+    tt = strip(t[2])
+    return tt
+end
+
+"""
     function setPostgres(l,c)
-        for i = c:size(l)[1]
-            if !startswith( l[i],"#" )
-                if startswith( l[i],"host" )
-                    # DB host
-                    global JetelinaDBhost = getSetting(l[i])
-                elseif startswith( l[i], "port")
-                    # DB port
-                    global JetelinaDBport = parse( Int16, getSetting(l[i]) )
-                elseif startswith( l[i], "user")
-                    # DB host 
-                    global JetelinaDBuser = getSetting(l[i])
-                elseif startswith( l[i], "password")
-                    # DB user password
-                    global JetelinaDBpassword = getSetting(l[i])
-                elseif startswith( l[i], "sslmode")
-                    # DB ssl mode 
-                    global JetelinaDBsslmode = getSetting(l[i])
-                elseif startswith( l[i], "dbname")
-                    # DB name
-                    global JetelinaDBname = getSetting(l[i])
-                end
+
+# Arguments
+- `l: String`: configuration file strings
+- `c: Integer`: file line number 
+
+        parses and gets then set PostgreSQL connection parameterss to the global variables
+"""
+function setPostgres(l, c)
+    for i = c:size(l)[1]
+        if !startswith(l[i], "#")
+            if startswith(l[i], "host")
+                # DB host
+                global JetelinaDBhost = getSetting(l[i])
+            elseif startswith(l[i], "port")
+                # DB port
+                global JetelinaDBport = parse(Int16, getSetting(l[i]))
+            elseif startswith(l[i], "user")
+                # DB host 
+                global JetelinaDBuser = getSetting(l[i])
+            elseif startswith(l[i], "password")
+                # DB user password
+                global JetelinaDBpassword = getSetting(l[i])
+            elseif startswith(l[i], "sslmode")
+                # DB ssl mode 
+                global JetelinaDBsslmode = getSetting(l[i])
+            elseif startswith(l[i], "dbname")
+                # DB name
+                global JetelinaDBname = getSetting(l[i])
             end
         end
     end
+end
 end

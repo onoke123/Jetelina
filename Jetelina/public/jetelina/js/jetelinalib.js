@@ -79,7 +79,7 @@ const getAjaxData = (url) => {
         }).fail(function (result) {
         });
     } else {
-        console.error("ajax url is not defined");
+        console.error("getAjaxData() ajax url is not defined");
     }
 }
 
@@ -95,10 +95,8 @@ const postAjaxData = (url, data) => {
             data: data,
             dataType: "json"
         }).done(function (result, textStatus, jqXHR) {
-            console.log("getAjaxData result: ", result);
             if (url == "/getapilist") {
                 //rendering sql list
-                console.log("getapilist: ", result);
                 preferent.apilist = result;
                 getdata(result, 2);
             } else if (url == "/jetelinawords") {
@@ -107,14 +105,16 @@ const postAjaxData = (url, data) => {
         }).fail(function (result) {
         });
     } else {
-        console.error("ajax url is not defined");
+        console.error("postAjaxData() ajax url is not defined");
     }
 }
 
 const typingControll = (m) => {
     //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく
     if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
-    console.log("typingControll():", m);
+    
+    if( debug ) console.info("typingControll() m:", m);
+    
     typing(0, m);
 
 }
@@ -131,7 +131,7 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
         data: data,
         dataType: "json"
     }).done(function (result, textStatus, jqXHR) {
-        if (debug) console.log("authAjax() result: ", result);
+        if (debug) console.info("authAjax() result: ", result);
 
         scenarioNumber = 4;
         if (result != null) {
@@ -185,7 +185,7 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
         p:選択されたチャットメッセージにmを繋げる位置　 b->before, その他->after
     */
 const chooseMsg = (i, m, p) => {
-    if (debug) console.log("scenario number: ", i);
+    if (debug) console.info("chooseMsg() scenario number: ", i);
 
     scenario_name = i;// scenario追加に備えて対象番号を控えておく
 
@@ -246,7 +246,7 @@ const chatKeyDown = (cmd) => {
 
     let logoutflg = false;
 
-    if (debug) console.log("ut: ", ut);
+    if (debug) console.info("chatKeyDown() ut: ", ut);
 
     if (ut != null && 0 < ut.length) {
         ut = $.trim(ut.toLowerCase());
@@ -258,7 +258,7 @@ const chatKeyDown = (cmd) => {
             $("#jetelina_panel [name='chat_input']").val("");
             $("#jetelina_panel [name='your_tell']").text(ut);
 
-            if (debug) console.info("stage: ", stage, " ", ut);
+            if (debug) console.info("chatKeyDown() stage: ", stage);
 
             // logout
             if (logoutChk(ut)) {
@@ -400,12 +400,11 @@ const chatKeyDown = (cmd) => {
                 $("#jetelina_panel [name='jetelina_tell']").val("");
                 enterNumber = 0;
             }
-console.log("mmm:", m, m.length);
-            if ( 0<m.length ) {
+
+            if ( 0<m.length && m != 'ignore' ) {
                 typingControll(m);
-            }else{
+            }else if( m == null || m.length == 0){
                 //何言ってるかわかんない時
-                console.log("aaaaaa");
                 typingControll(chooseMsg('unknown-msg',"",""));
             }
             //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく

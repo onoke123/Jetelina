@@ -1,33 +1,36 @@
 module JetelinaLog
 
-    using Logging
-    using JetelinaReadConfig
+using Logging
+using JetelinaReadConfig
 
-    export writetoLogfile
+export writetoLogfile
 
-    function logfileOpen()
-        logfile = string( joinpath( @__DIR__, "log", JetelinaLogfile ) )
+function logfileOpen()
+    logfile = string(joinpath(@__DIR__, "log", JetelinaLogfile))
 
-        if debugflg
-            println("JetelinaLog.jl logfile: ", logfile)
-        end
-
-        io = open( logfile, "a+")
-        logger = SimpleLogger( io )
+    if debugflg
+        println("JetelinaLog.jl logfile: ", logfile)
+    end
+    try
+        io = open(logfile, "a+")
+        logger = SimpleLogger(io)
         return io, logger
+    catch err
+        println("JetelinaLog.logfileOpen(): "$err)
+    end
+end
+
+function writetoLogfile(s)
+    io, logger = logfileOpen()
+    with_logger(logger) do
+        @info s
     end
 
-    function writetoLogfile( s )
-        io, logger = logfileOpen()
-        with_logger( logger ) do 
-            @info s
-        end
+    closeLogfile(io)
+end
 
-        closeLogfile( io )
-    end
-
-    function closeLogfile( io )
-        flush( io )
-        close( io )
-    end
+function closeLogfile(io)
+    flush(io)
+    close(io)
+end
 end

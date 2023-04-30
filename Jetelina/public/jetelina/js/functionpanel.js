@@ -125,7 +125,7 @@ const fileupload = () => {
 
   const uploadFilename = $("input[type=file]").prop("files")[0].name;
   const tablename = uploadFilename.split(".")[0];
-  if (debug) console.log("fileupload(): ", tablename);
+  if (debug) console.info("fileupload(): ", tablename);
 
   $.ajax({
     url: "/dofup",
@@ -151,7 +151,6 @@ const fileupload = () => {
 
       typingControll(chooseMsg('success', "", ""));
     } else {
-      console.log("fup here");
     }
   }).fail(function (result) {
     // something error happened
@@ -168,14 +167,6 @@ const fileupload = () => {
 */
 $(document).on("click", ".table,.api", function () {
   listClick($(this));
-  /*  let tn = $(this).text();
-    let cl = $(this).attr("class");
-  
-    if (debug) {
-      console.log("clicked table: ", tn);
-      console.log("clicked class: ", cl);
-    }
-  */
 });
 
 /*
@@ -350,13 +341,14 @@ const getColumn = (tablename) => {
       contentType: 'application/json',
       dataType: "json"
     }).done(function (result, textStatus, jqXHR) {
-      if (debug) console.log("getColumn result: ", result);
+      if (debug) console.info("getColumn() result: ", result);
       // data parseに行く
       return getdata(result, 1);
     }).fail(function (result) {
+      typingControll(chooseMsg('fail', "", ""));
     });
   } else {
-    console.error("ajax url is not defined");
+    console.error("getColumn() ajax url is not defined");
   }
 }
 
@@ -385,15 +377,6 @@ const deleteThisTable = (tablename) => {
       contentType: 'application/json',
       dataType: "json"
     }).done(function (result, textStatus, jqXHR) {
-      /*
-        本当はここに来るはずなのに、何故かこのajax処理はfail()してしまう。
-        サーバサイドのDB処理は一応正常に終了しているので、原因がわかるまでは
-        done()の処理をalways()で行うようにしている。
-      */
-      console.log("deleteThisTable: tablename result -> ", result);
-    }).fail(function (result) {
-      console.error("deletetable() faild: ", result);
-    }).always(function () {
       $(`#table_container span:contains(${tablename})`).filter(function () {
         if ($(this).text() === tablename) {
           $(this).remove();
@@ -402,9 +385,13 @@ const deleteThisTable = (tablename) => {
       });
 
       typingControll(chooseMsg('success', "", ""));
+    }).fail(function (result) {
+      console.error("deletetable() faild: ", result);
+      typingControll(chooseMsg('fail', "", ""));
+    }).always(function () {
     });
   } else {
-    console.error("deletetable: table is not defined");
+    console.error("deletetable() table is not defined");
   }
 }
 
@@ -414,7 +401,7 @@ const deleteThisTable = (tablename) => {
 const postSelectedColumns = () => {
   let pd = {};
   pd["item"] = selectedItemsArr;
-  if (debug) console.log("post: ", selectedItemsArr, " -> ", pd);
+  if (debug) console.info("postSelectedColumns() post data: ", selectedItemsArr, " -> ", pd);
   let dd = JSON.stringify(pd);
 
   $.ajax({
@@ -422,19 +409,18 @@ const postSelectedColumns = () => {
     type: "POST",
     data: dd,
     contentType: 'application/json',
-    dataType: "json",
-    async: false
+    dataType: "json"
   }).done(function (result, textStatus, jqXHR) {
     /*
      本当はここに来るはずなのに、何故かこのajax処理はfail()してしまう。
      サーバサイドのDB処理は一応正常に終了しているので、原因がわかるまでは
      done()の処理をalways()で行うようにしている。
    */
-    console.log("postSele... :", result);
-  }).fail(function (result) {
-    console.log("postSele... fail");
-  }).always(function () {
     typingControll(chooseMsg('success', "", ""));
+  }).fail(function (result) {
+    console.error("postSelectedColumns() fail");
+    typingControll(chooseMsg('fail', "", ""));
+  }).always(function () {
   });
 }
 /*
@@ -477,6 +463,10 @@ const functionPanelFunctions = (ut, cmd) => {
     }
 
     //チャットコマンドでtable/apiを操作する
+    /* ちょっと解説
+      このprocTableApiList()では画面操作だけ行っていてajaxコールしていない。
+       そのため、必ずmが遅滞なく帰ってくるのでOK。
+    */
     m = procTableApiList(cmd);
     // drop はちょっと特殊な処理
     let dropTable = getPreferentPropertie('cmd');
@@ -539,7 +529,12 @@ const functionPanelFunctions = (ut, cmd) => {
         break;
       case 'post':
         if (0 < selectedItemsArr.length) {
-          console.log("post ret: ", postSelectedColumns());
+          /* postSelectedColumns()はajaxコールするのでmがunknownになる可能性がある。
+            このため'ignore'キーワードを設定して、成否のメッセージはpostSele..()内で表示させて、
+            この処理以降のtyping()は行わないようにしよう。
+          */
+          postSelectedColumns();
+          m = 'ignore';
         } else {
           m = chooseMsg('6func_post_err', "", "");
         }
@@ -593,7 +588,6 @@ const functionPanelFunctions = (ut, cmd) => {
       case 'fileupload'://csv file upload
         const f = $("input[type=file]").prop("files");
         if (f != null && 0 < f.length) {
-          if (debug) console.log("file up: ", f[0].name);
           fileupload();
         } else {
           m = chooseMsg('6func-fileupload-msg', "", "");
@@ -636,7 +630,7 @@ const procTableApiList = (s) => {
       switch (t[0]) {
         case 'open':
         case 'close':
-          m = chooseMsg('unknown-msg',"","");
+          m = chooseMsg('unknown-msg', "", "");
           $(targetlist).find("span").each(function (i, v) {
             if (v.textContent == t[1]) {
               listClick($(this));
@@ -682,7 +676,6 @@ const procTableApiList = (s) => {
 
           break;
         default:
-          console.log("mmmmmm");
           break;
       }
     }
