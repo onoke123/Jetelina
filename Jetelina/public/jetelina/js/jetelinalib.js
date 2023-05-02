@@ -375,6 +375,8 @@ const chatKeyDown = (cmd) => {
                             top: "10%",
                             left: "10%"
                         }, animateDuration);;
+
+                        viewGraph();
                     }
 
                     break;
