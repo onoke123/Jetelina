@@ -158,7 +158,22 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:26
 ┌ Info: csv file: lib/jetelina/testdata/ftest2.csv
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:26
+<<<<<<< HEAD
 ┌ Info: csv file: lib/jetelina/testdata/ftest.csv
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:26
 ┌ Info: csv file: lib/jetelina/testdata/ftest3.csv
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:26
+=======
+┌ Info: csv file: lib/jetelina/testdata/ftest2.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:26
+┌ Info: csv file: lib/jetelina/testdata/ftest.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:26
+┌ Info: csv file: lib/jetelina/testdata/ftest.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:26
+┌ Info: csv file: lib/jetelina/testdata/ftest5.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:26
+┌ Info: csv file: lib/jetelina/testdata/ftest.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:26
+┌ Info: csv file: lib/jetelina/testdata/ftest2.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:26
+>>>>>>> 45a05da (SQL lists)

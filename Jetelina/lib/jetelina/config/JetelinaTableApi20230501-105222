@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ji179:ftest5
 ju180:ftest5
 jd181:ftest5
@@ -14,17 +13,11 @@ js193:ftest2
 js194:ftest2
 js195:ftest5
 js196:ftest2
-ji197:ftest
-ju198:ftest
-jd199:ftest
-js200:ftest
-js201:ftest2
-ji202:ftest3
-ju203:ftest3
-jd204:ftest3
-=======
-ji26:ftest
-ju27:ftest
-jd28:ftest
-js32:ftest
->>>>>>> 45a05da (SQL lists)
+js12:ftest3,ftest2
+ji13:ftest2
+ju14:ftest2
+jd15:ftest2
+js19:ftest2,ftest3
+ji20:ftest
+ju21:ftest
+jd22:ftest
