@@ -126,18 +126,25 @@ module SQLAnalyzer
     d = Dict( table_df.tablename .=> axes( table_df, 1 ) )
     # d("ftest"=>1 "ftest2=>4...と入っている)　を参照してindexを取得し、それをcombinationに当てはめていく
     sql_df.combination = [getindex.(Ref(d),x) for x in sql_df.combination]
+
     @info sql_df
- #   @info sql_df.combination
-    @info sql_df.access_number
-    @info "max access no: " findmax(sql_df.access_number )
-#    @info "max combination: " findmax(sql_df.combination)
-    @info "max combination: " sql_df.combination size(sql_df.combination) ndims(sql_df.combination) 
- #   @info "min combination: " findmin(sql_df.combination[1])
 
-    sql_df.access_number .*= inv(findmax(sql_df.access_number)[1])
+    # access_numberが一番大きな
+#    md = findall(x->x==maximum(sql_df.access_number), sql_df.access_number)
+#    @info "max access no: " md 
+    @info "max access_number max: " maximum(sql_df.access_number) 
+    sql_df.access_number = sql_df.access_number/maximum(sql_df.access_number)
+
+    @info sql_df
+
+    B_len = length.(sql_df.combination)
+    ml = findall(x->x==(maximum(B_len)),B_len)
+    @info "max combination: " ml
+    @info "max combination max length: " maximum(B_len)
+
+#    @info "dummy: " sql_df.access_number[1]
+#    sql_df.access_number .*= inv(findmax(sql_df.access_number)[1])
 #    sql_df.combination .*= inv(findmax(sql_df.combination)[1])
-
-#    @info sql_df
 
 
 #    @info json( Dict( "Jetelina" => copy.( eachrow( sql_df ))))
