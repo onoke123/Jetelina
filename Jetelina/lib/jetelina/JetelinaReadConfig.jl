@@ -23,6 +23,7 @@ contain functions
 
 module JetelinaReadConfig
 using DBDataController, JetelinaReadSqlList
+using JetelinaFiles
 
 export debugflg, JetelinaLogfile, JetelinaDBtype, JetelinaFileUploadPath, JetelinaSQLLogfile, JetelinaDBhost,
     JetelinaDBport, JetelinaDBuser, JetelinaDBpassword, JetelinaDBsslmode, JetelinaDBname, Df_JetelinaTableManager
@@ -46,7 +47,8 @@ read configuration parameters from JetelinaConfig.cnf file,
 then set them to the global variables.
 """
 function readConfig()
-    configfile = string(joinpath(@__DIR__, "config", "JetelinaConfig.cnf"))
+    configfile = getFileNameFromConfigPath("JetelinaConfig.cnf")
+    #configfile = string(joinpath(@__DIR__, "config", "JetelinaConfig.cnf"))
 
     try
         f = open(configfile, "r")

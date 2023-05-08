@@ -3,7 +3,7 @@ module PostDataController
 using Genie, Genie.Requests, Genie.Renderer.Json
 using DBDataController
 using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
-using SQLSentenceManager
+using SQLSentenceManager,JetelinaFiles
 
 #===
     postデータからselect文を組み立てる
@@ -145,8 +145,10 @@ function addJetelinaWords()
 
     # adding scenario
     #        scenarioFile = string( joinpath( "..","..","public","jetelina","js","scenario.js" ))
-    scenarioFile = string(joinpath(@__DIR__, "..", "..", "public", "jetelina", "js", "scenario.js"))
-    scenarioTmpFile = string(joinpath(@__DIR__, "..", "..", "public", "jetelina", "js", "scenario.tmp"))
+    scenarioFile = getJsFileNameFromPublicPath("scenario.js")
+    scenarioTmpFile = getJsFileNameFromPublicPath("scenario.tmp")
+    #scenarioFile = string(joinpath(@__DIR__, "..", "..", "public", "jetelina", "js", "scenario.js"))
+    #scenarioTmpFile = string(joinpath(@__DIR__, "..", "..", "public", "jetelina", "js", "scenario.tmp"))
     if debugflg
         @info "PostDataController.addJetelinaWords(): " newwords, arr
         @info "scenario path: " scenarioFile

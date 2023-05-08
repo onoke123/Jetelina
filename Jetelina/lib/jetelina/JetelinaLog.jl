@@ -1,12 +1,13 @@
 module JetelinaLog
 
 using Logging
-using JetelinaReadConfig
+using JetelinaReadConfig,JetelinaFiles
 
 export writetoLogfile
 
 function logfileOpen()
-    logfile = string(joinpath(@__DIR__, "log", JetelinaLogfile))
+    logfile = getFileNameFromLogPath(JetelinaLogfile)
+    #logfile = string(joinpath(@__DIR__, "log", JetelinaLogfile))
 
     if debugflg
         println("JetelinaLog.jl logfile: ", logfile)

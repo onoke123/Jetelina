@@ -2,10 +2,13 @@ module SQLSentenceManager
 using DBDataController
 using Dates
 using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
+using JetelinaFiles
 
 # sqli list file
-sqlFile = string(joinpath(@__DIR__, "config", "JetelinaSqlList"))
-tableapiFile = string(joinpath(@__DIR__, "config", "JetelinaTableApi"))
+sqlFile = getFileNameFromConfigPath("JetelinaSqlList")
+tableapiFile = getFileNameFromConfigPath("JetelinaTableApi")
+#sqlFile = string(joinpath(@__DIR__, "config", "JetelinaSqlList"))
+#tableapiFile = string(joinpath(@__DIR__, "config", "JetelinaTableApi"))
 
 function writeTolist(sql, tablename_arr)
     # get the sequence name then create the sql sentence
@@ -69,8 +72,10 @@ end
     drop tableと同時にsql listから対象tableのヤツを消す
 ===#
 function deleteFromlist(tablename)
-    sqlTmpFile = string(joinpath(@__DIR__, "config", "JetelinaSqlList.tmp"))
-    tableapiTmpFile = string(joinpath(@__DIR__, "config", "JetelinaTableApi.tmp"))
+    sqlTmpFile = getFileNameFromConfigPath("JetelinaSqlList.tmp")
+    tableapiTmpFile = getFileNameFromConfigPath("JetelinaTableApi.tmp")
+    #sqlTmpFile = string(joinpath(@__DIR__, "config", "JetelinaSqlList.tmp"))
+    #tableapiTmpFile = string(joinpath(@__DIR__, "config", "JetelinaTableApi.tmp"))
 
     # 該当tableと関係するApiを取得する
     targetapi = []

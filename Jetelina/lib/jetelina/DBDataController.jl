@@ -19,7 +19,7 @@ module DBDataController
 
     using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json
     using JetelinaLog, JetelinaReadConfig
-    using PgDBController
+    using PgDBController, JetelinaFiles
 
 #    export Df_JetelinaTableManager
 

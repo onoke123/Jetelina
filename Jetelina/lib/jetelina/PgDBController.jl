@@ -21,6 +21,7 @@ contain functions
     readJetelinatable()
     getJetelinaSequenceNumber( conn, t )
     getUserAccount( s )
+    measureSqlPerformance()
 """
 module PgDBController
 
@@ -28,6 +29,7 @@ using Genie, Genie.Renderer, Genie.Renderer.Json
 using CSV, LibPQ, DataFrames, IterTools, Tables
 using JetelinaLog, JetelinaReadConfig
 using PgDataTypeList
+using JetelinaFiles
 using SQLSentenceManager
 
 """
@@ -343,8 +345,7 @@ function dataInsertFromCSV(fname)
     """
     conn = open_connection()
     try
-        s = execute(conn, create_table_str)
-        @info "create table " s
+        execute(conn, create_table_str)
     catch err
         close_connection(conn)
         println(err)
@@ -374,8 +375,7 @@ function dataInsertFromCSV(fname)
 
     copyin = LibPQ.CopyIn("COPY $tableName FROM STDIN (FORMAT CSV);", row_strings)
     try
-        s = execute(conn, copyin)
-        @info "copy: " s
+        execute(conn, copyin)
     catch err
         println(err)
         JetelinaLog.writetoLogfile("PgDBController.dataInsertFromCSV() with $fname error : $err")
@@ -491,7 +491,41 @@ end
 function doInsert()
 end
 
-function doSelect()
+"""
+    function doSelect( sql,flg )
+
+# Arguments
+- `sql: String`: execute sql sentense
+- `mode: String`: "run"->running mode  "measure"->measure speed. only called by measureSqlPerformance()
+"""
+function doSelect(sql,mode)
+    conn = open_connection()
+    try
+        if mode == "measure"
+            exetime = 0.0
+            looptime = 10
+            for loop in 1:looptime
+                stats = @timed z = LibPQ.execute(conn, sql)
+                @info stats.time
+                exetime += stats.time
+            end
+
+            @info "exetime: " exetime
+
+            return exetime/looptime 
+        end
+
+        df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+        j = json(Dict("Jetelina" => copy.(eachrow(df))))
+        return true, j
+    catch err
+        println(err)
+        JetelinaLog.writetoLogfile("PgDBController.doSelect() with $mode $sql error : $err")
+        return false
+    finally
+        #ここまで来たらconnを閉じる
+        close_connection(conn)
+    end
 end
 
 function doUpdate()
@@ -520,6 +554,18 @@ function getUserAccount(s)
     end
 
     return j
+end
+
+"""
+    function measureSqlPerformance()
+
+# Arguments
+# Description
+    measure sql exectution time
+"""
+function measureSqlPerformance()
+
+    doSelect(sql,"measure")
 end
 
 end
