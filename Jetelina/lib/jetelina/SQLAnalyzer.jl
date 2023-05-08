@@ -14,12 +14,13 @@ module SQLAnalyzer
     using JetelinaReadConfig, JetelinaLog
     using ExeSql, DBDataController
     using DelimitedFiles
+    using JetelinaFiles
 
     """
         read sql.log file
             log/sql.log ex. select ftest2.id,ftest2.name from ftest2
     """
-    sqllogfile = string( joinpath( @__DIR__, "log", JetelinaSQLLogfile ) )
+    sqllogfile = getFileNameFromLogPath( JetelinaSQLLogfile  )
     df = readdlm( sqllogfile, ' ', String, '\n')
 
     """
@@ -147,7 +148,13 @@ module SQLAnalyzer
 #    sql_df.combination .*= inv(findmax(sql_df.combination)[1])
 
 
-#    @info json( Dict( "Jetelina" => copy.( eachrow( sql_df ))))
+    @info json( Dict( "Jetelina" => copy.( eachrow( sql_df ))))
+
+#    sqllogfile = string( joinpath( @__DIR__, "log", JetelinaSQLLogfile ) )
+    #sqlcsvfile = string( joinpath( @__DIR__, "log", "sqlcsv.csv" ) )
+    sqlcsvfile = getFileNameFromLogPath( "sqlcsv.csv" )
+
+    CSV.write(sqlcsvfile, sql_df)
     """
         json or csv形式にする前に、データのnormalizeを行いたい。
         combination:[x,y] -> x=当該table NO/全table数　y=y/max(y)
