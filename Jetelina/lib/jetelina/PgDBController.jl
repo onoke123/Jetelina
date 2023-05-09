@@ -502,17 +502,19 @@ function doSelect(sql,mode)
     conn = open_connection()
     try
         if mode == "measure"
-            exetime = 0.0
+            #===
+                取得するデータは、max,best,meanの三種類とする。
+            ===#
+            exetime = []
             looptime = 10
             for loop in 1:looptime
                 stats = @timed z = LibPQ.execute(conn, sql)
-                @info stats.time
-                exetime += stats.time
+#                @info stats.time
+                push!(exetime,stats.time)
             end
 
-            @info "exetime: " exetime
-
-            return exetime/looptime 
+#            @info "exetime: " findmax(exetime) findmin(exetime) sum(exetime)/looptime
+            return findmax(exetime), findmin(exetime), sum(exetime)/looptime
         end
 
         df = DataFrame(columntable(LibPQ.execute(conn, sql)))
@@ -559,13 +561,34 @@ end
 """
     function measureSqlPerformance()
 
-# Arguments
-# Description
+# Arguments。
     measure sql exectution time
 """
 function measureSqlPerformance()
+    #===
+     Df_JetelinaSqlList　に格納されているsqlリストを利用するのがよさそうと思ったが、DF_Jeteli..はGenie空間にあるため、
+     web経由でないと利用できない。それだとcronとか別プロセスで利用できないので、JetelinaSqlListを開いて処理することにする。
+    ===#
+    sqlFile = getFileNameFromConfigPath("JetelinaSqlList")
+    sqlPerformanceFile = getFileNameFromConfigPath("JetelinaSqlPerformance")
 
-    doSelect(sql,"measure")
+    open(sqlPerformanceFile, "w") do f
+        println(f,"no,max,min,mean")
+        df = CSV.read( sqlFile, DataFrame )
+        for i in 1:size(df,1)
+            if startswith(df.no[i] ,"js")
+                @info df.sql[i]
+                p = doSelect(df.sql[i],"measure")
+                fno::String=df.no[i]
+                fmax::Float64=p[1][1]
+                fmin::Float64=p[2][1]
+                fmean::Float64=p[3]
+                s = """$fno,$fmax,$fmin,$fmean"""
+                @info "called doSe(): " s
+                println(f,s)
+            end
+        end
+    end
 end
 
 end

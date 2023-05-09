@@ -1,5 +1,4 @@
 no,sql
-<<<<<<< HEAD
 ji179,"insert into ftest5 values(id,'name','sex',age,ave,jetelina_delete_flg)"
 ju180,"update ftest5 set id=d_id,name='d_name',sex='d_sex',age=d_age,ave=d_ave,jetelina_delete_flg=d_jetelina_delete_flg"
 jd181,"delete from ftest5"
