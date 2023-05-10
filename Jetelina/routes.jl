@@ -57,6 +57,9 @@ end
 ===#
 route("/dofup", FileUploadController.fup, method = POST)
 
+# condition panel のsqlアクセス解析データ取得
+route("/getsqlanalyzerdata",GetDataController.getSqlAnalyzerData)
+
 # test for three.js
 #===
 route( "/3" ) do

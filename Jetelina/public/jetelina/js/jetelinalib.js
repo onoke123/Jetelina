@@ -28,7 +28,7 @@ const getdata = (o, t) => {
                                     // table list
                                     str += `<span class="table">${value}</span>`;
                                 } else if (t == 1) {
-                                    // column list. jetelina_delte_flgは表示対象外
+                                    // column list. jetelina_delete_flgは表示対象外
                                     if (name != "jetelina_delete_flg") {
                                         str += `<span class="item" d=${value}><p>${targetTable}.${name}</p></span>`;
                                     }
@@ -75,7 +75,14 @@ const getAjaxData = (url) => {
             dataType: "json"
         }).done(function (result, textStatus, jqXHR) {
             // data parseに行く
-            getdata(result, 0);
+            if( url == "/getsqlanalyzerdata" ){
+                //condition panel graphic data
+                setGraphData(result);//defined in conditionpanel.js
+                sad = true;//ref conditionpanel.js
+            }else{
+                //主にfunction panelのデータ
+                getdata(result, 0);
+            }
             typingControll(chooseMsg("success", "", ""));
         }).fail(function (result) {
             console.error("getAjaxData() fail");
@@ -374,9 +381,9 @@ const chatKeyDown = (cmd) => {
                             height: window.innerHeight * 0.8 /*"800px"*/,
                             top: "10%",
                             left: "10%"
-                        }, animateDuration);;
+                        }, animateDuration);
 
-                        viewGraph();
+                        conditionPanelFunctions(ut,cmd);
                     }
 
                     break;
@@ -391,6 +398,8 @@ const chatKeyDown = (cmd) => {
                         stage = 'chose_func_or_cond';
                         chatKeyDown(ut);
                     }
+
+                    conditionPanelFunctions(ut,cmd);
 
                     break;
                 default:/*before login*/
