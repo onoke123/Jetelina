@@ -11,6 +11,7 @@ module SQLAnalyzer
     using CSV
     using DataFrames
     using Genie, Genie.Renderer, Genie.Renderer.Json
+    using JSON
     using JetelinaReadConfig, JetelinaLog
     using ExeSql, DBDataController
     using DelimitedFiles
@@ -148,13 +149,21 @@ module SQLAnalyzer
 #    sql_df.combination .*= inv(findmax(sql_df.combination)[1])
 
 
-    @info json( Dict( "Jetelina" => copy.( eachrow( sql_df ))))
+    @info JSON.json( Dict( "Jetelina" => copy.( eachrow( sql_df ))))
 
-#    sqllogfile = string( joinpath( @__DIR__, "log", JetelinaSQLLogfile ) )
-    #sqlcsvfile = string( joinpath( @__DIR__, "log", "sqlcsv.csv" ) )
-    sqlcsvfile = getFileNameFromLogPath( "sqlcsv.csv" )
+#    sqlcsvfile = getFileNameFromLogPath( "sqlcsv.csv" )
+#CSV.write(sqlcsvfile, sql_df)
 
-    CSV.write(sqlcsvfile, sql_df)
+    sqlcsvfile = getFileNameFromLogPath( "sqlcsv.json" )
+    open(sqlcsvfile,"w") do f
+        #===
+            JSON形式でファイルに格納しておけば、RestAPIで呼ばれたときにファイル出力してやればいいだけなので楽だろうということで
+            JSONにする。が、 Genie.Renderer.Jsonを使うとHTTPプロトコル出力(HTTP 200とか)が付いてしまうので、ここはプレーンなJSON
+            モジュールを使うことにする。
+        ===#
+        println(f,JSON.json( Dict( "Jetelina" => copy.( eachrow( sql_df )))))
+    end
+
     """
         json or csv形式にする前に、データのnormalizeを行いたい。
         combination:[x,y] -> x=当該table NO/全table数　y=y/max(y)
