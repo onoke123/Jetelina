@@ -2,6 +2,7 @@ let stage = 0;// action stage number ex. 1:before login  'login':at login
 let preferent = {};// 優先されるべきコマンドを格納する
 let presentaction = {};// 現在実行されている機能を格納する ex. functionpanel -> table
 const animateDuration = 1500;// animate() duration
+let sad = false;//getsqlanalyzerdataは一回だけ呼び出すので、getAjaxData()内でこれをtrueに設定する
 const debug = true;
 //const table = [];
 

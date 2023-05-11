@@ -429,7 +429,7 @@ const postSelectedColumns = () => {
 /*
   Function Panel 機能操作
 */
-const functionPanelFunctions = (ut, cmd) => {
+const functionPanelFunctions = (ut) => {
   let m = "";
   if (presentaction == null || presentaction.length == 0) {
     presentaction.push('func');
@@ -601,6 +601,7 @@ const functionPanelFunctions = (ut, cmd) => {
         }
         break;
       default:
+          m = "";//あとのことは後処理に任せる
         break;
     }
   }

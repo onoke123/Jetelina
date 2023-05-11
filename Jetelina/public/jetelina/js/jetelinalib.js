@@ -383,24 +383,17 @@ const chatKeyDown = (cmd) => {
                             left: "10%"
                         }, animateDuration);
 
-                        conditionPanelFunctions(ut,cmd);
+//                        conditionPanelFunctions(ut);
                     }
 
                     break;
                 case 'func':
                     // defined in functionpanel.js
-                    m = functionPanelFunctions(ut, cmd);
+                    m = functionPanelFunctions(ut);
                     break;
                 case 'cond':
-                    if (ut.indexOf('func') != -1) {
-                        delete preferent;
-                        delete presentaction;
-                        stage = 'chose_func_or_cond';
-                        chatKeyDown(ut);
-                    }
-
-                    conditionPanelFunctions(ut,cmd);
-
+                    // defined in conditionpanel.js
+                    m = conditionPanelFunctions(ut);
                     break;
                 default:/*before login*/
                     if (chkUResponse(0, ut)) {
@@ -412,6 +405,8 @@ const chatKeyDown = (cmd) => {
                             m = chooseMsg(3, "", "");
                         }
                     }
+
+                    if( m == null ) m = "";
             }
 
             if (0 < enterNumber) {
@@ -446,6 +441,7 @@ const logoutChk = (s) => {
 const logout = () => {
     enterNumber = 0;
     stage = 0;
+    sad = false;
 
     $("#jetelina_panel").animate({
         width: "400px",
