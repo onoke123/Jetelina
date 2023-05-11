@@ -1,4 +1,10 @@
 const conditionPanelFunctions = (ut) => {
+    let m = "";
+
+    if (presentaction == null || presentaction.length == 0) {
+        presentaction.push('cond');
+      }
+    
     if (ut.indexOf('func') != -1) {
         delete preferent;
         delete presentaction;
@@ -39,9 +45,9 @@ const conditionPanelFunctions = (ut) => {
                 m = "";//ここは後処理にお任せ
                 break;
         }
-
-        return m;
     }
+
+    return m;
 }
 
 const setGraphData = (o) => {

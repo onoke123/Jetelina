@@ -330,8 +330,6 @@ const chatKeyDown = (cmd) => {
                         panel = 'cond';
                     }
 
-//                    stage = panel;
-
                     //move Jetelina Chatpanel
                     if (panel == 'func' || panel == 'cond') {
                         const panelTop = window.innerHeight - 110;
@@ -382,8 +380,6 @@ const chatKeyDown = (cmd) => {
                             top: "10%",
                             left: "10%"
                         }, animateDuration);
-
-//                        conditionPanelFunctions(ut);
                     }
 
                     break;
@@ -405,8 +401,7 @@ const chatKeyDown = (cmd) => {
                             m = chooseMsg(3, "", "");
                         }
                     }
-
-                    if( m == null ) m = "";
+                break;
             }
 
             if (0 < enterNumber) {
