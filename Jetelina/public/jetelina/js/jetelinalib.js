@@ -75,11 +75,11 @@ const getAjaxData = (url) => {
             dataType: "json"
         }).done(function (result, textStatus, jqXHR) {
             // data parseに行く
-            if( url == "/getsqlanalyzerdata" ){
+            if (url == "/getsqlanalyzerdata") {
                 //condition panel graphic data
                 setGraphData(result);//defined in conditionpanel.js
                 sad = true;//ref conditionpanel.js
-            }else{
+            } else {
                 //主にfunction panelのデータ
                 getdata(result, 0);
             }
@@ -128,9 +128,9 @@ const postAjaxData = (url, data) => {
 const typingControll = (m) => {
     //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく
     if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
-    
-    if( debug ) console.info("typingControll() m:", m);
-    
+
+    if (debug) console.info("typingControll() m:", m);
+
     typing(0, m);
 
 }
@@ -380,6 +380,14 @@ const chatKeyDown = (cmd) => {
                             top: "10%",
                             left: "10%"
                         }, animateDuration);
+                        /*
+                            一度getsqlanalyzerdataが呼ばれたら、そのデータはすでにgraphにセットされている。
+                            このデータはあまり変わることはないので頻繁に呼び出す必要はない。
+                            そのため、一度呼び出したらsadフラグを設定して、これを判定として利用する。
+                        */
+                        if (!sad) {
+                            getAjaxData("/getsqlanalyzerdata");
+                        }
                     }
 
                     break;
@@ -401,7 +409,7 @@ const chatKeyDown = (cmd) => {
                             m = chooseMsg(3, "", "");
                         }
                     }
-                break;
+                    break;
             }
 
             if (0 < enterNumber) {
@@ -409,11 +417,11 @@ const chatKeyDown = (cmd) => {
                 enterNumber = 0;
             }
 
-            if ( 0<m.length && m != 'ignore' ) {
+            if (0 < m.length && m != 'ignore') {
                 typingControll(m);
-            }else if( m == null || m.length == 0){
+            } else if (m == null || m.length == 0) {
                 //何言ってるかわかんない時
-                typingControll(chooseMsg('unknown-msg',"",""));
+                typingControll(chooseMsg('unknown-msg', "", ""));
             }
             //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく
             //            if (typingTimeoutID != null) clearTimeout(typingTimeoutID);

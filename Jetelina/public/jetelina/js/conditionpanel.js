@@ -11,15 +11,6 @@ const conditionPanelFunctions = (ut) => {
         stage = 'chose_func_or_cond';
         chatKeyDown(ut);
     } else {
-        /*
-            一度getsqlanalyzerdataが呼ばれたら、そのデータはすでにgraphにセットされている。
-            このデータはあまり変わることはないので頻繁に呼び出す必要はない。
-            そのため、一度呼び出したらsadフラグを設定して、これを判定として利用する。
-        */
-        if (!sad) {
-            getAjaxData("/getsqlanalyzerdata");
-        }
-
         // 優先オブジェクトがあればそれを使う
         let cmd = getPreferentPropertie('cmd');
 
@@ -63,13 +54,25 @@ const setGraphData = (o) => {
                     if (v != null) {
                         $.each(v, function (name, value) {
                             if (name == "column_name") {
-                                base_table_name.push(value);
+                                base_table_name.push(value);// original table column name -> point text
                             } else if (name == "combination") {
-                                combination_table.push(value);
+                                base_table_no.push(value[0]);// original table no -> x axis
+                                let pn = 0;
+                                if( 2<value.length ){
+                                    let cbn = 0;
+                                    for( let i=2; i<value.length; i++ ){
+                                        cbn += value[i];
+                                    }
+
+                                    pn = cbn;
+                                }else if( value.length == 2 ){
+                                    pn = value[1];
+                                }
+
+                                combination_table.push(pn);// table combination no -> y axis                                    
                             } else if (name == "access_number") {
-                                access_count.push(value);
+                                access_count.push(value);// table access normarize no -> z axis
                             }
-                            //                            console.log("json data: ", name, value);
                         });
                     }
                 });
@@ -88,14 +91,24 @@ const setGraphData = (o) => {
 }
 
 const viewGraph = (bname, bno, ct, ac) => {
+    console.log("bname: ", bname);
+    console.log("bno: ", bno);
+    console.log("ct: ", ct);
+    console.log("at: ", ac);
     var data = [
         {
             opacity: 0.5,
             type: 'scatter3d',
+            text: bname,
+            x: ct,
+            y: bno,
+            z: ac,
+            /*
             x: [1, 5, 6],
             y: [1, 2, 3],
             z: [1, 3, 8],
             text: ["a", "b", "c"],
+        */
             mode: 'markers+text'
         }
     ];
