@@ -1,8 +1,0 @@
-no,sql
-ji179,"insert into ftest5 values(id,'name','sex',age,ave,jetelina_delete_flg)"
-ju180,"update ftest5 set id=d_id,name='d_name',sex='d_sex',age=d_age,ave=d_ave,jetelina_delete_flg=d_jetelina_delete_flg"
-jd181,"delete from ftest5"
-js195,"select ftest5.id, ftest5.sex, ftest5.ave from ftest5 as ftest5"
-ji23,"insert into ftest5 values(id,'name','sex',age,ave,jetelina_delete_flg)"
-ju24,"update ftest5 set id=d_id,name='d_name',sex='d_sex',age=d_age,ave=d_ave,jetelina_delete_flg=d_jetelina_delete_flg"
-jd25,"delete from ftest5"

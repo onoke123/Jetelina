@@ -1,9 +1,0 @@
-no,sql
-ji26,"insert into ftest values(id,'name','sex',age,ave,jetelina_delete_flg)"
-ju27,"update ftest set id=d_id,name='d_name',sex='d_sex',age=d_age,ave=d_ave,jetelina_delete_flg=d_jetelina_delete_flg"
-jd28,"delete from ftest"
-ji29,"insert into ftest2 values(id,'name','sex',age,ave,jetelina_delete_flg)"
-ju30,"update ftest2 set id=d_id,name='d_name',sex='d_sex',age=d_age,ave=d_ave,jetelina_delete_flg=d_jetelina_delete_flg"
-jd31,"delete from ftest2"
-js32,"select ftest.id, ftest.sex from ftest as ftest"
-js33,"select ftest.id, ftest2.name, ftest.sex, ftest2.age from ftest as ftest,ftest2 as ftest2"
