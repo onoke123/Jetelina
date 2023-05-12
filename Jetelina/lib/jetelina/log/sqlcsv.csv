@@ -1,0 +1,8 @@
+column_name,combination,access_number
+ftest2.id,"[5, 6]",0.6666666666666666
+ftest3.name,"[5, 6]",0.6666666666666666
+ftest2.id,[5],0.8333333333333334
+ftest3.id,[6],0.6666666666666666
+ftest.sex,"[3, 5, 6]",1.0
+ftest2.id,"[3, 5, 6]",1.0
+ftest3.name,"[3, 5, 6]",1.0

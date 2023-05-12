@@ -509,11 +509,9 @@ function doSelect(sql,mode)
             looptime = 10
             for loop in 1:looptime
                 stats = @timed z = LibPQ.execute(conn, sql)
-#                @info stats.time
                 push!(exetime,stats.time)
             end
 
-#            @info "exetime: " findmax(exetime) findmin(exetime) sum(exetime)/looptime
             return findmax(exetime), findmin(exetime), sum(exetime)/looptime
         end
 
@@ -577,14 +575,12 @@ function measureSqlPerformance()
         df = CSV.read( sqlFile, DataFrame )
         for i in 1:size(df,1)
             if startswith(df.no[i] ,"js")
-#                @info df.sql[i]
                 p = doSelect(df.sql[i],"measure")
                 fno::String=df.no[i]
                 fmax::Float64=p[1][1]
                 fmin::Float64=p[2][1]
                 fmean::Float64=p[3]
                 s = """$fno,$fmax,$fmin,$fmean"""
-                @info "called doSe(): " s
                 println(f,s)
             end
         end

@@ -1,7 +1,10 @@
 module PgDataTypeList
 
     function getDataType( c_type )
-        @info "c_type: ", c_type
+        if debugflg
+            @info "c_type: ", c_type
+        end
+        
         c_type = string( c_type )
         if startswith( c_type, "Int" ) 
             "integer"
