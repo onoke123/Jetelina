@@ -55,15 +55,15 @@ sql_df = DataFrame(column_name=String[], combination=[], access_number=Float64[]
 """
     shape the data
         ex. 
-            column    combination    access number
-        ftest3.id     ftest3+ftest2      2
-        ftest2.name   ftest3+ftest2      2
-        ftest3.id     ftest4+ftest2      5
-        ftest2.name   ftest2            10
+            column    combination         access number
+        ftest3.id     ['ftest3','ftest2']      2
+        ftest2.name   ['ftest3','ftest2']      2
+        ftest3.id     ['ftest4','ftest2']      5
+        ftest2.name   ['ftest2']              10
 
         then 
-        ftest3.idが一番呼ばれたのはftet4+ftest2なので、ftest3.idはこれを採用
-        ftest2.name        〃      ftestなので、ftest2.nameはこれを採用→table変更は必要なさそう
+        ftest3.idが一番呼ばれたのは['ftet4','ftest2']なので、ftest3.idはこれを採用
+        ftest2.name        〃      ['ftest2']なので、ftest2.nameはこれを採用→table変更は必要なさそう
 """
 
 for i = 1:u_size
@@ -81,8 +81,8 @@ for i = 1:u_size
     # make "column_name" and "combination" 
     for j = 1:size(c)[1]
         """
-            cc[1]//table name
-            cc[2]//column name 
+            cc[1]:table name
+            cc[2]:column name 
         """
         cc = split(c[j], ".")
         # table_arrにcc[1]が入っているかどうか見ている。論理否定。これが書きたかったからJulia。
@@ -120,10 +120,12 @@ end
 """
 table_df = DBDataController.getTableList("dataframe")#この処理は上の処理に含めよう
 
-# by Ph. Kaminski
-# table_df.tablenameがユニークだからできる技。
+#===
+ by Ph. Kaminski
+    table_df.tablenameがユニークだからできる技。
+    d("ftest"=>1 "ftest2=>4...と入っている)　を参照してindexを取得し、それをcombinationに当てはめていく
+===#
 d = Dict(table_df.tablename .=> axes(table_df, 1))
-# d("ftest"=>1 "ftest2=>4...と入っている)　を参照してindexを取得し、それをcombinationに当てはめていく
 sql_df.combination = [getindex.(Ref(d), x) for x in sql_df.combination]
 
 # access_numberが一番大きな
