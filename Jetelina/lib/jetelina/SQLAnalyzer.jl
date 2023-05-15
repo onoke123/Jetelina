@@ -140,10 +140,11 @@ if debugflg
 end
 
 #===
-    後々解析する際にCSV形式で持っていると楽かなぁと思って
+    後々解析する際にCSV形式で持っていると楽かなぁと思って。
+    でも、JSON3を使ってjsonファイルから読み出しができるから不要となりましたとさ。
 ===#
-sqlcsvfile = getFileNameFromLogPath("sqlcsv.csv")
-CSV.write(sqlcsvfile, sql_df)
+#sqlcsvfile = getFileNameFromLogPath("sqlcsv.csv")
+#CSV.write(sqlcsvfile, sql_df)
 
 #===
     でこっちは、JSON形式でファイルに格納しておけば、RestAPIで呼ばれたときにファイル出力してやればいいだけなので楽だろうということで
