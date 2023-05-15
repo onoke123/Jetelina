@@ -567,8 +567,8 @@ function measureSqlPerformance()
      Df_JetelinaSqlList　に格納されているsqlリストを利用するのがよさそうと思ったが、DF_Jeteli..はGenie空間にあるため、
      web経由でないと利用できない。それだとcronとか別プロセスで利用できないので、JetelinaSqlListを開いて処理することにする。
     ===#
-    sqlFile = getFileNameFromConfigPath("JetelinaSqlList")
-    sqlPerformanceFile = getFileNameFromConfigPath("JetelinaSqlPerformance")
+    sqlFile = getFileNameFromConfigPath(JetelinaSQLListfile)
+    sqlPerformanceFile = getFileNameFromConfigPath(JetelinaSqlPerformancefile)
 
     open(sqlPerformanceFile, "w") do f
         println(f,"no,max,min,mean")

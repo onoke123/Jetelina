@@ -1,15 +1,17 @@
 module JetelinaReadSqlList
 
     using DataFrames, CSV
-    using JetelinaFiles
+    using JetelinaReadConfig, JetelinaFiles
 
     export Df_JetelinaSqlList
 
-    #const Df_JetelinaSqlList = Ref{}
+    function __init__()
+        readSqlList2DataFrame()
+    end
 
     function readSqlList2DataFrame()
-        sqlFile = getFileNameFromConfigPath("JetelinaSqlList")
-#        sqlFile = string( joinpath( @__DIR__, "config", "JetelinaSqlList" ))
+        sqlFile = getFileNameFromConfigPath(JetelinaSQLListfile)
+#        sqlFile = string( joinpath( @__DIR__, "config", JetelinaSQLListfile ))
         df = CSV.read( sqlFile, DataFrame )
         #Df_JetelinaSqlList = Ref(df)
         global Df_JetelinaSqlList = df

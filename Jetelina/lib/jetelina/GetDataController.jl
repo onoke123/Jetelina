@@ -10,7 +10,7 @@ module GetDataController
 
 
     function getSqlAnalyzerData()
-        sqlcsvfile = getFileNameFromLogPath( "sqlcsv.json" )
-        return readchomp(sqlcsvfile)        
+        sqljsonfile = getFileNameFromLogPath( JetelinaSQLAnalyzedfile )
+        return readchomp(sqljsonfile)        
     end
 end

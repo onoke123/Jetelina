@@ -17,6 +17,15 @@ using ExeSql, DBDataController
 using DelimitedFiles
 using JetelinaFiles
 
+const sqljsonfile = getFileNameFromLogPath(JetelinaSQLAnalyzedfile)
+
+"""
+    functions
+        createAnalyzedJsonFile()
+        getAnalyzedDataFromJsonFileToDataFrame()
+
+"""
+function createAnalyzedJsonFile()
 """
     read sql.log file
         log/sql.log ex. select ftest2.id,ftest2.name from ftest2
@@ -151,27 +160,37 @@ end
     JSONにする。が、 Genie.Renderer.Jsonを使うとHTTPプロトコル出力(HTTP 200とか)が付いてしまうので、ここはプレーンなJSON
     モジュールを使うことにする。
 ===#
-sqlcsvfile = getFileNameFromLogPath("sqlcsv.json")
-open(sqlcsvfile, "w") do f
+open(sqljsonfile, "w") do f
     println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df)))))
 end
 
+end
+
 """
-    json or csv形式にする前に、データのnormalizeを行いたい。
-    combination:[x,y] -> x=当該table NO/全table数　y=y/max(y)
-    access_number: c=c/max(c)
+    read sqlcsv.json then put it to DataFrame for experimental*()
 """
+function getAnalyzedDataFromJsonFileToDataFrame()
+   js = read(sqljsonfile,String)
+   dic = JSON.parse(js)
+   df = DataFrame(dic)
+
+   @info "json to df: " df
+end
 
 """
     Table Layout Change
         analyzeに基づいてTableレイアウト変更を仮実行する。
 """
+function experimentalTableLayoutChange()
+end
 
 """
     Experimental SQL Run
         Table Layout Changeに対してSQLを発行して、処理速度を現状と比べる。
         結果をファイルに格納する。
 """
+function experimentalMeasureSqlPerformance()
+end
 
 """
     Suggestion
@@ -185,5 +204,9 @@ end
         function panelのajaxはこの関数を呼び出すので、解析結果で変更が不要の時には
         1,2では”状態OK”を返し、3,4のみのデータを返す。
 """
+function compareThePerformances()
+end
+function tableReformSuggestion()
+end
 
 end

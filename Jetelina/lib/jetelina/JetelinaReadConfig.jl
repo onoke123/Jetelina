@@ -7,6 +7,7 @@ then set them to global variables
     debugflg: debug mode or not
     JetelinaFileUploadPath: csv file upload path
     JetelinaSQLLogfile: SQL log file name
+    JetelinaSQLAnalyzedfile: SQL Analyed json file name
     JetelinaDBhost: DB host name
     JetelinaDBport: DB port number
     JetelinaDBuser: DB access user account
@@ -22,11 +23,12 @@ contain functions
 """
 
 module JetelinaReadConfig
-using DBDataController, JetelinaReadSqlList
+#using DBDataController, JetelinaReadSqlList
 using JetelinaFiles
 
 export debugflg, JetelinaLogfile, JetelinaDBtype, JetelinaFileUploadPath, JetelinaSQLLogfile, JetelinaDBhost,
-    JetelinaDBport, JetelinaDBuser, JetelinaDBpassword, JetelinaDBsslmode, JetelinaDBname, Df_JetelinaTableManager
+    JetelinaDBport, JetelinaDBuser, JetelinaDBpassword, JetelinaDBsslmode, JetelinaDBname, Df_JetelinaTableManager,
+    JetelinaSQLAnalyzedfile, JetelinaSQLListfile, JetelinaSqlPerformancefile, JetelinaTableApifile
 
 """
     function __init__()
@@ -36,8 +38,8 @@ this function calls readConfig function.
 """
 function __init__()
     readConfig()
-    DBDataController.init_Jetelina_table()
-    JetelinaReadSqlList.readSqlList2DataFrame()
+#    DBDataController.init_Jetelina_table()
+#    JetelinaReadSqlList.readSqlList2DataFrame()
 end
 
 """
@@ -48,7 +50,6 @@ then set them to the global variables.
 """
 function readConfig()
     configfile = getFileNameFromConfigPath("JetelinaConfig.cnf")
-    #configfile = string(joinpath(@__DIR__, "config", "JetelinaConfig.cnf"))
 
     try
         f = open(configfile, "r")
@@ -68,10 +69,21 @@ function readConfig()
                 elseif startswith(l[i], "sqllogfile")
                     # SQL log file name
                     global JetelinaSQLLogfile = getSetting(l[i])
+                elseif startswith(l[i], "sqlanalyzedfile")
+                    global JetelinaSQLAnalyzedfile = getSetting(l[i])
+                elseif startswith(l[i], "sqllistfile")
+                    global JetelinaSQLListfile = getSetting(l[i])
+                elseif startswith(l[i], "sqlperformancefile")
+                    global JetelinaSqlPerformancefile = getSetting(l[i])
+                elseif startswith(l[i], "tableapifile")
+                    global JetelinaTableApifile = getSetting(l[i])
                 elseif startswith(l[i], "dbtype")
                     # DB type
                     global JetelinaDBtype = getSetting(l[i])
-                    @info "dbtype:", JetelinaDBtype
+                    if debugflg
+                        @info "dbtype:", JetelinaDBtype
+                    end
+
                     if JetelinaDBtype == "postgresql"
                         # for PostgreSQL
                         setPostgres(l, i + 1)

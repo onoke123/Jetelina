@@ -21,6 +21,9 @@ module DBDataController
     using JetelinaLog, JetelinaReadConfig
     using PgDBController, JetelinaFiles
 
+    function __init__()
+        init_Jetelina_table()
+    end
 #    export Df_JetelinaTableManager
 
     function init_Jetelina_table()

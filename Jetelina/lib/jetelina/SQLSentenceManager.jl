@@ -5,8 +5,8 @@ using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
 using JetelinaFiles
 
 # sqli list file
-sqlFile = getFileNameFromConfigPath("JetelinaSqlList")
-tableapiFile = getFileNameFromConfigPath("JetelinaTableApi")
+sqlFile = getFileNameFromConfigPath(JetelinaSQLListfile)
+tableapiFile = getFileNameFromConfigPath(JetelinaTableApifile)
 #sqlFile = string(joinpath(@__DIR__, "config", "JetelinaSqlList"))
 #tableapiFile = string(joinpath(@__DIR__, "config", "JetelinaTableApi"))
 
@@ -72,7 +72,7 @@ end
     drop tableと同時にsql listから対象tableのヤツを消す
 ===#
 function deleteFromlist(tablename)
-    sqlTmpFile = getFileNameFromConfigPath("JetelinaSqlList.tmp")
+    sqlTmpFile = getFileNameFromConfigPath("$JetelinaSqlList.tmp")
     tableapiTmpFile = getFileNameFromConfigPath("JetelinaTableApi.tmp")
     #sqlTmpFile = string(joinpath(@__DIR__, "config", "JetelinaSqlList.tmp"))
     #tableapiTmpFile = string(joinpath(@__DIR__, "config", "JetelinaTableApi.tmp"))
