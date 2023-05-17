@@ -170,11 +170,42 @@ end
     read sqlcsv.json then put it to DataFrame for experimental*()
 """
 function getAnalyzedDataFromJsonFileToDataFrame()
-   js = read(sqljsonfile,String)
+    js = read(sqljsonfile,String)
    dic = JSON.parse(js)
-   df = DataFrame(dic)
+   df = DataFrame(dic) 
 
    @info "json to df: " df
+
+   # <- 現状、JetelinaでDFができているので、中身で展開するようにしないとね
+   d_col = df[!,:Jetelina]
+   combination_arr = Array[]
+   column_name_arr = String[]
+   access_number_arr = Float64[]
+
+   for i in eachindex(d_col)
+    push!(combination_arr,d_col[i]["combination"])
+    push!(column_name_arr,d_col[i]["column_name"])
+    push!(access_number_arr,d_col[i]["access_number"])
+    end
+
+    df_arr = DataFrame(:combination=>combination_arr,:column_name=>column_name_arr,:access_number=>access_number_arr)
+    @info "new df_arr" df_arr
+
+   B_len = length.(df_arr.combination)
+   ml = findall(x -> x == (maximum(B_len)), B_len) # このmlにはmaxのデータのindex番号が入る
+    mac = maximum(df_arr[!,:access_number])
+
+   @info "combination max len: " ml ml[1] size(ml) mac
+
+    if 0<size(ml)[1]
+        for i = 1:size(ml)[1]
+            d = df_arr[ml[i],:access_number]
+            if mac == d 
+                # このデータがTableレイアウト変更対象のデータになる　ハズ
+                @info "hit " ml[i]  df_arr[ml[i],:access_number]
+            end
+        end
+    end
 end
 
 """
