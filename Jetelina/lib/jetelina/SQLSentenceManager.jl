@@ -72,7 +72,7 @@ end
     drop tableと同時にsql listから対象tableのヤツを消す
 ===#
 function deleteFromlist(tablename)
-    sqlTmpFile = getFileNameFromConfigPath("$JetelinaSqlList.tmp")
+    sqlTmpFile = getFileNameFromConfigPath("$JetelinaSQLListfile.tmp")
     tableapiTmpFile = getFileNameFromConfigPath("JetelinaTableApi.tmp")
     #sqlTmpFile = string(joinpath(@__DIR__, "config", "JetelinaSqlList.tmp"))
     #tableapiTmpFile = string(joinpath(@__DIR__, "config", "JetelinaTableApi.tmp"))

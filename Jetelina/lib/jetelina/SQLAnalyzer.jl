@@ -200,8 +200,12 @@ function getAnalyzedDataFromJsonFileToDataFrame()
 
     df_arr = DataFrame(:combination => combination_arr, :column_name => column_name_arr, :access_number => access_number_arr)
 
+    #===
+        ↑ここまでがデータ解析の準備
+        ↓ここからがデータ解析処理
+    ===#
     c_len = length.(df_arr.combination)
-    hightcomblen = findall(x -> x == (maximum(c_len)), c_len) # このmlにはmaxのデータのindex番号が入る
+    hightcomblen = findall(x -> x == (maximum(c_len)), c_len) # このhighcomblenにはmaxのデータのindex番号が入る
     highaccess = maximum(df_arr[!, :access_number])
 
     if debugflg
@@ -215,6 +219,10 @@ function getAnalyzedDataFromJsonFileToDataFrame()
             if highaccess == acn
                 #=== 
                     このデータがTableレイアウト変更対象のデータになる　ハズ
+                    なぜなら、
+                    　　1.一番複雑(関連tableが多い)なcombination
+                    　　2.しかもアクセス数が多い
+                    から
                 ===#
                 @info "hit " hl df_arr[hl, :access_number] df_arr[hl, :column_name] df_arr[hl, :combination]
 

@@ -1,5 +1,7 @@
 module PgDataTypeList
 
+    using JetelinaReadConfig
+    
     function getDataType( c_type )
         if debugflg
             @info "c_type: ", c_type

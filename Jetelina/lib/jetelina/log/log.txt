@@ -163,3 +163,11 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:26
 ┌ Info: csv file: lib/jetelina/testdata/ftest3.csv
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:26
+┌ Info: csv file: lib/jetelina/testdata/ftest3.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: csv file: lib/jetelina/testdata/ftest3.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: csv file: lib/jetelina/testdata/ftest3.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLSentenceManager.deleteFromlist() error: BoundsError(SubString{String}["<<<<<<< HEAD"], (2,))
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
