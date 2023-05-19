@@ -100,8 +100,8 @@ const viewGraph = (bname, bno, ct, ac) => {
             opacity: 0.5,
             type: 'scatter3d',
             text: bname,
-            x: ct,
-            y: bno,
+            x: bno,
+            y: ct,
             z: ac,
             /*
             x: [1, 5, 6],

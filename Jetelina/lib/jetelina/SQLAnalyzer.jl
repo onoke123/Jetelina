@@ -206,17 +206,26 @@ function getAnalyzedDataFromJsonFileToDataFrame()
     ===#
     c_len = length.(df_arr.combination)
     hightcomblen = findall(x -> x == (maximum(c_len)), c_len) # このhighcomblenにはmaxのデータのindex番号が入る
-    highaccess = maximum(df_arr[!, :access_number])
+    maxaccess_n = maximum(df_arr[!, :access_number]) # 参考までに取得
 
     if debugflg
-        @info "combination max len: " hightcomblen hightcomblen[1] length(hightcomblen) highaccess
+        @info "combination max len: "  length(hightcomblen) maxaccess_n
     end
 
-    if 0 < length(hightcomblen)
+    #===
+        combination lengthが1であるのは単一table使用の意味になるので、
+        ここでは２つ以上のtable使用のモノを対象として調べることにする
+    ===#
+    if 1 < length(hightcomblen)
+        dum = []
         for i = 1:length(hightcomblen)
             hl = hightcomblen[i]
             acn = df_arr[hl, :access_number]
-            if highaccess == acn
+            push!(dum,acn)
+            #===
+                最大combinationの内で、最大accessnumberのモノが対象になる　-> graphの max(y*z)
+            ===#
+#            if maxaccess_n * 0.7 <= acn
                 #=== 
                     このデータがTableレイアウト変更対象のデータになる　ハズ
                     なぜなら、
@@ -226,12 +235,14 @@ function getAnalyzedDataFromJsonFileToDataFrame()
                 ===#
                 @info "hit " hl df_arr[hl, :access_number] df_arr[hl, :column_name] df_arr[hl, :combination]
 
-                for ii = 1:length(df_arr[hl, :combination])
-                    @info "comb ar: " df_arr[hl, :combination][ii]
-                end
+#                for ii = 1:length(df_arr[hl, :combination])
+#                    @info "comb ar: " df_arr[hl, :combination][ii]
+#                end
 
-            end
+#            end
         end
+
+        @info "max access in combi.. : " maximum(dum)  # このデータが欲しくてこの方法でもいいんだけど、indexが入ってないからもうちょっと工夫が必要だなぁ
     end
 end
 
