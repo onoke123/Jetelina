@@ -55,7 +55,7 @@ function readConfig()
         f = open(configfile, "r")
         l = readlines(f)
 
-        for i = 1:size(l)[1]
+        for i = 1:length(l)
             if !startswith(l[i], "#")
                 if startswith(l[i], "logfile")
                     # logfile path attribute
@@ -132,7 +132,7 @@ end
         parses and gets then set PostgreSQL connection parameterss to the global variables
 """
 function setPostgres(l, c)
-    for i = c:size(l)[1]
+    for i = c:length(l)
         if !startswith(l[i], "#")
             if startswith(l[i], "host")
                 # DB host

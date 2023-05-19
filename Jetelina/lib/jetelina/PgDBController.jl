@@ -285,7 +285,8 @@ function dataInsertFromCSV(fname)
 
     column_type = eltype.(eachcol(df))
 
-    column_type_string = Array{Union{Nothing,String}}(nothing, size(column_name))
+#    column_type_string = Array{Union{Nothing,String}}(nothing, size(column_name))
+    column_type_string = Array{Union{Nothing,String}}(nothing, length(column_name))
     column_str = string()
     insert_str = string()
     update_str = string()
@@ -573,7 +574,8 @@ function measureSqlPerformance()
     open(sqlPerformanceFile, "w") do f
         println(f,"no,max,min,mean")
         df = CSV.read( sqlFile, DataFrame )
-        for i in 1:size(df,1)
+#        for i in 1:size(df,1)
+        for i in 1:length(df)
             if startswith(df.no[i] ,"js")
                 p = doSelect(df.sql[i],"measure")
                 fno::String=df.no[i]

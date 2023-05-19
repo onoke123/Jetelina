@@ -23,7 +23,7 @@ function postDataAcquire()
     ==#
     item_d = jsonpayload("item")
     if debugflg
-        @info "post: " item_d, size(item_d)
+        @info "post: " item_d, length(item_d)
     end
     #===
         なぜsize(..)[1]かというと、上の@info出力でみるとsize(item_d)->(n,) とTupleになっていて
@@ -32,7 +32,7 @@ function postDataAcquire()
     selectSql = ""
     tableName = ""
     tablename_arr = []
-    for i = 1:size(item_d)[1]
+    for i = 1:length(item_d)
         if debugflg
             @info "data $i->", item_d[i]
         end
