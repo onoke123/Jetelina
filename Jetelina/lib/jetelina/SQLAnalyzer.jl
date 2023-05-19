@@ -209,7 +209,7 @@ function getAnalyzedDataFromJsonFileToDataFrame()
     maxaccess_n = maximum(df_arr[!, :access_number]) # 参考までに取得
 
     if debugflg
-        @info "combination max len: "  length(hightcomblen) maxaccess_n
+        @info "combination max len: " length(hightcomblen) maxaccess_n
     end
 
     #===
@@ -217,32 +217,31 @@ function getAnalyzedDataFromJsonFileToDataFrame()
         ここでは２つ以上のtable使用のモノを対象として調べることにする
     ===#
     if 1 < length(hightcomblen)
-        dum = []
+        candidate_columns = Dict()
         for i = 1:length(hightcomblen)
+            # dict作成処理の変数名が長くなるので、ここで短いヤツにしておく　<-単に見通しを良くするため
             hl = hightcomblen[i]
             acn = df_arr[hl, :access_number]
-            push!(dum,acn)
             #===
-                最大combinationの内で、最大accessnumberのモノが対象になる　-> graphの max(y*z)
+                Dict形式 a=>b　でcandidate...に追加している
             ===#
-#            if maxaccess_n * 0.7 <= acn
-                #=== 
-                    このデータがTableレイアウト変更対象のデータになる　ハズ
-                    なぜなら、
-                    　　1.一番複雑(関連tableが多い)なcombination
-                    　　2.しかもアクセス数が多い
-                    から
-                ===#
-                @info "hit " hl df_arr[hl, :access_number] df_arr[hl, :column_name] df_arr[hl, :combination]
-
-#                for ii = 1:length(df_arr[hl, :combination])
-#                    @info "comb ar: " df_arr[hl, :combination][ii]
-#                end
-
-#            end
+            candidate_columns[df_arr[hl, :column_name]] = acn
         end
 
-        @info "max access in combi.. : " maximum(dum)  # このデータが欲しくてこの方法でもいいんだけど、indexが入ってないからもうちょっと工夫が必要だなぁ
+        #=== 
+            このデータがTableレイアウト変更対象のデータになる
+            なぜなら、
+            　　1.一番複雑(関連tableが多い)なcombination
+            　　2.しかもアクセス数が多い
+            から
+        ===#
+        target_column = findall(x -> x == maximum(values(candidate_columns)), candidate_columns)
+        
+        if debugflg
+            @info "target is  " target_column
+        end
+
+        experimentalTableLayoutChange(target_column)
     end
 end
 
@@ -250,7 +249,12 @@ end
     Table Layout Change
         analyzeに基づいてTableレイアウト変更を仮実行する。
 """
-function experimentalTableLayoutChange()
+function experimentalTableLayoutChange(tablecolumn)
+    @info "well table layout change with $tablecolumn: " tablecolumn
+
+    d = split(tablecolumn[1],".")
+
+    @info "table and column " d[1] d[2]
 end
 
 """
