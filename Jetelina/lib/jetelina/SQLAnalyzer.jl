@@ -55,8 +55,8 @@ function createAnalyzedJsonFile()
                 column_name      access_number
             ftest3.id,ftest2.name    2
     """
-    u_size = size(u)[1]
-    df_size = size(df[:, [:2]])[1]
+    u_size = length(u)
+    df_size = length(df[:, [:2]])
 
     # uにはユニークなSQL文が入っているので、sql.logの中のマッチングでアクセス数を取得する ex. u[i] === ....
     sql_df = DataFrame(column_name=String[], combination=[], access_number=Float64[])
@@ -88,7 +88,7 @@ function createAnalyzedJsonFile()
         table_arr = String[]
         c = split(u[i], ",")
         # make "column_name" and "combination" 
-        for j = 1:size(c)[1]
+        for j = 1:length(c)
             """
                 cc[1]:table name
                 cc[2]:column name 
@@ -192,7 +192,7 @@ function getAnalyzedDataFromJsonFileToDataFrame()
         130行目ではjsonデータとして画面グラフレンダリングが必要だったのでtable名->数字　に変更したが、
         ここでは、table名そのものが欲しいので逆処理をやっている。
     ===#
-    if 0 < size(combination_arr)
+    if 0 < length(combination_arr)
         table_df = DBDataController.getTableList("dataframe")
         d = Dict(axes(table_df, 1) .=> table_df.tablename)
         combination_arr = [getindex.(Ref(d), x) for x in combination_arr]
@@ -200,25 +200,26 @@ function getAnalyzedDataFromJsonFileToDataFrame()
 
     df_arr = DataFrame(:combination => combination_arr, :column_name => column_name_arr, :access_number => access_number_arr)
 
-    B_len = length.(df_arr.combination)
-    ml = findall(x -> x == (maximum(B_len)), B_len) # このmlにはmaxのデータのindex番号が入る
-    mac = maximum(df_arr[!, :access_number])
+    c_len = length.(df_arr.combination)
+    hightcomblen = findall(x -> x == (maximum(c_len)), c_len) # このmlにはmaxのデータのindex番号が入る
+    highaccess = maximum(df_arr[!, :access_number])
 
     if debugflg
-        @info "combination max len: " ml ml[1] size(ml) mac
+        @info "combination max len: " hightcomblen hightcomblen[1] length(hightcomblen) highaccess
     end
 
-    if 0 < size(ml)[1]
-        for i = 1:size(ml)[1]
-            d = df_arr[ml[i], :access_number]
-            if mac == d
+    if 0 < length(hightcomblen)
+        for i = 1:length(hightcomblen)
+            hl = hightcomblen[i]
+            acn = df_arr[hl, :access_number]
+            if highaccess == acn
                 #=== 
                     このデータがTableレイアウト変更対象のデータになる　ハズ
                 ===#
-                @info "hit " ml[i] df_arr[ml[i], :access_number] df_arr[ml[i], :column_name] df_arr[ml[i], :combination]
+                @info "hit " hl df_arr[hl, :access_number] df_arr[hl, :column_name] df_arr[hl, :combination]
 
-                for ii = 1:length(df_arr[ml[i], :combination])
-                    @info "comb ar: " df_arr[ml[i], :combination][ii]
+                for ii = 1:length(df_arr[hl, :combination])
+                    @info "comb ar: " df_arr[hl, :combination][ii]
                 end
 
             end
