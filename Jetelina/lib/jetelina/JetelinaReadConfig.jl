@@ -14,7 +14,8 @@ then set them to global variables
     JetelinaDBpassword: DB access user password
     JetelinaDBsslmode: DB access ssl mode (in PostgreSQL)
     JetelinaDBname: DB database name
-
+    JetelinaTestDBname: DB database for testing by analyzing
+    
 contain functions
     __init__()
     readConfig()
@@ -28,7 +29,7 @@ using JetelinaFiles
 
 export debugflg, JetelinaLogfile, JetelinaDBtype, JetelinaFileUploadPath, JetelinaSQLLogfile, JetelinaDBhost,
     JetelinaDBport, JetelinaDBuser, JetelinaDBpassword, JetelinaDBsslmode, JetelinaDBname, Df_JetelinaTableManager,
-    JetelinaSQLAnalyzedfile, JetelinaSQLListfile, JetelinaSqlPerformancefile, JetelinaTableApifile
+    JetelinaSQLAnalyzedfile, JetelinaSQLListfile, JetelinaSqlPerformancefile, JetelinaTableApifile, JetelinaTestDBname
 
 """
     function __init__()
@@ -152,6 +153,9 @@ function setPostgres(l, c)
             elseif startswith(l[i], "dbname")
                 # DB name
                 global JetelinaDBname = getSetting(l[i])
+            elseif startswith(l[i], "testdbname")
+                # analyze test DB name
+                global JetelinaTestDBname = getSetting(l[i])
             end
         end
     end

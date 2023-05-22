@@ -33,6 +33,7 @@ user = postgres
 password = postgres
 sslmode = prefer
 dbname = postgres
+testdbname = testdb
 
 # MariaDB setting
 

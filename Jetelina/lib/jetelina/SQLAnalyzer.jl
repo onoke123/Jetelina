@@ -255,6 +255,16 @@ function experimentalTableLayoutChange(tablecolumn)
     d = split(tablecolumn[1],".")
 
     @info "table and column " d[1] d[2]
+
+    #===
+    1.運用中のDBの全tableを解析用DBにコピーする。データ数は全件ではない
+    2.該当するtableのレイアウト変更を実行する
+    3.sql listの対象となるselect文を実験実行する
+    4.性能を比較してどうするか決める
+    5.解析用DBを削除することを忘れずに
+
+    1,5は上位でやろう
+    ===#
 end
 
 """
