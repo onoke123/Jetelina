@@ -265,6 +265,11 @@ function experimentalTableLayoutChange(tablecolumn)
 
     1,5は上位でやろう
     ===#
+
+    # JetelinaSQLListfileを開いて対象となるsql文を呼ぶ
+    # そのsqlでPgTestDBController.doSelect(sql)　を呼ぶ
+    # 実験で得られたdata(max,min,mean)とJetelina..fileにある既存値を比較する　ref. measureSqlPerformance()
+    # 全体としてパフォーマンスの改善が見られたらレイアウトを変更する。
 end
 
 """
