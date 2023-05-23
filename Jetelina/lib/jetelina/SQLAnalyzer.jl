@@ -242,6 +242,10 @@ function getAnalyzedDataFromJsonFileToDataFrame()
             @info "target is  " target_column
         end
 
+        # まずはtestdb作成
+        copyTablesToTestdb()
+
+        # そのtestdbで操作するぜ
         experimentalTableLayoutChange(target_column)
     end
 end
@@ -307,6 +311,16 @@ function experimentalTableLayoutChange(tablecolumn)
 
     1,5は上位でやろう
     ===#
+
+    # 相手はtestdbなのでTestDBControllerを使う
+    conn = TestDBController.open_connection()
+    try
+        # 2をやる
+    catch err
+        JetelinaLog.writetoLogfile("SQLAnalyzer.experimentalTableLayoutChange() error: $err")
+    finally
+        TestDBController.close_connection(conn)
+    end
 
     # JetelinaSQLListfileを開いて対象となるsql文を呼ぶ
     # そのsqlでPgTestDBController.doSelect(sql)　を呼ぶ
