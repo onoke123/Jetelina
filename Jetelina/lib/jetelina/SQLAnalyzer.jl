@@ -11,11 +11,12 @@ module SQLAnalyzer
 using CSV
 using DataFrames
 using Genie, Genie.Renderer, Genie.Renderer.Json
-using JSON
+using JSON, LibPQ
 using JetelinaReadConfig, JetelinaLog
-using ExeSql, DBDataController
+using ExeSql, DBDataController,PgDBController
 using DelimitedFiles
 using JetelinaFiles
+using TestDBController
 
 const sqljsonfile = getFileNameFromLogPath(JetelinaSQLAnalyzedfile)
 
@@ -242,6 +243,47 @@ function getAnalyzedDataFromJsonFileToDataFrame()
         end
 
         experimentalTableLayoutChange(target_column)
+    end
+end
+
+"""
+    drop testdb
+"""
+function dropTestDB( conn )
+    dbdrop = """drop database if exists $JetelinaTestDBname"""
+    return PgDBController.execute(conn, dbdrop)
+end
+
+"""
+    create testdb by using running db(JetelinaDBname)
+"""
+function copyTablesToTestdb()
+   # @info "status: " status(PgDBController.open_connection())
+    #if LibPQ.isopen(PgDBController.open_connection())
+    #    LibPQ.reset!(PgDBController.open_connection())
+    #end
+
+    if JetelinaDBtype == "postgresql"
+        conn = PgDBController.open_connection()
+        try
+            #===
+                copyを実行するまえにtestdbがあればdropしておく。
+                postgresqlのcreate databaseにはif exist..句がないため。
+            ===#
+            dropTestDB( conn )
+
+            dbcopy = """create database $JetelinaTestDBname template $JetelinaDBname"""
+            PgDBController.execute(conn, dbcopy)
+        catch err
+            JetelinaLog.writetoLogfile("SQLAnalyzer.copyTablesToTestdb() error: $err")
+        finally
+            PgDBController.close_connection(conn)
+        end
+    
+    @info "after: " isopen(conn)
+
+    elseif JetelinaDBtype == "mariadb"
+    elseif JetelinaDBtype == "oracle"
     end
 end
 

@@ -173,3 +173,23 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
 ┌ Info: csv file: lib/jetelina/testdata/ftest3.csv
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"createdb\"\nLINE 1: createdb -T postgres testdb -U postgres\n        ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"createdb\"\nLINE 1: createdb -T postgres testdb -U postgres\n        ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.ObjectInUse("ERROR:  source database \"postgres\" is being accessed by other users\nDETAIL:  There are 3 other sessions using the database.\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.ObjectInUse("ERROR:  source database \"postgres\" is being accessed by other users\nDETAIL:  There are 3 other sessions using the database.\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.DuplicateDatabase("ERROR:  database \"testdb\" already exists\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.DuplicateDatabase("ERROR:  database \"testdb\" already exists\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.ObjectInUse("ERROR:  source database \"postgres\" is being accessed by other users\nDETAIL:  There are 3 other sessions using the database.\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.ObjectInUse("ERROR:  source database \"postgres\" is being accessed by other users\nDETAIL:  There are 5 other sessions using the database.\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.ObjectInUse("ERROR:  source database \"postgres\" is being accessed by other users\nDETAIL:  There are 12 other sessions using the database.\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.ObjectInUse("ERROR:  database \"testdb\" is being accessed by other users\nDETAIL:  There is 1 other session using the database.\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27

@@ -10,7 +10,7 @@ contain functions
 
     measureSqlPerformance()
 """
-module PgTestDBController
+module TestDBController
 
 #using Genie, Genie.Renderer, Genie.Renderer.Json
 using CSV, LibPQ, DataFrames, IterTools, Tables
