@@ -13,7 +13,7 @@ using DataFrames
 using Genie, Genie.Renderer, Genie.Renderer.Json
 using JSON, LibPQ, Tables
 using JetelinaReadConfig, JetelinaLog
-using ExeSql, DBDataController,PgDBController
+using ExeSql, DBDataController, PgDBController
 using DelimitedFiles
 using JetelinaFiles
 using TestDBController
@@ -237,7 +237,7 @@ function getAnalyzedDataFromJsonFileToDataFrame()
             から
         ===#
         target_column = findall(x -> x == maximum(values(candidate_columns)), candidate_columns)
-        
+
         if debugflg
             @info "target is  " target_column
         end
@@ -253,7 +253,7 @@ end
 """
     drop testdb
 """
-function dropTestDB( conn )
+function dropTestDB(conn)
     dbdrop = """drop database if exists $JetelinaTestDBname"""
     return PgDBController.execute(conn, dbdrop)
 end
@@ -262,22 +262,22 @@ end
     create testdb by using running db(JetelinaDBname)
 """
 function copyTablesToTestdb()
-   # @info "status: " status(PgDBController.open_connection())
+    # @info "status: " status(PgDBController.open_connection())
     #if LibPQ.isopen(PgDBController.open_connection())
     #    LibPQ.reset!(PgDBController.open_connection())
     #end
 
     if JetelinaDBtype == "postgresql"
         conn = PgDBController.open_connection()
-        
+
         try
             #===
                 copyを実行するまえにtestdbがあればdropしておく。
                 postgresqlのcreate databaseにはif exist..句がないため。
             ===#
-            dropTestDB( conn )
+            dropTestDB(conn)
 
-#            dbcopy = """create database $JetelinaTestDBname template $JetelinaDBname"""
+            #            dbcopy = """create database $JetelinaTestDBname template $JetelinaDBname"""
             dbcopy = """create database $JetelinaTestDBname"""
             execute(conn, dbcopy)
 
@@ -293,32 +293,35 @@ function copyTablesToTestdb()
                 元DBとテストDBが混在するから間違わないようにね。
             ===#
             return DBDataController.getTableList("dataframe")
+
         catch err
             JetelinaLog.writetoLogfile("SQLAnalyzer.copyTablesToTestdb() error: $err")
         finally
             PgDBController.close_connection(conn)
         end
+
     elseif JetelinaDBtype == "mariadb"
     elseif JetelinaDBtype == "oracle"
     end
 end
 
-function copycopy(df::DataFrames)
+function copycopy(df)
     tconn = TestDBController.open_connection()
-
     try
-        for i=1:size(df)[1]
-            tn = table_df.tablename[i]
+        for i = 1:size(df)[1]
+            tn = df.tablename[i]
             selectsql = """select * from $tn limit 2"""
             @info "sql " selectsql
 
-            df = DataFrame(columntable(LibPQ.execute(tconn,selectsql)))
-#                    @info "res " df
+            df = DataFrame(columntable(LibPQ.execute(tconn, selectsql)))
+
+            @info "copycopy() df " df
+            
             load_table!(tconn, df)
         end
 
     catch err
-        JetelinaLog.writetoLogfile("SQLAnalyzer.copyTablesToTestdb() error: $err")
+        JetelinaLog.writetoLogfile("SQLAnalyzer.copycopy() error: $err")
     finally
         TestDBController.close_connection(tconn)
     end
@@ -351,7 +354,7 @@ end
 function experimentalTableLayoutChange(tablecolumn)
     @info "well table layout change with $tablecolumn: " tablecolumn
 
-    d = split(tablecolumn[1],".")
+    d = split(tablecolumn[1], ".")
 
     @info "table and column " d[1] d[2]
 
@@ -366,10 +369,11 @@ function experimentalTableLayoutChange(tablecolumn)
     ===#
 
     #1
-    d = copyTablesToTestdb()
+    table_df = copyTablesToTestdb()
+    copycopy(table_df)
 
     #2
-    copycopy(d)
+
 
     # JetelinaSQLListfileを開いて対象となるsql文を呼ぶ
     # そのsqlでPgTestDBController.doSelect(sql)　を呼ぶ
