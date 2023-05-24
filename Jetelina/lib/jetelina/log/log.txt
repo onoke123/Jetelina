@@ -193,3 +193,43 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
 ┌ Info: SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.ObjectInUse("ERROR:  database \"testdb\" is being accessed by other users\nDETAIL:  There is 1 other session using the database.\n")
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: UndefVarError(:null)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: UndefVarError(:null)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: UndefVarError(:null)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: UndefVarError(:null)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: UndefVarError(:null)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: UndefVarError(:null)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: UndefVarError(:null)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: UndefVarError(:trable_df)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: UndefVarError(:trable_df)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: UndefVarError(:load!)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: UndefVarError(:load!)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.ObjectInUse("ERROR:  database \"testdb\" is being accessed by other users\nDETAIL:  There is 1 other session using the database.\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.ObjectInUse("ERROR:  database \"testdb\" is being accessed by other users\nDETAIL:  There is 1 other session using the database.\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: InterruptException()
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.ObjectInUse("ERROR:  database \"testdb\" is being accessed by other users\nDETAIL:  There are 3 other sessions using the database.\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.ObjectInUse("ERROR:  database \"testdb\" is being accessed by other users\nDETAIL:  There are 4 other sessions using the database.\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.ObjectInUse("ERROR:  database \"testdb\" is being accessed by other users\nDETAIL:  There are 4 other sessions using the database.\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.ObjectInUse("ERROR:  database \"testdb\" is being accessed by other users\nDETAIL:  There is 1 other session using the database.\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.ObjectInUse("ERROR:  database \"testdb\" is being accessed by other users\nDETAIL:  There is 1 other session using the database.\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.ObjectInUse("ERROR:  database \"testdb\" is being accessed by other users\nDETAIL:  There is 1 other session using the database.\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27

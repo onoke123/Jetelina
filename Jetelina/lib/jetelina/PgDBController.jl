@@ -153,11 +153,11 @@ function _getTableList()
     conn = open_connection()
     # schemanameをpublicに固定している。これはプロトコルでいいかな。
     # システムはpublicで作るとして、importも"publicで"としようか。
-    table_str = "select tablename from pg_tables where schemaname='public'"
+    table_str = """select tablename from pg_tables where schemaname='public'"""
     try
         df = DataFrame(columntable(LibPQ.execute(conn, table_str)))
-        # クライアントに提供するtable listには jetelina_table_manager　は含まない。
-        DataFrames.filter!(row -> row.tablename != "jetelina_table_manager", df)
+        # クライアントに提供するtable listには jetelina_table_manager,usertable　は含まない。
+        DataFrames.filter!(row -> row.tablename != "jetelina_table_manager" && row.tablename != "usertable", df)
     catch err
         JetelinaLog.writetoLogfile("PgDBController._getTableList() error: $err")
         return DataFrame() # null のDataFrameなんか返しちゃったりして
