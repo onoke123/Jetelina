@@ -365,15 +365,11 @@ function experimentalTableLayoutChange(tablecolumn)
     1,5は上位でやろう
     ===#
 
-    # 相手はtestdbなのでTestDBControllerを使う
-    conn = TestDBController.open_connection()
-    try
-        # 2をやる
-    catch err
-        JetelinaLog.writetoLogfile("SQLAnalyzer.experimentalTableLayoutChange() error: $err")
-    finally
-        TestDBController.close_connection(conn)
-    end
+    #1
+    d = copyTablesToTestdb()
+
+    #2
+    copycopy(d)
 
     # JetelinaSQLListfileを開いて対象となるsql文を呼ぶ
     # そのsqlでPgTestDBController.doSelect(sql)　を呼ぶ
