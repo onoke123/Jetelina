@@ -11,7 +11,7 @@ module SQLAnalyzer
 using CSV
 using DataFrames
 using Genie, Genie.Renderer, Genie.Renderer.Json
-using JSON, LibPQ
+using JSON, LibPQ, Tables
 using JetelinaReadConfig, JetelinaLog
 using ExeSql, DBDataController,PgDBController
 using DelimitedFiles
@@ -269,6 +269,7 @@ function copyTablesToTestdb()
 
     if JetelinaDBtype == "postgresql"
         conn = PgDBController.open_connection()
+        
         try
             #===
                 copyを実行するまえにtestdbがあればdropしておく。
@@ -276,18 +277,70 @@ function copyTablesToTestdb()
             ===#
             dropTestDB( conn )
 
-            dbcopy = """create database $JetelinaTestDBname template $JetelinaDBname"""
-            PgDBController.execute(conn, dbcopy)
+#            dbcopy = """create database $JetelinaTestDBname template $JetelinaDBname"""
+            dbcopy = """create database $JetelinaTestDBname"""
+            execute(conn, dbcopy)
+
+            #===
+                ここからが妙手。
+                create databaseでtemplate指定して作成すると元のDBのデータが全部copyされてしまう。
+                それはちょっとアレだ。
+                スキーマ情報だけcopyできたり、一番いいのはtemplate指定にlimitつけて数件だけデータ
+                をcopyできたらいいんだけどそんな都合良くはいかない。
+                なので、ここだよ:-)、元データを'limit 10'とかでselectして、その結果をDataFrameに
+                ぶっ込んで、するとスキーマ情報込になるから、それをテストDBにぶっ込んでやるという処理を
+                tableの数だけ実行するんだぜ。
+                元DBとテストDBが混在するから間違わないようにね。
+            ===#
+            return DBDataController.getTableList("dataframe")
         catch err
             JetelinaLog.writetoLogfile("SQLAnalyzer.copyTablesToTestdb() error: $err")
         finally
             PgDBController.close_connection(conn)
         end
-    
-    @info "after: " isopen(conn)
-
     elseif JetelinaDBtype == "mariadb"
     elseif JetelinaDBtype == "oracle"
+    end
+end
+
+function copycopy(df::DataFrames)
+    tconn = TestDBController.open_connection()
+
+    try
+        for i=1:size(df)[1]
+            tn = table_df.tablename[i]
+            selectsql = """select * from $tn limit 2"""
+            @info "sql " selectsql
+
+            df = DataFrame(columntable(LibPQ.execute(tconn,selectsql)))
+#                    @info "res " df
+            load_table!(tconn, df)
+        end
+
+    catch err
+        JetelinaLog.writetoLogfile("SQLAnalyzer.copyTablesToTestdb() error: $err")
+    finally
+        TestDBController.close_connection(tconn)
+    end
+end
+
+"""
+    ref. https://discourse.julialang.org/t/how-to-create-a-table-in-a-database-using-dataframes/75759/2
+"""
+function load_table!(conn, df, tablename, columns=names(df))
+    table_column_names = join(string.(columns), ", ")
+    placeholders = join(("\$$num" for num in 1:length(columns)), ", ")
+    data = select(df, columns)
+    try
+        LibPQ.execute(conn, "BEGIN;")
+        LibPQ.load!(
+            data,
+            conn,
+            "INSERT INTO $tablename ($(table_column_names)) VALUES ($placeholders)"
+        )
+        LibPQ.execute(conn, "COMMIT;")
+    catch
+        LibPQ.execute(conn, "ROLLBACK;")
     end
 end
 
