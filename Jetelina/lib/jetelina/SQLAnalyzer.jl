@@ -16,7 +16,7 @@ using JetelinaReadConfig, JetelinaLog
 using ExeSql, DBDataController, PgDBController
 using DelimitedFiles
 using JetelinaFiles
-using TestDBController
+using TestDBController, PgDataTypeList
 
 const sqljsonfile = getFileNameFromLogPath(JetelinaSQLAnalyzedfile)
 
@@ -307,22 +307,24 @@ end
 
 function copycopy(df)
     tconn = TestDBController.open_connection()
+    conn = PgDBController.open_connection()
     try
         for i = 1:size(df)[1]
             tn = df.tablename[i]
             selectsql = """select * from $tn limit 2"""
             @info "sql " selectsql
 
-            df = DataFrame(columntable(LibPQ.execute(tconn, selectsql)))
+            df = DataFrame(columntable(LibPQ.execute(conn, selectsql)))
 
             @info "copycopy() df " df
             
-            load_table!(tconn, df)
+            load_table!(tconn, df, tn)
         end
 
     catch err
         JetelinaLog.writetoLogfile("SQLAnalyzer.copycopy() error: $err")
     finally
+        PgDBController.close_connection(conn)
         TestDBController.close_connection(tconn)
     end
 end
@@ -331,19 +333,39 @@ end
     ref. https://discourse.julialang.org/t/how-to-create-a-table-in-a-database-using-dataframes/75759/2
 """
 function load_table!(conn, df, tablename, columns=names(df))
+    column_type = eltype.(eachcol(df))
+
+    column_type_string = Array{Union{Nothing,String}}(nothing, length(columns))
+    column_str = string()
+
+    for i = 1:length(columns)
+        column_type_string[i] = PgDataTypeList.getDataTypeInDataFrame(column_type[i])
+        column_str = string(column_str, " ", columns[i], " ", column_type_string[i], ",")
+    end
+
+    column_str = chop(column_str)
+
+    create_table_str = """create table if not exists $tablename ( $column_str );"""
     table_column_names = join(string.(columns), ", ")
-    placeholders = join(("\$$num" for num in 1:length(columns)), ", ")
+    placeholders = join(("\$$num" for num in 1:length(columns)), ", ")    
     data = select(df, columns)
+ 
+    @info "inser.. "            "INSERT INTO $tablename ($(table_column_names)) VALUES ($placeholders)"
+    @info "data .." data
+ 
     try
-        LibPQ.execute(conn, "BEGIN;")
-        LibPQ.load!(
+#        execute(conn, "BEGIN;")
+#        execute(conn, create_table_str)
+#===
+    load!(
             data,
             conn,
             "INSERT INTO $tablename ($(table_column_names)) VALUES ($placeholders)"
         )
-        LibPQ.execute(conn, "COMMIT;")
+ ===#
+        #       execute(conn, "COMMIT;")
     catch
-        LibPQ.execute(conn, "ROLLBACK;")
+ #       execute(conn, "ROLLBACK;")
     end
 end
 

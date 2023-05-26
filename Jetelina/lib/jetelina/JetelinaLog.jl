@@ -1,13 +1,12 @@
 module JetelinaLog
 
-using Logging
+using Logging, Dates
 using JetelinaReadConfig,JetelinaFiles
 
 export writetoLogfile
 
 function logfileOpen()
     logfile = getFileNameFromLogPath(JetelinaLogfile)
-    #logfile = string(joinpath(@__DIR__, "log", JetelinaLogfile))
 
     if debugflg
         println("JetelinaLog.jl logfile: ", logfile)
@@ -22,9 +21,13 @@ function logfileOpen()
 end
 
 function writetoLogfile(s)
+    # 日付をつける
+    ss = string(Dates.format(now(),"yyyy-mm-dd HH:MM:SS"), " ",s)
+
     io, logger = logfileOpen()
     with_logger(logger) do
-        @info s
+        # loggerは以下を記録しているので@infoは消さないで
+        @info ss
     end
 
     closeLogfile(io)

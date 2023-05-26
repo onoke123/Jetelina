@@ -233,3 +233,204 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
 ┌ Info: SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.ObjectInUse("ERROR:  database \"testdb\" is being accessed by other users\nDETAIL:  There is 1 other session using the database.\n")
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: SQLAnalyzer.copycopy() error: MethodError(Main.SQLAnalyzer.load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 2×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0), 0x0000000000007b17)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:27
+┌ Info: 2023-05-26 11:23:06test
+└ @ Main.JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:28
+┌ Info: 2023-05-26 11:23:41 test
+└ @ Main.JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:28
+┌ Info: 2023-05-26 11:25:04 test
+└ @ Main.JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 11:25:58 SQLAnalyzer.copycopy() error: MethodError(Main.SQLAnalyzer.load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 2×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0), 0x0000000000007b94)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 11:33:23 SQLAnalyzer.copycopy() error: MethodError(Main.SQLAnalyzer.load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 2×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0), 0x0000000000007bad)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 11:35:08 SQLAnalyzer.copycopy() error: MethodError(Main.SQLAnalyzer.load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 2×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0), 0x0000000000007bc6)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 11:36:17 SQLAnalyzer.copycopy() error: MethodError(Main.SQLAnalyzer.load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 2×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0), 0x0000000000007bdd)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 11:38:49 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 11:44:48 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 11:46:31 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 11:49:32 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 11:52:50 SQLAnalyzer.copycopy() error: UndefVarError(:name)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 11:55:40 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 11:59:07 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 12:00:07 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 12:05:33 SQLAnalyzer.copycopy() error: MethodError(join, (["id", "name", "sex", "age", "ave", "jetelina_delete_flg"], " ", Any, ", "), 0x0000000000007cc2)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 12:13:02 SQLAnalyzer.copycopy() error: UndefVarError(:dtable_column_names)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 12:14:10 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 12:17:04 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 12:18:22 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 12:18:56 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 12:20:59 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 13:23:01 SQLAnalyzer.copycopy() error: ArgumentError("column name :columns not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 13:25:41 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 13:26:16 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 13:26:24 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 13:30:33 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 13:43:49 SQLAnalyzer.copycopy() error: UndefVarError(:column_name)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 13:44:38 SQLAnalyzer.copycopy() error: UndefVarError(:PgDataTypeList)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 13:45:16 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 13:57:06 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 13:57:51 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 13:59:09 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 14:02:00 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 14:02:42 SQLAnalyzer.copycopy() error: UndefVarError(:chop!)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 14:03:14 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 14:03:38 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 14:06:07 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 14:07:58 SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.ObjectInUse("ERROR:  database \"testdb\" is being accessed by other users\nDETAIL:  There is 1 other session using the database.\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 14:08:03 SQLAnalyzer.copyTablesToTestdb() error: LibPQ.Errors.ObjectInUse("ERROR:  database \"testdb\" is being accessed by other users\nDETAIL:  There is 1 other session using the database.\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 14:08:03 SQLAnalyzer.copycopy() error: MethodError(size, (nothing,), 0x0000000000007ec0)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 14:08:16 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 14:11:09 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 14:12:22 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 14:13:16 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 14:14:50 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 14:16:26 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
