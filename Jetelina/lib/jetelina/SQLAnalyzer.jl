@@ -243,7 +243,7 @@ function getAnalyzedDataFromJsonFileToDataFrame()
         end
 
         # まずはtestdb作成
-        copyTablesToTestdb()
+        creatTestDB()
 
         # そのtestdbで操作するぜ
         experimentalTableLayoutChange(target_column)
@@ -251,6 +251,8 @@ function getAnalyzedDataFromJsonFileToDataFrame()
 end
 
 """
+    dropTestDB()
+
     drop testdb
 """
 function dropTestDB(conn)
@@ -259,14 +261,11 @@ function dropTestDB(conn)
 end
 
 """
+    creatTestDB()
+
     create testdb by using running db(JetelinaDBname)
 """
-function copyTablesToTestdb()
-    # @info "status: " status(PgDBController.open_connection())
-    #if LibPQ.isopen(PgDBController.open_connection())
-    #    LibPQ.reset!(PgDBController.open_connection())
-    #end
-
+function creatTestDB()
     if JetelinaDBtype == "postgresql"
         conn = PgDBController.open_connection()
 
@@ -277,25 +276,17 @@ function copyTablesToTestdb()
             ===#
             dropTestDB(conn)
 
-            #            dbcopy = """create database $JetelinaTestDBname template $JetelinaDBname"""
             dbcopy = """create database $JetelinaTestDBname"""
             execute(conn, dbcopy)
 
             #===
-                ここからが妙手。
-                create databaseでtemplate指定して作成すると元のDBのデータが全部copyされてしまう。
-                それはちょっとアレだ。
-                スキーマ情報だけcopyできたり、一番いいのはtemplate指定にlimitつけて数件だけデータ
-                をcopyできたらいいんだけどそんな都合良くはいかない。
-                なので、ここだよ:-)、元データを'limit 10'とかでselectして、その結果をDataFrameに
-                ぶっ込んで、するとスキーマ情報込になるから、それをテストDBにぶっ込んでやるという処理を
-                tableの数だけ実行するんだぜ。
-                元DBとテストDBが混在するから間違わないようにね。
+                testdb作成成功なら運用DBのtableリストを取得する。
+                別関数にするのがきっとキレイなんだけど、DB毎の処理をこの関数で行っているので、
+                なるべくまとめておきて、あちらこちらでif postgresql　と書かないで済むようにと。
             ===#
             return DBDataController.getTableList("dataframe")
-
         catch err
-            JetelinaLog.writetoLogfile("SQLAnalyzer.copyTablesToTestdb() error: $err")
+            JetelinaLog.writetoLogfile("SQLAnalyzer.creatTestDB() error: $err")
         finally
             PgDBController.close_connection(conn)
         end
@@ -305,24 +296,30 @@ function copyTablesToTestdb()
     end
 end
 
-function copycopy(df)
+"""
+    tableCopy()
+
+    運用DBにあるtableをtestdbにも作り、指定されたデータ件数だけinsert(copy)する。
+    DBによってはcopy処理コマンドがあったりするけど、ないものもあるので
+    　　　1.table作成
+    　　　2.データブッコミ
+    の手順を取ることにした。
+    ブッコミデータ数は任意だけどconfigで可変にして大域変数JetelinaTestDBDataLimitNumberとしている。
+    table処理の実態は_load_table!()にまかせている。
+"""
+function tableCopy(df)
     tconn = TestDBController.open_connection()
     conn = PgDBController.open_connection()
+
     try
         for i = 1:size(df)[1]
-            tn = df.tablename[i]
-            selectsql = """select * from $tn limit 2"""
-            @info "sql " selectsql
-
-            df = DataFrame(columntable(LibPQ.execute(conn, selectsql)))
-
-            @info "copycopy() df " df
-            
-            load_table!(tconn, df, tn)
+            tn = df[!, :tablename][i]
+            selectsql = """select * from $tn limit $JetelinaTestDBDataLimitNumber"""
+            altdf = DataFrame(columntable(LibPQ.execute(conn, selectsql)))
+            _load_table!(tconn, altdf, tn)
         end
-
     catch err
-        JetelinaLog.writetoLogfile("SQLAnalyzer.copycopy() error: $err")
+        JetelinaLog.writetoLogfile("SQLAnalyzer.tableCopy() error: $err")
     finally
         PgDBController.close_connection(conn)
         TestDBController.close_connection(tconn)
@@ -330,12 +327,16 @@ function copycopy(df)
 end
 
 """
+    _load_table!()
+
     ref. https://discourse.julialang.org/t/how-to-create-a-table-in-a-database-using-dataframes/75759/2
 """
-function load_table!(conn, df, tablename, columns=names(df))
+function _load_table!(conn, df, tablename, columns=names(df))
+    # columnのタイプをarray取得しておく
     column_type = eltype.(eachcol(df))
-
+    # DataFramesのカラムはこんな感じのデータになるので宣言しておく
     column_type_string = Array{Union{Nothing,String}}(nothing, length(columns))
+    # create tableする時のcolumn文字列(id,name,sex,....)
     column_str = string()
 
     for i = 1:length(columns)
@@ -343,29 +344,32 @@ function load_table!(conn, df, tablename, columns=names(df))
         column_str = string(column_str, " ", columns[i], " ", column_type_string[i], ",")
     end
 
+    # 最後に","が余分に付いちゃうのでここで切っておく
     column_str = chop(column_str)
 
+    # create table 実行文組み立て
     create_table_str = """create table if not exists $tablename ( $column_str );"""
+ 
+    # data insert文の組み立てやらなんやかや準備
     table_column_names = join(string.(columns), ", ")
-    placeholders = join(("\$$num" for num in 1:length(columns)), ", ")    
+    placeholders = join(("\$$num" for num in 1:length(columns)), ", ")
     data = select(df, columns)
- 
-    @info "inser.. "            "INSERT INTO $tablename ($(table_column_names)) VALUES ($placeholders)"
-    @info "data .." data
- 
+
     try
-#        execute(conn, "BEGIN;")
-#        execute(conn, create_table_str)
-#===
-    load!(
+        execute(conn, "BEGIN;")
+        # create table実行
+        execute(conn, create_table_str)
+        # load!()はexportされていないらしいので、あえてLibPG.をつけてdata insert実行
+        LibPQ.load!(
             data,
             conn,
             "INSERT INTO $tablename ($(table_column_names)) VALUES ($placeholders)"
         )
- ===#
-        #       execute(conn, "COMMIT;")
-    catch
- #       execute(conn, "ROLLBACK;")
+
+        execute(conn, "COMMIT;")
+    catch err
+        JetelinaLog.writetoLogfile("SQLAnalyzer.load_table!() error: $err")
+        execute(conn, "ROLLBACK;")
     end
 end
 
@@ -391,8 +395,9 @@ function experimentalTableLayoutChange(tablecolumn)
     ===#
 
     #1
-    table_df = copyTablesToTestdb()
-    copycopy(table_df)
+    table_df = creatTestDB()
+    @info "table df " table_df
+    tableCopy(table_df)
 
     #2
 

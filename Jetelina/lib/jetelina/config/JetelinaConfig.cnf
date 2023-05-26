@@ -38,3 +38,6 @@ testdbname = testdb
 # MariaDB setting
 
 # Oracle setting
+
+# testdb
+selectlimit = 10

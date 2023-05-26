@@ -434,3 +434,25 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
 ┌ Info: 2023-05-26 14:16:26 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 15:29:25 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 15:31:27 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 15:38:39 SQLAnalyzer.load_table!() error: UndefVarError(:load!)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 15:38:39 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 15:41:58 SQLAnalyzer.load_table!() error: UndefVarError(:load!)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 15:41:58 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 15:51:13 SQLAnalyzer.load_table!() error: UndefVarError(:load!)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 15:51:13 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 15:52:20 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 15:53:36 SQLAnalyzer.copycopy() error: ArgumentError("column name :tablename not found in the data frame")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-05-26 16:25:36 SQLAnalyzer.tableCopy() error: UndefVarError(:JetelinaTestDBDataLimitNumber)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30

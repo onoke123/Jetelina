@@ -29,7 +29,8 @@ using JetelinaFiles
 
 export debugflg, JetelinaLogfile, JetelinaDBtype, JetelinaFileUploadPath, JetelinaSQLLogfile, JetelinaDBhost,
     JetelinaDBport, JetelinaDBuser, JetelinaDBpassword, JetelinaDBsslmode, JetelinaDBname, Df_JetelinaTableManager,
-    JetelinaSQLAnalyzedfile, JetelinaSQLListfile, JetelinaSqlPerformancefile, JetelinaTableApifile, JetelinaTestDBname
+    JetelinaSQLAnalyzedfile, JetelinaSQLListfile, JetelinaSqlPerformancefile, JetelinaTableApifile, JetelinaTestDBname,
+    JetelinaTestDBDataLimitNumber
 
 """
     function __init__()
@@ -93,6 +94,8 @@ function readConfig()
                     elseif JetelinaDBtype == "oracle"
                         # for Oracle
                     end
+                elseif startswith(l[i], "selectlimit")
+                    global JetelinaTestDBDataLimitNumber = getSetting(l[i])
                 end
             else
                 # ignore as comment

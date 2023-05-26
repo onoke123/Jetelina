@@ -21,8 +21,7 @@ module PgDataTypeList
             vc_n = SubString( c_type, length("InlineStrings.String")+1, length(c_type) )
             "varchar( $vc_n )"
         elseif startswith( c_type, "String" )
-            # jetelina_idはDataFrameに後付なので"String"にされてしまう。なので、ここは決め打ち。
-            "varchar( 256 )"
+            "varchar"
         end
     end
 
@@ -33,11 +32,7 @@ module PgDataTypeList
         想定されるc_typeは Union{Missing,String}とかで、getDataType()のモノとは形が違うので、判別の
         startswithとcontainsの違いになっています。
     ===#
-    function getDataTypeInDataFrame( c_type )
-        if debugflg
-            @info "c_type: ", c_type
-        end
-        
+    function getDataTypeInDataFrame( c_type )        
         c_type = string( c_type )
         if contains( c_type, "Int" ) 
             "integer"
@@ -47,8 +42,7 @@ module PgDataTypeList
             vc_n = SubString( c_type, length("InlineStrings.String")+1, length(c_type) )
             "varchar( $vc_n )"
         elseif contains( c_type, "String" )
-            # jetelina_idはDataFrameに後付なので"String"にされてしまう。なので、ここは決め打ち。
-            "varchar( 256 )"
+            "varchar"
         end
     end
 
