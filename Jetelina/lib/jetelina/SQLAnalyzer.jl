@@ -396,7 +396,6 @@ function experimentalTableLayoutChange(tablecolumn)
 
     #1
     table_df = creatTestDB()
-    @info "table df " table_df
     tableCopy(table_df)
 
     #2
