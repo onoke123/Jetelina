@@ -416,10 +416,18 @@ const postSelectedColumns = () => {
     contentType: 'application/json',
     dataType: "json"
   }).done(function (result, textStatus, jqXHR) {
-    $("#container span").remove();
-    $("#container").append(`<span class="apisql"><p>api no is ${result.apino}</p></span>`);
+    /*
+       post dataと酷似のapiがなければ {"apino":"js10"}とかで返ってくる、もしくはエラー時はfalseが返る。
+       酷似APIが存在した場合は{"resembled":"js10"}と、酷似しているapi番号を返してくる
+    */
+    if(result.apino != null && 0<result.apino.length){ 
+      $("#container span").remove();
+      $("#container").append(`<span class="apisql"><p>api no is ${result.apino}</p></span>`);
 
-    typingControll(chooseMsg('success', "", ""));
+      typingControll(chooseMsg('success', "", ""));
+    }else if(result.resembled != null && 0<result.resembled.length){
+      $("#container").append(`<span class="apisql"><p>there is similar API exist already:  ${result.resembled}</p></span>`);
+    }
   }).fail(function (result) {
     console.error("postSelectedColumns() fail");
     typingControll(chooseMsg('fail', "", ""));

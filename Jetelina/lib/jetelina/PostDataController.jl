@@ -63,16 +63,26 @@ function postDataAcquire()
     end
 
     selectSql = """select $selectSql from $tableName"""
-    ret = SQLSentenceManager.writeTolist(selectSql, tablename_arr)
-    #===
-        SQLSente..()のreturnをtable型({true/false,apino/null})で返してもらい、
-        trueならapinoをjson形式で返す。
-    ===#
-    if ret[1] 
-        return json(Dict("apino" => ret[2]))
+
+    ck = SQLSentenceManager.sqlDuplicationCheck(selectSql)
+
+    if ck[1] 
+        # 同じものがすでにある
+        return json(Dict("resembled" => ck[2]))
     else
-        return ret[1]
+        # 新しいヤツだね
+        ret = SQLSentenceManager.writeTolist(selectSql, tablename_arr)
+        #===
+            SQLSente..()のreturnをtable型({true/false,apino/null})で返してもらい、
+            trueならapinoをjson形式で返す。
+        ===#
+        if ret[1] 
+            return json(Dict("apino" => ret[2]))
+        else
+            return ret[1]
+        end
     end
+
 end
 
 function getColumns()

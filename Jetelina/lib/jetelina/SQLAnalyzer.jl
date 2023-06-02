@@ -301,8 +301,8 @@ end
 
     運用DBにあるtableをtestdbにも作り、指定されたデータ件数だけinsert(copy)する。
     DBによってはcopy処理コマンドがあったりするけど、ないものもあるので
-    　　　1.table作成
-    　　　2.データブッコミ
+          1.table作成
+          2.データブッコミ
     の手順を取ることにした。
     ブッコミデータ数は任意だけどconfigで可変にして大域変数JetelinaTestDBDataLimitNumberとしている。
     table処理の実態は_load_table!()にまかせている。

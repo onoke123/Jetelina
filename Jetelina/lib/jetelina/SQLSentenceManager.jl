@@ -1,14 +1,11 @@
 module SQLSentenceManager
-using DBDataController
-using Dates
-using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
-using JetelinaFiles
+
+using Dates, StatsBase
+using DBDataController, JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
 
 # sqli list file
 sqlFile = getFileNameFromConfigPath(JetelinaSQLListfile)
 tableapiFile = getFileNameFromConfigPath(JetelinaTableApifile)
-#sqlFile = string(joinpath(@__DIR__, "config", "JetelinaSqlList"))
-#tableapiFile = string(joinpath(@__DIR__, "config", "JetelinaTableApi"))
 
 function writeTolist(sql, tablename_arr)
     # get the sequence name then create the sql sentence
@@ -25,7 +22,6 @@ function writeTolist(sql, tablename_arr)
         suffix = "jd"
     end
 
-    #        sqlsentence = """$suffix$seq_no,\"select $sql from $tablename\"\n"""
     sqlsentence = """$suffix$seq_no,\"$sql\""""
 
     if debugflg
@@ -65,7 +61,7 @@ function writeTolist(sql, tablename_arr)
     # DataFrameを更新する
     JetelinaReadSqlList.readSqlList2DataFrame()
 
-    return true, string(suffix, seq_no) 
+    return true, string(suffix, seq_no)
 end
 
 #===
@@ -74,8 +70,6 @@ end
 function deleteFromlist(tablename)
     sqlTmpFile = getFileNameFromConfigPath("$JetelinaSQLListfile.tmp")
     tableapiTmpFile = getFileNameFromConfigPath("JetelinaTableApi.tmp")
-    #sqlTmpFile = string(joinpath(@__DIR__, "config", "JetelinaSqlList.tmp"))
-    #tableapiTmpFile = string(joinpath(@__DIR__, "config", "JetelinaTableApi.tmp"))
 
     # 該当tableと関係するApiを取得する
     targetapi = []
@@ -133,6 +127,44 @@ function deleteFromlist(tablename)
     JetelinaReadSqlList.readSqlList2DataFrame()
 
     return true
+end
+
+"""
+    sqlDuplicationCheck
+
+    引数に設定されたSQLがJetelinaSQLListfileに存在するかどうか確認する。
+    比較対象はJetelinaSQLListfileファイルではなく、メモリ展開されているDataFrame形式の、
+    Df_JetelinaSqlListとすることで高速化を図る。
+
+    nsql: 引数のSQL句
+    return: tabpleで返す 
+            存在した場合   -> true と、該当する既存APIのNO ex. js100
+            存在しない場合 -> false
+
+"""
+function sqlDuplicationCheck(nsql)
+    # 一致するものはあるかなぁ？
+    for i=1:size(Df_JetelinaSqlList)[1]
+        strs = [nsql,Df_JetelinaSqlList[!,:sql][i]]
+        process1 = split.(strs,r"\W",keepempty=false)
+        process2 = map(x->lowercase.(x),process1)
+        process3 = sort.(process2)
+        process4 = countmap(process3)
+        #===
+            ここのprocess4の結果、strs[]の要素が
+                一致していたら      -> length(process4)=1
+                一致していなかったら-> length(process4)=2
+            となる。
+            これは、countmap()が同じmapデータをひとまとめにすることによる。                
+        ===#
+        if length(process4) == 1
+            return true, Df_JetelinaSqlList[!,:no][i]
+        end
+
+    end
+
+    # 結局、一致するものはなかった
+    return false
 end
 
 end
