@@ -96,6 +96,7 @@ const deleteSelectedItems = (p) => {
     //全削除
     selectedItemsArr.length = 0;
     $("#container span").removeClass("selectedItem");
+    $("#container .apisql").remove();
     $("#container span").detach().appendTo("#columns div");
     ret = true;
   }
