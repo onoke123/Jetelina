@@ -277,7 +277,7 @@ CSV file data insert into the table that is orderd by csv file name
 """
 function dataInsertFromCSV(fname)
     df = DataFrame(CSV.File(fname))
-
+    rename!(lowercase,df)
     # special column 'jetelina_delte_flg' is added to columns 
     insertcols!(df, :jetelina_delete_flg => 0)
 
@@ -366,6 +366,7 @@ function dataInsertFromCSV(fname)
         from $tableName
         """
     df0 = DataFrame(columntable(LibPQ.execute(conn, sql)))
+    rename!(lowercase,df0)
     cols = map(x -> x, names(df0))
     select!(df, cols)
 

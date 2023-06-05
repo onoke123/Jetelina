@@ -10,7 +10,7 @@ const getdata = (o, t) => {
                 最初にこのカラムのtable nameを取得する
                 table list表示のとき(t=0)は'undefined'になるだけ
             */
-            const targetTable = o["tablename"];
+            let targetTable = o["tablename"];
 
             //’Jetelina’のvalueはオブジェクトになっているからこうしている  name=>key value=>o[key]
             let row = 1, col = 1;
@@ -30,6 +30,21 @@ const getdata = (o, t) => {
                                 } else if (t == 1) {
                                     // column list. jetelina_delete_flgは表示対象外
                                     if (name != "jetelina_delete_flg") {
+                                        // 名前が長いと表示が崩れるので短縮形にしたりしなかったりする
+                                        // まずはtable名を短縮する
+                                        if( 11<(targetTable+name).length ){
+                                                targetTable = targetTable.slice(0,1) + ".." + targetTable.slice(-1);
+                                        }
+                                        // まだ長いようならカラムも短縮する
+                                        if( 11<(targetTable+name).length ){ 
+                                                name = name.slice(0,2) + ".." + name.slice(-1);
+                                        }
+                                    
+                                        //カラム表示が短縮形になったら、tips表示に含める
+                                        if( targetTable.indexOf("..") != -1 ){
+                                            value = `${targetTable}.${name}::${value}`;
+                                        }
+
                                         str += `<span class="item" d=${value}><p>${targetTable}.${name}</p></span>`;
                                     }
                                 }
