@@ -4,6 +4,7 @@ let presentaction = {};// 現在実行されている機能を格納する ex. f
 const animateDuration = 1500;// animate() duration
 let sad = false;//getsqlanalyzerdataは一回だけ呼び出すので、getAjaxData()内でこれをtrueに設定する
 const debug = true;
+let timerId;//opening画面のブラブラ表示実行interval timer変数。jetelinalib.js burabura()で使用している
 //const table = [];
 
 $(window).load(function () {
@@ -70,12 +71,17 @@ $(window).load(function () {
   /* 最初のチャットメッセージを表示する
      大体が"Hi"で始める
   */
-  typing(0, chooseMsg(0, "", ""));
+     openingMessage();
+  //  typing(0, chooseMsg(0, "", ""));
 });
 
 // chatting with Jetelina
 $("#jetelina_panel [name='chat_input']").keypress(function (e) {
   if (e.keyCode == 13) {
+    if (timerId != null ){
+      clearInterval(timerId);
+    }
+
     chatKeyDown();
   }
 });

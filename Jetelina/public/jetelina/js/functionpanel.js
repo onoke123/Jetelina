@@ -365,7 +365,11 @@ const getColumn = (tablename) => {
   カラム表示されている要素を指定して表示から削除する
 */
 const removeColumn = (p) => {
+    console.log("chk ", $(".item").not(".selectedItem").attr("d"));
+    console.log("chk2 ", $(".item").attr("d"));
+
   $(".item").not(".selectedItem").remove(`:contains(${p}.)`);
+  $(".item [name='d']").not(".selectedItem").remove(`:contains(${p}.)`);
 }
 /*
   指定されたtableをDBから削除する
@@ -481,6 +485,7 @@ const functionPanelFunctions = (ut) => {
        そのため、必ずmが遅滞なく帰ってくるのでOK。
     */
     m = procTableApiList(cmd);
+
     // drop はちょっと特殊な処理
     let dropTable = getPreferentPropertie('droptable');
     //優先されるべきtable nameがないときは入力データが生きる
@@ -555,8 +560,13 @@ const functionPanelFunctions = (ut) => {
 
         break;
       case 'cancel':
-        deleteSelectedItems();
-        break;
+//        deleteSelectedItems();
+        if (deleteSelectedItems()) {
+          m = chooseMsg('success', "", "");
+        } else {
+          m = chooseMsg('unknown-msg', "", "");
+        }
+    break;
       case 'droptable':
         if ($("#table_container").is(":visible")) {
           if (dropTable != null && 0 < dropTable.length) {
@@ -611,7 +621,7 @@ const functionPanelFunctions = (ut) => {
         }
         break;
       default:
-          m = "";//あとのことは後処理に任せる
+//          m = "";//あとのことは後処理に任せる
         break;
     }
   }

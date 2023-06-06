@@ -23,13 +23,14 @@ const getdata = (o, t) => {
                               t=0/1即ちtableリストとカラムリストは単純オブジェクトなので、以下のループで
                               データを取得してリスト表示にする。
                            */
-                            $.each(v, function (name, value) {
+                              $.each(v, function (name, value) {
                                 if (t == 0) {
                                     // table list
                                     str += `<span class="table">${value}</span>`;
                                 } else if (t == 1) {
                                     // column list. jetelina_delete_flgは表示対象外
                                     if (name != "jetelina_delete_flg") {
+                                        let o_name = name;
                                         // 名前が長いと表示が崩れるので短縮形にしたりしなかったりする
                                         // まずはtable名を短縮する
                                         if( 11<(targetTable+name).length ){
@@ -42,7 +43,7 @@ const getdata = (o, t) => {
                                     
                                         //カラム表示が短縮形になったら、tips表示に含める
                                         if( targetTable.indexOf("..") != -1 ){
-                                            value = `${targetTable}.${name}::${value}`;
+                                            value = `${o["tablename"]}.${o_name}::${value}`;
                                         }
 
                                         str += `<span class="item" d=${value}><p>${targetTable}.${name}</p></span>`;
@@ -438,6 +439,15 @@ const chatKeyDown = (cmd) => {
                 //何言ってるかわかんない時
                 typingControll(chooseMsg('unknown-msg', "", ""));
             }
+
+            if (logoutflg) {
+                const t = 10000;//10秒後にopening画面となる
+                setTimeout(function(){
+                    $("#jetelina_panel [name='your_tell']").text("");
+                    openingMessage();
+                },t);
+            }
+
             //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく
             //            if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
             //            typing(0, m);
@@ -446,6 +456,26 @@ const chatKeyDown = (cmd) => {
         $("#jetelina_panel [name='chat_input']").val("");
         enterNumber = 0;
     }
+}
+/*
+    Initial chat opening message
+*/
+const openingMessage = () =>{
+    const t = 10000;//10秒後にブラブラ始める
+    $("#jetelina_panel [name='jetelina_tell']").text("");
+    typing(0, chooseMsg(0, "", ""));
+
+    setTimeout(function(){burabura()},t);
+}
+/*
+   初期画面でログイン前に入力待ちの時にブラブラしている感じ
+*/
+const burabura = () =>{
+    const t = 20000;//20秒後にブラブラメッセージを変える
+    timerId = setInterval(function(){
+        $("#jetelina_panel [name='jetelina_tell']").text("");
+        typing(0, chooseMsg('bura', "", ""))
+    },t);
 }
 /*
     logout check
