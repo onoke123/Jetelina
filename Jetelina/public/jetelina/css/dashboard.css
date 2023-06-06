@@ -10,7 +10,8 @@ body {
 .item {
   display: inline-block;
   padding: 5px;
-  width: 80px;
+  width: auto;
+/*  width: 80px; */
   height: 15px;
   border: 1px solid #2e6da4;
   background-color: #09859e;
@@ -98,7 +99,8 @@ body {
 .tooltip {
   display: none;
   position: absolute;
-  width: 100px;
+  width: auto;
+/*  width: 100px; */
   padding: 5px;
   background: #dceb0c;
   color: #000000;

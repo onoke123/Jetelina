@@ -365,11 +365,7 @@ const getColumn = (tablename) => {
   カラム表示されている要素を指定して表示から削除する
 */
 const removeColumn = (p) => {
-    console.log("chk ", $(".item").not(".selectedItem").attr("d"));
-    console.log("chk2 ", $(".item").attr("d"));
-
   $(".item").not(".selectedItem").remove(`:contains(${p}.)`);
-  $(".item [name='d']").not(".selectedItem").remove(`:contains(${p}.)`);
 }
 /*
   指定されたtableをDBから削除する
