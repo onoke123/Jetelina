@@ -83,13 +83,15 @@ function deleteFromlist(tablename)
             open(tableapiFile, "r") do taf
                 # keep=falseにして改行文字を取り除いておく。そしてprintln()する
                 for ss in eachline(taf, keep=false)
-                    p = split(ss, ":") # api_name:table,table,....
-                    tmparr = split(p[2], ',')
-                    if tablename ∈ tmparr
-                        push!(targetapi, p[1]) # ["js1","ji2,.....]
-                    else
-                        # 対象外はファイルに残す
-                        println(ttaf, ss)
+                    if contains( ss, ':' )
+                        p = split(ss, ":") # api_name:table,table,....
+                        tmparr = split(p[2], ',')
+                        if tablename ∈ tmparr
+                            push!(targetapi, p[1]) # ["js1","ji2,.....]
+                        else
+                            # 対象外はファイルに残す
+                            println(ttaf, ss)
+                        end
                     end
                 end
             end

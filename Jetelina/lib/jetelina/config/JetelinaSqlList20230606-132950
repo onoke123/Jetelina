@@ -1,0 +1,13 @@
+no,sql
+ji202,"insert into ftest3 values(id,'name','sex',age,dumy,jetelina_delete_flg)"
+ju203,"update ftest3 set id=d_id,name='d_name',sex='d_sex',age=d_age,dumy=d_dumy,jetelina_delete_flg=d_jetelina_delete_flg"
+jd204,"delete from ftest3"
+ji211,"insert into ftest3 values(id,'name','sex',age,dumy,jetelina_delete_flg)"
+ju212,"update ftest3 set id=d_id,name='d_name',sex='d_sex',age=d_age,dumy=d_dumy,jetelina_delete_flg=d_jetelina_delete_flg"
+jd213,"delete from ftest3"
+ji214,"insert into ftest3 values(id,'name','sex',age,dumy,jetelina_delete_flg)"
+ju215,"update ftest3 set id=d_id,name='d_name',sex='d_sex',age=d_age,dumy=d_dumy,jetelina_delete_flg=d_jetelina_delete_flg"
+jd216,"delete from ftest3"
+ji233,"insert into ftest3 values(id,'name','sex',age,dumy,jetelina_delete_flg)"
+ju234,"update ftest3 set id=d_id,name='d_name',sex='d_sex',age=d_age,dumy=d_dumy,jetelina_delete_flg=d_jetelina_delete_flg"
+jd235,"delete from ftest3"

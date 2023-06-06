@@ -486,3 +486,23 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
 ┌ Info: 2023-06-05 10:13:04 csv file: lib/jetelina/testdata/ftest.csv
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-06-06 13:09:06 SQLSentenceManager.deleteFromlist() error: BoundsError(SubString{String}["<<<<<<< HEAD"], (2,))
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-06-06 13:19:38 SQLSentenceManager.deleteFromlist() error: BoundsError(SubString{String}["<<<<<<< HEAD"], (2,))
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-06-06 13:26:43 SQLSentenceManager.deleteFromlist() error: BoundsError(SubString{String}["js189:ftest2,ftest5"], (2,))
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-06-06 13:28:59 csv file: lib/jetelina/testdata/ftest4.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-06-06 13:29:12 csv file: lib/jetelina/testdata/ftest2.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-06-06 13:29:20 csv file: lib/jetelina/testdata/ftest3.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-06-06 13:30:25 csv file: lib/jetelina/testdata/ftest6.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-06-06 13:31:11 csv file: lib/jetelina/testdata/ftest.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-06-06 13:31:51 csv file: lib/jetelina/testdata/ftest2.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-06-06 13:31:59 csv file: lib/jetelina/testdata/ftest3.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30

@@ -475,6 +475,10 @@ const logout = () => {
     stage = 0;
     delete preferent;
     delete plesentaction;
+
+    cleanUp("items");
+    cleanUp("tables");
+    cleanUp("apis");
 }
 /*
     優先オブジェクト preferentのプロパティがあれば返す
