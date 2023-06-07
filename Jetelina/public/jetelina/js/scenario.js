@@ -5,7 +5,7 @@ scenario['null'] = ['',''];
 /* opening */
 scenario[0] = ['Hi','Hola'];
 userresponse[0] = ['hi','hello','hola','good ','sorry'];
-scenario['bura'] = ['Hi Ho','Fun fun fun','Someone there is?'];
+scenario['bura'] = ['Hi Ho','Fun fun fun','Someone is there?','Waiting for.....','Do you know the meaning of .... love?'];
 /* greeting */
 scenario[1] = ['Nice to see you', 'How are you?'];
 scenario['1a'] = ['Nice to hear it', 'Wow, super',' lucky you'];

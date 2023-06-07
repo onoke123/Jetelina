@@ -386,6 +386,7 @@ const deleteThisTable = (tablename) => {
       $(`#table_container span:contains(${tablename})`).filter(function () {
         if ($(this).text() === tablename) {
           $(this).remove();
+          removeColumn(tablename);
           return;
         }
       });
