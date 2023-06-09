@@ -22,6 +22,7 @@
 // table delete button
 $("#table_delete").hide();
 let selectedItemsArr = [];
+let selectedItemWhere = "";
 
 /*
    change label when selected a file
@@ -408,6 +409,7 @@ const deleteThisTable = (tablename) => {
 const postSelectedColumns = () => {
   let pd = {};
   pd["item"] = selectedItemsArr;
+  pd["where"] = selectedItemWhere;
   if (debug) console.info("postSelectedColumns() post data: ", selectedItemsArr, " -> ", pd);
   let dd = JSON.stringify(pd);
 
@@ -434,6 +436,7 @@ const postSelectedColumns = () => {
     console.error("postSelectedColumns() fail");
     typingControll(chooseMsg('fail', "", ""));
   }).always(function () {
+    presentaction.cmd = "";
   });
 }
 /*
@@ -496,6 +499,11 @@ const functionPanelFunctions = (ut) => {
       }
     }
 
+    // post もちょっと工夫が必要になった
+    if(cmd == "post"){
+      // utにwhere句らしきものがあれば設定する
+      selectedItemWhere = ut;
+    }
     /*
         switch table: table list表示
                api: api list表示
@@ -545,24 +553,46 @@ const functionPanelFunctions = (ut) => {
         break;
       case 'post':
         if (0 < selectedItemsArr.length) {
-          /* postSelectedColumns()はajaxコールするのでmがunknownになる可能性がある。
-            このため'ignore'キーワードを設定して、成否のメッセージはpostSele..()内で表示させて、
-            この処理以降のtyping()は行わないようにしよう。
+          /* post処理する前に、where句条件の設定を促す。
+             selectedItemArrを見て、複数tableのカラムが存在するかどうか確認する。
+             tableが複数の場合はwhere句は必須とする。
           */
-          postSelectedColumns();
-          m = 'ignore';
+          presentaction.cmd = "post";
+
+          //where句を聞く
+          if(selectedItemWhere == null || selectedItemWhere == "" ){
+            // where句が必須かどうかでチャットメッセージを変える
+            // postデータに複数tableのカラムがあるかどうかチェックする
+            if( containsMultiTables() ){
+              // 複数tableならwhere句は必須
+              m = chooseMsg('6func-postcolumn-where-indispensable-msg', "", "");
+
+            }else{
+              // なくてもいいけど、一応聞く
+              m = chooseMsg('6func-postcolumn-where-option-msg', "", "");
+            }
+          }else{
+            /* postSelectedColumns()はajaxコールするのでmがunknownになる可能性がある。
+              このため'ignore'キーワードを設定して、成否のメッセージはpostSele..()内で表示させて、
+              この処理以降のtyping()は行わないようにしよう。
+            */
+              postSelectedColumns();
+              m = 'ignore';
+          }
+        
         } else {
           m = chooseMsg('6func_post_err', "", "");
         }
 
         break;
       case 'cancel':
-//        deleteSelectedItems();
         if (deleteSelectedItems()) {
           m = chooseMsg('success', "", "");
         } else {
           m = chooseMsg('unknown-msg', "", "");
         }
+
+        presentaction.cmd = "";
     break;
       case 'droptable':
         if ($("#table_container").is(":visible")) {
@@ -710,4 +740,30 @@ const procTableApiList = (s) => {
   }
 
   return m;
+}
+
+/*
+  選択されたカラムをpostする前に、where句が必要かどうか判断する
+  ２つ以上のtableが対象となっていたらwhere句は必須となる
+  
+  return true:必須 false:必須ではない
+*/
+const containsMultiTables = () =>{
+  if( 0<selectedItemsArr.length ){
+    let tables = [];
+    $.each( selectedItemsArr, function(i,v){
+      if( 0<v.length && v.indexOf('.') ){
+        let p = v.split('.');
+        if( -1<$.inArray(p[1],tables) ){
+          tables.push(v.split('.')[0]);
+        }
+      }
+    });
+
+    if( 1<tables.length ){
+      return true;
+    }else{
+      return false;
+    }
+  }
 }

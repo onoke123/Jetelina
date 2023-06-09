@@ -39,6 +39,9 @@ scenario['6func-fileupload-open-cmd'] = ['open','file open','open the file box',
 scenario['6func-fileupload-open-msg'] = ['Which file?'];
 scenario['6func-fileupload-cmd'] = ['file up','upload','up load','file up load','fileup load','fileupload','up'];
 scenario['6func-fileupload-msg'] = ['File?'];
+scenario['6func-postcolumn-where-option-msg'] = ['Wanna set the \'Where\' sentence? This is an option.'];
+scenario['6func-postcolumn-where-indispensable-msg'] = ['Set the \'Where\' sentence. This is an indispensable.'];
+
 /* log out */
 scenario['logout'] = ['logout','exit','log out','out','return'];
 scenario['afterlogout'] = ['Bye', 'Have a good day','Hope you will back soon','I am looking forward you'];

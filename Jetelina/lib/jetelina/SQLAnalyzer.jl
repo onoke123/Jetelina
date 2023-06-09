@@ -242,11 +242,28 @@ function getAnalyzedDataFromJsonFileToDataFrame()
             @info "target is  " target_column
         end
 
+        #===
+            レイアウト変更対象カラムtarget_columnは取得できた。
+            このデータで本当にいいかどうか判断しよう。
+
+            まずは、どのtableに移動すればいいか判断する
+            1.combinationが2つなら「もう一方の」tableにいどうすればいい　-> 簡単な話
+            2.combinationが3つ以上のとき「どのtableとの相関が一番強いか」見よう
+            　　(1)対象カラムを含むtableとcombination tableが他のSQLでどの程度組み合わされているか　->　一番組み合わせ頻度の多いtableが移動先対象になる
+            　　(2)(1)で判断がつかない(同数になる)なら、実行されたSQL回数を見てみる　->　一番実行されたものが優先される
+            　　(3)(2)でも判断つかない((1)(2)も同数になる)なら、どれでもいいやってことになる
+            3.但し、target_columnが2で決定されたtable以外と他のSQLで組み合わせがあったら、これはもうtarget_columnではなくなる　->　将来的にはなんか考えるとして、現状は「制約」としておく
+        ===#
+
+        #===
+            上やってから下をやる。今はちょっとコメントアウトしておく。下が動くのはわかっている。
+
         # まずはtestdb作成
         creatTestDB()
 
         # そのtestdbで操作するぜ
         experimentalTableLayoutChange(target_column)
+        ===#
     end
 end
 
