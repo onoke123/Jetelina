@@ -431,6 +431,10 @@ const postSelectedColumns = () => {
     }else if(result.resembled != null && 0<result.resembled.length){
       $("#container").append(`<span class="apisql"><p>there is similar API exist already:  ${result.resembled}</p></span>`);
     }
+
+    if($("#genelic_panel").is(":visible")){
+      $("#genelic_panel").hide();
+    }
   }).fail(function (result) {
     console.error("postSelectedColumns() fail");
     typingControll(chooseMsg('fail', "", ""));
