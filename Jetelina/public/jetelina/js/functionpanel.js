@@ -409,8 +409,8 @@ const deleteThisTable = (tablename) => {
 const postSelectedColumns = () => {
   let pd = {};
   pd["item"] = selectedItemsArr;
-  pd["where"] = selectedItemWhere;
-  if (debug) console.info("postSelectedColumns() post data: ", selectedItemsArr, " -> ", pd);
+  pd["where"] = $("#genelic_panel input[name='genelic_input']").val();
+  if (debug) console.info("postSelectedColumns() post data: ",  pd);
   let dd = JSON.stringify(pd);
 
   $.ajax({
@@ -499,6 +499,10 @@ const functionPanelFunctions = (ut) => {
       }
     }
 
+    // item, selecteditem欄のお掃除コマンド
+    if($.inArray(ut,scenario['6func-cleanup-cmd']) != -1 ){
+      cmd = 'cleanup';
+    }
     // post もちょっと工夫が必要になった
     if(cmd == "post"){
       // utにwhere句らしきものがあれば設定する
@@ -560,27 +564,32 @@ const functionPanelFunctions = (ut) => {
           presentaction.cmd = "post";
 
           //where句を聞く
-          if(selectedItemWhere == null || selectedItemWhere == "" ){
+          let wheresentence = $("#genelic_panel input[name='genelic_input']").val();
+          console.log("where sentence: ", wheresentence);
+          if(wheresentence == null || wheresentence == "" ){
             // where句が必須かどうかでチャットメッセージを変える
             // postデータに複数tableのカラムがあるかどうかチェックする
             if( containsMultiTables() ){
               // 複数tableならwhere句は必須
               m = chooseMsg('6func-postcolumn-where-indispensable-msg', "", "");
-              if(!$("#genelic_panel").is(":visible")){
-                $("#genelic_panel").show();
-                $("#genelic_panel [name='genelic_input']").focus();
-              }
-
+              showGenelicPanel();
             }else{
               // なくてもいいけど、一応聞く
               m = chooseMsg('6func-postcolumn-where-option-msg', "", "");
+              // 次の問で'yes'だったらgenelic_panelを開く
+              if(ut.indexOf("yes") != -1){
+                showGenelicPanel();
+              }else{
+                //そうでなければダミーを入れておく
+                $("#genelic_panel input[name='genelic_input']").val("ignore");
+              }
             }
           }else{
             /* postSelectedColumns()はajaxコールするのでmがunknownになる可能性がある。
               このため'ignore'キーワードを設定して、成否のメッセージはpostSele..()内で表示させて、
               この処理以降のtyping()は行わないようにしよう。
             */
-//              postSelectedColumns();
+              postSelectedColumns();
               m = 'ignore';
           }
         
@@ -652,6 +661,11 @@ const functionPanelFunctions = (ut) => {
           m = chooseMsg('6func-fileupload-msg', "", "");
         }
         break;
+      case 'cleanup': //clean up the panels
+        deleteSelectedItems();
+        cleanUp("items");  
+        m = chooseMsg('success','','');
+      break;
       default:
 //          m = "";//あとのことは後処理に任せる
         break;
@@ -759,7 +773,6 @@ const containsMultiTables = () =>{
     $.each( selectedItemsArr, function(i,v){
       if( 0<v.length && v.indexOf('.') !=-1 ){
         let p = v.split('.');
-        console.log("p 1: ", p[0], $.inArray(p[0],tables));
         if( $.inArray(p[0],tables) === -1 ){
           tables.push(p[0]);
         }
@@ -771,5 +784,15 @@ const containsMultiTables = () =>{
     }else{
       return false;
     }
+  }
+}
+
+/*
+  genelic panel open
+*/
+const showGenelicPanel = () =>{
+  if(!$("#genelic_panel").is(":visible")){
+    $("#genelic_panel").show();
+    $("#genelic_panel input[name='genelic_input']").focus();
   }
 }
