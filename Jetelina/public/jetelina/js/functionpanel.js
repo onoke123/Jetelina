@@ -22,7 +22,6 @@
 // table delete button
 $("#table_delete").hide();
 let selectedItemsArr = [];
-let selectedItemWhere = "";
 
 /*
    change label when selected a file
@@ -437,6 +436,7 @@ const postSelectedColumns = () => {
     typingControll(chooseMsg('fail', "", ""));
   }).always(function () {
     presentaction.cmd = "";
+    $("#genelic_panel input[name='genelic_input']").val('');
   });
 }
 /*
@@ -506,7 +506,6 @@ const functionPanelFunctions = (ut) => {
     // post もちょっと工夫が必要になった
     if(cmd == "post"){
       // utにwhere句らしきものがあれば設定する
-//      selectedItemWhere = ut;
     }
     /*
         switch table: table list表示
