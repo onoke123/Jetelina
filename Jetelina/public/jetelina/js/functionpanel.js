@@ -759,9 +759,9 @@ const containsMultiTables = () =>{
     $.each( selectedItemsArr, function(i,v){
       if( 0<v.length && v.indexOf('.') !=-1 ){
         let p = v.split('.');
-        console.log("p 1: ", p[1], $.inArray(p[1],tables));
-        if( $.inArray(p[1],tables) === -1 ){
-          tables.push(v.split('.')[0]);
+        console.log("p 1: ", p[0], $.inArray(p[0],tables));
+        if( $.inArray(p[0],tables) === -1 ){
+          tables.push(p[0]);
         }
       }
     });
