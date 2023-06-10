@@ -502,7 +502,7 @@ const functionPanelFunctions = (ut) => {
     // post もちょっと工夫が必要になった
     if(cmd == "post"){
       // utにwhere句らしきものがあれば設定する
-      selectedItemWhere = ut;
+//      selectedItemWhere = ut;
     }
     /*
         switch table: table list表示
@@ -566,6 +566,10 @@ const functionPanelFunctions = (ut) => {
             if( containsMultiTables() ){
               // 複数tableならwhere句は必須
               m = chooseMsg('6func-postcolumn-where-indispensable-msg', "", "");
+              if(!$("#genelic_panel").is(":visible")){
+                $("#genelic_panel").show();
+                $("#genelic_panel [name='genelic_input']").focus();
+              }
 
             }else{
               // なくてもいいけど、一応聞く
@@ -576,7 +580,7 @@ const functionPanelFunctions = (ut) => {
               このため'ignore'キーワードを設定して、成否のメッセージはpostSele..()内で表示させて、
               この処理以降のtyping()は行わないようにしよう。
             */
-              postSelectedColumns();
+//              postSelectedColumns();
               m = 'ignore';
           }
         
@@ -584,6 +588,7 @@ const functionPanelFunctions = (ut) => {
           m = chooseMsg('6func_post_err', "", "");
         }
 
+        console.log("out post: ", m );
         break;
       case 'cancel':
         if (deleteSelectedItems()) {
@@ -752,9 +757,10 @@ const containsMultiTables = () =>{
   if( 0<selectedItemsArr.length ){
     let tables = [];
     $.each( selectedItemsArr, function(i,v){
-      if( 0<v.length && v.indexOf('.') ){
+      if( 0<v.length && v.indexOf('.') !=-1 ){
         let p = v.split('.');
-        if( -1<$.inArray(p[1],tables) ){
+        console.log("p 1: ", p[1], $.inArray(p[1],tables));
+        if( $.inArray(p[1],tables) === -1 ){
           tables.push(v.split('.')[0]);
         }
       }

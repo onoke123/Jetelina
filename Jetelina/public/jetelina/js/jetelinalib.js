@@ -484,12 +484,14 @@ const logout = () => {
 
     $("#function_panel").hide();
     $("#condition_panel").hide();
+    $("#genelic_panel").hide();
 
     // global variables initialize
     stage = 0;
     delete preferent;
     delete plesentaction;
 
+    deleteSelectedItems();
     cleanUp("items");
     cleanUp("tables");
     cleanUp("apis");

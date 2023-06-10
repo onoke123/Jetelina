@@ -126,7 +126,7 @@ body {
 }
 
 .commonpanel.itempanel{
-  text-align: left;
+    text-align: left;
 }
 
 .commonpanelborderon {
@@ -135,6 +135,15 @@ body {
 
 .commonpanelborderoff {
   border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.genelic_panel {
+  animation: blinkBorder 0.5s infinite alternate;
+}
+
+@keyframes blinkBorder{
+  0% { border-color: rgba(12, 236, 12, 0.831)}
+  100% { border-color: rgba(255, 255, 255, 0.18)}
 }
 
 .topview {
@@ -157,7 +166,7 @@ input.user-input {
   width: 300px;
 }
 
-.yourText {
+.yourText,.genelicText {
   font-size: 6px;
   color: rgb(199, 199, 227);
 }

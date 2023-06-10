@@ -5,15 +5,12 @@
 	<meta charset="utf-8">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
 	<link rel="stylesheet" href="jetelina/css/dashboard.css">
-	<!--link type="text/css" rel="stylesheet" href="../css/three/threemain.css"-->
 	<link type="text/css" rel="stylesheet" href="jetelina/css/tablelist.css">
-
 
 	<script type="text/javascript" src="js/genie/jquery.min.js"></script>
 	<script type="text/javascript" src="js/jquery-ui-1.13.2/jquery-ui.min.js"></script>
 
 	<script type="text/javascript" src="jetelina/js/jetelinalib.js"></script>
-	<!--script type="text/javascript" src="jetelina/js/draganddropitems.js"></script-->
 </head>
 
 <body>
@@ -21,17 +18,12 @@
             各種ステータスを表示・解析するパネル
         -->
 	<div id="condition_panel" class="functionpanel-parts commonpanel squarepanel" hidden>
-		<!--div name="figure"-->
-			<div id="plot" style="width:50%;height:50%" hidden></div>
-		<!--/div-->
+		<div id="plot" style="width:50%;height:50%" hidden></div>
 	</div>
-	<!--
-            機能を実現するパネル
-        <div id="function_panel" class="commonpanel squarepanel" style="width:1000px;height:800px;top:10%;left:10%">
-        -->
-	<!--div id="function_panel" class="functionpanel-parts commonpanel squarepanel"-->
+	<!-- 
+			機能を実現するパネル
+		-->
 	<div id="function_panel" class="functionpanel-parts commonpanel squarepanel" hidden>
-		<!--div id="fileup" style="width:200px;height:20px;" class="functionpanel-parts commonpanel squarepanel"-->
 		<div id="fileup" style="width:200px;height:2%;" class="functionpanel-parts commonpanel squarepanel">
 			<form id="my_form">
 				<!-- caution:
@@ -39,7 +31,8 @@
                     if it's changed to other. 
                 -->
 				<label name="filelabel">
-					<input type="file" name="upfile" style="display: none;" accept=".csv"><span style="font-size: 14px;">Upload CSV File</span>
+					<input type="file" name="upfile" style="display: none;" accept=".csv"><span
+						style="font-size: 14px;">Upload CSV File</span>
 				</label>
 				<!--
 				<button type="button" id="upbtn" class="panelbutton">UP</button>
@@ -47,7 +40,6 @@
 			</form>
 		</div>
 
-		<!--div id="left_panel" style="width:200px;height:600px" class="functionpanel-parts commonpanel squarepanel"-->
 		<div id="left_panel" style="width:200px;height:80%" class="functionpanel-parts commonpanel squarepanel">
 			<label id="panel_left">Table List</label>
 			<br><br>
@@ -55,38 +47,28 @@
 			<div id="api_container" hidden></div>
 		</div>
 
-		
-		<!--div id="columns" style="width:700px;height:450px" class="functionpanel-parts commonpanel squarepanel itempanel"-->
 		<div id="columns" style="width:700px;height:60%" class="functionpanel-parts commonpanel squarepanel itempanel">
 			<div class="item_area"></div>
 		</div>
-		<!--
 
-        <select id="d_tablelist">
-            <option hidden>Select your DB Table from below</option>
-        </select>
-        <button id="table_delete">delete this table</button>
--->
-<!--
-		<div id="sqllist">
-			<sql for each tables>
-		</div>
-	-->
 		<!-- tooltip for columns list -->
 		<div id="pop-up" class="tooltip">
 			<text></text>
 		</div>
 		<!-- selected columns list area -->
-		<!--div id="container" style="width:700px;height:120px" class="functionpanel-parts commonpanel squarepanel itempanel"-->
-		<div id="container" style="width:700px;height:15%" class="functionpanel-parts commonpanel squarepanel itempanel">
-				<!--
-			<div id="functionpanelpost" style="margin-bottom: 5px;">
-				<button name="post" disabled class="panelbutton">POST</button>
-				<button name="clear" disabled class="panelbutton" d="ask her">CREAR</button>
-			</div>
-		-->
+		<div id="container" style="width:700px;height:15%"
+			class="functionpanel-parts commonpanel squarepanel itempanel">
 		</div>
-
+		<div id="genelic_panel" class="commonpanel squarepanel genelic_panel" style="width:200px;height:70px;top:80%;left:20%" hidden>
+			<text name="genelic_text" class="box_text">Set it HERE, plz</text>
+			<div>
+				&nbsp;
+			</div>
+			<div>
+				<!--text name="genelic_input_text" class="genelicText"></text--><br>
+				<input type="text" name="genelic_input" class="user-input"></input>
+			</div>
+		</div>
 	</div>
 	<!--
             Jetelinaと会話するチャットパネル
@@ -106,7 +88,7 @@
 <script type="text/javascript" src="jetelina/js/dashboard.js"></script>
 <script type="text/javascript" src="jetelina/js/scenario.js"></script>
 <script type="text/javascript" src="jetelina/js/functionpanel.js"></script>
-<!--script src="https://cdn.plot.ly/plotly-2.18.2.min.js" charset="utf-8"></script-->
 <script src="https://cdn.plot.ly/plotly-2.22.0.min.js" charset="utf-8"></script>
 <script type="text/javascript" src="jetelina/js/conditionpanel.js"></script>
+
 </html>
