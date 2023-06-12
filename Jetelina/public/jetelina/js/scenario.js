@@ -22,6 +22,7 @@ scenario[5] = [`Welcome `, `I missed you, `];
 scenario[6] = ['How can I help you today?', 'What do you do now?'];
 scenario['success'] = ['Done','Success','I am so happy','Yes'];
 scenario['fail'] = ['Uge','Noooooooo','Sorry something wrong'];
+scenario['confirmation-sentences'] = ['yes','sure','why not','do it','do','i want to do it','i wanna do it','kick ass'];
 //scenario['6func_in'] = ['Do you wanna open the function panel?'];
 scenario['6func'] = ['Let me your command, if you need'];
 scenario['6func_post_err'] = ['Hey, no columns','You should select post data','Boo'];

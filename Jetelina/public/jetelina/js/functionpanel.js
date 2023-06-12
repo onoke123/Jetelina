@@ -231,6 +231,8 @@ const listClick = (p) => {
       if (preferent.apilist != null && preferent.apilist.length != 0) {
         let s = getdataFromJson(preferent.apilist, t);
         if (0 < s.length) {
+          s = s.replace("<","&lt;");
+          s = s.replace(">","&gt;");
           $("#container").append(`<span class="apisql"><p>${s}</p></span>`);
           // api in/out json
           let in_if = setApiIF_In(t, s);
@@ -254,6 +256,7 @@ const setApiIF_In = (t, s) => {
 
   if (ta.startsWith("js")) {
     //select
+    console.log("? number is: ", s.match(/\?/).length);
     ret = `{"apino":\"${t}\"}`;
   } else if (ta.startsWith("ji")) {
     //insert
@@ -445,7 +448,7 @@ const postSelectedColumns = () => {
     console.error("postSelectedColumns() fail");
     typingControll(chooseMsg('fail', "", ""));
   }).always(function () {
-    presentaction.cmd = "";
+    preferent.cmd = "";
     $("#genelic_panel input[name='genelic_input']").val('');
   });
 }
@@ -455,8 +458,9 @@ const postSelectedColumns = () => {
 const functionPanelFunctions = (ut) => {
   let m = "";
   
+  // 6/12 不要かもしれないロジック
   if (presentaction == null || presentaction.length == 0) {
-    presentaction.push('func');
+    //presentaction.push('func');
   }
 
   if (ut.indexOf('cond') != -1) {
@@ -513,10 +517,8 @@ const functionPanelFunctions = (ut) => {
     if($.inArray(ut,scenario['6func-cleanup-cmd']) != -1 ){
       cmd = 'cleanup';
     }
-    // post もちょっと工夫が必要になった
-    if(cmd == "post"){
-      // utにwhere句らしきものがあれば設定する
-    }
+
+    if (debug) console.info("functionPanelFunctions() cmd: ", cmd);
     /*
         switch table: table list表示
                api: api list表示
@@ -565,16 +567,15 @@ const functionPanelFunctions = (ut) => {
         m = 'ignore';
         break;
       case 'post':
+console.log("post: ", ut);
         if (0 < selectedItemsArr.length) {
           /* post処理する前に、where句条件の設定を促す。
              selectedItemArrを見て、複数tableのカラムが存在するかどうか確認する。
              tableが複数の場合はwhere句は必須とする。
           */
-          presentaction.cmd = "post";
 
           //where句を聞く
           let wheresentence = $("#genelic_panel input[name='genelic_input']").val();
-          console.log("where sentence: ", wheresentence);
           if(wheresentence == null || wheresentence == "" ){
             // where句が必須かどうかでチャットメッセージを変える
             // postデータに複数tableのカラムがあるかどうかチェックする
@@ -586,13 +587,19 @@ const functionPanelFunctions = (ut) => {
               // なくてもいいけど、一応聞く
               m = chooseMsg('6func-postcolumn-where-option-msg', "", "");
               // 次の問で'yes'だったらgenelic_panelを開く
-              if(ut.indexOf("yes") != -1){
+console.log("chk", ut, ut.indexOf("yes"));
+              if( $.inArray(ut,scenario['confirmation-sentences'] ) != -1){
                 showGenelicPanel();
               }else{
                 //そうでなければダミーを入れておく
-                $("#genelic_panel input[name='genelic_input']").val("ignore");
+                //一発目に ut=postで来るからここが自動的に設定されてしまい、２発目のyesが無視される。そこが問題
+                if( preferent.cmd == "post" ){
+                                  $("#genelic_panel input[name='genelic_input']").val("ignore");
+                }
               }
             }
+
+            preferent.cmd = "post";
           }else{
             // postする前にwhere句がちゃんとしているかどうかチェックしよう
             if( checkGenelicInput(wheresentence) ){
@@ -611,7 +618,6 @@ const functionPanelFunctions = (ut) => {
           m = chooseMsg('6func_post_err', "", "");
         }
 
-        console.log("out post: ", m );
         break;
       case 'cancel':
         if (deleteSelectedItems()) {
