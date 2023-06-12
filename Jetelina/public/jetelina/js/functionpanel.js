@@ -594,12 +594,17 @@ const functionPanelFunctions = (ut) => {
               }
             }
           }else{
-            /* postSelectedColumns()はajaxコールするのでmがunknownになる可能性がある。
-              このため'ignore'キーワードを設定して、成否のメッセージはpostSele..()内で表示させて、
-              この処理以降のtyping()は行わないようにしよう。
-            */
-              postSelectedColumns();
-              m = 'ignore';
+            // postする前にwhere句がちゃんとしているかどうかチェックしよう
+            if( checkGenelicInput(wheresentence) ){
+              /* postSelectedColumns()はajaxコールするのでmがunknownになる可能性がある。
+                このため'ignore'キーワードを設定して、成否のメッセージはpostSele..()内で表示させて、
+                この処理以降のtyping()は行わないようにしよう。
+              */
+                postSelectedColumns();
+                m = 'ignore';
+            }else{
+              // where句のparameterがopenされているtableのカラムではないぞ
+            }
           }
         
         } else {
@@ -804,4 +809,16 @@ const showGenelicPanel = () =>{
     $("#genelic_panel").show();
     $("#genelic_panel input[name='genelic_input']").focus();
   }
+}
+
+/*
+  check genelic panel input
+
+  caution: これは必要ならv2で実装する。v1ではwhere句のチェックはしない。
+
+  return: true -> openしているtableのカラムである
+          false -> 知らないカラムである
+*/
+const checkGenelicInput = (s) =>{
+  return true;
 }
