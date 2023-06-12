@@ -256,8 +256,18 @@ const setApiIF_In = (t, s) => {
 
   if (ta.startsWith("js")) {
     //select
-    console.log("? number is: ", s.match(/\?/).length);
-    ret = `{"apino":\"${t}\"}`;
+
+    /*
+        where句付きの場合のINを作りたいけど、めんどくさいなぁ
+    */
+    let qd = s.match(/\?/);
+    if( qd != null ){
+      for ( let i=1;i<=qd.length;i++ ) {
+        s = s.replace("\?","d"+i);
+      } 
+  }
+
+    ret = `{"apino":\"${t}\",${s}}`;
   } else if (ta.startsWith("ji")) {
     //insert
     // insert into table values(a,b,...) -> a,b,...
@@ -567,7 +577,6 @@ const functionPanelFunctions = (ut) => {
         m = 'ignore';
         break;
       case 'post':
-console.log("post: ", ut);
         if (0 < selectedItemsArr.length) {
           /* post処理する前に、where句条件の設定を促す。
              selectedItemArrを見て、複数tableのカラムが存在するかどうか確認する。
@@ -587,14 +596,13 @@ console.log("post: ", ut);
               // なくてもいいけど、一応聞く
               m = chooseMsg('6func-postcolumn-where-option-msg', "", "");
               // 次の問で'yes'だったらgenelic_panelを開く
-console.log("chk", ut, ut.indexOf("yes"));
               if( $.inArray(ut,scenario['confirmation-sentences'] ) != -1){
                 showGenelicPanel();
               }else{
                 //そうでなければダミーを入れておく
                 //一発目に ut=postで来るからここが自動的に設定されてしまい、２発目のyesが無視される。そこが問題
                 if( preferent.cmd == "post" ){
-                                  $("#genelic_panel input[name='genelic_input']").val("ignore");
+                  $("#genelic_panel input[name='genelic_input']").val("ignore");
                 }
               }
             }
