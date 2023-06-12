@@ -22,8 +22,9 @@ function postDataAcquire()
       としてsql文作成に使用する
     ==#
     item_d = jsonpayload("item")
+    where_d = jsonpayload("where")
     if debugflg
-        @info "post: " item_d, length(item_d)
+        @info "post: " item_d, length(item_d), where_d,length(where_d)
     end
     #===
         なぜsize(..)[1]かというと、上の@info出力でみるとsize(item_d)->(n,) とTupleになっていて
@@ -62,7 +63,12 @@ function postDataAcquire()
         end
     end
 
-    selectSql = """select $selectSql from $tableName"""
+    wheresentence = ""
+    if !isnothing(where_d) && 0<length(where_d)
+        wheresentence = """where $where_d"""
+    end
+
+    selectSql = """select $selectSql from $tableName $wheresentence"""
 
     ck = SQLSentenceManager.sqlDuplicationCheck(selectSql)
 
