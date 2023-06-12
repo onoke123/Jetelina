@@ -408,7 +408,13 @@ const deleteThisTable = (tablename) => {
 const postSelectedColumns = () => {
   let pd = {};
   pd["item"] = selectedItemsArr;
+
+  /*
+    post処理で必ず何かがgenelic_inputに入っている。
+    ユーザ設定がされていない場合は'ignore'が入っている。
+  */
   pd["where"] = $("#genelic_panel input[name='genelic_input']").val();
+   
   if (debug) console.info("postSelectedColumns() post data: ",  pd);
   let dd = JSON.stringify(pd);
 

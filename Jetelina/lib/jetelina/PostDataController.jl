@@ -64,7 +64,7 @@ function postDataAcquire()
     end
 
     wheresentence = ""
-    if !isnothing(where_d) && 0<length(where_d)
+    if !isnothing(where_d) && 0<length(where_d) && where_d != "ignore"
         wheresentence = """where $where_d"""
     end
 
