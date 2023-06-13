@@ -3,7 +3,7 @@ let scenario = [], userresponse = [];
 /* null */
 scenario['null'] = ['',''];
 /* opening */
-scenario[0] = ['Hi','Hola'];
+scenario[0] = ['Hi','Hello'];
 userresponse[0] = ['hi','hello','hola','good ','sorry'];
 scenario['bura'] = ['Hi Ho','Fun fun fun','Someone is there?','Waiting for.....','Do you know the meaning of .... love?'];
 /* greeting */

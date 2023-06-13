@@ -18,6 +18,9 @@
       postSelectedColumns() post selected columns
       functionPanelFunctions(ut, cmd)　Function Panel 機能操作
       procTableApiList(s) チャットでtable/apiの操作を行う
+      containsMultiTables() 選択されたカラムをpostする前に、where句が必要かどうか判断する
+      showGenelicPanel() genelic panel open
+      checkGenelicInput() check genelic panel input
 */
 // table delete button
 $("#table_delete").hide();
@@ -260,14 +263,18 @@ const setApiIF_In = (t, s) => {
     /*
         where句付きの場合のINを作りたいけど、めんどくさいなぁ
     */
-    let qd = s.match(/\?/);
+    let subquery = "\"subquery\":[";
+    let qd = s.match(/\?/g);
     if( qd != null ){
       for ( let i=1;i<=qd.length;i++ ) {
-        s = s.replace("\?","d"+i);
-      } 
-  }
+        subquery = `${subquery} d${i},`;
+      }
+      
+      subquery = subquery.slice(0,-1);//最後の","を切る
+      subquery = `${subquery}]`;
+    }
 
-    ret = `{"apino":\"${t}\",${s}}`;
+    ret = `{"apino":\"${t}\",${subquery}}`;
   } else if (ta.startsWith("ji")) {
     //insert
     // insert into table values(a,b,...) -> a,b,...
@@ -537,6 +544,7 @@ const functionPanelFunctions = (ut) => {
                droptable: drop table(post)
                fileselectoropen: open file selector
                fileupload: csv file upload
+               subquery: open subquery panel
                default: non
     */
     switch (cmd) {
@@ -635,7 +643,7 @@ const functionPanelFunctions = (ut) => {
         }
 
         presentaction.cmd = "";
-    break;
+        break;
       case 'droptable':
         if ($("#table_container").is(":visible")) {
           if (dropTable != null && 0 < dropTable.length) {
@@ -688,12 +696,17 @@ const functionPanelFunctions = (ut) => {
         } else {
           m = chooseMsg('6func-fileupload-msg', "", "");
         }
+
         break;
       case 'cleanup': //clean up the panels
         deleteSelectedItems();
         cleanUp("items");  
         m = chooseMsg('success','','');
-      break;
+        break;
+      case 'subquery': //open subquery panel
+        showGenelicPanel();
+        m = chooseMsg('success','','');
+        break;
       default:
 //          m = "";//あとのことは後処理に任せる
         break;
@@ -836,3 +849,10 @@ const showGenelicPanel = () =>{
 const checkGenelicInput = (s) =>{
   return true;
 }
+
+// genelic_panelでreturn keyを押したらチャットボックスに戻る
+$("#genelic_panel input[name='genelic_input']").keypress(function (e) {
+  if (e.keyCode == 13) {
+    $("#jetelina_panel [name='chat_input']").focus();
+  }
+});
