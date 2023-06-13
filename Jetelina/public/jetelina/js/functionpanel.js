@@ -274,9 +274,10 @@ const setApiIF_In = (t, s) => {
       }
       
       subquery = subquery.slice(0,-1);//最後の","を切る
-      subquery = `${subquery}]`;
     }
 
+    subquery = `${subquery}]`;
+    
     ret = `{"apino":\"${t}\",${subquery}}`;
   } else if (ta.startsWith("ji")) {
     //insert

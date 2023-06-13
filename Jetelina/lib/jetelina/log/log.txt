@@ -522,3 +522,5 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
 ┌ Info: 2023-06-13 11:03:34 csv file: lib/jetelina/testdata/ftest.csv
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-06-13 11:20:31 csv file: lib/jetelina/testdata/ftest2.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
