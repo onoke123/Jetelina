@@ -8,7 +8,7 @@ userresponse[0] = ['hi','hello','hola','good ','sorry'];
 scenario['bura'] = ['Hi Ho','Fun fun fun','Someone is there?','Waiting for.....','Do you know the meaning of .... love?'];
 /* greeting */
 scenario[1] = ['Nice to see you', 'How are you?'];
-scenario['1a'] = ['Nice to hear it', 'Wow, super',' lucky you'];
+scenario['1a'] = ['Nice to hear it', 'Wow, super','lucky you'];
 userresponse[1] = ['fine','good','sorry'];
 /* login */
 scenario[2] = ['Could you give me your name?',"Let me know your name, please","May I ask your name?"];
@@ -43,6 +43,7 @@ scenario['6func-fileupload-cmd'] = ['file up','upload','up load','file up load',
 scenario['6func-fileupload-msg'] = ['File?'];
 scenario['6func-postcolumn-where-option-msg'] = ['Wanna set the \'Where\' sentence? This is an option.'];
 scenario['6func-postcolumn-where-indispensable-msg'] = ['Set the \'Where\' sentence. This is an indispensable.'];
+scenario['6func-subpanel-open-cmd'] = ['oepn subquery panel','open sub panel','sub please','subquery panel please','subquery panel','subquery','sub panel','where panel'];
 
 /* log out */
 scenario['logout'] = ['logout','exit','log out','out','return'];

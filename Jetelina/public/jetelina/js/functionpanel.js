@@ -538,6 +538,11 @@ const functionPanelFunctions = (ut) => {
       cmd = 'cleanup';
     }
 
+    // genelic panel(subquery panel)
+    if( $.inArray(ut,scenario['6func-subpanel-open-cmd']) !=-1 ){
+      cmd = "subquery";
+    }
+
     if (debug) console.info("functionPanelFunctions() cmd: ", cmd);
     /*
         switch table: table list表示
