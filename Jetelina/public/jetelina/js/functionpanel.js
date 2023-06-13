@@ -4,6 +4,7 @@
     Author : Ono Keiji
     
     Functions:
+      itemSelect(p) select table column
       deleteSelectedItems(p) 選択されているcolumnsを#containerから削除する
       cleanUp(s) cleanUp droped items & columns of selecting table
       fileupload() CSV file upload
@@ -54,7 +55,9 @@ $(document).on({
       itemSelect($(this));
     }
 }, ".item");
-
+/*
+  select table column
+*/
 const itemSelect = (p) => {
   let cl = p.attr("class");
   let item = p.text();
@@ -744,6 +747,9 @@ const procTableApiList = (s) => {
     if ($.inArray(t[0], cmdlist) != -1) {
       switch (t[0]) {
         case 'open':
+          /* open/closeの処理が同じなので、ここではあえてbreakしないで
+             openの時もcloseの処理ロジックに行くようにしている。tricky! :-)
+          */
         case 'close':
           m = chooseMsg('unknown-msg', "", "");
           $(targetlist).find("span").each(function (i, v) {

@@ -1,4 +1,28 @@
 /*
+    JS library for Jetelina common library
+    ver 1
+    Author : Ono Keiji
+    
+    Functions:
+      getdata(o, t) 引数に渡されたオブジェクトを分解取得する
+      getAjaxData(url) 汎用的なajax getコール関数
+      postAjaxData(url,data) 汎用的なajax postコール関数
+      typingControll(m) typing character controller
+      authAjax(posturl, chunk, scenarioNumber) Authentication ajax call
+      chooseMsg(i,m,p) チャットに表示するメッセージを js/scenario.jsから選択する
+      typing(i,m) チャットメッセージをタイピング風に表示する
+      chkUResponse(n, s) ユーザレスポンスがuserresponse[]に期待されたものであるかチェックする
+      chatKeyDown(cmd) ユーザが入力するチャットボックス(input tag)でenter keyが押されたときの処理
+      openingMessage() Initial chat opening message
+      burabura() 初期画面でログイン前に入力待ちの時にブラブラしている感じ
+      logoutChk(s) logout check
+      logout() logout
+      getPreferentPropertie(p) 優先オブジェクト preferentのプロパティがあれば返す
+      cleanupItems4Switching() table list/api list表示切り替えに伴い、activeItem Classなんかをクリアする
+      cleanupContainers() table list/api list表示切り替えに伴い、詳細画面をクリアする
+      instractionMode(s) Jetelinaのscenario追加確認 
+*/
+/*
     引数に渡されたオブジェクトを分解取得する。
     @o: object
     @t: type  0->db table list, 1->table columns list or csv file columns 2-> sql list
@@ -124,7 +148,9 @@ const postAjaxData = (url, data) => {
         typingControll(chooseMsg("unknown-msg", "", ""));
     }
 }
-
+/*
+    typing character controller
+*/
 const typingControll = (m) => {
     //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく
     if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
