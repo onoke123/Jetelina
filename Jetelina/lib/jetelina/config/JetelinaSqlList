@@ -8,3 +8,7 @@ ju289,"update ftest2 set id=d_id,name='d_name',sex='d_sex',age=d_age,ave=d_ave,j
 jd290,"delete from ftest2"
 js291,"select ftest.sex, ftest.ave, ftest2.age, ftest2.name from ftest as ftest,ftest2 as ftest2 where ftest.id=ftest2.id"
 js292,"select ftest.firstname, ftest.sex, ftest2.age from ftest as ftest,ftest2 as ftest2 where fteset.id=ftest2.id"
+ji293,"insert into masterftest values(id,'name','sex',age,ave,jetelina_delete_flg)"
+ju294,"update masterftest set id=d_id,name='d_name',sex='d_sex',age=d_age,ave=d_ave,jetelina_delete_flg=d_jetelina_delete_flg"
+jd295,"delete from masterftest"
+js296,"select ftest.id, ftest.sex, ftest2.name from ftest as ftest,ftest2 as ftest2 where ftest.id=ftest2"

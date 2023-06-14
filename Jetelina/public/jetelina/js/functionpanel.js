@@ -553,6 +553,7 @@ const functionPanelFunctions = (ut) => {
                droptable: drop table(post)
                fileselectoropen: open file selector
                fileupload: csv file upload
+               creanup: cleanup column/selecteditem field
                subquery: open subquery panel
                default: non
     */
@@ -708,9 +709,11 @@ const functionPanelFunctions = (ut) => {
 
         break;
       case 'cleanup': //clean up the panels
+        cleanupItems4Switching();
         deleteSelectedItems();
-        cleanUp("items");  
-        m = chooseMsg('success','','');
+        cleanUp("items");
+        cleanupContainers();
+         m = chooseMsg('success','','');
         break;
       case 'subquery': //open subquery panel
         showGenelicPanel();
@@ -759,7 +762,19 @@ const procTableApiList = (s) => {
         case 'close':
           m = chooseMsg('unknown-msg', "", "");
           $(targetlist).find("span").each(function (i, v) {
-            if (v.textContent == t[1]) {
+            let findselect = false;
+            //apiの場合、連番数字だけでも特定できるようにする
+            if(presentaction.cmd == 'api' ){
+              if(v.textContent.indexOf(t[1]) != -1){
+                findselect = true;
+              }
+            }else{
+              if (v.textContent == t[1]) {
+                findselect = true;
+              }
+            }
+
+            if (findselect) {
               if ((t[0] == 'close' && $(this).hasClass("activeItem")) ||
                 (t[0] == 'open' && !$(this).hasClass("activeItem"))) {
                 listClick($(this));
@@ -772,7 +787,19 @@ const procTableApiList = (s) => {
         case 'select':
           if (presentaction.cmd == 'table') {
             $("#columns").find("span").each(function (i, v) {
-              if (v.textContent == t[1]) {
+              let findselect = false;
+              if( $(".activeItem").length == 1 ){
+                //開いているtableが一つだけの場合はカラム名だけでselectできる
+                if(v.textContent.indexOf(t[1]) != -1){
+                  findselect = true;
+                }
+              }else{
+                if (v.textContent == t[1]) {
+                  findselect = true;
+                }
+              }
+
+              if(findselect){
                 itemSelect($(this));
                 m = chooseMsg('success', "", "");
               }
