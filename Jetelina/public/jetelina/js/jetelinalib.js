@@ -426,6 +426,10 @@ const chatKeyDown = (cmd) => {
                     m = conditionPanelFunctions(ut);
                     break;
                 default:/*before login*/
+                    if( ut == "reload" ){
+                        location.reload();
+                    }
+                
                     if (chkUResponse(0, ut)) {
                         // greeting
                         m = chooseMsg(1, "", "");
@@ -435,6 +439,7 @@ const chatKeyDown = (cmd) => {
                             m = chooseMsg(3, "", "");
                         }
                     }
+                
                     break;
             }
 
