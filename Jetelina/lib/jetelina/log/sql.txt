@@ -1,19 +1,8 @@
-select ftest2.id,ftest3.name from ftest2 as ftest2, ftest3 as ftest3
 select ftest2.id from ftest2 as ftest2
 select ftest2.id from ftest2 as ftest2
 select ftest2.id from ftest2 as ftest2
 select ftest2.id from ftest2 as ftest2
 select ftest2.id from ftest2 as ftest2
-select ftest3.id from ftest3 as ftest3
-select ftest3.id from ftest3 as ftest3
-select ftest3.id from ftest3 as ftest3
-select ftest3.id from ftest3 as ftest3
-select ftest2.id,ftest3.name from ftest2 as ftest2, ftest3 as ftest3
-select ftest2.id,ftest3.name from ftest2 as ftest2, ftest3 as ftest3
-select ftest2.id,ftest3.name from ftest2 as ftest2, ftest3 as ftest3
-select ftest.sex,ftest2.id,ftest3.name from ftest as ftest,ftest2 as ftest2, ftest3 as ftest3
-select ftest.sex,ftest2.id,ftest3.name from ftest as ftest,ftest2 as ftest2, ftest3 as ftest3
-select ftest.sex,ftest2.id,ftest3.name from ftest as ftest,ftest2 as ftest2, ftest3 as ftest3
-select ftest.sex,ftest2.id,ftest3.name from ftest as ftest,ftest2 as ftest2, ftest3 as ftest3
-select ftest.sex,ftest2.id,ftest3.name from ftest as ftest,ftest2 as ftest2, ftest3 as ftest3
-select ftest.sex,ftest2.id,ftest3.name from ftest as ftest,ftest2 as ftest2, ftest3 as ftest3
+select ftest.name,ftest.sex,masterftest.id from ftest as ftest, masterftest as masterftest where ftest.id=masterftest.id
+select ftest.name,ftest.sex,masterftest.id from ftest as ftest, masterftest as masterftest where ftest.id=masterftest.id
+select ftest.name,ftest.sex,masterftest.id from ftest as ftest, masterftest as masterftest where ftest.id=masterftest.id

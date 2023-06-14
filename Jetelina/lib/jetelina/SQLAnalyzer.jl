@@ -106,7 +106,7 @@ function createAnalyzedJsonFile()
                 end
 
                 push!(sql_df, [c[j], table_arr, ac])
-            end
+           end
         end
 
     end
@@ -136,6 +136,12 @@ function createAnalyzedJsonFile()
     """
     table_df = DBDataController.getTableList("dataframe")
 
+    #===
+        master系tableを対象外とするために、table_dfにfilter処理をして"master"を含むtableを除外している。
+        ここの処理はちょっと重要。( ｰ`дｰ´)ｷﾘｯ
+    ===#
+    filter!(:tablename=>x->!contains(x,"master"),table_df)
+    
     #===
      by Ph. Kaminski
         table_df.tablenameがユニークだからできる技。
