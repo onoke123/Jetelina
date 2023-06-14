@@ -95,12 +95,18 @@ function createAnalyzedJsonFile()
                 cc[2]:column name 
             """
             cc = split(c[j], ".")
-            # table_arrにcc[1]が入っているかどうか見ている。論理否定。これが書きたかったからJulia。
-            if cc[1] ∉ table_arr
-                push!(table_arr, cc[1])
-            end
+            #===
+                 該当tableがmaster系でなければ処理する。
+                 master系tableには"master"がtable名に入っているのがプロトコル。
+            ===#
+            if !contains( cc[1], "master" )
+                # table_arrにcc[1]が入っているかどうか見ている。論理否定。これが書きたかったからJulia。
+                if cc[1] ∉ table_arr
+                    push!(table_arr, cc[1])
+                end
 
-            push!(sql_df, [c[j], table_arr, ac])
+                push!(sql_df, [c[j], table_arr, ac])
+            end
         end
 
     end
