@@ -32,7 +32,8 @@ function postDataAcquire()
     ===#
     selectSql = ""
     tableName = ""
-    tablename_arr = []
+    tablename_arr = [] # JetelinaTableApifile追記用にtable名を配列で格納する　SQLSentenceManager.writeTolist()で利用する
+    
     for i = 1:length(item_d)
         if debugflg
             @info "data $i->", item_d[i]

@@ -12,3 +12,5 @@ ji293,"insert into masterftest values(id,'name','sex',age,ave,jetelina_delete_fl
 ju294,"update masterftest set id=d_id,name='d_name',sex='d_sex',age=d_age,ave=d_ave,jetelina_delete_flg=d_jetelina_delete_flg"
 jd295,"delete from masterftest"
 js296,"select ftest.id, ftest.sex, ftest2.name from ftest as ftest,ftest2 as ftest2 where ftest.id=ftest2"
+js297,"select ftest2.name, ftest2.age, ftest2.sex from ftest2 as ftest2 where ftest2.id=masterftest.id"
+js298,"select ftest.firstname, ftest.sex, masterftest.id from ftest as ftest,masterftest as masterftest where ftest.id=masterftest.id"
