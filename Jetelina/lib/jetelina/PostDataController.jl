@@ -43,7 +43,8 @@ function postDataAcquire()
         t1 = strip(t[1])
         t2 = strip(t[2])
         if 0 < length(selectSql)
-            selectSql = """$selectSql, $t1.$t2"""
+            # SQLAnalyzerで解析する都合上、カラムは詰めて書くこと。 ex. select ftest.id,ftest.name from.....
+            selectSql = """$selectSql,$t1.$t2"""
         else
             selectSql = """$t1.$t2"""
         end

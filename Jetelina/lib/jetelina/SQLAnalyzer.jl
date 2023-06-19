@@ -30,6 +30,11 @@ function createAnalyzedJsonFile()
     """
         read sql.log file
             log/sql.log ex. select ftest2.id,ftest2.name from ftest2
+
+        delimiteを' 'にしているのでselect文のカラム表示はちゃんと詰めて書かれることを期待する。
+            ex.    select ftest2.id,ftest2.name from ...     OK
+                   select ftest2.id, ftest2.name from ....   NG
+                                    ^^
     """
     sqllogfile = getFileNameFromLogPath(JetelinaSQLLogfile)
     df = readdlm(sqllogfile, ' ', String, '\n')
@@ -111,6 +116,15 @@ function createAnalyzedJsonFile()
 
     end
 
+    @info sql_df
+    #===
+        ここから下は、Jetelinaのconditional panelでグラフを書くための処理。
+        統計処理自体は↑で終わっている。
+    ===#
+
+#===①
+    ちょっと解析ロジック検討のために一旦以下をコメントアウトにする。②まで。
+
     """
         analyze
             ex.
@@ -176,7 +190,7 @@ function createAnalyzedJsonFile()
     open(sqljsonfile, "w") do f
         println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df)))))
     end
-
+②===#
 end
 
 """
