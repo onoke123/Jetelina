@@ -240,6 +240,7 @@ function _exeSQLAnalyze(df::DataFrame)
         combination_arr = [getindex.(Ref(d), x) for x in combination_arr]
     end
     ===#
+    ## test
     df_arr = DataFrame(:combination => combination_arr, :column_name => column_name_arr, :access_number => access_number_arr)
 
     #===
