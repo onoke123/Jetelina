@@ -23,7 +23,7 @@ const sqljsonfile = getFileNameFromLogPath(JetelinaSQLAnalyzedfile)
 """
     functions
         createAnalyzedJsonFile()
-        getAnalyzedDataFromJsonFileToDataFrame()
+        _exeSQLAnalyze()
 
 """
 function createAnalyzedJsonFile()
@@ -116,14 +116,15 @@ function createAnalyzedJsonFile()
 
     end
 
-    @info sql_df
+    #===
+        解析処理のルーチンに入る
+    ===#
+    _exeSQLAnalyze(sql_df)
+
     #===
         ここから下は、Jetelinaのconditional panelでグラフを書くための処理。
         統計処理自体は↑で終わっている。
     ===#
-
-#===①
-    ちょっと解析ロジック検討のために一旦以下をコメントアウトにする。②まで。
 
     """
         analyze
@@ -190,28 +191,41 @@ function createAnalyzedJsonFile()
     open(sqljsonfile, "w") do f
         println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df)))))
     end
-②===#
 end
 
 """
     read sqlcsv.json then put it to DataFrame for experimental*()
 """
-function getAnalyzedDataFromJsonFileToDataFrame()
+function _exeSQLAnalyze(df::DataFrame)
+    @info "in the.. df " df
+
+ #===   
     js = read(sqljsonfile, String)
     dic = JSON.parse(js)
     df = DataFrame(dic)
 
+    @info "old df " df
+
     # <- 現状、JetelinaでDFができているので、中身で展開するようにしないとね
     d_col = df[!, :Jetelina]
+===#
     combination_arr = Array[]
     column_name_arr = String[]
     access_number_arr = Float64[]
-
+#===
     for i in eachindex(d_col)
         push!(combination_arr, d_col[i]["combination"])
         push!(column_name_arr, d_col[i]["column_name"])
         push!(access_number_arr, d_col[i]["access_number"])
     end
+===#
+    combination_arr = df[!,:combination]
+    column_name_arr = df[!,:column_name]
+    access_number_arr = df[!,:access_number]
+
+@info "combination arr " combination_arr
+    @info "column_name arr " column_name_arr
+    @info "access_number arr " access_number_arr
 
     #=== 
         combinationにあるindex番号をtable名に変換する。
@@ -219,12 +233,13 @@ function getAnalyzedDataFromJsonFileToDataFrame()
         130行目ではjsonデータとして画面グラフレンダリングが必要だったのでtable名->数字　に変更したが、
         ここでは、table名そのものが欲しいので逆処理をやっている。
     ===#
+    #===
     if 0 < length(combination_arr)
         table_df = DBDataController.getTableList("dataframe")
         d = Dict(axes(table_df, 1) .=> table_df.tablename)
         combination_arr = [getindex.(Ref(d), x) for x in combination_arr]
     end
-
+    ===#
     df_arr = DataFrame(:combination => combination_arr, :column_name => column_name_arr, :access_number => access_number_arr)
 
     #===
