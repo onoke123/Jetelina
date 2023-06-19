@@ -223,7 +223,7 @@ function _exeSQLAnalyze(df::DataFrame)
     column_name_arr = df[!,:column_name]
     access_number_arr = df[!,:access_number]
 
-@info "combination arr " combination_arr
+    @info "combination arr " combination_arr
     @info "column_name arr " column_name_arr
     @info "access_number arr " access_number_arr
 
@@ -240,7 +240,7 @@ function _exeSQLAnalyze(df::DataFrame)
         combination_arr = [getindex.(Ref(d), x) for x in combination_arr]
     end
     ===#
-    ## test
+    
     df_arr = DataFrame(:combination => combination_arr, :column_name => column_name_arr, :access_number => access_number_arr)
 
     #===
@@ -261,6 +261,7 @@ function _exeSQLAnalyze(df::DataFrame)
     ===#
     if 1 < length(hightcomblen)
         candidate_columns = Dict()
+candidate_combination =[]
         for i = 1:length(hightcomblen)
             # dict作成処理の変数名が長くなるので、ここで短いヤツにしておく　<-単に見通しを良くするため
             hl = hightcomblen[i]
@@ -269,6 +270,7 @@ function _exeSQLAnalyze(df::DataFrame)
                 Dict形式 a=>b　でcandidate...に追加している
             ===#
             candidate_columns[df_arr[hl, :column_name]] = acn
+            push!( candidate_combination, df_arr[hl, :combination])
         end
 
         #=== 
@@ -281,7 +283,9 @@ function _exeSQLAnalyze(df::DataFrame)
         target_column = findall(x -> x == maximum(values(candidate_columns)), candidate_columns)
 
         if debugflg
-            @info "target is  " target_column
+            @info "target is  " target_column length(unique(target_column)) candidate_combination
+
+                println("""$target_column  $candidate_combination""")
         end
 
         #===
