@@ -261,7 +261,9 @@ function _exeSQLAnalyze(df::DataFrame)
     ===#
     if 1 < length(hightcomblen)
         candidate_columns = Dict()
-candidate_combination =[]
+        real_target_column = Dict()
+        candidate_combination =[]
+        
         for i = 1:length(hightcomblen)
             # dict作成処理の変数名が長くなるので、ここで短いヤツにしておく　<-単に見通しを良くするため
             hl = hightcomblen[i]
@@ -282,10 +284,35 @@ candidate_combination =[]
         ===#
         target_column = findall(x -> x == maximum(values(candidate_columns)), candidate_columns)
 
-        if debugflg
-            @info "target is  " target_column length(unique(target_column)) candidate_combination
+        #===
+            レイアウト変更対象のデータを「どのtable」に移動したらいいかを判定する
+        ===#
+        if 0<length(target_column) && 0<length(candidate_combination)
+            for i=1:length(target_column)
+                for ii=1:length(candidate_combination)
+                    #=== 
+                        target_column[i]とcandidate_combination[i][ii]の組合せでdf_arrを検索し、ヒットしたaccess_numberの総和を求める。
+                        1.target_columnでfilter()を使い、target_columnだけのDataFrameを作成する
+                        　　ex. df_a = filter(:column_name => n -> n == target_column[i], df_arr)
+                        2.1で作成されたDataFrameの:combinationにcandidate_combination[ii]が含まれることを確認する
+                          occursin()もcontains()もvector stringを引数にとらないので、combinationをstringに変換してから比較する
+                            ex.  p = df_a[!,:combination]
+                                 if contains(p,candidate_combination)..
+                                    含む(true)なら:access_numberの総和を計算する
+                    ===#
 
-                println("""$target_column  $candidate_combination""")
+                end
+
+                real_target_column[i] = foreach((x,y) -> _determineTheTable(x,y),target_column, candidate_combination)
+            end
+        end
+
+        if debugflg
+            @info "targets are  " target_column length(unique(target_column)) candidate_combination
+            @info "then the target is " real_target_column
+
+#                println("""$target_column  $candidate_combination""")
+#            @info "pick up sample: " target_column[1] candidate_combination[1][1]
         end
 
         #===
@@ -311,6 +338,19 @@ candidate_combination =[]
         experimentalTableLayoutChange(target_column)
         ===#
     end
+end
+
+"""
+    レイアウト変更候補のカラムと、それらが関連するtableを突き合わせ、
+    1.sql実行回数が一番多いモノを候補とする
+    2.1の結果が複数ある場合は、SQL文として一番多いモノを候補とする
+    3.2でも複数ある場合は、レイアウト変更しない(ver.1ではね)
+
+    x:レイアウト変更候補カラム配列   ex. ["ftest.name","ftest2.age"]
+    y:xに対応したtableカラム         ex. ["ftest","ftest2],["ftest2","ftest3"]
+    return (colulmn name, table name) のtuple  ex. ("ftest.name","ftest2")
+"""
+function _determineTheTable(x,y)
 end
 
 """
