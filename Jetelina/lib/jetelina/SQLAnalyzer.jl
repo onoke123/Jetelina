@@ -209,7 +209,7 @@ function _exeSQLAnalyze(df::DataFrame)
     # <- 現状、JetelinaでDFができているので、中身で展開するようにしないとね
     d_col = df[!, :Jetelina]
 ===#
-    combination_arr = Array[]
+    combination_arr = Array{String,1}
     column_name_arr = String[]
     access_number_arr = Float64[]
 #===
@@ -242,12 +242,11 @@ function _exeSQLAnalyze(df::DataFrame)
     ===#
     
     df_arr = DataFrame(:combination => combination_arr, :column_name => column_name_arr, :access_number => access_number_arr)
-
     #===
         ↑ここまでがデータ解析の準備
         ↓ここからがデータ解析処理
     ===#
-    c_len = length.(df_arr.combination)
+    c_len = length.(df_arr.combination) # length処理に'.'が付いているからね😁
     hightcomblen = findall(x -> x == (maximum(c_len)), c_len) # このhighcomblenにはmaxのデータのindex番号が入る
     maxaccess_n = maximum(df_arr[!, :access_number]) # 参考までに取得
 
@@ -261,7 +260,8 @@ function _exeSQLAnalyze(df::DataFrame)
     ===#
     if 1 < length(hightcomblen)
         candidate_columns = Dict()
-        real_target_column = Dict()
+        candidate_tables = Dict()
+#        real_target_column = Dict()
         candidate_combination =[]
         
         for i = 1:length(hightcomblen)
@@ -273,6 +273,8 @@ function _exeSQLAnalyze(df::DataFrame)
             ===#
             candidate_columns[df_arr[hl, :column_name]] = acn
             push!( candidate_combination, df_arr[hl, :combination])
+
+#            println("hightco...:",df_arr[hl, :column_name],"->",acn,"->",df_arr[hl, :combination])
         end
 
         #=== 
@@ -283,6 +285,9 @@ function _exeSQLAnalyze(df::DataFrame)
             から
         ===#
         target_column = findall(x -> x == maximum(values(candidate_columns)), candidate_columns)
+
+        println("candidate_columns: ", candidate_columns)
+        println("target_column: ", target_column)
 
         #===
             レイアウト変更対象のデータを「どのtable」に移動したらいいかを判定する
@@ -297,19 +302,41 @@ function _exeSQLAnalyze(df::DataFrame)
                         2.1で作成されたDataFrameの:combinationにcandidate_combination[ii]が含まれることを確認する
                           occursin()もcontains()もvector stringを引数にとらないので、combinationをstringに変換してから比較する
                             ex.  p = df_a[!,:combination]
-                                 if contains(p,candidate_combination)..
+                                 if contains(string(p),string(candidate_combination))..
                                     含む(true)なら:access_numberの総和を計算する
                     ===#
+                    df_a = filter(:column_name => n -> n == target_column[i], df_arr)
+#                    @info "df_a is " df_a
+
+                    p = df_a[1,:combination]
+                    @info "compare: " p candidate_combination[ii]
+                    if contains(string(p), string(candidate_combination[ii]))
+                        #===
+                            Dict形式 a=>b　でcandidate...に追加している
+                        ===#
+                        #### なんかこの辺が変だなぁ。思ったようなdataが入っていない気がする
+                        candidate_tables[candidate_combination[ii]] = df_a[1,:access_number]
+
+                        println(string("Hit :",candidate_combination[ii], "->", df_a[1,:access_number]))
+                    end
 
                 end
 
-                real_target_column[i] = foreach((x,y) -> _determineTheTable(x,y),target_column, candidate_combination)
+                #=== 
+                    このデータがTableレイアウト変更移行先のTableになる
+                    なぜなら、
+                    　　1.一番一緒に使われている回数が多い
+                    から
+                ===#
+#                @info "target_table : " target_table = findall(x -> x == maximum(values(candidate_tables)), candidate_tables)
+
+        #                real_target_column[i] = foreach((x,y) -> _determineTheTable(x,y),target_column, candidate_combination)
             end
         end
 
         if debugflg
-            @info "targets are  " target_column length(unique(target_column)) candidate_combination
-            @info "then the target is " real_target_column
+ #           @info "targets are  " target_column length(unique(target_column)) candidate_combination
+ #           @info "then the target is " real_target_column
 
 #                println("""$target_column  $candidate_combination""")
 #            @info "pick up sample: " target_column[1] candidate_combination[1][1]
