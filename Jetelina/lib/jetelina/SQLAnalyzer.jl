@@ -125,7 +125,7 @@ function createAnalyzedJsonFile()
         ここから下は、Jetelinaのconditional panelでグラフを書くための処理。
         統計処理自体は↑で終わっている。
     ===#
-
+#=== ちょっとコメントアウトしておく 6/23
     """
         analyze
             ex.
@@ -191,56 +191,25 @@ function createAnalyzedJsonFile()
     open(sqljsonfile, "w") do f
         println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df)))))
     end
+ここまで===#
 end
 
 """
     read sqlcsv.json then put it to DataFrame for experimental*()
 """
 function _exeSQLAnalyze(df::DataFrame)
-    @info "in the.. df " df
-
- #===   
-    js = read(sqljsonfile, String)
-    dic = JSON.parse(js)
-    df = DataFrame(dic)
-
-    @info "old df " df
-
-    # <- 現状、JetelinaでDFができているので、中身で展開するようにしないとね
-    d_col = df[!, :Jetelina]
-===#
     combination_arr = Array{String,1}
     column_name_arr = String[]
     access_number_arr = Float64[]
-#===
-    for i in eachindex(d_col)
-        push!(combination_arr, d_col[i]["combination"])
-        push!(column_name_arr, d_col[i]["column_name"])
-        push!(access_number_arr, d_col[i]["access_number"])
-    end
-===#
-    combination_arr = df[!,:combination]
+
+    combination_arr = df[!,:combination]  
     column_name_arr = df[!,:column_name]
     access_number_arr = df[!,:access_number]
 
-    @info "combination arr " combination_arr
-    @info "column_name arr " column_name_arr
-    @info "access_number arr " access_number_arr
+    #@info "combination arr " combination_arr typeof(combination_arr)
+    #@info "column_name arr " column_name_arr typeof(column_name_arr)
+    #@info "access_number arr " access_number_arr typeof(access_number_arr)
 
-    #=== 
-        combinationにあるindex番号をtable名に変換する。
-        130行目Kaminskiさんに教えてもらった方法の逆をやる。
-        130行目ではjsonデータとして画面グラフレンダリングが必要だったのでtable名->数字　に変更したが、
-        ここでは、table名そのものが欲しいので逆処理をやっている。
-    ===#
-    #===
-    if 0 < length(combination_arr)
-        table_df = DBDataController.getTableList("dataframe")
-        d = Dict(axes(table_df, 1) .=> table_df.tablename)
-        combination_arr = [getindex.(Ref(d), x) for x in combination_arr]
-    end
-    ===#
-    
     df_arr = DataFrame(:combination => combination_arr, :column_name => column_name_arr, :access_number => access_number_arr)
     #===
         ↑ここまでがデータ解析の準備
@@ -261,7 +230,6 @@ function _exeSQLAnalyze(df::DataFrame)
     if 1 < length(hightcomblen)
         candidate_columns = Dict()
         candidate_tables = Dict()
-#        real_target_column = Dict()
         candidate_combination =[]
         
         for i = 1:length(hightcomblen)
@@ -273,8 +241,6 @@ function _exeSQLAnalyze(df::DataFrame)
             ===#
             candidate_columns[df_arr[hl, :column_name]] = acn
             push!( candidate_combination, df_arr[hl, :combination])
-
-#            println("hightco...:",df_arr[hl, :column_name],"->",acn,"->",df_arr[hl, :combination])
         end
 
         #=== 
@@ -285,9 +251,6 @@ function _exeSQLAnalyze(df::DataFrame)
             から
         ===#
         target_column = findall(x -> x == maximum(values(candidate_columns)), candidate_columns)
-
-        println("candidate_columns: ", candidate_columns)
-        println("target_column: ", target_column)
 
         #===
             レイアウト変更対象のデータを「どのtable」に移動したらいいかを判定する
@@ -306,10 +269,8 @@ function _exeSQLAnalyze(df::DataFrame)
                                     含む(true)なら:access_numberの総和を計算する
                     ===#
                     df_a = filter(:column_name => n -> n == target_column[i], df_arr)
-#                    @info "df_a is " df_a
 
                     p = df_a[1,:combination]
-                    @info "compare: " p candidate_combination[ii]
                     if contains(string(p), string(candidate_combination[ii]))
                         #===
                             Dict形式 a=>b　でcandidate...に追加している
@@ -317,7 +278,6 @@ function _exeSQLAnalyze(df::DataFrame)
                         #### なんかこの辺が変だなぁ。思ったようなdataが入っていない気がする
                         candidate_tables[candidate_combination[ii]] = df_a[1,:access_number]
 
-                        println(string("Hit :",candidate_combination[ii], "->", df_a[1,:access_number]))
                     end
 
                 end
@@ -328,18 +288,13 @@ function _exeSQLAnalyze(df::DataFrame)
                     　　1.一番一緒に使われている回数が多い
                     から
                 ===#
-#                @info "target_table : " target_table = findall(x -> x == maximum(values(candidate_tables)), candidate_tables)
+                @info "target_table : " target_table = findall(x -> x == maximum(values(candidate_tables)), candidate_tables)
 
-        #                real_target_column[i] = foreach((x,y) -> _determineTheTable(x,y),target_column, candidate_combination)
             end
         end
 
         if debugflg
- #           @info "targets are  " target_column length(unique(target_column)) candidate_combination
- #           @info "then the target is " real_target_column
-
-#                println("""$target_column  $candidate_combination""")
-#            @info "pick up sample: " target_column[1] candidate_combination[1][1]
+            @info "targets are  " target_column length(unique(target_column)) candidate_combination
         end
 
         #===
@@ -365,19 +320,6 @@ function _exeSQLAnalyze(df::DataFrame)
         experimentalTableLayoutChange(target_column)
         ===#
     end
-end
-
-"""
-    レイアウト変更候補のカラムと、それらが関連するtableを突き合わせ、
-    1.sql実行回数が一番多いモノを候補とする
-    2.1の結果が複数ある場合は、SQL文として一番多いモノを候補とする
-    3.2でも複数ある場合は、レイアウト変更しない(ver.1ではね)
-
-    x:レイアウト変更候補カラム配列   ex. ["ftest.name","ftest2.age"]
-    y:xに対応したtableカラム         ex. ["ftest","ftest2],["ftest2","ftest3"]
-    return (colulmn name, table name) のtuple  ex. ("ftest.name","ftest2")
-"""
-function _determineTheTable(x,y)
 end
 
 """
