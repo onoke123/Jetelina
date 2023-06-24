@@ -65,7 +65,8 @@ function createAnalyzedJsonFile()
     df_size = length(df[:, [:2]])
 
     # uにはユニークなSQL文が入っているので、sql.logの中のマッチングでアクセス数を取得する ex. u[i] === ....
-    sql_df = DataFrame(column_name=String[], combination=[], access_number=Float64[])
+#    sql_df = DataFrame(column_name=String[], combination=[], access_number=Float64[])
+    sql_df = DataFrame(column_name=String[], combination=Vector{String}[], access_number=Float64[])
 
     """
         shape the data
@@ -198,7 +199,9 @@ end
     read sqlcsv.json then put it to DataFrame for experimental*()
 """
 function _exeSQLAnalyze(df::DataFrame)
-    combination_arr = Array{String,1}
+    @info "in df: " df
+#    combination_arr = Array{String,1}
+    combination_arr = Vector{String}[]
     column_name_arr = String[]
     access_number_arr = Float64[]
 
@@ -211,6 +214,8 @@ function _exeSQLAnalyze(df::DataFrame)
     #@info "access_number arr " access_number_arr typeof(access_number_arr)
 
     df_arr = DataFrame(:combination => combination_arr, :column_name => column_name_arr, :access_number => access_number_arr)
+
+    @info "df_arr: " df_arr eltype(eachcol(df_arr))
     #===
         ↑ここまでがデータ解析の準備
         ↓ここからがデータ解析処理
@@ -288,7 +293,7 @@ function _exeSQLAnalyze(df::DataFrame)
                     　　1.一番一緒に使われている回数が多い
                     から
                 ===#
-                @info "target_table : " target_table = findall(x -> x == maximum(values(candidate_tables)), candidate_tables)
+#                @info "target_table : " target_table = findall(x -> x == maximum(values(candidate_tables)), candidate_tables)
 
             end
         end
