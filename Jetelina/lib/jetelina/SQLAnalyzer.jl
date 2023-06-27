@@ -15,7 +15,7 @@ using JSON, LibPQ, Tables
 using JetelinaReadConfig, JetelinaLog
 using ExeSql, DBDataController, PgDBController
 using DelimitedFiles
-using JetelinaFiles
+using JetelinaFiles, JetelinaReadSqlList
 using TestDBController, PgDataTypeList
 
 const sqljsonfile = getFileNameFromLogPath(JetelinaSQLAnalyzedfile)
@@ -197,10 +197,13 @@ end
 
 """
     read sqlcsv.json then put it to DataFrame for experimental*()
+
+    引数のdfはSQL実行履歴
 """
 function _exeSQLAnalyze(df::DataFrame)
     @info "in df: " df
-#    combination_arr = Array{String,1}
+
+#===
     combination_arr = Vector{String}[]
     column_name_arr = String[]
     access_number_arr = Float64[]
@@ -209,11 +212,9 @@ function _exeSQLAnalyze(df::DataFrame)
     column_name_arr = df[!,:column_name]
     access_number_arr = df[!,:access_number]
 
-    #@info "combination arr " combination_arr typeof(combination_arr)
-    #@info "column_name arr " column_name_arr typeof(column_name_arr)
-    #@info "access_number arr " access_number_arr typeof(access_number_arr)
-
     df_arr = DataFrame(:combination => combination_arr, :column_name => column_name_arr, :access_number => access_number_arr)
+===#
+    df_arr = df
 
     @info "df_arr: " df_arr eltype(eachcol(df_arr))
     #===
@@ -257,12 +258,43 @@ function _exeSQLAnalyze(df::DataFrame)
         ===#
         target_column = findall(x -> x == maximum(values(candidate_columns)), candidate_columns)
 
+        @info "target_column: " target_column
+        @info "candidate_combination: " candidate_combination
+
         #===
             レイアウト変更対象のデータを「どのtable」に移動したらいいかを判定する
+            target_columnとcandidate_combinationの組合せを作って、どの組合せが一番多いかSQLリストを検索する
+            検索対象はJetelinareadSqlList.readSqlList2DataFrame()で作成されているDataFrame Df_JetelinaSqlList
+
+            Df_JetelinaSqlList
+                Row |  no    | sql
+            |-------|--------|----------------------
+            |      1| ji293  | insert into masterftest values(id,'name','sex',age,ave,jetelina_delete_flg)
+            |      2| ju294  | update masterftest set id=d_id,name='d_name',sex='d_sex',age=d_age,ave=d_ave,jetelina_delete_flg=d_jetelina_delete_flg
+                  .      .                 .
+                  .      .                 .
+
+            select文だけを対象とするので、startswith(df[!,:no],"js") かな
         ===#
         if 0<length(target_column) && 0<length(candidate_combination)
+            #===
+                target_column[i] と candidate_combination[i] は対になっているから、
+                (target_column[i],candidate_combination[i][ii])の組合せを作ってDf_JetelinaSqlList.sqlを検索する
+            ===#
+            println( df_arr )
+
+            if( Df_JetelinaSqlList === nothing )
+                JetelinareadSqlList.readSqlList2DataFrame()
+            end
+
+            println(Df_JetelinaSqlList)
+
             for i=1:length(target_column)
-                for ii=1:length(candidate_combination)
+#                df_a = filter(:column_name => n -> n == target_column[i], df_arr)
+
+#                p = df_a[1,:combination]
+#                if( 0<length(p))
+                for ii=1:length(candidate_combination[i])
                     #=== 
                         target_column[i]とcandidate_combination[i][ii]の組合せでdf_arrを検索し、ヒットしたaccess_numberの総和を求める。
                         1.target_columnでfilter()を使い、target_columnだけのDataFrameを作成する
@@ -273,16 +305,20 @@ function _exeSQLAnalyze(df::DataFrame)
                                  if contains(string(p),string(candidate_combination))..
                                     含む(true)なら:access_numberの総和を計算する
                     ===#
-                    df_a = filter(:column_name => n -> n == target_column[i], df_arr)
+#                    df_a = filter(:column_name => n -> n == target_column[i], df_arr)
 
-                    p = df_a[1,:combination]
-                    if contains(string(p), string(candidate_combination[ii]))
+#                    p = df_a[1,:combination]
+
+#                    @info "df_a :" df_a
+#                    @info "p :" p
+#@info "candidate_combination: " ii candidate_combination[i][ii]
+                    if (findfirst(contains(string(candidate_combination[i][ii])),Df_JetelinaSqlList.sql) !== nothing )
                         #===
                             Dict形式 a=>b　でcandidate...に追加している
                         ===#
                         #### なんかこの辺が変だなぁ。思ったようなdataが入っていない気がする
-                        candidate_tables[candidate_combination[ii]] = df_a[1,:access_number]
-
+#                        candidate_tables[candidate_combination[i][ii]] = df_a[1,:access_number]
+ #                       @info "here " ii candidate_tables[candidate_combination[i][ii]]
                     end
 
                 end
@@ -299,7 +335,7 @@ function _exeSQLAnalyze(df::DataFrame)
         end
 
         if debugflg
-            @info "targets are  " target_column length(unique(target_column)) candidate_combination
+#            @info "targets are  " target_column length(unique(target_column)) candidate_combination
         end
 
         #===
