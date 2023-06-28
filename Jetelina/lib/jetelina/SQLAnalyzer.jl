@@ -201,29 +201,11 @@ end
     引数のdfはSQL実行履歴
 """
 function _exeSQLAnalyze(df::DataFrame)
-    @info "in df: " df
+    @info "df: " df eltype(eachcol(df))
 
-#===
-    combination_arr = Vector{String}[]
-    column_name_arr = String[]
-    access_number_arr = Float64[]
-
-    combination_arr = df[!,:combination]  
-    column_name_arr = df[!,:column_name]
-    access_number_arr = df[!,:access_number]
-
-    df_arr = DataFrame(:combination => combination_arr, :column_name => column_name_arr, :access_number => access_number_arr)
-===#
-    df_arr = df
-
-    @info "df_arr: " df_arr eltype(eachcol(df_arr))
-    #===
-        ↑ここまでがデータ解析の準備
-        ↓ここからがデータ解析処理
-    ===#
-    c_len = length.(df_arr.combination) # length処理に'.'が付いているからね😁
+    c_len = length.(df.combination) # length処理に'.'が付いているからね😁
     hightcomblen = findall(x -> x == (maximum(c_len)), c_len) # このhighcomblenにはmaxのデータのindex番号が入る
-    maxaccess_n = maximum(df_arr[!, :access_number]) # 参考までに取得
+    maxaccess_n = maximum(df[!, :access_number]) # 参考までに取得
 
     if debugflg
         @info "combination max len: " length(hightcomblen) maxaccess_n
@@ -241,12 +223,12 @@ function _exeSQLAnalyze(df::DataFrame)
         for i = 1:length(hightcomblen)
             # dict作成処理の変数名が長くなるので、ここで短いヤツにしておく　<-単に見通しを良くするため
             hl = hightcomblen[i]
-            acn = df_arr[hl, :access_number]
+            acn = df[hl, :access_number]
             #===
                 Dict形式 a=>b　でcandidate...に追加している
             ===#
-            candidate_columns[df_arr[hl, :column_name]] = acn
-            push!( candidate_combination, df_arr[hl, :combination])
+            candidate_columns[df[hl, :column_name]] = acn
+            push!( candidate_combination, df[hl, :combination])
         end
 
         #=== 
@@ -280,47 +262,46 @@ function _exeSQLAnalyze(df::DataFrame)
             #===
                 target_column[i] と candidate_combination[i] は対になっているから、
                 (target_column[i],candidate_combination[i][ii])の組合せを作ってDf_JetelinaSqlList.sqlを検索する
-            ===#
-            println( df_arr )
 
+                select t1.a,t2.b,t3.c from t1,t2,t3
+            　　　このSQLの実行回数が一番多くて且つ、combinationも多いとなると、
+            　　　対象はt1.a,t2.b,t3.cの3つになる。
+            　　　
+            　　　[t1.a + t2] [t1.a + t3]
+                 [t2.b + t1] [t2.b + t3]
+                 [t3.c + t1] [t3.c + t2]
+            　　　の組合せで
+            　　　1.静的比較：SQL文としてはどの組合せが一番多いか
+            　　　2.動的比較：SQL文としてはどの組合せの実行回数が多いか
+
+            　　　2->1　の順で比較する：1->2だと使われていないSQLの影響が最初に大きく出てしまうから
+
+                JSON Analyze file
+                    t1.a,[t1,t2,t3],10     <-①
+            　　　　　 t1.a,[t1,t2], 3        <-②
+                    t1.a,[t1,t3],5         <-③
+
+                    ①+②　or ①+③ のどちらか大きい方をとる
+            ===#
+
+            #== 
+                Df_JetelinaSqlListはJenie空間にあるため、もしかしたらSQLAnalyzerを単独実行すると
+                使えないかもしれない。そんな時は以下が実行されてDf_JetelinaS...を作る。
+            ===#
             if( Df_JetelinaSqlList === nothing )
                 JetelinareadSqlList.readSqlList2DataFrame()
             end
 
-            println(Df_JetelinaSqlList)
-
+#            println(Df_JetelinaSqlList)
+            # 1.静的比較
             for i=1:length(target_column)
-#                df_a = filter(:column_name => n -> n == target_column[i], df_arr)
-
-#                p = df_a[1,:combination]
-#                if( 0<length(p))
+                @info "target column : " i target_column[i]
                 for ii=1:length(candidate_combination[i])
-                    #=== 
-                        target_column[i]とcandidate_combination[i][ii]の組合せでdf_arrを検索し、ヒットしたaccess_numberの総和を求める。
-                        1.target_columnでfilter()を使い、target_columnだけのDataFrameを作成する
-                        　　ex. df_a = filter(:column_name => n -> n == target_column[i], df_arr)
-                        2.1で作成されたDataFrameの:combinationにcandidate_combination[ii]が含まれることを確認する
-                          occursin()もcontains()もvector stringを引数にとらないので、combinationをstringに変換してから比較する
-                            ex.  p = df_a[!,:combination]
-                                 if contains(string(p),string(candidate_combination))..
-                                    含む(true)なら:access_numberの総和を計算する
-                    ===#
-#                    df_a = filter(:column_name => n -> n == target_column[i], df_arr)
+                    println( string("candidate_combination : ", i, candidate_combination[i]))
+                    p = nrow(filter([:no,:sql] => (n,s) -> startswith(n,"js") && contains(s,target_column[i]) && contains(s,candidate_combination[i][ii]),Df_JetelinaSqlList))
 
-#                    p = df_a[1,:combination]
-
-#                    @info "df_a :" df_a
-#                    @info "p :" p
-#@info "candidate_combination: " ii candidate_combination[i][ii]
-                    if (findfirst(contains(string(candidate_combination[i][ii])),Df_JetelinaSqlList.sql) !== nothing )
-                        #===
-                            Dict形式 a=>b　でcandidate...に追加している
-                        ===#
-                        #### なんかこの辺が変だなぁ。思ったようなdataが入っていない気がする
-#                        candidate_tables[candidate_combination[i][ii]] = df_a[1,:access_number]
- #                       @info "here " ii candidate_tables[candidate_combination[i][ii]]
-                    end
-
+                    @info "targets : " i  ii target_column[i] candidate_combination[i][ii] p
+                    # 6/28 問題。この処理方式だと単純にsql文を検索しているので、単純な句(ex. select a from b)もカウントしてしまう
                 end
 
                 #=== 
