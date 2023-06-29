@@ -278,7 +278,7 @@ function _exeSQLAnalyze(df::DataFrame)
 
                 JSON Analyze file
                     t1.a,[t1,t2,t3],10     <-①
-            　　　　　 t1.a,[t1,t2], 3        <-②
+            　 　　 t1.a,[t1,t2], 3        <-②
                     t1.a,[t1,t3],5         <-③
 
                     ①+②　or ①+③ のどちらか大きい方をとる
@@ -306,31 +306,20 @@ function _exeSQLAnalyze(df::DataFrame)
                         candidate_tables[(target_column[i],candidate_combination[i][ii])] = p
                     end
                 end
-                println(candidate_tables)
-
-                target_data = findall(x -> x == maximum(values(candidate_tables)), candidate_tables)
-
-                @info "target_data : " target_data target_data[1][1] target_data[1][2]
 
             end
         end
 
-        if debugflg
-#            @info "targets are  " target_column length(unique(target_column)) candidate_combination
-        end
-
         #===
-            レイアウト変更対象カラムtarget_columnは取得できた。
-            このデータで本当にいいかどうか判断しよう。
+            target_dataに(column,table)のtupleで入っているので、取り出し方は
+                target_column = target_data[1][1]
+                target_table  = target_data[1][2]
 
-            まずは、どのtableに移動すればいいか判断する
-            1.combinationが2つなら「もう一方の」tableにいどうすればいい　-> 簡単な話
-            2.combinationが3つ以上のとき「どのtableとの相関が一番強いか」見よう
-            　　(1)対象カラムを含むtableとcombination tableが他のSQLでどの程度組み合わされているか　->　一番組み合わせ頻度の多いtableが移動先対象になる
-            　　(2)(1)で判断がつかない(同数になる)なら、実行されたSQL回数を見てみる　->　一番実行されたものが優先される
-            　　(3)(2)でも判断つかない((1)(2)も同数になる)なら、どれでもいいやってことになる
-            3.但し、target_columnが2で決定されたtable以外と他のSQLで組み合わせがあったら、これはもうtarget_columnではなくなる　->　将来的にはなんか考えるとして、現状は「制約」としておく
+            となるので、target_column -> target_table　にレイアウト変更することを考える
         ===#
+        target_data = findall(x -> x == maximum(values(candidate_tables)), candidate_tables)
+
+        @info "target_data : " target_data target_data[1][1] target_data[1][2]
 
         #===
             上やってから下をやる。今はちょっとコメントアウトしておく。下が動くのはわかっている。
