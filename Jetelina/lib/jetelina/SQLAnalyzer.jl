@@ -293,24 +293,24 @@ function _exeSQLAnalyze(df::DataFrame)
             end
 
 #            println(Df_JetelinaSqlList)
-            # 1.静的比較
+            # 1.静的比較            
             for i=1:length(target_column)
-                @info "target column : " i target_column[i]
                 for ii=1:length(candidate_combination[i])
-                    println( string("candidate_combination : ", i, candidate_combination[i]))
-                    p = nrow(filter([:no,:sql] => (n,s) -> startswith(n,"js") && contains(s,target_column[i]) && contains(s,candidate_combination[i][ii]),Df_JetelinaSqlList))
-
-                    @info "targets : " i  ii target_column[i] candidate_combination[i][ii] p
-                    # 6/28 問題。この処理方式だと単純にsql文を検索しているので、単純な句(ex. select a from b)もカウントしてしまう
+                    p = split( target_column[i], '.' ) # ex. ftest.name -> [1]: ftest [2]:name
+                    if candidate_combination[i][ii] != p[1]
+                        p = nrow(filter([:no,:sql] => (n,s) -> startswith(n,"js") && contains(s,target_column[i]) && contains(s,candidate_combination[i][ii]),Df_JetelinaSqlList))
+                        #===
+                            Dict形式 (column,table) => 2
+                            という風に"target column","target table"のtupleにSQL句の関連数を格納している
+                        ===#
+                        candidate_tables[(target_column[i],candidate_combination[i][ii])] = p
+                    end
                 end
+                println(candidate_tables)
 
-                #=== 
-                    このデータがTableレイアウト変更移行先のTableになる
-                    なぜなら、
-                    　　1.一番一緒に使われている回数が多い
-                    から
-                ===#
-#                @info "target_table : " target_table = findall(x -> x == maximum(values(candidate_tables)), candidate_tables)
+                target_data = findall(x -> x == maximum(values(candidate_tables)), candidate_tables)
+
+                @info "target_data : " target_data target_data[1][1] target_data[1][2]
 
             end
         end
