@@ -321,16 +321,41 @@ function _exeSQLAnalyze(df::DataFrame)
 
         @info "target_data : " target_data target_data[1][1] target_data[1][2]
 
-        #===
-            上やってから下をやる。今はちょっとコメントアウトしておく。下が動くのはわかっている。
-
-        # まずはtestdb作成
-        creatTestDB()
-
-        # そのtestdbで操作するぜ
-        experimentalTableLayoutChange(target_column)
-        ===#
+        # testdbで操作するぜ
+        experimentalTableLayoutChange(target_data)
     end
+end
+
+"""
+    Table Layout Change
+        analyzeに基づいてTableレイアウト変更を仮実行する。
+
+        Args: target tuple data (column,table) ex. (ftest.name, ftest2)  <- meaning: name in ftest table try to moves to ftest2 table
+"""
+function experimentalTableLayoutChange(target)
+    @info "column move to table: " target[1][1] target[1][2]
+
+    #===
+    1.運用中のDBの全tableを解析用DBにコピーする。データ数は全件ではない
+    2.該当するtableのレイアウト変更を実行する
+    3.sql listの対象となるselect文を実験実行する
+    4.性能を比較してどうするか決める
+    5.解析用DBを削除することを忘れずに
+
+    1,5は上位でやろう
+    ===#
+
+    #1
+#    table_df = creatTestDB()
+#    tableCopy(table_df)
+
+    #2
+    tableAlter(target)
+
+    # JetelinaSQLListfileを開いて対象となるsql文を呼ぶ
+    # そのsqlでPgTestDBController.doSelect(sql)　を呼ぶ
+    # 実験で得られたdata(max,min,mean)とJetelina..fileにある既存値を比較する　ref. measureSqlPerformance()
+    # 全体としてパフォーマンスの改善が見られたらレイアウトを変更する。
 end
 
 """
@@ -457,37 +482,46 @@ function _load_table!(conn, df, tablename, columns=names(df))
 end
 
 """
-    Table Layout Change
-        analyzeに基づいてTableレイアウト変更を仮実行する。
+    指定されたカラムデータを、指定されたテーブルに移動するべく、alterでカラムを作成する
+
+    Args: target tuple data (column,table) ex. (ftest.name, ftest2)  <- meaning: name in ftest table try to moves to ftest2 table
+
 """
-function experimentalTableLayoutChange(tablecolumn)
-    @info "well table layout change with $tablecolumn: " tablecolumn
-
-    d = split(tablecolumn[1], ".")
-
-    @info "table and column " d[1] d[2]
+function tableAlter(target)
+    tconn = TestDBController.open_connection()
 
     #===
-    1.運用中のDBの全tableを解析用DBにコピーする。データ数は全件ではない
-    2.該当するtableのレイアウト変更を実行する
-    3.sql listの対象となるselect文を実験実行する
-    4.性能を比較してどうするか決める
-    5.解析用DBを削除することを忘れずに
-
-    1,5は上位でやろう
+        target[1][1]には元カラム名として table.column(ex. ftest.name)で入っている。
+        このcolumnをtarget[1][2]にaddしてやる。つまり、
+        ex.
+           ftest.name -> ftest, name の"name”をtarget[1][2]にalter add columnしてやる。
     ===#
+    origin  = split(target[1][1],'.')
+    origin_table = origin[1]
+    origin_column = origin[2]
+    moveto_table = target[1][2]
 
-    #1
-    table_df = creatTestDB()
-    tableCopy(table_df)
+    #===
+        移動対象となる元カラムデータのデータタイプを取得しておく。
+        他でやっておくところがなかったのでここでやっておく。alterする時の移動先のカラムのデータタイプとして使用する。🙄
+    ===#
+    origin_column_datatype = """select pg_typeof($origin_column) from $origin_table;"""
 
-    #2
+    try
+        dtyp = columntable(execute(tconn, origin_column_datatype))
 
+        @info "type? : " Tables.columntype("ftest",:name)
+        
+        # create table 実行文組み立て
+        table_alter_str = """alter table $moveto_table add column $origin_column $dtyp;"""
 
-    # JetelinaSQLListfileを開いて対象となるsql文を呼ぶ
-    # そのsqlでPgTestDBController.doSelect(sql)　を呼ぶ
-    # 実験で得られたdata(max,min,mean)とJetelina..fileにある既存値を比較する　ref. measureSqlPerformance()
-    # 全体としてパフォーマンスの改善が見られたらレイアウトを変更する。
+        @info "alter str: " table_alter_str 
+#        execute(tconn, table_alter_str)
+    catch err
+        JetelinaLog.writetoLogfile("SQLAnalyzer.tableCopy() error: $err")
+    finally
+        TestDBController.close_connection(tconn)
+    end
 end
 
 """
