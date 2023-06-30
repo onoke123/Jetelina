@@ -538,3 +538,11 @@
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
 ┌ Info: 2023-06-19 13:52:59 csv file: lib/jetelina/testdata/ftest3.csv
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-06-30 11:03:43 SQLAnalyzer.tableCopy() error: UndefVarError(:column_types)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-06-30 11:06:00 SQLAnalyzer.tableCopy() error: UndefVarError(:column_types)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-06-30 11:55:44 SQLAnalyzer.tableCopy() error: UndefVarError(:dtype1)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-06-30 11:56:45 SQLAnalyzer.tableCopy() error: UndefVarError(:prinln)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30

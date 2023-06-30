@@ -508,16 +508,22 @@ function tableAlter(target)
     origin_column_datatype = """select pg_typeof($origin_column) from $origin_table;"""
 
     try
-        dtyp = columntable(execute(tconn, origin_column_datatype))
+        #===
+            6/30 dtype->Type[String] で返ってくるのでtable_alter_strの文が成立しない。
+            最低限 StringにできればPgDataTypeList.getDataType()でvarcharに変換できる。
+            StackOverflowに問い合わせているが、うまい方法がないようなら上記moduleで強引に変換してしまおう。
+            　https://stackoverflow.com/questions/76585805/julia-get-and-set-a-column-datatype-in-postgresql            
+        ===#
+#        dtyp = LibPQ.columntable(execute(tconn, origin_column_datatype))
+        dtyp = LibPQ.column_types(execute(tconn, origin_column_datatype))
 
-        @info "type? : " Tables.columntype("ftest",:name)
-        
         # create table 実行文組み立て
         table_alter_str = """alter table $moveto_table add column $origin_column $dtyp;"""
 
-        @info "alter str: " table_alter_str 
+        @info "alter str: " table_alter_str
 #        execute(tconn, table_alter_str)
     catch err
+        println(err)
         JetelinaLog.writetoLogfile("SQLAnalyzer.tableCopy() error: $err")
     finally
         TestDBController.close_connection(tconn)
