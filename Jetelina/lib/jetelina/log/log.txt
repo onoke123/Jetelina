@@ -546,3 +546,7 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
 ┌ Info: 2023-06-30 11:56:45 SQLAnalyzer.tableCopy() error: UndefVarError(:prinln)
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-07-03 09:31:27 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer.var"#_type_param#11"(), (Type[String],), 0x0000000000007b35)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-07-03 10:23:17 SQLAnalyzer.tableCopy() error: LibPQ.Errors.UndefinedColumn("ERROR:  column \"ftest2_age\" does not exist\nLINE 1: select pg_typeof(ftest2_age) from ftest2;\n                         ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30

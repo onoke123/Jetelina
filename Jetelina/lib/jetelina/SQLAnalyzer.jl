@@ -509,19 +509,26 @@ function tableAlter(target)
 
     try
         #===
-            6/30 dtype->Type[String] で返ってくるのでtable_alter_strの文が成立しない。
-            最低限 StringにできればPgDataTypeList.getDataType()でvarcharに変換できる。
-            StackOverflowに問い合わせているが、うまい方法がないようなら上記moduleで強引に変換してしまおう。
-            　https://stackoverflow.com/questions/76585805/julia-get-and-set-a-column-datatype-in-postgresql            
+            どうやらcolumn_types()は指定されたカラムデータのデータタイプをArrayで返してくるらしい。
+            つまり、ex.  id, name, sex とかのカラムデータを取ろうと思ったら　Type[Int64,String,String]　という風に。
+            なので、今回はorigin_columnは一つだけ指定しているのでType[..]で返ってくるので、これをPostgreのデータタイプに
+            するためにPgDataTypeList.getDataType()にType[..][1]を渡してやれば、それなりのデータタイプが得られると。
         ===#
-#        dtyp = LibPQ.columntable(execute(tconn, origin_column_datatype))
         dtyp = LibPQ.column_types(execute(tconn, origin_column_datatype))
+        # dtype -> Type[String]とかで返ってくるので　dtyp[1] -> String　となる :o
+        dt = PgDataTypeList.getDataType(dtyp[1])
+
+        # add先のtableに同名があることもあるので、追加するcolumn名はオリジナル名(ex. ftest.age)を残すことにする(ex. ftest_age)。
+        add_column = replace(target[1][1], "." => "_", count=1)
 
         # create table 実行文組み立て
-        table_alter_str = """alter table $moveto_table add column $origin_column $dtyp;"""
+        table_alter_str = """alter table $moveto_table add column $add_column $dt;"""
 
-        @info "alter str: " table_alter_str
-#        execute(tconn, table_alter_str)
+        if debugflg
+            @info "alter str: " table_alter_str
+        end
+
+        execute(tconn, table_alter_str)
     catch err
         println(err)
         JetelinaLog.writetoLogfile("SQLAnalyzer.tableCopy() error: $err")
