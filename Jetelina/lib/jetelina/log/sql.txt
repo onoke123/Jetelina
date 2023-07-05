@@ -1,9 +1,9 @@
-select ftest.name,ftest2.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest1.id=ftest3.id
-select ftest.name,ftest2.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest1.id=ftest3.id
-select ftest.name,ftest2.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest1.id=ftest3.id
-select ftest.name,ftest2.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest1.id=ftest3.id
-select ftest.name,ftest2.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest1.id=ftest3.id
-select ftest.name,ftest2.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest1.id=ftest3.id
+select ftest.name,ftest2.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id
+select ftest.name,ftest2.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id
+select ftest.name,ftest2.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id
+select ftest.name,ftest2.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id
+select ftest.name,ftest2.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id
+select ftest.name,ftest2.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id
 select ftest.name,ftest3.dumy from ftest as ftest,ftest3 as ftest3
 select ftest.name,ftest3.dumy from ftest as ftest,ftest3 as ftest3
 select ftest.name,ftest3.dumy from ftest as ftest,ftest3 as ftest3

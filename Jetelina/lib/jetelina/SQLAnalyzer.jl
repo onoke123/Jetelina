@@ -322,7 +322,7 @@ function _exeSQLAnalyze(df::DataFrame)
         @info "target_data : " target_data target_data[1][1] target_data[1][2]
 
         # testdbで操作するぜ
-        experimentalTableLayoutChange(target_data)
+        experimentalCreateView(target_data)
     end
 end
 
@@ -330,9 +330,10 @@ end
     Table Layout Change
         analyzeに基づいてTableレイアウト変更を仮実行する。
 
-        Args: target tuple data (column,table) ex. (ftest.name, ftest2)  <- meaning: name in ftest table try to moves to ftest2 table
+        Args: viewtable: view table name  ex. js102
+              targetsql: sql for creating view  ex. select .......
 """
-function experimentalTableLayoutChange(target)
+function experimentalCreateView(viewtable,targetsql)
     @info "column move to table: " target[1][1] target[1][2]
 
     #===
@@ -346,16 +347,41 @@ function experimentalTableLayoutChange(target)
     ===#
 
     #1
-#    table_df = creatTestDB()
-#    tableCopy(table_df)
+    table_df = creatTestDB()
+    tableCopy(table_df)
 
     #2
-    tableAlter(target)
+#    tableAlter(target)
+    createView(viewtable,targetsql)
 
     # JetelinaSQLListfileを開いて対象となるsql文を呼ぶ
     # そのsqlでPgTestDBController.doSelect(sql)　を呼ぶ
     # 実験で得られたdata(max,min,mean)とJetelina..fileにある既存値を比較する　ref. measureSqlPerformance()
     # 全体としてパフォーマンスの改善が見られたらレイアウトを変更する。
+end
+
+"""
+    createView()
+
+    ２つ以上のテーブルが関係して且つ、実際に利用されている頻度の高いSQL文をviewにする
+
+    Args: viewtable: view table name  ex. js102
+          targetsql: sql for creating view  ex. select .......
+"""
+function createView(viewtable, targetsql)
+    tconn = TestDBController.open_connection()
+
+    create_view_str = """create view $viewtable as $targetsql;"""
+
+    try
+        execute(tconn, table_alter_str)
+    catch err
+        println(err)
+        JetelinaLog.writetoLogfile("SQLAnalyzer.createView() error: $err")
+    finally
+        TestDBController.close_connection(tconn)
+    end
+
 end
 
 """
@@ -482,7 +508,10 @@ function _load_table!(conn, df, tablename, columns=names(df))
 end
 
 """
+    tableAlter()
+
     指定されたカラムデータを、指定されたテーブルに移動するべく、alterでカラムを作成する
+    ver1ではcreate viewにすることにしたので、このfunctionは使われていない
 
     Args: target tuple data (column,table) ex. (ftest.name, ftest2)  <- meaning: name in ftest table try to moves to ftest2 table
 
@@ -531,7 +560,7 @@ function tableAlter(target)
         execute(tconn, table_alter_str)
     catch err
         println(err)
-        JetelinaLog.writetoLogfile("SQLAnalyzer.tableCopy() error: $err")
+        JetelinaLog.writetoLogfile("SQLAnalyzer.tableAlter() error: $err")
     finally
         TestDBController.close_connection(tconn)
     end
