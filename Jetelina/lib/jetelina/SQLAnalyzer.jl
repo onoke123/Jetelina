@@ -80,6 +80,16 @@ function createAnalyzedJsonFile()
             then 
             ftest3.idが一番呼ばれたのは['ftet4','ftest2']なので、ftest3.idはこれを採用
             ftest2.name        〃      ['ftest2']なので、ftest2.nameはこれを採用→table変更は必要なさそう
+
+        view方式に変更するため
+            ex. 
+                sql     combination         access number
+            select .... ['ftest3','ftest2']      2
+            select .... ['ftest4','ftest2']      5
+            select .... ['ftest2']              10
+
+            とする。採用するロジックは変わらない。
+
     """
 
     for i = 1:u_size
@@ -111,7 +121,8 @@ function createAnalyzedJsonFile()
                     push!(table_arr, cc[1])
                 end
 
-                push!(sql_df, [c[j], table_arr, ac])
+#                push!(sql_df, [c[j], table_arr, ac])
+                push!(sql_df, [u[i], table_arr, ac])
            end
         end
 
