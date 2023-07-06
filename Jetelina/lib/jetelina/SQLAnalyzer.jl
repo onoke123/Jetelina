@@ -28,8 +28,8 @@ const sqljsonfile = getFileNameFromLogPath(JetelinaSQLAnalyzedfile)
 """
 function createAnalyzedJsonFile()
     """
-        read sql.log file
-            log/sql.log ex. select ftest2.id,ftest2.name from ftest2
+        read sql.txt file
+            log/sql.txt ex. js314,"select ftest.sex,ftest.age,ftest.name from ftest as ftest "
 
         delimiteを' 'にしているのでselect文のカラム表示はちゃんと詰めて書かれることを期待する。
             ex.    select ftest2.id,ftest2.name from ...     OK
@@ -37,18 +37,16 @@ function createAnalyzedJsonFile()
                                     ^^
     """
     sqllogfile = getFileNameFromLogPath(JetelinaSQLLogfile)
-    df = readdlm(sqllogfile, ' ', String, '\n')
-
+    df = readdlm(sqllogfile, '\"', String, '\n')
+#    @info "readdlm: " df
     """
         get uniqeness
             ex. 
-                select ftest2.id,ftest2.name from ftest2
-                select ftest2.id,ftest2.name from ftest2
-                select ftest.id,ftest.name from ftest
-                
-                -->
-                select ftest2.id,ftest2.name from ftest2
-                select ftest.id,ftest.name from ftest
+            "js312,"  "select ftest.name,ftest.age,ftest2.name,ftest2.age,ftest3.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id"  ""
+            "js312,"  "select ftest.name,ftest.age,ftest2.name,ftest2.age,ftest3.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id"  ""
+
+            -->
+            "js312,"  "select ftest.name,ftest.age,ftest2.name,ftest2.age,ftest3.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id"  ""
     """
     u = unique(df[:, [:2]])
 
@@ -57,38 +55,24 @@ function createAnalyzedJsonFile()
         2.pick only the columns part
         3.count the access number in each sql
         4.put it into DataFrame alike
-            ex. 
-                column_name      access_number
-            ftest3.id,ftest2.name    2
     """
     u_size = length(u)
     df_size = length(df[:, [:2]])
 
-    # uにはユニークなSQL文が入っているので、sql.logの中のマッチングでアクセス数を取得する ex. u[i] === ....
-#    sql_df = DataFrame(column_name=String[], combination=[], access_number=Float64[])
-    sql_df = DataFrame(column_name=String[], combination=Vector{String}[], access_number=Float64[])
+    # uにはユニークなSQL文が入っているので、sql.txtの中のマッチングでアクセス数を取得する ex. u[i] === ....
+    sql_df = DataFrame(sql=String[], combination=Vector{String}[], access_number=Float64[])
 
     """
         shape the data
-            ex. 
-                column    combination         access number
-            ftest3.id     ['ftest3','ftest2']      2
-            ftest2.name   ['ftest3','ftest2']      2
-            ftest3.id     ['ftest4','ftest2']      5
-            ftest2.name   ['ftest2']              10
-
-            then 
-            ftest3.idが一番呼ばれたのは['ftet4','ftest2']なので、ftest3.idはこれを採用
-            ftest2.name        〃      ['ftest2']なので、ftest2.nameはこれを採用→table変更は必要なさそう
-
-        view方式に変更するため
             ex. 
                 sql     combination         access number
             select .... ['ftest3','ftest2']      2
             select .... ['ftest4','ftest2']      5
             select .... ['ftest2']              10
 
-            とする。採用するロジックは変わらない。
+            then 
+            ftest3.idが一番呼ばれたのは['ftet4','ftest2']なので、ftest3.idはこれを採用
+            ftest2.name        〃      ['ftest2']なので、ftest2.nameはこれを採用→table変更は必要なさそう
 
     """
 
@@ -97,20 +81,37 @@ function createAnalyzedJsonFile()
         # collect access number for each unique SQL. make "access_number"
         for ii = 1:df_size
 
+#            @info " comp: " u[i] df[:, [:2]][ii]
+
             if u[i] == df[:, [:2]][ii]
                 ac += 1
             end
         end
 
         table_arr = String[]
+        
+        #==
+            combination作成の下準備として"select .... from .... where ..."　文から
+            カラム部分"select/from"を抽出する。
+            この処理はSQL文がプログラムで自動作成されるためフォーマットが統一されているので
+            できること。
+        ==#
+        if contains(u[i],"select")
+            u[i] = split(u[i],"select ")[2]
+        end
+
+        if contains(u[i],"from")
+            u[i] = split(u[i]," from")[1]
+        end
+
         c = split(u[i], ",")
-        # make "column_name" and "combination" 
         for j = 1:length(c)
             """
                 cc[1]:table name
                 cc[2]:column name 
             """
             cc = split(c[j], ".")
+            
             #===
                  該当tableがmaster系でなければ処理する。
                  master系tableには"master"がtable名に入っているのがプロトコル。
@@ -128,10 +129,12 @@ function createAnalyzedJsonFile()
 
     end
 
+    @info "sql_df: " println(sql_df)
+
     #===
         解析処理のルーチンに入る
     ===#
-    _exeSQLAnalyze(sql_df)
+##    _exeSQLAnalyze(sql_df)
 
     #===
         ここから下は、Jetelinaのconditional panelでグラフを書くための処理。
@@ -142,14 +145,19 @@ function createAnalyzedJsonFile()
         analyze
             ex.
                 各tableのRow No.でcombinationを置き換える
-                     Row │ column_name  combination  access_number
-            │           │ String       Array…       Float64
-            │ ─────┼─────────────────────────────────────────
-            │    1 │ ftest2.id          [4]            2
-            │    2 │ ftest2.name        [4]            2
-            │    3 │ ftest.id           [1]            1
-            │    4 │ ftest3.id          [3, 4]         1
-            └    5 │ ftest2.name        [3, 4]         2
+            Row │ column_name                        combination                    access_number 
+                │ String                             Array…                         Float64       
+            ──┼─────────────────────────────────────────────────────────────────────────────────
+            1   │ ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
+            2   │ ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
+            3   │ ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
+            4   │ ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
+            5   │ ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
+            6   │ ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
+            7   │ ftest.sex,ftest.age,ftest2.age,f…  ["ftest", "ftest2"]                      3.0
+            8   │ ftest.sex,ftest.age,ftest2.age,f…  ["ftest", "ftest2"]                      3.0
+            9   │ ftest.sex,ftest.age,ftest2.age,f…  ["ftest", "ftest2"]                      3.0
+            10  │ ftest.sex,ftest.age,ftest2.age,f…  ["ftest", "ftest2"]                      3.0
 
                     ftest3.idはftest3にあるので→x座標:3(ftest3)
                     ftest3.idはftest4+ftest2が代表値なので → (3+4)/2(tableが2つだから)=3.5 ←y座標になる
