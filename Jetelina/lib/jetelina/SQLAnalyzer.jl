@@ -28,17 +28,22 @@ const sqljsonfile = getFileNameFromLogPath(JetelinaSQLAnalyzedfile)
 """
 function createAnalyzedJsonFile()
     """
-        read sql.txt file
-            log/sql.txt ex. js314,"select ftest.sex,ftest.age,ftest.name from ftest as ftest "
+        read sql.log file
+            log/sql.log ex. js314,"select ftest.sex,ftest.age,ftest.name from ftest as ftest "
 
         delimiteを' 'にしているのでselect文のカラム表示はちゃんと詰めて書かれることを期待する。
             ex.    select ftest2.id,ftest2.name from ...     OK
                    select ftest2.id, ftest2.name from ....   NG
                                     ^^
+
+        sql.logファイルサイズが偉いことになっていたら、100万件とか、いけるんだろうか？
+        sql.logのローテーションと、ローテーションファイルを順次利用することも考えないといけないかもね。 #tichet1254
     """
     sqllogfile = getFileNameFromLogPath(JetelinaSQLLogfile)
-    df = readdlm(sqllogfile, '\"', String, '\n')
-#    @info "readdlm: " df
+#    df = readdlm(sqllogfile, '\"', String, '\n')
+    maxrow::Int = 100 # for secure
+    df = CSV.read( sqllogfile, DataFrame, limit=maxrow )
+    @info "readdlm: " df
     """
         get uniqeness
             ex. 
@@ -48,8 +53,8 @@ function createAnalyzedJsonFile()
             -->
             "js312,"  "select ftest.name,ftest.age,ftest2.name,ftest2.age,ftest3.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id"  ""
     """
-    u = unique(df[:, [:2]])
-
+    u = unique(df[:, :apino]) # uniquenessはwhere文の外部設定値が違う場合を想定してapi noで取る
+    @info "u : " u
     """
         1.make unique sql statements
         2.pick only the columns part
@@ -57,37 +62,37 @@ function createAnalyzedJsonFile()
         4.put it into DataFrame alike
     """
     u_size = length(u)
-    df_size = length(df[:, [:2]])
+    df_size = nrow(df) # 全体の行数はapi noで取る
 
-    # uにはユニークなSQL文が入っているので、sql.txtの中のマッチングでアクセス数を取得する ex. u[i] === ....
-    sql_df = DataFrame(sql=String[], combination=Vector{String}[], access_number=Float64[])
+    # uにはユニークなapi noが入っているので、sql.logの中のマッチングでアクセス数を取得する ex. u[i] === ....
+    sql_df = DataFrame(apino=String[], sql=String[], combination=Vector{String}[], access_number=Float64[])
 
     """
         shape the data
             ex. 
-                sql     combination         access number
-            select .... ['ftest3','ftest2']      2
-            select .... ['ftest4','ftest2']      5
-            select .... ['ftest2']              10
+              apino      sql         combination         access number
+               js10    select ....  ['ftest3','ftest2']      2
+               js22    select ....  ['ftest4','ftest2']      5
+               js10    select ....  ['ftest2']              10
 
             then 
-            ftest3.idが一番呼ばれたのは['ftet4','ftest2']なので、ftest3.idはこれを採用
-            ftest2.name        〃      ['ftest2']なので、ftest2.nameはこれを採用→table変更は必要なさそう
+            combination数が高いjs10,js22..の内、一番アクセス数が多いのはjs22なので、view作成はこれを採用
+            js10はアクセス数は多いがcombination数が低いのでview作成は必要なさそう
 
     """
 
     for i = 1:u_size
         ac = 0
         # collect access number for each unique SQL. make "access_number"
+        dd = filter(:apino=>x->x==u[i],df)
+        ac = nrow(dd)
+#==
         for ii = 1:df_size
-
-#            @info " comp: " u[i] df[:, [:2]][ii]
-
             if u[i] == df[:, [:2]][ii]
                 ac += 1
             end
         end
-
+==#
         table_arr = String[]
         
         #==
@@ -96,15 +101,16 @@ function createAnalyzedJsonFile()
             この処理はSQL文がプログラムで自動作成されるためフォーマットが統一されているので
             できること。
         ==#
-        if contains(u[i],"select")
-            u[i] = split(u[i],"select ")[2]
+        cols = df[:,:sql][i]
+        if contains(cols,"select")
+            cols = split(cols,"select ")[2]
         end
 
-        if contains(u[i],"from")
-            u[i] = split(u[i]," from")[1]
+        if contains(cols,"from")
+            cols = split(cols," from")[1]
         end
 
-        c = split(u[i], ",")
+        c = split(cols, ",")
         for j = 1:length(c)
             """
                 cc[1]:table name
@@ -123,7 +129,7 @@ function createAnalyzedJsonFile()
                 end
 
 #                push!(sql_df, [c[j], table_arr, ac])
-                push!(sql_df, [u[i], table_arr, ac])
+                push!(sql_df, [u[i], df[:,:sql][i],table_arr, ac])
            end
         end
 
@@ -140,7 +146,6 @@ function createAnalyzedJsonFile()
         ここから下は、Jetelinaのconditional panelでグラフを書くための処理。
         統計処理自体は↑で終わっている。
     ===#
-#=== ちょっとコメントアウトしておく 6/23
     """
         analyze
             ex.
@@ -148,16 +153,16 @@ function createAnalyzedJsonFile()
             Row │ column_name                        combination                    access_number 
                 │ String                             Array…                         Float64       
             ──┼─────────────────────────────────────────────────────────────────────────────────
-            1   │ ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
-            2   │ ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
-            3   │ ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
-            4   │ ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
-            5   │ ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
-            6   │ ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
-            7   │ ftest.sex,ftest.age,ftest2.age,f…  ["ftest", "ftest2"]                      3.0
-            8   │ ftest.sex,ftest.age,ftest2.age,f…  ["ftest", "ftest2"]                      3.0
-            9   │ ftest.sex,ftest.age,ftest2.age,f…  ["ftest", "ftest2"]                      3.0
-            10  │ ftest.sex,ftest.age,ftest2.age,f…  ["ftest", "ftest2"]                      3.0
+            1   │ select ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
+            2   │ select ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
+            3   │ select ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
+            4   │ select ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
+            5   │ select ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
+            6   │ select ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
+            7   │ select ftest.sex,ftest.age,ftest2.age,f…  ["ftest", "ftest2"]                      3.0
+            8   │ select ftest.sex,ftest.age,ftest2.age,f…  ["ftest", "ftest2"]                      3.0
+            9   │ select ftest.sex,ftest.age,ftest2.age,f…  ["ftest", "ftest2"]                      3.0
+            10  │ select ftest.sex,ftest.age,ftest2.age,f…  ["ftest", "ftest2"]                      3.0
 
                     ftest3.idはftest3にあるので→x座標:3(ftest3)
                     ftest3.idはftest4+ftest2が代表値なので → (3+4)/2(tableが2つだから)=3.5 ←y座標になる
@@ -193,7 +198,7 @@ function createAnalyzedJsonFile()
     #ml = findall(x -> x == (maximum(B_len)), B_len)
 
     if debugflg
-        @info JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df))))
+##        @info JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df))))
     end
 
     #===
@@ -208,10 +213,9 @@ function createAnalyzedJsonFile()
         JSONにする。が、 Genie.Renderer.Jsonを使うとHTTPプロトコル出力(HTTP 200とか)が付いてしまうので、ここはプレーンなJSON
         モジュールを使うことにする。
     ===#
-    open(sqljsonfile, "w") do f
-        println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df)))))
-    end
-ここまで===#
+##    open(sqljsonfile, "w") do f
+##        println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df)))))
+##    end
 end
 
 """
