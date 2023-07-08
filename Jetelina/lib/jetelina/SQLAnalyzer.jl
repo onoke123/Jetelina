@@ -12,6 +12,7 @@ using CSV
 using DataFrames
 using Genie, Genie.Renderer, Genie.Renderer.Json
 using JSON, LibPQ, Tables
+using StatsBase
 using JetelinaReadConfig, JetelinaLog
 using ExeSql, DBDataController, PgDBController
 using DelimitedFiles
@@ -63,7 +64,7 @@ function createAnalyzedJsonFile()
     """
     u_size = length(u)
     df_size = nrow(df) # 全体の行数はapi noで取る
-
+@info "df size " df_size
     # uにはユニークなapi noが入っているので、sql.logの中のマッチングでアクセス数を取得する ex. u[i] === ....
     sql_df = DataFrame(apino=String[], sql=String[], combination=Vector{String}[], access_number=Float64[])
 
@@ -94,7 +95,8 @@ function createAnalyzedJsonFile()
         end
 ==#
         table_arr = String[]
-        
+        tables = String[]
+
         #==
             combination作成の下準備として"select .... from .... where ..."　文から
             カラム部分"select/from"を抽出する。
@@ -125,13 +127,24 @@ function createAnalyzedJsonFile()
             if !contains( cc[1], "master" )
                 # table_arrにcc[1]が入っているかどうか見ている。論理否定。これが書きたかったからJulia。
                 if cc[1] ∉ table_arr
-                    push!(table_arr, cc[1])
+                    push!(table_arr, cc[1]) # master以外のtableを重複なく格納する
                 end
 
+                push!(tables,cc[1])  # sql文で使われているtableをとにかく網羅する
+
 #                push!(sql_df, [c[j], table_arr, ac])
-                push!(sql_df, [u[i], df[:,:sql][i],table_arr, ac])
+##                push!(sql_df, [u[i], df[:,:sql][i],table_arr, ac])
            end
         end
+
+        #===
+            tablesに格納されている一番多いtable名を”基本table”としてtablesの先頭に挿入する。
+            "基本table"候補が複数ある場合はAscii順になるみたい。
+                ex. "a","b"二つの基本table候補がある場合(同数の場合)、"a"が採用されるらしい。。。まっいっか。
+        ===#
+        pushfirst!(table_arr,mode(tables))
+        # column別からsql別に変更したため、ここに移動する
+        push!(sql_df, [u[i], df[:,:sql][i],table_arr, ac])
 
     end
 
@@ -146,23 +159,18 @@ function createAnalyzedJsonFile()
         ここから下は、Jetelinaのconditional panelでグラフを書くための処理。
         統計処理自体は↑で終わっている。
     ===#
+    # sql_dfから:sqlカラムを抜く。だって不要だしjsonファイルに書き込むときに削除するのが面倒だから
+    select!(sql_df,:apino,:combination,:access_number)
     """
         analyze
             ex.
                 各tableのRow No.でcombinationを置き換える
-            Row │ column_name                        combination                    access_number 
-                │ String                             Array…                         Float64       
+            Row │ apino          combination                    access_number 
+                │ String           Array…                         Float64       
             ──┼─────────────────────────────────────────────────────────────────────────────────
-            1   │ select ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
-            2   │ select ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
-            3   │ select ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
-            4   │ select ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
-            5   │ select ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
-            6   │ select ftest.name,ftest.age,ftest2.name…  ["ftest", "ftest2", "ftest3"]            5.0
-            7   │ select ftest.sex,ftest.age,ftest2.age,f…  ["ftest", "ftest2"]                      3.0
-            8   │ select ftest.sex,ftest.age,ftest2.age,f…  ["ftest", "ftest2"]                      3.0
-            9   │ select ftest.sex,ftest.age,ftest2.age,f…  ["ftest", "ftest2"]                      3.0
-            10  │ select ftest.sex,ftest.age,ftest2.age,f…  ["ftest", "ftest2"]                      3.0
+            1   │ js312  ["ftest", "ftest2", "ftest3"]            5.0
+            2   │ js313  ["ftest", "ftest2", "ftest3"]            5.0
+            3   │ js314  ["ftest", "ftest2", "ftest3"]            5.0
 
                     ftest3.idはftest3にあるので→x座標:3(ftest3)
                     ftest3.idはftest4+ftest2が代表値なので → (3+4)/2(tableが2つだから)=3.5 ←y座標になる
@@ -198,7 +206,7 @@ function createAnalyzedJsonFile()
     #ml = findall(x -> x == (maximum(B_len)), B_len)
 
     if debugflg
-##        @info JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df))))
+        @info JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df))))
     end
 
     #===
@@ -213,9 +221,9 @@ function createAnalyzedJsonFile()
         JSONにする。が、 Genie.Renderer.Jsonを使うとHTTPプロトコル出力(HTTP 200とか)が付いてしまうので、ここはプレーンなJSON
         モジュールを使うことにする。
     ===#
-##    open(sqljsonfile, "w") do f
-##        println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df)))))
-##    end
+    open(sqljsonfile, "w") do f
+        println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df)))))
+    end
 end
 
 """
