@@ -44,7 +44,7 @@ function createAnalyzedJsonFile()
 #    df = readdlm(sqllogfile, '\"', String, '\n')
     maxrow::Int = 100 # for secure
     df = CSV.read( sqllogfile, DataFrame, limit=maxrow )
-    @info "readdlm: " df
+    #@info "readdlm: " df
     """
         get uniqeness
             ex. 
@@ -55,7 +55,7 @@ function createAnalyzedJsonFile()
             "js312,"  "select ftest.name,ftest.age,ftest2.name,ftest2.age,ftest3.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id"  ""
     """
     u = unique(df[:, :apino]) # uniquenessはwhere文の外部設定値が違う場合を想定してapi noで取る
-    @info "u : " u
+    #@info "u : " u
     """
         1.make unique sql statements
         2.pick only the columns part
@@ -64,7 +64,7 @@ function createAnalyzedJsonFile()
     """
     u_size = length(u)
     df_size = nrow(df) # 全体の行数はapi noで取る
-@info "df size " df_size
+#@info "df size " df_size
     # uにはユニークなapi noが入っているので、sql.logの中のマッチングでアクセス数を取得する ex. u[i] === ....
     sql_df = DataFrame(apino=String[], sql=String[], combination=Vector{String}[], access_number=Float64[])
 
@@ -153,8 +153,14 @@ function createAnalyzedJsonFile()
     #===
         解析処理のルーチンに入る
     ===#
-##    _exeSQLAnalyze(sql_df)
+    #_exeSQLAnalyze(sql_df)
 
+    # combinationが最長のものを探す
+    c_len = length.(sql_df.combination)
+    p = findall(x->x==maximum(c_len),c_len) # pにはmaxデータのindex番号が入る
+    target_sql = df[!,:sql][p] # なので、対象となるSQLはこうなる
+
+#=== 7/9 以下はできているので一旦コメントアウトする
     #===
         ここから下は、Jetelinaのconditional panelでグラフを書くための処理。
         統計処理自体は↑で終わっている。
@@ -224,6 +230,7 @@ function createAnalyzedJsonFile()
     open(sqljsonfile, "w") do f
         println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df)))))
     end
+7/9 ここまで===#
 end
 
 """
