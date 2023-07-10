@@ -552,3 +552,7 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
 ┌ Info: 2023-07-05 14:14:50 SQLAnalyzer.tableCopy() error: LibPQ.Errors.DuplicateColumn("ERROR:  column \"ftest2_age\" of relation \"ftest\" already exists\n")
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-07-10 10:29:37 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...test2.name,ftest2.age,ftest3.age,ftest3.dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-07-10 10:31:53 SQLAnalyzer.createView() error: LibPQ.Errors.DuplicateColumn("ERROR:  column \"name\" specified more than once\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30

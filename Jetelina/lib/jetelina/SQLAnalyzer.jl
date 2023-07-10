@@ -148,7 +148,7 @@ function createAnalyzedJsonFile()
 
     end
 
-    @info "sql_df: " println(sql_df)
+#    @info "sql_df: " println(sql_df)
 
     #===
         解析処理のルーチンに入る
@@ -158,7 +158,17 @@ function createAnalyzedJsonFile()
     # combinationが最長のものを探す
     c_len = length.(sql_df.combination)
     p = findall(x->x==maximum(c_len),c_len) # pにはmaxデータのindex番号が入る
-    target_sql = df[!,:sql][p] # なので、対象となるSQLはこうなる
+
+    # combinationが最長のモノの中で一番アクセス数が多いモノは？
+    accn = sql_df[p,:access_number]
+    pp =  findall(x->x==maximum(accn),accn)
+
+    # よって、対象はこうなる
+    target = sql_df[pp,:]
+    
+    # ヨシと、testdbで操作するぜ
+    experimentalCreateView(target)
+
 
 #=== 7/9 以下はできているので一旦コメントアウトする
     #===
@@ -365,14 +375,13 @@ function _exeSQLAnalyze(df::DataFrame)
 end
 
 """
-    Table Layout Change
-        analyzeに基づいてTableレイアウト変更を仮実行する。
+    View table create for test
+        analyzeに基づいてview tableを仮実行する。
 
-        Args: viewtable: view table name  ex. js102
-              targetsql: sql for creating view  ex. select .......
+        Args: df: target dataframe data
 """
-function experimentalCreateView(viewtable,targetsql)
-    @info "column move to table: " target[1][1] target[1][2]
+function experimentalCreateView(df)
+    @info "target df: " df
 
     #===
     1.運用中のDBの全tableを解析用DBにコピーする。データ数は全件ではない
@@ -382,6 +391,9 @@ function experimentalCreateView(viewtable,targetsql)
     5.解析用DBを削除することを忘れずに
 
     1,5は上位でやろう
+
+    view方式にしたので全tableを解析用にDBにコピーする必要はなくなった。
+    つまり、対象となるapiだけ試験実行すればいいから他のapiには影響なくなった。
     ===#
 
     #1
@@ -390,7 +402,7 @@ function experimentalCreateView(viewtable,targetsql)
 
     #2
 #    tableAlter(target)
-    createView(viewtable,targetsql)
+    createView(df)
 
     # JetelinaSQLListfileを開いて対象となるsql文を呼ぶ
     # そのsqlでPgTestDBController.doSelect(sql)　を呼ぶ
@@ -406,20 +418,24 @@ end
     Args: viewtable: view table name  ex. js102
           targetsql: sql for creating view  ex. select .......
 """
-function createView(viewtable, targetsql)
+function createView(df)
+    viewtable = string(df.apino[1],"_view")
+    targetsql = df.sql[1]
+
     tconn = TestDBController.open_connection()
 
     create_view_str = """create view $viewtable as $targetsql;"""
 
+    @info "create view str: " create_view_str
+
     try
-        execute(tconn, table_alter_str)
+        execute(tconn, create_view_str)
     catch err
         println(err)
         JetelinaLog.writetoLogfile("SQLAnalyzer.createView() error: $err")
     finally
         TestDBController.close_connection(tconn)
     end
-
 end
 
 """
