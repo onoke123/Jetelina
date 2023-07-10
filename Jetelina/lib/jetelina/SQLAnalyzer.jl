@@ -103,16 +103,9 @@ function createAnalyzedJsonFile()
             この処理はSQL文がプログラムで自動作成されるためフォーマットが統一されているので
             できること。
         ==#
-        cols = df[:,:sql][i]
-        if contains(cols,"select")
-            cols = split(cols,"select ")[2]
-        end
-
-        if contains(cols,"from")
-            cols = split(cols," from")[1]
-        end
-
+        cols = extractColumnsFromSql(df[:,:sql][i])
         c = split(cols, ",")
+
         for j = 1:length(c)
             """
                 cc[1]:table name
@@ -243,6 +236,27 @@ function createAnalyzedJsonFile()
 7/9 ここまで===#
 end
 
+"""
+    extractColumnsFromSql()
+
+    指定されたSLQ文からカラム文の部分(select/fromの間)を抽出する
+
+        Args: String sql文を期待。ex. select .... from .....
+
+        return: tuple 1 or 2 -> 1: selectで分解 -> [1]:"select" [2]:column trings
+                                2: select & fromで分解 -> [1]:column strings [2]:from strings
+"""
+function extractColumnsFromSql(s)
+    if contains(s,"select")
+        s = split(s,"select ")[2]
+
+        if contains(s,"from")
+            s = split(s," from")[1]
+        end
+    end
+
+    return s
+end
 """
     read sqlcsv.json then put it to DataFrame for experimental*()
 
@@ -397,8 +411,8 @@ function experimentalCreateView(df)
     ===#
 
     #1
-    table_df = creatTestDB()
-    tableCopy(table_df)
+#    table_df = creatTestDB()
+#    tableCopy(table_df)
 
     #2
 #    tableAlter(target)
@@ -422,19 +436,46 @@ function createView(df)
     viewtable = string(df.apino[1],"_view")
     targetsql = df.sql[1]
 
-    tconn = TestDBController.open_connection()
+    #===
+        targetsqlのカラム部分を分解してas宣言しないとDuplication column errorになる可能性があるので
+        ここでas設定を追加する。　😁めんどくせー
+
+        select ftest.name,ftest2.name,.....
+        ->
+        select ftest.name as ftest_name,ftest2.name as ftest2_name,.....
+    ===#
+    columns_str = extractColumnsFromSql(targetsql)
+    editedtargetsql = ""
+    if 0<length(columns_str)
+        c = split(columns_str,',')
+        for i=1:length(c)
+            p = c[i]
+            pp = replace(p,'.'=>'_')
+            c[i] = """$p as $pp"""
+
+            if 0<length(editedtargetsql)
+                editedtargetsql = string(editedtargetsql,',',c[i])
+            else
+                editedtargetsql = c[i]
+            end   
+        end
+
+        @info "editedtargetsql " editedtargetsql
+    end
+
+#    tconn = TestDBController.open_connection()
 
     create_view_str = """create view $viewtable as $targetsql;"""
 
     @info "create view str: " create_view_str
 
     try
-        execute(tconn, create_view_str)
+ #       execute(tconn, create_view_str)
     catch err
         println(err)
         JetelinaLog.writetoLogfile("SQLAnalyzer.createView() error: $err")
     finally
-        TestDBController.close_connection(tconn)
+ #       TestDBController.close_connection(tconn)
     end
 end
 
