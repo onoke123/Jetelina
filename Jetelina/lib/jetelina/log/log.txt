@@ -572,3 +572,9 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
 ┌ Info: 2023-07-10 12:54:40 SQLAnalyzer.tableCopy() error: MethodError(size, (nothing,), 0x00000000000080b5)
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-07-10 12:59:04 SQLAnalyzer.createView() error: LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"ftest_name\"\nLINE 1: ...te view js312_view as select ftest.name as select ftest_name...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-07-10 13:01:48 SQLAnalyzer.createView() error: LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"ftest_name\"\nLINE 1: ...te view js312_view as select ftest.name as select ftest_name...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-07-10 13:03:48 SQLAnalyzer.createView() error: LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"ftest\"\nLINE 1: create view js312_view as ftest.name as ftest_name,ftest.age...\n                                  ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30

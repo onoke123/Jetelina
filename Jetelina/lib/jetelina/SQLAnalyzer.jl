@@ -252,13 +252,14 @@ function extractColumnsFromSql(s)
         ss = split(s,"select ")
         cs = string(ss[2])
         ad = "select"
-        if contains(s,"from")
-            ss = split(s," from")
+        if contains(cs,"from")
+            ss = split(cs," from")
             cs = string(ss[1])
             ad = string("from",ss[2])
         end
     end
 
+    @info "cs ad " cs ad
     return cs, ad
 end
 """
@@ -460,14 +461,14 @@ function createView(df)
             if 0<length(editedtargetsql)
                 editedtargetsql = string(editedtargetsql,',',c[i])
             else
-                editedtargetsql = c[i]
+                editedtargetsql = string("select",' ',c[i])
             end   
         end
 
         @info "editedtargetsql " editedtargetsql
     end
 
-#    tconn = TestDBController.open_connection()
+    tconn = TestDBController.open_connection()
 
     targetsql = string(editedtargetsql,' ', columns_str[2])
     create_view_str = """create view $viewtable as $targetsql;"""
@@ -475,12 +476,12 @@ function createView(df)
     @info "create view str: " create_view_str
 
     try
- #       execute(tconn, create_view_str)
+        execute(tconn, create_view_str)
     catch err
         println(err)
         JetelinaLog.writetoLogfile("SQLAnalyzer.createView() error: $err")
     finally
- #       TestDBController.close_connection(tconn)
+        TestDBController.close_connection(tconn)
     end
 end
 
