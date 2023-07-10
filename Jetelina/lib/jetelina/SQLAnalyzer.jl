@@ -104,7 +104,7 @@ function createAnalyzedJsonFile()
             できること。
         ==#
         cols = extractColumnsFromSql(df[:,:sql][i])
-        c = split(cols, ",")
+        c = split(cols[1], ",")
 
         for j = 1:length(c)
             """
@@ -243,19 +243,23 @@ end
 
         Args: String sql文を期待。ex. select .... from .....
 
-        return: tuple 1 or 2 -> 1: selectで分解 -> [1]:"select" [2]:column trings
-                                2: select & fromで分解 -> [1]:column strings [2]:from strings
+        return: tuple s: column strngs ad: select or from strings
 """
 function extractColumnsFromSql(s)
+    ad::String = ""
+    cs::String = ""
     if contains(s,"select")
-        s = split(s,"select ")[2]
-
+        ss = split(s,"select ")
+        cs = string(ss[2])
+        ad = "select"
         if contains(s,"from")
-            s = split(s," from")[1]
+            ss = split(s," from")
+            cs = string(ss[1])
+            ad = string("from",ss[2])
         end
     end
 
-    return s
+    return cs, ad
 end
 """
     read sqlcsv.json then put it to DataFrame for experimental*()
@@ -411,8 +415,8 @@ function experimentalCreateView(df)
     ===#
 
     #1
-#    table_df = creatTestDB()
-#    tableCopy(table_df)
+    table_df = creatTestDB()
+    tableCopy(table_df)
 
     #2
 #    tableAlter(target)
@@ -446,8 +450,8 @@ function createView(df)
     ===#
     columns_str = extractColumnsFromSql(targetsql)
     editedtargetsql = ""
-    if 0<length(columns_str)
-        c = split(columns_str,',')
+    if 0<length(columns_str[1])
+        c = split(columns_str[1],',')
         for i=1:length(c)
             p = c[i]
             pp = replace(p,'.'=>'_')
@@ -465,6 +469,7 @@ function createView(df)
 
 #    tconn = TestDBController.open_connection()
 
+    targetsql = string(editedtargetsql,' ', columns_str[2])
     create_view_str = """create view $viewtable as $targetsql;"""
 
     @info "create view str: " create_view_str

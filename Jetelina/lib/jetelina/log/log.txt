@@ -564,3 +564,11 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
 ┌ Info: 2023-07-10 11:32:37 SQLAnalyzer.tableCopy() error: MethodError(size, (nothing,), 0x0000000000007e8d)
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-07-10 12:52:32 SQLAnalyzer.creatTestDB() error: LibPQ.Errors.ObjectInUse("ERROR:  database \"testdb\" is being accessed by other users\nDETAIL:  There is 1 other session using the database.\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-07-10 12:52:32 SQLAnalyzer.tableCopy() error: MethodError(size, (nothing,), 0x00000000000080b5)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-07-10 12:54:40 SQLAnalyzer.creatTestDB() error: LibPQ.Errors.ObjectInUse("ERROR:  database \"testdb\" is being accessed by other users\nDETAIL:  There is 1 other session using the database.\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-07-10 12:54:40 SQLAnalyzer.tableCopy() error: MethodError(size, (nothing,), 0x00000000000080b5)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
