@@ -436,10 +436,12 @@ end
 function createView(df)
     # 対象が一つとは限らない
     create_view_str = String[]
+    newapilist = Dict()
 
     for i=1:nrow(df)
         viewtable = string(df.apino[i],"_view")
         targetsql = df.sql[i]
+
         #===
             targetsqlのカラム部分を分解してas宣言しないとDuplication column errorになる可能性があるので
             ここでas設定を追加する。　😁めんどくせー
@@ -451,9 +453,14 @@ function createView(df)
             extractColumnsFromSql()はtupleで返してきて、
                 [1]:column strings
                 [2]:"select"もしくは"from"以降のstrings 
+
+            同時に、元のapiを更新する必要がある。
+            create viewされたtableのカラム名は以下のppに相当するから、ループ処理の中で一緒に作ってしまおう。
+            作成されたview用のapiはapiファイル上に更新するので、"api名=>新SQL文"でDict()にしておけば後々処理が楽そう。
         ===#
         columns_str = extractColumnsFromSql(targetsql)
         editedtargetsql = ""
+        newapisql = ""
         if 0<length(columns_str[1])
             c = split(columns_str[1],',')
             for ii=1:length(c)
@@ -463,23 +470,25 @@ function createView(df)
 
                 if 0<length(editedtargetsql)
                     editedtargetsql = string(editedtargetsql,',',c[ii])
+                    newapisql = string(newapisql,',',pp)
                 else
                     editedtargetsql = string("select",' ',c[ii])
-                end   
+                    newapisql = string("select",' ',pp)
+                end
             end
         end
 
         # column_str[2]には"from"以降の文を期待している。多分裏切らない。
         targetsql = string(editedtargetsql,' ', columns_str[2])
+        newapisql = string(newapisql," from ", viewtable)
+#        @info "newapisql " newapisql
+        newapilist[df.apino[i]] = newapisql
         cvs = """create view $viewtable as $targetsql;"""
         push!(create_view_str,cvs)
-#        create_view_str[i] = """create view $viewtable as $targetsql;"""
     end
 
+    @info "new api list " newapilist
     tconn = TestDBController.open_connection()
-
-
-    #    @info "create view str: " create_view_str
 
     try
         for i=1:length(create_view_str)
