@@ -259,9 +259,11 @@ function extractColumnsFromSql(s)
         end
     end
 
-    @info "cs ad " cs ad
+#    @info "cs ad " cs ad
     return cs, ad
 end
+
+#=== create view方式になったのでこの関数は使わない
 """
     read sqlcsv.json then put it to DataFrame for experimental*()
 
@@ -392,7 +394,7 @@ function _exeSQLAnalyze(df::DataFrame)
         experimentalCreateView(target_data)
     end
 end
-
+===#
 """
     View table create for test
         analyzeに基づいてview tableを仮実行する。
@@ -438,50 +440,58 @@ end
           targetsql: sql for creating view  ex. select .......
 """
 function createView(df)
-    viewtable = string(df.apino[1],"_view")
-    targetsql = df.sql[1]
+    # 対象が一つとは限らない
+    for i=1:nrwo(df)
 
-    #===
-        targetsqlのカラム部分を分解してas宣言しないとDuplication column errorになる可能性があるので
-        ここでas設定を追加する。　😁めんどくせー
+        viewtable = string(df.apino[i],"_view")
+        targetsql = df.sql[i]
 
-        select ftest.name,ftest2.name,.....
-        ->
-        select ftest.name as ftest_name,ftest2.name as ftest2_name,.....
-    ===#
-    columns_str = extractColumnsFromSql(targetsql)
-    editedtargetsql = ""
-    if 0<length(columns_str[1])
-        c = split(columns_str[1],',')
-        for i=1:length(c)
-            p = c[i]
-            pp = replace(p,'.'=>'_')
-            c[i] = """$p as $pp"""
+        #===
+            targetsqlのカラム部分を分解してas宣言しないとDuplication column errorになる可能性があるので
+            ここでas設定を追加する。　😁めんどくせー
 
-            if 0<length(editedtargetsql)
-                editedtargetsql = string(editedtargetsql,',',c[i])
-            else
-                editedtargetsql = string("select",' ',c[i])
-            end   
+            select ftest.name,ftest2.name,.....
+            ->
+            select ftest.name as ftest_name,ftest2.name as ftest2_name,.....
+
+            extractColumnsFromSql()はtupleで返してきて、
+                [1]:column strings
+                [2]:"select"もしくは"from"以降のstrings 
+        ===#
+        columns_str = extractColumnsFromSql(targetsql)
+        editedtargetsql = ""
+        if 0<length(columns_str[1])
+            c = split(columns_str[1],',')
+            for i=1:length(c)
+                p = c[i]
+                pp = replace(p,'.'=>'_')
+                c[i] = """$p as $pp"""
+
+                if 0<length(editedtargetsql)
+                    editedtargetsql = string(editedtargetsql,',',c[i])
+                else
+                    editedtargetsql = string("select",' ',c[i])
+                end   
+            end
+
+    #        @info "editedtargetsql " editedtargetsql
         end
 
-        @info "editedtargetsql " editedtargetsql
-    end
+        tconn = TestDBController.open_connection()
 
-    tconn = TestDBController.open_connection()
+        targetsql = string(editedtargetsql,' ', columns_str[2])
+        create_view_str = """create view $viewtable as $targetsql;"""
 
-    targetsql = string(editedtargetsql,' ', columns_str[2])
-    create_view_str = """create view $viewtable as $targetsql;"""
+    #    @info "create view str: " create_view_str
 
-    @info "create view str: " create_view_str
-
-    try
-        execute(tconn, create_view_str)
-    catch err
-        println(err)
-        JetelinaLog.writetoLogfile("SQLAnalyzer.createView() error: $err")
-    finally
-        TestDBController.close_connection(tconn)
+        try
+            execute(tconn, create_view_str)
+        catch err
+            println(err)
+            JetelinaLog.writetoLogfile("SQLAnalyzer.createView() error: $err")
+        finally
+            TestDBController.close_connection(tconn)
+        end
     end
 end
 
