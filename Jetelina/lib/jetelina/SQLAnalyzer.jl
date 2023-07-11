@@ -405,24 +405,18 @@ function experimentalCreateView(df)
     @info "target df: " df
 
     #===
-    1.運用中のDBの全tableを解析用DBにコピーする。データ数は全件ではない
-    2.該当するtableのレイアウト変更を実行する
-    3.sql listの対象となるselect文を実験実行する
-    4.性能を比較してどうするか決める
+    1.テスト用のDBを用意する
+    2.運用中のDBの全tableを解析用DBにコピーする。データ数は全件ではない
+    3.該当するSQLを特定しcreate viewを実行する。該当apiんもそれ用にする
+    4.3で新規に作成されたviewの新apiを実行して、前のものと性能を比較する。結果を”レポート”に残す→function panelで表示するため
     5.解析用DBを削除することを忘れずに
-
-    1,5は上位でやろう
-
-    view方式にしたので全tableを解析用にDBにコピーする必要はなくなった。
-    つまり、対象となるapiだけ試験実行すればいいから他のapiには影響なくなった。
     ===#
 
     #1
     table_df = creatTestDB()
-    tableCopy(table_df)
-
     #2
-#    tableAlter(target)
+    tableCopy(table_df)
+    #3
     createView(df)
 
     # JetelinaSQLListfileを開いて対象となるsql文を呼ぶ
@@ -441,11 +435,11 @@ end
 """
 function createView(df)
     # 対象が一つとは限らない
-    for i=1:nrwo(df)
+    create_view_str = String[]
 
+    for i=1:nrow(df)
         viewtable = string(df.apino[i],"_view")
         targetsql = df.sql[i]
-
         #===
             targetsqlのカラム部分を分解してas宣言しないとDuplication column errorになる可能性があるので
             ここでas設定を追加する。　😁めんどくせー
@@ -462,36 +456,41 @@ function createView(df)
         editedtargetsql = ""
         if 0<length(columns_str[1])
             c = split(columns_str[1],',')
-            for i=1:length(c)
-                p = c[i]
+            for ii=1:length(c)
+                p = c[ii]
                 pp = replace(p,'.'=>'_')
-                c[i] = """$p as $pp"""
+                c[ii] = """$p as $pp"""
 
                 if 0<length(editedtargetsql)
-                    editedtargetsql = string(editedtargetsql,',',c[i])
+                    editedtargetsql = string(editedtargetsql,',',c[ii])
                 else
-                    editedtargetsql = string("select",' ',c[i])
+                    editedtargetsql = string("select",' ',c[ii])
                 end   
             end
-
-    #        @info "editedtargetsql " editedtargetsql
         end
 
-        tconn = TestDBController.open_connection()
-
+        # column_str[2]には"from"以降の文を期待している。多分裏切らない。
         targetsql = string(editedtargetsql,' ', columns_str[2])
-        create_view_str = """create view $viewtable as $targetsql;"""
+        cvs = """create view $viewtable as $targetsql;"""
+        push!(create_view_str,cvs)
+#        create_view_str[i] = """create view $viewtable as $targetsql;"""
+    end
+
+    tconn = TestDBController.open_connection()
+
 
     #    @info "create view str: " create_view_str
 
-        try
-            execute(tconn, create_view_str)
-        catch err
-            println(err)
-            JetelinaLog.writetoLogfile("SQLAnalyzer.createView() error: $err")
-        finally
-            TestDBController.close_connection(tconn)
+    try
+        for i=1:length(create_view_str)
+            @info "create view str " create_view_str[i]
+            execute(tconn, create_view_str[i])
         end
+    catch err
+        println(err)
+        JetelinaLog.writetoLogfile("SQLAnalyzer.createView() error: $err")
+    finally
+        TestDBController.close_connection(tconn)
     end
 end
 
