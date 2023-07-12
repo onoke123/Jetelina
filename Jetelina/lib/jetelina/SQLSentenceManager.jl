@@ -64,6 +64,33 @@ function writeTolist(sql, tablename_arr)
     return true, string(suffix, seq_no)
 end
 
+"""
+    updateSqlList()
+
+    JetelinaSQLListfileファイルの更新を行う
+
+    Args
+        type: v->view tableのSQLなのでappend処理
+              c->common 通常のSQLなので上書き処理
+        
+        dic : 更新対象SQLが、apino=>sql のDict形式
+                ex.  js100=>select ....
+"""
+function updateSqlList(type,dic)
+    if !isempty(dic)
+        nd = keys(dic)
+
+        for i=1:length(nd)
+            
+            if type == 'v'
+                # view sql
+            else
+                # common sql
+            end
+        end
+    end
+end
+
 #===
     drop tableと同時にsql listから対象tableのヤツを消す
 ===#

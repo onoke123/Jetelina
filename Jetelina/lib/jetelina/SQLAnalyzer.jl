@@ -16,7 +16,7 @@ using StatsBase
 using JetelinaReadConfig, JetelinaLog
 using ExeSql, DBDataController, PgDBController
 using DelimitedFiles
-using JetelinaFiles, JetelinaReadSqlList
+using JetelinaFiles, JetelinaReadSqlList, SQLSentenceManager
 using TestDBController, PgDataTypeList
 
 const sqljsonfile = getFileNameFromLogPath(JetelinaSQLAnalyzedfile)
@@ -494,6 +494,9 @@ function createView(df)
         for i=1:length(create_view_str)
             @info "create view str " create_view_str[i]
             execute(tconn, create_view_str[i])
+
+            # SQL update to JetelinaSQLListfile
+            SQLSentenceManager.updateSqlList('v',newapilist)
         end
     catch err
         println(err)
