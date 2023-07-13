@@ -496,7 +496,7 @@ function createView(df)
 #            execute(tconn, create_view_str[i])
 
             # SQL update to JetelinaSQLListfile
-            SQLSentenceManager.updateSqlList('v',newapilist)
+            SQLSentenceManager.updateSqlList(newapilist)
         end
     catch err
         println(err)

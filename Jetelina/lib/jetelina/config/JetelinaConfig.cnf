@@ -17,6 +17,7 @@ sqlanalyzedfile = sqlanalyzed.json
 sqllistfile = JetelinaSqlList
 sqlperformancefile = JetelinaSqlPerformance
 tableapifile = JetelinaTableApi
+experimentsqllistfile = JetelinaExperimentSqlList
 
 #
 #  section of database

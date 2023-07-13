@@ -30,7 +30,7 @@ using JetelinaFiles
 export debugflg, JetelinaLogfile, JetelinaDBtype, JetelinaFileUploadPath, JetelinaSQLLogfile, JetelinaDBhost,
     JetelinaDBport, JetelinaDBuser, JetelinaDBpassword, JetelinaDBsslmode, JetelinaDBname, Df_JetelinaTableManager,
     JetelinaSQLAnalyzedfile, JetelinaSQLListfile, JetelinaSqlPerformancefile, JetelinaTableApifile, JetelinaTestDBname,
-    JetelinaTestDBDataLimitNumber
+    JetelinaTestDBDataLimitNumber, JetelinaExperimentSqlList
 
 """
     function __init__()
@@ -79,6 +79,8 @@ function readConfig()
                     global JetelinaSqlPerformancefile = getSetting(l[i])
                 elseif startswith(l[i], "tableapifile")
                     global JetelinaTableApifile = getSetting(l[i])
+                elseif startswith(l[i], "experimentsqllistfile")
+                    global JetelinaExperimentSqlList = getSetting(l[i])
                 elseif startswith(l[i], "dbtype")
                     # DB type
                     global JetelinaDBtype = getSetting(l[i])

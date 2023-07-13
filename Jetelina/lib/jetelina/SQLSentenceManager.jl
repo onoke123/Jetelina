@@ -6,6 +6,7 @@ using DBDataController, JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, Je
 # sqli list file
 sqlFile = getFileNameFromConfigPath(JetelinaSQLListfile)
 tableapiFile = getFileNameFromConfigPath(JetelinaTableApifile)
+experimentFile = getFileNameFromConfigPath(JetelinaExperimentSqlList)
 
 function writeTolist(sql, tablename_arr)
     # get the sequence name then create the sql sentence
@@ -70,23 +71,17 @@ end
     JetelinaSQLListfileファイルの更新を行う
 
     Args
-        type: v->view tableのSQLなのでappend処理
-              c->common 通常のSQLなので上書き処理
-        
         dic : 更新対象SQLが、apino=>sql のDict形式
                 ex.  js100=>select ....
 """
-function updateSqlList(type,dic)
+function updateSqlList(dic)
     #===
         SQL ListはDf_JetelinaSqlListでdataframe形式でメモリ展開されている。
         これをDict形式に変換するもよし、元のJetelinaSqlListファイルをCSV.read()してDictにするもよし。
         今回は元ファイルからにしてみる。
     ===#
     orglist = CSV.File(sqlFile) |> Dict
-    @info "org list dict type: " println(orglist)
-
     newlist = merge!(orglist,dic)
-    @info "new list dict type: " println(newlist)
 
     #===
         ファイル書き込みの準備はできた。
@@ -94,6 +89,13 @@ function updateSqlList(type,dic)
         なので新しいファイル名が必要になる。
         それをconfファイルに追加しないと。
     ===#
+    try
+        CSV.write( experimentFile, newlist )
+    catch err
+        println(err)
+        JetelinaLog.writetoLogfile("SQLSentenceManager.updateSqlList() error: $err")
+        return false
+    end
     
 end
 
