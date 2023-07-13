@@ -90,7 +90,7 @@ function updateSqlList(dic)
         それをconfファイルに追加しないと。
     ===#
     try
-        CSV.write( experimentFile, newlist )
+        CSV.write( experimentFile, newlist, header=["no","sql"] )
     catch err
         println(err)
         JetelinaLog.writetoLogfile("SQLSentenceManager.updateSqlList() error: $err")
