@@ -1,6 +1,6 @@
 module SQLSentenceManager
 
-using Dates, StatsBase
+using Dates, StatsBase, CSV
 using DBDataController, JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
 
 # sqli list file
@@ -77,18 +77,24 @@ end
                 ex.  js100=>select ....
 """
 function updateSqlList(type,dic)
-    if !isempty(dic)
-        nd = keys(dic)
+    #===
+        SQL ListはDf_JetelinaSqlListでdataframe形式でメモリ展開されている。
+        これをDict形式に変換するもよし、元のJetelinaSqlListファイルをCSV.read()してDictにするもよし。
+        今回は元ファイルからにしてみる。
+    ===#
+    orglist = CSV.File(sqlFile) |> Dict
+    @info "org list dict type: " println(orglist)
 
-        for i=1:length(nd)
-            
-            if type == 'v'
-                # view sql
-            else
-                # common sql
-            end
-        end
-    end
+    newlist = merge!(orglist,dic)
+    @info "new list dict type: " println(newlist)
+
+    #===
+        ファイル書き込みの準備はできた。
+        ここで書き込むのは試験用のリストになる。なぜならリストを作成したあとに実行速度の測定をするから。
+        なので新しいファイル名が必要になる。
+        それをconfファイルに追加しないと。
+    ===#
+    
 end
 
 #===
@@ -101,9 +107,12 @@ function deleteFromlist(tablename)
     # 該当tableと関係するApiを取得する
     targetapi = []
     # 対象ファイル類のバックアップをとっておく
-    backupfilesuffix = Dates.format(now(), "yyyymmdd-HHMMSS")
-    cp(tableapiFile, string(tableapiFile, backupfilesuffix), force=true)
-    cp(sqlFile, string(sqlFile, backupfilesuffix), force=true)
+#    backupfilesuffix = Dates.format(now(), "yyyymmdd-HHMMSS")
+#    cp(tableapiFile, string(tableapiFile, backupfilesuffix), force=true)
+#    cp(sqlFile, string(sqlFile, backupfilesuffix), force=true)
+
+    fileBackup(tableapiFile)
+    fileBackup(sqlFile)
 
     try
         open(tableapiTmpFile, "w") do ttaf
@@ -156,6 +165,19 @@ function deleteFromlist(tablename)
     JetelinaReadSqlList.readSqlList2DataFrame()
 
     return true
+end
+
+"""
+    fileBackup()
+
+        指定されたファイルのバックアップを行う。
+        バックアップファイルはさふぃに"日付時間 yyyymmdd-HHMMSS"が付く。
+
+        Args: file name (full path)
+"""
+function fileBackup(fname)
+    backupfilesuffix = Dates.format(now(), "yyyymmdd-HHMMSS")
+    cp(fname, string(fname, backupfilesuffix), force=true)
 end
 
 """

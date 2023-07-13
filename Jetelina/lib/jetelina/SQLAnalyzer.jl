@@ -493,7 +493,7 @@ function createView(df)
     try
         for i=1:length(create_view_str)
             @info "create view str " create_view_str[i]
-            execute(tconn, create_view_str[i])
+#            execute(tconn, create_view_str[i])
 
             # SQL update to JetelinaSQLListfile
             SQLSentenceManager.updateSqlList('v',newapilist)
