@@ -106,7 +106,7 @@ function measureSqlPerformance()
         df = CSV.read( sqlFile, DataFrame )
         for i in 1:length(df)
             if startswith(df.no[i] ,"js")
-                p = doSelect(df.sql[i],"measure")
+                p = doSelect(df.sql[i])
                 fno::String=df.no[i]
                 fmax::Float64=p[1][1]
                 fmin::Float64=p[2][1]
