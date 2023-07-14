@@ -414,12 +414,28 @@ function experimentalCreateView(df)
     #2
     tableCopy(table_df)
     #3
-    createView(df)
+    dict = createView(df)
 
     # JetelinaSQLListfileを開いて対象となるsql文を呼ぶ
     # そのsqlでPgTestDBController.doSelect(sql)　を呼ぶ
     # 実験で得られたdata(max,min,mean)とJetelina..fileにある既存値を比較する　ref. measureSqlPerformance()
     # 全体としてパフォーマンスの改善が見られたらレイアウトを変更する。
+
+    #4
+    if 0<length(dict)
+        @info "dict " dict
+
+        for i in keys(dict)
+            #===
+                i->key, dict[i]->valueになる
+                つまり、
+                    ex. i->js101, dict[i]->select ....
+            ===#
+            @info "dict key: " i
+            @info "dict value: " dict[i]
+
+        end
+    end
 end
 
 """
@@ -429,6 +445,8 @@ end
 
     Args: viewtable: view table name  ex. js102
           targetsql: sql for creating view  ex. select .......
+
+    return: Dict() create viewしたことにより更新されたapinoとsql
 """
 function createView(df)
     # 対象が一つとは限らない
@@ -500,6 +518,8 @@ function createView(df)
         JetelinaLog.writetoLogfile("SQLAnalyzer.createView() error: $err")
     finally
         TestDBController.close_connection(tconn)
+
+        return newapilist
     end
 end
 
