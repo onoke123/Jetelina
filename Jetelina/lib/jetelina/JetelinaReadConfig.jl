@@ -30,7 +30,8 @@ using JetelinaFiles
 export debugflg, JetelinaLogfile, JetelinaDBtype, JetelinaFileUploadPath, JetelinaSQLLogfile, JetelinaDBhost,
     JetelinaDBport, JetelinaDBuser, JetelinaDBpassword, JetelinaDBsslmode, JetelinaDBname, Df_JetelinaTableManager,
     JetelinaSQLAnalyzedfile, JetelinaSQLListfile, JetelinaSqlPerformancefile, JetelinaTableApifile, JetelinaTestDBname,
-    JetelinaTestDBDataLimitNumber, JetelinaExperimentSqlList
+    JetelinaTestDBDataLimitNumber, JetelinaExperimentSqlList, JetelinaFileColumnApino, JetelinaFileColumnSql,
+    JetelinaFileColumnMax, JetelinaFileColumnMin, JetelinaFileColumnMean
 
 """
     function __init__()
@@ -81,6 +82,16 @@ function readConfig()
                     global JetelinaTableApifile = getSetting(l[i])
                 elseif startswith(l[i], "experimentsqllistfile")
                     global JetelinaExperimentSqlList = getSetting(l[i])
+                elseif startswith(l[i], "file_column_apino")
+                    global JetelinaFileColumnApino = getSetting(l[i])
+                elseif startswith(l[i], "file_column_sql")
+                    global JetelinaFileColumnSql = getSetting(l[i])
+                elseif startswith(l[i], "file_column_max")
+                    global JetelinaFileColumnMax = getSetting(l[i])
+                elseif startswith(l[i], "file_column_min")
+                    global JetelinaFileColumnMin = getSetting(l[i])
+                elseif startswith(l[i], "file_column_mean")
+                    global JetelinaFileColumnMean = getSetting(l[i])
                 elseif startswith(l[i], "dbtype")
                     # DB type
                     global JetelinaDBtype = getSetting(l[i])

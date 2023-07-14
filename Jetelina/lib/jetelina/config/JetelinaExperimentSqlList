@@ -1,4 +1,4 @@
-no,sql
+apino,sql
 js312,"select ftest_name,ftest_age,ftest2_name,ftest2_age,ftest3_age,ftest3_dumy from js312_view"
 jd36,delete from ftest2
 ji306,"insert into ftest2 values(id,'name','sex',age,ave,jetelina_delete_flg)"

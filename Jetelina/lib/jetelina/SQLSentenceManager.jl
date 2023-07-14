@@ -38,7 +38,7 @@ function writeTolist(sql, tablename_arr)
     try
         open(sqlFile, "a") do f
             if !thefirstflg
-                println(f, "no,sql")
+                println(f, string(JetelinaFileColumnApino,',',JetelinaFileColumnSql))
             end
 
 
@@ -86,11 +86,11 @@ function updateSqlList(dic)
     #===
         ファイル書き込みの準備はできた。
         ここで書き込むのは試験用のリストになる。なぜならリストを作成したあとに実行速度の測定をするから。
-        なので新しいファイル名が必要になる。
-        それをconfファイルに追加しないと。
+        CSV.write()を”素”で実行するとheaderがデフォルトで"first","secound"と付いてまう。
+        これをカスタマイズするために"header"を指定するんだと。
     ===#
     try
-        CSV.write( experimentFile, newlist, header=["no","sql"] )
+        CSV.write( experimentFile, newlist, header=[JetelinaFileColumnApino,JetelinaFileColumnSql] )
     catch err
         println(err)
         JetelinaLog.writetoLogfile("SQLSentenceManager.updateSqlList() error: $err")

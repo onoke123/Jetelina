@@ -102,7 +102,7 @@ function measureSqlPerformance()
     sqlPerformanceFile = getFileNameFromConfigPath(JetelinaSqlPerformancefile)
 
     open(sqlPerformanceFile, "w") do f
-        println(f,"no,max,min,mean")
+        println(f,string(JetelinaFileColumnApino,',',JetelinaFileColumnMax,',',JetelinaFileColumnMin,',',JetelinaFileColumnMean))
         df = CSV.read( sqlFile, DataFrame )
         for i in 1:length(df)
             if startswith(df.no[i] ,"js")

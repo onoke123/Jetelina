@@ -162,8 +162,6 @@ function createAnalyzedJsonFile()
     # ヨシと、testdbで操作するぜ
     experimentalCreateView(target)
 
-
-#=== 7/9 以下はできているので一旦コメントアウトする
     #===
         ここから下は、Jetelinaのconditional panelでグラフを書くための処理。
         統計処理自体は↑で終わっている。
@@ -233,7 +231,6 @@ function createAnalyzedJsonFile()
     open(sqljsonfile, "w") do f
         println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df)))))
     end
-7/9 ここまで===#
 end
 
 """
@@ -402,7 +399,7 @@ end
         Args: df: target dataframe data
 """
 function experimentalCreateView(df)
-    @info "target df: " df
+#    @info "target df: " df
 
     #===
     1.テスト用のDBを用意する
@@ -487,13 +484,13 @@ function createView(df)
         push!(create_view_str,cvs)
     end
 
-    @info "new api list " newapilist
+#    @info "new api list " newapilist
     tconn = TestDBController.open_connection()
 
     try
         for i=1:length(create_view_str)
-            @info "create view str " create_view_str[i]
-#            execute(tconn, create_view_str[i])
+#            @info "create view str " create_view_str[i]
+            execute(tconn, create_view_str[i])
 
             # SQL update to JetelinaSQLListfile
             SQLSentenceManager.updateSqlList(newapilist)

@@ -573,7 +573,7 @@ function measureSqlPerformance()
     sqlPerformanceFile = getFileNameFromConfigPath(JetelinaSqlPerformancefile)
 
     open(sqlPerformanceFile, "w") do f
-        println(f,"no,max,min,mean")
+        println(f,string(JetelinaFileColumnApino,',',JetelinaFileColumnMax,',',JetelinaFileColumnMin,',',JetelinaFileColumnMean))
         df = CSV.read( sqlFile, DataFrame )
 #        for i in 1:size(df,1)
         for i in 1:length(df)
