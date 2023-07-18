@@ -436,12 +436,26 @@ function experimentalCreateView(df)
         
         後のことはconditional panelのjsに任せる。
     ===#
+    sqlPerformanceFile_real = getFileNameFromConfigPath(JetelinaSqlPerformancefile)
+    sqlPerformanceFile_test = getFileNameFromConfigPath(string(JetelinaSqlPerformancefile,".test"))
+
+    df_real = CSV.read(sqlPerformanceFile_real,DataFrame)
+    df_test = CSV.read(sqlPerformanceFile_test,DataFrame)
+
+    @info "df_real: " println(df_real)
+    @info "df_test: " println(df_test)
+
+    real_max = findall(x->x==maximum(df_real[!,:max]),df_real[!,:max])
+    real_min = findall(x->x==maximum(df_real[!,:min]),df_real[!,:min])
+    real_mean = findall(x->x==maximum(df_real[!,:mean]),df_real[!,:mean])
+
+@info "df_real: " 
 end
 
 """
     createView()
 
-    ２つ以上のテーブルが関係して且つ、実際に利用されている頻度の高いSQL文をviewにする
+    2つ以上のテーブルが関係して且つ、実際に利用されている頻度の高いSQL文をviewにする
 
     Args: viewtable: view table name  ex. js102
           targetsql: sql for creating view  ex. select .......
