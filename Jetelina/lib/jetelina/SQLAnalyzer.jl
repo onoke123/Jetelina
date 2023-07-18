@@ -442,14 +442,25 @@ function experimentalCreateView(df)
     df_real = CSV.read(sqlPerformanceFile_real,DataFrame)
     df_test = CSV.read(sqlPerformanceFile_test,DataFrame)
 
-    @info "df_real: " println(df_real)
-    @info "df_test: " println(df_test)
+    df_real.max  = df_real.max / maximum(df_real.max)
+    df_real.min  = df_real.min / maximum(df_real.min)
+    df_real.mean = df_real.mean / maximum(df_real.mean)
 
-    real_max = findall(x->x==maximum(df_real[!,:max]),df_real[!,:max])
-    real_min = findall(x->x==maximum(df_real[!,:min]),df_real[!,:min])
-    real_mean = findall(x->x==maximum(df_real[!,:mean]),df_real[!,:mean])
+    df_test.max  = df_test.max / maximum(df_test.max)
+    df_test.min  = df_test.min / maximum(df_test.min)
+    df_test.mean = df_test.mean / maximum(df_test.mean)
 
-@info "df_real: " 
+    sqlPerformanceFile_real_json = getFileNameFromConfigPath(string(JetelinaSqlPerformancefile,".json"))
+    sqlPerformanceFile_test_json = getFileNameFromConfigPath(string(JetelinaSqlPerformancefile,".test.json"))
+
+    open(sqlPerformanceFile_real_json, "w") do f
+        println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(df_real)))))
+    end
+
+    open(sqlPerformanceFile_test_json, "w") do f
+        println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(df_test)))))
+    end
+
 end
 
 """
