@@ -424,6 +424,11 @@ function experimentalCreateView(df)
     #4
     TestDBController.measureSqlPerformance()
     #===
+        JetelinaSqlPerformancefile(実DB)と..test(testdb)ファイルのapino毎のパフォーマンスを比較する。
+        実DBの各値(max/min/mean)は各値のmax値でnormalizeする。
+        testdbの各値は、実DBの各値のmax値でnormalizeする。
+    ===#
+    #===
     if 0<length(dict)
         @info "dict " dict
 
