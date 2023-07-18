@@ -405,7 +405,7 @@ function experimentalCreateView(df)
     1.テスト用のDBを用意する
     2.運用中のDBの全tableを解析用DBにコピーする。データ数は全件ではない
     3.該当するSQLを特定しcreate viewを実行する。該当apiんもそれ用にする
-    4.3で新規に作成されたviewの新apiを実行して、前のものと性能を比較する。結果を”レポート”に残す→function panelで表示するため
+    4.3で新規に作成されたviewの新apiを含めてtestdbで全apiを実行して、前のものと性能を比較する。結果を”レポート”に残す→function panelで表示するため
     5.解析用DBを削除することを忘れずに
     ===#
 
@@ -422,6 +422,8 @@ function experimentalCreateView(df)
     # 全体としてパフォーマンスの改善が見られたらレイアウトを変更する。
 
     #4
+    TestDBController.measureSqlPerformance()
+    #===
     if 0<length(dict)
         @info "dict " dict
 
@@ -436,6 +438,7 @@ function experimentalCreateView(df)
 
         end
     end
+    ===#
 end
 
 """

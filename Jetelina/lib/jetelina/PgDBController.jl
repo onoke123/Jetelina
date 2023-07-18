@@ -575,11 +575,11 @@ function measureSqlPerformance()
     open(sqlPerformanceFile, "w") do f
         println(f,string(JetelinaFileColumnApino,',',JetelinaFileColumnMax,',',JetelinaFileColumnMin,',',JetelinaFileColumnMean))
         df = CSV.read( sqlFile, DataFrame )
-#        for i in 1:size(df,1)
-        for i in 1:length(df)
-            if startswith(df.no[i] ,"js")
+        for i in 1:size(df,1)
+#        for i in 1:length(df)
+            if startswith(df.apino[i] ,"js")
                 p = doSelect(df.sql[i],"measure")
-                fno::String=df.no[i]
+                fno::String=df.apino[i]
                 fmax::Float64=p[1][1]
                 fmin::Float64=p[2][1]
                 fmean::Float64=p[3]

@@ -1,4 +1,4 @@
-no,sql
+apino,sql
 ji293,"insert into masterftest values(id,'name','sex',age,ave,jetelina_delete_flg)"
 ju294,"update masterftest set id=d_id,name='d_name',sex='d_sex',age=d_age,ave=d_ave,jetelina_delete_flg=d_jetelina_delete_flg"
 jd295,"delete from masterftest"

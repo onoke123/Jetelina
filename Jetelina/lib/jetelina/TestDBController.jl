@@ -98,16 +98,16 @@ function measureSqlPerformance()
      Df_JetelinaSqlList　に格納されているsqlリストを利用するのがよさそうと思ったが、DF_Jeteli..はGenie空間にあるため、
      web経由でないと利用できない。それだとcronとか別プロセスで利用できないので、JetelinaSqlListを開いて処理することにする。
     ===#
-    sqlFile = getFileNameFromConfigPath(JetelinaSQLListfile)
-    sqlPerformanceFile = getFileNameFromConfigPath(JetelinaSqlPerformancefile)
-
+    sqlFile = getFileNameFromConfigPath(JetelinaExperimentSqlList)
+    sqlPerformanceFile = getFileNameFromConfigPath(string(JetelinaSqlPerformancefile,".test"))
+@info "sqlFile: " sqlFile, sqlPerformanceFile
     open(sqlPerformanceFile, "w") do f
         println(f,string(JetelinaFileColumnApino,',',JetelinaFileColumnMax,',',JetelinaFileColumnMin,',',JetelinaFileColumnMean))
         df = CSV.read( sqlFile, DataFrame )
-        for i in 1:length(df)
-            if startswith(df.no[i] ,"js")
+        for i in 1:size(df,1)
+            if startswith(df.apino[i] ,"js")
                 p = doSelect(df.sql[i])
-                fno::String=df.no[i]
+                fno::String=df.apino[i]
                 fmax::Float64=p[1][1]
                 fmin::Float64=p[2][1]
                 fmean::Float64=p[3]
