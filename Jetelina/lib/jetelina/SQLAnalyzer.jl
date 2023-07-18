@@ -427,22 +427,14 @@ function experimentalCreateView(df)
         JetelinaSqlPerformancefile(実DB)と..test(testdb)ファイルのapino毎のパフォーマンスを比較する。
         実DBの各値(max/min/mean)は各値のmax値でnormalizeする。
         testdbの各値は、実DBの各値のmax値でnormalizeする。
-    ===#
-    #===
-    if 0<length(dict)
-        @info "dict " dict
-
-        for i in keys(dict)
-            #===
-                i->key, dict[i]->valueになる
-                つまり、
-                    ex. i->js101, dict[i]->select ....
-            ===#
-            @info "dict key: " i
-            @info "dict value: " dict[i]
-
-        end
-    end
+        
+        ①Jeteli..file,②Jeteli..file.testの各ファイルをDataFrame化する。
+        ①のmax/min/meanの各max値を求めて、各apinoの各値をnormalizeする。
+        ①で採用した各max値で②の各apinoの各値をnormalizeする。
+        ①②の当該apinoに何らかの印をつけておく。
+        以上をjsonファイル化する。
+        
+        後のことはconditional panelのjsに任せる。
     ===#
 end
 
