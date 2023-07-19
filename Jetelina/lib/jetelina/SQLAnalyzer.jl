@@ -415,7 +415,6 @@ function experimentalCreateView(df)
     tableCopy(table_df)
     #3
     dict = createView(df)
-    @info "dict " dict
     dict_apino_arr = []
     if 0<length(dict)
         for i in keys(dict)
@@ -424,13 +423,12 @@ function experimentalCreateView(df)
                 つまり、
                     ex. i->js101, dict[i]->select ....
             ===#
-            @info "dict key: " i
-            @info "dict value: " dict[i]
+#            @info "dict key: " i
+#            @info "dict value: " dict[i]
             push!(dict_apino_arr,i)
         end
     end
 
-    @info "dict arr " dict_apino_arr
     # JetelinaSQLListfileを開いて対象となるsql文を呼ぶ
     # そのsqlでPgTestDBController.doSelect(sql)　を呼ぶ
     # 実験で得られたdata(max,min,mean)とJetelina..fileにある既存値を比較する　ref. measureSqlPerformance()
@@ -473,7 +471,16 @@ function experimentalCreateView(df)
         もしあったら、当該aipnoを大文字にする。
         大文字のapinoはグラフ上でハイライトされるハズ。
     ===#
-
+    for i=1:length(dict_apino_arr)
+        #===
+            ここで、pはVector{Int64}で返ってくる。
+            ということはpそのものは配列型になっているので、index数字をIntとして使うにはp[1]とする。
+            なので、df_real/df_testのrow indexはp[1]になっている。メンドイ^_^
+        ===#
+        p = findall( x->x==dict_apino_arr[i],df_real.apino)
+        df_real[p[1],:apino] = uppercase(dict_apino_arr[i])
+        df_test[p[1],:apino] = uppercase(dict_apino_arr[i])
+    end
     
     open(sqlPerformanceFile_real_json, "w") do f
         println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(df_real)))))
