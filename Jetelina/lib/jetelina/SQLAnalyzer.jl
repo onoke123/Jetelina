@@ -415,7 +415,22 @@ function experimentalCreateView(df)
     tableCopy(table_df)
     #3
     dict = createView(df)
+    @info "dict " dict
+    dict_apino_arr = []
+    if 0<length(dict)
+        for i in keys(dict)
+            #===
+                i->key, dict[i]->valueになる
+                つまり、
+                    ex. i->js101, dict[i]->select ....
+            ===#
+            @info "dict key: " i
+            @info "dict value: " dict[i]
+            push!(dict_apino_arr,i)
+        end
+    end
 
+    @info "dict arr " dict_apino_arr
     # JetelinaSQLListfileを開いて対象となるsql文を呼ぶ
     # そのsqlでPgTestDBController.doSelect(sql)　を呼ぶ
     # 実験で得られたdata(max,min,mean)とJetelina..fileにある既存値を比較する　ref. measureSqlPerformance()
@@ -453,6 +468,13 @@ function experimentalCreateView(df)
     sqlPerformanceFile_real_json = getFileNameFromConfigPath(string(JetelinaSqlPerformancefile,".json"))
     sqlPerformanceFile_test_json = getFileNameFromConfigPath(string(JetelinaSqlPerformancefile,".test.json"))
 
+    #===
+        df_real/df_testの各apinoがdict_apino_arrにあるかどうか調べる。
+        もしあったら、当該aipnoを大文字にする。
+        大文字のapinoはグラフ上でハイライトされるハズ。
+    ===#
+
+    
     open(sqlPerformanceFile_real_json, "w") do f
         println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(df_real)))))
     end
