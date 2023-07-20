@@ -30,10 +30,10 @@ const conditionPanelFunctions = (ut) => {
         switch (cmd) {
             case 'graph':
                 $("#plot").show();
+                $("#performance_real").show()
                 m = chooseMsg('6cond-graph-show', "", "");
                 break;
             case 'performance':
-                console.log("performance");
                 getAjaxData("/getperformancedata_test");
                 break;
             default:
@@ -45,15 +45,22 @@ const conditionPanelFunctions = (ut) => {
     return m;
 }
 
-const setGraphData = (o) => {
+const setGraphData = (o,type) => {
     if (o != null) {
         Object.keys(o).forEach(function (key) {
             //’Jetelina’のvalueはオブジェクトになっているからこうしている  name=>key value=>o[key]
             if (key == "Jetelina" && o[key].length > 0) {
+                // access vs combination
                 let base_table_name = [];
                 let base_table_no = [];
                 let combination_table = [];
                 let access_count = [];
+                /* performance
+                    apino,max,min,mean -> apino, meanだけを使う。
+                */
+                let apino = [];
+                let mean = [];
+                
                 $.each(o[key], function (k, v) {
                     if (v != null) {
                         $.each(v, function (name, value) {
@@ -76,6 +83,10 @@ const setGraphData = (o) => {
                                 combination_table.push(pn);// table combination no -> y axis                                    
                             } else if (name == "access_number") {
                                 access_count.push(value);// table access normarize no -> z axis
+                            } else if ( name == "apino"){
+                                apino.push(value);
+                            } else if ( name == "mean"){
+                                mean.push(value);
                             }
                         });
                     }
@@ -83,15 +94,51 @@ const setGraphData = (o) => {
 
                 //plot.jsのレンダリング実行速度がクライアントによって違うので、ここで遅延処理して辻褄を合わせる
                 setTimeout(function () {
-                    viewGraph(base_table_name, base_table_no, combination_table, access_count);
+                    if( type == "ac" ){
+                        viewGraph(base_table_name, base_table_no, combination_table, access_count);
+                    }else{
+                        viewPerformanceGraph(apino,mean,type);
+                    }
                 }, 1000);
 
             }
         });
-
     }
+}
 
+const viewPerformanceGraph = (apino,mean,type) =>{
+    var data = [
+        {
+            opacity: 0.5,
+            type: 'scatter',
+            text: apino,
+            x: apino,
+            y: mean,
+            mode: 'markers+text'
+        }
+    ];
+    var layout = {
+        plot_bgcolor: "rgb(0,0,0)",
+        paper_bgcolor: "rgb(0,0,0)",
+        scene: {
+            xaxis: {
+                backgroundcolor: "rgb(255,0,0)",
+                showbackground: false,
+                gridcolor: "rgb(0,153,153)"
+            },
+            yaxis: {
+                backgroundcolor: "rgb(255,0,0)",
+                showbackground: false,
+                gridcolor: "rgb(0,153,153)"
+            }
+        }
+    };
 
+    if( type == "real"){
+        Plotly.newPlot('performance_real', data, layout);
+    }else{
+        Plotly.newPlot('performance_test', data, layout);
+    }
 }
 
 const viewGraph = (bname, bno, ct, ac) => {

@@ -99,9 +99,21 @@ const getAjaxData = (url) => {
             dataType: "json"
         }).done(function (result, textStatus, jqXHR) {
             // data parseに行く
-            if (url == "/getsqlanalyzerdata") {
+            const graphurls = ["/getsqlanalyzerdata","/getperformancedata_real","/getperformancedata_test"];
+            if ($.inArray(url,graphurls) != -1) {
+                let type = "";
+                if( url == graphurls[0]){
+                    // access vs combination
+                    type = "ac";
+                }else if( url == graphurls[1] ){
+                    // real performance
+                    type = "real"; 
+                }else if( url == graphurls[2]){
+                    // test performance
+                    type = "test";
+                }
                 //condition panel graphic data
-                setGraphData(result);//defined in conditionpanel.js
+                setGraphData(result, type);//defined in conditionpanel.js
                 sad = true;//ref conditionpanel.js
             } else {
                 //主にfunction panelのデータ
