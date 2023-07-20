@@ -30,6 +30,7 @@ scenario['6func_post_err'] = ['Hey, no columns','You should select post data','B
 scenario['6cond'] = ['Let me your command, if you need'];
 scenario['6cond-graph-show'] = ['here you are','tatta laan'];
 scenario['6cond-graph-show-keywords'] = ['graph','graphic','figure','zu'];
+scenario['6cond-performance-graph-show-keywords'] = ['performance','suggest','perf','zu'];
 scenario['6a'] = ['OK, here you are'];
 scenario['6b'] = ['Command me, if you need'];
 scenario['6func-cleanup-cmd'] = ['refresh','cleanup','clean'];

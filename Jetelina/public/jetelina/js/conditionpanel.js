@@ -20,10 +20,10 @@ const conditionPanelFunctions = (ut) => {
         }        
 
         if (cmd == null || cmd.length <= 0) {
-            for (let i = 0; i < scenario['6cond-graph-show-keywords'].length; i++) {
-                if (ut.indexOf(scenario['6cond-graph-show-keywords'][i]) != -1) {
-                    cmd = "graph";
-                }
+            if($.inArray(ut,scenario['6cond-graph-show-keywords']) != -1 ){
+                cmd = "graph";
+            }else if($.inArray(ut,scenario['6cond-performance-graph-show-keywords']) != -1 ){
+                cmd = "performance";
             }
         }
 
@@ -31,6 +31,10 @@ const conditionPanelFunctions = (ut) => {
             case 'graph':
                 $("#plot").show();
                 m = chooseMsg('6cond-graph-show', "", "");
+                break;
+            case 'performance':
+                console.log("performance");
+                getAjaxData("/getperformancedata_test");
                 break;
             default:
                 m = "";//ここは後処理にお任せ

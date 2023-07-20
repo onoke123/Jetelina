@@ -412,7 +412,10 @@ const chatKeyDown = (cmd) => {
                             そのため、一度呼び出したらsadフラグを設定して、これを判定として利用する。
                         */
                         if (!sad) {
+                            // relation access & combination
                             getAjaxData("/getsqlanalyzerdata");
+                            // simply sql speed
+                            getAjaxData("/getperformancedata_real");
                         }
                     }
 

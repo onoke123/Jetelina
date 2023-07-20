@@ -13,4 +13,15 @@ module GetDataController
         sqljsonfile = getFileNameFromLogPath( JetelinaSQLAnalyzedfile )
         return readchomp(sqljsonfile)        
     end
+
+    function getPerformanceRealData()
+        performancefile = getFileNameFromLogPath( string(JetelinaSqlPerformancefile,".json") )
+        return readchomp(performancefile)        
+    end
+
+    function getPerformanceTestData()
+        performancefile = getFileNameFromLogPath( string(JetelinaSqlPerformancefile,".test.json") )
+        return readchomp(performancefile)        
+    end
+
 end

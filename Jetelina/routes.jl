@@ -59,6 +59,9 @@ route("/dofup", FileUploadController.fup, method = POST)
 
 # condition panel のsqlアクセス解析データ取得
 route("/getsqlanalyzerdata",GetDataController.getSqlAnalyzerData)
+# condition panel のsqlパフォーマンスデータ取得
+route("/getperformancedata_real",GetDataController.getPerformanceRealData)
+route("/getperformancedata_test",GetDataController.getPerformanceTestData)
 
 # test for three.js
 #===

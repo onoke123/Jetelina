@@ -463,8 +463,8 @@ function experimentalCreateView(df)
     df_test.min  = df_test.min / maximum(df_test.min)
     df_test.mean = df_test.mean / maximum(df_test.mean)
 
-    sqlPerformanceFile_real_json = getFileNameFromConfigPath(string(JetelinaSqlPerformancefile,".json"))
-    sqlPerformanceFile_test_json = getFileNameFromConfigPath(string(JetelinaSqlPerformancefile,".test.json"))
+    sqlPerformanceFile_real_json = getFileNameFromLogPath(string(JetelinaSqlPerformancefile,".json"))
+    sqlPerformanceFile_test_json = getFileNameFromLogPath(string(JetelinaSqlPerformancefile,".test.json"))
 
     #===
         df_real/df_testの各apinoがdict_apino_arrにあるかどうか調べる。
