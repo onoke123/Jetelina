@@ -428,7 +428,13 @@ const chatKeyDown = (cmd) => {
                             getAjaxData("/getsqlanalyzerdata");
                             // simply sql speed
                             getAjaxData("/getperformancedata_real");
-                        }
+                            // sql speed after creating view
+                            /*
+                               create viewしたほうがいいよという「提案」があったら
+                               これを実行する。どう提案されるかは思案中🤔
+                            */
+                               getAjaxData("/getperformancedata_test");
+                            }
                     }
 
                     break;

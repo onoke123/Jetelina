@@ -3,8 +3,8 @@ const conditionPanelFunctions = (ut) => {
 
     if (presentaction == null || presentaction.length == 0) {
         presentaction.push('cond');
-      }
-    
+    }
+
     if (ut.indexOf('func') != -1) {
         delete preferent;
         delete presentaction;
@@ -14,26 +14,32 @@ const conditionPanelFunctions = (ut) => {
         // 優先オブジェクトがあればそれを使う
         let cmd = getPreferentPropertie('cmd');
 
-        if (debug){
+        if (debug) {
             console.log("conditonpanel.js conditonPanelFunctions() starts with : ", ut);
             console.log("conditonpanel.js conditonPanelFunctions() cmd : ", cmd);
-        }        
+        }
 
         if (cmd == null || cmd.length <= 0) {
-            if($.inArray(ut,scenario['6cond-graph-show-keywords']) != -1 ){
+            if ($.inArray(ut, scenario['6cond-graph-show-keywords']) != -1) {
                 cmd = "graph";
-            }else if($.inArray(ut,scenario['6cond-performance-graph-show-keywords']) != -1 ){
+            } else if ($.inArray(ut, scenario['6cond-performance-graph-show-keywords']) != -1) {
                 cmd = "performance";
             }
         }
 
         switch (cmd) {
             case 'graph':
+                /*
+                    #plotは3Dグラフをグリグリ回転させるので、divパネル自体は
+                    draggableにはしないでおく。
+                */
                 $("#plot").show().animate({
                     top: "5%",
                     left: "-5%"
                 }, animateDuration);
-
+                /*
+                    このグラフは2DだからdivパネルをdraggableでもOK
+                */
                 $("#performance_real").show().draggable().animate({
                     top: "-50%",
                     left: "50%"
@@ -42,7 +48,15 @@ const conditionPanelFunctions = (ut) => {
                 m = chooseMsg('6cond-graph-show', "", "");
                 break;
             case 'performance':
-                getAjaxData("/getperformancedata_test");
+                /*
+                    このグラフは2DだからdivパネルをdraggableでもOK
+                */
+                $("#performance_test").show().draggable().animate({
+                    top: "-70%",
+                    left: "30%"
+                }, animateDuration);
+
+                m = chooseMsg('6cond-graph-show', "", "");
                 break;
             default:
                 m = "";//ここは後処理にお任せ
@@ -53,7 +67,7 @@ const conditionPanelFunctions = (ut) => {
     return m;
 }
 
-const setGraphData = (o,type) => {
+const setGraphData = (o, type) => {
     if (o != null) {
         Object.keys(o).forEach(function (key) {
             //’Jetelina’のvalueはオブジェクトになっているからこうしている  name=>key value=>o[key]
@@ -68,30 +82,30 @@ const setGraphData = (o,type) => {
                 */
                 let apino = [];
                 let mean = [];
-                
+
                 $.each(o[key], function (k, v) {
                     if (v != null) {
                         $.each(v, function (name, value) {
-                            if ( name == "apino"){
+                            if (name == "apino") {
                                 apino.push(value);
                             } else if (name == "combination") {
                                 base_table_no.push(value[0]);// original table no -> x axis
                                 let pn = 0;
-                                if( 2<value.length ){
+                                if (2 < value.length) {
                                     let cbn = 0;
-                                    for( let i=2; i<value.length; i++ ){
+                                    for (let i = 2; i < value.length; i++) {
                                         cbn += value[i];
                                     }
 
                                     pn = cbn;
-                                }else if( value.length == 2 ){
+                                } else if (value.length == 2) {
                                     pn = value[1];
                                 }
 
                                 combination_table.push(pn);// table combination no -> y axis                                    
                             } else if (name == "access_number") {
                                 access_count.push(value);// table access normarize no -> z axis
-                            } else if ( name == "mean"){
+                            } else if (name == "mean") {
                                 mean.push(value);
                             }
                         });
@@ -100,10 +114,10 @@ const setGraphData = (o,type) => {
 
                 //plot.jsのレンダリング実行速度がクライアントによって違うので、ここで遅延処理して辻褄を合わせる
                 setTimeout(function () {
-                    if( type == "ac" ){
+                    if (type == "ac") {
                         viewCombinationGraph(apino, base_table_no, combination_table, access_count);
-                    }else{
-                        viewPerformanceGraph(apino,mean,type);
+                    } else {
+                        viewPerformanceGraph(apino, mean, type);
                     }
                 }, 1000);
 
@@ -112,7 +126,7 @@ const setGraphData = (o,type) => {
     }
 }
 
-const viewPerformanceGraph = (apino,mean,type) =>{
+const viewPerformanceGraph = (apino, mean, type) => {
     var data = [
         {
             opacity: 0.5,
@@ -121,66 +135,43 @@ const viewPerformanceGraph = (apino,mean,type) =>{
             x: apino,
             y: mean,
             mode: 'markers',
-            marker:{
+            marker: {
                 color: 'rgb(255,255,255)',
                 size: 20
             }
         }
     ];
+
     var layout = {
         plot_bgcolor: 'rgb(0,0,0)',
         paper_bgcolor: 'rgb(112,128,144)',
-/*        scene: {*/
-            xaxis: {
-                backgroundcolor: 'rgb(255,0,0)',
-                showbackground: false,
-                gridcolor: 'rgb(0,153,153)',
-                color: 'rgb(255,255,255)',
-                size: 20,
-                title: 'api no'
-            },
-            yaxis: {
-                backgroundcolor: 'rgb(255,0,0)',
-                showbackground: false,
-                gridcolor: 'rgb(0,153,153)',
-                color: 'rgb(255,255,255)',
-                size: 20,
-                title: 'exection speed'
-            },
-
-//            height: '90%',
-//            width: '90%'
-        /*}*/
-    };
-/*
-    var layout = {
-        plot_bgcolor: "rgb(105,105,105)",
-        paper_bgcolor: "rgb(105,105,105)",
-        scene: {
-            xaxis: {
-                backgroundcolor: "rgb(255,0,0)",
-                showbackground: false,
-                gridcolor: "rgb(255,255,255)",
-                title: "api no"
-            },
-            yaxis: {
-                backgroundcolor: "rgb(255,0,0)",
-                showbackground: false,
-                gridcolor: "rgb(255,255,255)",
-                title: "SQL exec mean time (sec)"
-            }
+        xaxis: {
+            backgroundcolor: 'rgb(255,0,0)',
+            showbackground: false,
+            gridcolor: 'rgb(0,153,153)',
+            color: 'rgb(255,255,255)',
+            size: 20,
+            title: 'api no'
+        },
+        yaxis: {
+            backgroundcolor: 'rgb(255,0,0)',
+            showbackground: false,
+            gridcolor: 'rgb(0,153,153)',
+            color: 'rgb(255,255,255)',
+            size: 20,
+            title: 'exection speed'
         }
     };
-*/
-    if( type == "real"){
+
+    if (type == "real") {
         Plotly.newPlot('performance_real_graph', data, layout);
-    }else{
-        Plotly.newPlot('performance_test', data, layout);
+    } else {
+        Plotly.newPlot('performance_test_graph', data, layout);
     }
 }
 
 const viewCombinationGraph = (bname, bno, ct, ac) => {
-    if(debug){
+    if (debug) {
         console.log("bname: ", bname);
         console.log("bno: ", bno);
         console.log("ct: ", ct);
@@ -201,35 +192,30 @@ const viewCombinationGraph = (bname, bno, ct, ac) => {
     var layout = {
         plot_bgcolor: 'rgb(0,0,0)',
         paper_bgcolor: 'rgb(112,128,144)',
-
-        //        plot_bgcolor: 'rgb(0,0,0)',
-//        paper_bgcolor: 'rgb(0,0,0)',
-//        scene: { 
-            xaxis: {
-                backgroundcolor: 'rgb(255,0,0)',
-                showbackground: false,
-                gridcolor: 'rgb(0,153,153)',
-                color: 'rgb(255,255,255)',
-                size: 20,
-                title: 'api no'
-           },
-            yaxis: {
-                backgroundcolor: 'rgb(255,0,0)',
-                showbackground: false,
-                gridcolor: 'rgb(0,153,153)',
-                color: 'rgb(255,255,255)',
-                size: 20,
-                title: 'combination'
-            },
-            zaxis: {
-                backgroundcolor: 'rgb(255,0,0)',
-                showbackground: false,
-                gridcolor: 'rgb(0,153,153)',
-                color: 'rgb(255,255,255)',
-                size: 20,
-                title: 'access'
-            }
-//        }
+        xaxis: {
+            backgroundcolor: 'rgb(255,0,0)',
+            showbackground: false,
+            gridcolor: 'rgb(0,153,153)',
+            color: 'rgb(255,255,255)',
+            size: 20,
+            title: 'api no'
+        },
+        yaxis: {
+            backgroundcolor: 'rgb(255,0,0)',
+            showbackground: false,
+            gridcolor: 'rgb(0,153,153)',
+            color: 'rgb(255,255,255)',
+            size: 20,
+            title: 'combination'
+        },
+        zaxis: {
+            backgroundcolor: 'rgb(255,0,0)',
+            showbackground: false,
+            gridcolor: 'rgb(0,153,153)',
+            color: 'rgb(255,255,255)',
+            size: 20,
+            title: 'access'
+        }
     };
 
     Plotly.newPlot('plot_graph', data, layout);
