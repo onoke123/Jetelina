@@ -18,9 +18,15 @@
             各種ステータスを表示・解析するパネル
         -->
 	<div id="condition_panel" class="functionpanel-parts commonpanel squarepanel" hidden>
-		<div id="plot" style="width:50%;height:50%" hidden></div>
-		<div id="performance_real" style="width:50%;height:50%" hidden></div>
-		<div id="performance_test" style="width:50%;height:50%" hidden></div>
+		<div id="plot" style="width:50%;height:50%" hidden>
+			<div><text style="size:a3;color:lightgreen;">Access vs Combination</text></div>
+			<div id="plot_graph"></div>
+		</div>
+		<div id="performance_real" style="width:50%;height:50%" hidden>
+			<div><text style="size:a3;color:white;">SQL Execution Time (sec)</text></div>
+			<div id="performance_real_graph"></div>
+		</div>
+		<div id="performance_test" style="width:30%;height:30%" hidden></div>
 	</div>
 	<!-- 
 			機能を実現するパネル

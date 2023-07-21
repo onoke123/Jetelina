@@ -29,8 +29,16 @@ const conditionPanelFunctions = (ut) => {
 
         switch (cmd) {
             case 'graph':
-                $("#plot").show();
-                $("#performance_real").show()
+                $("#plot").show().draggable().animate({
+                    top: "5%",
+                    left: "-5%"
+                }, animateDuration);
+
+                $("#performance_real").show().draggable().animate({
+                    top: "-50%",
+                    left: "50%"
+                }, animateDuration);
+
                 m = chooseMsg('6cond-graph-show', "", "");
                 break;
             case 'performance':
@@ -114,38 +122,73 @@ const viewPerformanceGraph = (apino,mean,type) =>{
             text: apino,
             x: apino,
             y: mean,
-            mode: 'markers+text'
+            mode: 'markers',
+            marker:{
+                color: 'rgb(255,255,255)',
+                size: 20
+            }
         }
     ];
     var layout = {
-        plot_bgcolor: "rgb(0,0,0)",
-        paper_bgcolor: "rgb(0,0,0)",
+        plot_bgcolor: 'rgb(0,0,0)',
+        paper_bgcolor: 'rgb(112,128,144)',
+/*        scene: {*/
+            xaxis: {
+                backgroundcolor: 'rgb(255,0,0)',
+                showbackground: false,
+                gridcolor: 'rgb(0,153,153)',
+                color: 'rgb(255,255,255)',
+                size: 20,
+                title: 'api no'
+            },
+            yaxis: {
+                backgroundcolor: 'rgb(255,0,0)',
+                showbackground: false,
+                gridcolor: 'rgb(0,153,153)',
+                color: 'rgb(255,255,255)',
+                size: 20,
+                title: 'exection speed'
+            },
+
+            height: '90%',
+            width: '90%'
+        /*}*/
+    };
+/*
+    var layout = {
+        plot_bgcolor: "rgb(105,105,105)",
+        paper_bgcolor: "rgb(105,105,105)",
         scene: {
             xaxis: {
                 backgroundcolor: "rgb(255,0,0)",
                 showbackground: false,
-                gridcolor: "rgb(0,153,153)"
+                gridcolor: "rgb(255,255,255)",
+                title: "api no"
             },
             yaxis: {
                 backgroundcolor: "rgb(255,0,0)",
                 showbackground: false,
-                gridcolor: "rgb(0,153,153)"
+                gridcolor: "rgb(255,255,255)",
+                title: "SQL exec mean time (sec)"
             }
         }
     };
-
+*/
     if( type == "real"){
-        Plotly.newPlot('performance_real', data, layout);
+        Plotly.newPlot('performance_real_graph', data, layout);
     }else{
         Plotly.newPlot('performance_test', data, layout);
     }
 }
 
 const viewGraph = (bname, bno, ct, ac) => {
-    console.log("bname: ", bname);
-    console.log("bno: ", bno);
-    console.log("ct: ", ct);
-    console.log("at: ", ac);
+    if(debug){
+        console.log("bname: ", bname);
+        console.log("bno: ", bno);
+        console.log("ct: ", ct);
+        console.log("at: ", ac);
+    }
+
     var data = [
         {
             opacity: 0.5,
@@ -154,12 +197,6 @@ const viewGraph = (bname, bno, ct, ac) => {
             x: bno,
             y: ct,
             z: ac,
-            /*
-            x: [1, 5, 6],
-            y: [1, 2, 3],
-            z: [1, 3, 8],
-            text: ["a", "b", "c"],
-        */
             mode: 'markers+text'
         }
     ];
@@ -185,5 +222,5 @@ const viewGraph = (bname, bno, ct, ac) => {
         }
     };
 
-    Plotly.newPlot('plot', data, layout);
+    Plotly.newPlot('plot_graph', data, layout);
 }
