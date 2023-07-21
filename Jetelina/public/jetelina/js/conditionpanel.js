@@ -29,7 +29,7 @@ const conditionPanelFunctions = (ut) => {
 
         switch (cmd) {
             case 'graph':
-                $("#plot").show().draggable().animate({
+                $("#plot").show().animate({
                     top: "5%",
                     left: "-5%"
                 }, animateDuration);
@@ -72,8 +72,8 @@ const setGraphData = (o,type) => {
                 $.each(o[key], function (k, v) {
                     if (v != null) {
                         $.each(v, function (name, value) {
-                            if (name == "column_name") {
-                                base_table_name.push(value);// original table column name -> point text
+                            if ( name == "apino"){
+                                apino.push(value);
                             } else if (name == "combination") {
                                 base_table_no.push(value[0]);// original table no -> x axis
                                 let pn = 0;
@@ -91,8 +91,6 @@ const setGraphData = (o,type) => {
                                 combination_table.push(pn);// table combination no -> y axis                                    
                             } else if (name == "access_number") {
                                 access_count.push(value);// table access normarize no -> z axis
-                            } else if ( name == "apino"){
-                                apino.push(value);
                             } else if ( name == "mean"){
                                 mean.push(value);
                             }
@@ -103,7 +101,7 @@ const setGraphData = (o,type) => {
                 //plot.jsのレンダリング実行速度がクライアントによって違うので、ここで遅延処理して辻褄を合わせる
                 setTimeout(function () {
                     if( type == "ac" ){
-                        viewGraph(base_table_name, base_table_no, combination_table, access_count);
+                        viewCombinationGraph(apino, base_table_no, combination_table, access_count);
                     }else{
                         viewPerformanceGraph(apino,mean,type);
                     }
@@ -150,8 +148,8 @@ const viewPerformanceGraph = (apino,mean,type) =>{
                 title: 'exection speed'
             },
 
-            height: '90%',
-            width: '90%'
+//            height: '90%',
+//            width: '90%'
         /*}*/
     };
 /*
@@ -181,7 +179,7 @@ const viewPerformanceGraph = (apino,mean,type) =>{
     }
 }
 
-const viewGraph = (bname, bno, ct, ac) => {
+const viewCombinationGraph = (bname, bno, ct, ac) => {
     if(debug){
         console.log("bname: ", bname);
         console.log("bno: ", bno);
@@ -201,25 +199,37 @@ const viewGraph = (bname, bno, ct, ac) => {
         }
     ];
     var layout = {
-        plot_bgcolor: "rgb(0,0,0)",
-        paper_bgcolor: "rgb(0,0,0)",
-        scene: {
+        plot_bgcolor: 'rgb(0,0,0)',
+        paper_bgcolor: 'rgb(112,128,144)',
+
+        //        plot_bgcolor: 'rgb(0,0,0)',
+//        paper_bgcolor: 'rgb(0,0,0)',
+//        scene: { 
             xaxis: {
-                backgroundcolor: "rgb(255,0,0)",
+                backgroundcolor: 'rgb(255,0,0)',
                 showbackground: false,
-                gridcolor: "rgb(0,153,153)"
-            },
+                gridcolor: 'rgb(0,153,153)',
+                color: 'rgb(255,255,255)',
+                size: 20,
+                title: 'api no'
+           },
             yaxis: {
-                backgroundcolor: "rgb(255,0,0)",
+                backgroundcolor: 'rgb(255,0,0)',
                 showbackground: false,
-                gridcolor: "rgb(0,153,153)"
+                gridcolor: 'rgb(0,153,153)',
+                color: 'rgb(255,255,255)',
+                size: 20,
+                title: 'combination'
             },
             zaxis: {
-                backgroundcolor: "rgb(255,0,0)",
+                backgroundcolor: 'rgb(255,0,0)',
                 showbackground: false,
-                gridcolor: "rgb(0,153,153)"
+                gridcolor: 'rgb(0,153,153)',
+                color: 'rgb(255,255,255)',
+                size: 20,
+                title: 'access'
             }
-        }
+//        }
     };
 
     Plotly.newPlot('plot_graph', data, layout);
