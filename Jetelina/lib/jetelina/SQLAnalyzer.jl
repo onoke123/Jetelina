@@ -470,7 +470,7 @@ function experimentalCreateView(df)
 
     sqlPerformanceFile_real_json = getFileNameFromLogPath(string(JetelinaSqlPerformancefile,".json"))
     sqlPerformanceFile_test_json = getFileNameFromLogPath(string(JetelinaSqlPerformancefile,".test.json"))
-    improveApisFile = getFileNameFromLogPath(string("JetelinaImprApis.json"))
+    improveApisFile = getFileNameFromLogPath(string(JetelinaImprApis))
 
     #===
         df_real/df_testの各apinoがdict_apino_arrにあるかどうか調べる。
@@ -490,11 +490,14 @@ function experimentalCreateView(df)
         df_test[p[1],:apino] = uppercase(dict_apino_arr[i])
 
         diff_speed = df_test[p[1],:mean] / df_real[p[1],:mean]
-        @info "diff " diff_speed
-
-#        if diff_speed<0.75
+        #@info "diff " diff_speed
+        #===
+            暫定的に25%以上の速度向上が見られたら、「やる？」という
+            提案をすることにする
+        ===#
+        if diff_speed<0.75
             improve_apis = (dict_apino_arr[i],diff_speed)
-#        end
+        end
 
     end
     

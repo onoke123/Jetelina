@@ -31,6 +31,7 @@ scenario['6cond'] = ['Let me your command, if you need'];
 scenario['6cond-graph-show'] = ['here you are','tatta laan'];
 scenario['6cond-graph-show-keywords'] = ['graph','graphic','figure','zu'];
 scenario['6cond-performance-graph-show-keywords'] = ['performance','suggest','perf','zu'];
+scenario['6cond-performance-improve'] = ['There is an improve suggestion.'];
 scenario['6a'] = ['OK, here you are'];
 scenario['6b'] = ['Command me, if you need'];
 scenario['6func-cleanup-cmd'] = ['refresh','cleanup','clean'];

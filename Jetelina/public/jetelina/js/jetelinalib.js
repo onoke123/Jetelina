@@ -47,7 +47,7 @@ const getdata = (o, t) => {
                               t=0/1即ちtableリストとカラムリストは単純オブジェクトなので、以下のループで
                               データを取得してリスト表示にする。
                            */
-                              $.each(v, function (name, value) {
+                            $.each(v, function (name, value) {
                                 if (t == 0) {
                                     // table list
                                     str += `<span class="table">${value}</span>`;
@@ -99,27 +99,41 @@ const getAjaxData = (url) => {
             dataType: "json"
         }).done(function (result, textStatus, jqXHR) {
             // data parseに行く
-            const graphurls = ["/getsqlanalyzerdata","/getperformancedata_real","/getperformancedata_test"];
-            if ($.inArray(url,graphurls) != -1) {
+            const graphurls = ["/getsqlanalyzerdata", "/getperformancedata_real", "/getperformancedata_test"];
+            if ($.inArray(url, graphurls) != -1) {
                 let type = "";
-                if( url == graphurls[0]){
+                if (url == graphurls[0]) {
                     // access vs combination
                     type = "ac";
-                }else if( url == graphurls[1] ){
+                } else if (url == graphurls[1]) {
                     // real performance
-                    type = "real"; 
-                }else if( url == graphurls[2]){
+                    type = "real";
+                } else if (url == graphurls[2]) {
                     // test performance
                     type = "test";
                 }
                 //condition panel graphic data
                 setGraphData(result, type);//defined in conditionpanel.js
                 sad = true;//ref conditionpanel.js
+                if(url == graphurls[2]){
+                    typingControll(chooseMsg("6cond-performance-improve", "", ""));                    
+                }else{
+                    typingControll(chooseMsg("success", "", ""));
+                }
+            } else if (url == "/getexistimprfile") {
+                if (result) {
+                    /*
+                       sql speed after creating view
+                       create viewしたほうがいいよという「提案」があったら
+                       これを実行する。
+                    */
+                    getAjaxData("/getperformancedata_test");
+                }
             } else {
                 //主にfunction panelのデータ
                 getdata(result, 0);
+                typingControll(chooseMsg("success", "", ""));
             }
-            typingControll(chooseMsg("success", "", ""));
         }).fail(function (result) {
             console.error("getAjaxData() fail");
             typingControll(chooseMsg("fail", "", ""));
@@ -428,13 +442,9 @@ const chatKeyDown = (cmd) => {
                             getAjaxData("/getsqlanalyzerdata");
                             // simply sql speed
                             getAjaxData("/getperformancedata_real");
-                            // sql speed after creating view
-                            /*
-                               create viewしたほうがいいよという「提案」があったら
-                               これを実行する。どう提案されるかは思案中🤔
-                            */
-                               getAjaxData("/getperformancedata_test");
-                            }
+                            // check existing for improve file
+                            getAjaxData("/getexistimprfile")
+                        }
                     }
 
                     break;
@@ -447,10 +457,10 @@ const chatKeyDown = (cmd) => {
                     m = conditionPanelFunctions(ut);
                     break;
                 default:/*before login*/
-                    if( ut == "reload" ){
+                    if (ut == "reload") {
                         location.reload();
                     }
-                
+
                     if (chkUResponse(0, ut)) {
                         // greeting
                         m = chooseMsg(1, "", "");
@@ -460,7 +470,7 @@ const chatKeyDown = (cmd) => {
                             m = chooseMsg(3, "", "");
                         }
                     }
-                
+
                     break;
             }
 
@@ -478,10 +488,10 @@ const chatKeyDown = (cmd) => {
 
             if (logoutflg) {
                 const t = 10000;//10秒後にopening画面となる
-                setTimeout(function(){
+                setTimeout(function () {
                     $("#jetelina_panel [name='your_tell']").text("");
                     openingMessage();
-                },t);
+                }, t);
             }
 
             //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく
@@ -496,22 +506,22 @@ const chatKeyDown = (cmd) => {
 /*
     Initial chat opening message
 */
-const openingMessage = () =>{
+const openingMessage = () => {
     const t = 10000;//10秒後にブラブラ始める
     $("#jetelina_panel [name='jetelina_tell']").text("");
     typing(0, chooseMsg(0, "", ""));
 
-    setTimeout(function(){burabura()},t);
+    setTimeout(function () { burabura() }, t);
 }
 /*
    初期画面でログイン前に入力待ちの時にブラブラしている感じ
 */
-const burabura = () =>{
+const burabura = () => {
     const t = 20000;//20秒後にブラブラメッセージを変える
-    timerId = setInterval(function(){
+    timerId = setInterval(function () {
         $("#jetelina_panel [name='jetelina_tell']").text("");
         typing(0, chooseMsg('bura', "", ""))
-    },t);
+    }, t);
 }
 /*
     logout check
@@ -537,6 +547,9 @@ const logout = () => {
     $("#function_panel").hide();
     $("#condition_panel").hide();
     $("#genelic_panel").hide();
+    $("#plot").hide();
+    $("#performance_real").hide();
+    $("#performance_test").hide();
 
     // global variables initialize
     stage = 0;

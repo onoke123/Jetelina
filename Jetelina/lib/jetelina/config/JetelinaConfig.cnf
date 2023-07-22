@@ -18,6 +18,7 @@ sqllistfile = JetelinaSqlList
 sqlperformancefile = JetelinaSqlPerformance
 tableapifile = JetelinaTableApi
 experimentsqllistfile = JetelinaExperimentSqlList
+improvesuggestionfile = JetelinaImprApis.json
 
 #
 # column title of sqllogfile/sqllistfile/experimentalsqllistfile

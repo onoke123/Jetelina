@@ -8,7 +8,6 @@ module GetDataController
         DBDataController.getTableList( "json" )
     end
 
-
     function getSqlAnalyzerData()
         sqljsonfile = getFileNameFromLogPath( JetelinaSQLAnalyzedfile )
         return readchomp(sqljsonfile)        
@@ -24,4 +23,8 @@ module GetDataController
         return readchomp(performancefile)        
     end
 
+    function checkExistImproveFile()
+        performancefile = getFileNameFromLogPath( JetelinaImprApis )
+        return isfile(performancefile)
+    end
 end
