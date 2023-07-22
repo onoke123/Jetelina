@@ -455,22 +455,30 @@ function experimentalCreateView(df)
     df_real = CSV.read(sqlPerformanceFile_real,DataFrame)
     df_test = CSV.read(sqlPerformanceFile_test,DataFrame)
 
-    df_real.max  = df_real.max / maximum(df_real.max)
-    df_real.min  = df_real.min / maximum(df_real.min)
-    df_real.mean = df_real.mean / maximum(df_real.mean)
+    std_max = maximum(df_real.max)
+    std_min = maximum(df_real.min)
+    std_mean = maximum(df_real.mean)
 
-    df_test.max  = df_test.max / maximum(df_test.max)
-    df_test.min  = df_test.min / maximum(df_test.min)
-    df_test.mean = df_test.mean / maximum(df_test.mean)
+    df_real.max  = df_real.max / std_max
+    df_real.min  = df_real.min / std_min
+    df_real.mean = df_real.mean / std_mean
+
+    # testdbのスピードは実DBの基準を採用することで比較可能となる。
+    df_test.max  = df_test.max / std_max
+    df_test.min  = df_test.min / std_min
+    df_test.mean = df_test.mean / std_mean
 
     sqlPerformanceFile_real_json = getFileNameFromLogPath(string(JetelinaSqlPerformancefile,".json"))
     sqlPerformanceFile_test_json = getFileNameFromLogPath(string(JetelinaSqlPerformancefile,".test.json"))
+    improveApisFile = getFileNameFromLogPath(string("JetelinaImprApis.json"))
 
     #===
         df_real/df_testの各apinoがdict_apino_arrにあるかどうか調べる。
         もしあったら、当該aipnoを大文字にする。
         大文字のapinoはグラフ上でハイライトされるハズ。
     ===#
+    improve_apis = Dict()
+
     for i=1:length(dict_apino_arr)
         #===
             ここで、pはVector{Int64}で返ってくる。
@@ -480,6 +488,14 @@ function experimentalCreateView(df)
         p = findall( x->x==dict_apino_arr[i],df_real.apino)
         df_real[p[1],:apino] = uppercase(dict_apino_arr[i])
         df_test[p[1],:apino] = uppercase(dict_apino_arr[i])
+
+        diff_speed = df_test[p[1],:mean] / df_real[p[1],:mean]
+        @info "diff " diff_speed
+
+#        if diff_speed<0.75
+            improve_apis = (dict_apino_arr[i],diff_speed)
+#        end
+
     end
     
     open(sqlPerformanceFile_real_json, "w") do f
@@ -488,6 +504,13 @@ function experimentalCreateView(df)
 
     open(sqlPerformanceFile_test_json, "w") do f
         println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(df_test)))))
+    end
+
+    if 0<length(improve_apis)
+        open(improveApisFile, "w") do f
+            println(f, JSON.json("Jetelina" => improve_apis))
+#            println(f, JSON.json(improve_apis))
+        end    
     end
 
 end
