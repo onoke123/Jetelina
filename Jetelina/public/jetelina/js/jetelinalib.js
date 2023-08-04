@@ -64,7 +64,7 @@ const getdata = (o, t) => {
                               こんな感じ。
                             */
                             // api list
-                            str += `<span class="api">${v.no}</span>`;
+                            str += `<span class="api">${v.apino}</span>`;
                         }
 
                         let tagid = "";
