@@ -1,24 +1,43 @@
+/**
+ * @author Ono Keiji
+ * @version 1.0
+ * 
+ * This is the main js file for Jetelina. These functions handle the initial behavior of Jetelina screen.
+ * 
+ */
 let stage = 0;// action stage number ex. 1:before login  'login':at login
-let preferent = {};// 優先されるべきコマンドを格納する
-let presentaction = {};// 現在実行されている機能を格納する ex. functionpanel -> table
+let preferent = {};// contains precedence commands
+let presentaction = {};// contains the present function  ex. functionpanel -> table
 const animateDuration = 1500;// animate() duration
-let sad = false;//getsqlanalyzerdataは一回だけ呼び出すので、getAjaxData()内でこれをtrueに設定する
-const debug = true;
-let timerId;//opening画面のブラブラ表示実行interval timer変数。jetelinalib.js burabura()で使用している
-//const table = [];
+let sad = false;// set this to 'true' in getAjaxData() as getsqlanalyzerdata is called only once
+const debug = true;// debug flag   true or false
+let timerId;// interval timer of the idling comment in the opening screen。uses in jetelinalib.js burabura()
 
 $(window).load(function () {
-  // focust on the input tag of jetelina panel
+  /**
+   * @function focusonJetelinaPanel
+   * 
+   * focust on the input tag of jetelina panel
+   */
   const focusonJetelinaPanel = () => {
     $("#jetelina_panel [name='chat_input']").focus();
   }
-  // make active the panel
+  /**
+   * @function activePanel
+   * @param {string]} panel tag name
+   * 
+   * make active the panel
+   */
   const activePanel = (p) => {
     $(p).removeClass("commonpanelborderoff");
     $(p).addClass("commonpanelborderon");
   }
-
-  // make inactive the panel
+  /**
+   * @function inactivePanel
+   * @param {string} panel tag name
+   *  
+   * make inactive the panel
+   */
   const inactivePanel = (p) => {
     $(p).removeClass("commonpanelborderon");
     $(p).addClass("commonpanelborderoff");
@@ -26,31 +45,31 @@ $(window).load(function () {
 
   /* panelをclickしたときに画面中央にpanelを移動させる。
      panelサイズを考慮した移動にしないといけない。
-  */
+     8/29 要るかどうかどうかわからないので一旦コメントアウト。 #83も同じ
+  
   const moveTotheCenter = () => {
-  }
+  }*/
 
-  // jetelina panel (chat)
-  $("#jetelina_panel").show().draggable({
-    /*
-    start: function(event, ui) {  }, //at drag start
-    drag: function( event, ui ) { }, //at during drag
-    stop: function (event, ui) { }
-    */
-  });
-
-  // condition panel
+  /**
+   * manipulate jetelina panel (chat)
+   */
+  $("#jetelina_panel").show().draggable();
+  /**
+   *   manipulate condition panel
+   */
   $("#condition_panel").hide().draggable();
   $("#plot").mouseover(function () {
     $("#condition_panel").draggable("disable");
   }).mouseout(function () {
     $("#condition_panel").draggable("enable");
   });
-
-  // function panel
+  /**
+   *  manipulate function panel
+   */
   $("#function_panel").hide().draggable();
-
-  // switch active/inactive panel by focusting 
+  /**
+   * switch active/inactive panel by focusting
+   */
   $(".squarepanel").mouseover(function () {
     let elementid = $(this).attr('id');
     if (elementid == 'jetelina_panel') focusonJetelinaPanel();
@@ -61,21 +80,21 @@ $(window).load(function () {
   }).on('click', function () {
     /* panelをclickしたときに画面中央にpanelを移動させる。
        panelサイズを考慮した移動にしないといけない。
-    */
     moveTotheCenter();
+    */
   });
-
-  // set forcus in the input tag of jetelina panel
+  /**
+   * set forcus in the input tag of jetelina panel
+   */
   focusonJetelinaPanel();
-
-  /* 最初のチャットメッセージを表示する
-     大体が"Hi"で始める
-  */
+  /**
+   * Show the first message 'Hi'
+   */
      openingMessage();
-  //  typing(0, chooseMsg(0, "", ""));
 });
-
-// chatting with Jetelina
+/**
+ * chatting with Jetelina
+ */
 $("#jetelina_panel [name='chat_input']").keypress(function (e) {
   if (e.keyCode == 13) {
     if (timerId != null ){
