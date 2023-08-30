@@ -1,31 +1,36 @@
-/*
+/**
     JS library for Jetelina common library
-    ver 1
-    Author : Ono Keiji
+    @author Ono Keiji
+    @version 1.0
+
+    This js lib works with dashboard.js, functionpanel.js and conditionpanel.js.
     
-    Functions:
-      getdata(o, t) 引数に渡されたオブジェクトを分解取得する
-      getAjaxData(url) 汎用的なajax getコール関数
-      postAjaxData(url,data) 汎用的なajax postコール関数
+
+    Functions list:
+      getdata(o, t) resolve the json object into each data
+      getAjaxData(url) general purpose ajax get call function 汎用的なajax getコール関数
+      postAjaxData(url,data) general purpose ajax post call function 汎用的なajax postコール関数
       typingControll(m) typing character controller
       authAjax(posturl, chunk, scenarioNumber) Authentication ajax call
-      chooseMsg(i,m,p) チャットに表示するメッセージを js/scenario.jsから選択する
-      typing(i,m) チャットメッセージをタイピング風に表示する
-      chkUResponse(n, s) ユーザレスポンスがuserresponse[]に期待されたものであるかチェックする
-      chatKeyDown(cmd) ユーザが入力するチャットボックス(input tag)でenter keyが押されたときの処理
+      chooseMsg(i,m,p) select a message to show in chat box from js/senario.js チャットに表示するメッセージを js/scenario.jsから選択する
+      typing(i,m) show a chat message alike typing style チャットメッセージをタイピング風に表示する
+      chkUResponse(n, s) check if the user input message is what is expected in userresponse[] ユーザレスポンスがuserresponse[]に期待されたものであるかチェックする
+      chatKeyDown(cmd) behavior of hitting enter key in the chat box by user ユーザが入力するチャットボックス(input tag)でenter keyが押されたときの処理
       openingMessage() Initial chat opening message
-      burabura() 初期画面でログイン前に入力待ちの時にブラブラしている感じ
+      burabura() idling message in the initial screen 初期画面でログイン前に入力待ちの時にブラブラしている感じ
       logoutChk(s) logout check
       logout() logout
-      getPreferentPropertie(p) 優先オブジェクト preferentのプロパティがあれば返す
-      cleanupItems4Switching() table list/api list表示切り替えに伴い、activeItem Classなんかをクリアする
-      cleanupContainers() table list/api list表示切り替えに伴い、詳細画面をクリアする
-      instractionMode(s) Jetelinaのscenario追加確認 
+      getPreferentPropertie(p) get prior object it it is   優先オブジェクト preferentのプロパティがあれば返す
+      cleanupItems4Switching() clear screen in activeItem class when switching table list/api list  table list/api list表示切り替えに伴い、activeItem Classなんかをクリアする
+      cleanupContainers() clear screen in the detail zone showing when switching table list/api list  table list/api list表示切り替えに伴い、詳細画面をクリアする
+      instractionMode(s) confirmation in adding a new scenario        Jetelinaのscenario追加確認 
 */
-/*
-    引数に渡されたオブジェクトを分解取得する。
-    @o: object
-    @t: type  0->db table list, 1->table columns list or csv file columns 2-> sql list
+/**
+    @function getdata
+    @param {object} o mostry json data
+    @param {integer} t 0->db table list, 1->table columns list or csv file columns 2-> sql list
+
+    resolve the json object into each data
 */
 const getdata = (o, t) => {
     if (o != null) {
@@ -86,8 +91,13 @@ const getdata = (o, t) => {
 
     }
 }
-
-// 汎用的なajax getコール関数
+/**
+ * 
+ * @function getAjaxData
+ * @param {string} url
+ * 
+ * general purpose ajax get call function. Execute the ordered url.
+ */
 const getAjaxData = (url) => {
     if (0 < url.length || url != undefined) {
         if (!url.startsWith("/")) url = "/" + url;
@@ -143,8 +153,13 @@ const getAjaxData = (url) => {
         typingControll(chooseMsg("unknown-msg", "", ""));
     }
 }
-
-// 汎用的なajax postコール関数
+/**
+ * @function postAjaxData
+ * @param {string} url execute url
+ * @param {object} data json style object 
+ * 
+ * general purpose ajax post call function. Execute the ordered url with the object.
+ */
 const postAjaxData = (url, data) => {
     if (0 < url.length || url != undefined) {
         if (!url.startsWith("/")) url = "/" + url;
@@ -174,9 +189,12 @@ const postAjaxData = (url, data) => {
         typingControll(chooseMsg("unknown-msg", "", ""));
     }
 }
-/*
-    typing character controller
-*/
+/**
+ * @function typingControll
+ * @param {string} m   showing message in the chat box
+ * 
+ * typing character controller
+ */
 const typingControll = (m) => {
     //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく
     if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
@@ -186,9 +204,14 @@ const typingControll = (m) => {
     typing(0, m);
 
 }
-/*
-    Authentication ajax call
-*/
+/**
+ * @function authAjax
+ * @param {string} posturl  execute url 
+ * @param {string} chunk    post data as json style
+ * @param {string} scenarioNumber  showing message after executing
+ * 
+ * Authentication ajax call
+ */
 const authAjax = (posturl, chunk, scenarioNumber) => {
     const data = JSON.stringify({ username: `${chunk}` });
 
@@ -243,12 +266,15 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
         }
     });
 }
-
-/* チャットに表示するメッセージを js/scenario.jsから選択する
-        i:scenarioの配列番号
-        m:メッセージに追加する文字列
-        p:選択されたチャットメッセージにmを繋げる位置　 b->before, その他->after
-    */
+/**
+ * @function chooseMsg
+ * @param {string} i  array number of the scenario message 
+ * @param {string} m  adding string to the defined message
+ * @param {string} p  position number of adding 'm' to the message  b->before, else->after
+ * @returns {string}  displays message in the chat box
+ * 
+ * select a message to show in chat box from js/senario.js 
+ */
 const chooseMsg = (i, m, p) => {
     if (debug) console.info("chooseMsg() scenario number: ", i);
 
@@ -271,6 +297,14 @@ const chooseMsg = (i, m, p) => {
         m:表示する文字列
 */
 let typingTimeoutID;
+/**
+ * @function typing
+ * @param {integer} i  the next character number 
+ * @param {string} m  entire message to show
+ * @returns nothing if 'm' is empty
+ * 
+ * show a chat message alike typing style 
+ */
 const typing = (i, m) => {
     const t = 100; /* typing delay time */
     let ii = i;
