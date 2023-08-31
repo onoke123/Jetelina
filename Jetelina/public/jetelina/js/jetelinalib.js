@@ -18,11 +18,11 @@
       chatKeyDown(cmd) behavior of hitting enter key in the chat box by user ユーザが入力するチャットボックス(input tag)でenter keyが押されたときの処理
       openingMessage() Initial chat opening message
       burabura() idling message in the initial screen 初期画面でログイン前に入力待ちの時にブラブラしている感じ
-      logoutChk(s) logout check
+      logoutChk(s) chech the user's intention is to be logout
       logout() logout
-      getPreferentPropertie(p) get prior object it it is   優先オブジェクト preferentのプロパティがあれば返す
-      cleanupItems4Switching() clear screen in activeItem class when switching table list/api list  table list/api list表示切り替えに伴い、activeItem Classなんかをクリアする
-      cleanupContainers() clear screen in the detail zone showing when switching table list/api list  table list/api list表示切り替えに伴い、詳細画面をクリアする
+      getPreferentPropertie(p) get prior object if there were   優先オブジェクト preferentのプロパティがあれば返す
+      cleanupItems4Switching() clear screen in activeItem class when switching table list/api list     table list/api list 表示切り替えに伴い、activeItem Classなんかをクリアする
+      cleanupContainers() clear screen in the detail zone showing when switching table list/api list     table list/api list 表示切り替えに伴い、詳細画面をクリアする
       instractionMode(s) confirmation in adding a new scenario        Jetelinaのscenario追加確認 
 */
 /**
@@ -318,12 +318,14 @@ const typing = (i, m) => {
 
     typingTimeoutID = setTimeout(typing, t, ii, m);
 }
-
-/* ユーザレスポンスがuserresponse[]に期待されたものであるかチェックする
-    userresponse[]はsenario.jsで定義されている
-            true: 期待通り
-            false:　意外な答え
-*/
+/**
+ * @function chkUResponse
+ * @param {string} n  scenario array index number 
+ * @param {string} s  user input character
+ * @returns {boolean}  true -> as expected  false -> unexpected user response
+ * 
+ * check if the user input message is what is expected in userresponse[] 
+ */
 const chkUResponse = (n, s) => {
     if (userresponse[n].includes(s)) {
         return true;
@@ -333,9 +335,14 @@ const chkUResponse = (n, s) => {
 }
 
 let enterNumber = 0;
-/* ユーザが入力するチャットボックス(input tag)でenter keyが押されたときの処理 */
+/**
+ * function chatKeyDown
+ * @param {string} cmd 
+ * 
+ * behavior of hitting enter key in the chat box by user
+ */
 const chatKeyDown = (cmd) => {
-    /* userTextはユーザのチャット入力文字列 */
+    /* ut is the input character by user */
     let ut;
     if (cmd == null) {
         ut = $("#jetelina_panel [name='chat_input']").val().toLowerCase();
@@ -350,7 +357,7 @@ const chatKeyDown = (cmd) => {
     if (ut != null && 0 < ut.length) {
         ut = $.trim(ut.toLowerCase());
         let m = "";
-        /* ユーザのチャット入力文字列がある時だけ処理を実行する　*/
+        /* do it only if there were a input character by user */
         if (0 < ut.length) {
             enterNumber++;
             $("#jetelina_panel [name='jetelina_tell']").text("");
@@ -366,30 +373,30 @@ const chatKeyDown = (cmd) => {
                 logoutflg = true;
             }
 
-            // Jetelinaに言葉を教えているかどうか調べる
+            // check the instraction mode that is teaching 'words' to Jetelina or not
             instractionMode(ut);
 
             /*
-                switch 1:login時のやりとり
-                       login:login処理結果のやりとり
+                switch 1:between 'before login' and 'at login'
+                       login:at login
                        login_success: after login
-                       chose_func_or_cond: login_success後のstage
-                       func: function panelのstage
-                       cond: condition panelのstage
+                       chose_func_or_cond: the stage after 'login_success'
+                       func: the stage into function panel
+                       cond: the stage into condition panel
                        default:before login
             */
             switch (stage) {
-                case 1:/*login時のやりとり*/
+                case 1:
                     if (!chkUResponse(1, ut)) {
                         m = chooseMsg(2, "", "");
                         stage = 'login';
                     } else {
-                        /* 'fine'とか言われたら気持ちよく返そう */
+                        /* say 'nice' if a user said 'fine' */
                         m = chooseMsg('1a', "", "");
                     }
 
                     break;
-                case 'login':/*login処理結果のやりとり*/
+                case 'login':
                     let chunk = "";
                     scenarioNumber = 4;
 
@@ -403,7 +410,7 @@ const chatKeyDown = (cmd) => {
                     authAjax('/chkacount', chunk, scenarioNumber);
                     m = 'ignore';
                     break;
-                case 'login_success':/* after login */
+                case 'login_success':
                     m = chooseMsg(6, "", "");
                     stage = 'chose_func_or_cond';
                     break;
@@ -416,7 +423,7 @@ const chatKeyDown = (cmd) => {
                         panel = 'cond';
                     }
 
-                    //move Jetelina Chatpanel
+                    // move Jetelina Chat panel
                     if (panel == 'func' || panel == 'cond') {
                         const panelTop = window.innerHeight - 110;
                         $("#jetelina_panel").animate({
@@ -433,8 +440,8 @@ const chatKeyDown = (cmd) => {
                         stage = 'func';
                         $("#condition_panel").hide();
                         $("#function_panel").show().animate({
-                            width: window.innerWidth * 0.8 /*"1000px"*/,
-                            height: window.innerHeight * 0.8 /*"800px"*/,
+                            width: window.innerWidth * 0.8,
+                            height: window.innerHeight * 0.8,
                             top: "10%",
                             left: "10%"
                         }, animateDuration);
@@ -453,7 +460,7 @@ const chatKeyDown = (cmd) => {
                                 left: "30%"
                             }, animateDuration);
                             $("#container").draggable().animate({
-                                bottom: "5%" /*"10%"*/,
+                                bottom: "5%",
                                 left: "30%"
                             }, animateDuration);
                         }
@@ -461,15 +468,14 @@ const chatKeyDown = (cmd) => {
                         stage = 'cond';
                         $("#function_panel").hide().animate({}, animateDuration);
                         $("#condition_panel").show().animate({
-                            width: window.innerWidth * 0.8 /*"1000px"*/,
-                            height: window.innerHeight * 0.8 /*"800px"*/,
+                            width: window.innerWidth * 0.8,
+                            height: window.innerHeight * 0.8,
                             top: "10%",
                             left: "10%"
                         }, animateDuration);
                         /*
-                            一度getsqlanalyzerdataが呼ばれたら、そのデータはすでにgraphにセットされている。
-                            このデータはあまり変わることはないので頻繁に呼び出す必要はない。
-                            そのため、一度呼び出したらsadフラグを設定して、これを判定として利用する。
+                            Once getsqlanalyzerdata is called, the data has already set in the graph.
+                            This data does not change often, that why set 'sed' flag to use for the decision. 
                         */
                         if (!sad) {
                             // relation access & combination
@@ -490,7 +496,7 @@ const chatKeyDown = (cmd) => {
                     // defined in conditionpanel.js
                     m = conditionPanelFunctions(ut);
                     break;
-                default:/*before login*/
+                default:
                     if (ut == "reload") {
                         location.reload();
                     }
@@ -516,56 +522,62 @@ const chatKeyDown = (cmd) => {
             if (0 < m.length && m != 'ignore') {
                 typingControll(m);
             } else if (m == null || m.length == 0) {
-                //何言ってるかわかんない時
+                // cannot understand what the user is typing
                 typingControll(chooseMsg('unknown-msg', "", ""));
             }
 
             if (logoutflg) {
-                const t = 10000;//10秒後にopening画面となる
+                const t = 10000;// switch to the opening screen after 10 sec
                 setTimeout(function () {
                     $("#jetelina_panel [name='your_tell']").text("");
                     openingMessage();
                 }, t);
             }
-
-            //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく
-            //            if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
-            //            typing(0, m);
         }
     } else {
         $("#jetelina_panel [name='chat_input']").val("");
         enterNumber = 0;
     }
 }
-/*
-    Initial chat opening message
-*/
+/**
+ * @function openingMessage
+ * 
+ * Initial chat opening message
+ */
 const openingMessage = () => {
-    const t = 10000;//10秒後にブラブラ始める
+    const t = 10000;// into idling mode after 10 sec if nothing input into the chat box
     $("#jetelina_panel [name='jetelina_tell']").text("");
     typing(0, chooseMsg(0, "", ""));
 
     setTimeout(function () { burabura() }, t);
 }
-/*
-   初期画面でログイン前に入力待ちの時にブラブラしている感じ
-*/
+/**
+ * @function burabura
+ * 
+ * idling message in the initial screen
+ */
 const burabura = () => {
-    const t = 20000;//20秒後にブラブラメッセージを変える
+    const t = 20000;// chage the idling message after 20 sec
     timerId = setInterval(function () {
         $("#jetelina_panel [name='jetelina_tell']").text("");
         typing(0, chooseMsg('bura', "", ""))
     }, t);
 }
-/*
-    logout check
-*/
+/**
+ * @function logoutChk
+ * @param {string} s  check the user input message is intend to logout or not 
+ * @returns {boolean}  true -> intend to logout  false -> ignore this message
+ * 
+ * chech the user's intention is to be logout
+ */
 const logoutChk = (s) => {
     return scenario['logout'].includes(s);
 }
-/*
-   logout 
-*/
+/**
+ * @function logout
+ * 
+ * logout
+ */
 const logout = () => {
     enterNumber = 0;
     stage = 0;
@@ -595,9 +607,13 @@ const logout = () => {
     cleanUp("tables");
     cleanUp("apis");
 }
-/*
-    優先オブジェクト preferentのプロパティがあれば返す
-*/
+/**
+ * @function getPreferentPropertie
+ * @param {string} p  string to point to a prior object 
+ * @returns 'cmd' string or ''
+ * 
+ * get prior object if there were
+ */
 const getPreferentPropertie = (p) => {
     let c = "";
 
@@ -619,9 +635,11 @@ const getPreferentPropertie = (p) => {
 
     return c;
 }
-/*
-    table list/api list表示切り替えに伴い、activeItem Classなんかをクリアする
-*/
+/**
+ * @function cleanupItems4Switching
+ * 
+ * clear screen in activeItem class when switching table list/api list
+ */
 const cleanupItems4Switching = () => {
     if ($("#table_container").is(":visible")) {
         $("#table_container span").removeClass("activeItem");
@@ -630,16 +648,22 @@ const cleanupItems4Switching = () => {
         $("#container span").remove();
     }
 }
-/*
-   table list/api list表示切り替えに伴い、詳細画面をクリアする
-*/
+/**
+ * @function cleanupContainers
+ * 
+ * clear screen in the detail zone showing when switching table list/api list
+ */
 const cleanupContainers = () => {
     $("#container span,#columns span").remove();
 }
-/*
-    Jetelinaのscenario追加確認
-    俺だけの機能
-*/
+/**
+ * @function instractionMode
+ * @param {string} s  new words for Jetelina scenario
+ * 
+ * confirmation in adding a new scenario.
+ * 
+ * Wanna to be 0nly for Jetelina administrator.
+ */
 const instractionMode = (s) => {
     if (s.indexOf("say:") != -1) {
         let data = `{"sayjetelina":"${s.split("say:")[1]}","arr":"${scenario_name}"}`;
