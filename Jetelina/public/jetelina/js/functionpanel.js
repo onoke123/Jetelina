@@ -1,14 +1,16 @@
-/*
+/**
     JS library for Jetelina Function Panel
-    ver 1
-    Author : Ono Keiji
+    @author Ono Keiji
+    @version 1.0
+
+    This js lib works with dashboard.js, functionpanel.js and conditionpanel.js for the Function Panel.
     
     Functions:
       itemSelect(p) select table column
-      deleteSelectedItems(p) 選択されているcolumnsを#containerから削除する
-      cleanUp(s) cleanUp droped items & columns of selecting table
+      deleteSelectedItems(p) delete the selected columns from #container field   選択されているcolumnsを#containerから削除する
+      cleanUp(s)  droped items & columns of selecting table
       fileupload() CSV file upload
-      getdataFromJson(o,k) 指定されたJsonデータから指定されたデータを取得する
+      getdataFromJson(o,k) aquire the ordered data from the ordered json object  指定されたJsonデータから指定されたデータを取得する
       listClick(p)   Table list / API listをクリックした時の処理 
       setApiIF_In(t,s) API　IN Json
       setApiIF_Out(t,s) API OUT Json
@@ -55,23 +57,26 @@ $(document).on({
       itemSelect($(this));
     }
 }, ".item");
-/*
-  select table column
-*/
+/**
+ * @function itemSelect
+ * @param {object} p  jquery tag object
+ * 
+ * select table column 
+ */
 const itemSelect = (p) => {
   let cl = p.attr("class");
   let item = p.text();
 
-  // column data post後にapi noが表示されているので、まずは消しておく
+  // delete the showing because the api no is displayed in there initially.
   if ($("#container span").hasClass('apisql')) {
     $("#container span").remove();
   }
 
   if (p.hasClass("selectedItem")) {
-    //削除
+    // delete
     deleteSelectedItems(p);
   } else {
-    //追加
+    // adding
     if ($.inArray(item, selectedItemsArr) != -1) {
       p.detach();
     } else {
@@ -82,14 +87,18 @@ const itemSelect = (p) => {
     selectedItemsArr.push(item);
   }
 }
-/*
-  選択されているcolumnsを#containerから削除する
-*/
+/**
+ * @function deleteSelectedItems
+ * @param {string} p  jquery tag string 
+ * @returns {boolean}  true->success done  false->no action
+ * 
+ * delete the selected columns from #container field
+ */
 const deleteSelectedItems = (p) => {
   let ret = false;
 
   if (p != null) {
-    //指定項目削除
+    // delete the ordered item
     let item = $(p).text();
     selectedItemsArr = selectedItemsArr.filter(elm => {
       return elm !== item;
@@ -99,7 +108,7 @@ const deleteSelectedItems = (p) => {
     $(p).detach().appendTo("#columns div");
     ret = true;
   } else {
-    //全削除
+    // delete all items
     selectedItemsArr.length = 0;
     $("#container span").removeClass("selectedItem");
     $("#container .apisql").remove();
@@ -109,11 +118,12 @@ const deleteSelectedItems = (p) => {
 
   return ret;
 }
-/*
-    cleanUp
-
-    droped items & columns of selecting table
-*/
+/**
+ * @function cleanUp
+ * @param {string} s  point to target : 'items' or 'tables' or 'apis'
+ * 
+ * droped items & columns of selecting table
+ */
 const cleanUp = (s) => {
   selectedItemsArr.splice(0);
 
@@ -128,9 +138,12 @@ const cleanUp = (s) => {
     $("#api_container .api").remove();
   }
 }
-/*
-    CSV file upload
-*/
+/**
+ * @function fileupload
+ * 
+ * CSV file upload.
+ * The target csv files is ordered in '#my_form'
+ */
 const fileupload = () => {
   let fd = new FormData($("#my_form").get(0));
   $("#upbtn").prop("disabled", true);
@@ -173,28 +186,30 @@ const fileupload = () => {
 }
 
 /*
-    指定されたtableのcolumnを取得する
-    一度クリックされると当該tableのclass属性が変わる
-    クリック前&２度めのクリック後：table 
-    １度目のクリック後　　　　　 ：table activeItem
-    この"activeItem"を見てcolumn取得実行の判定を行っている
+  get the ordered table column.
+  Once clicking it, this table's class attribute has changed
+      before clicking & secound time : table
+      after the first clicking       : table activeItem
+
+  the excecution of getting column is judged by this 'activeItem' attribute.
 */
 $(document).on("click", ".table,.api", function () {
   listClick($(this));
 });
 
-/*
-  指定されたJsonデータから指定されたデータを取得する
-  o:Json object
-  k:取得対象データ
-
-  return　対象データ
-*/
+/**
+ * @function getdataFromJson
+ * @param {object} o  json object 
+ * @param {string} k  targeted desiring data (json name part)
+ * @returns {boolean}  targeted desiring data (json value part)
+ * 
+ * aquire the ordered data from the ordered json object.
+ */
 const getdataFromJson = (o, k) => {
   const Jkey = 'Jetelina';
   let ret = "";
   Object.keys(o).forEach(function (key) {
-    //’Jetelina’のvalueはオブジェクトになっているからこうしている  name=>key value=>o[key]
+    // because the value in ’Jetelina’ is an object: name=>key value=>o[key]
     let row = 1, col = 1;
     if (key == Jkey && o[key].length > 0) {
       $.each(o[key], function (n, v) {
