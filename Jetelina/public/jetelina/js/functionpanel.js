@@ -11,14 +11,14 @@
       cleanUp(s)  droped items & columns of selecting table
       fileupload() CSV file upload
       getdataFromJson(o,k) aquire the ordered data from the ordered json object  指定されたJsonデータから指定されたデータを取得する
-      listClick(p)   Table list / API listをクリックした時の処理 
-      setApiIF_In(t,s) API　IN Json
-      setApiIF_Out(t,s) API OUT Json
-      buildJetelinaJsonForm(t,s)  API IN/OUT　Json
-      getColumn(tablename) 指定されたtableのカラムデータを取得する
-      removeColumn(tablename) カラム表示されている要素を指定して表示から削除する
-      deleteThisTable(tablename)　指定されたtableをDBから削除する
-      postSelectedColumns() post selected columns
+      listClick(p)   do something by clicking tble list or api list items  Table list / API listをクリックした時の処理 
+      setApiIF_In(t,s) Show Json of 'API　IN'
+      setApiIF_Out(t,s) Show Json of 'API OUT'
+      buildJetelinaJsonForm(t,s)  Create display Json form data from a API
+      getColumn(tablename) Ajax function for getting the column names of the ordered table  指定されたtableのカラムデータを取得する
+      removeColumn(tablename) delete a column from selected item list on the display カラム表示されている要素を指定して表示から削除する
+      deleteThisTable(tablename)　Ajax function for deleting the target table from DataBase. 指定されたtableをDBから削除する
+      postSelectedColumns() Ajax function for posting the selected columns.
       functionPanelFunctions(ut, cmd)　Function Panel 機能操作
       procTableApiList(s) チャットでtable/apiの操作を行う
       containsMultiTables() 選択されたカラムをpostする前に、where句が必要かどうか判断する
@@ -201,7 +201,7 @@ $(document).on("click", ".table,.api", function () {
  * @function getdataFromJson
  * @param {object} o  json object 
  * @param {string} k  targeted desiring data (json name part)
- * @returns {boolean}  targeted desiring data (json value part)
+ * @returns {string}  targeted desiring data (json value part)
  * 
  * aquire the ordered data from the ordered json object.
  */
@@ -216,7 +216,7 @@ const getdataFromJson = (o, k) => {
         $.each(v, function (name, value) {
           if (value == k) {
             ret = v.sql;
-            return false;
+            return false;// loop out
           }
         });
       });
@@ -225,16 +225,18 @@ const getdataFromJson = (o, k) => {
 
   return ret;
 }
-/*
-   Table list / API listをクリックした時の処理 
-*/
+/**
+ * @function listClick
+ * @param {object} p  jquery tag object
+ * 
+ * do something by clicking tble list or api list items 
+ */
 const listClick = (p) => {
   let t = p.text();
   let c = p.attr("class");
 
   removeColumn(t);
   if (c.indexOf("activeItem") != -1) {
-    //    removeColumn(tn);
     p.toggleClass("activeItem");
     if ($("#api_container").is(":visible")) {
       cleanupContainers();
@@ -248,7 +250,7 @@ const listClick = (p) => {
       cleanupItems4Switching();
       cleanupContainers();
 
-      // API ListはpostAjaxData("/getapilist",...)で取得されてpreferent.apilistにあるので、ここから該当SQLを取得する
+      // showing ordered sql from preferent.apilist that is gotten by postAjaxData("/getapilist",...)
       if (preferent.apilist != null && preferent.apilist.length != 0) {
         let s = getdataFromJson(preferent.apilist, t);
         if (0 < s.length) {
@@ -268,9 +270,14 @@ const listClick = (p) => {
     p.toggleClass("activeItem");
   }
 }
-/*
-  API　IN Json
-*/
+/**
+ * @function setApiIF_In
+ * @param {string} t targeted desiring data (json name part)
+ * @param {string} s targeted desiring data (json value part)
+ * @returns {string} json form string
+ * 
+ * Show Json of 'API　IN'
+ */
 const setApiIF_In = (t, s) => {
   let ta = t.toLowerCase();
   let ret = "";
@@ -279,7 +286,7 @@ const setApiIF_In = (t, s) => {
     //select
 
     /*
-        where句付きの場合のINを作りたいけど、めんどくさいなぁ
+        create sql sentence with 'where sentence'
     */
     let subquery = "\"subquery\":[";
     let qd = s.match(/\?/g);
@@ -288,7 +295,7 @@ const setApiIF_In = (t, s) => {
         subquery = `${subquery} d${i},`;
       }
       
-      subquery = subquery.slice(0,-1);//最後の","を切る
+      subquery = subquery.slice(0,-1);// cut the end of ','
     }
 
     subquery = `${subquery}]`;
@@ -315,17 +322,22 @@ const setApiIF_In = (t, s) => {
 
   return ret;
 }
-/*
-  API OUT Json 
-  基本、select文しかOutはない。
-*/
+/**
+ * @function setApiIF_Out
+ * @param {string} t targeted desiring data (json name part)
+ * @param {string} s targeted desiring data (json value part)
+ * @returns {string} json form string
+ *
+ * Show Json of 'API OUT'
+ * Only select sql  
+ */
 const setApiIF_Out = (t, s) => {
   let ret = "";
 
   if (t.toLowerCase().startsWith("js")) {
     let pb = s.split("select");
     let pf = pb[1].split("from");
-    // pf[0]にselect項目があるはず
+    // there is the items in pf[0]
     if (pf[0] != null && 0 < pf[0].length) {
       ret = buildJetelinaJsonForm(t, pf[0]);
     }
@@ -333,9 +345,14 @@ const setApiIF_Out = (t, s) => {
 
   return ret;
 }
-/*
-  API IN/OUT　Json
-*/
+/**
+ * @function buildJetelinaJsonForm
+ * @param {string} t targeted desiring data (json name part)
+ * @param {string} s tables(after 'from' sentence in a sql)
+ * @returns {string} Json form string
+ * 
+ * Create display Json form data from a API
+ */
 const buildJetelinaJsonForm = (t, s) => {
   let ret = "";
 
@@ -373,6 +390,13 @@ const buildJetelinaJsonForm = (t, s) => {
 
   return ret;
 }
+/**
+ * @function getColumn
+ * @param {string} tablename  targeted table name
+ * 
+ * Ajax function for getting the column names of the ordered table.
+ * Then display in the function panel.
+ */
 /*
   指定されたtableのカラムデータを取得する
 */
@@ -390,7 +414,7 @@ const getColumn = (tablename) => {
       dataType: "json"
     }).done(function (result, textStatus, jqXHR) {
       if (debug) console.info("getColumn() result: ", result);
-      // data parseに行く
+      // got to data parse
       return getdata(result, 1);
     }).fail(function (result) {
       typingControll(chooseMsg('fail', "", ""));
@@ -399,13 +423,21 @@ const getColumn = (tablename) => {
     console.error("getColumn() ajax url is not defined");
   }
 }
-
-/*
-  カラム表示されている要素を指定して表示から削除する
-*/
+/**
+ * @function removeColumn
+ * @param {string} p  target column name
+ * 
+ * delete a column from selected item list on the display  
+ */
 const removeColumn = (p) => {
   $(".item").not(".selectedItem").remove(`:contains(${p}.)`);
 }
+/**
+ * @function deleteThisTable
+ * @param {string} tablename  target table name
+ * 
+ * Ajax function for deleting the target table from DataBase. 
+ */
 /*
   指定されたtableをDBから削除する
 */
@@ -440,17 +472,18 @@ const deleteThisTable = (tablename) => {
     console.error("deletetable() table is not defined");
   }
 }
-
-/*
-  post selected columns
-*/
+/**
+ * @function postSelectedColumns
+ * 
+ * Ajax function for posting the selected columns.
+ */
 const postSelectedColumns = () => {
   let pd = {};
   pd["item"] = selectedItemsArr;
 
   /*
-    post処理で必ず何かがgenelic_inputに入っている。
-    ユーザ設定がされていない場合は'ignore'が入っている。
+    absolutely something is in 'getelic_input'.
+    'ignore' is if nothing done by the user.
   */
   pd["where"] = $("#genelic_panel input[name='genelic_input']").val();
    
@@ -465,8 +498,8 @@ const postSelectedColumns = () => {
     dataType: "json"
   }).done(function (result, textStatus, jqXHR) {
     /*
-       post dataと酷似のapiがなければ {"apino":"js10"}とかで返ってくる、もしくはエラー時はfalseが返る。
-       酷似APIが存在した場合は{"resembled":"js10"}と、酷似しているapi番号を返してくる
+      if there is not a quite similar api in there -> return as alike {"apino":"js10"} or false in error.
+      if there already is a quite similar api in there -> return api no as alike {"resembled":"js10"}.
     */
     if(result.apino != null && 0<result.apino.length){ 
       $("#container span").remove();
