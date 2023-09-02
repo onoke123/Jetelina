@@ -16,14 +16,14 @@
       setApiIF_Out(t,s) Show Json of 'API OUT'
       buildJetelinaJsonForm(t,s)  Create display Json form data from a API
       getColumn(tablename) Ajax function for getting the column names of the ordered table  指定されたtableのカラムデータを取得する
-      removeColumn(tablename) delete a column from selected item list on the display カラム表示されている要素を指定して表示から削除する
+      removeColumn(tablename) Delete a column from selected item list on the display カラム表示されている要素を指定して表示から削除する
       deleteThisTable(tablename)　Ajax function for deleting the target table from DataBase. 指定されたtableをDBから削除する
       postSelectedColumns() Ajax function for posting the selected columns.
-      functionPanelFunctions(ut, cmd)　Function Panel 機能操作
-      procTableApiList(s) チャットでtable/apiの操作を行う
-      containsMultiTables() 選択されたカラムをpostする前に、where句が必要かどうか判断する
-      showGenelicPanel() genelic panel open
-      checkGenelicInput() check genelic panel input
+      functionPanelFunctions(ut)　Exectute some functions ordered by user chat input message    Function Panel 機能操作
+      procTableApiList(s) Execute some functions for table list and/or api list order by user chat input commands  チャットでtable/apiの操作を行う
+      containsMultiTables() Judge demanding 'where sentence' before post to the server
+      showGenelicPanel() genelic panel open. 
+      checkGenelicInput() check genelic panel input. caution: will imprement this in V2 if necessary
 */
 // table delete button
 $("#table_delete").hide();
@@ -521,36 +521,36 @@ const postSelectedColumns = () => {
     $("#genelic_panel input[name='genelic_input']").val('');
   });
 }
-/*
-  Function Panel 機能操作
-*/
+/**
+ * @function functionPanelFunctions
+ * @param {string} ut  chat message by user 
+ * @returns {string}  answer chat message by Jetelina
+ * 
+ * Exectute some functions ordered by user chat input message 
+ */
 const functionPanelFunctions = (ut) => {
   let m = "";
   
-  // 6/12 不要かもしれないロジック
-  if (presentaction == null || presentaction.length == 0) {
-    //presentaction.push('func');
-  }
-
   if (ut.indexOf('cond') != -1) {
     delete preferent;
     delete presentaction;
     stage = 'chose_func_or_cond';
     chatKeyDown(ut);
   } else {
-    // 優先オブジェクトがあればそれを使う
+    // use the prior command if it were
     let cmd = getPreferentPropertie('cmd');
-    //優先されるべきコマンドがないときは入力データが生きる
+    // use input data if there were not a prior command 
     if (cmd == null || cmd.length <= 0) {
       if ($.inArray(ut, scenario['6func-fileupload-cmd']) != -1) {
         cmd = 'fileupload';
       } else if ($.inArray(ut, scenario['6func-fileupload-open-cmd']) != -1) {
-        //ここではコマンドだけ期待しているので$.inArrayを使う
+        // use $.inArray because of expecting only command at here 
         cmd = 'fileselectoropen';
       } else if (ut.indexOf('table') != -1) {
-        //ここではコマンド+table名の可能性がるのでindexOfを使う　以下そういうこと
+        // use indexOf() because of 'command + table name' is possible
         cmd = 'table';
       } else if (ut.indexOf('api') != -1) {
+        // same as above
         cmd = 'api';
       } else {
         cmd = ut;
@@ -562,16 +562,16 @@ const functionPanelFunctions = (ut) => {
       presentaction.cmd = cmd;
     }
 
-    //チャットコマンドでtable/apiを操作する
-    /* ちょっと解説
-      このprocTableApiList()では画面操作だけ行っていてajaxコールしていない。
-       そのため、必ずmが遅滞なく帰ってくるのでOK。
+    // execute table or api list order the chatting message by the user
+    /* Tips:
+       ProcTableApiList() handles only on screen, not calling ajax function.
+       That why 'm' can be expected without any delay. So this function call is correct.
     */
     m = procTableApiList(cmd);
 
-    // drop はちょっと特殊な処理
+    // Attention, the drop exection is a little bit special.
     let dropTable = getPreferentPropertie('droptable');
-    //優先されるべきtable nameがないときは入力データが生きる
+    // the input data is prefered if there were a prior table name.
     if (dropTable == null || dropTable.length <= 0) {
       for (let i = 0; i < scenario['6func-tabledrop-cmd'].length; i++) {
         if (ut.indexOf(scenario['6func-tabledrop-cmd'][i]) != -1) {
@@ -582,7 +582,7 @@ const functionPanelFunctions = (ut) => {
       }
     }
 
-    // item, selecteditem欄のお掃除コマンド
+    // cleanup command of item, selecteditem field
     if($.inArray(ut,scenario['6func-cleanup-cmd']) != -1 ){
       cmd = 'cleanup';
     }
@@ -607,15 +607,15 @@ const functionPanelFunctions = (ut) => {
     */
     switch (cmd) {
       case 'table':
-        /* jetelinalib.jsのgetAjaxData()を呼び出して、DB上の全tableリストを取得する
-            ajaxのurlは'getalldbtable'
+        /*  Call getAjaxData() in jetelinalib.js for getting all table list in the Database.
+            The url of general ajax call is 'getalldbtable'.
         */
         if ($("#api_container").is(":visible")) {
-          //一旦画面をキレイにしてから
+          // cleanup the screen
           cleanupItems4Switching();
           cleanupContainers();
           $("#api_container").hide();
-          //table listを表示する
+          // show the table list
           $("#panel_left").text("Table List");
           $("#table_container").show();
         }
@@ -626,47 +626,46 @@ const functionPanelFunctions = (ut) => {
         break;
       case 'api':
         if ($("#table_container").is(":visible")) {
-          //一旦画面をキレイにしてから
+          // cleanup the scree 
           cleanupItems4Switching();
           cleanupContainers();
           $("#table_container").hide();
-          //api listを表示する
+          // show api list
           $("#panel_left").text("API List");
           $("#api_container").show();
         }
 
         cleanUp("apis");
 
-        //postAjaxData()でapilistを取得してpreferent.apilistに格納するので、一旦キレイにしておく
+        // cleanup once because getting apilist and contain to preferent.aplist by calling postAjaxData()
         delete preferent.apilist;
         postAjaxData("/getapilist");
         m = 'ignore';
         break;
       case 'post':
         if (0 < selectedItemsArr.length) {
-          /* post処理する前に、where句条件の設定を促す。
-             selectedItemArrを見て、複数tableのカラムが存在するかどうか確認する。
-             tableが複数の場合はwhere句は必須とする。
+          /*  call an attentiion for inputting where sentence before posting it.
+              confirm if the sql sentence has multi table in 'selectedItemArr'.
+              a 'where sentence' is demanded when multi tables are setted.
           */
-
-          //where句を聞く
+          // open the box for inputting a 'where sentence'
           let wheresentence = $("#genelic_panel input[name='genelic_input']").val();
           if(wheresentence == null || wheresentence == "" ){
-            // where句が必須かどうかでチャットメッセージを変える
-            // postデータに複数tableのカラムがあるかどうかチェックする
+            // arrange the Jetelina message order by demanding 'where sentece' or not
+            // check multi table columns in the post data 
             if( containsMultiTables() ){
-              // 複数tableならwhere句は必須
+              // 'where sentence' is demanded if there were multi tables
               m = chooseMsg('6func-postcolumn-where-indispensable-msg', "", "");
               showGenelicPanel();
             }else{
-              // なくてもいいけど、一応聞く
+              // 'where sentence' is not demanded but ask it once time
               m = chooseMsg('6func-postcolumn-where-option-msg', "", "");
-              // 次の問で'yes'だったらgenelic_panelを開く
+              // open the getelic_panel(input where sentecen) if the user's answer is 'yes'
               if( $.inArray(ut,scenario['confirmation-sentences'] ) != -1){
                 showGenelicPanel();
               }else{
-                //そうでなければダミーを入れておく
-                //一発目に ut=postで来るからここが自動的に設定されてしまい、２発目のyesが無視される。そこが問題
+                // contain a dummy data('ignore') if the user's anwer is not 'yes'
+                // Attention: should confirm and resolve there.(一発目に ut=postで来るからここが自動的に設定されてしまい、２発目のyesが無視される。そこが問題)
                 if( preferent.cmd == "post" ){
                   $("#genelic_panel input[name='genelic_input']").val("ignore");
                 }
@@ -675,19 +674,18 @@ const functionPanelFunctions = (ut) => {
 
             preferent.cmd = "post";
           }else{
-            // postする前にwhere句がちゃんとしているかどうかチェックしよう
+            // let's check the 'where sentence' before post it to the server
             if( checkGenelicInput(wheresentence) ){
-              /* postSelectedColumns()はajaxコールするのでmがunknownになる可能性がある。
-                このため'ignore'キーワードを設定して、成否のメッセージはpostSele..()内で表示させて、
-                この処理以降のtyping()は行わないようにしよう。
+              /* 'm' has a chance to be 'unknown' because postSelectedColumns() is ajax function.
+                 So set a keyword 'ignore' then the message of success or fail in postSele..(), 
+                 then do not do typing() after this process.
               */
                 postSelectedColumns();
                 m = 'ignore';
             }else{
-              // where句のparameterがopenされているtableのカラムではないぞ
+              // Hum, it is not a table column of opening the 'where sentence'.
             }
-          }
-        
+          }        
         } else {
           m = chooseMsg('6func_post_err', "", "");
         }
@@ -705,13 +703,13 @@ const functionPanelFunctions = (ut) => {
       case 'droptable':
         if ($("#table_container").is(":visible")) {
           if (dropTable != null && 0 < dropTable.length) {
-            //該当table存在確認
+            // Hit the table
             let p = $(`#table_container span:contains(${dropTable})`).filter(function () {
               return $(this).text() === dropTable;
             });
 
 
-            // 6func-tabledrop-confirmに対して'yes'と言われたら実行される
+            // execute this if 6func-tabledrop-confirm is 'yes'
             if (ut.indexOf('yes') != -1) {
               let t = preferent.droptable;
 
@@ -722,18 +720,18 @@ const functionPanelFunctions = (ut) => {
               m = 'ignore';
             } else {
               if (p != null && 0 < p.length) {
-                //あった。よし削除確認メッセージ
+                // Yes there is, show the delete confirmation message.
                 m = chooseMsg('6func-tabledrop-confirm', "", "");
                 preferent.cmd = cmd;
                 preferent.droptable = dropTable;
               } else {
-                //ないぞ。ちゃんとtableを指定して。
+                // Well, there is nothing. Show the message fo '6func-table....'
                 m = chooseMsg('6func-tabledrop-msg', "", "");
                 preferent.cmd = cmd;
               }
             }
           } else {
-            //table指定催促メッセージ
+            // the request message for ordering table name
             m = chooseMsg('6func-tabledrop-msg', "", "");
             preferent.cmd = cmd;
           }
@@ -768,16 +766,18 @@ const functionPanelFunctions = (ut) => {
         m = chooseMsg('success','','');
         break;
       default:
-//          m = "";//あとのことは後処理に任せる
         break;
     }
   }
 
   return m;
 }
-/*
-  チャットでtable/apiの操作を行う
-*/
+/**
+ * @function procTableApiList
+ * @param {string} s  expect 'open', 'close', 'select', 'cancel' commands for table list and/or api list   
+ * 
+ * Execute some functions for table list and/or api list order by user chat input commands
+ */
 const procTableApiList = (s) => {
   let m = "";
   let targetlist = "";
@@ -804,14 +804,14 @@ const procTableApiList = (s) => {
     if ($.inArray(t[0], cmdlist) != -1) {
       switch (t[0]) {
         case 'open':
-          /* open/closeの処理が同じなので、ここではあえてbreakしないで
-             openの時もcloseの処理ロジックに行くようにしている。tricky! :-)
+          /* do not break because of open/close are same
+             go to 'close' if it were 'open' as well, this is tricky! :-)
           */
         case 'close':
           m = chooseMsg('unknown-msg', "", "");
           $(targetlist).find("span").each(function (i, v) {
             let findselect = false;
-            //apiの場合、連番数字だけでも特定できるようにする
+            // only the api-number is ok in api list
             if(presentaction.cmd == 'api' ){
               if(v.textContent.indexOf(t[1]) != -1){
                 findselect = true;
@@ -837,7 +837,7 @@ const procTableApiList = (s) => {
             $("#columns").find("span").each(function (i, v) {
               let findselect = false;
               if( $(".activeItem").length == 1 ){
-                //開いているtableが一つだけの場合はカラム名だけでselectできる
+                // can selct by only the column name when opening only one table. I mean 'ftest.id' -> 'id' is OK.
                 if(v.textContent.indexOf(t[1]) != -1){
                   findselect = true;
                 }
@@ -888,13 +888,12 @@ const procTableApiList = (s) => {
 
   return m;
 }
-
-/*
-  選択されたカラムをpostする前に、where句が必要かどうか判断する
-  ２つ以上のtableが対象となっていたらwhere句は必須となる
-  
-  return true:必須 false:必須ではない
-*/
+/**
+ * @function containsMultiTables
+ * @returns {boolean}  true->demand false->not demand
+ * 
+ * Judge demanding 'where sentence' before post to the server
+ */
 const containsMultiTables = () =>{
   if( 0<selectedItemsArr.length ){
     let tables = [];
@@ -914,30 +913,29 @@ const containsMultiTables = () =>{
     }
   }
 }
-
-/*
-  genelic panel open
-*/
+/**
+ * @function showGenelicPanel
+ * 
+ * genelic panel open
+ */
 const showGenelicPanel = () =>{
   if(!$("#genelic_panel").is(":visible")){
     $("#genelic_panel").show();
     $("#genelic_panel input[name='genelic_input']").focus();
   }
 }
-
-/*
-  check genelic panel input
-
-  caution: これは必要ならv2で実装する。v1ではwhere句のチェックはしない。
-
-  return: true -> openしているtableのカラムである
-          false -> 知らないカラムである
-*/
+/**
+ * @function checkGenelicInput
+ * @param {string} s  where sentence strings 
+ * @returns {boolean}  true->known column as opening  false->unknown column(illegal)
+ * 
+ * caution: will imprement this in V2 if necessary
+ */
 const checkGenelicInput = (s) =>{
   return true;
 }
 
-// genelic_panelでreturn keyを押したらチャットボックスに戻る
+// return to the chat box if 'return key' is typed in genelic_panel
 $("#genelic_panel input[name='genelic_input']").keypress(function (e) {
   if (e.keyCode == 13) {
     $("#jetelina_panel [name='chat_input']").focus();
