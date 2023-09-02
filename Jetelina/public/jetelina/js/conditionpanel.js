@@ -1,3 +1,17 @@
+
+/**
+    JS library for Jetelina Condition Panel
+    @author Ono Keiji
+    @version 1.0
+
+    This js lib works with dashboard.js, functionpanel.js and conditionpanel.js for the Condition Panel.
+    
+    Functions:
+      conditionPanelFunctions(ut)
+      setGraphData(o,type)
+      viewPerformanceGraph(apino, mean, type)
+      viewCombinationGraph(bname, bno, ct, ac)
+*/
 const conditionPanelFunctions = (ut) => {
     let m = "";
 
