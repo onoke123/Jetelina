@@ -7,11 +7,18 @@
     This js lib works with dashboard.js, functionpanel.js and conditionpanel.js for the Condition Panel.
     
     Functions:
-      conditionPanelFunctions(ut)
-      setGraphData(o,type)
-      viewPerformanceGraph(apino, mean, type)
-      viewCombinationGraph(bname, bno, ct, ac)
+      conditionPanelFunctions(ut)  Exectute some functions ordered by user chat input message
+      setGraphData(o,type)  set data to a graph of creating by plot.js. data and 'type' are passed by getAjaxData() in jetelinalib.js 
+      viewPerformanceGraph(apino, mean, type)  show 'performance graph'
+      viewCombinationGraph(bname, bno, ct, ac)  show the 'combination graph'
 */
+/**
+ * @function conditionPanelFunctions
+ * @param {string} ut  chat message by user 
+ * @returns {string}  answer chat message by Jetelina
+ * 
+ * Exectute some functions ordered by user chat input message
+ */
 const conditionPanelFunctions = (ut) => {
     let m = "";
 
@@ -25,7 +32,7 @@ const conditionPanelFunctions = (ut) => {
         stage = 'chose_func_or_cond';
         chatKeyDown(ut);
     } else {
-        // 優先オブジェクトがあればそれを使う
+        // use the prior command if it were
         let cmd = getPreferentPropertie('cmd');
 
         if (debug) {
@@ -44,15 +51,14 @@ const conditionPanelFunctions = (ut) => {
         switch (cmd) {
             case 'graph':
                 /*
-                    #plotは3Dグラフをグリグリ回転させるので、divパネル自体は
-                    draggableにはしないでおく。
+                    #plot rotates 3D graph, so the div panel is not to be draggable.
                 */
                 $("#plot").show().animate({
                     top: "5%",
                     left: "-5%"
                 }, animateDuration);
                 /*
-                    このグラフは2DだからdivパネルをdraggableでもOK
+                    This graph is 2D that why it is to be draggable
                 */
                 $("#performance_real").show().draggable().animate({
                     top: "-50%",
@@ -63,7 +69,7 @@ const conditionPanelFunctions = (ut) => {
                 break;
             case 'performance':
                 /*
-                    このグラフは2DだからdivパネルをdraggableでもOK
+                    This graph is 2D that why this div panel is to be draggable
                 */
                 $("#performance_test").show().draggable().animate({
                     top: "-70%",
@@ -73,18 +79,24 @@ const conditionPanelFunctions = (ut) => {
                 m = chooseMsg('6cond-graph-show', "", "");
                 break;
             default:
-                m = "";//ここは後処理にお任せ
+                m = "";
                 break;
         }
     }
 
     return m;
 }
-
+/**
+ * @function setGraphData
+ * @param {object} o   json object data
+ * @param {string} type  'ac'-> access vs combination  'real'->real performance  'test->test performance    this is ordered in jetelinalib.js
+ * 
+ * set data to a graph of creating by plot.js. data and 'type' are passed by getAjaxData() in jetelinalib.js  
+ */
 const setGraphData = (o, type) => {
     if (o != null) {
         Object.keys(o).forEach(function (key) {
-            //’Jetelina’のvalueはオブジェクトになっているからこうしている  name=>key value=>o[key]
+            // because a value of ’Jetelina’ is an object   name=>key value=>o[key]
             if (key == "Jetelina" && o[key].length > 0) {
                 // access vs combination
                 let base_table_name = [];
@@ -92,7 +104,7 @@ const setGraphData = (o, type) => {
                 let combination_table = [];
                 let access_count = [];
                 /* performance
-                    apino,max,min,mean -> apino, meanだけを使う。
+                    apino,max,min,mean -> apino, use only 'mean' data
                 */
                 let apino = [];
                 let mean = [];
@@ -126,7 +138,10 @@ const setGraphData = (o, type) => {
                     }
                 });
 
-                //plot.jsのレンダリング実行速度がクライアントによって違うので、ここで遅延処理して辻褄を合わせる
+                /*
+                    Tips:
+                      adjusting the plot.js execution time because it is depend on clients environment
+                */
                 setTimeout(function () {
                     if (type == "ac") {
                         viewCombinationGraph(apino, base_table_no, combination_table, access_count);
@@ -139,7 +154,14 @@ const setGraphData = (o, type) => {
         });
     }
 }
-
+/**
+ * @function viewPerformanceGraph
+ * @param {string} apino 
+ * @param {Float64Array} mean  array of mean data 
+ * @param {string} type  'ac'-> access vs combination  'real'->real performance  'test->test performance    this is ordered in jetelinalib.js
+ * 
+ * show 'performance graph'
+ */
 const viewPerformanceGraph = (apino, mean, type) => {
     var data = [
         {
@@ -183,7 +205,15 @@ const viewPerformanceGraph = (apino, mean, type) => {
         Plotly.newPlot('performance_test_graph', data, layout);
     }
 }
-
+/**
+ * @function viewCombinationGraph
+ * @param {string} bname   api number
+ * @param {integre} bno   base table number 
+ * @param {string} ct   table name of combination 
+ * @param {integer} ac  sql access count number
+ * 
+ * show the 'combination graph' 
+ */
 const viewCombinationGraph = (bname, bno, ct, ac) => {
     if (debug) {
         console.log("bname: ", bname);
