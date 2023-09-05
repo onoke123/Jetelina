@@ -7,7 +7,7 @@ module CSVFileController
 
     using CSV
     using DataFrames
-    using SQLite
+#    using SQLite
     using Genie, Genie.Renderer, Genie.Renderer.Json
     using JetelinaReadConfig, JetelinaLog
     using ExeSql, DBDataController
@@ -16,14 +16,14 @@ module CSVFileController
         function read( csvfname::String )
 
     # Arguments
-    - `csvfname: String`: csv file name
+    - `csvfname: String`: csv file name. Expect string data of JetelinaFileUploadPath + <csv file name>.
 
     read csv file, then insert the csv data into DB.
     """
     function read( csvfname::String )       
         if debugflg
             debugmsg = "csv file: $csvfname"
-            writetoLogfile( debugmsg )
+            JetelinaLog.writetoLogfile( debugmsg )
         end
 
         # read line count number from the head of the csv file
