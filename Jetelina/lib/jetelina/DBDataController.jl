@@ -1,19 +1,21 @@
 """
     module: DBDataCOntroller
 
-DB controller
+    DB action controller
 
-contain functions
-    init_Jetelina_table()
-    dataInsertFromCSV()
-    dropTable()
-    getTableList(s)
-    getSequenceNumber(t)
-    doInsert()
-    doSelect()
-    doUpdate()
-    doDelete()
-    getUserAccount(s)
+    functions
+        __init__()
+        init_Jetelina_table()
+        dataInsertFromCSV(csvfname::String)
+        getTableList(s::String)
+        getSequenceNumber(t::Integer)
+        dropTable( tableName::String )
+        getColumns( tableName::String )
+        doInsert()
+        doSelect()
+        doUpdate()
+        doDelete()
+        getUserAccount(s::String)
 """
 module DBDataController
 
@@ -38,7 +40,7 @@ module DBDataController
 
     end
 
-    function dataInsertFromCSV( csvfname )
+    function dataInsertFromCSV( csvfname::String )
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.dataInsertFromCSV( csvfname )
@@ -63,7 +65,7 @@ module DBDataController
         end
     end
 
-    function getSequenceNumber(t)
+    function getSequenceNumber(t::Integer)
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.getJetelinaSequenceNumber(t)
@@ -72,7 +74,7 @@ module DBDataController
         end
     end
 
-    function dropTable( tableName )
+    function dropTable( tableName::String )
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.dropTable( tableName )
@@ -81,7 +83,7 @@ module DBDataController
         end
     end
 
-    function getColumns( tableName )
+    function getColumns( tableName::String )
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.getColumns( tableName )
@@ -126,7 +128,7 @@ module DBDataController
         end
     end
 
-    function getUserAccount( s )
+    function getUserAccount( s::String )
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.getUserAccount(s)

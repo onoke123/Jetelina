@@ -2,6 +2,9 @@
     module: CSVFileController
 
     read the upload csv file, then insert into DB.
+
+    functions:
+        read(csvfname::String)
 """
 module CSVFileController
 

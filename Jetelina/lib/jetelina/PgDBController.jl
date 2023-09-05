@@ -237,7 +237,7 @@ function insert2JetelinaTableManager( tableName, columns )
 
     columns of tableName insert into Jetelina_table_manager  
 """
-function insert2JetelinaTableManager(tableName, columns)
+function insert2JetelinaTableManager(tableName::String, columns::Array)
     conn = open_connection()
 
     try
@@ -275,7 +275,7 @@ end
 
 CSV file data insert into the table that is orderd by csv file name
 """
-function dataInsertFromCSV(fname)
+function dataInsertFromCSV(fname::String)
     df = DataFrame(CSV.File(fname))
     rename!(lowercase,df)
     # special column 'jetelina_delte_flg' is added to columns 
@@ -430,7 +430,7 @@ function dropTable( tableName )
 
 drop the table and delete its related data from jetelina_table_manager table
 """
-function dropTable(tableName)
+function dropTable(tableName::String)
     # drop the tableName
     drop_table_str = """
         drop table $tableName
@@ -465,7 +465,7 @@ end
 # Arguments
 - `tableName: String`: DB table name
 """
-function getColumns(tableName)
+function getColumns(tableName::String)
     j = ""
 
     sql = """   
@@ -536,7 +536,7 @@ end
 function doDelete()
 end
 
-function getUserAccount(s)
+function getUserAccount(s::String)
     j = ""
 
     sql = """   
