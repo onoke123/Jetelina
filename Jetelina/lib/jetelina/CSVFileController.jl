@@ -1,7 +1,10 @@
 """
     module: CSVFileController
 
-    read the upload csv file, then insert into DB.
+    Author: Ono keiji
+    Version: 1.0
+    Description:
+        Handles CSV files.
 
     functions:
         read(csvfname::String)
@@ -10,18 +13,19 @@ module CSVFileController
 
     using CSV
     using DataFrames
-#    using SQLite
-    using Genie, Genie.Renderer, Genie.Renderer.Json
+#    using Genie, Genie.Renderer, Genie.Renderer.Json
     using JetelinaReadConfig, JetelinaLog
-    using ExeSql, DBDataController
+#    using ExeSql, 
+    using DBDataController
 
     """
-        function read( csvfname::String )
+    function read( csvfname::String )
+
+        read csv file, then insert the csv data into DB.
+
 
     # Arguments
     - `csvfname: String`: csv file name. Expect string data of JetelinaFileUploadPath + <csv file name>.
-
-    read csv file, then insert the csv data into DB.
     """
     function read( csvfname::String )       
         if debugflg

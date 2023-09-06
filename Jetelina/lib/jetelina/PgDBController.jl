@@ -1,27 +1,30 @@
 """
     module: PgDBController
 
-DB controller for PostgreSQL
+    Author: Ono keiji
+    Version: 1.0
+    Description:
+        DB controller for PostgreSQL
 
-contain functions
-    open_connection()
-    close_connection( conn )
-    getTableList()
-    dataInsertFromCSV( fname )
-    dropTable( tableName )
-    getColumns()
-    doInsert()
-    doSelect()
-    doUpdate()
-    doDelete()
+    functions
+        open_connection()
+        close_connection( conn )
+        getTableList()
+        dataInsertFromCSV( fname )
+        dropTable( tableName )
+        getColumns()
+        doInsert()
+        doSelect()
+        doUpdate()
+        doDelete()
 
-    create_jetelina_tables()
-    create_jetelina_id_sequence()
-    insert2JetelinaTableManager( tableName, columns )
-    readJetelinatable()
-    getJetelinaSequenceNumber( conn, t )
-    getUserAccount( s )
-    measureSqlPerformance()
+        create_jetelina_tables()
+        create_jetelina_id_sequence()
+        insert2JetelinaTableManager( tableName, columns )
+        readJetelinatable()
+        getJetelinaSequenceNumber(t )
+        getUserAccount( s )
+        measureSqlPerformance()
 """
 module PgDBController
 
@@ -423,7 +426,7 @@ function dataInsertFromCSV(fname::String)
 end
 
 """
-function dropTable( tableName )
+function dropTable(tableName::String)
 
 # Arguments
 - `tableName: String`: name of the table
@@ -460,7 +463,7 @@ function dropTable(tableName::String)
 end
 
 """
-    function getColumns( fname )
+function getColumns(tableName::String)
 
 # Arguments
 - `tableName: String`: DB table name
@@ -494,7 +497,7 @@ function doInsert()
 end
 
 """
-    function doSelect( sql,flg )
+function doSelect( sql,mode )
 
 # Arguments
 - `sql: String`: execute sql sentense
