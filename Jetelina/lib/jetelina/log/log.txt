@@ -594,3 +594,5 @@
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
 ┌ Info: 2023-08-03 15:16:22 csv file: lib/jetelina/testdata/ftest2.csv
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30
+┌ Info: 2023-09-06 14:18:00 PgDBController.create_jetelina_table() error: MethodError(LibPQ._multi_execute, (nothing, "    create table if not exists jetelina_table_manager(\n        jetelina_id varchar(256), table_name varchar(256), columns varchar(256)\n    );\n"), 0x0000000000007b63)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:30

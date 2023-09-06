@@ -7,9 +7,12 @@
         DB controller for PostgreSQL
 
     functions
+        create_jetelina_tables()
+        create_jetelina_id_sequence()
         open_connection()
-        close_connection( conn )
-        getTableList()
+        close_connection(conn::LibPQ.Connection)
+        getTableList(s::String)
+
         dataInsertFromCSV( fname )
         dropTable( tableName )
         getColumns()
@@ -18,8 +21,6 @@
         doUpdate()
         doDelete()
 
-        create_jetelina_tables()
-        create_jetelina_id_sequence()
         insert2JetelinaTableManager( tableName, columns )
         readJetelinatable()
         getJetelinaSequenceNumber(t )
@@ -36,6 +37,9 @@ using JetelinaFiles
 using SQLSentenceManager
 
 """
+function create_jetelina_table
+
+    create 'jetelina_table_manager' table.
 """
 function create_jetelina_table()
     create_jetelina_table_manager_str = """
@@ -54,6 +58,9 @@ function create_jetelina_table()
 end
 
 """
+function create_jetelina_id_sequence()
+
+    create 'jetelina_id' sequence.
 """
 function create_jetelina_id_sequence()
     create_jetelina_id_sequence = """
@@ -70,21 +77,16 @@ function create_jetelina_id_sequence()
 end
 
 """
-    function open_connection()
+function open_connection()
 
-open connection to the DB.
-connection parameters are set by global variables.
+    open connection to the DB.
+    connection parameters are set by global variables.
+
+# Arguments
+- return: LibPQ.Connection object
 """
 function open_connection()
-    #===
-    @info "host = '$JetelinaDBhost' 
-    port = '$JetelinaDBport'
-    user = '$JetelinaDBuser'
-    password = '$JetelinaDBpassword'
-    sslmode = '$JetelinaDBsslmode'
-    dbname = '$JetelinaDBname' "
-    ===#
-    conn = LibPQ.Connection("""host = '$JetelinaDBhost' 
+    return conn = LibPQ.Connection("""host = '$JetelinaDBhost' 
         port = '$JetelinaDBport'
         user = '$JetelinaDBuser'
         password = '$JetelinaDBpassword'
@@ -93,21 +95,25 @@ function open_connection()
 end
 
 """
-    function close_connection( conn )
+function close_connection(conn::LibPQ.Connection)
+
+    close the DB connection
 
 # Arguments
-- `conn: Object`: connection object
+- `conn:LibPQ.Connection`: LibPQ.Connection object
 
-close the DB connection
 """
-function close_connection(conn)
+function close_connection(conn::LibPQ.Connection)
     close(conn)
 end
 
 """
-    function readJetelinatable()
+function readJetelinatable()
 
-read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame 
+    read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame 
+
+# Arguments
+- return: boolean:  true->success, false->fail
 """
 function readJetelinatable()
     sql = """   
@@ -133,14 +139,15 @@ function readJetelinatable()
 end
 
 """
-    function getTableList()
+function getTableList(s::String)
+
+    get all table name from public 'schemaname'
 
 # Arguments
-s:String: 'json' -> return is JSON form
-          'dataframe' -> return is DataFrames form
-return: json data of table list
+- `s:String`: 'json' -> required JSON form to return
+              'dataframe' -> required DataFrames form to return
+- return: table list in json or DataFrame
 
-get all table name from public 'schemaname'
 """
 function getTableList(s::String)
     df = _getTableList()
@@ -150,7 +157,9 @@ function getTableList(s::String)
         return df
     end
 end
+"""
 
+"""
 function _getTableList()
     df = DataFrame()
     conn = open_connection()
