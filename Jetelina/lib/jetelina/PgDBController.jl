@@ -11,20 +11,18 @@
         create_jetelina_id_sequence()
         open_connection()
         close_connection(conn::LibPQ.Connection)
+        readJetelinatable()
         getTableList(s::String)
-
-        dataInsertFromCSV( fname )
-        dropTable( tableName )
-        getColumns()
+        getJetelinaSequenceNumber(t::Integer)
+        insert2JetelinaTableManager(tableName::String, columns::Array)
+        dataInsertFromCSV(fname::String)
+        dropTable(tableName::String)
+        getColumns(tableName::String)
         doInsert()
-        doSelect()
+        doSelect(sql::String,mode::String)
         doUpdate()
         doDelete()
-
-        insert2JetelinaTableManager( tableName, columns )
-        readJetelinatable()
-        getJetelinaSequenceNumber(t )
-        getUserAccount( s )
+        getUserAccount(s::String)
         measureSqlPerformance()
 """
 module PgDBController
@@ -158,21 +156,26 @@ function getTableList(s::String)
     end
 end
 """
+function _getTableList()
 
+    get table list then put it into DataFrame object. this is a private function, but can access from others
+    fixing as 'public' in schemaname. this is the protocol.
+
+# Arguments
+- return: DataFrame object. empty if got fail.
 """
 function _getTableList()
     df = DataFrame()
     conn = open_connection()
-    # schemanameをpublicに固定している。これはプロトコルでいいかな。
-    # システムはpublicで作るとして、importも"publicで"としようか。
+    # Fixing as 'public' in schemaname. This is the protocol.
     table_str = """select tablename from pg_tables where schemaname='public'"""
     try
         df = DataFrame(columntable(LibPQ.execute(conn, table_str)))
-        # クライアントに提供するtable listには jetelina_table_manager,usertable　は含まない。
+        # do not include 'jetelina_table_manager and usertable in the return
         DataFrames.filter!(row -> row.tablename != "jetelina_table_manager" && row.tablename != "usertable", df)
     catch err
         JetelinaLog.writetoLogfile("PgDBController._getTableList() error: $err")
-        return DataFrame() # null のDataFrameなんか返しちゃったりして
+        return DataFrame() # return empty DataFrame if got fail
     finally
         close_connection(conn)
     end
@@ -180,13 +183,15 @@ function _getTableList()
     return df
 end
 """
-    function getJetelinaSequenceNumber( t )
-    
+function getJetelinaSequenceNumber(t::Integer)
+
+    get seaquence number from jetelina_id table
+
 # Arguments
 - `t: Integer`  : type order  0-> jetelina_id, 1-> jetelian_sql_sequence
-get seaquence number from jetelina_id table
+- return: 0< sequence number   -1 fail
 """
-function getJetelinaSequenceNumber(t)
+function getJetelinaSequenceNumber(t::Integer)
     conn = open_connection()
     ret = -1
     try
@@ -201,14 +206,17 @@ function getJetelinaSequenceNumber(t)
 end
 
 """
-    function _getJetelinaSequenceNumber( conn, t )
-    
+function _getJetelinaSequenceNumber(conn::LibPQ.connection, t::Integer)
+
+    get seaquence number from jetelina_id table, but this is a private function.
+    this function will never get fail, expectedly.:-P
+
 # Arguments
 - `conn: Object`: connection object
 - `t: Integer`  : type order  0-> jetelina_id, 1-> jetelian_sql_sequence
-get seaquence number from jetelina_id table
+- return:Integer: sequence number 
 """
-function _getJetelinaSequenceNumber(conn, t)
+function _getJetelinaSequenceNumber(conn::LibPQ.connection, t::Integer)
     sql = ""
 
     if t == 0
@@ -224,30 +232,24 @@ function _getJetelinaSequenceNumber(conn, t)
     sequence_number = columntable(execute(conn, sql))
 
     #===
-        ここはちょっと説明が要る。
-        sequence_numberは Union{Missing, Int64}[51]　になっていて
-        nextval()の値は[51]の51になっている。なので、
-        sequence_number[1] -> Union{Int64}[51]
-        sequence_number[1][1] -> 51
-        というわけ。メンドウだな。
-    ===
-    if t == 0
-        return "j" * string( sequence_number[1][1] )
-    elseif t == 1
-        return "js" * string( sequence_number[1][1] )
-    end
+        Tips:
+        this sequence_number is a type of Union{Missing,Int64}{51} for example.
+        wanted nextval() is {51}, then 
+            sequence_number[1] -> Union{Int64}[51]
+            sequence_number[1][1] -> 51
     ===#
     return sequence_number[1][1]
 end
 
 """
-function insert2JetelinaTableManager( tableName, columns )
+function insert2JetelinaTableManager(tableName::String, columns::Array )
 
-    # Arguments
-    - `tableName: String`: table name of insertion
-    - `columns: Array`: vector arrya for insert column data
+    insert columns of 'tableName' into Jetelina_table_manager  
 
-    columns of tableName insert into Jetelina_table_manager  
+# Arguments
+- `tableName: String`: table name of insertion
+- `columns: Array`: vector arrya for insert column data
+- return: boolean: fail if got error. nothing return in the caes of success
 """
 function insert2JetelinaTableManager(tableName::String, columns::Array)
     conn = open_connection()
@@ -275,17 +277,18 @@ function insert2JetelinaTableManager(tableName::String, columns::Array)
         close_connection(conn)
     end
 
-    # Df_JetelinaTableManagerを更新する
+    # update Df_JetelinaTableManager
     readJetelinatable()
 end
 
 """
-    function dataInsertFromCSV( fname )
+function dataInsertFromCSV(fname::String)
+
+    insert csv file data ordered by 'fname' into table. the table name is the csv file name.
 
 # Arguments
 - `fname: String`: csv file name
-
-CSV file data insert into the table that is orderd by csv file name
+- return: boolean: true -> success, false -> get fail
 """
 function dataInsertFromCSV(fname::String)
     df = DataFrame(CSV.File(fname))
@@ -296,15 +299,13 @@ function dataInsertFromCSV(fname::String)
     column_name = names(df)
 
     column_type = eltype.(eachcol(df))
-
-#    column_type_string = Array{Union{Nothing,String}}(nothing, size(column_name))
     column_type_string = Array{Union{Nothing,String}}(nothing, length(column_name))
     column_str = string()
     insert_str = string()
     update_str = string()
     tablename_arr = []
     #===
-        要は、create table文の　"id integer, name varchar(36)...の文を作るための処理であるぞと
+        make the sentece of sql( "id integer, name varchar(36)...")
     ===#
     for i = 1:length(column_name)
         cn = column_name[i]
@@ -338,18 +339,17 @@ function dataInsertFromCSV(fname::String)
     tableName = splitext(splitdir(fname)[2])[1]
 
     #===
-        ここで一度、同じ名前のtableの存在を確認する。
-        でもそれはcreate tableのためではなくて(だって、not existsしてるし)、
-        その後の insert2JetelinaTableManager() 処理のため。
+        check if the same name table already exists.
+        this is not for create sql, but for insert2JetelinaTableManager().
     ===#
     df_tl = _getTableList()
     DataFrames.filter!(row -> row.tablename == tableName, df_tl)
 
     #===
-        "not exists"条件をつけてtableを作成する。
-        その後csvファイルデータをinsertするが、これは同一tableに「追加」
-        を認めているから。もし「追加」を認めない場合は、insert2JetelinaTableManager()
-        実行処理条件のところと同じく isempty( df_tl ) 判定を入れればいい。
+        Tips:
+        create table with 'not exists'.
+        then insert csv data to there. this is because of forgiving adding data to the same table.
+        put isempty(df_tl) in there as same as insert2JetelinaTableManager if it does not forgive it.
     ===#
     create_table_str = """
         create table if not exists $tableName(
@@ -365,8 +365,7 @@ function dataInsertFromCSV(fname::String)
         JetelinaLog.writetoLogfile("PgDBController.dataInsertFromCSV() with $fname error : $err")
         return false
     finally
-        #正常な場合まだ下でconnを使うのでここでは閉じない
-        #close_connection( conn )
+        # do not close the connection because of resuming below yet.
     end
     #===
         then get column from the created table, because the columns are order by csv file, thus they can get after
@@ -395,13 +394,15 @@ function dataInsertFromCSV(fname::String)
         JetelinaLog.writetoLogfile("PgDBController.dataInsertFromCSV() with $fname error : $err")
         return false
     finally
-        #ここまで来たらconnを閉じる
+        # ok. close the connection finally
         close_connection(conn)
     end
-
-    # cols: ["id", "name", "sex", "age", "ave", "jetelina_delete_flg"]みたいに入っているのでカラムを使いたいときはこれを使おう
-    # と思ったけど、insert文もupdate文もデータのタイプを判断しないといけないから、colsではなくその上の
-    # select文の書き込みはPostDataCOntroller.postDataAcquire()　でやっている
+    #===
+        Tips:
+        cols(see above) is ["id", "name", "sex", "age", "ave", "jetelina_delete_flg"], so can use it when
+        wanna use column name, but need to judge the data type both the case of 'insert' and 'update', 
+        that why do not use cols here. writing select sentence is done in PostDataController.postDataAcquire(). 
+    ===#
     push!(tablename_arr, tableName)
     insert_str = """insert into $tableName values($insert_str)"""
     if debugflg
@@ -437,10 +438,11 @@ end
 """
 function dropTable(tableName::String)
 
-# Arguments
-- `tableName: String`: name of the table
+    drop the table and delete its related data from jetelina_table_manager table
 
-drop the table and delete its related data from jetelina_table_manager table
+# Arguments
+- `tableName: String`: ordered table name
+- return: boolean: true -> success, false -> get fail
 """
 function dropTable(tableName::String)
     # drop the tableName
@@ -465,7 +467,7 @@ function dropTable(tableName::String)
         close_connection(conn)
     end
 
-    # SQLリストを処理する
+    # update SQL list
     SQLSentenceManager.deleteFromlist(tableName)
 
     return true
@@ -474,8 +476,11 @@ end
 """
 function getColumns(tableName::String)
 
+    get columns name of ordereing table.
+
 # Arguments
 - `tableName: String`: DB table name
+- return: String: in success -> column data in json, in fail -> ""
 """
 function getColumns(tableName::String)
     j = ""
@@ -501,23 +506,32 @@ function getColumns(tableName::String)
 
     return j
 end
+"""
+function doInsert()
 
+    insert json data into table, but not imprement yet.
+"""
 function doInsert()
 end
 
 """
-function doSelect( sql,mode )
+function doSelect(sql::String,mode::String)
+
+    execute select data by ordering sql sentence, but get sql execution time of ordered sql if 'mode' is 'measure'.
+    'mode=mesure' is for the condition panel feture.
 
 # Arguments
 - `sql: String`: execute sql sentense
 - `mode: String`: "run"->running mode  "measure"->measure speed. only called by measureSqlPerformance()
+- return: no 'mesure' mode -> tuple(boolean,string in json). json string is missing when getting fail
+          'mesure' mode -> exectution time of tuple(max,min,mean) 
 """
-function doSelect(sql,mode)
+function doSelect(sql::String,mode::String)
     conn = open_connection()
     try
         if mode == "measure"
             #===
-                取得するデータは、max,best,meanの三種類とする。
+                aquire data types are max,best and mean
             ===#
             exetime = []
             looptime = 10
@@ -537,17 +551,33 @@ function doSelect(sql,mode)
         JetelinaLog.writetoLogfile("PgDBController.doSelect() with $mode $sql error : $err")
         return false
     finally
-        #ここまで来たらconnを閉じる
+        # close the connection finally
         close_connection(conn)
     end
 end
+"""
+function doUpdate()
 
+    update json data into table, but not imprement yet.
+"""
 function doUpdate()
 end
+"""
+function doDelete()
 
+    delete data ordered table, but not imprement yet.
+"""
 function doDelete()
 end
+"""
+function getUserAccount(s::String)
 
+    get user account for authentication.
+    
+# Arguments
+- `s::String`:  user information. login account or first name or last name.
+- return: success -> user data in json, fail -> ""
+"""
 function getUserAccount(s::String)
     j = ""
 
@@ -571,15 +601,15 @@ function getUserAccount(s::String)
 end
 
 """
-    function measureSqlPerformance()
+function measureSqlPerformance()
 
-# Arguments。
-    measure sql exectution time
+    measure exectution time of all listed sql sentences. then write it out to JetelinaSqlPerformancefile.
 """
 function measureSqlPerformance()
     #===
-     Df_JetelinaSqlList　に格納されているsqlリストを利用するのがよさそうと思ったが、DF_Jeteli..はGenie空間にあるため、
-     web経由でないと利用できない。それだとcronとか別プロセスで利用できないので、JetelinaSqlListを開いて処理することにする。
+        Tips:
+        Use JetelinaSqlList file here because the convenient Df_JetelinaSqlList is in the Genie zone,
+        then need to use it via Web, it gives a reguration to use it in other process, for example cron.
     ===#
     sqlFile = getFileNameFromConfigPath(JetelinaSQLListfile)
     sqlPerformanceFile = getFileNameFromConfigPath(JetelinaSqlPerformancefile)
@@ -588,7 +618,6 @@ function measureSqlPerformance()
         println(f,string(JetelinaFileColumnApino,',',JetelinaFileColumnMax,',',JetelinaFileColumnMin,',',JetelinaFileColumnMean))
         df = CSV.read( sqlFile, DataFrame )
         for i in 1:size(df,1)
-#        for i in 1:length(df)
             if startswith(df.apino[i] ,"js")
                 p = doSelect(df.sql[i],"measure")
                 fno::String=df.apino[i]

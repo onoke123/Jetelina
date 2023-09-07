@@ -147,7 +147,7 @@ module DBDataController
         end
     end
     """
-    function doSelect()
+    function doSelect(sql::String,mode::String)
 
         execute select sentence depend on DB type.
 
@@ -179,7 +179,7 @@ module DBDataController
     """
     function doDelete()
 
-        delete ordered table, but not imprement yet.
+        delete data ordered table, but not imprement yet.
     """
     function doDelete()
         if JetelinaDBtype == "postgresql"
