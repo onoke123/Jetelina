@@ -1,7 +1,12 @@
 """
-    module: FileUploadController
+module: FileUploadController
 
-contain functions
+Author: Ono keiji
+Version: 1.0
+Description:
+    csv file upload controller
+
+functions
     fup()
 """
 module FileUploadController
@@ -11,10 +16,10 @@ module FileUploadController
     using CSVFileController
 
     """
-        function fup()
+    function fup()
 
-    upload the csv file from fileuplaod.html.
-    caution: ':upfile'(html tag id) is depend on fileupload.html
+        upload the csv file from fileuplaod.html.
+        caution: ':upfile'(html tag id) is depend on fileupload.html
     """
     function fup()
         if infilespayload(:upfile)
