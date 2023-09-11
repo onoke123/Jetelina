@@ -13,43 +13,43 @@ functions
 """
 module JetelinaFiles
 
-export getFileNameFromConfigPath,getJsFileNameFromPublicPath,getFileNameFromLogPath
+    export getFileNameFromConfigPath,getJsFileNameFromPublicPath,getFileNameFromLogPath
 
-"""
-function getFileNameFromConfigPath(fname::String)
+    """
+    function getFileNameFromConfigPath(fname::String)
 
-    get full path of Jetelina Configuration files 
+        get full path of Jetelina Configuration files 
 
-# Arguments
-- `fname::String`: target file name
-- return: full path of the tartget name. this path is under Genie zone.
-"""
-function getFileNameFromConfigPath(fname::String)
-    return string( joinpath( @__DIR__, "config", fname ))
-end
-"""
-function getJsFileNameFromPublicPath(fname::String)
+    # Arguments
+    - `fname::String`: target file name
+    - return: full path of the tartget name. this path is under Genie zone.
+    """
+    function getFileNameFromConfigPath(fname::String)
+        return string( joinpath( @__DIR__, "config", fname ))
+    end
+    """
+    function getJsFileNameFromPublicPath(fname::String)
 
-    get full path of Jetelina public files
+        get full path of Jetelina public files
 
-# Arguments
-- `fname::String`: target file name
-- return: full path of the tartget name. this path is under Genie zone.
-"""
-function getJsFileNameFromPublicPath(fname::String)
-    return string(joinpath(@__DIR__, "..", "..", "public", "jetelina", "js", fname))
-end
-"""
-function getJsFileNameFromPublicPath(fname::String)
+    # Arguments
+    - `fname::String`: target file name
+    - return: full path of the tartget name. this path is under Genie zone.
+    """
+    function getJsFileNameFromPublicPath(fname::String)
+        return string(joinpath(@__DIR__, "..", "..", "public", "jetelina", "js", fname))
+    end
+    """
+    function getJsFileNameFromPublicPath(fname::String)
 
-    get full path of Jetelina log files
+        get full path of Jetelina log files
 
-# Arguments
-- `fname::String`: target file name
-- return: full path of the tartget name. this path is under Genie zone.
-"""
-function getFileNameFromLogPath(fname::String)
-    return string( joinpath( @__DIR__, "log", fname ) )
-end
+    # Arguments
+    - `fname::String`: target file name
+    - return: full path of the tartget name. this path is under Genie zone.
+    """
+    function getFileNameFromLogPath(fname::String)
+        return string( joinpath( @__DIR__, "log", fname ) )
+    end
 
 end
