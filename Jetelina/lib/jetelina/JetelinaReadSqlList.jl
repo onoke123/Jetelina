@@ -1,5 +1,5 @@
 """
-module: JetelinaFiles
+module: JetelinaReadSqlList
 
 Author: Ono keiji
 Version: 1.0

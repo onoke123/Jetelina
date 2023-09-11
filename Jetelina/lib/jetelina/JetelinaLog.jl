@@ -1,5 +1,5 @@
 """
-module: JetelinaFiles
+module: JetelinaLog
 
 Author: Ono keiji
 Version: 1.0

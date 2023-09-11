@@ -1,13 +1,31 @@
+"""
+module: PgDataTypeList
+
+Author: Ono keiji
+Version: 1.0
+Description:
+    determaine data type of PostgreSQL
+
+functions
+    getDataType(c_type::String)   determaine 'c_type' to PostgreSQL data. ex. c_type=='Int' -> 'Integer'
+    getDataTypeInDataFrame(c_type::String)  determaine 'c_type' to DataFrame data. ex. c_type=='Int' -> 'Integer'
+"""
 module PgDataTypeList
 
     using JetelinaReadConfig
 
-    #===
-        当初、csv->dbを想定してdata typeを設定したもの。
-        getDataTypeInDataFrame()は後から追加したものだけど、ひょっとしたらそちらに
-        統合できるのかなぁなんて思ったりもしている。
-    ===#
-    function getDataType( c_type )
+    export getDataType,getDataTypeInDataFrame
+
+    """
+    function getDataType(c_type::String)
+
+        determaine 'c_type' to PostgreSQL data. ex. c_type=='Int' -> 'Integer'.
+        It might be able to integrate with getDataTypeInDataFrame(), but should consider.
+
+    # Arguments
+    - `c_type::String`:  data type string. ex 'Int'
+    """
+    function getDataType(c_type::String)
         if debugflg
             @info "c_type: ", c_type
         end
@@ -24,15 +42,17 @@ module PgDataTypeList
             "varchar"
         end
     end
+    """
+    function getDataTypeInDataFrame(c_type::String)
 
-    #===
-        DataFrameのdata typeを判別するためのもの。
-        getDataType()の後、しばらく経ってから追加したもので、getDataType()に影響を及ぼしたくなかった
-        ので追加しました。けど、ひょっとしたら統合できるのかなぁなんて思ってたりする。
-        想定されるc_typeは Union{Missing,String}とかで、getDataType()のモノとは形が違うので、判別の
-        startswithとcontainsの違いになっています。
-    ===#
-    function getDataTypeInDataFrame( c_type )        
+        determaine 'c_type' to DataFrame data. ex. c_type=='Int' -> 'Integer'.
+        this function has been impremented after being defined getDataType(), because did not want to effect to it.
+        c_type is expected Union{Missing,String} and so on, and it is not as same as a variable in getDataType().
+
+    # Arguments
+    - `c_type::String`:  data type string. ex 'Int'
+    """
+    function getDataTypeInDataFrame(c_type::String)        
         c_type = string( c_type )
         if contains( c_type, "Int" ) 
             "integer"
