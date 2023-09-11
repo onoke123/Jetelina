@@ -15,6 +15,8 @@ module FileUploadController
     using JetelinaReadConfig, JetelinaLog
     using CSVFileController
 
+    export fup
+    
     """
     function fup()
 

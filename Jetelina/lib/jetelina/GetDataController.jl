@@ -19,6 +19,8 @@ module GetDataController
     using DBDataController
     using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
 
+    export getTableList,getSqlAnalyzerData,getPerformanceRealData,getPerformanceTestData,checkExistImproveFile
+
     """
     function getTableList()
 

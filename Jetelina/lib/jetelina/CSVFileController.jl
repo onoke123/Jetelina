@@ -18,6 +18,8 @@ module CSVFileController
 #    using ExeSql, 
     using DBDataController
 
+    export read
+    
     """
     function read( csvfname::String )
 

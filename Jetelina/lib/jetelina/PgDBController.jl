@@ -34,6 +34,11 @@ using PgDataTypeList
 using JetelinaFiles
 using SQLSentenceManager
 
+export create_jetelina_tables,create_jetelina_id_sequence,open_connection,close_connection,readJetelinatable,
+getTableList,getJetelinaSequenceNumber,insert2JetelinaTableManager,dataInsertFromCSV,dropTable,getColumns,doInsert,
+doSelect,doUpdate,doDelete,getUserAccount,measureSqlPerformance
+
+
 """
 function create_jetelina_table
 
@@ -206,7 +211,7 @@ function getJetelinaSequenceNumber(t::Integer)
 end
 
 """
-function _getJetelinaSequenceNumber(conn::LibPQ.connection, t::Integer)
+function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer)
 
     get seaquence number from jetelina_id table, but this is a private function.
     this function will never get fail, expectedly.:-P
@@ -216,7 +221,7 @@ function _getJetelinaSequenceNumber(conn::LibPQ.connection, t::Integer)
 - `t: Integer`  : type order  0-> jetelina_id, 1-> jetelian_sql_sequence
 - return:Integer: sequence number 
 """
-function _getJetelinaSequenceNumber(conn::LibPQ.connection, t::Integer)
+function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer)
     sql = ""
 
     if t == 0

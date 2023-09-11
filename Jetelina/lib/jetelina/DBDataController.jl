@@ -27,6 +27,9 @@ module DBDataController
     using JetelinaLog, JetelinaReadConfig
     using PgDBController, JetelinaFiles
 
+    export init_Jetelina_table,dataInsertFromCSV,getTableList,getSequenceNumber,dropTable,getColumns,doInsert,doSelect,doUpdate,
+    doDelete,getUserAccount
+
     """
     function __init__()
         Initial action. Execute init_Jetelina_table()

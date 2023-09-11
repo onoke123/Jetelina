@@ -1,3 +1,14 @@
+"""
+module: JetelinaFiles
+
+Author: Ono keiji
+Version: 1.0
+Description:
+    read and write to log file
+
+functions
+    writetoLogfile(s)  write 's' to log file. date format is "yyyy-mm-dd HH:MM:SS".'s' is available whatever type.
+"""
 module JetelinaLog
 
 using Logging, Dates
@@ -5,12 +16,22 @@ using JetelinaReadConfig,JetelinaFiles
 
 export writetoLogfile
 
-function logfileOpen()
+"""
+function _logfileOpen()
+
+    this function is hopefully be private.
+    open log file. the log file is defined in Jetelina config file.
+
+# Arguments
+- return::tuple: IOStream, Logging.SimpleLogger
+"""
+function _logfileOpen()
     logfile = getFileNameFromLogPath(JetelinaLogfile)
 
     if debugflg
         println("JetelinaLog.jl logfile: ", logfile)
     end
+    
     try
         io = open(logfile, "a+")
         logger = SimpleLogger(io)
@@ -19,22 +40,38 @@ function logfileOpen()
         println("JetelinaLog.logfileOpen(): "$err)
     end
 end
-
+"""
 function writetoLogfile(s)
-    # 日付をつける
+
+    write 's' to log file. date format is "yyyy-mm-dd HH:MM:SS".'s' is available whatever type.
+
+# Arguments
+- `s`: data to write in log file. String/Integer... whatever
+"""
+function writetoLogfile(s)
+    # put date
     ss = string(Dates.format(now(),"yyyy-mm-dd HH:MM:SS"), " ",s)
 
-    io, logger = logfileOpen()
+    io, logger = _logfileOpen()
     with_logger(logger) do
-        # loggerは以下を記録しているので@infoは消さないで
+        # do not delete this @info
         @info ss
     end
 
-    closeLogfile(io)
+    _closeLogfile(io)
 end
+"""
+function _closeLogfile(io::IOStream)
 
-function closeLogfile(io)
+    this function is hopefully be private.
+    close log file after fushing memory,
+
+# Arguments
+- `io::IOStream`: IOStream    
+"""
+function _closeLogfile(io::IOStream)
     flush(io)
     close(io)
 end
+
 end
