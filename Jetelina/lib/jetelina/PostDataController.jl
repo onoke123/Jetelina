@@ -8,7 +8,7 @@ Description:
 
 functions
     postDataAcquire()  create select sentence of SQL from posting data,then append it to JetelinaTableApifile.
-    getColuns()  get ordered tables's columns with json style.ordered table name is posted as the name 'tablename' in jsonpayload().
+    getColumns()  get ordered tables's columns with json style.ordered table name is posted as the name 'tablename' in jsonpayload().
     getApiList()  get registering api list in json style.api list is refered in Df_JetelinaSqlList.
     deleteTable()  delete table by ordering. this function calls DBDataController.dropTable(tableName), so 'delete' meaning is really 'drop'.ordered table name is posted as the name 'tablename' in jsonpayload().
     login()  login procedure.user's login account is posted as the name 'username' in jsonpayload().
@@ -20,6 +20,8 @@ module PostDataController
     using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
     using SQLSentenceManager,JetelinaFiles
 
+    export postDataAcquire,getColumns,getApiList,deleteTable,login
+    
     """
     function postDataAcquire()
 
@@ -120,7 +122,7 @@ module PostDataController
 
     end
     """
-    function getColuns()
+    function getColumns()
 
         get ordered tables's columns with json style.
         ordered table name is posted as the name 'tablename' in jsonpayload().

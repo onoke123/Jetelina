@@ -1,223 +1,250 @@
+"""
+module: SQLSentenceManager
+
+Author: Ono keiji
+Version: 1.0
+Description:
+    General DB action controller
+
+functions
+    writeTolist(sql::String, tablename_arr::Vector{String})  create api no and write it to JetelinaSQLListfile order by SQL sentence.
+    updateSqlList(dic::Dict)  update JetelinaSQLListfile file
+    deleteFromlist(tablename::String)  delete table name from JetelinaSQLListfile synchronized with dropping table.
+    fileBackup(fname::String)  back up the ordered file with date suffix. ex. <file>.txt -> <file>.txt.yyyymmdd-HHMMSS
+    sqlDuplicationCheck(nsql::String)  confirm duplication, if 'nsql' exists in JetelinaSQLListfile.but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
+"""
 module SQLSentenceManager
 
-using Dates, StatsBase, CSV
-using DBDataController, JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
+    using Dates, StatsBase, CSV
+    using DBDataController, JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
 
-# sqli list file
-sqlFile = getFileNameFromConfigPath(JetelinaSQLListfile)
-tableapiFile = getFileNameFromConfigPath(JetelinaTableApifile)
-experimentFile = getFileNameFromConfigPath(JetelinaExperimentSqlList)
-
-function writeTolist(sql, tablename_arr)
-    # get the sequence name then create the sql sentence
-    seq_no = DBDataController.getSequenceNumber(1)
-    suffix = string()
-
-    if startswith(sql, "insert")
-        suffix = "ji"
-    elseif startswith(sql, "update")
-        suffix = "ju"
-    elseif startswith(sql, "select")
-        suffix = "js"
-    elseif startswith(sql, "delete")
-        suffix = "jd"
-    end
-
-    sqlsentence = """$suffix$seq_no,\"$sql\""""
-
-    if debugflg
-        @info "sql sentence: ", sqlsentence
-    end
-
-    # write the sql to the file
-    thefirstflg = true
-    if !isfile(sqlFile)
-        thefirstflg = false
-    end
-
-    try
-        open(sqlFile, "a") do f
-            if !thefirstflg
-                println(f, string(JetelinaFileColumnApino,',',JetelinaFileColumnSql))
-            end
-
-
-            println(f, sqlsentence)
-        end
-    catch err
-        JetelinaLog.writetoLogfile("SQLSentenceManager.writeTolist() error: $err")
-        return false, nothing
-    end
-
-    # write the relation between tables and api to the file
-    try
-        open(tableapiFile, "a") do ff
-            println(ff, string(suffix, seq_no, ":", join(tablename_arr, ",")))
-        end
-    catch err
-        JetelinaLog.writetoLogfile("SQLSentenceManager.writeTolist() error: $err")
-        return false, nothing
-    end
-
-    # DataFrameを更新する
-    JetelinaReadSqlList.readSqlList2DataFrame()
-
-    return true, string(suffix, seq_no)
-end
-
-"""
-    updateSqlList()
-
-    JetelinaSQLListfileファイルの更新を行う
-
-    Args
-        dic : 更新対象SQLが、apino=>sql のDict形式
-                ex.  js100=>select ....
-"""
-function updateSqlList(dic)
-    #===
-        SQL ListはDf_JetelinaSqlListでdataframe形式でメモリ展開されている。
-        これをDict形式に変換するもよし、元のJetelinaSqlListファイルをCSV.read()してDictにするもよし。
-        今回は元ファイルからにしてみる。
-    ===#
-    orglist = CSV.File(sqlFile) |> Dict
-    newlist = merge!(orglist,dic)
-
-    #===
-        ファイル書き込みの準備はできた。
-        ここで書き込むのは試験用のリストになる。なぜならリストを作成したあとに実行速度の測定をするから。
-        CSV.write()を”素”で実行するとheaderがデフォルトで"first","secound"と付いてまう。
-        これをカスタマイズするために"header"を指定するんだと。
-    ===#
-    try
-        CSV.write( experimentFile, newlist, header=[JetelinaFileColumnApino,JetelinaFileColumnSql] )
-    catch err
-        println(err)
-        JetelinaLog.writetoLogfile("SQLSentenceManager.updateSqlList() error: $err")
-        return false
-    end
+    export writeTolist,updateSqlList,deleteFromlist,fileBackup,sqlDuplicationCheck
     
-end
+    # sqli list file
+    sqlFile = getFileNameFromConfigPath(JetelinaSQLListfile)
+    tableapiFile = getFileNameFromConfigPath(JetelinaTableApifile)
+    experimentFile = getFileNameFromConfigPath(JetelinaExperimentSqlList)
 
-#===
-    drop tableと同時にsql listから対象tableのヤツを消す
-===#
-function deleteFromlist(tablename)
-    sqlTmpFile = getFileNameFromConfigPath("$JetelinaSQLListfile.tmp")
-    tableapiTmpFile = getFileNameFromConfigPath("JetelinaTableApi.tmp")
+    """
+    function writeTolist(sql::String, tablename_arr::Vector{String})
 
-    # 該当tableと関係するApiを取得する
-    targetapi = []
-    # 対象ファイル類のバックアップをとっておく
-#    backupfilesuffix = Dates.format(now(), "yyyymmdd-HHMMSS")
-#    cp(tableapiFile, string(tableapiFile, backupfilesuffix), force=true)
-#    cp(sqlFile, string(sqlFile, backupfilesuffix), force=true)
+        create api no and write it to JetelinaSQLListfile order by SQL sentence.
+        
+    # Arguments
+    - `sql::String`: sql sentence
+    - `tablename_arr::Vector{String}`: table name list that are used in 'sql'
+    """
+    function writeTolist(sql::String, tablename_arr::Vector{String})
+        # get the sequence name then create the sql sentence
+        seq_no = DBDataController.getSequenceNumber(1)
+        suffix = string()
 
-    fileBackup(tableapiFile)
-    fileBackup(sqlFile)
+        if startswith(sql, "insert")
+            suffix = "ji"
+        elseif startswith(sql, "update")
+            suffix = "ju"
+        elseif startswith(sql, "select")
+            suffix = "js"
+        elseif startswith(sql, "delete")
+            suffix = "jd"
+        end
 
-    try
-        open(tableapiTmpFile, "w") do ttaf
-            open(tableapiFile, "r") do taf
-                # keep=falseにして改行文字を取り除いておく。そしてprintln()する
-                for ss in eachline(taf, keep=false)
-                    if contains( ss, ':' )
-                        p = split(ss, ":") # api_name:table,table,....
-                        tmparr = split(p[2], ',')
-                        if tablename ∈ tmparr
-                            push!(targetapi, p[1]) # ["js1","ji2,.....]
-                        else
-                            # 対象外はファイルに残す
-                            println(ttaf, ss)
+        sqlsentence = """$suffix$seq_no,\"$sql\""""
+
+        if debugflg
+            @info "sql sentence: ", sqlsentence
+        end
+
+        # write the sql to the file
+        thefirstflg = true
+        if !isfile(sqlFile)
+            thefirstflg = false
+        end
+
+        try
+            open(sqlFile, "a") do f
+                if !thefirstflg
+                    println(f, string(JetelinaFileColumnApino,',',JetelinaFileColumnSql))
+                end
+
+
+                println(f, sqlsentence)
+            end
+        catch err
+            JetelinaLog.writetoLogfile("SQLSentenceManager.writeTolist() error: $err")
+            return false, nothing
+        end
+
+        # write the relation between tables and api to the file
+        try
+            open(tableapiFile, "a") do ff
+                println(ff, string(suffix, seq_no, ":", join(tablename_arr, ",")))
+            end
+        catch err
+            JetelinaLog.writetoLogfile("SQLSentenceManager.writeTolist() error: $err")
+            return false, nothing
+        end
+
+        # update DataFrame
+        JetelinaReadSqlList.readSqlList2DataFrame()
+
+        return true, string(suffix, seq_no)
+    end
+
+    """
+    function updateSqlList(dic::Dict)
+
+        update JetelinaSQLListfile file
+
+    # Arguments
+    - `dic::Dict`: target sql for updating. ex.  js100=>select ....
+    - return: false -> if got something error.
+    """
+    function updateSqlList(dic::Dict)
+        #===
+            Tips:
+                SQL list is in Df_JetelinaSqlList as DataFrame type.
+                Both are OK as it transfers to Dict type and read original JetelinaSQLListfile with CSV.read() to transfer to Dict type.
+                This time hires reading original file.
+        ===#
+        orglist = CSV.File(sqlFile) |> Dict
+        newlist = merge!(orglist,dic)
+
+        #===
+            Tips:
+                ready for writing to files.
+                this writing file is to be for test list because of mesuring the execution speed.
+                use 'header' in CSV.write() because 'first','secound'... headers are put automatically without this parameter.
+                'header' is for customizing the file headers.
+        ===#
+        try
+            CSV.write( experimentFile, newlist, header=[JetelinaFileColumnApino,JetelinaFileColumnSql] )
+        catch err
+            println(err)
+            JetelinaLog.writetoLogfile("SQLSentenceManager.updateSqlList() error: $err")
+            return false
+        end
+        
+    end
+    """
+    function deleteFromlist(tablename::String)
+
+        delete table name from JetelinaSQLListfile synchronized with dropping table.
+
+    # Arguments
+    - `tablename::String`: target table name
+    - return: boolean: true -> all done ,  false -> something failed
+    """
+    function deleteFromlist(tablename::String)
+        sqlTmpFile = getFileNameFromConfigPath("$JetelinaSQLListfile.tmp")
+        tableapiTmpFile = getFileNameFromConfigPath("JetelinaTableApi.tmp")
+
+        targetapi = []
+        # take the backup file
+        fileBackup(tableapiFile)
+        fileBackup(sqlFile)
+
+        try
+            open(tableapiTmpFile, "w") do ttaf
+                open(tableapiFile, "r") do taf
+                    # Tips: delete line feed by 'keep=false', then do println()
+                    for ss in eachline(taf, keep=false)
+                        if contains( ss, ':' )
+                            p = split(ss, ":") # api_name:table,table,....
+                            tmparr = split(p[2], ',')
+                            if tablename ∈ tmparr
+                                push!(targetapi, p[1]) # ["js1","ji2,.....]
+                            else
+                                # remain others in the file
+                                println(ttaf, ss)
+                            end
                         end
                     end
                 end
             end
+        catch err
+            JetelinaLog.writetoLogfile("SQLSentenceManager.deleteFromlist() error: $err")
+            return false
         end
-    catch err
-        JetelinaLog.writetoLogfile("SQLSentenceManager.deleteFromlist() error: $err")
-        return false
-    end
 
-    # targetapiに含まれないSQLだけ残す
-    try
-        open(sqlTmpFile, "w") do tf
-            open(sqlFile, "r") do f
-                for ss in eachline(f, keep=false)
-                    p = split(ss, "\"") # js1,"select..."
-                    if rstrip(p[1], ',') ∈ targetapi # これこれぇ＼(^o^)／
-                    # 含まれるのでスキップ
-                    else
-                        #対象tableを含まないものだけ書き出す
-                        println(tf, ss)
+        # remain SQL sentence not include in the target api
+        try
+            open(sqlTmpFile, "w") do tf
+                open(sqlFile, "r") do f
+                    for ss in eachline(f, keep=false)
+                        p = split(ss, "\"") # js1,"select..."
+                        if rstrip(p[1], ',') ∈ targetapi # yes, this is＼(^o^)／
+                        # skip it because of including in it
+                        else
+                            # write out sql that does not contain the target table
+                            println(tf, ss)
+                        end
                     end
                 end
             end
+        catch err
+            JetelinaLog.writetoLogfile("SQLSentenceManager.deleteFromlist() error: $err")
+            return false
         end
-    catch err
-        JetelinaLog.writetoLogfile("SQLSentenceManager.deleteFromlist() error: $err")
+
+        # change the file name. scenarioTmpFile->scenarioFile
+        mv(sqlTmpFile, sqlFile, force=true)
+        mv(tableapiTmpFile, tableapiFile, force=true)
+
+        # update DataFrame
+        JetelinaReadSqlList.readSqlList2DataFrame()
+
+        return true
+    end
+
+    """
+    function fileBackup(fname::String)
+
+        back up the ordered file with date suffix. ex. <file>.txt -> <file>.txt.yyyymmdd-HHMMSS
+
+    # Arguments
+    - `fname::String`: target file name
+    """
+    function fileBackup(fname::String)
+        backupfilesuffix = Dates.format(now(), "yyyymmdd-HHMMSS")
+        cp(fname, string(fname, backupfilesuffix), force=true)
+    end
+
+    """
+    function sqlDuplicationCheck(nsql::String)
+
+        confirm duplication, if 'nsql' exists in JetelinaSQLListfile.
+        but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
+
+    # Arguments
+    - `nsql::String`: sql sentence
+    - return:  tuple style
+               exist     -> ture, api no(ex.js100)
+               not exist -> false
+    """
+    function sqlDuplicationCheck(nsql::String)
+        # exist?
+        for i=1:size(Df_JetelinaSqlList)[1]
+            strs = [nsql,Df_JetelinaSqlList[!,:sql][i]]
+            process1 = split.(strs,r"\W",keepempty=false)
+            process2 = map(x->lowercase.(x),process1)
+            process3 = sort.(process2)
+            process4 = countmap(process3)
+            #===
+                Tips:
+                    the result in process4 will be
+                        exist -> length(process4)=1
+                        not exist -> length(process4)=2
+                    because coutmap() do group together.
+            ===#
+            if length(process4) == 1
+                return true, Df_JetelinaSqlList[!,:no][i]
+            end
+
+        end
+
+        # consequently, not exist.
         return false
     end
-
-    # 全部終わったら scenarioTmpFile->scenarioFileとする
-    mv(sqlTmpFile, sqlFile, force=true)
-    mv(tableapiTmpFile, tableapiFile, force=true)
-
-    # DataFrameを更新する
-    JetelinaReadSqlList.readSqlList2DataFrame()
-
-    return true
-end
-
-"""
-    fileBackup()
-
-        指定されたファイルのバックアップを行う。
-        バックアップファイルはさふぃに"日付時間 yyyymmdd-HHMMSS"が付く。
-
-        Args: file name (full path)
-"""
-function fileBackup(fname)
-    backupfilesuffix = Dates.format(now(), "yyyymmdd-HHMMSS")
-    cp(fname, string(fname, backupfilesuffix), force=true)
-end
-
-"""
-    sqlDuplicationCheck
-
-    引数に設定されたSQLがJetelinaSQLListfileに存在するかどうか確認する。
-    比較対象はJetelinaSQLListfileファイルではなく、メモリ展開されているDataFrame形式の、
-    Df_JetelinaSqlListとすることで高速化を図る。
-
-    nsql: 引数のSQL句
-    return: tabpleで返す 
-            存在した場合   -> true と、該当する既存APIのNO ex. js100
-            存在しない場合 -> false
-
-"""
-function sqlDuplicationCheck(nsql)
-    # 一致するものはあるかなぁ？
-    for i=1:size(Df_JetelinaSqlList)[1]
-        strs = [nsql,Df_JetelinaSqlList[!,:sql][i]]
-        process1 = split.(strs,r"\W",keepempty=false)
-        process2 = map(x->lowercase.(x),process1)
-        process3 = sort.(process2)
-        process4 = countmap(process3)
-        #===
-            ここのprocess4の結果、strs[]の要素が
-                一致していたら      -> length(process4)=1
-                一致していなかったら-> length(process4)=2
-            となる。
-            これは、countmap()が同じmapデータをひとまとめにすることによる。                
-        ===#
-        if length(process4) == 1
-            return true, Df_JetelinaSqlList[!,:no][i]
-        end
-
-    end
-
-    # 結局、一致するものはなかった
-    return false
-end
 
 end
