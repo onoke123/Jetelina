@@ -14,7 +14,7 @@ using Genie, Genie.Renderer, Genie.Renderer.Json
 using JSON, LibPQ, Tables
 using StatsBase
 using JetelinaReadConfig, JetelinaLog
-using ExeSql, DBDataController, PgDBController
+using DBDataController, PgDBController
 using DelimitedFiles
 using JetelinaFiles, JetelinaReadSqlList, SQLSentenceManager
 using TestDBController, PgDataTypeList
