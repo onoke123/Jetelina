@@ -1,196 +1,236 @@
+"""
+module: PostDataController
+
+Author: Ono keiji
+Version: 1.0
+Description:
+    all controll for poting data from clients
+
+functions
+    postDataAcquire()  create select sentence of SQL from posting data,then append it to JetelinaTableApifile.
+    getColuns()  get ordered tables's columns with json style.ordered table name is posted as the name 'tablename' in jsonpayload().
+    getApiList()  get registering api list in json style.api list is refered in Df_JetelinaSqlList.
+    deleteTable()  delete table by ordering. this function calls DBDataController.dropTable(tableName), so 'delete' meaning is really 'drop'.ordered table name is posted as the name 'tablename' in jsonpayload().
+    login()  login procedure.user's login account is posted as the name 'username' in jsonpayload().
+"""
 module PostDataController
 
-using Genie, Genie.Requests, Genie.Renderer.Json
-using DBDataController
-using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
-using SQLSentenceManager,JetelinaFiles
+    using Genie, Genie.Requests, Genie.Renderer.Json
+    using DBDataController
+    using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
+    using SQLSentenceManager,JetelinaFiles
 
-#===
-    postデータからselect文を組み立てる
-===#
-function postDataAcquire()
-    #==
-      dashboard.htmlからのcolumn post dataは以下のjson形式で来る
-         { 'item'.'["<table name>.<column name>","<table name>.<column name>",...]' }
-      で来る。これをjsonpayload("item")で受けると
-         item_d -> ["<table name>.<column name1>","<table name>.<column name2>",...]
-      になるので、後は配列処理で
-         [1] -> <table name>.<column name1>
-      とするが、さらにtable名とカラム名に分けるので '.'　で文字分解して
-         table name  -> <table name>
-         column name -> <column name1>
-      としてsql文作成に使用する
-    ==#
-    item_d = jsonpayload("item")
-    where_d = jsonpayload("where")
-    if debugflg
-        @info "post: " item_d, length(item_d), where_d,length(where_d)
-    end
-    #===
-        なぜsize(..)[1]かというと、上の@info出力でみるとsize(item_d)->(n,) とTupleになっていて
-        最初の"n"が配列の長さなので、ってこと
-    ===#
-    selectSql = ""
-    tableName = ""
-    tablename_arr = [] # JetelinaTableApifile追記用にtable名を配列で格納する　SQLSentenceManager.writeTolist()で利用する
-    
-    for i = 1:length(item_d)
+    """
+    function postDataAcquire()
+
+        create select sentence of SQL from posting data,then append it to JetelinaTableApifile.
+
+    # Arguments
+    - return: this sql is already existing -> json {"resembled":true}
+              new sql then success to append it to  -> json {"apino":"<something no>"}
+                           fail to append it to     -> false
+    """
+    function postDataAcquire()
+        #==
+            Tips:
+                column post data from dashboard.html is expected below json style
+                    { 'item'.'["<table name>.<column name>","<table name>.<column name>",...]' }
+                then parcing it by jsonpayload("item") 
+                    item_d -> ["<table name>.<column name1>","<table name>.<column name2>",...]
+ 
+                then handle it as an array data
+                    [1] -> <table name>.<column name1>
+                furthermore deviding it to <table name> and <column name> by '.' 
+                    table name  -> <table name>
+                    column name -> <column name1>
+        
+                use these to create sql sentence.
+        ==#
+        item_d = jsonpayload("item")
+        where_d = jsonpayload("where")
         if debugflg
-            @info "data $i->", item_d[i]
+            @info "post: " item_d, length(item_d), where_d,length(where_d)
         end
+        #===
+            Tips:
+                Why size(..)[1]? because size(item_d) is tuple data like (n,) in watching above @info.
+                So 'n' is used as the length of the array data.
+        ===#
+        selectSql = ""
+        tableName = ""
+        tablename_arr = [] # Tips: put into array for writing it to JetelinaTableApifile. This is used in SQLSentenceManager.writeTolist().
+        
+        for i = 1:length(item_d)
+            if debugflg
+                @info "data $i->", item_d[i]
+            end
 
-        t = split(item_d[i], ".")
-        t1 = strip(t[1])
-        t2 = strip(t[2])
-        if 0 < length(selectSql)
-            # SQLAnalyzerで解析する都合上、カラムは詰めて書くこと。 ex. select ftest.id,ftest.name from.....
-            selectSql = """$selectSql,$t1.$t2"""
-        else
-            selectSql = """$t1.$t2"""
-        end
+            t = split(item_d[i], ".")
+            t1 = strip(t[1])
+            t2 = strip(t[2])
+            if 0 < length(selectSql)
+                # Tips: should be justfified this columns line for analyzing in SQLAnalyzer。 ex. select ftest.id,ftest.name from.....
+                selectSql = """$selectSql,$t1.$t2"""
+            else
+                selectSql = """$t1.$t2"""
+            end
 
-        if (0 < length(tableName))
-            if (!contains(tableName, t1))
-                tableName = """$tableName,$t1 as $t1"""
+            if (0 < length(tableName))
+                if (!contains(tableName, t1))
+                    tableName = """$tableName,$t1 as $t1"""
+                    push!(tablename_arr,t1)
+                end
+            else
+                tableName = """$t1 as $t1"""
                 push!(tablename_arr,t1)
             end
-        else
-            tableName = """$t1 as $t1"""
-            push!(tablename_arr,t1)
-        end
 
 
-        if debugflg
-            @info "t1, t2: ", t1, t2
-        end
-    end
-
-    wheresentence = ""
-    if !isnothing(where_d) && 0<length(where_d) && where_d != "ignore"
-        wheresentence = """where $where_d"""
-    end
-
-    selectSql = """select $selectSql from $tableName $wheresentence"""
-
-    ck = SQLSentenceManager.sqlDuplicationCheck(selectSql)
-
-    if ck[1] 
-        # 同じものがすでにある
-        return json(Dict("resembled" => ck[2]))
-    else
-        # 新しいヤツだね
-        ret = SQLSentenceManager.writeTolist(selectSql, tablename_arr)
-        #===
-            SQLSente..()のreturnをtable型({true/false,apino/null})で返してもらい、
-            trueならapinoをjson形式で返す。
-        ===#
-        if ret[1] 
-            return json(Dict("apino" => ret[2]))
-        else
-            return ret[1]
-        end
-    end
-
-end
-
-function getColumns()
-    tableName = jsonpayload("tablename")
-    if debugflg
-        @info "PostDataController.getColumns(): " tableName
-    end
-
-    DBDataController.getColumns(tableName)
-end
-
-#==
-    tableを指定してそれに関連するapiを返す関数。
-    なにかに使いそうなのでコメントアウトして残しておく。
-    function getApiList()
-        tableName = jsonpayload( "tablename" )
-        @info "getApiList: " tableName
-        target = contains( tableName )
-        #===
-          DataFrame Df_JetelinaSqlListから、指定したtableNameが含まれる"sql"カラムを
-          filter()で絞り込んでいる。
-          次は絞り込みをVectorにしてJson化したい。
-          Caution: filter!()は使わない。なぜならDf_Jete...はそのままにしておくから。
-        ===#
-        sql_list = filter( :sql => target, Df_JetelinaSqlList )
-        @info "sql_list: " sql_list
-        ret = json( Dict( "Jetelina" => copy.( eachrow( sql_list ))))
-        @info "sql list ret: " ret
-        return ret
-    end
-==#
-#==
-    APIのリストを返す。
-    単純にDf_JetelinaSqlListをJSON形式にして返す。
-==#
-function getApiList()
-    return json(Dict("Jetelina" => copy.(eachrow(Df_JetelinaSqlList))))
-end
-
-#===
-    function _checkTable( s ){
-        p = split( s, "from" )
-        p[2].chop
-    }
-===#
-function deleteTable()
-    tableName = jsonpayload("tablename")
-    if debugflg
-        @info "PostDataController.deleteTable() dropTable: " tableName
-    end
-
-    DBDataController.dropTable(tableName)
-end
-
-function login()
-    userName = jsonpayload("username")
-    if debugflg
-        @info "PostDataController.login(): " userName
-    end
-
-    DBDataController.getUserAccount(userName)
-end
-
-#===
-    Add senario of Jetelina
-===#
-function addJetelinaWords()
-    newwords = jsonpayload("sayjetelina")
-    arr = jsonpayload("arr")
-
-    # adding scenario
-    #        scenarioFile = string( joinpath( "..","..","public","jetelina","js","scenario.js" ))
-    scenarioFile = getJsFileNameFromPublicPath("scenario.js")
-    scenarioTmpFile = getJsFileNameFromPublicPath("scenario.tmp")
-    #scenarioFile = string(joinpath(@__DIR__, "..", "..", "public", "jetelina", "js", "scenario.js"))
-    #scenarioTmpFile = string(joinpath(@__DIR__, "..", "..", "public", "jetelina", "js", "scenario.tmp"))
-    if debugflg
-        @info "PostDataController.addJetelinaWords(): " newwords, arr
-        @info "scenario path: " scenarioFile
-    end
-
-    target_scenario = "scenario['$arr']"
-    rewritestring = ""
-
-    open(scenarioTmpFile, "w") do tf
-        open(scenarioFile, "r") do f
-            # keep=falseにして改行文字を取り除いておく。そしてprintln()する
-            for ss in eachline(f, keep=false)
-                if startswith(ss, target_scenario)
-                    @info "hit: " ss
-                    #ここで入れ替える
-                    ss = ss[1:length(ss)-2] * ",'$newwords'];"                    
-                end
-
-                println(tf, ss)
+            if debugflg
+                @info "t1, t2: ", t1, t2
             end
         end
+
+        wheresentence = ""
+        if !isnothing(where_d) && 0<length(where_d) && where_d != "ignore"
+            wheresentence = """where $where_d"""
+        end
+
+        selectSql = """select $selectSql from $tableName $wheresentence"""
+
+        ck = SQLSentenceManager.sqlDuplicationCheck(selectSql)
+
+        if ck[1] 
+            # already exist it. return it and do nothing.
+            return json(Dict("resembled" => ck[2]))
+        else
+            # yes this is the new
+            ret = SQLSentenceManager.writeTolist(selectSql, tablename_arr)
+            #===
+                Tips:
+                    SQLSente..() returns tuple({true/false,apino/null}).
+                    return apino in json style if the first in tuple were true.
+            ===#
+            if ret[1] 
+                return json(Dict("apino" => ret[2]))
+            else
+                return ret[1]
+            end
+        end
+
+    end
+    """
+    function getColuns()
+
+        get ordered tables's columns with json style.
+        ordered table name is posted as the name 'tablename' in jsonpayload().
+    """
+    function getColumns()
+        tableName = jsonpayload("tablename")
+        if debugflg
+            @info "PostDataController.getColumns(): " tableName
+        end
+
+        DBDataController.getColumns(tableName)
     end
 
-    #全部終わったら scenarioTmpFile->scenarioFileとする
-    mv( scenarioTmpFile,scenarioFile,force=true)
-end
+    #==
+        This comment out is for future requests.
+
+        tableを指定してそれに関連するapiを返す関数。
+        なにかに使いそうなのでコメントアウトして残しておく。
+        function getApiList()
+            tableName = jsonpayload( "tablename" )
+            @info "getApiList: " tableName
+            target = contains( tableName )
+            #===
+            DataFrame Df_JetelinaSqlListから、指定したtableNameが含まれる"sql"カラムを
+            filter()で絞り込んでいる。
+            次は絞り込みをVectorにしてJson化したい。
+            Caution: filter!()は使わない。なぜならDf_Jete...はそのままにしておくから。
+            ===#
+            sql_list = filter( :sql => target, Df_JetelinaSqlList )
+            @info "sql_list: " sql_list
+            ret = json( Dict( "Jetelina" => copy.( eachrow( sql_list ))))
+            @info "sql list ret: " ret
+            return ret
+        end
+    ==#
+    """
+    function getApiList()
+
+        get registering api list in json style.
+        api list is refered in Df_JetelinaSqlList.
+    """
+    function getApiList()
+        return json(Dict("Jetelina" => copy.(eachrow(Df_JetelinaSqlList))))
+    end
+    """
+    function deleteTable()
+
+        delete table by ordering. this function calls DBDataController.dropTable(tableName), so 'delete' meaning is really 'drop'.
+        ordered table name is posted as the name 'tablename' in jsonpayload().
+    """
+    function deleteTable()
+        tableName = jsonpayload("tablename")
+        if debugflg
+            @info "PostDataController.deleteTable() dropTable: " tableName
+        end
+
+        DBDataController.dropTable(tableName)
+    end
+    """
+    function login()
+
+        login procedure.
+        user's login account is posted as the name 'username' in jsonpayload().
+    """
+    function login()
+        userName = jsonpayload("username")
+        if debugflg
+            @info "PostDataController.login(): " userName
+        end
+
+        DBDataController.getUserAccount(userName)
+    end
+    """
+    function _addJetelinaWords()
+
+        expected keeping a private func.
+        this should not open to all users.
+    """
+    function _addJetelinaWords()
+        newwords = jsonpayload("sayjetelina")
+        arr = jsonpayload("arr")
+
+        # adding scenario
+        #        scenarioFile = string( joinpath( "..","..","public","jetelina","js","scenario.js" ))
+        scenarioFile = getJsFileNameFromPublicPath("scenario.js")
+        scenarioTmpFile = getJsFileNameFromPublicPath("scenario.tmp")
+        if debugflg
+            @info "PostDataController._addJetelinaWords(): " newwords, arr
+            @info "scenario path: " scenarioFile
+        end
+
+        target_scenario = "scenario['$arr']"
+        rewritestring = ""
+
+        open(scenarioTmpFile, "w") do tf
+            open(scenarioFile, "r") do f
+                # keep=falseにして改行文字を取り除いておく。そしてprintln()する
+                for ss in eachline(f, keep=false)
+                    if startswith(ss, target_scenario)
+                        @info "hit: " ss
+                        #ここで入れ替える
+                        ss = ss[1:length(ss)-2] * ",'$newwords'];"                    
+                    end
+
+                    println(tf, ss)
+                end
+            end
+        end
+
+        #全部終わったら scenarioTmpFile->scenarioFileとする
+        mv( scenarioTmpFile,scenarioFile,force=true)
+    end
 end

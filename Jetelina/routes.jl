@@ -74,4 +74,4 @@ end
 #route( "/getanalyzedata", SQLAnalyzer.getAnalyzeData )
 
 # chat 
-route( "/jetelinawords", PostDataController.addJetelinaWords, method = POST)
+route( "/jetelinawords", PostDataController._addJetelinaWords, method = POST)

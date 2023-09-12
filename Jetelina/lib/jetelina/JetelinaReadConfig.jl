@@ -1,5 +1,5 @@
 """
-module: Jetelina_readConfig
+module: JetelinaReadConfig
 
     read configuration parameters from Jetelina.cnf file
     then set them to global variables
@@ -20,9 +20,9 @@ contain functions
     __init__()
 """
 
-module Jetelina_readConfig
+module JetelinaReadConfig
 
-    using JetelinaFiles
+    using JetelinaFiles, JetelinaLog
 
     export debugflg, JetelinaLogfile, JetelinaDBtype, JetelinaFileUploadPath, JetelinaSQLLogfile, JetelinaDBhost,
         JetelinaDBport, JetelinaDBuser, JetelinaDBpassword, JetelinaDBsslmode, JetelinaDBname, Df_JetelinaTableManager,
@@ -145,10 +145,10 @@ module Jetelina_readConfig
         parses and gets then set PostgreSQL connection parameterss to the global variables.
 
     # Arguments
-    - `l::String`: configuration file strings
-    - `c::Integer`: file line number 
+    - `l::Vector{String}`: configuration file strings
+    - `c::Int64`: file line number 
     """
-    function _setPostgres(l::String, c::Integer)
+    function _setPostgres(l::Vector{String}, c::Int64)
         for i = c:length(l)
             if !startswith(l[i], "#")
                 if startswith(l[i], "host")
