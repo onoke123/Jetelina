@@ -1,9 +1,15 @@
 """
     module: SQLAnalyzer
 
-    read the log/sql.log file, then analyze the calling column status
+    Author: Ono keiji
+    Version: 1.0
+    Description:
+        Analyze execution speed of all SQL sentences. 
+    
+    functions
+        createAnalyzedJsonFile()
 
-    contain functions
+        read the log/sql.log file, then analyze the calling column status
 
 """
 module SQLAnalyzer
@@ -22,162 +28,159 @@ using TestDBController, PgDataTypeList
 const sqljsonfile = getFileNameFromLogPath(JetelinaSQLAnalyzedfile)
 
 """
-    functions
-        createAnalyzedJsonFile()
-        _exeSQLAnalyze()
+function createAnalyzedJsonFile()
+
+    create json file for result of sql execution speed analyze data.
+
+# Arguments
 
 """
 function createAnalyzedJsonFile()
-    """
-        read sql.log file
-            log/sql.log ex. js314,"select ftest.sex,ftest.age,ftest.name from ftest as ftest "
+    #===
+        Tips:
+            read sql.log file
+                log/sql.log ex. js314,"select ftest.sex,ftest.age,ftest.name from ftest as ftest "
 
-        delimiteを' 'にしているのでselect文のカラム表示はちゃんと詰めて書かれることを期待する。
-            ex.    select ftest2.id,ftest2.name from ...     OK
-                   select ftest2.id, ftest2.name from ....   NG
-                                    ^^
+            the delimite of this file is ' ', that why expect right justify in select sentences.
+                ex.    select ftest2.id,ftest2.name from ...     OK
+                    select ftest2.id, ftest2.name from ....   NG
+                                        ^^
 
-        sql.logファイルサイズが偉いことになっていたら、100万件とか、いけるんだろうか？
-        sql.logのローテーションと、ローテーションファイルを順次利用することも考えないといけないかもね。 #tichet1254
-    """
+            wondering is it ok if sql.log has more than one milion lines.
+            maybe should consider to rotated sql.log files. this is in #ticket 1254 
+    ===#
     sqllogfile = getFileNameFromLogPath(JetelinaSQLLogfile)
-#    df = readdlm(sqllogfile, '\"', String, '\n')
     maxrow::Int = 100 # for secure
     df = CSV.read( sqllogfile, DataFrame, limit=maxrow )
-    #@info "readdlm: " df
-    """
-        get uniqeness
-            ex. 
-            "js312,"  "select ftest.name,ftest.age,ftest2.name,ftest2.age,ftest3.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id"  ""
-            "js312,"  "select ftest.name,ftest.age,ftest2.name,ftest2.age,ftest3.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id"  ""
+    #===
+        Tips:
+            get uniqeness
+                ex. 
+                "js312,"  "select ftest.name,ftest.age,ftest2.name,ftest2.age,ftest3.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id"  ""
+                "js312,"  "select ftest.name,ftest.age,ftest2.name,ftest2.age,ftest3.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id"  ""
 
-            -->
-            "js312,"  "select ftest.name,ftest.age,ftest2.name,ftest2.age,ftest3.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id"  ""
-    """
-    u = unique(df[:, :apino]) # uniquenessはwhere文の外部設定値が違う場合を想定してapi noで取る
-    #@info "u : " u
-    """
-        1.make unique sql statements
-        2.pick only the columns part
-        3.count the access number in each sql
-        4.put it into DataFrame alike
-    """
+                -->
+                "js312,"  "select ftest.name,ftest.age,ftest2.name,ftest2.age,ftest3.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id"  ""
+    ===#
+    u = unique(df[:, :apino]) # do uniqueness as 'apino' because of different in 'where' sentences, maybe.
+    #===
+        Tips:
+            steps for analyzing
+                1.make unique sql statements
+                2.pick only the columns part
+                3.count the access number in each sql
+                4.write them out to analyzing files
+    ===#
     u_size = length(u)
-    df_size = nrow(df) # 全体の行数はapi noで取る
-#@info "df size " df_size
-    # uにはユニークなapi noが入っているので、sql.logの中のマッチングでアクセス数を取得する ex. u[i] === ....
+    df_size = nrow(df) # all line number
+    # step1: unique 'api no' in 'u', then count access number in sql.log.  ex. u[i] === ....
     sql_df = DataFrame(apino=String[], sql=String[], combination=Vector{String}[], access_number=Float64[])
 
-    """
-        shape the data
-            ex. 
-              apino      sql         combination         access number
-               js10    select ....  ['ftest3','ftest2']      2
-               js22    select ....  ['ftest4','ftest2']      5
-               js10    select ....  ['ftest2']              10
+    #===
+        Tips:
+            shape the data
+                ex. 
+                apino      sql         combination         access number
+                js10    select ....  ['ftest3','ftest2']      2
+                js22    select ....  ['ftest4','ftest2']      5
+                js10    select ....  ['ftest2']              10
 
-            then 
-            combination数が高いjs10,js22..の内、一番アクセス数が多いのはjs22なので、view作成はこれを採用
-            js10はアクセス数は多いがcombination数が低いのでview作成は必要なさそう
+            hire js22 because it is the highest access number among higher combination number(js10,js22) to create a client view graph 'condition panel'.
+            js10 is the best number but it has low combination number, so it may does not need to create a client view graph in 'condition panel'
 
-    """
+    ===#
 
     for i = 1:u_size
         ac = 0
         # collect access number for each unique SQL. make "access_number"
         dd = filter(:apino=>x->x==u[i],df)
         ac = nrow(dd)
-#==
-        for ii = 1:df_size
-            if u[i] == df[:, [:2]][ii]
-                ac += 1
-            end
-        end
-==#
         table_arr = String[]
         tables = String[]
 
         #==
-            combination作成の下準備として"select .... from .... where ..."　文から
-            カラム部分"select/from"を抽出する。
-            この処理はSQL文がプログラムで自動作成されるためフォーマットが統一されているので
-            できること。
+            step2:
+                pick up columns from sql sentence. the columns are between 'select' and 'from'.
+                    ex. select <columns> from <tables> where ...  -> <columns> 
+
+                this can do because of unified sql sentence by Jetelina created.
         ==#
         cols = extractColumnsFromSql(df[:,:sql][i])
         c = split(cols[1], ",")
 
         for j = 1:length(c)
-            """
-                cc[1]:table name
-                cc[2]:column name 
-            """
+            #===
+                Tips:
+                    cc[1]:table name
+                    cc[2]:column name 
+            ===#
             cc = split(c[j], ".")
             
             #===
-                 該当tableがmaster系でなければ処理する。
-                 master系tableには"master"がtable名に入っているのがプロトコル。
+                Tips:
+                    except master tables.
+                    master tables has 'master' in their own name. this is the protocol.
             ===#
             if !contains( cc[1], "master" )
-                # table_arrにcc[1]が入っているかどうか見ている。論理否定。これが書きたかったからJulia。
+                # logical NOT in Julia, yes.
                 if cc[1] ∉ table_arr
-                    push!(table_arr, cc[1]) # master以外のtableを重複なく格納する
+                    push!(table_arr, cc[1]) # push except master table without duplication.
                 end
 
-                push!(tables,cc[1])  # sql文で使われているtableをとにかく網羅する
-
-#                push!(sql_df, [c[j], table_arr, ac])
-##                push!(sql_df, [u[i], df[:,:sql][i],table_arr, ac])
+                push!(tables,cc[1])  # collect table names used in the sql sentence, whatever.
            end
         end
 
         #===
-            tablesに格納されている一番多いtable名を”基本table”としてtablesの先頭に挿入する。
-            "基本table"候補が複数ある場合はAscii順になるみたい。
-                ex. "a","b"二つの基本table候補がある場合(同数の場合)、"a"が採用されるらしい。。。まっいっか。
+            Tips:
+                push the best number of table in tables[] as 'basic table' to the head of table_arr.
+                in the case of multi candidates in 'basic table', they are ordered in Ascii.
+                    ex. there are candidates as 'a','b'(they are same number), will hire 'a'. hum.. alright.  
         ===#
         pushfirst!(table_arr,mode(tables))
-        # column別からsql別に変更したため、ここに移動する
+        # move it to here becase it has changed each column name to each sql name.
         push!(sql_df, [u[i], df[:,:sql][i],table_arr, ac])
 
     end
-
-#    @info "sql_df: " println(sql_df)
-
     #===
-        解析処理のルーチンに入る
+        ↑ preparation.
+        ↓ analyzing.
     ===#
-    #_exeSQLAnalyze(sql_df)
 
-    # combinationが最長のものを探す
+    # find the sql that is the longest combination number
     c_len = length.(sql_df.combination)
-    p = findall(x->x==maximum(c_len),c_len) # pにはmaxデータのindex番号が入る
+    p = findall(x->x==maximum(c_len),c_len) # 'p' has the index number of the max data
 
-    # combinationが最長のモノの中で一番アクセス数が多いモノは？
+    # step3. find the max access number among the longest combination number sql sentence.
     accn = sql_df[p,:access_number]
     pp =  findall(x->x==maximum(accn),accn)
 
-    # よって、対象はこうなる
+    # then the target sql sentence is this.
     target = sql_df[pp,:]
     
-    # ヨシと、testdbで操作するぜ
+    # step4: good!. let's analyze it in testdb.
     experimentalCreateView(target)
 
     #===
-        ここから下は、Jetelinaのconditional panelでグラフを書くための処理。
-        統計処理自体は↑で終わっている。
+        Tips:
+            from here for showing the anlyzed graph in conditional pane.
+            the analyzing has been done above.
     ===#
-    # sql_dfから:sqlカラムを抜く。だって不要だしjsonファイルに書き込むときに削除するのが面倒だから
+    # delete ':sql' column from 'sql_df', because it is unnecessary in the json file.
     select!(sql_df,:apino,:combination,:access_number)
-    """
-        analyze
-            ex.
-                各tableのRow No.でcombinationを置き換える
-            Row │ apino          combination                    access_number 
-                │ String           Array…                         Float64       
-            ──┼─────────────────────────────────────────────────────────────────────────────────
-            1   │ js312  ["ftest", "ftest2", "ftest3"]            5.0
-            2   │ js313  ["ftest", "ftest2", "ftest3"]            5.0
-            3   │ js314  ["ftest", "ftest2", "ftest3"]            5.0
+    #===
+        Tips:
+            this tips is complicated, that why still in Japanese.
+            what here is doing, 
+                ex.
+                    replace 'combination' with 'Row No.' of each table.
+
+                    Row │ apino          combination                    access_number 
+                        │ String           Array…                         Float64       
+                    ──┼────────────────────────────────
+                    1   │ js312  ["ftest", "ftest2", "ftest3"]            5.0
+                    2   │ js313  ["ftest", "ftest2", "ftest3"]            5.0
+                    3   │ js314  ["ftest", "ftest2", "ftest3"]            5.0
 
                     ftest3.idはftest3にあるので→x座標:3(ftest3)
                     ftest3.idはftest4+ftest2が代表値なので → (3+4)/2(tableが2つだから)=3.5 ←y座標になる
@@ -187,46 +190,34 @@ function createAnalyzedJsonFile()
 
 
                 最終的に、カラム名とカラム座標値のMatrixをファイルに格納する(一旦ね)。
-
-    """
+    ===#
     table_df = DBDataController.getTableList("dataframe")
 
     #===
-        master系tableを対象外とするために、table_dfにfilter処理をして"master"を含むtableを除外している。
-        ここの処理はちょっと重要。( ｰ`дｰ´)ｷﾘｯ
+        rejecting 'master' tables. master tables names 'master' in their own table name.
+        here is important .( ｰ`дｰ´)ｷﾘｯ
     ===#
     filter!(:tablename=>x->!contains(x,"master"),table_df)
     
     #===
-     by Ph. Kaminski
-        table_df.tablenameがユニークだからできる技。
-        d("ftest"=>1 "ftest2=>4...と入っている)　を参照してindexを取得し、それをcombinationに当てはめていく
+        Tips:
+        by Ph. Kaminski
+            this is able to do because 'table_df.tablename' is unique.
+            refer d("ftest"=>1 "ftest2=>4...) to get the index, then put them into combination.
     ===#
     d = Dict(table_df.tablename .=> axes(table_df, 1))
     sql_df.combination = [getindex.(Ref(d), x) for x in sql_df.combination]
 
-    # 一番大きなaccess_numberで各access_numberを正規化する
+    # normalize all access number by the biggest 'access_number'
     sql_df.access_number = sql_df.access_number / maximum(sql_df.access_number)
-
-
-    #B_len = length.(sql_df.combination)
-    #ml = findall(x -> x == (maximum(B_len)), B_len)
 
     if debugflg
         @info JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df))))
     end
-
     #===
-        後々解析する際にCSV形式で持っていると楽かなぁと思って。
-        でも、JSON3を使ってjsonファイルから読み出しができるから不要となりましたとさ。
-    ===#
-    #sqlcsvfile = getFileNameFromLogPath("sqlcsv.csv")
-    #CSV.write(sqlcsvfile, sql_df)
-
-    #===
-        でこっちは、JSON形式でファイルに格納しておけば、RestAPIで呼ばれたときにファイル出力してやればいいだけなので楽だろうということで
-        JSONにする。が、 Genie.Renderer.Jsonを使うとHTTPプロトコル出力(HTTP 200とか)が付いてしまうので、ここはプレーンなJSON
-        モジュールを使うことにする。
+        Tips:
+            use plain JSON module insted of Genie.Renderer.Json module, because Genie's module put http protocol header(ex. HTTP 200) in the output.
+            the conditional panel will call this as a plain file in being called RestAPI. 
     ===#
     open(sqljsonfile, "w") do f
         println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df)))))
@@ -234,15 +225,15 @@ function createAnalyzedJsonFile()
 end
 
 """
-    extractColumnsFromSql()
+function  extractColumnsFromSql(s::String)
 
-    指定されたSLQ文からカラム文の部分(select/fromの間)を抽出する
+    pick up columns data from 's'.
 
-        Args: String sql文を期待。ex. select .... from .....
-
-        return: tuple s: column strngs ad: select or from strings
+# Arguments
+-`s::String`: expected sql sentence. ex. select .... from .....
+- return: tuple   column strngs, select or from strings
 """
-function extractColumnsFromSql(s)
+function extractColumnsFromSql(s::String)
     ad::String = ""
     cs::String = ""
     if contains(s,"select")
@@ -256,7 +247,6 @@ function extractColumnsFromSql(s)
         end
     end
 
-#    @info "cs ad " cs ad
     return cs, ad
 end
 
@@ -393,20 +383,22 @@ function _exeSQLAnalyze(df::DataFrame)
 end
 ===#
 """
-    View table create for test
-        analyzeに基づいてview tableを仮実行する。
+function experimentalCreateView(df:DataFrame)
 
-        Args: df: target dataframe data
+    create view tables for test and execute all sql sentences for analyzing.
+
+# Arguments
+- `df::DataFrame`: target dataframe data
 """
 function experimentalCreateView(df)
-#    @info "target df: " df
 
     #===
-    1.テスト用のDBを用意する
-    2.運用中のDBの全tableを解析用DBにコピーする。データ数は全件ではない
-    3.該当するSQLを特定しcreate viewを実行する。該当apiんもそれ用にする
-    4.3で新規に作成されたviewの新apiを含めてtestdbで全apiを実行して、前のものと性能を比較する。結果を”レポート”に残す→function panelで表示するため
-    5.解析用DBを削除することを忘れずに
+        Tips:
+            1.ready test db
+            2.copy all table in running to test db, but not all line
+            3.execute 'create view' in order to sql sentence, the api are changed order by it
+            4.execute all api in create view in 3 on test db, and compare with the latest data. then write them out to 'report file' for viewing condition panel
+            5.do not forget to delete the test db after analyzing
     ===#
 
     #1
@@ -419,35 +411,37 @@ function experimentalCreateView(df)
     if 0<length(dict)
         for i in keys(dict)
             #===
-                i->key, dict[i]->valueになる
-                つまり、
+                Tips:
+                    i->key, dict[i]->value
                     ex. i->js101, dict[i]->select ....
             ===#
-#            @info "dict key: " i
-#            @info "dict value: " dict[i]
             push!(dict_apino_arr,i)
         end
     end
 
-    # JetelinaSQLListfileを開いて対象となるsql文を呼ぶ
-    # そのsqlでPgTestDBController.doSelect(sql)　を呼ぶ
-    # 実験で得られたdata(max,min,mean)とJetelina..fileにある既存値を比較する　ref. measureSqlPerformance()
-    # 全体としてパフォーマンスの改善が見られたらレイアウトを変更する。
+    #===
+        Tips:
+            open JetelinaSQLListfile and call sql sentences.
+            execute PgTestDBController.doSelect(sql) with the 'sql'.
+            compare the experiment data(max,min,mean) with the latest data in Jetelina..file. ref: measureSqlPerformance()
+            change table layout if its performance has been improved. this is the Jetelina!
+    ===#
 
     #4
     TestDBController.measureSqlPerformance()
     #===
-        JetelinaSqlPerformancefile(実DB)と..test(testdb)ファイルのapino毎のパフォーマンスを比較する。
-        実DBの各値(max/min/mean)は各値のmax値でnormalizeする。
-        testdbの各値は、実DBの各値のmax値でnormalizeする。
-        
-        ①Jeteli..file,②Jeteli..file.testの各ファイルをDataFrame化する。
-        ①のmax/min/meanの各max値を求めて、各apinoの各値をnormalizeする。
-        ①で採用した各max値で②の各apinoの各値をnormalizeする。
-        ①②の当該apinoに何らかの印をつけておく。
-        以上をjsonファイル化する。
-        
-        後のことはconditional panelのjsに任せる。
+        Tips: Attention.
+            compare the each api performance between JetelinaSqlPerformancefile(running db) and ..test(test db).
+            each data(max/min/mean) are normalized by the max data.
+            each data in test db are normalized by the real db max data.
+
+            be a json file
+                be DataFrame Jeteli..file(①),Jeteli..file.test(②).
+                normalize each number of each api no by the max number of ①.
+                normalize each number of each api no of ② by the max number of ①.
+                put something mark on the target api no in ① and ②.
+
+            then rely on js code in conditional panel after all.
     ===#
     sqlPerformanceFile_real = getFileNameFromConfigPath(JetelinaSqlPerformancefile)
     sqlPerformanceFile_test = getFileNameFromConfigPath(string(JetelinaSqlPerformancefile,".test"))
@@ -463,7 +457,7 @@ function experimentalCreateView(df)
     df_real.min  = df_real.min / std_min
     df_real.mean = df_real.mean / std_mean
 
-    # testdbのスピードは実DBの基準を採用することで比較可能となる。
+    # can be compare the speed of test db by hiring the speed of the running db
     df_test.max  = df_test.max / std_max
     df_test.min  = df_test.min / std_min
     df_test.mean = df_test.mean / std_mean
@@ -473,9 +467,10 @@ function experimentalCreateView(df)
     improveApisFile = getFileNameFromLogPath(string(JetelinaImprApis))
 
     #===
-        df_real/df_testの各apinoがdict_apino_arrにあるかどうか調べる。
-        もしあったら、当該aipnoを大文字にする。
-        大文字のapinoはグラフ上でハイライトされるハズ。
+        Tips:
+            find each 'apino' in df_real/df_test exists in dict_apino_arr.
+            capitalize the 'apino' if existed.
+            this capitalized 'apino' will be highlighted on the graph in conditional panel by js program.
     ===#
     improve_apis = Dict()
 
