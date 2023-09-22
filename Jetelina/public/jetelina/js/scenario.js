@@ -2,6 +2,8 @@ let scenario = [], userresponse = [];
 
 /* null */
 scenario['null'] = ['',''];
+/* command list order */
+scenario['command_list'] = ["show command","what can i","what can you","how start","where can i"];
 /* opening */
 scenario[0] = ['Hi','Hello'];
 userresponse[0] = ['hi','hello','hola','good ','sorry'];

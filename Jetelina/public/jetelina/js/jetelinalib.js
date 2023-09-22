@@ -24,6 +24,7 @@
       cleanupItems4Switching() clear screen in activeItem class when switching table list/api list     table list/api list 表示切り替えに伴い、activeItem Classなんかをクリアする
       cleanupContainers() clear screen in the detail zone showing when switching table list/api list     table list/api list 表示切り替えに伴い、詳細画面をクリアする
       instractionMode(s) confirmation in adding a new scenario        Jetelinaのscenario追加確認 
+      commandlistShow(s) show/hide the command list panel
 */
 /**
     @function getdata
@@ -108,7 +109,7 @@ const getAjaxData = (url) => {
             data: "",
             dataType: "json"
         }).done(function (result, textStatus, jqXHR) {
-            // data parseに行く
+            // go data parse
             const graphurls = ["/getsqlanalyzerdata", "/getperformancedata_real", "/getperformancedata_test"];
             if ($.inArray(url, graphurls) != -1) {
                 let type = "";
@@ -373,6 +374,9 @@ const chatKeyDown = (cmd) => {
                 logoutflg = true;
             }
 
+            // check ordered the command list
+            commandlistShow(ut);
+
             // check the instraction mode that is teaching 'words' to Jetelina or not
             instractionMode(ut);
 
@@ -596,6 +600,7 @@ const logout = () => {
     $("#plot").hide();
     $("#performance_real").hide();
     $("#performance_test").hide();
+    $("#command_list").hide();
 
     // global variables initialize
     stage = 0;
@@ -668,5 +673,34 @@ const instractionMode = (s) => {
     if (s.indexOf("say:") != -1) {
         let data = `{"sayjetelina":"${s.split("say:")[1]}","arr":"${scenario_name}"}`;
         postAjaxData("/jetelinawords", data);
+    }
+}
+/**
+ * @function commandlistShow
+ * @param {string} s  user input data
+ * 
+ * show/hide the command list panel
+ * 
+ */
+const commandlistShow = (s) => {
+    const order = scenario['command_list'];
+    let ret=false;
+    console.log("ut: ", s);
+    for(key in order){
+        console.log("key: ", order[key]);
+        if (s.indexOf(order[key]) != -1) {
+            $("#command_list").show().animate({
+                width: window.innerWidth * 0.8,
+                height: window.innerHeight * 0.8,
+                top: "10%",
+                left: "10%"
+            }, animateDuration);
+
+            ret = true;
+        }
+    }
+
+    if (!ret){
+        $("#command_list").hide();
     }
 }
