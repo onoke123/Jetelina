@@ -50,7 +50,7 @@ scenario['6func-postcolumn-where-indispensable-msg'] = ['Set the \'Where\' sente
 scenario['6func-subpanel-open-cmd'] = ['oepn subquery panel','open sub panel','sub please','subquery panel please','subquery panel','subquery','sub panel','where panel'];
 
 /* log out */
-scenario['logout'] = ['logout','exit','log out','out','return'];
+scenario['logout'] = ['logout','exit','log out','out','return','have a nice day', 'bye','see you'];
 scenario['afterlogout'] = ['Bye', 'Have a good day','Hope you will back soon','I am looking forward you'];
 /* unknow command */
 scenario['unknown-msg'] = ['Hey hey hey','Ah.... what?','Could not catch yours, what?','Oh oh oh, what?'];

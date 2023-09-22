@@ -25,6 +25,7 @@
       cleanupContainers() clear screen in the detail zone showing when switching table list/api list     table list/api list 表示切り替えに伴い、詳細画面をクリアする
       instractionMode(s) confirmation in adding a new scenario        Jetelinaのscenario追加確認 
       commandlistShow(s) show/hide the command list panel
+      inScenarioChk(s,sc) check if user input string is in the ordered scenario
 */
 /**
     @function getdata
@@ -575,7 +576,8 @@ const burabura = () => {
  * chech the user's intention is to be logout
  */
 const logoutChk = (s) => {
-    return scenario['logout'].includes(s);
+//    return scenario['logout'].includes(s);
+    return inScenarioChk(s,"logout");
 }
 /**
  * @function logout
@@ -683,24 +685,34 @@ const instractionMode = (s) => {
  * 
  */
 const commandlistShow = (s) => {
-    const order = scenario['command_list'];
+    if( inScenarioChk(s,"command_list") ){
+        $("#command_list").show().animate({
+            width: window.innerWidth * 0.8,
+            height: window.innerHeight * 0.8,
+            top: "10%",
+            left: "10%"
+        }, animateDuration);
+    }else{
+        $("#command_list").hide();
+    }
+}
+/**
+ * @function inScenarioChk
+ * @param {string} s  user input data
+ * @param {string} sc scenario data array name 
+ * @returns {boolean}  true -> in the list, false -> no
+ * 
+ * check if user input string is in the ordered scenario
+ * 
+ */
+const inScenarioChk = (s,sc) =>{
+    const order = scenario[`${sc}`];
     let ret=false;
-    console.log("ut: ", s);
     for(key in order){
-        console.log("key: ", order[key]);
         if (s.indexOf(order[key]) != -1) {
-            $("#command_list").show().animate({
-                width: window.innerWidth * 0.8,
-                height: window.innerHeight * 0.8,
-                top: "10%",
-                left: "10%"
-            }, animateDuration);
-
             ret = true;
         }
     }
 
-    if (!ret){
-        $("#command_list").hide();
-    }
+    return ret;
 }
