@@ -422,12 +422,19 @@ const chatKeyDown = (cmd) => {
                 case 'chose_func_or_cond':
                     let panel;
 
+                    /*
                     if (ut.indexOf('func') != -1) {
                         panel = 'func';
                     } else if (ut.indexOf('cond') != -1) {
                         panel = 'cond';
                     }
+                    */
 
+                    if(inScenarioChk(ut,"function_panel")){
+                        panel = 'func';
+                    }else if(inScenarioChk(ut,"condition_panel")){
+                        panel = 'cond';
+                    }
                     // move Jetelina Chat panel
                     if (panel == 'func' || panel == 'cond') {
                         const panelTop = window.innerHeight - 110;

@@ -29,6 +29,12 @@ scenario['confirmation-sentences'] = ['yes','sure','why not','do it','do','i wan
 scenario['6func'] = ['Let me your command, if you need'];
 scenario['6func_post_err'] = ['Hey, no columns','You should select post data','Boo'];
 //scenario['6cond_in'] = ['Do you wanna open the condition panel?'];
+
+//open the function panel
+scenario['function_panel'] = ['function panel', 'open func','show me func'];
+//open the condition panel
+scenario['condition_panel'] = ['condition panel', 'open cond','show me cond'];
+
 scenario['6cond'] = ['Let me your command, if you need'];
 scenario['6cond-graph-show'] = ['here you are','tatta laan'];
 scenario['6cond-graph-show-keywords'] = ['graph','graphic','figure','zu'];
