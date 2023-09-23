@@ -31,9 +31,13 @@ scenario['6func_post_err'] = ['Hey, no columns','You should select post data','B
 //scenario['6cond_in'] = ['Do you wanna open the condition panel?'];
 
 //open the function panel
-scenario['function_panel'] = ['function panel', 'open func','show me func'];
+scenario['function_panel'] = ['function panel', 'open func','show me func','func'];
 //open the condition panel
 scenario['condition_panel'] = ['condition panel', 'open cond','show me cond'];
+//open table list
+scenario['6func-show-table-list'] = ['open table','show me table','table list','tables list'];
+//open api list
+scenario['6func-show-api-list'] = ['open api','show me api','api list','apis list'];
 
 scenario['6cond'] = ['Let me your command, if you need'];
 scenario['6cond-graph-show'] = ['here you are','tatta laan'];
@@ -47,7 +51,7 @@ scenario['6func-tabledrop-cmd'] = ['drop','drop table','table drop','tabledrop',
 scenario['6func-tabledrop-msg'] = ['Which table do you want to drop?'];
 scenario['6func-tabledrop-ng-msg'] = ['Hey open the table list first!','Huum?','Check it first','Watch it'];
 scenario['6func-tabledrop-confirm'] = ['Sure?'];
-scenario['6func-fileupload-open-cmd'] = ['open','file open','open the file box','open file box','open filebox','file box','csv file','csv file select','choose csv file'];
+scenario['6func-fileupload-open-cmd'] = ['file open','open the file box','open file box','open filebox','file box','csv file','csv file select','choose csv file'];
 scenario['6func-fileupload-open-msg'] = ['Which file?'];
 scenario['6func-fileupload-cmd'] = ['file up','upload','up load','file up load','fileup load','fileupload','up'];
 scenario['6func-fileupload-msg'] = ['File?'];

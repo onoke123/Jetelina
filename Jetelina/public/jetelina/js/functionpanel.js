@@ -541,16 +541,20 @@ const functionPanelFunctions = (ut) => {
     let cmd = getPreferentPropertie('cmd');
     // use input data if there were not a prior command 
     if (cmd == null || cmd.length <= 0) {
-      if ($.inArray(ut, scenario['6func-fileupload-cmd']) != -1) {
+//      if ($.inArray(ut, scenario['6func-fileupload-cmd']) != -1) {
+      if(inScenarioChk(ut,'6func-fileupload-open-cmd')){
         cmd = 'fileupload';
-      } else if ($.inArray(ut, scenario['6func-fileupload-open-cmd']) != -1) {
+//      } else if ($.inArray(ut, scenario['6func-fileupload-open-cmd']) != -1) {
+      } else if (inScenarioChk(ut,'6func-fileupload-open-cmd')){
         // use $.inArray because of expecting only command at here 
         cmd = 'fileselectoropen';
-      } else if (ut.indexOf('table') != -1) {
+//      } else if (ut.indexOf('table') != -1) {
+      } else if(inScenarioChk(ut,'6func-show-table-list')){
         // use indexOf() because of 'command + table name' is possible
         cmd = 'table';
-      } else if (ut.indexOf('api') != -1) {
-        // same as above
+//      } else if (ut.indexOf('api') != -1) {
+      } else if(inScenarioChk(ut,'6func-show-api-list')){
+  // same as above
         cmd = 'api';
       } else {
         cmd = ut;
@@ -583,12 +587,14 @@ const functionPanelFunctions = (ut) => {
     }
 
     // cleanup command of item, selecteditem field
-    if($.inArray(ut,scenario['6func-cleanup-cmd']) != -1 ){
+//    if($.inArray(ut,scenario['6func-cleanup-cmd']) != -1 ){
+      if(inScenarioChk(ut,'6func-cleanup-cmd')){
       cmd = 'cleanup';
     }
 
     // genelic panel(subquery panel)
-    if( $.inArray(ut,scenario['6func-subpanel-open-cmd']) !=-1 ){
+    if(inScenarioChk(ut,'6func-subpanel-open-cmd')){
+//    if( $.inArray(ut,scenario['6func-subpanel-open-cmd']) !=-1 ){
       cmd = "subquery";
     }
 
@@ -866,6 +872,8 @@ const procTableApiList = (s) => {
               $("#container").find("span").each(function (i, v) {
                 if (v.textContent == t[1]) {
                   p = $(this);
+                }else if( v.textContent.indexOf(t[1]) != -1){
+                  p = $(this);                  
                 }
               });
             }
