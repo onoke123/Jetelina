@@ -542,7 +542,7 @@ const functionPanelFunctions = (ut) => {
     // use input data if there were not a prior command 
     if (cmd == null || cmd.length <= 0) {
 //      if ($.inArray(ut, scenario['6func-fileupload-cmd']) != -1) {
-      if(inScenarioChk(ut,'6func-fileupload-open-cmd')){
+      if(inScenarioChk(ut,'6func-fileupload-cmd')){
         cmd = 'fileupload';
 //      } else if ($.inArray(ut, scenario['6func-fileupload-open-cmd']) != -1) {
       } else if (inScenarioChk(ut,'6func-fileupload-open-cmd')){
