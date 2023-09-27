@@ -41,9 +41,9 @@ const conditionPanelFunctions = (ut) => {
         }
 
         if (cmd == null || cmd.length <= 0) {
-            if ($.inArray(ut, scenario['6cond-graph-show-keywords']) != -1) {
+            if( inScenarioChk(ut,'6cond-graph-show-keywords')){
                 cmd = "graph";
-            } else if ($.inArray(ut, scenario['6cond-performance-graph-show-keywords']) != -1) {
+            }else if( inScenarioChk(ut,'6cond-sql-performance-graph-show-keywords')){
                 cmd = "performance";
             }
         }

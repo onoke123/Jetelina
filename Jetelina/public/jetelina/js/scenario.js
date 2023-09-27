@@ -3,7 +3,7 @@ let scenario = [], userresponse = [];
 /* null */
 scenario['null'] = ['',''];
 /* command list order */
-scenario['command_list'] = ["show command","what can i","what can you","how start","where can i"];
+scenario['command_list'] = ["show me command","show command","what can i","what can you","how start","where can i","manual"];
 /* opening */
 scenario[0] = ['Hi','Hello'];
 userresponse[0] = ['hi','hello','hola','good ','sorry'];
@@ -41,8 +41,11 @@ scenario['6func-show-api-list'] = ['open api','show me api','api list','apis lis
 
 scenario['6cond'] = ['Let me your command, if you need'];
 scenario['6cond-graph-show'] = ['here you are','tatta laan'];
-scenario['6cond-graph-show-keywords'] = ['graph','graphic','figure','zu'];
-scenario['6cond-performance-graph-show-keywords'] = ['performance','suggest','perf','zu'];
+// Access vs Combination graph 
+scenario['6cond-graph-show-keywords'] = ['what is your suggestion','suggest','combination data','analyzed','show the result','graph'];
+// SQL Exectuon Time graph
+scenario['6cond-sql-performance-graph-show-keywords'] = ['sql exec','performance'];
+
 scenario['6cond-performance-improve'] = ['There is an improve suggestion.'];
 scenario['6a'] = ['OK, here you are'];
 scenario['6b'] = ['Command me, if you need'];
