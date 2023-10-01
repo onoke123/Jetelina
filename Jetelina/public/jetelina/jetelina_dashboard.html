@@ -16,8 +16,8 @@
 
 <body>
 	<!--
-            各種ステータスを表示・解析するパネル
-        -->
+            condition panel
+    -->
 	<div id="condition_panel" class="functionpanel-parts commonpanel squarepanel" hidden>
 		<div id="plot" style="width:50%;height:50%" hidden>
 			<div><text style="size:a3;color:lightgreen;">Access vs Combination</text></div>
@@ -28,13 +28,13 @@
 			<div id="performance_real_graph"></div>
 		</div>
 		<div id="performance_test" style="width:30%;height:30%" hidden>
-			<div><text style="size:a3;color:white;">TEST SQL Execution Time (sec)</text></div>
+			<div><text style="size:a3;color:red;">TEST SQL Execution Time (sec)</text></div>
 			<div id="performance_test_graph"></div>
 		</div>
 	</div>
 	<!-- 
-			機能を実現するパネル
-		-->
+			function panel
+	-->
 	<div id="function_panel" class="functionpanel-parts commonpanel squarepanel" hidden>
 		<div id="fileup" style="width:200px;height:2%;" class="functionpanel-parts commonpanel squarepanel">
 			<form id="my_form">
@@ -46,9 +46,6 @@
 					<input type="file" name="upfile" style="display: none;" accept=".csv"><span
 						style="font-size: 14px;">Upload CSV File</span>
 				</label>
-				<!--
-				<button type="button" id="upbtn" class="panelbutton">UP</button>
-				-->
 			</form>
 		</div>
 
@@ -83,7 +80,7 @@
 		</div>
 	</div>
 	<!--
-		command list
+		command list, another word 'help'
 	-->
 	<div id="command_list" class="functionpanel-parts commonpanel squarepanel" hidden>
 		<div  style="width:50%;height:50%">
@@ -118,14 +115,14 @@
 				<pre style="size:a3;color:lightgreen;">
 					This panel show you the analyzed data of your DB status.
 
+					First, you type 'show me condition panel', 'open condition panel', even 'condition', with 'please'.
 					Jetelina wanna try to keep simple DB layout because the simpleness is the best solution for your DB performance.
 					All SQL execution performance are tested automatically and occasionally by Jetelina.
-					You can see the result with typing 'show me sql exection data', 'show sql performance data' or simply 'performance'.
+					You can see the result with typing 'show me combination data', 'show analyzed data' or simply 'graph'. Then you can see the present DB analyzed data graph.
 					
 					Jetelina also keeps watching your DB health. Especially Jetelina worries about your tables to be chaos.
 					Then Jetelina sometimes check you table relation, and give a suggestion if Jetelina found a improving point.
-					You can see the analyzed data with typing 'what is your suggestion, 'show combination data' or simply 'suggest?'. Jetelina will show 
-					the analyzed data if there were a suggest.
+					You also can see 'TEST' performance data graph by typing 'what is your suggestion','show your suggestion', or simply 'sql test', if Jetelina said 'There is an improve sugestion'.
 
 					This is the biggest advantage feature of Jetelina.
 					In ver.1, Jetelina does only analyze then.
@@ -136,7 +133,7 @@
 		</div>
 	</div>
 	<!--
-            Jetelinaと会話するチャットパネル
+            Jetelina chat panel
         -->
 	<div class="commonpanel squarepanel" id="jetelina_panel" style="width:400px;height:100px;top:40%;left:40%">
 		<text name="jetelina_tell" class="box_text"></text>

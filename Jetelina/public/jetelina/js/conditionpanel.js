@@ -163,7 +163,7 @@ const setGraphData = (o, type) => {
  * show 'performance graph'
  */
 const viewPerformanceGraph = (apino, mean, type) => {
-    var data = [
+    let data = [
         {
             opacity: 0.5,
             type: 'scatter',
@@ -178,14 +178,21 @@ const viewPerformanceGraph = (apino, mean, type) => {
         }
     ];
 
-    var layout = {
+    let paper_bgc = 'rgb(112,128,144)';
+    let font_col = 'rgb(255,255,255)';
+    if( type == 'test'){
+        paper_bgc = 'rgb(240,230,140)';
+        font_col = 'rgb(255,0,0)';
+    }
+
+    let layout = {
         plot_bgcolor: 'rgb(0,0,0)',
-        paper_bgcolor: 'rgb(112,128,144)',
+        paper_bgcolor: paper_bgc,
         xaxis: {
             backgroundcolor: 'rgb(255,0,0)',
             showbackground: false,
             gridcolor: 'rgb(0,153,153)',
-            color: 'rgb(255,255,255)',
+            color: font_col,
             size: 20,
             title: 'api no'
         },
@@ -193,7 +200,7 @@ const viewPerformanceGraph = (apino, mean, type) => {
             backgroundcolor: 'rgb(255,0,0)',
             showbackground: false,
             gridcolor: 'rgb(0,153,153)',
-            color: 'rgb(255,255,255)',
+            color: font_col,
             size: 20,
             title: 'exection speed'
         }
