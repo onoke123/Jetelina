@@ -498,7 +498,6 @@ const chatKeyDown = (cmd) => {
                             getAjaxData("/getexistimprfile")
                         }
                     }
-
                     break;
                 case 'func':
                     // defined in functionpanel.js
@@ -550,6 +549,7 @@ const chatKeyDown = (cmd) => {
         $("#jetelina_panel [name='chat_input']").val("");
         enterNumber = 0;
     }
+
 }
 /**
  * @function openingMessage

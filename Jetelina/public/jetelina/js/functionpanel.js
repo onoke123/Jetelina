@@ -529,9 +529,9 @@ const postSelectedColumns = () => {
  * Exectute some functions ordered by user chat input message 
  */
 const functionPanelFunctions = (ut) => {
-  let m = "";
+  let m = 'ignore';
   
-  if (ut.indexOf('cond') != -1) {
+  if (inScenarioChk(ut,'condition_panel')) {
     delete preferent;
     delete presentaction;
     stage = 'chose_func_or_cond';
@@ -587,14 +587,12 @@ const functionPanelFunctions = (ut) => {
     }
 
     // cleanup command of item, selecteditem field
-//    if($.inArray(ut,scenario['6func-cleanup-cmd']) != -1 ){
       if(inScenarioChk(ut,'6func-cleanup-cmd')){
       cmd = 'cleanup';
     }
 
     // genelic panel(subquery panel)
     if(inScenarioChk(ut,'6func-subpanel-open-cmd')){
-//    if( $.inArray(ut,scenario['6func-subpanel-open-cmd']) !=-1 ){
       cmd = "subquery";
     }
 

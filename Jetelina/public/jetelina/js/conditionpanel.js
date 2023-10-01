@@ -20,13 +20,13 @@
  * Exectute some functions ordered by user chat input message
  */
 const conditionPanelFunctions = (ut) => {
-    let m = "";
+    let m = 'ignore';
 
     if (presentaction == null || presentaction.length == 0) {
         presentaction.push('cond');
     }
 
-    if (ut.indexOf('func') != -1) {
+    if (inScenarioChk(ut,'function_panel')) {
         delete preferent;
         delete presentaction;
         stage = 'chose_func_or_cond';

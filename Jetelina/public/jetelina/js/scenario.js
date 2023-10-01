@@ -31,9 +31,9 @@ scenario['6func_post_err'] = ['Hey, no columns','You should select post data','B
 //scenario['6cond_in'] = ['Do you wanna open the condition panel?'];
 
 //open the function panel
-scenario['function_panel'] = ['function panel', 'open func','show me func','func'];
+scenario['function_panel'] = ['function panel', 'open func','show me func','function'];
 //open the condition panel
-scenario['condition_panel'] = ['condition panel', 'open cond','show me cond'];
+scenario['condition_panel'] = ['condition panel', 'open cond','show me cond','condition'];
 //open table list
 scenario['6func-show-table-list'] = ['open table','show me table','table list','tables list'];
 //open api list
@@ -47,7 +47,7 @@ scenario['6cond-graph-show-keywords'] = ['what is your suggestion','suggest','co
 scenario['6cond-sql-performance-graph-show-keywords'] = ['sql exec','performance'];
 
 scenario['6cond-performance-improve'] = ['There is an improve suggestion.'];
-scenario['6a'] = ['OK, here you are'];
+scenario['6a'] = ['OK, here you are','Hey ho','This'];
 scenario['6b'] = ['Command me, if you need'];
 scenario['6func-cleanup-cmd'] = ['refresh','cleanup','clean'];
 scenario['6func-tabledrop-cmd'] = ['drop','drop table','table drop','tabledrop','droptable'];
