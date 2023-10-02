@@ -7,11 +7,11 @@ Description:
     get i/f of ajax
 
 functions
-    getTableList()
-    getSqlAnalyzerData()
-    getPerformanceRealData()
-    getPerformanceTestData()
-    checkExistImproveFile()
+    getTableList() calling DBDataController.getTableList() with json mode. the return is json form naturally.
+    getSqlAnalyzerData()  get JetelinaSQLAnalyzedfile data file name
+    getPerformanceRealData()  get JetelinaSqlPerformancefile data file name
+    getPerformanceTestData()  get JetelinaSqlPerformancefile data file name but it is '.test' suffix
+    checkExistImproveFile()  get JetelinaImprApis data file name
 """
 module GetDataController
 

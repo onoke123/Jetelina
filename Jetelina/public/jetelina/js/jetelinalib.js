@@ -111,38 +111,49 @@ const getAjaxData = (url) => {
             dataType: "json"
         }).done(function (result, textStatus, jqXHR) {
             // go data parse
-            const graphurls = ["/getsqlanalyzerdata", "/getperformancedata_real", "/getperformancedata_test"];
-            if ($.inArray(url, graphurls) != -1) {
+            const dataurls = scenario['analyzed-data-collect-url'];
+            if (inScenarioChk(url, 'analyzed-data-collect-url')) {
                 let type = "";
-                if (url == graphurls[0]) {
+                if (url == dataurls[0]) {
                     // access vs combination
                     type = "ac";
-                } else if (url == graphurls[1]) {
+                } else if (url == dataurls[1]) {
                     // real performance
                     type = "real";
-                } else if (url == graphurls[2]) {
+                } else if (url == dataurls[2]) {
                     // test performance
                     type = "test";
                 }
-                //condition panel graphic data
-                setGraphData(result, type);//defined in conditionpanel.js
-                sad = true;//ref conditionpanel.js
-                if(url == graphurls[2]){
+                /*
+                    Tips:
+                        drow graphic in condition panel.
+                        this setGraphDta() function is defined in conditionpanel.js.
+                */ 
+                setGraphData(result, type);
+                /* Tips: ref to conditionpanel.js */
+                sad = true;
+                if(url == dataurls[2]){
+                    /*
+                        Tips:
+                            dataurls[2] is executed if the experimental exection result file were exist.
+                            the meaning of the file existing is Jetelina wanna put inform you something 'improving suggestion'.
+                            the below message is for it.
+                    */
                     typingControll(chooseMsg("6cond-performance-improve", "", ""));                    
                 }else{
                     typingControll(chooseMsg("success", "", ""));
                 }
-            } else if (url == "/getexistimprfile") {
+            } else if (url == "/chkexistimprfile") {
+                /*
+                    Tips:
+                        '/chkexistimprfile' is for checking existing Jetelina's suggestion.
+                        resume below if the return were true,meaning exsit her one.
+                */
                 if (result) {
-                    /*
-                       sql speed after creating view
-                       create viewしたほうがいいよという「提案」があったら
-                       これを実行する。
-                    */
                     getAjaxData("/getperformancedata_test");
                 }
             } else {
-                //主にfunction panelのデータ
+                // mainly, data for function panel
                 getdata(result, 0);
                 typingControll(chooseMsg("success", "", ""));
             }
@@ -495,7 +506,7 @@ const chatKeyDown = (cmd) => {
                             // simply sql speed
                             getAjaxData("/getperformancedata_real");
                             // check existing for improve file
-                            getAjaxData("/getexistimprfile")
+                            getAjaxData("/chkexistimprfile")
                         }
                     }
                     break;

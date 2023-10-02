@@ -106,6 +106,7 @@ module JetelinaReadConfig
                             # for Oracle
                         end
                     elseif startswith(l[i], "selectlimit")
+                        # execution limit number of select sentence in test db
                         global JetelinaTestDBDataLimitNumber = _getSetting(l[i])
                     end
                 else

@@ -62,7 +62,7 @@ route("/getsqlanalyzerdata",GetDataController.getSqlAnalyzerData)
 # condition panel のsqlパフォーマンスデータ取得
 route("/getperformancedata_real",GetDataController.getPerformanceRealData)
 route("/getperformancedata_test",GetDataController.getPerformanceTestData)
-route("/getexistimprfile",GetDataController.checkExistImproveFile)
+route("/chkexistimprfile",GetDataController.checkExistImproveFile)
 
 # test for three.js
 #===

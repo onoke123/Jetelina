@@ -1,9 +1,13 @@
 let scenario = [], userresponse = [];
 
+/* special configuration parameter */
+/* urls for condition panel */
+scenario['analyzed-data-collect-url'] = ['/getsqlanalyzerdata', '/getperformancedata_real', '/getperformancedata_test'];
+
 /* null */
 scenario['null'] = ['',''];
 /* command list order */
-scenario['command_list'] = ["show me command","show command","what can i","what can you","how start","where can i","manual"];
+scenario['command_list'] = ['show me command','show command','what can i','what can you','how start','where can i','manual'];
 /* opening */
 scenario[0] = ['Hi','Hello'];
 userresponse[0] = ['hi','hello','hola','good ','sorry'];
@@ -13,7 +17,7 @@ scenario[1] = ['Nice to see you', 'How are you?'];
 scenario['1a'] = ['Nice to hear it', 'Wow, super','lucky you'];
 userresponse[1] = ['fine','good','sorry'];
 /* login */
-scenario[2] = ['Could you give me your name?',"Let me know your name, please","May I ask your name?"];
+scenario[2] = ['Could you give me your name?','Let me know your name, please','May I ask your name?'];
 /* etc */
 scenario[3] = ['What?','Are you kidding me?','Never mind'];
 /* miss login */
@@ -46,7 +50,7 @@ scenario['6cond-graph-show-keywords'] = ['combination data','analyzed','show the
 // SQL Exectuon Time graph
 scenario['6cond-sql-performance-graph-show-keywords'] = ['your suggestion','suggest','sql test','improved performance'];
 
-scenario['6cond-performance-improve'] = ['There is an improve suggestion.'];
+scenario['6cond-performance-improve'] = ['There is an improving suggestion.','Do you wanna know my great idea?','Attention please. I have an idea.'];
 scenario['6a'] = ['OK, here you are','Hey ho','This'];
 scenario['6b'] = ['Command me, if you need'];
 scenario['6func-cleanup-cmd'] = ['refresh','cleanup','clean'];
