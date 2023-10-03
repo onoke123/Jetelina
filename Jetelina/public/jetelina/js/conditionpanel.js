@@ -50,6 +50,10 @@ const conditionPanelFunctions = (ut) => {
 
         switch (cmd) {
             case 'graph':
+                if($("#performance_test").is(":visible")){
+                    $("#performance_test").hide();
+                }        
+                
                 /*
                     Tips:
                         #plot rotates 3D graph, so the div panel is not to be draggable.
@@ -63,6 +67,7 @@ const conditionPanelFunctions = (ut) => {
                         This graph is 2D, the graph can zoom/pan...., 
                         so the div panel is also not to be draggable after getting its position.
                 */
+
                 $("#performance_real").show().draggable().animate({
                     top: "-50%",
                     left: "50%"
@@ -71,6 +76,9 @@ const conditionPanelFunctions = (ut) => {
                 m = chooseMsg('6cond-graph-show', "", "");
                 break;
             case 'performance':
+                if($("#performance_real").is(":visible")){
+                    $("#performance_real").hide();
+                }        
                 /*
                     Tips:
                         below graphs performance is as same as 'case:graph'.
@@ -238,8 +246,8 @@ const viewPerformanceGraph = (apino, mean, type) => {
     let paper_bgc = 'rgb(112,128,144)';
     let font_col = 'rgb(255,255,255)';
     if( type == 'test'){
-        paper_bgc = 'rgb(240,230,140)';
-        font_col = 'rgb(255,0,0)';
+        paper_bgc = 'rgb(0,129,104)';//'rgb(240,230,140)'
+//        font_col = 'rgb(255,0,0)';
     }
 
     let layout = {
