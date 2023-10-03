@@ -51,30 +51,39 @@ const conditionPanelFunctions = (ut) => {
         switch (cmd) {
             case 'graph':
                 /*
-                    #plot rotates 3D graph, so the div panel is not to be draggable.
+                    Tips:
+                        #plot rotates 3D graph, so the div panel is not to be draggable.
                 */
                 $("#plot").show().animate({
                     top: "5%",
                     left: "-5%"
                 }, animateDuration);
                 /*
-                    This graph is 2D that why it is to be draggable
+                    Tips:
+                        This graph is 2D, the graph can zoom/pan...., 
+                        so the div panel is also not to be draggable after getting its position.
                 */
                 $("#performance_real").show().draggable().animate({
                     top: "-50%",
                     left: "50%"
-                }, animateDuration);
+                }, animateDuration).draggable('disable');
 
                 m = chooseMsg('6cond-graph-show', "", "");
                 break;
             case 'performance':
                 /*
-                    This graph is 2D that why this div panel is to be draggable
+                    Tips:
+                        below graphs performance is as same as 'case:graph'.
                 */
-                $("#performance_test").show().draggable().animate({
-                    top: "-70%",
-                    left: "30%"
+                $("#plot").show().animate({
+                    top: "5%",
+                    left: "-5%"
                 }, animateDuration);
+
+                $("#performance_test").show().draggable().animate({
+                    top: "-50%",
+                    left: "50%"
+                }, animateDuration).draggable('disable');
 
                 m = chooseMsg('6cond-graph-show', "", "");
                 break;
@@ -86,6 +95,15 @@ const conditionPanelFunctions = (ut) => {
 
     return m;
 }
+
+/*
+    Tips:
+        the real sql execution performance data is stored in this parameter temporarily.
+        this stored real data is needed when the test data is rendered.
+        because the real data and test db performance data are packed in the same graph.
+ */
+let realPerformanceData;
+
 /**
  * @function setGraphData
  * @param {object} o   json object data
@@ -163,20 +181,59 @@ const setGraphData = (o, type) => {
  * show 'performance graph'
  */
 const viewPerformanceGraph = (apino, mean, type) => {
-    let data = [
-        {
-            opacity: 0.5,
-            type: 'scatter',
-            text: apino,
-            x: apino,
-            y: mean,
-            mode: 'markers',
-            marker: {
-                color: 'rgb(255,255,255)',
-                size: 20
+    let data;
+
+    if (type == "real"){
+        data = [
+            {
+                opacity: 0.5,
+                type: 'scatter',
+                text: apino,
+                x: apino,
+                y: mean,
+                mode: 'markers',
+                marker: {
+                    color: 'rgb(255,255,255)',
+                    size: 20
+                }
             }
-        }
-    ];
+        ];    
+    }else{
+        let real_data = 
+            {
+                opacity: 0.5,
+                type: 'scatter',
+                text: apino,
+                x: apino,
+                y: realPerformanceData,
+                mode: 'markers',
+                name: 'real sql',
+                marker: {
+                    color: 'rgb(255,255,255)',
+                    size: 20
+                }
+            };
+        
+
+        let test_data = 
+            {
+                opacity: 0.5,
+                type: 'scatter',
+                text: apino,
+                x: apino,
+                y: mean,
+                mode: 'markers',
+                name: 'test sql',
+                marker: {
+                    color: 'rgb(255,0,0)',
+                    size: 20
+                }
+            };
+        
+
+        data = [real_data,test_data];
+    }
+
 
     let paper_bgc = 'rgb(112,128,144)';
     let font_col = 'rgb(255,255,255)';
