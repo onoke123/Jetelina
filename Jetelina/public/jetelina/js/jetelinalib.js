@@ -151,6 +151,8 @@ const getAjaxData = (url) => {
                 */
                 if (result) {
                     getAjaxData("/getperformancedata_test");
+                }else{
+                    typingControll(chooseMsg("success", "", ""));
                 }
             } else {
                 // mainly, data for function panel
@@ -209,8 +211,15 @@ const postAjaxData = (url, data) => {
  * typing character controller
  */
 const typingControll = (m) => {
-    //keyinputが続くとtyping()処理が重なるので、ここで一度クリアしておく
-    if (typingTimeoutID != null) clearTimeout(typingTimeoutID);
+    /*
+      Tips:
+        clear once for priventing duplication.
+        and clearing the text in Jetelina's chat box as well.
+    */
+    if (typingTimeoutID != null){
+        clearTimeout(typingTimeoutID);
+        $("#jetelina_panel [name='jetelina_tell']").text("");
+    }
 
     if (debug) console.info("typingControll() m:", m);
 
@@ -501,12 +510,13 @@ const chatKeyDown = (cmd) => {
                             This data does not change often, that why set 'sed' flag to use for the decision. 
                         */
                         if (!sad) {
+                            const dataurls = scenario['analyzed-data-collect-url'];
                             // relation access & combination
-                            getAjaxData("/getsqlanalyzerdata");
+                            getAjaxData(dataurls[0]);
                             // simply sql speed
-                            getAjaxData("/getperformancedata_real");
+                            getAjaxData(dataurls[1]);
                             // check existing for improve file
-                            getAjaxData("/chkexistimprfile")
+                            getAjaxData(dataurls[2]);
                         }
                     }
                     break;
