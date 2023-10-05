@@ -478,7 +478,7 @@ const chatKeyDown = (cmd) => {
                             left: "10%"
                         }, animateDuration);
 
-                        if ($("#columns").is(":visible")) {
+                        if (isVisibleColumns()) {
                             $("#fileup").draggable().animate({
                                 top: "4%",
                                 left: "5%"
@@ -676,9 +676,9 @@ const getPreferentPropertie = (p) => {
  * clear screen in activeItem class when switching table list/api list
  */
 const cleanupItems4Switching = () => {
-    if ($("#table_container").is(":visible")) {
+    if (isVisibleTableContainer()) {
         $("#table_container span").removeClass("activeItem");
-    } else if ($("#api_container").is(":visible")) {
+    } else if (isVisibleApiContainer()) {
         $("#api_container span").removeClass("activeItem");
         $("#container span").remove();
     }

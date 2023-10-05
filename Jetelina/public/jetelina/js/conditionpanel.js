@@ -7,11 +7,41 @@
     This js lib works with dashboard.js, functionpanel.js and conditionpanel.js for the Condition Panel.
     
     Functions:
+      isVisiblePerformanceReal() checking "#performance_real" is visible or not
+      isVisiblePerformanceTest() checking "#performance_test" is visible or not
       conditionPanelFunctions(ut)  Exectute some functions ordered by user chat input message
       setGraphData(o,type)  set data to a graph of creating by plot.js. data and 'type' are passed by getAjaxData() in jetelinalib.js 
       viewPerformanceGraph(apino, mean, type)  show 'performance graph'
       viewCombinationGraph(bname, bno, ct, ac)  show the 'combination graph'
 */
+/**
+ * @function isVisiblePerformanceReal
+ * @returns {boolean}  true -> visible, false -> invisible
+ * 
+ * checking "#performance_real" is visible or not
+ */
+const isVisiblePerformanceReal = () =>{
+    let ret = false;
+    if ($("#performance_real").is(":visible")){
+      ret = true;
+    }
+  
+    return ret;
+  }
+/**
+ * @function isVisiblePerformanceTest
+ * @returns {boolean}  true -> visible, false -> invisible
+ * 
+ * checking "#performance_test" is visible or not
+ */
+const isVisiblePerformanceTest = () =>{
+    let ret = false;
+    if ($("#performance_test").is(":visible")){
+      ret = true;
+    }
+  
+    return ret;
+  }
 /**
  * @function conditionPanelFunctions
  * @param {string} ut  chat message by user 
@@ -50,7 +80,7 @@ const conditionPanelFunctions = (ut) => {
 
         switch (cmd) {
             case 'graph':
-                if($("#performance_test").is(":visible")){
+                if(isVisiblePerformanceTest()){
                     $("#performance_test").hide();
                 }        
                 
@@ -76,7 +106,7 @@ const conditionPanelFunctions = (ut) => {
                 m = chooseMsg('6cond-graph-show', "", "");
                 break;
             case 'performance':
-                if($("#performance_real").is(":visible")){
+                if(isVisiblePerformanceReal()){
                     $("#performance_real").hide();
                 }        
                 /*

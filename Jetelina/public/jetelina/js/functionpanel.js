@@ -6,6 +6,10 @@
     This js lib works with dashboard.js, functionpanel.js and conditionpanel.js for the Function Panel.
     
     Functions:
+      isVisibleTableContainer() checking "#table_container" is visible or not
+      isVisibleApiContainer() checking "#api_container" is visible or not
+      isVisibleGenelicPanel() checking "#genelic_panel" is visible or not
+      isVisibleColumns() checking "#columns" is visible or not
       itemSelect(p) select table column
       deleteSelectedItems(p) delete the selected columns from #container field   選択されているcolumnsを#containerから削除する
       cleanUp(s)  droped items & columns of selecting table
@@ -57,6 +61,62 @@ $(document).on({
       itemSelect($(this));
     }
 }, ".item");
+/**
+ * @function isVisibleTableContainer
+ * @returns {boolean}  true -> visible, false -> invisible
+ * 
+ * checking "#table_container" is visible or not
+ */
+const isVisibleTableContainer = () =>{
+  let ret = false;
+  if ($("#table_container").is(":visible")){
+    ret = true;
+  }
+
+  return ret;
+}
+/**
+ * @function isVisibleApiContainer
+ * @returns {boolean}  true -> visible, false -> invisible
+ * 
+ * checking "#api_container" is visible or not
+ */
+const isVisibleApiContainer = () =>{
+  let ret = false;
+  if ($("#api_container").is(":visible")){
+    ret = true;
+  }
+
+  return ret;
+}
+/**
+ * @function isVisibleGenelicPanel
+ * @returns {boolean}  true -> visible, false -> invisible
+ * 
+ * checking "#genelic_panel" is visible or not
+ */
+const isVisibleGenelicPanel = () =>{
+  let ret = false;
+  if ($("#genelic_panel").is(":visible")){
+    ret = true;
+  }
+
+  return ret;
+}
+/**
+ * @function isVisibleColumns
+ * @returns {boolean}  true -> visible, false -> invisible
+ * 
+ * checking "#columns" is visible or not
+ */
+const isVisibleColumns = () =>{
+  let ret = false;
+  if ($("#columns").is(":visible")){
+    ret = true;
+  }
+
+  return ret;
+}
 /**
  * @function itemSelect
  * @param {object} p  jquery tag object
@@ -169,7 +229,7 @@ const fileupload = () => {
       $("#my_form label span").text("Upload CSV File");
 
       //refresh table list 
-      if ($("#table_container").is(":visible")) {
+      if (isVisibleTableContainer()) {
         cleanUp("tables");
         getAjaxData("getalldbtable");
       } else {
@@ -238,7 +298,7 @@ const listClick = (p) => {
   removeColumn(t);
   if (c.indexOf("activeItem") != -1) {
     p.toggleClass("activeItem");
-    if ($("#api_container").is(":visible")) {
+    if (isVisibleApiContainer()) {
       cleanupContainers();
     }
   } else {
@@ -510,7 +570,7 @@ const postSelectedColumns = () => {
       $("#container").append(`<span class="apisql"><p>there is similar API exist already:  ${result.resembled}</p></span>`);
     }
 
-    if($("#genelic_panel").is(":visible")){
+    if(isVisibleGenelicPanel()){
       $("#genelic_panel").hide();
     }
   }).fail(function (result) {
@@ -614,7 +674,7 @@ const functionPanelFunctions = (ut) => {
         /*  Call getAjaxData() in jetelinalib.js for getting all table list in the Database.
             The url of general ajax call is 'getalldbtable'.
         */
-        if ($("#api_container").is(":visible")) {
+        if (isVisibleApiContainer()) {
           // cleanup the screen
           cleanupItems4Switching();
           cleanupContainers();
@@ -629,7 +689,7 @@ const functionPanelFunctions = (ut) => {
         m = 'ignore';
         break;
       case 'api':
-        if ($("#table_container").is(":visible")) {
+        if (isVisibleTableContainer()) {
           // cleanup the scree 
           cleanupItems4Switching();
           cleanupContainers();
@@ -705,7 +765,7 @@ const functionPanelFunctions = (ut) => {
         presentaction.cmd = "";
         break;
       case 'droptable':
-        if ($("#table_container").is(":visible")) {
+        if (isVisibleTableContainer()) {
           if (dropTable != null && 0 < dropTable.length) {
             // Hit the table
             let p = $(`#table_container span:contains(${dropTable})`).filter(function () {
@@ -925,7 +985,7 @@ const containsMultiTables = () =>{
  * genelic panel open
  */
 const showGenelicPanel = () =>{
-  if(!$("#genelic_panel").is(":visible")){
+  if(!isVisibleGenelicPanel()){
     $("#genelic_panel").show();
     $("#genelic_panel input[name='genelic_input']").focus();
   }
