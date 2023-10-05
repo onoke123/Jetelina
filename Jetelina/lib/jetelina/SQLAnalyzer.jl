@@ -7,6 +7,7 @@
         Analyze execution speed of all SQL sentences. 
     
     functions
+        main() this function set as for kicking createAna..() from outer function.
         createAnalyzedJsonFile() create json file for result of sql execution speed analyze data.
         extractColumnsFromSql(s::String)  pick up columns data from 's'.
         experimentalCreateView(df::DataFrame)  create view tables for test and execute all sql sentences for analyzing.
@@ -29,6 +30,19 @@ module SQLAnalyzer
     using TestDBController, PgDataTypeList
 
     const sqljsonfile = getFileNameFromLogPath(JetelinaSQLAnalyzedfile)
+
+    """
+    function main()
+
+        rap function for executing createAnalyzedJsonFile() that is the real analyzing function.
+        this function set as for kicking createAna..() from outer function.
+
+    # Arguments
+
+    """
+    function main()
+        createAnalyzedJsonFile();
+    end
 
     """
     function createAnalyzedJsonFile()
@@ -64,8 +78,10 @@ module SQLAnalyzer
 
                     -->
                     "js312,"  "select ftest.name,ftest.age,ftest2.name,ftest2.age,ftest3.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id"  ""
+
+                do uniqueness with 'apino' because of difference 'where' sentences, maybe.
         ===#
-        u = unique(df[:, :apino]) # do uniqueness as 'apino' because of different in 'where' sentences, maybe.
+        u = unique(df[:, :apino])
         #===
             Tips:
                 steps for analyzing
@@ -76,7 +92,7 @@ module SQLAnalyzer
         ===#
         u_size = length(u)
         df_size = nrow(df) # all line number
-        # step1: unique 'api no' in 'u', then count access number in sql.log.  ex. u[i] === ....
+        # step1: unique 'apino' in 'u', then count access number in sql.log.  ex. u[i] === ....
         sql_df = DataFrame(apino=String[], sql=String[], combination=Vector{String}[], access_number=Float64[])
 
         #===
@@ -86,16 +102,15 @@ module SQLAnalyzer
                     apino      sql         combination         access number
                     js10    select ....  ['ftest3','ftest2']      2
                     js22    select ....  ['ftest4','ftest2']      5
-                    js10    select ....  ['ftest2']              10
+                    js30    select ....  ['ftest2']              10
 
                 hire js22 because it is the highest access number among higher combination number(js10,js22) to create a client view graph 'condition panel'.
-                js10 is the best number but it has low combination number, so it may does not need to create a client view graph in 'condition panel'
-
+                js30 may does not need to be created in 'condition panel' so that it is the best number but it has low combination number. 
         ===#
 
         for i = 1:u_size
             ac = 0
-            # collect access number for each unique SQL. make "access_number"
+            # collect access numbers for each unique SQL. make "access_number"
             dd = filter(:apino=>x->x==u[i],df)
             ac = nrow(dd)
             table_arr = String[]
@@ -106,7 +121,7 @@ module SQLAnalyzer
                     pick up columns from sql sentence. the columns are between 'select' and 'from'.
                         ex. select <columns> from <tables> where ...  -> <columns> 
 
-                    this can do because of unified sql sentence by Jetelina created.
+                    this can do because of unified sql sentence by Jetelina created.  <-- importance!
             ==#
             cols = extractColumnsFromSql(df[:,:sql][i])
             c = split(cols[1], ",")
@@ -114,6 +129,8 @@ module SQLAnalyzer
             for j = 1:length(c)
                 #===
                     Tips:
+                        c[j] -> <table name>.<column name>
+                        then spliting to
                         cc[1]:table name
                         cc[2]:column name 
                 ===#
@@ -121,8 +138,8 @@ module SQLAnalyzer
                 
                 #===
                     Tips:
-                        except master tables.
-                        master tables has 'master' in their own name. this is the protocol.
+                        reject master tables.
+                        master tables has 'master' in their own name. this is the protocol. <-- importance!
                 ===#
                 if !contains( cc[1], "master" )
                     # logical NOT in Julia, yes.
@@ -131,19 +148,31 @@ module SQLAnalyzer
                     end
 
                     push!(tables,cc[1])  # collect table names used in the sql sentence, whatever.
-            end
+                end
             end
 
             #===
                 Tips:
                     push the best number of table in tables[] as 'basic table' to the head of table_arr.
                     in the case of multi candidates in 'basic table', they are ordered in Ascii.
-                        ex. there are candidates as 'a','b'(they are same number), will hire 'a'. hum.. alright.  
+                        ex. there are candidates as 'a','b'(they are same number), will hire 'a'. hum.. alright. 
+
+                    this 'basic table' is to be x-axis order in 'Access vs Combination' graph in the conditon panel, that is drwawn by Plotly.js.
+                        
+                    mode() is included in StatsBase.jl to return the mode of tables array.
+
+                    then sql_df will be alike below, you can see 'basic table' is in the head of 'combination' array data,
+
+                        Row │ apino   sql                                    combination                        access_number 
+                            │ String  String                                 Array…                             Float64       
+                  ─────┼───────────────────────────────────────────────────
+                          1 │ js312   select ftest.name,ftest.age,ftes…  ["ftest", "ftest", "ftest2", "ft…            5.0
+                          2 │ js313   select ftest.name,ftest.age,ftes…  ["ftest", "ftest", "ftest2", "ft…            3.0
+                          3 │ js314   select ftest.name,ftest.age,ftes…  ["ftest", "ftest", "ftest2", "ft…            1.0
             ===#
             pushfirst!(table_arr,mode(tables))
             # move it to here becase it has changed each column name to each sql name.
             push!(sql_df, [u[i], df[:,:sql][i],table_arr, ac])
-
         end
         #===
             ↑ preparation.
