@@ -1,22 +1,12 @@
 apino,sql
+js46,"select ftest.id,ftest.sex from ftest as ftest "
+ji40,"insert into ftest values(id,'name','sex',age,ave,jetelina_delete_flg)"
+jd45,delete from ftest
 js312,"select ftest_name,ftest_age,ftest2_name,ftest2_age,ftest3_age,ftest3_dumy from js312_view"
-jd36,delete from ftest2
-ji306,"insert into ftest2 values(id,'name','sex',age,ave,jetelina_delete_flg)"
-jd295,delete from masterftest
-jd305,delete from ftest
-ju35,"update ftest2 set id=d_id,name='d_name',sex='d_sex',age=d_age,ave=d_ave,jetelina_delete_flg=d_jetelina_delete_flg"
-jd39,delete from ftest3
-jd311,delete from ftest3
-ju304,"update ftest set id=d_id,name='d_name',sex='d_sex',age=d_age,ave=d_ave,jetelina_delete_flg=d_jetelina_delete_flg"
-ji309,"insert into ftest3 values(id,'name','sex',age,dumy,jetelina_delete_flg)"
-ji293,"insert into masterftest values(id,'name','sex',age,ave,jetelina_delete_flg)"
-ju310,"update ftest3 set id=d_id,name='d_name',sex='d_sex',age=d_age,dumy=d_dumy,jetelina_delete_flg=d_jetelina_delete_flg"
-ju294,"update masterftest set id=d_id,name='d_name',sex='d_sex',age=d_age,ave=d_ave,jetelina_delete_flg=d_jetelina_delete_flg"
-ju38,"update ftest3 set id=d_id,name='d_name',sex='d_sex',age=d_age,dumy=d_dumy,jetelina_delete_flg=d_jetelina_delete_flg"
-ji34,"insert into ftest2 values(id,'name','sex',age,ave,jetelina_delete_flg)"
-js314,"select ftest.sex,ftest.age,ftest.name from ftest as ftest "
-jd308,delete from ftest2
-ji303,"insert into ftest values(id,'name','sex',age,ave,jetelina_delete_flg)"
-js313,"select ftest.sex,ftest.age,ftest2.age,ftest2.ave from ftest as ftest,ftest2 as ftest2 where ftest.id=ftest2.id"
-ju307,"update ftest2 set id=d_id,name='d_name',sex='d_sex',age=d_age,ave=d_ave,jetelina_delete_flg=d_jetelina_delete_flg"
-ji37,"insert into ftest3 values(id,'name','sex',age,dumy,jetelina_delete_flg)"
+js50,"select ftest2.id,ftest2.age from ftest2 as ftest2 "
+js51,"select ftest.id,ftest.ave,ftest.sex from ftest as ftest "
+jd49,delete from ftest2
+ju44,"update ftest set id=d_id,name='d_name',sex='d_sex',age=d_age,ave=d_ave,jetelina_delete_flg=d_jetelina_delete_flg"
+ji43,"insert into ftest values(id,'name','sex',age,ave,jetelina_delete_flg)"
+ji47,"insert into ftest2 values(id,'name','sex',age,ave,jetelina_delete_flg)"
+ju48,"update ftest2 set id=d_id,name='d_name',sex='d_sex',age=d_age,ave=d_ave,jetelina_delete_flg=d_jetelina_delete_flg"

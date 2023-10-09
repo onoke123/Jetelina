@@ -3,32 +3,40 @@ module: JetelinaReadConfig
 
     read configuration parameters from Jetelina.cnf file
     then set them to global variables
-        JetelinaLogfile: log file name
-        debugflg: debug mode or not
-        JetelinaFileUploadPath: csv file upload path
-        JetelinaSQLLogfile: SQL log file name
-        JetelinaSQLAnalyzedfile: SQL Analyed json file name
-        JetelinaDBhost: DB host name
-        JetelinaDBport: DB port number
-        JetelinaDBuser: DB access user account
-        JetelinaDBpassword: DB access user password
-        JetelinaDBsslmode: DB access ssl mode (in PostgreSQL)
-        JetelinaDBname: DB database name
-        JetelinaTestDBname: DB database for testing by analyzing
-    
-contain functions
-    __init__()
+
+    contain functions
+        __init__()
 """
 
 module JetelinaReadConfig
 
     using JetelinaFiles, JetelinaLog
 
-    export debugflg, JetelinaLogfile, JetelinaDBtype, JetelinaFileUploadPath, JetelinaSQLLogfile, JetelinaDBhost,
-        JetelinaDBport, JetelinaDBuser, JetelinaDBpassword, JetelinaDBsslmode, JetelinaDBname, Df_JetelinaTableManager,
-        JetelinaSQLAnalyzedfile, JetelinaSQLListfile, JetelinaSqlPerformancefile, JetelinaTableApifile, JetelinaTestDBname,
-        JetelinaTestDBDataLimitNumber, JetelinaExperimentSqlList, JetelinaFileColumnApino, JetelinaFileColumnSql,
-        JetelinaFileColumnMax, JetelinaFileColumnMin, JetelinaFileColumnMean, JetelinaImprApis
+    export  JetelinaLogfile,# log file name
+        debugflg,# debug configuration true/false
+        JetelinaFileUploadPath,# csv file upload path
+        JetelinaSQLLogfile,# SQL log file name
+        JetelinaSQLAnalyzedfile,# real sql execution test data in json form
+        JetelinaSQLListfile,# real sql list file name
+        JetelinaSqlPerformancefile,# original text file of 'sqlanalyzedfile'
+        JetelinaTableApifile,# file name for relation between talbe name and api no
+        JetelinaExperimentSqlList,# sql list file for execution in test db
+        JetelinaImprApis,# suggestion file name due to execute test db
+        JetelinaFileColumnApino,# column title of sqllogfile/sqllistfile/experimentalsqllistfile
+        JetelinaFileColumnSql,# column title of sqllogfile/sqllistfile/experimentalsqllistfile
+        JetelinaFileColumnMax,# column title of sqllogfile/sqllistfile/experimentalsqllistfile
+        JetelinaFileColumnMin,# column title of sqllogfile/sqllistfile/experimentalsqllistfile
+        JetelinaFileColumnMean,# column title of sqllogfile/sqllistfile/experimentalsqllistfile
+        JetelinaDBtype,# type of database
+        JetelinaDBhost,# DB host name
+        JetelinaDBport,# DB port number
+        JetelinaDBuser,# DB access user account
+        JetelinaDBpassword,# DB access user password
+        JetelinaDBsslmode,# DB access ssl mode (in PostgreSQL)
+        JetelinaDBname,# DB database name
+        JetelinaTestDBname,# DB database for testing by analyzing
+        JetelinaTestDBDataLimitNumber,# execution limit number of select sentence in test db
+        JetelinaReadingLogMaxLine # maxmum lines to read 'sqllogfile'
 
     """
     function __init__()
@@ -57,7 +65,7 @@ module JetelinaReadConfig
             for i = 1:length(l)
                 if !startswith(l[i], "#")
                     if startswith(l[i], "logfile")
-                        # logfile path attribute
+                        # log file name
                         global JetelinaLogfile = _getSetting(l[i])
                     elseif startswith(l[i], "debug")
                         # debug configuration true/false
@@ -69,29 +77,40 @@ module JetelinaReadConfig
                         # SQL log file name
                         global JetelinaSQLLogfile = _getSetting(l[i])
                     elseif startswith(l[i], "sqlanalyzedfile")
+                        # real sql execution test data file name in json form
                         global JetelinaSQLAnalyzedfile = _getSetting(l[i])
                     elseif startswith(l[i], "sqllistfile")
+                        # real sql list file name
                         global JetelinaSQLListfile = _getSetting(l[i])
                     elseif startswith(l[i], "sqlperformancefile")
+                        # original text file of 'sqlanalyzedfile'
                         global JetelinaSqlPerformancefile = _getSetting(l[i])
                     elseif startswith(l[i], "tableapifile")
+                        # file name for relation between talbe name and api no
                         global JetelinaTableApifile = _getSetting(l[i])
                     elseif startswith(l[i], "experimentsqllistfile")
+                        # sql list file for execution in test db
                         global JetelinaExperimentSqlList = _getSetting(l[i])
                     elseif startswith(l[i], "improvesuggestionfile")
+                        # suggestion file name due to execute test db
                         global JetelinaImprApis = _getSetting(l[i])
                     elseif startswith(l[i], "file_column_apino")
+                        # column title of sqllogfile/sqllistfile/experimentalsqllistfile
                         global JetelinaFileColumnApino = _getSetting(l[i])
                     elseif startswith(l[i], "file_column_sql")
+                        # column title of sqllogfile/sqllistfile/experimentalsqllistfile
                         global JetelinaFileColumnSql = _getSetting(l[i])
                     elseif startswith(l[i], "file_column_max")
+                        # column title of sqllogfile/sqllistfile/experimentalsqllistfile
                         global JetelinaFileColumnMax = _getSetting(l[i])
                     elseif startswith(l[i], "file_column_min")
+                        # column title of sqllogfile/sqllistfile/experimentalsqllistfile
                         global JetelinaFileColumnMin = _getSetting(l[i])
                     elseif startswith(l[i], "file_column_mean")
+                        # column title of sqllogfile/sqllistfile/experimentalsqllistfile
                         global JetelinaFileColumnMean = _getSetting(l[i])
                     elseif startswith(l[i], "dbtype")
-                        # DB type
+                        # type of database
                         global JetelinaDBtype = _getSetting(l[i])
                         if debugflg
                             @info "dbtype:", JetelinaDBtype
@@ -108,6 +127,9 @@ module JetelinaReadConfig
                     elseif startswith(l[i], "selectlimit")
                         # execution limit number of select sentence in test db
                         global JetelinaTestDBDataLimitNumber = _getSetting(l[i])
+                    elseif startswith(l[i], "reading_max_lines")
+                        # maxmum lines to read 'sqllogfile'
+                        global JetelinaReadingLogMaxLine = _getSetting(l[i])
                     end
                 else
                     # ignore as comment

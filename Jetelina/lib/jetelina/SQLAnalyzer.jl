@@ -64,10 +64,10 @@ module SQLAnalyzer
                                             ^^
 
                 wondering is it ok if sql.log has more than one milion lines.
-                maybe should consider to rotated sql.log files. this is in #ticket 1254 
+                maybe should consider to rotate sql.log files. this is in #ticket 1254 
         ===#
         sqllogfile = getFileNameFromLogPath(JetelinaSQLLogfile)
-        maxrow::Int = 100 # for secure
+        maxrow::Int = JetelinaReadingLogMaxLine
         df = CSV.read( sqllogfile, DataFrame, limit=maxrow )
         #===
             Tips:
@@ -699,7 +699,12 @@ module SQLAnalyzer
 
         try
             for i = 1:size(df)[1]
-                tn = df[!, :tablename][i]
+                #===
+                    Tips:
+                        'df' has a chance to give unexpected data type 'Union' due to data missing.
+                        here requires simple 'String' data type.
+                ===#
+                tn = string(df[!, :tablename][i])
                 selectsql = """select * from $tn limit $JetelinaTestDBDataLimitNumber"""
                 altdf = DataFrame(columntable(LibPQ.execute(conn, selectsql)))
                 _load_table!(tconn, altdf, tn)
@@ -711,7 +716,6 @@ module SQLAnalyzer
             TestDBController.close_connection(tconn)
         end
     end
-
     """
     function _load_table!(conn, df::DataFrame, tablename::Vector{String}, columns=names(df))
 
@@ -722,19 +726,24 @@ module SQLAnalyzer
     # Arguments
     - `conn`: database connection object. it depend on database lib.
     - `df::DataFrame`:: dataframe object
-    - `tablename::Vector{String]`: ordered table name
+    - `tablename::String`: ordered table name
     - `columns=..`: this is the optional value. to make table columns name as dataframe's one. 
     """
-    function _load_table!(conn, df::DataFrame, tablename::Vector{String}, columns=names(df))
+    function _load_table!(conn, df::DataFrame, tablename::String, columns=names(df))
         # acquire columns type to array
-        column_type = eltype.(eachcol(df))
+        column_type = nonmissingtype.(eltype.(eachcol(df)))
         # define DataFrame column
         column_type_string = Array{Union{Nothing,String}}(nothing, length(columns))
         # columns(id,name,sex,....) in creating table
         column_str = string()
 
         for i = 1:length(columns)
-            column_type_string[i] = PgDataTypeList.getDataTypeInDataFrame(column_type[i])
+            #===
+                Tips:
+                    'column_type[i]' has a chance to give unexpected data type 'Union' due to 'df' has missing data.
+                    here requires simple 'String' data type.
+            ===#
+            column_type_string[i] = PgDataTypeList.getDataTypeInDataFrame(string(column_type[i]))
             column_str = string(column_str, " ", columns[i], " ", column_type_string[i], ",")
         end
 
@@ -743,7 +752,6 @@ module SQLAnalyzer
 
         # build 'create table' sentence
         create_table_str = """create table if not exists $tablename ( $column_str );"""
-    
         # build 'insert' sentence
         table_column_names = join(string.(columns), ", ")
         placeholders = join(("\$$num" for num in 1:length(columns)), ", ")
@@ -762,7 +770,7 @@ module SQLAnalyzer
 
             execute(conn, "COMMIT;")
         catch err
-            JetelinaLog.writetoLogfile("SQLAnalyzer.load_table!() error: $err")
+            JetelinaLog.writetoLogfile("SQLAnalyzer._load_table!() error: $err")
             execute(conn, "ROLLBACK;")
         end
     end

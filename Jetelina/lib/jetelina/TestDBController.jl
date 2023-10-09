@@ -20,7 +20,7 @@ module TestDBController
     using JetelinaFiles
     using SQLSentenceManager
 
-    export open_connection,close_connection,doSelect,measureSqlPerformance
+    export measureSqlPerformance
 
     """
     function open_connection()
@@ -83,7 +83,7 @@ module TestDBController
             return false
         finally
             # close the connection
-            close_connection(conn)
+            TestDBController.close_connection(conn)
         end
     end
 

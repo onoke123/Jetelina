@@ -648,3 +648,985 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
 ┌ Info: 2023-10-05 11:34:34 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-06 11:27:51 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007b4b)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-06 11:27:52 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-06 11:49:44 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007b4b)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-06 11:49:44 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-06 12:12:03 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007bde)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-06 12:12:03 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-06 13:36:46 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007bde)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-06 13:36:46 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-06 13:38:35 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007bde)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-06 13:38:35 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-06 13:49:23 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007bea)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-06 13:49:24 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-06 14:11:47 SQLAnalyzer.tableCopy() error: MethodError(SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007b26)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-06 14:11:48 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-06 14:18:02 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007b43)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-06 14:18:02 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 09:57:54 SQLAnalyzer.tableCopy() error: MethodError(SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007b26)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 09:57:55 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:01:09 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007b46)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:01:09 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:04:27 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007b7d)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:04:27 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:07:01 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007bbc)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:07:01 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:09:47 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007bfb)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:10:56 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007c13)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:16:14 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007c52)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:20:16 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007c8f)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:28:32 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007ccd)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:28:32 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:29:27 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007d0c)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:29:27 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:32:54 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007d4b)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:32:54 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:39:09 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer.P_load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007d72)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:39:09 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:39:17 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer.P_load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007d8a)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:39:17 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:42:52 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007dc9)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:42:52 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:44:46 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:53:55 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007e47)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 10:55:46 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007e63)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:02:25 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007eba)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:02:25 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:03:16 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007ed5)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:03:16 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:05:19 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007f14)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:05:19 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:07:46 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007f2e)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:07:46 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:15:01 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007f48)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:15:01 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:15:39 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007f48)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:15:39 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:20:56 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x0000000000007f85)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:20:56 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:22:53 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:24:31 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:27:02 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:27:51 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._load_table!, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x000000000000807e)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:27:51 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:28:59 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:29:46 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:30:47 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._ltttt, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x000000000000813e)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:30:47 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:32:21 SQLAnalyzer.tableCopy() error: MethodError(Main.SQLAnalyzer._ltttt, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = testdb
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 3×6 DataFrame
+│  Row │ id      name     sex      age     ave       jetelina_delete_flg
+│      │ Int32?  String?  String?  Int32?  Float64?  Int32?
+│ ─────┼─────────────────────────────────────────────────────────────────
+│    1 │      1  AAA      m            10       0.1                    0
+│    2 │      2  BBB      f            20       0.2                    0
+│    3 │      3  CCC      m            30       0.3                    0, "ftest"), 0x000000000000817e)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:32:21 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:33:16 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:34:19 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:35:34 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Union{Missing, Int32},), 0x0000000000008240)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:35:34 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:43:49 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Union{Missing, Int32},), 0x0000000000008280)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:43:49 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:51:19 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Union{Missing, Int32},), 0x000000000000829d)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:51:19 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:52:14 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Union{Missing, Int32},), 0x00000000000082a2)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:52:14 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:54:42 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Union{Missing, Int32},), 0x00000000000082a7)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 11:54:42 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 12:38:44 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Union{Missing, Int32},), 0x00000000000082e6)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 12:38:44 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 12:49:16 SQLAnalyzer.tableCopy() error: MethodError(convert, (String, Union{Missing, Int32}), 0x0000000000008325)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 12:49:16 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 12:53:02 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Union{Missing, Int32},), 0x0000000000008364)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 12:53:02 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 12:54:29 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Union{Missing, Int32},), 0x00000000000083a3)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 12:54:29 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 13:34:32 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Union{Missing, Int32},), 0x00000000000083eb)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 13:34:32 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 13:35:13 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Union{Missing, Int32},), 0x000000000000842a)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 13:35:13 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 13:37:51 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Union{Missing, Int32},), 0x000000000000842f)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 13:37:51 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 13:40:05 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Union{Missing, Int32},), 0x000000000000846e)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 13:40:05 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 13:41:33 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Union{Missing, Int32},), 0x00000000000084ad)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 13:41:33 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 14:32:02 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Union{Missing, Int32},), 0x00000000000084ec)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 14:32:02 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 14:32:52 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Union{Missing, Int32},), 0x000000000000852b)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 14:32:52 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 14:33:25 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Union{Missing, Int32},), 0x000000000000856a)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 14:33:25 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 14:34:49 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Union{Missing, Int32},), 0x00000000000085a9)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 14:34:49 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 14:36:37 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Union{Missing, Int32},), 0x00000000000085e8)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-07 14:36:37 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-08 09:53:14 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Union{Missing, Int32},), 0x0000000000008627)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-08 09:53:14 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-08 10:18:52 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Int32,), 0x0000000000008666)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-08 10:18:52 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-08 10:22:27 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Int32,), 0x00000000000086aa)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-08 10:22:27 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-08 10:24:12 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, (Int32,), 0x00000000000086af)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-08 10:24:13 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-09 10:26:19 SQLAnalyzer.creatTestDB() error: LibPQ.Errors.ObjectInUse("ERROR:  database \"testdb\" is being accessed by other users\nDETAIL:  There is 1 other session using the database.\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58

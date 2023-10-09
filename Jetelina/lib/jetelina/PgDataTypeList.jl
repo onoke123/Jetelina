@@ -52,7 +52,7 @@ module PgDataTypeList
     # Arguments
     - `c_type::String`:  data type string. ex 'Int'
     """
-    function getDataTypeInDataFrame(c_type::String)        
+      function getDataTypeInDataFrame(c_type::String) 
         c_type = string( c_type )
         if contains( c_type, "Int" ) 
             "integer"
