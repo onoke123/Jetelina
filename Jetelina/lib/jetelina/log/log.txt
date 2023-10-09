@@ -1630,3 +1630,7 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
 ┌ Info: 2023-10-09 10:26:19 SQLAnalyzer.creatTestDB() error: LibPQ.Errors.ObjectInUse("ERROR:  database \"testdb\" is being accessed by other users\nDETAIL:  There is 1 other session using the database.\n")
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-09 11:07:02 SQLAnalyzer.tableCopy() error: MethodError(PgDataTypeList.getDataTypeInDataFrame, ('D',), 0x0000000000007b86)
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-09 11:07:02 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"ftest\" does not exist\nLINE 1: ...age as ftest3_age,ftest3.dumy as ftest3_dumy from ftest as f...\n                                                             ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58

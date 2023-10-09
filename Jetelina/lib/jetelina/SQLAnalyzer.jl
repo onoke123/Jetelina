@@ -740,8 +740,8 @@ module SQLAnalyzer
         for i = 1:length(columns)
             #===
                 Tips:
-                    'column_type[i]' has a chance to give unexpected data type 'Union' due to 'df' has missing data.
-                    here requires simple 'String' data type.
+                    'column_type[i]' are 'DataType' due to nonmissingtype().
+                    need to change the data type to 'String' to call getDataTypeInDataFrame().
             ===#
             column_type_string[i] = PgDataTypeList.getDataTypeInDataFrame(string(column_type[i]))
             column_str = string(column_str, " ", columns[i], " ", column_type_string[i], ",")
