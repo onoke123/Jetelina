@@ -699,12 +699,7 @@ module SQLAnalyzer
 
         try
             for i = 1:size(df)[1]
-                #===
-                    Tips:
-                        'df' has a chance to give unexpected data type 'Union' due to data missing.
-                        here requires simple 'String' data type.
-                ===#
-                tn = string(df[!, :tablename][i])
+                tn = df[!, :tablename][i]
                 selectsql = """select * from $tn limit $JetelinaTestDBDataLimitNumber"""
                 altdf = DataFrame(columntable(LibPQ.execute(conn, selectsql)))
                 _load_table!(tconn, altdf, tn)
@@ -740,7 +735,7 @@ module SQLAnalyzer
         for i = 1:length(columns)
             #===
                 Tips:
-                    'column_type[i]' are 'DataType' due to nonmissingtype().
+                    'column_type[i]' are 'DataType' due to eltype().
                     need to change the data type to 'String' to call getDataTypeInDataFrame().
             ===#
             column_type_string[i] = PgDataTypeList.getDataTypeInDataFrame(string(column_type[i]))
