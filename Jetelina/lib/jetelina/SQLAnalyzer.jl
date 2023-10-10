@@ -481,15 +481,29 @@ module SQLAnalyzer
         df_real = CSV.read(sqlPerformanceFile_real,DataFrame)
         df_test = CSV.read(sqlPerformanceFile_test,DataFrame)
 
-        std_max = maximum(df_real.max)
+        #===
+            Tips:
+              df_real contains the real sql execution speed on the real db
+              df_test contains the experimental sql exectution speed on the test db.
+
+              here, define standard speed data due to df_real.
+              then normalize both df_real and df_test data by this standard data for being able to compare the both speed data.
+
+              Attention: std_max is due to minimum(). std_mean is calculated by sum() divide the row number of df_real.
+        ===#
+        std_max = minimum(df_real.max)
         std_min = maximum(df_real.min)
-        std_mean = maximum(df_real.mean)
+        std_mean = sum(df_real.mean) / size(df_real)[1]
+
+        if debugflg
+            println("df_real", df_real)
+            println("std_max:", std_max, " std_min:", std_min, " std_mean:", std_mean )
+        end
 
         df_real.max  = df_real.max / std_max
         df_real.min  = df_real.min / std_min
         df_real.mean = df_real.mean / std_mean
 
-        # can be compare the speed of test db by hiring the speed of the running db
         df_test.max  = df_test.max / std_max
         df_test.min  = df_test.min / std_min
         df_test.mean = df_test.mean / std_mean
@@ -497,6 +511,9 @@ module SQLAnalyzer
         sqlPerformanceFile_real_json = getFileNameFromLogPath(string(JetelinaSqlPerformancefile,".json"))
         sqlPerformanceFile_test_json = getFileNameFromLogPath(string(JetelinaSqlPerformancefile,".test.json"))
         improveApisFile = getFileNameFromLogPath(string(JetelinaImprApis))
+
+        # delete impr.. file if it exists
+        rm(improveApisFile, force=true)
 
         #===
             Tips:
@@ -518,6 +535,10 @@ module SQLAnalyzer
             df_test[p[1],:apino] = uppercase(dict_apino_arr[i])
 
             diff_speed = df_test[p[1],:mean] / df_real[p[1],:mean]
+
+            if debugflg
+                println("diff_speed:", dict_apino_arr[i], " -> ",diff_speed)
+            end
             #===
                 Tips:
                     propose 'do?' if sql execution speed were improved over 25%.
