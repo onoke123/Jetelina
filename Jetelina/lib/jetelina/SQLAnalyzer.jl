@@ -481,6 +481,10 @@ module SQLAnalyzer
         df_real = CSV.read(sqlPerformanceFile_real,DataFrame)
         df_test = CSV.read(sqlPerformanceFile_test,DataFrame)
 
+        if debugflg
+            println("before normalize df_real", df_real)
+            println("before normalize df_test", df_test)
+        end
         #===
             Tips:
               df_real contains the real sql execution speed on the real db
@@ -495,11 +499,6 @@ module SQLAnalyzer
         std_min = maximum(df_real.min)
         std_mean = sum(df_real.mean) / size(df_real)[1]
 
-        if debugflg
-            println("df_real", df_real)
-            println("std_max:", std_max, " std_min:", std_min, " std_mean:", std_mean )
-        end
-
         df_real.max  = df_real.max / std_max
         df_real.min  = df_real.min / std_min
         df_real.mean = df_real.mean / std_mean
@@ -507,6 +506,14 @@ module SQLAnalyzer
         df_test.max  = df_test.max / std_max
         df_test.min  = df_test.min / std_min
         df_test.mean = df_test.mean / std_mean
+
+        if debugflg
+            println("after normalize df_real", df_real)
+            println("std_max:", std_max, " std_min:", std_min, " std_mean:", std_mean )
+            println("df_real.max:", df_real.max, " df_real.min:", df_real.min, " df_real.mean:", df_real.mean )
+            println("after normalize df_test", df_test)
+            println("df_test.max:", df_test.max, " df_test.min:", df_test.min, " df_test.mean:", df_test.mean )
+        end
 
         sqlPerformanceFile_real_json = getFileNameFromLogPath(string(JetelinaSqlPerformancefile,".json"))
         sqlPerformanceFile_test_json = getFileNameFromLogPath(string(JetelinaSqlPerformancefile,".test.json"))
