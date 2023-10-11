@@ -59,7 +59,6 @@ module TestDBController
 
     # Arguments
     - `sql::String`: execute sql sentense
-    - `mode::String`: "run"->running mode  "measure"->measure speed. only called by measureSqlPerformance()
     - return: boolean: false in fale.
     """
     function doSelect(sql)

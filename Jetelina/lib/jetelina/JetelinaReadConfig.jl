@@ -16,9 +16,9 @@ module JetelinaReadConfig
         debugflg,# debug configuration true/false
         JetelinaFileUploadPath,# csv file upload path
         JetelinaSQLLogfile,# SQL log file name
-        JetelinaSQLAnalyzedfile,# real sql execution test data in json form
+        JetelinaTableCombiVsAccessRelation,# real sql execution test data in json form
         JetelinaSQLListfile,# real sql list file name
-        JetelinaSqlPerformancefile,# original text file of 'sqlanalyzedfile'
+        JetelinaSqlPerformancefile,# sql execution speed data file name
         JetelinaTableApifile,# file name for relation between talbe name and api no
         JetelinaExperimentSqlList,# sql list file for execution in test db
         JetelinaImprApis,# suggestion file name due to execute test db
@@ -76,14 +76,14 @@ module JetelinaReadConfig
                     elseif startswith(l[i], "sqllogfile")
                         # SQL log file name
                         global JetelinaSQLLogfile = _getSetting(l[i])
-                    elseif startswith(l[i], "sqlanalyzedfile")
+                    elseif startswith(l[i], "tablecombinationfile")
                         # real sql execution test data file name in json form
-                        global JetelinaSQLAnalyzedfile = _getSetting(l[i])
+                        global JetelinaTableCombiVsAccessRelation = _getSetting(l[i])
                     elseif startswith(l[i], "sqllistfile")
                         # real sql list file name
                         global JetelinaSQLListfile = _getSetting(l[i])
                     elseif startswith(l[i], "sqlperformancefile")
-                        # original text file of 'sqlanalyzedfile'
+                        # sql execution speed data file name
                         global JetelinaSqlPerformancefile = _getSetting(l[i])
                     elseif startswith(l[i], "tableapifile")
                         # file name for relation between talbe name and api no

@@ -23,7 +23,6 @@ module SQLSentenceManager
     # sqli list file
     sqlFile = getFileNameFromConfigPath(JetelinaSQLListfile)
     tableapiFile = getFileNameFromConfigPath(JetelinaTableApifile)
-    experimentFile = getFileNameFromConfigPath(JetelinaExperimentSqlList)
 
     """
     function writeTolist(sql::String, tablename_arr::Vector{String})
@@ -110,6 +109,9 @@ module SQLSentenceManager
         orglist = CSV.File(sqlFile) |> Dict
         newlist = merge!(orglist,dic)
 
+        experimentFile = getFileNameFromConfigPath(JetelinaExperimentSqlList)
+        # delete this file if it exists, becaus this file is always fresh.
+        rm(experimentFile, force=true)
         #===
             Tips:
                 ready for writing to files.

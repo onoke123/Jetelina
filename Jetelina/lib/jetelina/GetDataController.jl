@@ -8,10 +8,10 @@ Description:
 
 functions
     getTableList() calling DBDataController.getTableList() with json mode. the return is json form naturally.
-    getSqlAnalyzerData()  get JetelinaSQLAnalyzedfile data file name
-    getPerformanceRealData()  get JetelinaSqlPerformancefile data file name
-    getPerformanceTestData()  get JetelinaSqlPerformancefile data file name but it is '.test' suffix
-    checkExistImproveFile()  get JetelinaImprApis data file name
+    getTableCombiVsAccessRelationData()  get JetelinaTableCombiVsAccessRelation data file name. this file is analyzed data for table combination.
+    getPerformanceRealData()  get JetelinaSqlPerformancefile data file name. this file is analyzed data for real sql execution speed.
+    getPerformanceTestData()  get JetelinaSqlPerformancefile data file name but it is '.test' suffix. this file is analyzed data for sql execution speed on test db.
+    checkExistImproveFile()  get JetelinaImprApis data file name. this file contains an improving suggestion data of a target api. 
 """
 module GetDataController
 
@@ -19,7 +19,7 @@ module GetDataController
     using DBDataController
     using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
 
-    export getTableList,getSqlAnalyzerData,getPerformanceRealData,getPerformanceTestData,checkExistImproveFile
+    export getTableList,getTableCombiVsAccessRelationData,getPerformanceRealData,getPerformanceTestData,checkExistImproveFile
 
     """
     function getTableList()
@@ -31,51 +31,67 @@ module GetDataController
         DBDataController.getTableList( "json" )
     end
     """
-    function getSqlAnalyzerData()
+    function getTableCombiVsAccessRelationData()
 
-        get JetelinaSQLAnalyzedfile data file name
+        get JetelinaTableCombiVsAccessRelation data file name. this file is analyzed data for table combination.
 
     # Arguments
-    - return: JetelinaSQLAnalyzedfile file name with its path
+    - return: JetelinaTableCombiVsAccessRelation file name with its path
     """
-    function getSqlAnalyzerData()
-        sqljsonfile = getFileNameFromLogPath( JetelinaSQLAnalyzedfile )
-        return readchomp(sqljsonfile)        
+    function getTableCombiVsAccessRelationData()        
+        f = getFileNameFromLogPath( JetelinaTableCombiVsAccessRelation )
+        if isfile(f) 
+            return readchomp(f)        
+        else
+            return false
+        end
     end
     """
     function getPerformanceRealData()
 
-        get JetelinaSqlPerformancefile data file name
+        get JetelinaSqlPerformancefile data file name. this file is analyzed data for real sql execution speed.
 
     # Arguments
     - return: JetelinaSqlPerformancefile of json style with its path
     """
     function getPerformanceRealData()
-        performancefile = getFileNameFromLogPath( string(JetelinaSqlPerformancefile,".json") )
-        return readchomp(performancefile)        
+        f = getFileNameFromLogPath( string(JetelinaSqlPerformancefile,".json") )
+        if isfile(f)
+            return readchomp(f)
+        else
+            return false
+        end
     end
     """
     function getPerformanceTestData()
 
-        get JetelinaSqlPerformancefile data file name but it is '.test' suffix
+        get JetelinaSqlPerformancefile data file name but it is '.test' suffix. this file is analyzed data for sql execution speed on test db.
 
     # Arguments
     - return: JetelinaSqlPerformancefile of json style with its path
     """
     function getPerformanceTestData()
-        performancefile = getFileNameFromLogPath( string(JetelinaSqlPerformancefile,".test.json") )
-        return readchomp(performancefile)        
+        f = getFileNameFromLogPath( string(JetelinaSqlPerformancefile,".test.json") )
+        if isfile(f)
+            return readchomp(f)
+        else
+            return false
+        end
     end
     """
     function checkExistImproveFile()
 
-        get JetelinaImprApis data file name
+        get JetelinaImprApis data file name. this file contains an improving suggestion data of a target api. 
 
     # Arguments
     - return: JetelinaImprApis file name with its path    
     """
     function checkExistImproveFile()
-        performancefile = getFileNameFromLogPath( JetelinaImprApis )
-        return isfile(performancefile)
+        f = getFileNameFromLogPath( JetelinaImprApis )
+        if isfile(f)
+            return isfile(f)
+        else
+            return false
+        end
     end
 end

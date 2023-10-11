@@ -29,8 +29,6 @@ module SQLAnalyzer
     using JetelinaFiles, JetelinaReadSqlList, SQLSentenceManager
     using TestDBController, PgDataTypeList
 
-    const sqljsonfile = getFileNameFromLogPath(JetelinaSQLAnalyzedfile)
-
     """
     function main()
 
@@ -53,6 +51,10 @@ module SQLAnalyzer
 
     """
     function createAnalyzedJsonFile()
+        tablecombinationfile = getFileNameFromLogPath(JetelinaTableCombiVsAccessRelation)
+        # delete this file if it exists, because this file is always fresh.
+        rm(tablecombinationfile, force=true)
+
         #===
             Tips:
                 read sql.log file
@@ -91,7 +93,7 @@ module SQLAnalyzer
                     4.write them out to analyzing files
         ===#
         u_size = length(u)
-        df_size = nrow(df) # all line number
+##        df_size = nrow(df) # all line number
         # step1: unique 'apino' in 'u', then count access number in sql.log.  ex. u[i] === ....
         sql_df = DataFrame(apino=String[], sql=String[], combination=Vector{String}[], access_number=Float64[])
 
@@ -251,7 +253,7 @@ module SQLAnalyzer
                 use plain JSON module insted of Genie.Renderer.Json module, because Genie's module put http protocol header(ex. HTTP 200) in the output.
                 the conditional panel will call this as a plain file in being called RestAPI. 
         ===#
-        open(sqljsonfile, "w") do f
+        open(tablecombinationfile, "w") do f
             println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df)))))
         end
     end
@@ -497,7 +499,7 @@ module SQLAnalyzer
         ===#
         std_max = minimum(df_real.max)
         std_min = maximum(df_real.min)
-        std_mean = sum(df_real.mean) / size(df_real)[1]
+        std_mean = sum(df_real.mean) / nrow(df_real) #size(df_real)[1]
 
         df_real.max  = df_real.max / std_max
         df_real.min  = df_real.min / std_min
@@ -519,7 +521,9 @@ module SQLAnalyzer
         sqlPerformanceFile_test_json = getFileNameFromLogPath(string(JetelinaSqlPerformancefile,".test.json"))
         improveApisFile = getFileNameFromLogPath(string(JetelinaImprApis))
 
-        # delete impr.. file if it exists
+        # delete all files if they exists, because these files are always fresh.
+        rm(sqlPerformanceFile_real_json, force=true)
+        rm(sqlPerformanceFile_test_json, force=true)
         rm(improveApisFile, force=true)
 
         #===

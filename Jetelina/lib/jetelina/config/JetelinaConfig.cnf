@@ -8,9 +8,9 @@
 #      debug  : define debug mode  true->debug mode false->run mode
 #      fileuploadpath: define csv file upload path
 #      sqllogfile: be executed SQL sentences log file
-#      sqlanalyzedfile: real sql execution test data file name in json form
+#      tablecombinationfile: real sql execution test data file name in json form
 #      sqllistfile: real sql list file name
-#      sqlperformancefile: original text file of 'sqlanalyzedfile'
+#      sqlperformancefile: sql execution speed data file
 #      tableapifile: file name for relation between talbe name and api no
 #      experimentsqllistfile: sql list file for execution in test db
 #      improvesuggestionfile: suggestion file name due to execute test db
@@ -18,12 +18,12 @@ logfile = log.txt
 debug = true
 fileuploadpath = lib/jetelina/testdata
 sqllogfile = sql.txt
-sqlanalyzedfile = sqlanalyzed.json
+tablecombinationfile = JetelinaTableCombiVsAccessRelation.json
 sqllistfile = JetelinaSqlList
 sqlperformancefile = JetelinaSqlPerformance
-tableapifile = JetelinaTableApi
+tableapifile = JetelinaTableApiRelation
 experimentsqllistfile = JetelinaExperimentSqlList
-improvesuggestionfile = JetelinaImprApis.json
+improvesuggestionfile = JetelinaSuggestion.json
 
 #
 # column title of sqllogfile/sqllistfile/experimentalsqllistfile
