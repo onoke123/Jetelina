@@ -167,11 +167,9 @@ const getAjaxData = (url) => {
                 /*
                     Tips:
                         dataurls[3] is for checking existing Jetelina's suggestion.
-                        resume below if the return were false,meaning no-exsit her one.
+                        resume below if the return were true,meaning exsit her one.
                 */
-                if (!result) {
-                    getAjaxData(dataurls[4]);
-                }else{
+                if(result)
                     // relation access & combination
                     getAjaxData(dataurls[0]);
                     // simply sql speed
@@ -179,6 +177,13 @@ const getAjaxData = (url) => {
                     // sql speed on test db
                     getAjaxData(dataurls[2]);
                 }
+
+                /*
+                    Tips:
+                        dataurls[4] is for sql access count data.
+                        this data always is executed.
+                */
+                getAjaxData(dataurls[4]);
             } else {
                 // mainly, data for function panel
                 getdata(result, 0);
