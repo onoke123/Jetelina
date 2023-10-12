@@ -9,7 +9,7 @@ let stage = 0;// action stage number ex. 1:before login  'login':at login
 let preferent = {};// contains precedence commands
 let presentaction = {};// contains the present function  ex. functionpanel -> table
 const animateDuration = 1500;// animate() duration
-let sad = false;// set this to 'true' in getAjaxData() as getsqlanalyzerdata is called only once
+let isSuggestion = false; // set this to 'true' in getAjaxData() if there were Jetelina's suggestion
 const debug = true;// debug flag   true or false
 let timerId;// interval timer of the idling comment in the opening screen。uses in jetelinalib.js burabura()
 

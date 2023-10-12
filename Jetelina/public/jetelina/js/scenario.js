@@ -2,7 +2,7 @@ let scenario = [], userresponse = [];
 
 /* special configuration parameter */
 /* urls for condition panel */
-scenario['analyzed-data-collect-url'] = ['/getsqlanalyzerdata', '/getperformancedata_real', '/getperformancedata_test'];
+scenario['analyzed-data-collect-url'] = ['/gettablecombivsaccessrelationdata', '/getperformancedata_real', '/getperformancedata_test','/chkexistimprapifile','/getsqlaccessdata'];
 
 /* null */
 scenario['null'] = ['',''];

@@ -20,6 +20,7 @@ fileuploadpath = lib/jetelina/testdata
 sqllogfile = sql.txt
 tablecombinationfile = JetelinaTableCombiVsAccessRelation.json
 sqllistfile = JetelinaSqlList
+sqlaccesscountfile = JetelinaSqlAccess
 sqlperformancefile = JetelinaSqlPerformance
 tableapifile = JetelinaTableApiRelation
 experimentsqllistfile = JetelinaExperimentSqlList

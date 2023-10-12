@@ -123,6 +123,28 @@ const getAjaxData = (url) => {
                 } else if (url == dataurls[2]) {
                     // test performance
                     type = "test";
+                } else if (url == dataurls[4]) {
+                    // sql access
+                    type = "access";
+                } else if (url == dataurls[3]) {
+                    /*
+                        Tips:
+                            dataurls[3] is for checking existing Jetelina's suggestion.
+                            resume below if the return were false,meaning no-exsit her one.
+                            Once gettablecombivsaccessrelationdata is called, the data has already set in the graph.
+                            This data does not change often, that why set 'isSuggestion' flag to use for the decision. 
+                    */
+                            if (!result) {
+                        getAjaxData(dataurls[4]);
+                    }else{
+                        isSuggestion = true;
+                        // relation access & combination
+                        getAjaxData(dataurls[0]);
+                        // simply sql speed
+                        getAjaxData(dataurls[1]);
+                        // check existing for improve file
+                        getAjaxData(dataurls[2]);
+                    }
                 }
                 /*
                     Tips:
@@ -130,29 +152,32 @@ const getAjaxData = (url) => {
                         this setGraphDta() function is defined in conditionpanel.js.
                 */ 
                 setGraphData(result, type);
-                /* Tips: ref to conditionpanel.js */
-                sad = true;
-                if(url == dataurls[2]){
+
+                if(isSuggestion){
                     /*
                         Tips:
-                            dataurls[2] is executed if the experimental exection result file were exist.
-                            the meaning of the file existing is Jetelina wanna put inform you something 'improving suggestion'.
+                            isSuggestion = true, the meaning of the file existing is Jetelina wanna put inform you something 'improving suggestion'.
                             the below message is for it.
                     */
                     typingControll(chooseMsg("6cond-performance-improve", "", ""));                    
                 }else{
                     typingControll(chooseMsg("success", "", ""));
-                }
-            } else if (url == "/chkexistimprfile") {
+                }      
+            } else if (url == dataurls[3]) {
                 /*
                     Tips:
-                        '/chkexistimprfile' is for checking existing Jetelina's suggestion.
-                        resume below if the return were true,meaning exsit her one.
+                        dataurls[3] is for checking existing Jetelina's suggestion.
+                        resume below if the return were false,meaning no-exsit her one.
                 */
-                if (result) {
-                    getAjaxData("/getperformancedata_test");
+                if (!result) {
+                    getAjaxData(dataurls[4]);
                 }else{
-                    typingControll(chooseMsg("success", "", ""));
+                    // relation access & combination
+                    getAjaxData(dataurls[0]);
+                    // simply sql speed
+                    getAjaxData(dataurls[1]);
+                    // sql speed on test db
+                    getAjaxData(dataurls[2]);
                 }
             } else {
                 // mainly, data for function panel
@@ -505,19 +530,11 @@ const chatKeyDown = (cmd) => {
                             top: "10%",
                             left: "10%"
                         }, animateDuration);
+                        const dataurls = scenario['analyzed-data-collect-url'];
                         /*
-                            Once getsqlanalyzerdata is called, the data has already set in the graph.
-                            This data does not change often, that why set 'sed' flag to use for the decision. 
+                            check for existing Jetelina's suggestion
                         */
-                        if (!sad) {
-                            const dataurls = scenario['analyzed-data-collect-url'];
-                            // relation access & combination
-                            getAjaxData(dataurls[0]);
-                            // simply sql speed
-                            getAjaxData(dataurls[1]);
-                            // check existing for improve file
-                            getAjaxData(dataurls[2]);
-                        }
+                        getAjaxData(dataurls[3]);
                     }
                     break;
                 case 'func':
@@ -615,7 +632,7 @@ const logoutChk = (s) => {
 const logout = () => {
     enterNumber = 0;
     stage = 0;
-    sad = false;
+    isSuggestion = false;
 
     $("#jetelina_panel").animate({
         width: "400px",

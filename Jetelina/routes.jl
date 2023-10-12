@@ -58,11 +58,12 @@ end
 route("/dofup", FileUploadController.fup, method = POST)
 
 # condition panel のsqlアクセス解析データ取得
-route("/getsqlanalyzerdata",GetDataController.getTableCombiVsAccessRelationData)
+route("/gettablecombivsaccessrelationdata",GetDataController.getTableCombiVsAccessRelationData)
 # condition panel のsqlパフォーマンスデータ取得
+route("/getsqlaccessdata",GetDataController.getSqlAccessData)
 route("/getperformancedata_real",GetDataController.getPerformanceRealData)
 route("/getperformancedata_test",GetDataController.getPerformanceTestData)
-route("/chkexistimprfile",GetDataController.checkExistImproveFile)
+route("/chkexistimprapifile",GetDataController.checkExistImproveApiFile)
 
 # test for three.js
 #===

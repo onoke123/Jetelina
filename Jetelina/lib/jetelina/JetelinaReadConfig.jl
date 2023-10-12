@@ -18,6 +18,7 @@ module JetelinaReadConfig
         JetelinaSQLLogfile,# SQL log file name
         JetelinaTableCombiVsAccessRelation,# real sql execution test data in json form
         JetelinaSQLListfile,# real sql list file name
+        JetelinaSqlAccess,# sql access count data file name
         JetelinaSqlPerformancefile,# sql execution speed data file name
         JetelinaTableApifile,# file name for relation between talbe name and api no
         JetelinaExperimentSqlList,# sql list file for execution in test db
@@ -82,6 +83,9 @@ module JetelinaReadConfig
                     elseif startswith(l[i], "sqllistfile")
                         # real sql list file name
                         global JetelinaSQLListfile = _getSetting(l[i])
+                    elseif startswith(l[i], "sqlaccesscountfile")
+                        # sql access count data file name
+                        global JetelinaSqlAccess = _getSetting(l[i])
                     elseif startswith(l[i], "sqlperformancefile")
                         # sql execution speed data file name
                         global JetelinaSqlPerformancefile = _getSetting(l[i])

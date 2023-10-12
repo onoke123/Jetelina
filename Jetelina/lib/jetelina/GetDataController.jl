@@ -8,10 +8,11 @@ Description:
 
 functions
     getTableList() calling DBDataController.getTableList() with json mode. the return is json form naturally.
+    getSqlAccessData() get JetelinaSqlAccess data file name. this file  contains access cound data in each sql due to sql.txt log file.
     getTableCombiVsAccessRelationData()  get JetelinaTableCombiVsAccessRelation data file name. this file is analyzed data for table combination.
     getPerformanceRealData()  get JetelinaSqlPerformancefile data file name. this file is analyzed data for real sql execution speed.
     getPerformanceTestData()  get JetelinaSqlPerformancefile data file name but it is '.test' suffix. this file is analyzed data for sql execution speed on test db.
-    checkExistImproveFile()  get JetelinaImprApis data file name. this file contains an improving suggestion data of a target api. 
+    checkExistImproveApiFile()  get JetelinaImprApis data file name. this file contains an improving suggestion data of a target api. 
 """
 module GetDataController
 
@@ -19,7 +20,7 @@ module GetDataController
     using DBDataController
     using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
 
-    export getTableList,getTableCombiVsAccessRelationData,getPerformanceRealData,getPerformanceTestData,checkExistImproveFile
+    export getTableList,getTableCombiVsAccessRelationData,getPerformanceRealData,getPerformanceTestData,checkExistImproveApiFile
 
     """
     function getTableList()
@@ -29,6 +30,22 @@ module GetDataController
     """
     function getTableList()
         DBDataController.getTableList( "json" )
+    end
+    """
+    function getSqlAccessData()
+
+        get JetelinaSqlAccess data file name. this file  contains access cound data in each sql due to sql.txt log file.
+
+    # Arguments
+    - return: JetelinaSqlAccess file name with its path
+    """
+    function getSqlAccessData()
+        f = getFileNameFromLogPath( JetelinaSqlAccess )
+        if isfile(f) 
+            return readchomp(f)        
+        else
+            return false
+        end
     end
     """
     function getTableCombiVsAccessRelationData()
@@ -79,14 +96,14 @@ module GetDataController
         end
     end
     """
-    function checkExistImproveFile()
+    function checkExistImproveApiFile()
 
         get JetelinaImprApis data file name. this file contains an improving suggestion data of a target api. 
 
     # Arguments
     - return: JetelinaImprApis file name with its path    
     """
-    function checkExistImproveFile()
+    function checkExistImproveApiFile()
         f = getFileNameFromLogPath( JetelinaImprApis )
         if isfile(f)
             return isfile(f)
