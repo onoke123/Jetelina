@@ -169,7 +169,7 @@ const getAjaxData = (url) => {
                         dataurls[3] is for checking existing Jetelina's suggestion.
                         resume below if the return were true,meaning exsit her one.
                 */
-                if(result)
+                if(result){
                     // relation access & combination
                     getAjaxData(dataurls[0]);
                     // simply sql speed
