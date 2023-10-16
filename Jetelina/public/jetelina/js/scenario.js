@@ -51,6 +51,8 @@ scenario['6cond-graph-show-keywords'] = ['combination data','analyzed','show the
 scenario['6cond-sql-performance-graph-show-keywords'] = ['your suggestion','suggest','sql test','improved performance'];
 
 scenario['6cond-performance-improve'] = ['There is an improving suggestion.','Do you wanna know my great idea?','Attention please. I have an idea.'];
+scenario['6cond-no-suggestion'] = ['I do not have any suggestions so far.','No suggestions','I do not give it to you.','Hey, Nothing at all'];
+
 scenario['6a'] = ['OK, here you are','Hey ho','This'];
 scenario['6b'] = ['Command me, if you need'];
 scenario['6func-cleanup-cmd'] = ['refresh','cleanup','clean'];

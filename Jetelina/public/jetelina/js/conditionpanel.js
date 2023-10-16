@@ -74,6 +74,12 @@ const conditionPanelFunctions = (ut) => {
             if( inScenarioChk(ut,'6cond-graph-show-keywords')){
                 cmd = "graph";
             }else if( inScenarioChk(ut,'6cond-sql-performance-graph-show-keywords')){
+                if(isSuggestion){
+                    cmd = "performance";
+                }else{
+                    cmd = "no_uggestion";
+                }
+            }else if( inScenarioChk(ut,'confirmation-sentences') && isSuggestion ){
                 cmd = "performance";
             }
         }
@@ -124,6 +130,9 @@ const conditionPanelFunctions = (ut) => {
                 }, animateDuration).draggable('disable');
 
                 m = chooseMsg('6cond-graph-show', "", "");
+                break;
+            case 'no_uggestion':
+                m = chooseMsg('6cond-no-suggestion', "", "");
                 break;
             default:
                 m = "";
