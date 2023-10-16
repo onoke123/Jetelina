@@ -537,28 +537,29 @@ module SQLAnalyzer
         for i=1:length(dict_apino_arr)
             #===
                 Tips:
-                    'p' returns Vector{Int64} type.
-                    using the index number with Int type should be p[1], because 'p' is Array type.
-                    the row index of df_real/df_test are p[1]. hum, troublesome.^_^
+                    'p' returns the index number,Vector{Int64} type, if it were in.
+                    can use this index number because of being garanteed df_real.apino was uniqueness.
             ===#
             p = findall( x->x==dict_apino_arr[i],df_real.apino)
-            df_real[p[1],:apino] = uppercase(dict_apino_arr[i])
-            df_test[p[1],:apino] = uppercase(dict_apino_arr[i])
+            if 0<length(p)
 
-            diff_speed = df_test[p[1],:mean] / df_real[p[1],:mean]
+                df_real[p,:apino] = uppercase(dict_apino_arr[i])
+                df_test[p,:apino] = uppercase(dict_apino_arr[i])
 
-            if debugflg
-                println("diff_speed:", dict_apino_arr[i], " -> ",diff_speed)
+                diff_speed = df_test[p,:mean] / df_real[p,:mean]
+
+                if debugflg
+                    println("diff_speed:", dict_apino_arr[i], " -> ",diff_speed)
+                end
+                #===
+                    Tips:
+                        propose 'do?' if sql execution speed were improved over 25%.
+                        '25%' is provisionally.
+                ===#
+                if diff_speed<0.75
+                    improve_apis = (dict_apino_arr[i],diff_speed)
+                end
             end
-            #===
-                Tips:
-                    propose 'do?' if sql execution speed were improved over 25%.
-                    '25%' is provisionally.
-            ===#
-            if diff_speed<0.75
-                improve_apis = (dict_apino_arr[i],diff_speed)
-            end
-
         end
         
         open(sqlPerformanceFile_real_json, "w") do f
