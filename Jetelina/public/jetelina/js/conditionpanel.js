@@ -93,19 +93,27 @@ const conditionPanelFunctions = (ut) => {
                 /*
                     Tips:
                         #plot rotates 3D graph, so the div panel is not to be draggable.
+                        this graph is shown when the data exsists. this is judged by 'acVsCom' 
+                        global valiable, and it is set in setGraphData() in jetelinalib.js.
                 */
-                $("#plot").show().animate({
-                    top: "5%",
-                    left: "-5%"
-                }, animateDuration);
+                if(acVscom){
+                    $("#plot").show().animate({
+                        top: "5%",
+                        left: "-5%"
+                    }, animateDuration);
+                }
                 /*
                     Tips:
                         This graph is 2D, the graph can zoom/pan...., 
                         so the div panel is also not to be draggable after getting its position.
                 */
+               let ppp = "-50%";
+                if(!$("#plot").is(":visible")){
+                    ppp = "-5%";
+                }
 
                 $("#performance_real").show().draggable().animate({
-                    top: "-50%",
+                    top: ppp,
                     left: "50%"
                 }, animateDuration).draggable('disable');
 
@@ -155,10 +163,12 @@ let realPerformanceData;
  * @function setGraphData
  * @param {object} o   json object data
  * @param {string} type  'ac'-> access vs combination  'real'->real performance  'test->test performance    this is ordered in jetelinalib.js
- * 
+ * @return {boolean} true->exists 'Access vs Combination data'  false-> not exists it
  * set data to a graph of creating by plot.js. data and 'type' are passed by getAjaxData() in jetelinalib.js  
  */
 const setGraphData = (o, type) => {
+    let ret = false;
+
     if (o != null) {
         Object.keys(o).forEach(function (key) {
             // because a value of ’Jetelina’ is an object   name=>key value=>o[key]
@@ -193,7 +203,8 @@ const setGraphData = (o, type) => {
                                     pn = value[1];
                                 }
 
-                                combination_table.push(pn);// table combination no -> y axis                                    
+                                combination_table.push(pn);// table combination no -> y axis
+                                ret = true; // meaning of exisiting combination_table is there is the data of 'Access vs Combination'.                                     
                             } else if (name == "access_number") {
                                 access_count.push(value);// table access normarize no -> z axis
                             } else if (name == "mean") {
@@ -218,6 +229,8 @@ const setGraphData = (o, type) => {
             }
         });
     }
+
+    return ret;
 }
 /**
  * @function viewPerformanceGraph

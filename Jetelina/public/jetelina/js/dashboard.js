@@ -12,6 +12,7 @@ const animateDuration = 1500;// animate() duration
 let isSuggestion = false; // set this to 'true' in getAjaxData() if there were Jetelina's suggestion
 const debug = true;// debug flag   true or false
 let timerId;// interval timer of the idling comment in the opening screen。uses in jetelinalib.js burabura()
+let acVscom;// flg for exisiting the data of 'Access vs Combination'.
 
 $(window).load(function () {
   /**

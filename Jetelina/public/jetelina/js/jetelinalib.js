@@ -150,8 +150,9 @@ const getAjaxData = (url) => {
                     Tips:
                         drow graphic in condition panel.
                         this setGraphDta() function is defined in conditionpanel.js.
-                */ 
-                setGraphData(result, type);
+                        acVsCom is defined in dashboard.js as a global variable,this is expected true/false.
+                */
+                acVscom = setGraphData(result, type);
 
                 if(isSuggestion){
                     /*
