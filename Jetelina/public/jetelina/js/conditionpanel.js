@@ -106,6 +106,8 @@ const conditionPanelFunctions = (ut) => {
                     Tips:
                         This graph is 2D, the graph can zoom/pan...., 
                         so the div panel is also not to be draggable after getting its position.
+                        the "#performance_real" will fly away to somewhere when "#plot" is invisible,
+                        if the "top" variable is unchangeable. :-P
                 */
                let ppp = "-50%";
                 if(!$("#plot").is(":visible")){

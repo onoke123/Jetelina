@@ -10,6 +10,7 @@
         main() this function set as for kicking createAna..() from outer function.
         createAnalyzedJsonFile() create json file for result of sql execution speed analyze data.
         extractColumnsFromSql(s::String)  pick up columns data from 's'.
+        collectSqlAccessNumbers(df::DataFrame)  collect each sql access numbers then write out it to JetelinaSqlAccess file in JSON form for showing its graph in condition panel.
         experimentalCreateView(df::DataFrame)  create view tables for test and execute all sql sentences for analyzing.
         createView(df::DataFrame)  create view table from a sql sentence that has multi tables and hight use in the running db.
         dropTestDB(conn)  drop testdb. doubtfull. :-p
@@ -88,13 +89,18 @@ module SQLAnalyzer
             Tips:
                 steps for analyzing
                     1.make unique sql statements
-                    2.pick only the columns part
-                    3.count the access number in each sql
-                    4.write them out to analyzing files
+                    2.pick up only the columns part
+                    3.find the max access number among the longest combination number sql sentence
+                    4.collect each sql access numbers
+                    5.experimental sql execution in test db, if there were a target table that had possibilities in inproving
+                    6.write this relation data to JetelinaTableCombiVsAccessRelation file in JSON form
         ===#
         u_size = length(u)
-##        df_size = nrow(df) # all line number
-        # step1: unique 'apino' in 'u', then count access number in sql.log.  ex. u[i] === ....
+
+        #==
+            step1:
+                unique 'apino' in 'u', then count access number in sql.log.  ex. u[i] === ....
+        ==#
         sql_df = DataFrame(apino=String[], sql=String[], combination=Vector{String}[], access_number=Float64[])
 
         #===
@@ -181,80 +187,103 @@ module SQLAnalyzer
             ↓ analyzing.
         ===#
 
+        #==
+            step3:
+                first of all, collect each sql access number for showing it on condition panel. 
+        ==#
+        collectSqlAccessNumbers(sql_df)
+
         # find the sql that is the longest combination number
         c_len = length.(sql_df.combination)
         p = findall(x->x==maximum(c_len),c_len) # 'p' has the index number of the max data
 
-        # step3. find the max access number among the longest combination number sql sentence.
+        #==
+            step4:
+                find the max access number among the longest combination number sql sentence.
+        ==#
         accn = sql_df[p,:access_number]
         pp =  findall(x->x==maximum(accn),accn)
 
         # then the target sql sentence is this.
         target = sql_df[pp,:]
         
-        # step4: good!. let's analyze it in testdb.
-        experimentalCreateView(target)
-
         #===
             Tips:
-                from here for showing the anlyzed graph in conditional pane.
-                the analyzing has been done above.
+                execute an experimental sql test(step5,6) on test db if there were a target.
         ===#
-        # delete ':sql' column from 'sql_df', because it is unnecessary in the json file.
-        select!(sql_df,:apino,:combination,:access_number)
-        #===
-            Tips:
-                this tips is complicated, that why still in Japanese.
-                what here is doing, 
-                    ex.
-                        replace 'combination' with 'Row No.' of each table.
+        if( 0<nrow(target))
+            #==
+                step5: 
+                    good!. let's analyze it in testdb.
+            ==#
+            experimentalCreateView(target)
 
-                        Row │ apino          combination                    access_number 
-                            │ String           Array…                         Float64       
-                        ──┼────────────────────────────────
-                        1   │ js312  ["ftest", "ftest2", "ftest3"]            5.0
-                        2   │ js313  ["ftest", "ftest2", "ftest3"]            5.0
-                        3   │ js314  ["ftest", "ftest2", "ftest3"]            5.0
+            #===
+                Tips:
+                    from here for showing the anlyzed graph in conditional pane.
+                    the analyzing has been done above.
+            ===#
+            # delete ':sql' column from 'sql_df', because it is unnecessary in the json file.
+            select!(sql_df,:apino,:combination,:access_number)
 
-                        ftest3.idはftest3にあるので→x座標:3(ftest3)
-                        ftest3.idはftest4+ftest2が代表値なので → (3+4)/2(tableが2つだから)=3.5 ←y座標になる
-                        よって、ftest3.idの座標は(3,3.5)
+            #===
+                Tips:
+                    this tips is complicated, that why still in Japanese.
+                    what here is doing, 
+                        ex.
+                            replace 'combination' with 'Row No.' of each table.
 
-                        ”access number”はk-means法の"重み"として考えているけど、上記座標取得方法なら不要になる、が一応保持しておく、念のため。
+                            Row │ apino          combination                    access_number 
+                                │ String           Array…                         Float64       
+                            ──┼────────────────────────────────
+                            1   │ js312  ["ftest", "ftest2", "ftest3"]            5.0
+                            2   │ js313  ["ftest", "ftest2", "ftest3"]            5.0
+                            3   │ js314  ["ftest", "ftest2", "ftest3"]            5.0
+
+                            ftest3.idはftest3にあるので→x座標:3(ftest3)
+                            ftest3.idはftest4+ftest2が代表値なので → (3+4)/2(tableが2つだから)=3.5 ←y座標になる
+                            よって、ftest3.idの座標は(3,3.5)
+
+                            ”access number”はk-means法の"重み"として考えているけど、上記座標取得方法なら不要になる、が一応保持しておく、念のため。
 
 
-                    最終的に、カラム名とカラム座標値のMatrixをファイルに格納する(一旦ね)。
-        ===#
-        table_df = DBDataController.getTableList("dataframe")
+                        最終的に、カラム名とカラム座標値のMatrixをファイルに格納する(一旦ね)。
+            ===#
+            table_df = DBDataController.getTableList("dataframe")
 
-        #===
-            rejecting 'master' tables. master tables names 'master' in their own table name.
-            here is important .( ｰ`дｰ´)ｷﾘｯ
-        ===#
-        filter!(:tablename=>x->!contains(x,"master"),table_df)
-        
-        #===
-            Tips:
-            by Ph. Kaminski
-                this is able to do because 'table_df.tablename' is unique.
-                refer d("ftest"=>1 "ftest2=>4...) to get the index, then put them into combination.
-        ===#
-        d = Dict(table_df.tablename .=> axes(table_df, 1))
-        sql_df.combination = [getindex.(Ref(d), x) for x in sql_df.combination]
+            #===
+                rejecting 'master' tables. master tables names 'master' in their own table name.
+                here is important .( ｰ`дｰ´)ｷﾘｯ
+            ===#
+            filter!(:tablename=>x->!contains(x,"master"),table_df)
+            
+            #===
+                Tips:
+                by Ph. Kaminski
+                    this is able to do because 'table_df.tablename' is unique.
+                    refer d("ftest"=>1 "ftest2=>4...) to get the index, then put them into combination.
+            ===#
+            d = Dict(table_df.tablename .=> axes(table_df, 1))
+            sql_df.combination = [getindex.(Ref(d), x) for x in sql_df.combination]
 
-        # normalize all access number by the biggest 'access_number'
-        sql_df.access_number = sql_df.access_number / maximum(sql_df.access_number)
+            # normalize all access number by the biggest 'access_number'
+            sql_df.access_number = sql_df.access_number / maximum(sql_df.access_number)
 
-        if debugflg
-            @info JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df))))
-        end
-        #===
-            Tips:
-                use plain JSON module insted of Genie.Renderer.Json module, because Genie's module put http protocol header(ex. HTTP 200) in the output.
-                the conditional panel will call this as a plain file in being called RestAPI. 
-        ===#
-        open(tablecombinationfile, "w") do f
-            println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df)))))
+            if debugflg
+                @info JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df))))
+            end
+            #===
+                Tips:
+                    use plain JSON module insted of Genie.Renderer.Json module, because Genie's module put http protocol header(ex. HTTP 200) in the output.
+                    the conditional panel will call this as a plain file in being called RestAPI. 
+            ===#
+            #==
+                step6:
+                    write this relation data to JetelinaTableCombiVsAccessRelation file in JSON form.
+            ==#
+            open(tablecombinationfile, "w") do f
+                println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df)))))
+            end
         end
     end
 
@@ -284,7 +313,7 @@ module SQLAnalyzer
         return cs, ad
     end
 
-    #=== create view方式になったのでこの関数は使わない
+    #=== create view方式になったのでこの関数は使わない。でも参考のためにちょっと残しておく。
     """
         read sqlcsv.json then put it to DataFrame for experimental*()
 
@@ -416,6 +445,25 @@ module SQLAnalyzer
         end
     end
     ===#
+    """
+    function collectSqlAccessNumbers(df::DataFrame)
+
+        collect each sql access numbers then write out it to JetelinaSqlAccess file in JSON form for showing its graph in condition panel.
+
+    # Arguments
+    - `df::DataFrame`: target dataframe data
+    """
+    function collectSqlAccessNumbers(df::DataFrame)
+        this_df = copy(df)
+        sqlaccessnumberfile = getFileNameFromLogPath(JetelinaSqlAccess)
+        # delete this file if it exists, because this file is always fresh.
+        rm(sqlaccessnumberfile, force=true)
+
+        select!(this_df,:apino,:access_number)
+        open(sqlaccessnumberfile, "w") do f
+            println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(this_df)))))
+        end
+    end
     """
     function experimentalCreateView(df::DataFrame)
 

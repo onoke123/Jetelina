@@ -134,7 +134,7 @@ const getAjaxData = (url) => {
                             Once gettablecombivsaccessrelationdata is called, the data has already set in the graph.
                             This data does not change often, that why set 'isSuggestion' flag to use for the decision. 
                     */
-                            if (!result) {
+                    if (!result) {
                         getAjaxData(dataurls[4]);
                     }else{
                         isSuggestion = true;
