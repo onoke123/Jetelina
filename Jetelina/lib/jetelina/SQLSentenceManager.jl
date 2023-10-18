@@ -189,7 +189,7 @@ module SQLSentenceManager
             return false
         end
 
-        # change the file name. scenarioTmpFile->scenarioFile
+        # change the file name
         mv(sqlTmpFile, sqlFile, force=true)
         mv(tableapiTmpFile, tableapiFile, force=true)
 
