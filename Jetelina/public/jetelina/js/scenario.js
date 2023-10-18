@@ -56,6 +56,7 @@ scenario['6cond-no-suggestion'] = ['I do not have any suggestions so far.','No s
 
 scenario['6a'] = ['OK, here you are','Hey ho','This'];
 scenario['6b'] = ['Command me, if you need'];
+scenario['6func-list-cmd'] = ['open','close','select','cancel'];
 scenario['6func-cleanup-cmd'] = ['refresh','cleanup','clean'];
 scenario['6func-tabledrop-cmd'] = ['drop','drop table','table drop','tabledrop','droptable'];
 scenario['6func-tabledrop-msg'] = ['Which table do you want to drop?','correct order is \'droptable <table name>\''];

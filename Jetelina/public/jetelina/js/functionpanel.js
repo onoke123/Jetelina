@@ -598,10 +598,8 @@ const functionPanelFunctions = (ut) => {
       if(inScenarioChk(ut,'6func-fileupload-cmd')){
         cmd = 'fileupload';
       } else if (inScenarioChk(ut,'6func-fileupload-open-cmd')){
-        // use $.inArray because of expecting only command at here 
         cmd = 'fileselectoropen';
       } else if(inScenarioChk(ut,'6func-show-table-list')){
-        // use indexOf() because of 'command + table name' is possible
         cmd = 'table';
       } else if(inScenarioChk(ut,'6func-show-api-list')){
         // same as above
@@ -648,16 +646,19 @@ const functionPanelFunctions = (ut) => {
 
     if (debug) console.info("functionPanelFunctions() cmd: ", cmd);
     /*
-        switch table: table list表示
-               api: api list表示
-               post: post selected items
-               cancel: cancel all selected items
-               droptable: drop table(post)
-               fileselectoropen: open file selector
-               fileupload: csv file upload
-               creanup: cleanup column/selecteditem field
-               subquery: open subquery panel
-               default: non
+        this 'swich' commands manipulates 'table' and 'csv file upload' 
+        
+        'cmd'
+          table: show table list
+          api: switch to show api list
+          post: post selected columns 
+          cancel: cancel all selected columns
+          droptable: drop table(post)
+          fileselectoropen: open file selector
+          fileupload: csv file upload
+          creanup: cleanup column/selecteditem field
+          subquery: open subquery panel
+          default: non
     */
     switch (cmd) {
       case 'table':
@@ -715,7 +716,7 @@ const functionPanelFunctions = (ut) => {
               // 'where sentence' is not demanded but ask it once time
               m = chooseMsg('6func-postcolumn-where-option-msg', "", "");
               // open the getelic_panel(input where sentecen) if the user's answer is 'yes'
-              if( $.inArray(ut,scenario['confirmation-sentences'] ) != -1){
+              if( inScenarioChk(ut,'confirmation-sentences' )){
                 showGenelicPanel();
               }else{
                 // contain a dummy data('ignore') if the user's anwer is not 'yes'
@@ -745,14 +746,26 @@ const functionPanelFunctions = (ut) => {
         }
 
         break;
-      case 'cancel':
-        if (deleteSelectedItems()) {
-          m = chooseMsg('success', "", "");
-        } else {
-          m = chooseMsg('unknown-msg', "", "");
+      case 'cancel': case 'withdraw':
+        if (isVisibleApiContainer()) {
+          // cleanup the screen
+          cleanupItems4Switching();
+          cleanupContainers();
+          m = chooseMsg('cancel', "", "");
+        }else{
+          // table list
+          if (deleteSelectedItems()) {
+              m = chooseMsg('cancel', "", "");
+          } else {
+              m = chooseMsg('unknown-msg', "", "");
+          }
         }
-
+        /* 
+        18th Oct 
+          comment outed below, but not sure it was OK or not. 
+        
         presentaction.cmd = "";
+        */
         break;
       case 'droptable':
         if (isVisibleTableContainer()) {
@@ -847,7 +860,6 @@ const procTableApiList = (s) => {
     targetlist = "#api_container";
   }
 
-  const cmdlist = ['open', 'close', 'select', 'cancel'];
   s = $.trim(s);
   let t;
   if (s.indexOf(':') != -1) {
@@ -861,13 +873,13 @@ const procTableApiList = (s) => {
   if (t != null && 0 < t.length) {
     t[0] = $.trim(t[0]);
     t[1] = $.trim(t[1]);
-    if ($.inArray(t[0], cmdlist) != -1) {
+
+    if (inScenarioChk(t[0],'6func-list-cmd')) {
       switch (t[0]) {
-        case 'open':
+        case 'open': case 'close':
           /* do not break because of open/close are same
              go to 'close' if it were 'open' as well, this is tricky! :-)
           */
-        case 'close':
           m = chooseMsg('unknown-msg', "", "");
           $(targetlist).find("span").each(function (i, v) {
             let findselect = false;
@@ -919,7 +931,12 @@ const procTableApiList = (s) => {
           }
 
           break;
-        case 'cancel':
+          /*
+            18th Oct
+                case 'cancel' is integrated to functionPanelFunctions() 'cancel' procedure.
+                maybe this is correct.
+
+          case 'cancel':
           if (presentaction.cmd == 'table') {
             let p;
             if (t[1] != null && 0 < t[1].length) {
@@ -933,7 +950,7 @@ const procTableApiList = (s) => {
             }
 
             if (deleteSelectedItems(p)) {
-              m = chooseMsg('success', "", "");
+              m = chooseMsg('cancel', "", "");
             } else {
               m = chooseMsg('unknown-msg', "", "");
             }
@@ -942,6 +959,7 @@ const procTableApiList = (s) => {
           }
 
           break;
+          */
         default:
           break;
       }
