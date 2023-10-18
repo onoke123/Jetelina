@@ -457,9 +457,6 @@ const buildJetelinaJsonForm = (t, s) => {
  * Ajax function for getting the column names of the ordered table.
  * Then display in the function panel.
  */
-/*
-  指定されたtableのカラムデータを取得する
-*/
 const getColumn = (tablename) => {
   if (0 < tablename.length || tablename != undefined) {
     let pd = {};
@@ -498,9 +495,6 @@ const removeColumn = (p) => {
  * 
  * Ajax function for deleting the target table from DataBase. 
  */
-/*
-  指定されたtableをDBから削除する
-*/
 const deleteThisTable = (tablename) => {
   if (0 < tablename.length || tablename != undefined) {
     let pd = {};
@@ -601,20 +595,16 @@ const functionPanelFunctions = (ut) => {
     let cmd = getPreferentPropertie('cmd');
     // use input data if there were not a prior command 
     if (cmd == null || cmd.length <= 0) {
-//      if ($.inArray(ut, scenario['6func-fileupload-cmd']) != -1) {
       if(inScenarioChk(ut,'6func-fileupload-cmd')){
         cmd = 'fileupload';
-//      } else if ($.inArray(ut, scenario['6func-fileupload-open-cmd']) != -1) {
       } else if (inScenarioChk(ut,'6func-fileupload-open-cmd')){
         // use $.inArray because of expecting only command at here 
         cmd = 'fileselectoropen';
-//      } else if (ut.indexOf('table') != -1) {
       } else if(inScenarioChk(ut,'6func-show-table-list')){
         // use indexOf() because of 'command + table name' is possible
         cmd = 'table';
-//      } else if (ut.indexOf('api') != -1) {
       } else if(inScenarioChk(ut,'6func-show-api-list')){
-  // same as above
+        // same as above
         cmd = 'api';
       } else {
         cmd = ut;
@@ -799,6 +789,11 @@ const functionPanelFunctions = (ut) => {
             m = chooseMsg('6func-tabledrop-msg', "", "");
             preferent.cmd = cmd;
           }
+          // cancel an order of table drop 
+          if( ut.indexOf('cancel') != -1){
+            preferent.cmd = "";
+            m = chooseMsg('cancel', "", "");
+          }
         } else {
           m = chooseMsg('6func-tabledrop-ng-msg', "", "");
         }
@@ -860,6 +855,7 @@ const procTableApiList = (s) => {
   } else if (s.indexOf(' ') != -1) {
     t = s.split(' ');
   } else {
+    // will be implemented anything, anyday. 
   }
 
   if (t != null && 0 < t.length) {
