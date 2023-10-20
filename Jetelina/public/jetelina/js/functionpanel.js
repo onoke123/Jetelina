@@ -1053,12 +1053,20 @@ const containsMultiTables = () => {
  * genelic panel open or close
  */
 const showGenelicPanel = (b) => {
-//  if (!isVisibleGenelicPanel()) {
   if(b){
+    if(isVisibleTableContainer()){
+      /*
+        in the case of showing table list, this field is for expecting 'Sub Query'
+      */
+      $("#genelic_panel text[name='genelic_text']").text("Sub Query:");
+      $("#genelic_panel input[name='genelic_input']").attr('placeholder','where .....');
+    }
+
     $("#genelic_panel").show();
     $("#genelic_panel input[name='genelic_input']").focus();
   }else{
     $("#genelic_panel").hide();
+      $("#genelic_panel text[name='genelic_text']").text("");
     $("#jetelina_panel [name='chat_input']").focus();
   }
 }
