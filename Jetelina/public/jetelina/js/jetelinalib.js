@@ -217,11 +217,12 @@ const postAjaxData = (url, data) => {
             data: data,
             dataType: "json"
         }).done(function (result, textStatus, jqXHR) {
-            if (url == "/getapilist") {
-                //rendering sql list
+            const posturls = scenario['function-post-url'];
+            if (url == posturls[0]) {
+                //rendering api list
                 preferent.apilist = result;
                 getdata(result, 2);
-            } else if (url == "/jetelinawords") {
+            } else if (url == posturls[1]) {
                 // nothing do
             }
 

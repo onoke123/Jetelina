@@ -3,7 +3,8 @@ let scenario = [], userresponse = [];
 /* special configuration parameter */
 /* urls for condition panel */
 scenario['analyzed-data-collect-url'] = ['/gettablecombivsaccessrelationdata', '/getperformancedata_real', '/getperformancedata_test','/chkexistimprapifile','/getsqlaccessdata'];
-
+/* post urls for function panel */
+scenario['function-post-url'] = ['/getapilist','/jetelinawords'];
 /* null */
 scenario['null'] = ['',''];
 /* command list order */
@@ -59,9 +60,15 @@ scenario['6b'] = ['Command me, if you need'];
 scenario['6func-list-cmd'] = ['open','close','select','cancel'];
 scenario['6func-cleanup-cmd'] = ['refresh','cleanup','clean'];
 scenario['6func-tabledrop-cmd'] = ['drop','drop table','table drop','tabledrop','droptable'];
-scenario['6func-tabledrop-msg'] = ['Which table do you want to drop?','correct order is \'droptable <table name>\''];
+scenario['6func-tabledrop-msg'] = ['Which table do you want to drop?','correct order is \'droptable <table name>\' and so on'];
 scenario['6func-tabledrop-ng-msg'] = ['Hey open the table list first!','Huum?','Check it first','Watch it'];
-scenario['6func-tabledrop-confirm'] = ['Sure?'];
+scenario['6func-tabledrop-confirm'] = ['Sure?','Really?','Won\'t you regret?'];
+
+scenario['6func-apidelete-cmd'] = ['delete','delete api','api delete','apidelete','deleteapi'];
+scenario['6func-apidelete-msg'] = ['Which api do you want to delete?','correct order is \'delete <api name>\' and so on'];
+scenario['6func-apidelete-ng-msg'] = ['Hey open the api list first!','Huum?','Check it first','Watch it'];
+scenario['6func-apidelete-confirm'] = scenario['6func-tabledrop-confirm'];
+
 scenario['6func-fileupload-open-cmd'] = ['file open','open the file box','open file box','open filebox','file box','csv file','csv file select','choose csv file'];
 scenario['6func-fileupload-open-msg'] = ['Which file?'];
 scenario['6func-fileupload-cmd'] = ['file up','upload','up load','file up load','fileup load','fileupload','up'];

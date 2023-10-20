@@ -240,7 +240,7 @@ module SQLSentenceManager
                     because coutmap() do group together.
             ===#
             if length(process4) == 1
-                return true, Df_JetelinaSqlList[!,:no][i]
+                return true, Df_JetelinaSqlList[!,:apino][i]
             end
 
         end

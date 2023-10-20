@@ -105,3 +105,27 @@ $("#jetelina_panel [name='chat_input']").keypress(function (e) {
     chatKeyDown();
   }
 });
+
+/**
+ * text zoom In/Out
+ *    In -> fontsize change to 22px
+ *    Out -> fontsize change to 6px
+ * 
+ * zoom 'your_tell' text in Jetelina Chatbox 'id=jetelina_panel'
+ * font-size=22px is preliminary
+ * font-size=6px is matched with '.yourText' class in dashboard.css 
+ * 
+ * 'yourText' is defined in dashboard.css, '.zoomInOut' is not defined anywhare so that 
+ * this class name gives this effection as your demand. 
+ */
+$(".yourText,.zoomInOut").on('mouseover',function () {
+  $(this).animate({
+    'font-size':'22px'
+  }, 200);
+}).on('mouseout',function () {
+  $(this).animate({
+    'font-size':'6px'
+  }, 200);
+}).on('click', function () {
+  /* something will be implemented someday */
+});

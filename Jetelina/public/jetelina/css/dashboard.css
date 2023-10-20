@@ -1,23 +1,17 @@
 body {
   margin: 20px;
   background-color: #0a1e0f;
-/*  background-color: #697f92;
-  background-image: url("../img/sf2-1280x720.png");
-  background-repeat: no-repeat;
-  background-size: cover; */
 }
 
 .item {
   display: inline-block;
   padding: 5px;
   width: auto;
-/*  width: 80px; */
   height: 15px;
   border: 1px solid #2e6da4;
   background-color: #09859e;
   color: #eeeeee;
   border-radius: 9999px;
-
   display: inline-block;
   font-size: 12px;
   border-radius: 9999px;
@@ -26,7 +20,6 @@ body {
   overflow: hidden;
   opacity: 0.6;
   text-align: center;
-
 }
 
 .item:hover {
@@ -65,42 +58,11 @@ body {
   background-color: lightcoral;
 }
 
-/*.item p {
-  display: inline-block;
-}*/
-/*
-.drop_area {
-  margin-top: 50px;
-  width: 200px;
-  height: 200px;
-  border: 1px solid #3a945b;
-}
-*/
-/*
-.drop_area > p {
-  margin: 10px;
-  color: #a8ce49;
-  text-shadow: 0 0 10px rgb(14, 225, 31), 0 0 15px rgb(229, 232, 198);
-}
-*/
-/*
-.ui-selected {
-  background-color: #1cc7ff;
-}
-*/
-/*
-.ui-selectable-helper {
-  position: absolute;
-  z-index: 100;
-  border: 1px dotted black;
-}
-*/
 /* columns sample data pop up */
 .tooltip {
   display: none;
   position: absolute;
   width: auto;
-/*  width: 100px; */
   padding: 5px;
   background: #dceb0c;
   color: #000000;
@@ -117,7 +79,6 @@ body {
   padding: 10px;
   background-color: lightgray;
   text-align: center;
-
   background: rgba(109, 98, 226, 0.15);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   backdrop-filter: blur(1.5px);
@@ -166,7 +127,7 @@ input.user-input {
   width: 300px;
 }
 
-.yourText,.genelicText {
+.yourText {
   font-size: 6px;
   color: rgb(199, 199, 227);
 }
@@ -183,11 +144,7 @@ input.user-input {
   color: #a8ce49;
   text-shadow: 0 0 10px rgb(14, 225, 31), 0 0 15px rgb(229, 232, 198);
 }
-/*
-input[name="upfile"] {
-  display: none;
-}
-*/
+
 #my_form > label[name="filelabel"]{
   font-size: 10px;
   color: #a8ce49;
@@ -195,12 +152,7 @@ input[name="upfile"] {
   background: rgb(53, 41, 94, 0.1);
   cursor: pointer;
 }
-/*
-#table_container div{
-  position: relative;
-  font-size:16px;
-}
-*/
+
 .panelbutton {
   cursor: not-allowed;
 }
