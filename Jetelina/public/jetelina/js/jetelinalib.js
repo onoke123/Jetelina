@@ -658,8 +658,8 @@ const logout = () => {
 
     // global variables initialize
     stage = 0;
-    delete preferent;
-    delete plesentaction;
+    preferent = {};
+    presentaction = {};
 
     deleteSelectedItems();
     cleanUp("items");
