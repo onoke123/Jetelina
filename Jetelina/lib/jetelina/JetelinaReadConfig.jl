@@ -117,7 +117,7 @@ module JetelinaReadConfig
                         # type of database
                         global JetelinaDBtype = _getSetting(l[i])
                         if debugflg
-                            @info "dbtype:", JetelinaDBtype
+                            @info "JetelinaReadConfig._readConfig() db type:", JetelinaDBtype
                         end
 
                         if JetelinaDBtype == "postgresql"

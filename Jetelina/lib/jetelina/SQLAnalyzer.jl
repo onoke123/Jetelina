@@ -270,7 +270,7 @@ module SQLAnalyzer
             sql_df.access_number = sql_df.access_number / maximum(sql_df.access_number)
 
             if debugflg
-                @info JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df))))
+                @info "SQLAnalyzer.createAnalyzedJsonFile(): " JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df))))
             end
             #===
                 Tips:

@@ -30,14 +30,14 @@ module FileUploadController
             for f in files
                 csvfilename = joinpath( JetelinaFileUploadPath, f[2].name )
                 if debugflg == true
-                    @info "csvfilename:" * csvfilename
+                    @info "FileUploadController.fup() csvfilename:" * csvfilename
                 end 
     
                 write( csvfilename, f[2].data)
             end
     
             if length(files) == 0
-                @info "No file uploaded"
+                @info "FileUploadController.fup() No file uploaded"
             end
         
             CSVFileController.read( csvfilename )

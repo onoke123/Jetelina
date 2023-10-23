@@ -134,7 +134,7 @@ using SQLSentenceManager
         end
 
         if debugflg
-            @info "Df_JetelinaTableManager: " Df_JetelinaTableManager
+            @info "PgDBController.readJetelinatable() Df_JetelinaTableManager: " Df_JetelinaTableManager
         end
 
         return true
@@ -266,7 +266,7 @@ using SQLSentenceManager
                 values_str = "'$jetelina_id','$tableName','$c'"
 
                 if debugflg
-                    @info "insert str:" values_str
+                    @info "PgDBController.insert2JetelinaTableManager() insert str:" values_str
                 end
 
                 insert_str = """
@@ -333,7 +333,7 @@ using SQLSentenceManager
         end
 
         if debugflg
-            @info "col str to create table: ", column_str
+            @info "PgDBController.dataInsertFromCSV() col str to create table: ", column_str
         end
 
         #===
@@ -410,7 +410,7 @@ using SQLSentenceManager
         push!(tablename_arr, tableName)
         insert_str = """insert into $tableName values($insert_str)"""
         if debugflg
-            @info "insert sql: " insert_str
+            @info "PgDBController.dataInsertFromCSV() insert sql: " insert_str
         end
 
         SQLSentenceManager.writeTolist(insert_str, tablename_arr)
@@ -418,7 +418,7 @@ using SQLSentenceManager
         # update
         update_str = """update $tableName set $update_str"""
         if debugflg
-            @info "update sql: " update_str
+            @info "PgDBController.dataInsertFromCSV() update sql: " update_str
         end
 
         SQLSentenceManager.writeTolist(update_str, tablename_arr)
@@ -426,7 +426,7 @@ using SQLSentenceManager
         # delete
         delete_str = """delete from $tableName"""
         if debugflg
-            @info "delete sql: " delete_str
+            @info "PgDBController.dataInsertFromCSV() delete sql: " delete_str
         end
 
         SQLSentenceManager.writeTolist(delete_str, tablename_arr)

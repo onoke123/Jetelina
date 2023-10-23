@@ -38,7 +38,7 @@ module JetelinaReadSqlList
         global Df_JetelinaSqlList = df
 
         if debugflg
-            @info "sql list in DataFrame: ", Df_JetelinaSqlList 
+            @info "JetelinaReadSqlList.readSqlList2DataFrame() sql list in DataFrame: ", Df_JetelinaSqlList 
         end
     end
 end

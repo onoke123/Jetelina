@@ -96,7 +96,6 @@ module PostDataController
             return json(Dict("resembled" => ck[2]))
         else
             # yes this is the new
-            @info "table arr: " tablename_arr, typeof(tablename_arr)
             ret = SQLSentenceManager.writeTolist(selectSql, tablename_arr)
             #===
                 Tips:
@@ -212,7 +211,6 @@ module PostDataController
                 # keep=falseにして改行文字を取り除いておく。そしてprintln()する
                 for ss in eachline(f, keep=false)
                     if startswith(ss, target_scenario)
-                        @info "hit: " ss
                         #ここで入れ替える
                         ss = ss[1:length(ss)-2] * ",'$newwords'];"                    
                     end

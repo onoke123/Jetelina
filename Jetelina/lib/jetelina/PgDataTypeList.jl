@@ -27,7 +27,7 @@ module PgDataTypeList
     """
     function getDataType(c_type::String)
         if debugflg
-            @info "c_type: ", c_type
+            @info "PgDataTypeList.getDataType() c_type: ", c_type
         end
         
         c_type = string( c_type )
