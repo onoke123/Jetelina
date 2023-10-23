@@ -229,7 +229,7 @@ module PostDataController
         delete api by ordering from JetelinaSQLListfile file, then refresh the DataFrame.
     """
     function deleteApi()
-        targetapi = jsonpayload("targetapi")
+        targetapi = jsonpayload("apino")
 
         if debugflg
             @info "PostDataController.deleteApi() target api: " targetapi
@@ -242,9 +242,9 @@ module PostDataController
             open(apiFile_tmp, "w") do tio
                 open(apiFile, "r") do io
                     for ss in eachline(io,keep=false)
-                        if contains( ss, ':' )
-                            p = split(ss, ":")
-                            if !contains(targetapi,p[1])
+                        if contains( ss, '\"' )
+                            p = split(ss, "\"")
+                            if !contains(p[1],targetapi)
                                 # remain others in the file
                                 println(tio, ss)
                             end

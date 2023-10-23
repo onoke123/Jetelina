@@ -15,7 +15,7 @@ functions
 """
 module SQLSentenceManager
 
-    using Dates, StatsBase, CSV
+    using Dates, StatsBase, CSV, DataFrames
     using DBDataController, JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
 
     export writeTolist,updateSqlList,deleteFromlist,fileBackup,sqlDuplicationCheck
@@ -226,7 +226,7 @@ module SQLSentenceManager
     """
     function sqlDuplicationCheck(nsql::String)
         # exist?
-        for i=1:size(Df_JetelinaSqlList)[1]
+        for i=1:nrow(Df_JetelinaSqlList)
             strs = [nsql,Df_JetelinaSqlList[!,:sql][i]]
             process1 = split.(strs,r"\W",keepempty=false)
             process2 = map(x->lowercase.(x),process1)

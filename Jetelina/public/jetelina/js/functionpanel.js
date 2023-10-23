@@ -848,6 +848,7 @@ const functionPanelFunctions = (ut) => {
 
         break;
       case 'deleteapi':
+        console.log("delteApi:", deleteApi);
         if (isVisibleApiContainer()) {
           if (deleteApi != null && 0 < deleteApi.length) {
             // Hit the table

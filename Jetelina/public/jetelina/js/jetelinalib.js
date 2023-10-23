@@ -683,9 +683,15 @@ const getPreferentPropertie = (p) => {
             }
             break;
         case 'droptable':// table drop target table name
-            //すでにdrop tableが指定されているかもしれない
+            // take the table name from preferent
             if (preferent.droptable != null && 0 < preferent.droptable.length) {
                 c = preferent.droptable;
+            }
+            break;
+        case 'deleteapi':// delete target api name
+            // take the api name from preferent
+            if ( preferent.deleteapi != null && 0<preferent.deleteapi.length ){
+                c = preferent.deleteapi;
             }
             break;
         default:
