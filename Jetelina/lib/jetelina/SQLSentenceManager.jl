@@ -51,7 +51,7 @@ module SQLSentenceManager
         sqlsentence = """$suffix$seq_no,\"$sql\""""
 
         if debugflg
-            @info "sql sentence: ", sqlsentence
+            @info "SQLSentenceManager.writeTolist() sql sentence: ", sqlsentence
         end
 
         # write the sql to the file

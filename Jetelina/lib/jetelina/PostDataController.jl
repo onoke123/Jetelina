@@ -51,23 +51,16 @@ module PostDataController
         ==#
         item_d = jsonpayload("item")
         where_d = jsonpayload("where")
+
         if debugflg
-            @info "post: " item_d, length(item_d), where_d,length(where_d)
+            @info "PostDataController.postDataAcquire() post data: " item_d, length(item_d), where_d, length(where_d)
         end
-        #===
-            Tips:
-                Why size(..)[1]? because size(item_d) is tuple data like (n,) in watching above @info.
-                So 'n' is used as the length of the array data.
-        ===#
-        selectSql = ""
-        tableName = ""
-        tablename_arr = [] # Tips: put into array for writing it to JetelinaTableApifile. This is used in SQLSentenceManager.writeTolist().
+
+        selectSql::String = ""
+        tableName::String = ""
+        tablename_arr::Vector{String} = [] # Tips: put into array for writing it to JetelinaTableApifile. This is used in SQLSentenceManager.writeTolist().
         
         for i = 1:length(item_d)
-            if debugflg
-                @info "data $i->", item_d[i]
-            end
-
             t = split(item_d[i], ".")
             t1 = strip(t[1])
             t2 = strip(t[2])
@@ -87,11 +80,6 @@ module PostDataController
                 tableName = """$t1 as $t1"""
                 push!(tablename_arr,t1)
             end
-
-
-            if debugflg
-                @info "t1, t2: ", t1, t2
-            end
         end
 
         wheresentence = ""
@@ -108,6 +96,7 @@ module PostDataController
             return json(Dict("resembled" => ck[2]))
         else
             # yes this is the new
+            @info "table arr: " tablename_arr, typeof(tablename_arr)
             ret = SQLSentenceManager.writeTolist(selectSql, tablename_arr)
             #===
                 Tips:
