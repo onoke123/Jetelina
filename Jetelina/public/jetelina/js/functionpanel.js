@@ -173,6 +173,7 @@ const deleteSelectedItems = (p) => {
     selectedItemsArr.length = 0;
     $("#container span").removeClass("selectedItem");
     $("#container .apisql").remove();
+    $("#columns .apisql").remove();
     $("#container span").detach().appendTo("#columns div");
     ret = true;
   }

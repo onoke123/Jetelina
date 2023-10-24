@@ -240,6 +240,8 @@ module PostDataController
 
         try
             open(apiFile_tmp, "w") do tio
+                # write header first
+                println(tio,string("$JetelinaFileColumnApino,$JetelinaFileColumnSql"))
                 open(apiFile, "r") do io
                     for ss in eachline(io,keep=false)
                         if contains( ss, '\"' )
