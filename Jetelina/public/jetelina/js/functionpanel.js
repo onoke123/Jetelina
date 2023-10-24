@@ -366,7 +366,7 @@ const setApiIF_In = (t, s) => {
     //insert
     // insert into table values(a,b,...) -> a,b,...
     let i_sql = s.split("values(");
-    i_sql[1] = i_sql[1].slice(0, i_sql[1].length - 1);
+    i_sql[1] = i_sql[1].slice(0, i_sql[1].length - 1).replaceAll('\'','');
     ret = buildJetelinaJsonForm(t, i_sql[1]);
   } else if (ta.startsWith("ju")) {
     //update
@@ -439,7 +439,7 @@ const buildJetelinaJsonForm = (t, s) => {
       }
 
       if (ss != "jetelina_delete_flg") {
-        ret = `${ret}\"${$.trim(ss)}:\"&lt;your data&gt;\",`;
+        ret = `${ret}\"${$.trim(ss)}\":\"&lt;your data&gt;\",`;
       }
     }
   }

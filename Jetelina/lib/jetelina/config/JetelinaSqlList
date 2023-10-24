@@ -1,3 +1,4 @@
+apino,sql
 ji40,"insert into ftest values(id,'name','sex',age,ave,jetelina_delete_flg)"
 ji43,"insert into ftest values(id,'name','sex',age,ave,jetelina_delete_flg)"
 ju44,"update ftest set id=d_id,name='d_name',sex='d_sex',age=d_age,ave=d_ave,jetelina_delete_flg=d_jetelina_delete_flg"
