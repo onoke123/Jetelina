@@ -7,7 +7,7 @@ Description:
     all controll for poting data from clients
 
 functions
-    postDataAcquire()  create select sentence of SQL from posting data,then append it to JetelinaTableApifile.
+    createSelectSentence()  create select sentence of SQL from posting data,then append it to JetelinaTableApifile.
     getColumns()  get ordered tables's columns with json style.ordered table name is posted as the name 'tablename' in jsonpayload().
     getApiList()  get registering api list in json style.api list is refered in Df_JetelinaSqlList.
     deleteTable()  delete table by ordering. this function calls DBDataController.dropTable(tableName), so 'delete' meaning is really 'drop'.ordered table name is posted as the name 'tablename' in jsonpayload().
@@ -21,10 +21,18 @@ module PostDataController
     using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
     using SQLSentenceManager,JetelinaFiles
 
-    export postDataAcquire,getColumns,getApiList,deleteTable,login,deleteApi
+    export createSelectSentence,getColumns,getApiList,deleteTable,login,deleteApi
     
     """
-    function postDataAcquire()
+    for test
+    """
+    function handlepostdata()
+        d = rawpayload()
+        @info "post data all: " d
+    end
+
+    """
+    function createSelectSentence()
 
         create select sentence of SQL from posting data,then append it to JetelinaTableApifile.
 
@@ -33,7 +41,7 @@ module PostDataController
               new sql then success to append it to  -> json {"apino":"<something no>"}
                            fail to append it to     -> false
     """
-    function postDataAcquire()
+    function createSelectSentence()
         #==
             Tips:
                 column post data from dashboard.html is expected below json style
@@ -53,7 +61,7 @@ module PostDataController
         where_d = jsonpayload("where")
 
         if debugflg
-            @info "PostDataController.postDataAcquire() post data: " item_d, length(item_d), where_d, length(where_d)
+            @info "PostDataController.createSelectSentence() post data: " item_d, length(item_d), where_d, length(where_d)
         end
 
         selectSql::String = ""

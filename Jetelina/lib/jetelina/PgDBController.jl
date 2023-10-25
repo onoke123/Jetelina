@@ -405,7 +405,7 @@ using SQLSentenceManager
             Tips:
             cols(see above) is ["id", "name", "sex", "age", "ave", "jetelina_delete_flg"], so can use it when
             wanna use column name, but need to judge the data type both the case of 'insert' and 'update', 
-            that why do not use cols here. writing select sentence is done in PostDataController.postDataAcquire(). 
+            that why do not use cols here. writing select sentence is done in PostDataController.createSelectSentence(). 
         ===#
         push!(tablename_arr, tableName)
         insert_str = """insert into $tableName values($insert_str)"""

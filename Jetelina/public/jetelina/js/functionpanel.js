@@ -215,7 +215,7 @@ const fileupload = () => {
   if (debug) console.info("fileupload(): ", tablename);
 
   $.ajax({
-    url: "/dofup",
+    url: "/postcsvfile",
     type: "post",
     data: fd,
     cache: false,
@@ -547,7 +547,7 @@ const postSelectedColumns = () => {
   let dd = JSON.stringify(pd);
 
   $.ajax({
-    url: "/putitems",
+    url: "/postcolumns",
     type: "POST",
     data: dd,
     contentType: 'application/json',
