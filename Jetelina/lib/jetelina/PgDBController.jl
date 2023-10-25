@@ -308,7 +308,7 @@ using SQLSentenceManager
         insert_column_str = string() # columns definition field
         insert_data_str = string() # data field
         update_str = string()
-        tablename_arr = []
+        tablename_arr::Vector{String} = []
         #===
             make the sentece of sql( "id integer, name varchar(36)...")
         ===#
@@ -319,12 +319,12 @@ using SQLSentenceManager
             if startswith(column_type_string[i], "varchar")
                 #string data
                 insert_column_str = string(insert_column_str, "'$cn'")
-                insert_data_str = string(insert_data_str,"'{d}'") # '{d}' is dummy, whatever indeed
+                insert_data_str = string(insert_data_str,"'<d>'") # '<d>' is dummy, whatever indeed
                 update_str = string(update_str, "$cn='d_$cn'")
             else
                 #number data
                 insert_column_str = string(insert_column_str, "$cn")
-                insert_data_str = string(insert_data_str,"{d}") # {d} is dummy, whatever indeed
+                insert_data_str = string(insert_data_str,"<d>") # <d> is dummy, whatever indeed
                 update_str = string(update_str, "$cn=d_$cn")
             end
 

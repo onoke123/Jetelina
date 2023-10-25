@@ -316,8 +316,10 @@ const listClick = (p) => {
       if (preferent.apilist != null && preferent.apilist.length != 0) {
         let s = getdataFromJson(preferent.apilist, t);
         if (0 < s.length) {
-          s = s.replace("<", "&lt;");
-          s = s.replace(">", "&gt;");
+          s = s.replaceAll('<','{');
+          s = s.replaceAll('>','}');
+//          s = s.replace("<", "&lt;");
+//          s = s.replace(">", "&gt;");
           $("#container").append(`<span class="apisql"><p>${s}</p></span>`);
           // api in/out json
           let in_if = setApiIF_In(t, s);

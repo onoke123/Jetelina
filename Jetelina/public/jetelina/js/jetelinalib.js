@@ -38,12 +38,16 @@ const getdata = (o, t) => {
     if (o != null) {
         Object.keys(o).forEach(function (key) {
             /*
-                最初にこのカラムのtable nameを取得する
-                table list表示のとき(t=0)は'undefined'になるだけ
+                Tips:
+                    get the table name of this column at first.
+                    it is to be 'undefined' in the case of showing table list(t=0)
             */
             let targetTable = o["tablename"];
 
-            //’Jetelina’のvalueはオブジェクトになっているからこうしている  name=>key value=>o[key]
+            /*
+                Tips:
+                    because Jetelina's value is object.  name=>key value=>o[key]
+            */
             let row = 1, col = 1;
             if (key == "Jetelina" && o[key].length > 0) {
                 $.each(o[key], function (k, v) {
@@ -51,15 +55,15 @@ const getdata = (o, t) => {
                         let str = "";
                         if (t < 2) {
                             /*
-                              t=0/1即ちtableリストとカラムリストは単純オブジェクトなので、以下のループで
-                              データを取得してリスト表示にする。
+                                Tips:
+                                    get data then show as the list in below loop as t=0/1(table list and column list) is simply object.
                            */
                             $.each(v, function (name, value) {
                                 if (t == 0) {
                                     // table list
                                     str += `<span class="table">${value}</span>`;
                                 } else if (t == 1) {
-                                    // column list. jetelina_delete_flgは表示対象外
+                                    // jetelina_delete_flg should not show in the column list
                                     if (name != "jetelina_delete_flg") {
                                         str += `<span class="item" d=${value}><p>${targetTable}.${name}</p></span>`;
                                     }
@@ -67,10 +71,10 @@ const getdata = (o, t) => {
                             });
                         } else {
                             /*
-                              t=2即ちSQLリストはオブジェクト内に複数のデータがあり得て且つ、表示上は一行にしたいので
-                              こんな感じ。
+                                Tips:
+                                    case t=2: wanna show it in one line
+                                    this is the api list.
                             */
-                            // api list
                             str += `<span class="api">${v.apino}</span>`;
                         }
 
@@ -78,11 +82,9 @@ const getdata = (o, t) => {
                         if (t == 0) {
                             tagid = "#table_container";
                         } else if (t == 1) {
-                            //                            tagid = "#container .item_area";
                             tagid = "#columns .item_area";
                         } else if (t == 2) {
                             tagid = "#api_container";
-                            //                            tagid = "#sqllist";
                         }
 
                         $(tagid).append(`${str}`);
