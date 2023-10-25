@@ -69,7 +69,7 @@ scenario['6func-apidelete-msg'] = ['Which api do you want to delete?','correct o
 scenario['6func-apidelete-ng-msg'] = ['Hey open the api list first!','Huum?','Check it first','Watch it'];
 scenario['6func-apidelete-confirm'] = scenario['6func-tabledrop-confirm'];
 
-scenario['6func-fileupload-open-cmd'] = ['file open','open the file box','open file box','open filebox','file box','csv file','csv file select','choose csv file'];
+scenario['6func-fileupload-open-cmd'] = ['file open','open file','open the file box','open file box','open filebox','file box','csv file','csv file select','choose csv file'];
 scenario['6func-fileupload-open-msg'] = ['Which file?'];
 scenario['6func-fileupload-cmd'] = ['file up','upload','up load','file up load','fileup load','fileupload','up'];
 scenario['6func-fileupload-msg'] = ['File?'];

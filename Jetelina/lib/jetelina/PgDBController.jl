@@ -305,7 +305,8 @@ using SQLSentenceManager
         column_type = eltype.(eachcol(df))
         column_type_string = Array{Union{Nothing,String}}(nothing, length(column_name))
         column_str = string()
-        insert_str = string()
+        insert_column_str = string() # columns definition field
+        insert_data_str = string() # data field
         update_str = string()
         tablename_arr = []
         #===
@@ -313,21 +314,24 @@ using SQLSentenceManager
         ===#
         for i = 1:length(column_name)
             cn = column_name[i]
-            column_type_string[i] = PgDataTypeList.getDataType(column_type[i])
+            column_type_string[i] = PgDataTypeList.getDataType(string(column_type[i]))
             column_str = string(column_str, " ", column_name[i], " ", column_type_string[i])
             if startswith(column_type_string[i], "varchar")
                 #string data
-                insert_str = string(insert_str, "'$cn'")
+                insert_column_str = string(insert_column_str, "'$cn'")
+                insert_data_str = string(insert_data_str,"'{d}'") # '{d}' is dummy, whatever indeed
                 update_str = string(update_str, "$cn='d_$cn'")
             else
                 #number data
-                insert_str = string(insert_str, "$cn")
+                insert_column_str = string(insert_column_str, "$cn")
+                insert_data_str = string(insert_data_str,"{d}") # {d} is dummy, whatever indeed
                 update_str = string(update_str, "$cn=d_$cn")
             end
 
             if 0 < i < length(column_name)
                 column_str = string(column_str * ",")
-                insert_str = string(insert_str * ",")
+                insert_column_str = string(insert_column_str * ",")
+                insert_data_str = string(insert_data_str * ",")
                 update_str = string(update_str * ",")
             end
         end
@@ -408,7 +412,9 @@ using SQLSentenceManager
             that why do not use cols here. writing select sentence is done in PostDataController.createSelectSentence(). 
         ===#
         push!(tablename_arr, tableName)
-        insert_str = """insert into $tableName values($insert_str)"""
+#        insert_str = """insert into $tableName values($insert_str)"""
+        insert_str = """insert into $tableName ($insert_column_str) values($insert_data_str)"""
+
         if debugflg
             @info "PgDBController.dataInsertFromCSV() insert sql: " insert_str
         end

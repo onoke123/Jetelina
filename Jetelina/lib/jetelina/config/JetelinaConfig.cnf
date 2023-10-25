@@ -16,7 +16,7 @@
 #      improvesuggestionfile: suggestion file name due to execute test db
 logfile = log.txt
 debug = true
-fileuploadpath = lib/jetelina/testdata
+fileuploadpath = lib/jetelina/repo
 sqllogfile = sql.txt
 tablecombinationfile = JetelinaTableCombiVsAccessRelation.json
 sqllistfile = JetelinaSqlList
