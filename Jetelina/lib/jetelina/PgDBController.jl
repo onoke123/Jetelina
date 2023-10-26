@@ -323,16 +323,27 @@ using SQLSentenceManager
                 update_str = string(update_str, "$cn='{$cn}'")
             else
                 #number data
-                insert_column_str = string(insert_column_str, "$cn")
-                insert_data_str = string(insert_data_str,"{$cn}")
-                update_str = string(update_str, "$cn={$cn}")
+                if !contains(cn,"jetelina_delete_flg")
+                    insert_column_str = string(insert_column_str, "$cn")
+                    insert_data_str = string(insert_data_str,"{$cn}")
+                end
+
+                if !contains(cn,"jetelina_delete_flg")
+                    update_str = string(update_str, "$cn={$cn}")
+                end
             end
 
             if 0 < i < length(column_name)
                 column_str = string(column_str,",")
-                insert_column_str = string(insert_column_str,",")
-                insert_data_str = string(insert_data_str,",")
                 update_str = string(update_str,",")
+                #==
+                    Tips:
+                        because 'jetelina_delete_flg' always comes into the tail
+                ==#
+                if i<length(column_name)-1
+                    insert_column_str = string(insert_column_str,",")
+                    insert_data_str = string(insert_data_str,",")
+                end
             end
         end
 
