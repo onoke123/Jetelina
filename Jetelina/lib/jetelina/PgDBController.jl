@@ -429,7 +429,8 @@ using SQLSentenceManager
         SQLSentenceManager.writeTolist(update_str, tablename_arr)
 
         # delete
-        delete_str = """delete from $tableName where jt_id={jt_id}"""
+#        delete_str = """delete from $tableName where jt_id={jt_id}"""
+        delete_str = """update $tableName set jetelina_delete_flg=1 where jt_id={jt_id}"""
         if debugflg
             @info "PgDBController.dataInsertFromCSV() delete sql: " delete_str
         end

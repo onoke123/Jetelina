@@ -40,12 +40,14 @@ module SQLSentenceManager
 
         if startswith(sql, "insert")
             suffix = "ji"
+        elseif startswith(sql,"update") && contains(sql,"jetelina_delete_flg=1")
+            suffix = "jd"
         elseif startswith(sql, "update")
             suffix = "ju"
         elseif startswith(sql, "select")
             suffix = "js"
-        elseif startswith(sql, "delete")
-            suffix = "jd"
+#        elseif startswith(sql, "delete")
+#            suffix = "jd"
         end
 
         sqlsentence = """$suffix$seq_no,\"$sql\""""

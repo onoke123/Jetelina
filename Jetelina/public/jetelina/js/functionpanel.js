@@ -370,15 +370,15 @@ const setApiIF_In = (t, s) => {
     let i_sql = s.split("values(");
     i_sql[1] = i_sql[1].slice(0, i_sql[1].length - 1).replaceAll('\'','');
     ret = buildJetelinaJsonForm(t, i_sql[1]);
-  } else if (ta.startsWith("ju")) {
-    //update
+  } else if (ta.startsWith("ju") || ta.startsWith("jd")) {
+    //update and delete(indeed update)
     // update table set a=d_a,b=d_b..... -> a=d_a,b=d_b...
     let u_sql = s.split("set");
     ret = buildJetelinaJsonForm(t, u_sql[1]);
-  } else if (ta.startsWith("jd")) {
+//  } else if (ta.startsWith("jd")) {
     //delete
-    let d_sql = s.split("from");
-    ret = buildJetelinaJsonForm(t, d_sql[1]);
+//    let d_sql = s.split("from");
+//    ret = buildJetelinaJsonForm(t, d_sql[1]);
   } else {
     // who knows
   }
