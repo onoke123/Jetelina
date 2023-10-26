@@ -335,12 +335,13 @@ using SQLSentenceManager
 
             if 0 < i < length(column_name)
                 column_str = string(column_str,",")
-                update_str = string(update_str,",")
+#                update_str = string(update_str,",")
                 #==
                     Tips:
                         because 'jetelina_delete_flg' always comes into the tail
                 ==#
                 if i<length(column_name)-1
+                    update_str = string(update_str,",")
                     insert_column_str = string(insert_column_str,",")
                     insert_data_str = string(insert_data_str,",")
                 end

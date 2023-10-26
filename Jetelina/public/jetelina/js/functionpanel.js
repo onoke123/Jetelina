@@ -375,10 +375,8 @@ const setApiIF_In = (t, s) => {
     // update table set a=d_a,b=d_b..... -> a=d_a,b=d_b...
     let u_sql = s.split("set");
     ret = buildJetelinaJsonForm(t, u_sql[1]);
-    // special for 'jd'
-    if (ta.startsWith("jd")){
-      ret = ret.slice(0,ret.length-1) + ",\"jt_id\":{jt_id}" + ret.slice(ret.length);
-    }
+    // special for 'ju and 'jd'
+      ret = ret.slice(0,ret.length-1) + ",\"jt_id\":{jt_id}" + ret.slice(ret.length-1,ret.length);
   } else {
     // who knows
   }
@@ -442,9 +440,9 @@ const buildJetelinaJsonForm = (t, s) => {
 
       if (ss != "jetelina_delete_flg") {
 //        ret = `${ret}\"${$.trim(ss)}\":\"&lt;your data&gt;\",`;
-        if (ss == "where jt_id"){
-          ss = "jt_id";
-        }
+//        if (ss == "where jt_id"){
+//          ss = "jt_id";
+//        }
 
         ret = `${ret}\"${$.trim(ss)}\":\"{${$.trim(ss)}}\",`;
       }
