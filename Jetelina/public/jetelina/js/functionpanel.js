@@ -435,13 +435,17 @@ const buildJetelinaJsonForm = (t, s) => {
           //update
           ss = c[i].split("=")[0];
         } else {
-          //insert delte
+          //insert delete
           ss = c[i];
         }
       }
 
       if (ss != "jetelina_delete_flg") {
 //        ret = `${ret}\"${$.trim(ss)}\":\"&lt;your data&gt;\",`;
+        if (ss == "where jt_id"){
+          ss = "jt_id";
+        }
+
         ret = `${ret}\"${$.trim(ss)}\":\"{${$.trim(ss)}}\",`;
       }
     }
