@@ -322,10 +322,8 @@ const listClick = (p) => {
           let in_out = setApiIF_Out(t, s);
           $("#columns .item_area").append(`<span class="apisql apiout"><bold>OUT:</bold>${in_out}</span>`);
 
-          s = s.replaceAll('<','{');
-          s = s.replaceAll('>','}');
-//          s = s.replace("<", "&lt;");
-//          s = s.replace(">", "&gt;");
+//          s = s.replaceAll('<','{');
+//          s = s.replaceAll('>','}');
           $("#container").append(`<span class="apisql"><p>${s}</p></span>`);
         }
       }
@@ -443,7 +441,8 @@ const buildJetelinaJsonForm = (t, s) => {
       }
 
       if (ss != "jetelina_delete_flg") {
-        ret = `${ret}\"${$.trim(ss)}\":\"&lt;your data&gt;\",`;
+//        ret = `${ret}\"${$.trim(ss)}\":\"&lt;your data&gt;\",`;
+        ret = `${ret}\"${$.trim(ss)}\":\"{${$.trim(ss)}}\",`;
       }
     }
   }

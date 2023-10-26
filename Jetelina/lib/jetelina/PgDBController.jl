@@ -421,8 +421,7 @@ using SQLSentenceManager
         SQLSentenceManager.writeTolist(insert_str, tablename_arr)
 
         # update
-#        update_str = """update $tableName set $update_str"""
-        update_str = """update $tableName set $update_str where id={id}"""
+        update_str = """update $tableName set $update_str where jt_id={jt_id}"""
         if debugflg
             @info "PgDBController.dataInsertFromCSV() update sql: " update_str
         end
@@ -430,7 +429,7 @@ using SQLSentenceManager
         SQLSentenceManager.writeTolist(update_str, tablename_arr)
 
         # delete
-        delete_str = """delete from $tableName where id={id}"""
+        delete_str = """delete from $tableName where jt_id={jt_id}"""
         if debugflg
             @info "PgDBController.dataInsertFromCSV() delete sql: " delete_str
         end
