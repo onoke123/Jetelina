@@ -26,44 +26,63 @@ module PgDataTypeList
     - `c_type::String`:  data type string. ex 'Int'
     """
     function getDataType(c_type::String)
+        ret::String = ""
+
         if debugflg
             @info "PgDataTypeList.getDataType() c_type: ", c_type
         end
         
         c_type = string( c_type )
         if startswith( c_type, "Int" ) 
-            "integer"
+            ret = "integer"
         elseif startswith( c_type, "Float" )
-            "double precision"
+            ret = "double precision"
         elseif startswith( c_type, "InlineStrings.String" )
-            vc_n = SubString( c_type, length("InlineStrings.String")+1, length(c_type) )
-            "varchar( $vc_n )"
+#            vc_n = SubString( c_type, length("InlineStrings.String")+1, length(c_type) )
+#            "varchar( $vc_n )"
+            #==
+                did not wanna limit a character number by the initial uploaded csv file 
+            ==#
+            ret = "varchar"
         elseif startswith( c_type, "String" )
-            "varchar"
+            ret = "varchar"
         end
+
+        return ret
     end
     """
     function getDataTypeInDataFrame(c_type::String)
 
         determaine 'c_type' to DataFrame data. ex. c_type=='Int' -> 'Integer'.
         this function has been impremented after being defined getDataType(), because did not want to effect to it.
-        c_type is expected Union{Missing,String} and so on, and it is not as same as a variable in getDataType().
+        c_type is expected 'Union{Missing,String}' then return 'String' and so on.
+        this function is used in SQLAnalyzer.jl so far, that mean using to copy table from the real db to the test db.
+        
+        Caution: This func is not as same as a variable in getDataType().
 
     # Arguments
     - `c_type::String`:  data type string. ex 'Int'
     """
-      function getDataTypeInDataFrame(c_type::String) 
+    function getDataTypeInDataFrame(c_type::String) 
+        ret::String = ""
+
         c_type = string( c_type )
         if contains( c_type, "Int" ) 
-            "integer"
+            ret = "integer"
         elseif contains( c_type, "Float" )
-            "double precision"
+            ret = "double precision"
         elseif contains( c_type, "InlineStrings.String" )
-            vc_n = SubString( c_type, length("InlineStrings.String")+1, length(c_type) )
-            "varchar( $vc_n )"
+#            vc_n = SubString( c_type, length("InlineStrings.String")+1, length(c_type) )
+#            ret = "varchar( $vc_n )"
+            #==
+                did not wanna be same as the real table
+            ==#
+            ret = "varchar" 
         elseif contains( c_type, "String" )
-            "varchar"
+            ret = "varchar"
         end
+
+        return ret
     end
 
 end

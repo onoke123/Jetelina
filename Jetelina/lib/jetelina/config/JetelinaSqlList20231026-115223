@@ -1,0 +1,6 @@
+apino,sql
+ji40,"insert into ftest values(id,'name','sex',age,ave,jetelina_delete_flg)"
+js317,"select ftest3.id from ftest3 as ftest3 "
+ji328,"insert into ftest4 (id,'name','sex',age,ave,jetelina_delete_flg) values({id},'{name}','{sex}',{age},{ave},{jetelina_delete_flg})"
+ju329,"update ftest4 set id={id},name='{name}',sex='{sex}',age={age},ave={ave},jetelina_delete_flg={jetelina_delete_flg} where id={id}"
+jd330,"delete from ftest4 where id={id}"

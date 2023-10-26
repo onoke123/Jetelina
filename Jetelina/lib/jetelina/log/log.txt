@@ -1660,3 +1660,13 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
 ┌ Info: 2023-10-25 12:45:50 csv file: lib/jetelina/repo/ftest4.csv
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-26 10:21:42 csv file: lib/jetelina/repo/ftest4.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-26 11:27:59 csv file: lib/jetelina/repo/ftest.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-26 11:28:48 csv file: lib/jetelina/repo/ftest4.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-26 11:44:03 csv file: lib/jetelina/repo/ftest4.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-10-26 11:52:39 csv file: lib/jetelina/repo/ftest.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58

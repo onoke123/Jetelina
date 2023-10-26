@@ -316,16 +316,17 @@ const listClick = (p) => {
       if (preferent.apilist != null && preferent.apilist.length != 0) {
         let s = getdataFromJson(preferent.apilist, t);
         if (0 < s.length) {
-          s = s.replaceAll('<','{');
-          s = s.replaceAll('>','}');
-//          s = s.replace("<", "&lt;");
-//          s = s.replace(">", "&gt;");
-          $("#container").append(`<span class="apisql"><p>${s}</p></span>`);
           // api in/out json
           let in_if = setApiIF_In(t, s);
           $("#columns .item_area").append(`<span class="apisql apiin"><bold>IN:</bold>${in_if}</span>`);
           let in_out = setApiIF_Out(t, s);
           $("#columns .item_area").append(`<span class="apisql apiout"><bold>OUT:</bold>${in_out}</span>`);
+
+          s = s.replaceAll('<','{');
+          s = s.replaceAll('>','}');
+//          s = s.replace("<", "&lt;");
+//          s = s.replace(">", "&gt;");
+          $("#container").append(`<span class="apisql"><p>${s}</p></span>`);
         }
       }
     }

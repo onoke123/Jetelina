@@ -319,25 +319,25 @@ using SQLSentenceManager
             if startswith(column_type_string[i], "varchar")
                 #string data
                 insert_column_str = string(insert_column_str, "'$cn'")
-                insert_data_str = string(insert_data_str,"'<d>'") # '<d>' is dummy, whatever indeed
-                update_str = string(update_str, "$cn='d_$cn'")
+                insert_data_str = string(insert_data_str,"'{$cn}'") 
+                update_str = string(update_str, "$cn='{$cn}'")
             else
                 #number data
                 insert_column_str = string(insert_column_str, "$cn")
-                insert_data_str = string(insert_data_str,"<d>") # <d> is dummy, whatever indeed
-                update_str = string(update_str, "$cn=d_$cn")
+                insert_data_str = string(insert_data_str,"{$cn}")
+                update_str = string(update_str, "$cn={$cn}")
             end
 
             if 0 < i < length(column_name)
-                column_str = string(column_str * ",")
-                insert_column_str = string(insert_column_str * ",")
-                insert_data_str = string(insert_data_str * ",")
-                update_str = string(update_str * ",")
+                column_str = string(column_str,",")
+                insert_column_str = string(insert_column_str,",")
+                insert_data_str = string(insert_data_str,",")
+                update_str = string(update_str,",")
             end
         end
 
         if debugflg
-            @info "PgDBController.dataInsertFromCSV() col str to create table: ", column_str
+            @info "PgDBController.dataInsertFromCSV() col str to create table: " column_str
         end
 
         #===
@@ -412,7 +412,6 @@ using SQLSentenceManager
             that why do not use cols here. writing select sentence is done in PostDataController.createSelectSentence(). 
         ===#
         push!(tablename_arr, tableName)
-#        insert_str = """insert into $tableName values($insert_str)"""
         insert_str = """insert into $tableName ($insert_column_str) values($insert_data_str)"""
 
         if debugflg
@@ -422,7 +421,8 @@ using SQLSentenceManager
         SQLSentenceManager.writeTolist(insert_str, tablename_arr)
 
         # update
-        update_str = """update $tableName set $update_str"""
+#        update_str = """update $tableName set $update_str"""
+        update_str = """update $tableName set $update_str where id={id}"""
         if debugflg
             @info "PgDBController.dataInsertFromCSV() update sql: " update_str
         end
@@ -430,7 +430,7 @@ using SQLSentenceManager
         SQLSentenceManager.writeTolist(update_str, tablename_arr)
 
         # delete
-        delete_str = """delete from $tableName"""
+        delete_str = """delete from $tableName where id={id}"""
         if debugflg
             @info "PgDBController.dataInsertFromCSV() delete sql: " delete_str
         end
