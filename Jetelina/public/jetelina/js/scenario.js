@@ -75,6 +75,7 @@ scenario['6func-fileupload-cmd'] = ['file up','upload','up load','file up load',
 scenario['6func-fileupload-msg'] = ['File?'];
 scenario['6func-postcolumn-where-option-msg'] = ['Wanna set the \'Where\' sentence? This is an option.'];
 scenario['6func-postcolumn-where-indispensable-msg'] = ['Set the \'Where\' sentence. This is an indispensable.'];
+scenario['6func-postcolumn-available-msg'] = ['Now you can post them','Do post them','Type \'post\' now'];
 scenario['6func-subpanel-open-cmd'] = ['oepn subquery panel','open sub panel','sub please','subquery panel please','subquery panel','subquery','sub panel','where panel'];
 
 /* log out */
