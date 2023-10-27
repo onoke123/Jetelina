@@ -769,7 +769,7 @@ const functionPanelFunctions = (ut) => {
             preferent.cmd = "post";
           } else {
             // let's check the 'where sentence' before post it to the server
-            if (checkGenelicInput(wheresentence)) {
+//            if (checkGenelicInput(wheresentence)) {
               /* 
                 'm' has a chance to be 'unknown' because postSelectedColumns() is ajax function.
                 So set a keyword 'ignore' then the message of success or fail in postSele..(), 
@@ -777,9 +777,9 @@ const functionPanelFunctions = (ut) => {
               */
               postSelectedColumns();
               m = 'ignore';
-            } else {
+//            } else {
               // Hum, it is not a table column of opening the 'where sentence'.
-            }
+//            }
           }
         } else {
           m = chooseMsg('6func_post_err', "", "");
