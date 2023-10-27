@@ -562,7 +562,7 @@ const postSelectedColumns = () => {
       if there already is a quite similar api in there -> return api no as alike {"resembled":"js10"}.
     */
     if (result.apino != null && 0 < result.apino.length) {
-      $("#container span").remove();
+      $("#container .selectedItem").remove();
       $("#container").append(`<span class="apisql"><p>api no is ${result.apino}</p></span>`);
 
       typingControll(chooseMsg('success', "", ""));
@@ -577,6 +577,7 @@ const postSelectedColumns = () => {
     console.error("postSelectedColumns() fail");
     typingControll(chooseMsg('fail', "", ""));
   }).always(function () {
+    // initializing
     preferent.cmd = "";
     $("#genelic_panel input[name='genelic_input']").val('');
   });
@@ -736,50 +737,57 @@ const functionPanelFunctions = (ut) => {
         m = 'ignore';
         break;
       case 'post':
+        /*
+          Tips:
+            the first 'post' is ut=cmd for asking 'sub query' sentnece.
+            then if ut is positive answer alike 'yes' -> showGenelicPanel(true).
+            'sub query' is mandatory if its contains multi tables, it is optional if it is single table.
+            'ignore' is set in 'genelic_input' field if does not set the sub query.
+
+            the secound post is ut!=cmd for execution of postion, maybe.
+        */
+        let wheresentence = $("#genelic_panel input[name='genelic_input']").val();
         if (0 < selectedItemsArr.length) {
-          /*  
-            call an attentiion for inputting where sentence before posting it.
-            confirm if the sql sentence has multi table in 'selectedItemArr'.
-            a 'where sentence' is demanded when multi tables are setted.
-          */
-          // open the box for inputting a 'where sentence'
-          let wheresentence = $("#genelic_panel input[name='genelic_input']").val();
-          if (wheresentence == null || wheresentence == "") {
-            // arrange the Jetelina message order by demanding 'where sentece' or not
-            // check multi table columns in the post data 
+          if(ut == cmd){
+            // the first calling            
             if (containsMultiTables()) {
               // 'where sentence' is demanded if there were multi tables
-              m = chooseMsg('6func-postcolumn-where-indispensable-msg', "", "");
               showGenelicPanel(true);
+              m = chooseMsg('6func-postcolumn-where-indispensable-msg', "", "");
             } else {
               // 'where sentence' is not demanded but ask it once time
-              m = chooseMsg('6func-postcolumn-where-option-msg', "", "");
-              // open the getelic_panel(input where sentecen) if the user's answer is 'yes'
-              if (inScenarioChk(ut, 'confirmation-sentences')) {
-                showGenelicPanel(true);
-              } else {
-                // contain a dummy data('ignore') if the user's anwer is not 'yes'
-                // Attention: should confirm and resolve there.(一発目に ut=postで来るからここが自動的に設定されてしまい、２発目のyesが無視される。そこが問題)
-                if (preferent.cmd == "post") {
-                  $("#genelic_panel input[name='genelic_input']").val("ignore");
-                }
+              if(wheresentence != "ignore"){
+                m = chooseMsg('6func-postcolumn-where-option-msg', "", "");
+              }else{
+
               }
+
+              if (checkGenelicInput(wheresentence)) {
+                postSelectedColumns();
+                m = 'ignore';
+              }              
+
+            }
+          }else if(inScenarioChk(ut,'6func-postcolumn-cancel-cmd')){
+            preferent.cmd = "cancel";
+          }else{
+            // the secound calling, sub query open or not
+            if (inScenarioChk(ut, 'confirmation-sentences')) {
+                showGenelicPanel(true);
+                m = chooseMsg('6func-subpanel-opened',"","");
+            }else{
+              $("#genelic_panel input[name='genelic_input']").val("ignore");
             }
 
-            preferent.cmd = "post";
-          } else {
-            // let's check the 'where sentence' before post it to the server
-            if (checkGenelicInput(wheresentence)) {
-              /* 
-                'm' has a chance to be 'unknown' because postSelectedColumns() is ajax function.
-                So set a keyword 'ignore' then the message of success or fail in postSele..(), 
-                then do not do typing() after this process.
-              */
-              postSelectedColumns();
-              m = 'ignore';
-            } else {
-              // Hum, it is not a table column of opening the 'where sentence'.
+            if( $("#genelic_panel input[name='genelic_input']").val() != "" ){
+              m = chooseMsg('6func-postcolumn-available-msg',"","");
             }
+
+          }
+
+          // important
+          if( preferent.cmd != 'cancel'){
+            preferent.cmd = cmd;
           }
         } else {
           m = chooseMsg('6func_post_err', "", "");
@@ -921,7 +929,7 @@ const functionPanelFunctions = (ut) => {
         break;
       case 'subquery': //open subquery panel
         showGenelicPanel(true);
-        m = chooseMsg('success', '', '');
+        m = chooseMsg('6func-subpanel-opened', '', '');
         break;
       default:
         break;
@@ -1078,17 +1086,21 @@ const showGenelicPanel = (b) => {
 }
 /**
  * @function checkGenelicInput
- * @param {string} s  where sentence strings 
- * @returns {boolean}  true->known column as opening  false->unknown column(illegal)
+ * @param {string} s  sub query sentence strings 
+ * @returns {boolean}  true->acceptable  false->something suspect
  * 
- * caution: will imprement this in V2 if necessary
+ * check sub query sentence. 'ignore' is always acceptable.
  */
 const checkGenelicInput = (s) => {
-  if(inScenarioChk(s,'cancel')){
-    showGenelicPanel(false);
+  let ret = true;
+
+  if( s == "" ){
+    ret = false;
+  }else if(s != "ignore"){
+    // sub query check
   }
 
-  return true;
+  return ret;
 }
 /**
  * @function deleteThisApi
