@@ -387,13 +387,13 @@ const setApiIF_In = (t, s) => {
  * @function setApiIF_Out
  * @param {string} t targeted desiring data (json name part)
  * @param {string} s targeted desiring data (json value part)
- * @returns {string} json form string
+ * @returns {string} json form string in select sentece, other true/false
  *
  * Show Json of 'API OUT'
  * Only select sql  
  */
 const setApiIF_Out = (t, s) => {
-  let ret = "";
+  let ret = "true or false";
 
   if (t.toLowerCase().startsWith("js")) {
     let pb = s.split("select");

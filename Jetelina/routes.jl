@@ -50,12 +50,12 @@ route( "/jetelinawords", PostDataController._addJetelinaWords, method = POST)
 route( "/getalldbtable", GetDataController.getTableList )
 # drops table by ordering
 route( "/deletetable", PostDataController.deleteTable, method = POST )
-# handle json data for db action of insert/update/delete
-route( "/dbactions", PostDataController.createSelectSentence, method = POST )
+# db table columns の選択されたpost dataを取得
+route( "/postcolumns", PostDataController.createSelectSentence, method = POST )
 # returns column list ordered by table in Json
 route( "getcolumns", PostDataController.getColumns, method = POST )
-# db table columns の選択されたpost dataを取得
-route( "/postcolumns", PostDataController.handlepostdata, method = POST )
+# handle json data for db action of insert/update/delete
+route( "/dbactions", PostDataController.handlepostdata, method = POST )
 #===
     -Handle APIs
 ===#

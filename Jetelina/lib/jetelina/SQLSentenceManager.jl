@@ -50,6 +50,7 @@ module SQLSentenceManager
 #            suffix = "jd"
         end
 
+        sql = strip(sql)
         sqlsentence = """$suffix$seq_no,\"$sql\""""
 
         if debugflg
