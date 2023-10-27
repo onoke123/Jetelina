@@ -92,7 +92,7 @@ module PostDataController
 
         wheresentence = ""
         if !isnothing(where_d) && 0<length(where_d) && where_d != "ignore"
-            wheresentence = """where $where_d"""
+            wheresentence = """$where_d"""
         end
 
         selectSql = """select $selectSql from $tableName $wheresentence"""
