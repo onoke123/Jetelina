@@ -368,7 +368,7 @@ const setApiIF_In = (t, s) => {
     //insert
     // insert into table values(a,b,...) -> a,b,...
     let i_sql = s.split("values(");
-    i_sql[1] = i_sql[1].slice(0, i_sql[1].length - 1).replaceAll('\'','');
+    i_sql[1] = i_sql[1].slice(0, i_sql[1].length - 1).replaceAll('\'','').replaceAll('{','').replaceAll('}','');
     ret = buildJetelinaJsonForm(t, i_sql[1]);
   } else if (ta.startsWith("ju") || ta.startsWith("jd")) {
     //update and delete(indeed update)
@@ -545,7 +545,7 @@ const postSelectedColumns = () => {
     absolutely something is in 'getelic_input'.
     'ignore' is if nothing done by the user.
   */
-  pd["where"] = $("#genelic_panel input[name='genelic_input']").val();
+  pd["subquery"] = $("#genelic_panel input[name='genelic_input']").val();
 
   if (debug) console.info("postSelectedColumns() post data: ", pd);
   let dd = JSON.stringify(pd);
@@ -746,7 +746,7 @@ const functionPanelFunctions = (ut) => {
 
             the secound post is ut!=cmd for execution of postion, maybe.
         */
-        let wheresentence = $("#genelic_panel input[name='genelic_input']").val();
+        let subquerysentence = $("#genelic_panel input[name='genelic_input']").val();
         if (0 < selectedItemsArr.length) {
           if(ut == cmd){
             // the first calling            
@@ -756,13 +756,13 @@ const functionPanelFunctions = (ut) => {
               m = chooseMsg('6func-postcolumn-where-indispensable-msg', "", "");
             } else {
               // 'where sentence' is not demanded but ask it once time
-              if(wheresentence != "ignore"){
+              if(subquerysentence != "ignore"){
                 m = chooseMsg('6func-postcolumn-where-option-msg', "", "");
               }else{
 
               }
 
-              if (checkGenelicInput(wheresentence)) {
+              if (checkGenelicInput(subquerysentence)) {
                 postSelectedColumns();
                 m = 'ignore';
               }              
@@ -779,6 +779,7 @@ const functionPanelFunctions = (ut) => {
               $("#genelic_panel input[name='genelic_input']").val("ignore");
             }
 
+            // use $(..).val() because this may was set 'ignore' just above.
             if( $("#genelic_panel input[name='genelic_input']").val() != "" ){
               m = chooseMsg('6func-postcolumn-available-msg',"","");
             }

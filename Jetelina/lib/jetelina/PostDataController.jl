@@ -58,15 +58,16 @@ module PostDataController
                 use these to create sql sentence.
         ==#
         item_d = jsonpayload("item")
-        where_d = jsonpayload("where")
+        subq_d = jsonpayload("subquery")
 
         if debugflg
-            @info "PostDataController.createSelectSentence() post data: " item_d, length(item_d), where_d, length(where_d)
+            @info "PostDataController.createSelectSentence() post data: " item_d, length(item_d), subq_d, length(subq_d)
         end
 
         selectSql::String = ""
         tableName::String = ""
         tablename_arr::Vector{String} = [] # Tips: put into array for writing it to JetelinaTableApifile. This is used in SQLSentenceManager.writeTolist().
+        subquerysentence::String = ""
         
         for i = 1:length(item_d)
             t = split(item_d[i], ".")
@@ -90,12 +91,11 @@ module PostDataController
             end
         end
 
-        wheresentence = ""
-        if !isnothing(where_d) && 0<length(where_d) && where_d != "ignore"
-            wheresentence = """$where_d"""
+        if !isnothing(subq_d) && 0<length(subq_d) && subq_d != "ignore"
+            subquerysentence = """jetelina_subquery={$subq_d}"""
         end
 
-        selectSql = """select $selectSql from $tableName $wheresentence"""
+        selectSql = """select $selectSql from $tableName $subquerysentence"""
 
         ck = SQLSentenceManager.sqlDuplicationCheck(selectSql)
 
