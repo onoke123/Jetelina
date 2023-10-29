@@ -238,21 +238,14 @@ const fileupload = () => {
         typingControll(chooseMsg('success', "", ""));
       }
     } else {
-      typingControll(chooseMsg('fail', "", ""));
+      // csv file format error
+      typingControll(chooseMsg('6func-csv-format-error', "", ""));
     }
   }).fail(function (result) {
-    let failtype = "unknown error";
-    let failmsg = "fail";
-    if(!result){
-      // something error happened
-      failtype = "csv format error";
-      failmgs = "6func-csv-format-error";
-      typingControll(chooseMsg('fail', "", ""));
-    }
-
-    console.error("fileupload():", failtype);
-    typingControll(chooseMsg(failmsg, "", ""));
-});
+    // something error happened
+    console.error("fileupload(): unexpected error");
+    typingControll(chooseMsg(fail, "", ""));
+  });
 }
 
 /*
