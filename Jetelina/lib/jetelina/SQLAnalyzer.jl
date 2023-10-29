@@ -27,7 +27,7 @@ module SQLAnalyzer
     using JetelinaReadConfig, JetelinaLog
     using DBDataController, PgDBController
     using DelimitedFiles
-    using JetelinaFiles, JetelinaReadSqlList, SQLSentenceManager
+    using JetelinaFiles, JetelinaReadSqlList, PgSQLSentenceManager
     using TestDBController, PgDataTypeList
 
     """
@@ -696,7 +696,7 @@ module SQLAnalyzer
                 execute(tconn, create_view_str[i])
 
                 # SQL update to JetelinaSQLListfile
-                SQLSentenceManager.updateSqlList(newapilist)
+                PgSQLSentenceManager.updateSqlList(newapilist)
             end
         catch err
             println(err)

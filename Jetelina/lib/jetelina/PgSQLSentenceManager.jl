@@ -1,5 +1,5 @@
 """
-module: SQLSentenceManager
+module: PgSQLSentenceManager
 
 Author: Ono keiji
 Version: 1.0
@@ -12,8 +12,9 @@ functions
     deleteFromlist(tablename::String)  delete table name from JetelinaSQLListfile synchronized with dropping table.
     fileBackup(fname::String)  back up the ordered file with date suffix. ex. <file>.txt -> <file>.txt.yyyymmdd-HHMMSS
     sqlDuplicationCheck(nsql::String)  confirm duplication, if 'nsql' exists in JetelinaSQLListfile.but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
+    checkSubQuery(subquery::String) check posted subquery strings wheather exists any illegal strings in it.
 """
-module SQLSentenceManager
+module PgSQLSentenceManager
 
     using Dates, StatsBase, CSV, DataFrames
     using DBDataController, JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
@@ -54,7 +55,7 @@ module SQLSentenceManager
         sqlsentence = """$suffix$seq_no,\"$sql\""""
 
         if debugflg
-            @info "SQLSentenceManager.writeTolist() sql sentence: ", sqlsentence
+            @info "PgSQLSentenceManager.writeTolist() sql sentence: ", sqlsentence
         end
 
         # write the sql to the file
@@ -73,7 +74,7 @@ module SQLSentenceManager
                 println(f, sqlsentence)
             end
         catch err
-            JetelinaLog.writetoLogfile("SQLSentenceManager.writeTolist() error: $err")
+            JetelinaLog.writetoLogfile("PgSQLSentenceManager.writeTolist() error: $err")
             return false, nothing
         end
 
@@ -83,7 +84,7 @@ module SQLSentenceManager
                 println(ff, string(suffix, seq_no, ":", join(tablename_arr, ",")))
             end
         catch err
-            JetelinaLog.writetoLogfile("SQLSentenceManager.writeTolist() error: $err")
+            JetelinaLog.writetoLogfile("PgSQLSentenceManager.writeTolist() error: $err")
             return false, nothing
         end
 
@@ -126,7 +127,7 @@ module SQLSentenceManager
             CSV.write( experimentFile, newlist, header=[JetelinaFileColumnApino,JetelinaFileColumnSql] )
         catch err
             println(err)
-            JetelinaLog.writetoLogfile("SQLSentenceManager.updateSqlList() error: $err")
+            JetelinaLog.writetoLogfile("PgSQLSentenceManager.updateSqlList() error: $err")
             return false
         end
         
@@ -168,7 +169,7 @@ module SQLSentenceManager
                 end
             end
         catch err
-            JetelinaLog.writetoLogfile("SQLSentenceManager.deleteFromlist() error: $err")
+            JetelinaLog.writetoLogfile("PgSQLSentenceManager.deleteFromlist() error: $err")
             return false
         end
 
@@ -188,7 +189,7 @@ module SQLSentenceManager
                 end
             end
         catch err
-            JetelinaLog.writetoLogfile("SQLSentenceManager.deleteFromlist() error: $err")
+            JetelinaLog.writetoLogfile("PgSQLSentenceManager.deleteFromlist() error: $err")
             return false
         end
 
@@ -250,6 +251,19 @@ module SQLSentenceManager
 
         # consequently, not exist.
         return false
+    end
+    """
+    function checkSubQuery(subquery::String)
+
+        check posted subquery strings wheather exists any illegal strings in it.
+        because subquery is free format posting data by user. 
+
+    # Arguments
+    - `subquery::String`: posted subquery
+    - return:  subquery string after processing
+    """
+    function checkSubQuery(subquery::String)
+        return replace(subquery,";"=>"")
     end
 
 end

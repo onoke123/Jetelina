@@ -18,7 +18,7 @@ module TestDBController
     using CSV, LibPQ, DataFrames, IterTools, Tables
     using JetelinaLog, JetelinaReadConfig
     using JetelinaFiles
-    using SQLSentenceManager
+    using PgSQLSentenceManager
 
     export measureSqlPerformance
 

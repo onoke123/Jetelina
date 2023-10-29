@@ -32,7 +32,7 @@ using CSV, LibPQ, DataFrames, IterTools, Tables
 using JetelinaLog, JetelinaReadConfig
 using PgDataTypeList
 using JetelinaFiles
-using SQLSentenceManager
+using PgSQLSentenceManager
 
     export create_jetelina_tables,create_jetelina_id_sequence,open_connection,close_connection,readJetelinatable,
     getTableList,getJetelinaSequenceNumber,insert2JetelinaTableManager,dataInsertFromCSV,dropTable,getColumns,doInsert,
@@ -430,7 +430,7 @@ using SQLSentenceManager
             @info "PgDBController.dataInsertFromCSV() insert sql: " insert_str
         end
 
-        SQLSentenceManager.writeTolist(insert_str, tablename_arr)
+        PgSQLSentenceManager.writeTolist(insert_str, tablename_arr)
 
         # update
         update_str = """update $tableName set $update_str where jt_id={jt_id}"""
@@ -438,7 +438,7 @@ using SQLSentenceManager
             @info "PgDBController.dataInsertFromCSV() update sql: " update_str
         end
 
-        SQLSentenceManager.writeTolist(update_str, tablename_arr)
+        PgSQLSentenceManager.writeTolist(update_str, tablename_arr)
 
         # delete
 #        delete_str = """delete from $tableName where jt_id={jt_id}"""
@@ -447,7 +447,7 @@ using SQLSentenceManager
             @info "PgDBController.dataInsertFromCSV() delete sql: " delete_str
         end
 
-        SQLSentenceManager.writeTolist(delete_str, tablename_arr)
+        PgSQLSentenceManager.writeTolist(delete_str, tablename_arr)
 
         if isempty(df_tl)
             # manage to jetelina_table_manager
@@ -490,7 +490,7 @@ using SQLSentenceManager
         end
 
         # update SQL list
-        SQLSentenceManager.deleteFromlist(tableName)
+        PgSQLSentenceManager.deleteFromlist(tableName)
 
         return true
     end

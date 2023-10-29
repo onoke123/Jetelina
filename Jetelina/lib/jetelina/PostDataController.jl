@@ -19,7 +19,7 @@ module PostDataController
     using Genie, Genie.Requests, Genie.Renderer.Json
     using DBDataController
     using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
-    using SQLSentenceManager,JetelinaFiles
+    using PgSQLSentenceManager,JetelinaFiles
 
     export createSelectSentence,getColumns,getApiList,deleteTable,login,deleteApi
     
@@ -59,6 +59,10 @@ module PostDataController
         ==#
         item_d = jsonpayload("item")
         subq_d = jsonpayload("subquery")
+        
+        if(subq_d != "")
+            subq_d = PgSQLSentenceManager.checkSubQuery(subq_d)
+        end
 
         if debugflg
             @info "PostDataController.createSelectSentence() post data: " item_d, length(item_d), subq_d, length(subq_d)
@@ -66,7 +70,7 @@ module PostDataController
 
         selectSql::String = ""
         tableName::String = ""
-        tablename_arr::Vector{String} = [] # Tips: put into array for writing it to JetelinaTableApifile. This is used in SQLSentenceManager.writeTolist().
+        tablename_arr::Vector{String} = [] # Tips: put into array for writing it to JetelinaTableApifile. This is used in PgSQLSentenceManager.writeTolist().
         subquerysentence::String = ""
         
         for i = 1:length(item_d)
@@ -97,14 +101,14 @@ module PostDataController
 
         selectSql = """select $selectSql from $tableName $subquerysentence"""
 
-        ck = SQLSentenceManager.sqlDuplicationCheck(selectSql)
+        ck = PgSQLSentenceManager.sqlDuplicationCheck(selectSql)
 
         if ck[1] 
             # already exist it. return it and do nothing.
             return json(Dict("resembled" => ck[2]))
         else
             # yes this is the new
-            ret = SQLSentenceManager.writeTolist(selectSql, tablename_arr)
+            ret = PgSQLSentenceManager.writeTolist(selectSql, tablename_arr)
             #===
                 Tips:
                     SQLSente..() returns tuple({true/false,apino/null}).
@@ -263,7 +267,7 @@ module PostDataController
                 end
             end
         catch err
-            JetelinaLog.writetoLogfile("SQLSentenceManager.deleteApi() error: $err")
+            JetelinaLog.writetoLogfile("PgSQLSentenceManager.deleteApi() error: $err")
             return false
         end
 
