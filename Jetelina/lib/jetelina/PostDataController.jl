@@ -111,7 +111,7 @@ module PostDataController
             ret = PgSQLSentenceManager.writeTolist(selectSql, tablename_arr)
             #===
                 Tips:
-                    SQLSente..() returns tuple({true/false,apino/null}).
+                    PgSQLSente..() returns tuple({true/false,apino/null}).
                     return apino in json style if the first in tuple were true.
             ===#
             if ret[1] 

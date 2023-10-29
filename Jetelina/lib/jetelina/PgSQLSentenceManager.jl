@@ -13,6 +13,9 @@ functions
     fileBackup(fname::String)  back up the ordered file with date suffix. ex. <file>.txt -> <file>.txt.yyyymmdd-HHMMSS
     sqlDuplicationCheck(nsql::String)  confirm duplication, if 'nsql' exists in JetelinaSQLListfile.but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
     checkSubQuery(subquery::String) check posted subquery strings wheather exists any illegal strings in it.
+    createInsertSentence(tn::String,cs::String,ds::String) create sql input sentence by queries.
+    createUpdateSentence(tn::String,us::String) create sql update sentence by queries.
+    createDeleteSentence(tn::String) create sql delete sentence by query.
 """
 module PgSQLSentenceManager
 
@@ -264,6 +267,48 @@ module PgSQLSentenceManager
     """
     function checkSubQuery(subquery::String)
         return replace(subquery,";"=>"")
+    end
+    """
+    function createInsertSentence(tn::String,cs::String,ds::String)
+
+        create sql input sentence by queries.
+        this function executs when csv file uploaded.
+
+    # Arguments
+    - `tn::String`: table name
+    - `cs::String`: column name strings
+    - `ds::String`: data strings
+    - return: String: sql insert sentence
+    """
+    function createInsertSentence(tn::String,cs::String,ds::String)
+        return """insert into $tn ($cs) values($ds)"""
+    end
+    """
+    function createUpdateSentence(tn::String,us::String)
+
+        create sql update sentence by queries.
+        this function executs when csv file uploaded.
+
+    # Arguments
+    - `tn::String`: table name
+    - `us::String`: update strings
+    - return: String: sql update sentence
+    """
+    function createUpdateSentence(tn::String,us::String)
+        return """update $tn set $us where jt_id={jt_id}"""
+    end
+    """
+    function createDeleteSentence(tn::String)
+
+        create sql delete sentence by query.
+        this function executs when csv file uploaded.
+
+    # Arguments
+    - `tn::String`: table name
+    - return: String: sql delete sentence
+    """
+    function createDeleteSentence(tn::String)
+        return  """update $tn set jetelina_delete_flg=1 where jt_id={jt_id}"""
     end
 
 end

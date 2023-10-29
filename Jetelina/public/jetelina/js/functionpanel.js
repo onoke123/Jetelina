@@ -241,10 +241,18 @@ const fileupload = () => {
       typingControll(chooseMsg('fail', "", ""));
     }
   }).fail(function (result) {
-    // something error happened
-    console.error("fileupload() failed");
-    typingControll(chooseMsg('fail', "", ""));
-  });
+    let failtype = "unknown error";
+    let failmsg = "fail";
+    if(!result){
+      // something error happened
+      failtype = "csv format error";
+      failmgs = "6func-csv-format-error";
+      typingControll(chooseMsg('fail', "", ""));
+    }
+
+    console.error("fileupload():", failtype);
+    typingControll(chooseMsg(failmsg, "", ""));
+});
 }
 
 /*

@@ -73,6 +73,7 @@ scenario['6func-fileupload-open-cmd'] = ['file open','open file','open the file 
 scenario['6func-fileupload-open-msg'] = ['Which file?'];
 scenario['6func-fileupload-cmd'] = ['file up','upload','up load','file up load','fileup load','fileupload','up'];
 scenario['6func-fileupload-msg'] = ['File?'];
+scenario['6func-csv-format-error'] = ['CSV format is not good, maybe lacked \'jt_id\'','Unacceptable CSV format, maybe lacked \'jt_id\''];
 scenario['6func-postcolumn-where-option-msg'] = ['Wanna set the \'Where\' sentence? This is an option.'];
 scenario['6func-postcolumn-where-indispensable-msg'] = ['Set the \'Where\' sentence. This is an indispensable.'];
 scenario['6func-postcolumn-available-msg'] = ['Now you can post them','Do post them','Type \'post\' now'];

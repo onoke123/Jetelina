@@ -38,6 +38,15 @@ module CSVFileController
         row::Int = 1
         df = CSV.read( csvfname, DataFrame, limit=row )
 
+        #===
+            Tips:
+                CSV files must have 'jt_id' name in its column.
+                This is the protocol.
+        ===#
+        if("jt_id" ∉ names(df))
+            return false
+        end
+
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             DBDataController.dataInsertFromCSV( csvfname )
