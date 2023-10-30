@@ -34,11 +34,13 @@ module JetelinaReadSqlList
     """
     function readSqlList2DataFrame()
         sqlFile = getFileNameFromConfigPath(JetelinaSQLListfile)
-        df = CSV.read( sqlFile, DataFrame )
-        global Df_JetelinaSqlList = df
+        if isfile(sqlFile)
+            df = CSV.read( sqlFile, DataFrame )
+            global Df_JetelinaSqlList = df
 
-        if debugflg
-            @info "JetelinaReadSqlList.readSqlList2DataFrame() sql list in DataFrame: ", Df_JetelinaSqlList 
+            if debugflg
+                @info "JetelinaReadSqlList.readSqlList2DataFrame() sql list in DataFrame: ", Df_JetelinaSqlList 
+            end
         end
     end
 end

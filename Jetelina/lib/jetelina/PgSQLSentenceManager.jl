@@ -7,11 +7,11 @@ Description:
     General DB action controller
 
 functions
-    writeTolist(sql::String, tablename_arr::Vector{String})  create api no and write it to JetelinaSQLListfile order by SQL sentence.
+    writeTolist(sql::String, subquery::String, tablename_arr::Vector{String})  create api no and write it to JetelinaSQLListfile order by SQL sentence.
     updateSqlList(dic::Dict)  update JetelinaSQLListfile file
     deleteFromlist(tablename::String)  delete table name from JetelinaSQLListfile synchronized with dropping table.
     fileBackup(fname::String)  back up the ordered file with date suffix. ex. <file>.txt -> <file>.txt.yyyymmdd-HHMMSS
-    sqlDuplicationCheck(nsql::String)  confirm duplication, if 'nsql' exists in JetelinaSQLListfile.but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
+    sqlDuplicationCheck(nsql::String, subq::String)  confirm duplication, if 'nsql' exists in JetelinaSQLListfile.but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
     checkSubQuery(subquery::String) check posted subquery strings wheather exists any illegal strings in it.
     createInsertSentence(tn::String,cs::String,ds::String) create sql input sentence by queries.
     createUpdateSentence(tn::String,us::String) create sql update sentence by queries.
@@ -35,9 +35,10 @@ module PgSQLSentenceManager
         
     # Arguments
     - `sql::String`: sql sentence
+    - `subquery::String`: sub query sentence
     - `tablename_arr::Vector{String}`: table name list that are used in 'sql'
     """
-    function writeTolist(sql::String, tablename_arr::Vector{String})
+    function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String})
         # get the sequence name then create the sql sentence
         seq_no = DBDataController.getSequenceNumber(1)
         suffix = string()
@@ -55,7 +56,7 @@ module PgSQLSentenceManager
         end
 
         sql = strip(sql)
-        sqlsentence = """$suffix$seq_no,\"$sql\""""
+        sqlsentence = """$suffix$seq_no,\"$sql\",\"$subquery\""""
 
         if debugflg
             @info "PgSQLSentenceManager.writeTolist() sql sentence: ", sqlsentence
@@ -70,7 +71,7 @@ module PgSQLSentenceManager
         try
             open(sqlFile, "a") do f
                 if !thefirstflg
-                    println(f, string(JetelinaFileColumnApino,',',JetelinaFileColumnSql))
+                    println(f, string(JetelinaFileColumnApino,',',JetelinaFileColumnSql,',',JetelinaFileColumnSubQuery))
                 end
 
 
@@ -127,7 +128,7 @@ module PgSQLSentenceManager
                 'header' is for customizing the file headers.
         ===#
         try
-            CSV.write( experimentFile, newlist, header=[JetelinaFileColumnApino,JetelinaFileColumnSql] )
+            CSV.write( experimentFile, newlist, header=[JetelinaFileColumnApino,JetelinaFileColumnSql,JetelinaFileColumnSubQuery] )
         catch err
             println(err)
             JetelinaLog.writetoLogfile("PgSQLSentenceManager.updateSqlList() error: $err")
@@ -220,25 +221,21 @@ module PgSQLSentenceManager
     end
 
     """
-    function sqlDuplicationCheck(nsql::String)
+    function sqlDuplicationCheck(nsql::String, subq::String)
 
         confirm duplication, if 'nsql' exists in JetelinaSQLListfile.
         but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
 
     # Arguments
     - `nsql::String`: sql sentence
+    - `subq::String`: sub query string for 'nsql'
     - return:  tuple style
                exist     -> ture, api no(ex.js100)
                not exist -> false
     """
-    function sqlDuplicationCheck(nsql::String)
-        # exist?
+    function sqlDuplicationCheck(nsql::String, subq::String)
+        # already exist?
         for i=1:nrow(Df_JetelinaSqlList)
-            strs = [nsql,Df_JetelinaSqlList[!,:sql][i]]
-            process1 = split.(strs,r"\W",keepempty=false)
-            process2 = map(x->lowercase.(x),process1)
-            process3 = sort.(process2)
-            process4 = countmap(process3)
             #===
                 Tips:
                     the result in process4 will be
@@ -246,7 +243,28 @@ module PgSQLSentenceManager
                         not exist -> length(process4)=2
                     because coutmap() do group together.
             ===#
-            if length(process4) == 1
+            # duplication check for SQL
+            strs = [nsql,Df_JetelinaSqlList[!,:sql][i]]
+            @info "strs" strs
+            process1 = split.(strs,r"\W",keepempty=false)
+            process2 = map(x->lowercase.(x),process1)
+            process3 = sort.(process2)
+            process4 = countmap(process3)
+            # duplication check for Sub query
+            sq = Df_JetelinaSqlList[!,:subquery][i]
+            if !ismissing(sq)
+                s_strs = [subq,sq]
+                @info "s_strs" s_strs
+                s_process1 = split.(s_strs,r"\W",keepempty=false)
+                s_process2 = map(y->lowercase.(y),s_process1)
+                s_process3 = sort.(s_process2)
+                s_process4 = countmap(s_process3)
+            else
+                s_process4 = ["dummy"];
+            end
+@info "pro..4, s_pro..4" process1,s_process4
+            if length(process4) == 1 && length(s_process4) == 1
+#            if length(process4) == 1
                 return true, Df_JetelinaSqlList[!,:apino][i]
             end
 
@@ -292,10 +310,10 @@ module PgSQLSentenceManager
     # Arguments
     - `tn::String`: table name
     - `us::String`: update strings
-    - return: String: sql update sentence
+    - return: Tuple: (sql update sentence, sub query sentence)
     """
     function createUpdateSentence(tn::String,us::String)
-        return """update $tn set $us where jt_id={jt_id}"""
+        return """update $tn set $us""", """where jt_id={jt_id}"""
     end
     """
     function createDeleteSentence(tn::String)
@@ -305,10 +323,10 @@ module PgSQLSentenceManager
 
     # Arguments
     - `tn::String`: table name
-    - return: String: sql delete sentence
+    - return: Tuple: (sql delete sentence, sub query sentence)
     """
     function createDeleteSentence(tn::String)
-        return  """update $tn set jetelina_delete_flg=1 where jt_id={jt_id}"""
+        return  """update $tn set jetelina_delete_flg=1""", """where jt_id={jt_id}"""
     end
 
 end

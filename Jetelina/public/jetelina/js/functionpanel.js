@@ -819,7 +819,7 @@ const functionPanelFunctions = (ut) => {
             preferent.cmd = cmd;
           }
         } else {
-          m = chooseMsg('6func_post_err', "", "");
+          m = chooseMsg('6func-post-err', "", "");
         }
 
         break;

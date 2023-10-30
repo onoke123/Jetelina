@@ -426,18 +426,18 @@ using PgSQLSentenceManager
         push!(tablename_arr, tableName)
 #        insert_str = """insert into $tableName ($insert_column_str) values($insert_data_str)"""
         insert_str = PgSQLSentenceManager.createInsertSentence(tableName,insert_column_str,insert_data_str)
-        PgSQLSentenceManager.writeTolist(insert_str, tablename_arr)
+        PgSQLSentenceManager.writeTolist(insert_str,"", tablename_arr)
 
         # update
 #        update_str = """update $tableName set $update_str where jt_id={jt_id}"""
         update_str = PgSQLSentenceManager.createUpdateSentence(tableName,update_str)
-        PgSQLSentenceManager.writeTolist(update_str, tablename_arr)
+        PgSQLSentenceManager.writeTolist(update_str[1],update_str[2], tablename_arr)
 
         # delete
 #        delete_str = """delete from $tableName where jt_id={jt_id}"""
 #        delete_str = """update $tableName set jetelina_delete_flg=1 where jt_id={jt_id}"""
         delete_str =  PgSQLSentenceManager.createDeleteSentence(tableName)
-        PgSQLSentenceManager.writeTolist(delete_str, tablename_arr)
+        PgSQLSentenceManager.writeTolist(delete_str[1], delete_str[2], tablename_arr)
 
         if isempty(df_tl)
             # manage to jetelina_table_manager

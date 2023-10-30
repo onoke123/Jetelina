@@ -25,6 +25,7 @@ module JetelinaReadConfig
         JetelinaImprApis,# suggestion file name due to execute test db
         JetelinaFileColumnApino,# column title of sqllogfile/sqllistfile/experimentalsqllistfile
         JetelinaFileColumnSql,# column title of sqllogfile/sqllistfile/experimentalsqllistfile
+        JetelinaFileColumnSubQuery,# column title of sqllogfile/sqllistfile/experimentalsqllistfile
         JetelinaFileColumnMax,# column title of sqllogfile/sqllistfile/experimentalsqllistfile
         JetelinaFileColumnMin,# column title of sqllogfile/sqllistfile/experimentalsqllistfile
         JetelinaFileColumnMean,# column title of sqllogfile/sqllistfile/experimentalsqllistfile
@@ -104,6 +105,10 @@ module JetelinaReadConfig
                     elseif startswith(l[i], "file_column_sql")
                         # column title of sqllogfile/sqllistfile/experimentalsqllistfile
                         global JetelinaFileColumnSql = _getSetting(l[i])
+                    elseif startswith(l[i], "file_column_subquery")
+                        # column title of sqllogfile/sqllistfile/experimentalsqllistfile
+                        global JetelinaFileColumnSubQuery = _getSetting(l[i])
+
                     elseif startswith(l[i], "file_column_max")
                         # column title of sqllogfile/sqllistfile/experimentalsqllistfile
                         global JetelinaFileColumnMax = _getSetting(l[i])

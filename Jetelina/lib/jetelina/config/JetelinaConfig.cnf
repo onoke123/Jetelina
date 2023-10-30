@@ -31,6 +31,7 @@ improvesuggestionfile = JetelinaSuggestion.json
 # 
 file_column_apino = apino
 file_column_sql = sql
+file_column_subquery = subquery
 file_column_max = max
 file_column_min = min
 file_column_mean = mean

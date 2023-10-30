@@ -95,20 +95,21 @@ module PostDataController
             end
         end
 
-        if !isnothing(subq_d) && 0<length(subq_d) && subq_d != "ignore"
-            subquerysentence = """jetelina_subquery={$subq_d}"""
-        end
+#        if !isnothing(subq_d) && 0<length(subq_d) && subq_d != "ignore"
+#            subquerysentence = """jetelina_subquery={$subq_d}"""
+#        end
 
-        selectSql = """select $selectSql from $tableName $subquerysentence"""
+#        selectSql = """select $selectSql from $tableName $subquerysentence"""
+        selectSql = """select $selectSql from $tableName"""
 
-        ck = PgSQLSentenceManager.sqlDuplicationCheck(selectSql)
+        ck = PgSQLSentenceManager.sqlDuplicationCheck(selectSql, subq_d)
 
         if ck[1] 
             # already exist it. return it and do nothing.
             return json(Dict("resembled" => ck[2]))
         else
             # yes this is the new
-            ret = PgSQLSentenceManager.writeTolist(selectSql, tablename_arr)
+            ret = PgSQLSentenceManager.writeTolist(selectSql, subq_d, tablename_arr)
             #===
                 Tips:
                     PgSQLSente..() returns tuple({true/false,apino/null}).
@@ -253,7 +254,7 @@ module PostDataController
         try
             open(apiFile_tmp, "w") do tio
                 # write header first
-                println(tio,string("$JetelinaFileColumnApino,$JetelinaFileColumnSql"))
+                println(tio,string("$JetelinaFileColumnApino,$JetelinaFileColumnSql,$JetelinaFileColumnSubQuery"))
                 open(apiFile, "r") do io
                     for ss in eachline(io,keep=false)
                         if contains( ss, '\"' )

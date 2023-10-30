@@ -33,7 +33,7 @@ scenario['cancel'] = ['It has been canceld','Has been withdrawn','Canceled','Wit
 scenario['confirmation-sentences'] = ['yes','sure','why not','do it','do','i want to do it','i wanna do it','kick ass'];
 //scenario['6func_in'] = ['Do you wanna open the function panel?'];
 scenario['6func'] = ['Let me your command, if you need'];
-scenario['6func_post_err'] = ['Hey, no columns','You should select post data','Boo'];
+scenario['6func-post-err'] = ['Hey, no columns','You should select post data','Boo'];
 //scenario['6cond_in'] = ['Do you wanna open the condition panel?'];
 
 //open the function panel
