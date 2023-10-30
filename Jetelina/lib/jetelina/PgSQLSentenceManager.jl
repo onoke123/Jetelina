@@ -260,11 +260,11 @@ module PgSQLSentenceManager
                 s_process3 = sort.(s_process2)
                 s_process4 = countmap(s_process3)
             else
+                # in the case of all were 'missing',be length(s_prrocess4)=1, anyhow :p
                 s_process4 = ["dummy"];
             end
-@info "pro..4, s_pro..4" process1,s_process4
+
             if length(process4) == 1 && length(s_process4) == 1
-#            if length(process4) == 1
                 return true, Df_JetelinaSqlList[!,:apino][i]
             end
 

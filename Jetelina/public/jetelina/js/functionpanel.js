@@ -12,11 +12,9 @@
       isVisibleColumns() checking "#columns" is visible or not
       itemSelect(p) select table column
       deleteSelectedItems(p) delete the selected columns from #container field   選択されているcolumnsを#containerから削除する
-
       cleanUp(s)  droped items & columns of selecting table
       cleanupItems4Switching() clear screen in activeItem class when switching table list/api list 
       cleanupContainers() clear screen in the detail zone showing when switching table list/api list 
-
       fileupload() CSV file upload
       getdataFromJson(o,k) aquire the ordered data from the ordered json object  指定されたJsonデータから指定されたデータを取得する
       listClick(p)   do something by clicking tble list or api list items  Table list / API listをクリックした時の処理 
@@ -289,7 +287,7 @@ $(document).on("click", ".table,.api", function () {
  * @function getdataFromJson
  * @param {object} o  json object 
  * @param {string} k  targeted desiring data (json name part)
- * @returns {string}  targeted desiring data (json value part)
+ * @returns {object}  targeted desiring data (apino, sql, subquery)
  * 
  * aquire the ordered data from the ordered json object.
  */
@@ -303,7 +301,7 @@ const getdataFromJson = (o, k) => {
       $.each(o[key], function (n, v) {
         $.each(v, function (name, value) {
           if (value == k) {
-            ret = v.sql;
+            ret = v;
             return false;// loop out
           }
         });
@@ -341,16 +339,21 @@ const listClick = (p) => {
       // showing ordered sql from preferent.apilist that is gotten by postAjaxData("/getapilist",...)
       if (preferent.apilist != null && preferent.apilist.length != 0) {
         let s = getdataFromJson(preferent.apilist, t);
-        if (0 < s.length) {
+        if (0 < s.sql.length) {
           // api in/out json
           let in_if = setApiIF_In(t, s);
           $("#columns .item_area").append(`<span class="apisql apiin"><bold>IN:</bold>${in_if}</span>`);
           let in_out = setApiIF_Out(t, s);
           $("#columns .item_area").append(`<span class="apisql apiout"><bold>OUT:</bold>${in_out}</span>`);
+          // possibly s.subquery is null
+          let sqlstr = "";
+          if(s.subquery != null){
+            sqlstr = `${s.sql} ${s.subquery};`;
+          }else{
+            sqlstr = `${s.sql};`;
+          }
 
-//          s = s.replaceAll('<','{');
-//          s = s.replaceAll('>','}');
-          $("#container").append(`<span class="apisql"><p>${s}</p></span>`);
+          $("#container").append(`<span class="apisql"><p>${sqlstr}</p></span>`);
         }
       }
     }
@@ -362,7 +365,7 @@ const listClick = (p) => {
 /**
  * @function setApiIF_In
  * @param {string} t targeted desiring data (json name part)
- * @param {string} s targeted desiring data (json value part)
+ * @param {object} s targeted desiring data object(apino, sql, subquery)
  * @returns {string} json form string
  * 
  * Show Json of 'API　IN'
@@ -373,33 +376,22 @@ const setApiIF_In = (t, s) => {
 
   if (ta.startsWith("js")) {
     //select
+    if( s.subquery != null && 0<s.subquery.length ){
+      ret = `{"apino":\"${t}\","subquery":\"${s.subquery}\"}`;
+    }else{
+      ret = `{"apino":\"${t}\"}`;
 
-    /*
-        create sql sentence with 'where sentence'
-    */
-    let subquery = "\"subquery\":[";
-    let qd = s.match(/\?/g);
-    if (qd != null) {
-      for (let i = 1; i <= qd.length; i++) {
-        subquery = `${subquery} d${i},`;
-      }
-
-      subquery = subquery.slice(0, -1);// cut the end of ','
     }
-
-    subquery = `${subquery}]`;
-
-    ret = `{"apino":\"${t}\",${subquery}}`;
   } else if (ta.startsWith("ji")) {
     //insert
     // insert into table values(a,b,...) -> a,b,...
-    let i_sql = s.split("values(");
+    let i_sql = s.sql.split("values(");
     i_sql[1] = i_sql[1].slice(0, i_sql[1].length - 1).replaceAll('\'','').replaceAll('{','').replaceAll('}','');
     ret = buildJetelinaJsonForm(t, i_sql[1]);
   } else if (ta.startsWith("ju") || ta.startsWith("jd")) {
     //update and delete(indeed update)
     // update table set a=d_a,b=d_b..... -> a=d_a,b=d_b...
-    let u_sql = s.split("set");
+    let u_sql = s.sql.split("set");
     ret = buildJetelinaJsonForm(t, u_sql[1]);
     // special for 'ju and 'jd'
       ret = ret.slice(0,ret.length-1) + ",\"jt_id\":{jt_id}" + ret.slice(ret.length-1,ret.length);
@@ -412,7 +404,7 @@ const setApiIF_In = (t, s) => {
 /**
  * @function setApiIF_Out
  * @param {string} t targeted desiring data (json name part)
- * @param {string} s targeted desiring data (json value part)
+ * @param {object} s targeted desiring data object(apino, sql, subquery)
  * @returns {string} json form string in select sentece, other true/false
  *
  * Show Json of 'API OUT'
@@ -422,7 +414,7 @@ const setApiIF_Out = (t, s) => {
   let ret = "true or false";
 
   if (t.toLowerCase().startsWith("js")) {
-    let pb = s.split("select");
+    let pb = s.sql.split("select");
     let pf = pb[1].split("from");
     // there is the items in pf[0]
     if (pf[0] != null && 0 < pf[0].length) {

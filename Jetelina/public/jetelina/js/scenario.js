@@ -16,7 +16,7 @@ scenario['bura'] = ['Hi Ho','Fun fun fun','Someone is there?','Waiting for.....'
 /* greeting */
 scenario[1] = ['Nice to see you', 'How are you?'];
 scenario['1a'] = ['Nice to hear it', 'Wow, super','lucky you'];
-userresponse[1] = ['fine','good','sorry'];
+userresponse[1] = ['fine','good','great'];
 /* login */
 scenario[2] = ['Could you give me your name?','Let me know your name, please','May I ask your name?'];
 /* etc */
