@@ -12,7 +12,11 @@
       isVisibleColumns() checking "#columns" is visible or not
       itemSelect(p) select table column
       deleteSelectedItems(p) delete the selected columns from #container field   選択されているcolumnsを#containerから削除する
+
       cleanUp(s)  droped items & columns of selecting table
+      cleanupItems4Switching() clear screen in activeItem class when switching table list/api list 
+      cleanupContainers() clear screen in the detail zone showing when switching table list/api list 
+
       fileupload() CSV file upload
       getdataFromJson(o,k) aquire the ordered data from the ordered json object  指定されたJsonデータから指定されたデータを取得する
       listClick(p)   do something by clicking tble list or api list items  Table list / API listをクリックした時の処理 
@@ -199,6 +203,27 @@ const cleanUp = (s) => {
     // clean up API list
     $("#api_container .api").remove();
   }
+}
+/**
+ * @function cleanupItems4Switching
+ * 
+ * clear screen in activeItem class when switching table list/api list
+ */
+const cleanupItems4Switching = () => {
+  if (isVisibleTableContainer()) {
+      $("#table_container span").removeClass("activeItem");
+  } else if (isVisibleApiContainer()) {
+      $("#api_container span").removeClass("activeItem");
+      $("#container span").remove();
+  }
+}
+/**
+* @function cleanupContainers
+* 
+* clear screen in the detail zone showing when switching table list/api list
+*/
+const cleanupContainers = () => {
+  $("#container span,#columns span").remove();
 }
 /**
  * @function fileupload
@@ -564,6 +589,8 @@ const postSelectedColumns = () => {
     */
     if (result.apino != null && 0 < result.apino.length) {
       $("#container .selectedItem").remove();
+      cleanUp("items");
+      cleanupItems4Switching();// clear(=close) opened table items. defined in jetelinalib.js
       $("#container").append(`<span class="apisql"><p>api no is ${result.apino}</p></span>`);
 
       typingControll(chooseMsg('success', "", ""));
@@ -762,13 +789,13 @@ const functionPanelFunctions = (ut) => {
               }else{
 
               }
-
+            }
               if (checkGenelicInput(subquerysentence)) {
                 postSelectedColumns();
                 m = 'ignore';
               }              
 
-            }
+            //}
           }else if(inScenarioChk(ut,'6func-postcolumn-cancel-cmd')){
             preferent.cmd = "cancel";
           }else{
@@ -805,6 +832,7 @@ const functionPanelFunctions = (ut) => {
         } else {
           // table list
           if (deleteSelectedItems()) {
+            showGenelicPanel(false);
             m = chooseMsg('cancel', "", "");
           } else {
             m = chooseMsg('unknown-msg', "", "");

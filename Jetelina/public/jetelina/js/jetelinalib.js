@@ -8,22 +8,20 @@
 
     Functions list:
       getdata(o, t) resolve the json object into each data
-      getAjaxData(url) general purpose ajax get call function 汎用的なajax getコール関数
-      postAjaxData(url,data) general purpose ajax post call function 汎用的なajax postコール関数
+      getAjaxData(url) general purpose ajax get call function 
+      postAjaxData(url,data) general purpose ajax post call function 
       typingControll(m) typing character controller
       authAjax(posturl, chunk, scenarioNumber) Authentication ajax call
-      chooseMsg(i,m,p) select a message to show in chat box from js/senario.js チャットに表示するメッセージを js/scenario.jsから選択する
-      typing(i,m) show a chat message alike typing style チャットメッセージをタイピング風に表示する
-      chkUResponse(n, s) check if the user input message is what is expected in userresponse[] ユーザレスポンスがuserresponse[]に期待されたものであるかチェックする
-      chatKeyDown(cmd) behavior of hitting enter key in the chat box by user ユーザが入力するチャットボックス(input tag)でenter keyが押されたときの処理
+      chooseMsg(i,m,p) select a message to show in chat box from js/senario.js 
+      typing(i,m) show a chat message alike typing style 
+      chkUResponse(n, s) check if the user input message is what is expected in userresponse[] 
+      chatKeyDown(cmd) behavior of hitting enter key in the chat box by user 
       openingMessage() Initial chat opening message
-      burabura() idling message in the initial screen 初期画面でログイン前に入力待ちの時にブラブラしている感じ
+      burabura() idling message in the initial screen 
       logoutChk(s) chech the user's intention is to be logout
       logout() logout
-      getPreferentPropertie(p) get prior object if there were   優先オブジェクト preferentのプロパティがあれば返す
-      cleanupItems4Switching() clear screen in activeItem class when switching table list/api list     table list/api list 表示切り替えに伴い、activeItem Classなんかをクリアする
-      cleanupContainers() clear screen in the detail zone showing when switching table list/api list     table list/api list 表示切り替えに伴い、詳細画面をクリアする
-      instractionMode(s) confirmation in adding a new scenario        Jetelinaのscenario追加確認 
+      getPreferentPropertie(p) get prior object if there were
+      instractionMode(s) confirmation in adding a new scenario
       commandlistShow(s) show/hide the command list panel
       inScenarioChk(s,sc) check if user input string is in the ordered scenario
 */
@@ -701,27 +699,6 @@ const getPreferentPropertie = (p) => {
     }
 
     return c;
-}
-/**
- * @function cleanupItems4Switching
- * 
- * clear screen in activeItem class when switching table list/api list
- */
-const cleanupItems4Switching = () => {
-    if (isVisibleTableContainer()) {
-        $("#table_container span").removeClass("activeItem");
-    } else if (isVisibleApiContainer()) {
-        $("#api_container span").removeClass("activeItem");
-        $("#container span").remove();
-    }
-}
-/**
- * @function cleanupContainers
- * 
- * clear screen in the detail zone showing when switching table list/api list
- */
-const cleanupContainers = () => {
-    $("#container span,#columns span").remove();
 }
 /**
  * @function instractionMode

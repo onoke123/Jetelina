@@ -22,3 +22,7 @@ jd381:ftest2
 ji382:ftest3
 ju383:ftest3
 jd384:ftest3
+js385:ftest,ftest2
+js386:ftest2,ftest3
+js387:ftest,ftest2,ftest3
+js388:ftest

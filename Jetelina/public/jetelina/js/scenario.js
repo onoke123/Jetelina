@@ -77,7 +77,7 @@ scenario['6func-csv-format-error'] = ['CSV format is not good, maybe lacked \'jt
 scenario['6func-postcolumn-where-option-msg'] = ['Wanna set the \'Where\' sentence? This is an option.'];
 scenario['6func-postcolumn-where-indispensable-msg'] = ['Set the \'Where\' sentence. This is an indispensable.'];
 scenario['6func-postcolumn-available-msg'] = ['Now you can post them','Do post them','Type \'post\' now'];
-scenario['6func-subpanel-open-cmd'] = ['oepn subquery panel','open sub panel','sub please','subquery panel please','subquery panel','subquery','sub panel','where panel'];
+scenario['6func-subpanel-open-cmd'] = ['sub please','subquery','sub panel','where panel','sub query'];
 scenario['6func-subpanel-opened'] =['Set your sub query in \'Sub Query\' field','Ready to \'Sub Query\' field'];
 scenario['6func-postcolumn-cancel-cmd'] = ['cancel','withdraw','abandon','postpone','give up','stop','quit'];
 /* log out */
