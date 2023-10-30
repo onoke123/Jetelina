@@ -20,6 +20,7 @@
       listClick(p)   do something by clicking tble list or api list items  Table list / API listをクリックした時の処理 
       setApiIF_In(t,s) Show Json of 'API　IN'
       setApiIF_Out(t,s) Show Json of 'API OUT'
+      setApiIF_Sql(s) Show sample execution sql sentence
       buildJetelinaJsonForm(t,s)  Create display Json form data from a API
       getColumn(tablename) Ajax function for getting the column names of the ordered table  指定されたtableのカラムデータを取得する
       removeColumn(tablename) Delete a column from selected item list on the display カラム表示されている要素を指定して表示から削除する
@@ -209,10 +210,10 @@ const cleanUp = (s) => {
  */
 const cleanupItems4Switching = () => {
   if (isVisibleTableContainer()) {
-      $("#table_container span").removeClass("activeItem");
+    $("#table_container span").removeClass("activeItem");
   } else if (isVisibleApiContainer()) {
-      $("#api_container span").removeClass("activeItem");
-      $("#container span").remove();
+    $("#api_container span").removeClass("activeItem");
+    $("#container span").remove();
   }
 }
 /**
@@ -341,19 +342,10 @@ const listClick = (p) => {
         let s = getdataFromJson(preferent.apilist, t);
         if (0 < s.sql.length) {
           // api in/out json
-          let in_if = setApiIF_In(t, s);
-          $("#columns .item_area").append(`<span class="apisql apiin"><bold>IN:</bold>${in_if}</span>`);
-          let in_out = setApiIF_Out(t, s);
-          $("#columns .item_area").append(`<span class="apisql apiout"><bold>OUT:</bold>${in_out}</span>`);
-          // possibly s.subquery is null
-          let sqlstr = "";
-          if(s.subquery != null){
-            sqlstr = `${s.sql} ${s.subquery};`;
-          }else{
-            sqlstr = `${s.sql};`;
-          }
-
-          $("#container").append(`<span class="apisql"><p>${sqlstr}</p></span>`);
+          $("#columns .item_area").append(`<span class="apisql apiin"><bold>IN:</bold>${setApiIF_In(t, s)}</span>`);
+          $("#columns .item_area").append(`<span class="apisql apiout"><bold>OUT:</bold>${setApiIF_Out(t, s)}</span>`);
+          // sample execution sql
+          $("#container").append(`<span class="apisql"><p>${setApiIF_Sql(s)}</p></span>`);
         }
       }
     }
@@ -376,9 +368,9 @@ const setApiIF_In = (t, s) => {
 
   if (ta.startsWith("js")) {
     //select
-    if( s.subquery != null && 0<s.subquery.length ){
+    if (s.subquery != null && 0 < s.subquery.length) {
       ret = `{"apino":\"${t}\","subquery":\"${s.subquery}\"}`;
-    }else{
+    } else {
       ret = `{"apino":\"${t}\"}`;
 
     }
@@ -386,7 +378,7 @@ const setApiIF_In = (t, s) => {
     //insert
     // insert into table values(a,b,...) -> a,b,...
     let i_sql = s.sql.split("values(");
-    i_sql[1] = i_sql[1].slice(0, i_sql[1].length - 1).replaceAll('\'','').replaceAll('{','').replaceAll('}','');
+    i_sql[1] = i_sql[1].slice(0, i_sql[1].length - 1).replaceAll('\'', '').replaceAll('{', '').replaceAll('}', '');
     ret = buildJetelinaJsonForm(t, i_sql[1]);
   } else if (ta.startsWith("ju") || ta.startsWith("jd")) {
     //update and delete(indeed update)
@@ -394,7 +386,7 @@ const setApiIF_In = (t, s) => {
     let u_sql = s.sql.split("set");
     ret = buildJetelinaJsonForm(t, u_sql[1]);
     // special for 'ju and 'jd'
-      ret = ret.slice(0,ret.length-1) + ",\"jt_id\":{jt_id}" + ret.slice(ret.length-1,ret.length);
+    ret = ret.slice(0, ret.length - 1) + ",\"jt_id\":{jt_id}" + ret.slice(ret.length - 1, ret.length);
   } else {
     // who knows
   }
@@ -420,6 +412,25 @@ const setApiIF_Out = (t, s) => {
     if (pf[0] != null && 0 < pf[0].length) {
       ret = buildJetelinaJsonForm(t, pf[0]);
     }
+  }
+
+  return ret;
+}
+/**
+ * @function setApiIF_Sql
+ * @param {object} s targeted desiring data object(apino, sql, subquery)
+ * @returns {string} sample execution sql sentence
+ *
+ * Show sample execution sql sentence
+ */
+const setApiIF_Sql = (s) => {
+  let ret = "";
+
+  // possibly s.subquery is null
+  if (s.subquery != null) {
+    ret = `${s.sql} ${s.subquery};`;
+  } else {
+    ret = `${s.sql};`;
   }
 
   return ret;
@@ -457,10 +468,10 @@ const buildJetelinaJsonForm = (t, s) => {
       }
 
       if (ss != "jetelina_delete_flg") {
-//        ret = `${ret}\"${$.trim(ss)}\":\"&lt;your data&gt;\",`;
-//        if (ss == "where jt_id"){
-//          ss = "jt_id";
-//        }
+        //        ret = `${ret}\"${$.trim(ss)}\":\"&lt;your data&gt;\",`;
+        //        if (ss == "where jt_id"){
+        //          ss = "jt_id";
+        //        }
 
         ret = `${ret}\"${$.trim(ss)}\":\"{${$.trim(ss)}}\",`;
       }
@@ -768,7 +779,7 @@ const functionPanelFunctions = (ut) => {
         */
         let subquerysentence = $("#genelic_panel input[name='genelic_input']").val();
         if (0 < selectedItemsArr.length) {
-          if(ut == cmd){
+          if (ut == cmd) {
             // the first calling            
             if (containsMultiTables()) {
               // 'where sentence' is demanded if there were multi tables
@@ -776,38 +787,38 @@ const functionPanelFunctions = (ut) => {
               m = chooseMsg('6func-postcolumn-where-indispensable-msg', "", "");
             } else {
               // 'where sentence' is not demanded but ask it once time
-              if(subquerysentence != "ignore"){
+              if (subquerysentence != "ignore") {
                 m = chooseMsg('6func-postcolumn-where-option-msg', "", "");
-              }else{
+              } else {
 
               }
             }
-              if (checkGenelicInput(subquerysentence)) {
-                postSelectedColumns();
-                m = 'ignore';
-              }              
+            if (checkGenelicInput(subquerysentence)) {
+              postSelectedColumns();
+              m = 'ignore';
+            }
 
             //}
-          }else if(inScenarioChk(ut,'6func-postcolumn-cancel-cmd')){
+          } else if (inScenarioChk(ut, '6func-postcolumn-cancel-cmd')) {
             preferent.cmd = "cancel";
-          }else{
+          } else {
             // the secound calling, sub query open or not
             if (inScenarioChk(ut, 'confirmation-sentences')) {
-                showGenelicPanel(true);
-                m = chooseMsg('6func-subpanel-opened',"","");
-            }else{
+              showGenelicPanel(true);
+              m = chooseMsg('6func-subpanel-opened', "", "");
+            } else {
               $("#genelic_panel input[name='genelic_input']").val("ignore");
             }
 
             // use $(..).val() because this may was set 'ignore' just above.
-            if( $("#genelic_panel input[name='genelic_input']").val() != "" ){
-              m = chooseMsg('6func-postcolumn-available-msg',"","");
+            if ($("#genelic_panel input[name='genelic_input']").val() != "") {
+              m = chooseMsg('6func-postcolumn-available-msg', "", "");
             }
 
           }
 
           // important
-          if( preferent.cmd != 'cancel'){
+          if (preferent.cmd != 'cancel') {
             preferent.cmd = cmd;
           }
         } else {
@@ -1089,20 +1100,20 @@ const containsMultiTables = () => {
  * genelic panel open or close
  */
 const showGenelicPanel = (b) => {
-  if(b){
-    if(isVisibleTableContainer()){
+  if (b) {
+    if (isVisibleTableContainer()) {
       /*
         in the case of showing table list, this field is for expecting 'Sub Query'
       */
       $("#genelic_panel text[name='genelic_text']").text("Sub Query:");
-      $("#genelic_panel input[name='genelic_input']").attr('placeholder','where .....');
+      $("#genelic_panel input[name='genelic_input']").attr('placeholder', 'where .....');
     }
 
     $("#genelic_panel").show();
     $("#genelic_panel input[name='genelic_input']").focus();
-  }else{
+  } else {
     $("#genelic_panel").hide();
-      $("#genelic_panel text[name='genelic_text']").text("");
+    $("#genelic_panel text[name='genelic_text']").text("");
     $("#jetelina_panel [name='chat_input']").focus();
   }
 }
@@ -1116,9 +1127,9 @@ const showGenelicPanel = (b) => {
 const checkGenelicInput = (s) => {
   let ret = true;
 
-  if( s == "" ){
+  if (s == "") {
     ret = false;
-  }else if(s != "ignore"){
+  } else if (s != "ignore") {
     // sub query check
   }
 
