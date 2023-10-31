@@ -367,8 +367,8 @@ const setApiIF_In = (t, s) => {
   let ret = "";
 
   if (ta.startsWith("js")) {
-    //select
-    if (s.subquery != null && 0 < s.subquery.length) {
+    //select. 'ignore' -> no sub query
+    if (s.subquery != null && 0 < s.subquery.length && s.subquery != "ignore") {
       ret = `{"apino":\"${t}\","subquery":\"${s.subquery}\"}`;
     } else {
       ret = `{"apino":\"${t}\"}`;
@@ -451,36 +451,31 @@ const buildJetelinaJsonForm = (t, s) => {
     let cn = c[i].split('.');
     if (ret.length == 0) {
       ret = `{"apino":\"${t}\",`;
+    }
+
+    let ss = "";
+    if (cn[1] != null && 0 < cn[1].length) {
+      // select
+      ss = cn[1];
     } else {
-      let ss = "";
-      if (cn[1] != null && 0 < cn[1].length) {
-        // select
-        ss = cn[1];
+      //insert update delete
+      if (c[i].indexOf("=") != -1) {
+        //update
+        ss = c[i].split("=")[0];
       } else {
-        //insert update delete
-        if (c[i].indexOf("=") != -1) {
-          //update
-          ss = c[i].split("=")[0];
-        } else {
-          //insert delete
-          ss = c[i];
-        }
+        //insert delete
+        ss = c[i];
       }
+    }
 
-      if (ss != "jetelina_delete_flg") {
-        //        ret = `${ret}\"${$.trim(ss)}\":\"&lt;your data&gt;\",`;
-        //        if (ss == "where jt_id"){
-        //          ss = "jt_id";
-        //        }
-
-        ret = `${ret}\"${$.trim(ss)}\":\"{${$.trim(ss)}}\",`;
-      }
+    if (ss != "jetelina_delete_flg") {
+      ret = `${ret}\"${$.trim(ss)}\":\"{${$.trim(ss)}}\",`;
     }
   }
 
   if (0 < ret.length) {
-    ret = ret.slice(0, ret.length - 1);//冗長な最後の","から前を使う
-    ret = `${ret}}`;
+    ret = ret.slice(0, ret.length - 1);// reject ',' from the tail
+    ret = `${ret}}`; // caution: the last '}' is necessary
   }
 
   return ret;

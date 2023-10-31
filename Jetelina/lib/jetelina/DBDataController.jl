@@ -7,18 +7,19 @@
         General DB action controller
 
     functions
-        __init__()
-        init_Jetelina_table()
-        dataInsertFromCSV(csvfname::String)
-        getTableList(s::String)
-        getSequenceNumber(t::Integer)
-        dropTable(tableName::String)
-        getColumns(tableName::String)
+        __init__() Initial action. Execute init_Jetelina_table()
+        init_Jetelina_table() Execute *.create_jetelina_table() depend on DB type.Execute *.readJetelinatable() depend on DB type.
+        dataInsertFromCSV(csvfname::String) CSV data inserts into DB. It executes in *.dataInsertFromCSV depend on DB type.
+        getTableList(s::String) Get the ordered table list by executing *.getTable() depend on DB type
+        getSequenceNumber(t::Integer) Get seaquence number from jetelina_id table depend on DB type.
+        dropTable(tableName::String) Drop the table and delete its related data from jetelina_table_manager table
+        getColumns(tableName::String) Get columns of ordered table name depend on DB type.
         doInsert()
         doSelect(sql::String,mode::String)
         doUpdate()
         doDelete()
-        getUserAccount(s::String)
+        getUserAccount(s::String) Get user account for authentication.
+        executeApi(d) Execute SQL sentence order by d: json raw data.
 """
 
 module DBDataController
@@ -28,7 +29,7 @@ module DBDataController
     using PgDBController, JetelinaFiles
 
     export init_Jetelina_table,dataInsertFromCSV,getTableList,getSequenceNumber,dropTable,getColumns,doInsert,doSelect,doUpdate,
-    doDelete,getUserAccount
+    doDelete,getUserAccount,executeApi
 
     """
     function __init__()
@@ -91,7 +92,7 @@ module DBDataController
     """
     function getSequenceNumber(t::Integer)
 
-        get seaquence number from jetelina_id table depend on DB type.
+        Get seaquence number from jetelina_id table depend on DB type.
 
     # Arguments
     - `t: Integer`  : type order  0-> jetelina_id, 1-> jetelian_sql_sequence        
@@ -107,7 +108,7 @@ module DBDataController
     """
     function dropTable(tableName::String)
             
-        drop the table and delete its related data from jetelina_table_manager table
+        Drop the table and delete its related data from jetelina_table_manager table
 
     # Arguments
     - `tableName: String`: name of the table
@@ -123,7 +124,7 @@ module DBDataController
     """
     function getColumns(tableName::String)
 
-        get columns of ordered table name depend on DB type.
+        Get columns of ordered table name depend on DB type.
 
     # Arguments
     - `tableName: String`: DB table name
@@ -195,7 +196,7 @@ module DBDataController
     """
     function getUserAccount(s::String)
 
-        get user account for authentication.
+        Get user account for authentication.
         
     # Arguments
     - `s::String`:  user information. login account or first name or last name.        
@@ -204,6 +205,23 @@ module DBDataController
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.getUserAccount(s)
+        elseif JetelinaDBtype == "mariadb"
+        elseif JetelinaDBtype == "oracle"
+        end
+    end
+
+    """
+    function executeApi(d)
+
+        Execute SQL sentence order by d: json raw data.
+        
+    # Arguments
+    - `d`:  json raw data, uncertain data type        
+    """
+    function executeApi(d)
+        if JetelinaDBtype == "postgresql"
+            # Case in PostgreSQL
+            PgDBController.executeApi(d)
         elseif JetelinaDBtype == "mariadb"
         elseif JetelinaDBtype == "oracle"
         end

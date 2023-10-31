@@ -342,7 +342,6 @@ module PgSQLSentenceManager
               new sql then success to append it to  -> json {"apino":"<something no>"}
                            fail to append it to     -> false
     """
-    #function createApiSelectSentence(item_d::Vector{String},subq_d::String)
     function createApiSelectSentence(item_d,subq_d)
             #==
             Tips:

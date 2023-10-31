@@ -52,8 +52,8 @@ route( "/getalldbtable", GetDataController.getTableList )
 route( "/deletetable", PostDataController.deleteTable, method = POST )
 # returns column list ordered by table in Json
 route( "getcolumns", PostDataController.getColumns, method = POST )
-# handle json data for db action of insert/update/delete
-route( "/dbactions", PostDataController.handlepostdata, method = POST )
+# handle json data for db action of insert/update/delete/select
+route( "/apiactions", PostDataController.handleApipostdata, method = POST )
 #===
     -Handle APIs
 ===#

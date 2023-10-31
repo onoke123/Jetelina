@@ -7,23 +7,24 @@
         DB controller for PostgreSQL
 
     functions
-        create_jetelina_tables()
-        create_jetelina_id_sequence()
-        open_connection()
-        close_connection(conn::LibPQ.Connection)
-        readJetelinatable()
-        getTableList(s::String)
-        getJetelinaSequenceNumber(t::Integer)
-        insert2JetelinaTableManager(tableName::String, columns::Array)
-        dataInsertFromCSV(fname::String)
-        dropTable(tableName::String)
-        getColumns(tableName::String)
+        create_jetelina_tables() create 'jetelina_table_manager' table.
+        create_jetelina_id_sequence() create 'jetelina_id' sequence.
+        open_connection() open connection to the DB.
+        close_connection(conn::LibPQ.Connection)  close the DB connection
+        readJetelinatable() read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame 
+        getTableList(s::String) get all table name from public 'schemaname'
+        getJetelinaSequenceNumber(t::Integer) get seaquence number from jetelina_id table
+        insert2JetelinaTableManager(tableName::String, columns::Array) insert columns of 'tableName' into Jetelina_table_manager  
+        dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
+        dropTable(tableName::String) drop the table and delete its related data from jetelina_table_manager table
+        getColumns(tableName::String) get columns name of ordereing table.
+        executeApi(d) execute API with creating SQL sentence
         doInsert()
-        doSelect(sql::String,mode::String)
+        doSelect(sql::String,mode::String) execute select data by ordering sql sentence, but get sql execution time of ordered sql if 'mode' is 'measure'.
         doUpdate()
         doDelete()
-        getUserAccount(s::String)
-        measureSqlPerformance()
+        getUserAccount(s::String) get user account for authentication.
+        measureSqlPerformance() measure exectution time of all listed sql sentences. then write it out to JetelinaSqlPerformancefile.
 """
 module PgDBController
 
@@ -513,6 +514,19 @@ using PgSQLSentenceManager
         end
 
         return j
+    end
+    """
+    function executeApi(d)
+
+        execute API with creating SQL sentence
+
+    # Arguments
+    - `d`:  json raw data, uncertain data type        
+    - return: insert/update/delete -> true/false
+              select               -> json format data
+              error                -> false
+    """
+    function executeApi(d)
     end
     """
     function doInsert()

@@ -21,14 +21,21 @@ module PostDataController
     using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
     using PgSQLSentenceManager,JetelinaFiles
 
-    export createApi,getColumns,getApiList,deleteTable,login,deleteApi
+    export createApi,getColumns,getApiList,deleteTable,login,deleteApi,handleApipostdata
     
     """
-    for test
+    function handleApipostdata()
+
+        execute ordered API by posting data.
+
+    # Arguments
+    - return: insert/update/delete -> true/false
+              select               -> json format data
+              error                -> false
     """
-    function handlepostdata()
+    function handleApipostdata()
         d = rawpayload()
-        @info "post data all: " d
+        return DBDataController.executeApi(d)
     end
 
     """
