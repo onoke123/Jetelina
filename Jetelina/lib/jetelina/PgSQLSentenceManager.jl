@@ -13,13 +13,15 @@ functions
     fileBackup(fname::String)  back up the ordered file with date suffix. ex. <file>.txt -> <file>.txt.yyyymmdd-HHMMSS
     sqlDuplicationCheck(nsql::String, subq::String)  confirm duplication, if 'nsql' exists in JetelinaSQLListfile.but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
     checkSubQuery(subquery::String) check posted subquery strings wheather exists any illegal strings in it.
-    createInsertSentence(tn::String,cs::String,ds::String) create sql input sentence by queries.
-    createUpdateSentence(tn::String,us::String) create sql update sentence by queries.
-    createDeleteSentence(tn::String) create sql delete sentence by query.
+    createApiInsertSentence(tn::String,cs::String,ds::String) create sql input sentence by queries.
+    createApiUpdateSentence(tn::String,us::String) create sql update sentence by queries.
+    createApiDeleteSentence(tn::String) create sql delete sentence by query.
+    createApiSelectSentence(item_d::Vector{String},subq_d::String) create select sentence of SQL from posting data,
 """
 module PgSQLSentenceManager
 
     using Dates, StatsBase, CSV, DataFrames
+    using Genie, Genie.Requests, Genie.Renderer.Json
     using DBDataController, JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
 
     export writeTolist,updateSqlList,deleteFromlist,fileBackup,sqlDuplicationCheck
@@ -287,7 +289,7 @@ module PgSQLSentenceManager
         return replace(subquery,";"=>"")
     end
     """
-    function createInsertSentence(tn::String,cs::String,ds::String)
+    function createApiInsertSentence(tn::String,cs::String,ds::String)
 
         create sql input sentence by queries.
         this function executs when csv file uploaded.
@@ -298,11 +300,11 @@ module PgSQLSentenceManager
     - `ds::String`: data strings
     - return: String: sql insert sentence
     """
-    function createInsertSentence(tn::String,cs::String,ds::String)
+    function createApiInsertSentence(tn::String,cs::String,ds::String)
         return """insert into $tn ($cs) values($ds)"""
     end
     """
-    function createUpdateSentence(tn::String,us::String)
+    function createApiUpdateSentence(tn::String,us::String)
 
         create sql update sentence by queries.
         this function executs when csv file uploaded.
@@ -312,11 +314,11 @@ module PgSQLSentenceManager
     - `us::String`: update strings
     - return: Tuple: (sql update sentence, sub query sentence)
     """
-    function createUpdateSentence(tn::String,us::String)
+    function createApiUpdateSentence(tn::String,us::String)
         return """update $tn set $us""", """where jt_id={jt_id}"""
     end
     """
-    function createDeleteSentence(tn::String)
+    function createApiDeleteSentence(tn::String)
 
         create sql delete sentence by query.
         this function executs when csv file uploaded.
@@ -325,8 +327,96 @@ module PgSQLSentenceManager
     - `tn::String`: table name
     - return: Tuple: (sql delete sentence, sub query sentence)
     """
-    function createDeleteSentence(tn::String)
+    function createApiDeleteSentence(tn::String)
         return  """update $tn set jetelina_delete_flg=1""", """where jt_id={jt_id}"""
+    end
+    """
+    function createApiSelectSentence(item_d::Vector{String},subq_d::String)
+
+        create API and SQL select sentence from posting data,then append it to JetelinaTableApifile.
+
+    # Arguments
+    - `item_d::Vector{String}`: column data part in posted json data
+    - `subq_d::String`: subquery part in posted json data
+    - return: this sql is already existing -> json {"resembled":true}
+              new sql then success to append it to  -> json {"apino":"<something no>"}
+                           fail to append it to     -> false
+    """
+    #function createApiSelectSentence(item_d::Vector{String},subq_d::String)
+    function createApiSelectSentence(item_d,subq_d)
+            #==
+            Tips:
+                item_d:column post data from dashboard.html is expected below json style
+                    { 'item'.'["<table name>.<column name>","<table name>.<column name>",...]' }
+                then parcing it by jsonpayload("item") 
+                    item_d -> ["<table name>.<column name1>","<table name>.<column name2>",...]
+ 
+                then handle it as an array data
+                    [1] -> <table name>.<column name1>
+                furthermore deviding it to <table name> and <column name> by '.' 
+                    table name  -> <table name>
+                    column name -> <column name1>
+        
+                use these to create sql sentence.
+        ==#
+        if(subq_d != "")
+            subq_d = checkSubQuery(subq_d)
+        end
+
+        selectSql::String = ""
+        tableName::String = ""
+        #===
+            Tips: 
+                put into array to write it to JetelinaTableApifile. 
+                This is used in writeTolist().
+        ===#
+        tablename_arr::Vector{String} = []
+        
+        for i = 1:length(item_d)
+            t = split(item_d[i], ".")
+            t1 = strip(t[1])
+            t2 = strip(t[2])
+            if 0 < length(selectSql)
+                #===
+                    Tips: 
+                        should be justfified this columns line for analyzing in SQLAnalyzer.
+                            ex. select ftest.id,ftest.name from.....
+                ===#
+                selectSql = """$selectSql,$t1.$t2"""
+            else
+                selectSql = """$t1.$t2"""
+            end
+
+            if (0 < length(tableName))
+                if (!contains(tableName, t1))
+                    tableName = """$tableName,$t1 as $t1"""
+                    push!(tablename_arr,t1)
+                end
+            else
+                tableName = """$t1 as $t1"""
+                push!(tablename_arr,t1)
+            end
+        end
+
+        selectSql = """select $selectSql from $tableName"""
+        ck = sqlDuplicationCheck(selectSql, subq_d)
+        if ck[1] 
+            # already exist it. return it and do nothing.
+            return json(Dict("resembled" => ck[2]))
+        else
+            # yes this is the new
+            ret = writeTolist(selectSql, subq_d, tablename_arr)
+            #===
+                Tips:
+                    writeTolist() returns tuple({true/false,apino/null}).
+                    return apino in json style if the first in tuple were true.
+            ===#
+            if ret[1] 
+                return json(Dict("apino" => ret[2]))
+            else
+                return ret[1]
+            end
+        end
     end
 
 end

@@ -426,8 +426,8 @@ const setApiIF_Out = (t, s) => {
 const setApiIF_Sql = (s) => {
   let ret = "";
 
-  // possibly s.subquery is null
-  if (s.subquery != null) {
+  // possibly s.subquery is null. 'ignore' -> no sub query
+  if (s.subquery != null && s.subquery != "ignore") {
     ret = `${s.sql} ${s.subquery};`;
   } else {
     ret = `${s.sql};`;
@@ -580,7 +580,7 @@ const postSelectedColumns = () => {
   let dd = JSON.stringify(pd);
 
   $.ajax({
-    url: "/postcolumns",
+    url: "/createapi",
     type: "POST",
     data: dd,
     contentType: 'application/json',
@@ -591,14 +591,10 @@ const postSelectedColumns = () => {
       if there already is a quite similar api in there -> return api no as alike {"resembled":"js10"}.
     */
     if (result.apino != null && 0 < result.apino.length) {
-      $("#container .selectedItem").remove();
-      cleanUp("items");
-      cleanupItems4Switching();// clear(=close) opened table items. defined in jetelinalib.js
       $("#container").append(`<span class="apisql"><p>api no is ${result.apino}</p></span>`);
-
       typingControll(chooseMsg('success', "", ""));
     } else if (result.resembled != null && 0 < result.resembled.length) {
-      $("#container").append(`<span class="apisql"><p>there is similar API exist already:  ${result.resembled}</p></span>`);
+      $("#container").append(`<span class="apisql"><p>there is similar API already exist:  ${result.resembled}</p></span>`);
     }
 
     if (isVisibleGenelicPanel()) {
@@ -611,6 +607,9 @@ const postSelectedColumns = () => {
     // initializing
     preferent.cmd = "";
     $("#genelic_panel input[name='genelic_input']").val('');
+    $("#container .selectedItem").remove();
+    cleanUp("items");
+    cleanupItems4Switching();// clear(=close) opened table items. defined in jetelinalib.js
   });
 }
 /**

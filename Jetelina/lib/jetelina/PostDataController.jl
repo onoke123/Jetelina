@@ -7,7 +7,7 @@ Description:
     all controll for poting data from clients
 
 functions
-    createSelectSentence()  create select sentence of SQL from posting data,then append it to JetelinaTableApifile.
+    createApi()  create API and SQL select sentence from posting data.
     getColumns()  get ordered tables's columns with json style.ordered table name is posted as the name 'tablename' in jsonpayload().
     getApiList()  get registering api list in json style.api list is refered in Df_JetelinaSqlList.
     deleteTable()  delete table by ordering. this function calls DBDataController.dropTable(tableName), so 'delete' meaning is really 'drop'.ordered table name is posted as the name 'tablename' in jsonpayload().
@@ -21,7 +21,7 @@ module PostDataController
     using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
     using PgSQLSentenceManager,JetelinaFiles
 
-    export createSelectSentence,getColumns,getApiList,deleteTable,login,deleteApi
+    export createApi,getColumns,getApiList,deleteTable,login,deleteApi
     
     """
     for test
@@ -32,96 +32,20 @@ module PostDataController
     end
 
     """
-    function createSelectSentence()
+    function createApi()
 
-        create select sentence of SQL from posting data,then append it to JetelinaTableApifile.
+        create API and SQL select sentence from posting data.
 
     # Arguments
     - return: this sql is already existing -> json {"resembled":true}
               new sql then success to append it to  -> json {"apino":"<something no>"}
                            fail to append it to     -> false
     """
-    function createSelectSentence()
-        #==
-            Tips:
-                column post data from dashboard.html is expected below json style
-                    { 'item'.'["<table name>.<column name>","<table name>.<column name>",...]' }
-                then parcing it by jsonpayload("item") 
-                    item_d -> ["<table name>.<column name1>","<table name>.<column name2>",...]
- 
-                then handle it as an array data
-                    [1] -> <table name>.<column name1>
-                furthermore deviding it to <table name> and <column name> by '.' 
-                    table name  -> <table name>
-                    column name -> <column name1>
-        
-                use these to create sql sentence.
-        ==#
+    function createApi()
         item_d = jsonpayload("item")
         subq_d = jsonpayload("subquery")
         
-        if(subq_d != "")
-            subq_d = PgSQLSentenceManager.checkSubQuery(subq_d)
-        end
-
-        if debugflg
-            @info "PostDataController.createSelectSentence() post data: " item_d, length(item_d), subq_d, length(subq_d)
-        end
-
-        selectSql::String = ""
-        tableName::String = ""
-        tablename_arr::Vector{String} = [] # Tips: put into array for writing it to JetelinaTableApifile. This is used in PgSQLSentenceManager.writeTolist().
-        subquerysentence::String = ""
-        
-        for i = 1:length(item_d)
-            t = split(item_d[i], ".")
-            t1 = strip(t[1])
-            t2 = strip(t[2])
-            if 0 < length(selectSql)
-                # Tips: should be justfified this columns line for analyzing in SQLAnalyzer。 ex. select ftest.id,ftest.name from.....
-                selectSql = """$selectSql,$t1.$t2"""
-            else
-                selectSql = """$t1.$t2"""
-            end
-
-            if (0 < length(tableName))
-                if (!contains(tableName, t1))
-                    tableName = """$tableName,$t1 as $t1"""
-                    push!(tablename_arr,t1)
-                end
-            else
-                tableName = """$t1 as $t1"""
-                push!(tablename_arr,t1)
-            end
-        end
-
-#        if !isnothing(subq_d) && 0<length(subq_d) && subq_d != "ignore"
-#            subquerysentence = """jetelina_subquery={$subq_d}"""
-#        end
-
-#        selectSql = """select $selectSql from $tableName $subquerysentence"""
-        selectSql = """select $selectSql from $tableName"""
-
-        ck = PgSQLSentenceManager.sqlDuplicationCheck(selectSql, subq_d)
-
-        if ck[1] 
-            # already exist it. return it and do nothing.
-            return json(Dict("resembled" => ck[2]))
-        else
-            # yes this is the new
-            ret = PgSQLSentenceManager.writeTolist(selectSql, subq_d, tablename_arr)
-            #===
-                Tips:
-                    PgSQLSente..() returns tuple({true/false,apino/null}).
-                    return apino in json style if the first in tuple were true.
-            ===#
-            if ret[1] 
-                return json(Dict("apino" => ret[2]))
-            else
-                return ret[1]
-            end
-        end
-
+        return PgSQLSentenceManager.createApiSelectSentence(item_d,subq_d)
     end
     """
     function getColumns()
