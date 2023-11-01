@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <script type=""text/javascript" src="../js/genie/jquery.min.js"></script>
+    </head>
+    <body>
+        <button onclick="getAjaxData()">Hit this button</button>
+    </body>
+</html>
+<script type="text/javascript">
+    const getAjaxData = () => {
+        let pd = {};
+        pd["apino"] = "js414";
+        let dd = JSON.stringify(pd);
+        console.log("dd is ", dd);
+        
+        $.ajax( {
+            url: "/apiactions",
+            type: "post",
+            data: dd,
+            contentType: 'application/json',
+            dataType: "json",
+        }).done(function(result, textStatus, jqXHR) {
+            console.log(result);
+        }).fail( function( result ){
+        });
+    }
+</script>

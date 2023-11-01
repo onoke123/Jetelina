@@ -527,6 +527,31 @@ using PgSQLSentenceManager
               error                -> false
     """
     function executeApi(d)
+        @info "PgDBController.executeApi d" d typeof(d)
+        """
+            Tips:
+                d -> {"apino":"ji1","jt_id":1,"name":"Someone","age":32,.....}
+                Steps
+                    1.reject '{' and '}'
+                    2.split it with ',' then put each to array
+                    3.pick 'apino' up then search its sql from Df_JetelinaSqlList
+                      ex. ji1 -> update <table> set name='{name}', age={age} where jt_id={jt_id}
+                    4.bind "Someone", 32 to ji1 sql data
+                    5.execute the binded sql sentence
+        """
+        # Step1:
+        dd = replace(d,"{"=>"","}"=>"")
+        # Step2:
+        d_arr = split(dd,",")
+        # Step3:
+        for i in eachindex(d_arr)
+            @info "PgDBController.executeApi d_arr" d_arr[i]
+            p = split(d_arr[i],":")
+            if contains(p[1],"apino")
+                @info "PgDBController.executeApi apino" p[2]
+            end
+        end
+
     end
     """
     function doInsert()
