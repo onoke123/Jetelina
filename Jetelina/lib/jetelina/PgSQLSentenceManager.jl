@@ -17,6 +17,7 @@ functions
     createApiUpdateSentence(tn::String,us::String) create sql update sentence by queries.
     createApiDeleteSentence(tn::String) create sql delete sentence by query.
     createApiSelectSentence(item_d::Vector{String},subq_d::String) create select sentence of SQL from posting data,
+    function createExecutionSqlSentence(item_d::Vector{String},subq_d::String) create real execution SQL sentence.
 """
 module PgSQLSentenceManager
 
@@ -417,5 +418,33 @@ module PgSQLSentenceManager
             end
         end
     end
+    """
+    function createExecutionSqlSentence(item_d::Vector{String},subq_d::String)
 
+        create real execution SQL sentence.
+        using 'ignore' and 'subquery' as keywords to create SQL sentence. 
+        These are the 'PROTOCOL' in using DataFrame of SQL list and posting data I/F.
+
+    # Arguments
+    - `item_arr::Vector{String}`: posted column data
+    - `df::DataFrame`: dataframe of target api data. a part of Df_JetelinaSqlList 
+    - return::String SQL sentence
+    """
+    function createExecutionSqlSentence(item_arr::Vector{SubString{String}}, df::DataFrame)
+        keyword1::String = "ignore" # protocol
+        keyword2::String = "subquery" # protocol
+        ret::String = ""
+
+        if ismissing(df.subquery[1]) || contains(df.subquery[1],keyword1)
+            ret = df.sql[1]
+        else
+            postedSubquery = item_arr[findfirst(x -> contains(x,keyword2),item_arr)]
+            if 0<length(postedSubquery)
+                p = split(postedSubquery,":")
+                sub_str = replace(p[2],"\""=>"")
+    
+                ret = string(df.sql[1]," ",sub_str)
+            end
+        end
+    end
 end

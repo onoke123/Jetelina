@@ -28,12 +28,9 @@
 """
 module PgDBController
 
-using Genie, Genie.Renderer, Genie.Renderer.Json
-using CSV, LibPQ, DataFrames, IterTools, Tables
-using JetelinaLog, JetelinaReadConfig
-using PgDataTypeList
-using JetelinaFiles
-using PgSQLSentenceManager
+    using Genie, Genie.Renderer, Genie.Renderer.Json
+    using CSV, LibPQ, DataFrames, IterTools, Tables, DataFrames
+    using JetelinaLog, JetelinaReadConfig, JetelinaReadSqlList, PgDataTypeList, JetelinaFiles, PgSQLSentenceManager
 
     export create_jetelina_tables,create_jetelina_id_sequence,open_connection,close_connection,readJetelinatable,
     getTableList,getJetelinaSequenceNumber,insert2JetelinaTableManager,dataInsertFromCSV,dropTable,getColumns,doInsert,
@@ -527,7 +524,9 @@ using PgSQLSentenceManager
               error                -> false
     """
     function executeApi(d)
-        @info "PgDBController.executeApi d" d typeof(d)
+        if debugflg
+            @info "PgDBController.executeApi d" d typeof(d)
+        end
         """
             Tips:
                 d -> {"apino":"ji1","jt_id":1,"name":"Someone","age":32,.....}
@@ -545,10 +544,38 @@ using PgSQLSentenceManager
         d_arr = split(dd,",")
         # Step3:
         for i in eachindex(d_arr)
-            @info "PgDBController.executeApi d_arr" d_arr[i]
             p = split(d_arr[i],":")
             if contains(p[1],"apino")
-                @info "PgDBController.executeApi apino" p[2]
+                apino = replace(p[2],"\""=>"")
+                #===
+                    Tips:
+                        use subset() here, because Df_JetelinaSqlList may have missing data.
+                        subset() supports 'skipmissing', but filter() does not.
+                ===#
+                target_api = subset(Df_JetelinaSqlList,:apino => ByRow(==(apino)),skipmissing=true)
+                if 0<nrow(target_api)
+                    sql_str = PgSQLSentenceManager.createExecutionSqlSentence(d_arr,target_api)
+                    if 0<length(sql_str)
+                        if debugflg
+                            @info "PgDBController.executeApi sql " sql_str
+                        end
+                        
+                        conn = open_connection()
+                        try
+#                            df = DataFrame(LibPQ.execute(conn, sql_str))
+#                            j = json(Dict("Jetelina" => copy.(eachrow(df))))
+#                            return true, j
+                            return true
+                        catch err
+                            println(err)
+                            JetelinaLog.writetoLogfile("PgDBController.executeApi() with $apino : $sql_str error : $err")
+                            return false
+                        finally
+                            # close the connection finally
+                            close_connection(conn)
+                        end
+                    end
+                end
             end
         end
 

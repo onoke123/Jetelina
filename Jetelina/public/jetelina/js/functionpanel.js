@@ -379,12 +379,12 @@ const setApiIF_In = (t, s) => {
     // insert into table values(a,b,...) -> a,b,...
     let i_sql = s.sql.split("values(");
     i_sql[1] = i_sql[1].slice(0, i_sql[1].length - 1).replaceAll('\'', '').replaceAll('{', '').replaceAll('}', '');
-    ret = buildJetelinaJsonForm(t, i_sql[1]);
+    ret = buildJetelinaJsonForm(ta, i_sql[1]);
   } else if (ta.startsWith("ju") || ta.startsWith("jd")) {
     //update and delete(indeed update)
     // update table set a=d_a,b=d_b..... -> a=d_a,b=d_b...
     let u_sql = s.sql.split("set");
-    ret = buildJetelinaJsonForm(t, u_sql[1]);
+    ret = buildJetelinaJsonForm(ta, u_sql[1]);
     // special for 'ju and 'jd'
     ret = ret.slice(0, ret.length - 1) + ",\"jt_id\":{jt_id}" + ret.slice(ret.length - 1, ret.length);
   } else {
@@ -404,13 +404,14 @@ const setApiIF_In = (t, s) => {
  */
 const setApiIF_Out = (t, s) => {
   let ret = "true or false";
+  let ta = t.toLowerCase();
 
-  if (t.toLowerCase().startsWith("js")) {
+  if (ta.startsWith("js")) {
     let pb = s.sql.split("select");
     let pf = pb[1].split("from");
     // there is the items in pf[0]
     if (pf[0] != null && 0 < pf[0].length) {
-      ret = buildJetelinaJsonForm(t, pf[0]);
+      ret = buildJetelinaJsonForm(ta, pf[0]);
     }
   }
 
@@ -458,17 +459,17 @@ const buildJetelinaJsonForm = (t, s) => {
       // select
       ss = cn[1];
     } else {
-      //insert update delete
-      if (c[i].indexOf("=") != -1) {
-        //update
-        ss = c[i].split("=")[0];
-      } else {
-        //insert delete
-        ss = c[i];
-      }
+        //insert update delete
+        if (c[i].indexOf("=") != -1) {
+          //update
+          ss = c[i].split("=")[0];
+        } else {
+          //insert delete
+          ss = c[i];
+        }
     }
 
-    if (ss != "jetelina_delete_flg") {
+    if (ss.indexOf("jetelina_delete_flg") <= 0) {
       ret = `${ret}\"${$.trim(ss)}\":\"{${$.trim(ss)}}\",`;
     }
   }
