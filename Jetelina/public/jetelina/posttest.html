@@ -3,14 +3,28 @@
         <script type=""text/javascript" src="../js/genie/jquery.min.js"></script>
     </head>
     <body>
-        <button onclick="getAjaxData()">Hit this button</button>
+        <button onclick="getAjaxData('s')">Simple Select</button>
+        <br>
+        <button onclick="getAjaxData('w')">Select where ftest.jt_id=1</button>
+        <br>
+        <button onclick="getAjaxData('u')">Update</button>
+        <div>
+            <text id="result"></text>
+        </div>
     </body>
 </html>
 <script type="text/javascript">
-    const getAjaxData = () => {
+    const getAjaxData = (s) => {
         let pd = {};
-        pd["apino"] = "js419";
-        pd["subquery"] = "where ftest.jt_id=1";
+        if(s=="s"){
+            pd["apino"] = "js414";
+        }else if(s=="w"){
+            pd["apino"] = "js415";
+            pd["subquery"] = "where ftest.jt_id=1";
+        }else if(s=="u"){
+
+        }
+
         let dd = JSON.stringify(pd);
         console.log("dd is ", dd);
         
@@ -21,8 +35,10 @@
             contentType: 'application/json',
             dataType: "json",
         }).done(function(result, textStatus, jqXHR) {
-            console.log(result);
         }).fail( function( result ){
+        }).always(function(result){
+            console.log(result);
+            $("#result").text(result);
         });
     }
 </script>

@@ -562,10 +562,8 @@ module PgDBController
                         
                         conn = open_connection()
                         try
-#                            df = DataFrame(LibPQ.execute(conn, sql_str))
-#                            j = json(Dict("Jetelina" => copy.(eachrow(df))))
-#                            return true, j
-                            return true
+                            df = DataFrame(LibPQ.execute(conn, sql_str))
+                            return json(Dict("Jetelina" => copy.(eachrow(df))))
                         catch err
                             println(err)
                             JetelinaLog.writetoLogfile("PgDBController.executeApi() with $apino : $sql_str error : $err")
