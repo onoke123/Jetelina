@@ -293,6 +293,9 @@ module PgDBController
     - return: boolean: true -> success, false -> get fail
     """
     function dataInsertFromCSV(fname::String)
+        keyword1::String = "jetelina_delete_flg"
+        keyword2::String = "jt_id"
+
         df = DataFrame(CSV.File(fname))
         rename!(lowercase,df)
         # special column 'jetelina_delte_flg' is added to columns 
@@ -321,12 +324,12 @@ module PgDBController
                 update_str = string(update_str, "$cn='{$cn}'")
             else
                 #number data
-                if !contains(cn,"jetelina_delete_flg")
+                if !contains(cn,keyword1)
                     insert_column_str = string(insert_column_str, "$cn")
                     insert_data_str = string(insert_data_str,"{$cn}")
                 end
 
-                if !contains(cn,"jetelina_delete_flg")
+                if !contains(cn,keyword1) && !contains(cn,keyword2)
                     update_str = string(update_str, "$cn={$cn}")
                 end
             end
@@ -339,7 +342,7 @@ module PgDBController
                         because 'jetelina_delete_flg' always comes into the tail
                 ==#
                 if i<length(column_name)-1
-                    update_str = string(update_str,",")
+#                    update_str = string(update_str,",")
                     insert_column_str = string(insert_column_str,",")
                     insert_data_str = string(insert_data_str,",")
                 end

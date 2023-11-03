@@ -386,8 +386,12 @@ const setApiIF_In = (t, s) => {
     let u_sql = s.sql.split("set");
     ret = buildJetelinaJsonForm(ta, u_sql[1]);
     // special for 'ju and 'jd'
-    ret = ret.slice(0, ret.length - 1) + ",\"jt_id\":{jt_id}" + ret.slice(ret.length - 1, ret.length);
-  } else {
+//    ret = ret.slice(0, ret.length - 1) + ",\"jt_id\":{jt_id}" + ret.slice(ret.length - 1, ret.length);
+    if (s.subquery != null && 0 < s.subquery.length && s.subquery != "ignore") {
+      ret = ret.slice(0, ret.length - 1) + `,\"subquery\":\"${s.subquery}\"` + ret.slice(ret.length - 1, ret.length);
+//ret = `${ret},"subquery":\"${s.subquery}\"}`;
+    }
+} else {
     // who knows
   }
 
