@@ -1,0 +1,9 @@
+apino,sql,subquery
+ji426,"insert into ftest (jt_id,'name','sex',age,ave) values({jt_id},'{name}','{sex}',{age},{ave})",""
+ju427,"update ftest set name='{name}'sex='{sex}'age={age}ave={ave}","where jt_id={jt_id}"
+jd428,"update ftest set jetelina_delete_flg=1","where jt_id={jt_id}"
+js429,"select ftest.name,ftest.sex,ftest.jt_id from ftest as ftest","ignore"
+js430,"select ftest.name,ftest.ave from ftest as ftest","where ftest.jt_id={jt_id}"
+ji434,"insert into ftest2 (jt_id,'name','sex',age,ave) values({jt_id},'{name}','{sex}',{age},{ave})",""
+ju435,"update ftest2 set ,name='{name}',sex='{sex}',age={age},ave={ave}","where jt_id={jt_id}"
+jd436,"update ftest2 set jetelina_delete_flg=1","where jt_id={jt_id}"

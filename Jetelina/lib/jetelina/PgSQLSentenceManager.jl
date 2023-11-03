@@ -14,7 +14,7 @@ functions
     sqlDuplicationCheck(nsql::String, subq::String)  confirm duplication, if 'nsql' exists in JetelinaSQLListfile.but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
     checkSubQuery(subquery::String) check posted subquery strings wheather exists any illegal strings in it.
     createApiInsertSentence(tn::String,cs::String,ds::String) create sql input sentence by queries.
-    createApiUpdateSentence(tn::String,us::String) create sql update sentence by queries.
+    createApiUpdateSentence(tn::String,us::Any) create sql update sentence by queries.
     createApiDeleteSentence(tn::String) create sql delete sentence by query.
     createApiSelectSentence(item_d::Vector{String},subq_d::String) create select sentence of SQL from posting data,
     function createExecutionSqlSentence(item_d::Vector{String},subq_d::String) create real execution SQL sentence.
@@ -305,17 +305,17 @@ module PgSQLSentenceManager
         return """insert into $tn ($cs) values($ds)"""
     end
     """
-    function createApiUpdateSentence(tn::String,us::String)
+    function createApiUpdateSentence(tn::String,us::Any)
 
         create sql update sentence by queries.
         this function executs when csv file uploaded.
 
     # Arguments
     - `tn::String`: table name
-    - `us::String`: update strings
+    - `us::Any`: update strings
     - return: Tuple: (sql update sentence, sub query sentence)
     """
-    function createApiUpdateSentence(tn::String,us::String)
+    function createApiUpdateSentence(tn::String,us::Any)
         return """update $tn set $us""", """where jt_id={jt_id}"""
     end
     """

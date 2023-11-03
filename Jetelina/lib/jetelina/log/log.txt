@@ -1722,3 +1722,15 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
 ┌ Info: 2023-11-03 11:09:53 csv file: lib/jetelina/repo/ftest.csv
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-03 11:17:24 csv file: lib/jetelina/repo/ftest2.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-03 11:18:48 csv file: lib/jetelina/repo/ftest2.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-03 11:26:18 csv file: lib/jetelina/repo/ftest.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-03 11:43:29 csv file: lib/jetelina/repo/ftest.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-03 11:47:20 csv file: lib/jetelina/repo/ftest.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-03 11:53:39 PgDBController.executeApi() with ju442 : update ftest set name='{name}',sex='{sex}',age={age},ave={ave} where ftest.jt_id=1 error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"{\"\nLINE 1: update ftest set name='{name}',sex='{sex}',age={age},ave={av...\n                                                       ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58

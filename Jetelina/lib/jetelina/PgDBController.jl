@@ -304,8 +304,8 @@ module PgDBController
         column_name = names(df)
 
         column_type = eltype.(eachcol(df))
-        column_type_string = Array{Union{Nothing,String}}(nothing, length(column_name))
-        column_str = string()
+        column_type_string = Array{Union{Nothing,String}}(nothing, length(column_name)) # using for creating table
+        column_str = string() # using for creating table
         insert_column_str = string() # columns definition field
         insert_data_str = string() # data field
         update_str = string()
@@ -342,14 +342,26 @@ module PgDBController
                         because 'jetelina_delete_flg' always comes into the tail
                 ==#
                 if i<length(column_name)-1
-#                    update_str = string(update_str,",")
+                    update_str = string(update_str,",")
                     insert_column_str = string(insert_column_str,",")
                     insert_data_str = string(insert_data_str,",")
                 end
             end
         end
 
+        #===
+            Tips:
+                There is a reason.....
+                in the above, 'update_str' has ',' at its head because of rejecting 'jt_id' column.
+                'jt_id' is always head of the columns, and it puzzled to build 'update_str' if rejected it.
+                that's why using lstrip(). dum it. :p
+        ===#
+        if startswith(update_str,",")
+            update_str = lstrip(update_str,',')
+        end
+
         if debugflg
+            @info "update_str " update_str
             @info "PgDBController.dataInsertFromCSV() col str to create table: " column_str
         end
 
