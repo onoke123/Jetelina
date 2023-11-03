@@ -17,7 +17,7 @@ functions
     createApiUpdateSentence(tn::String,us::Any) create sql update sentence by queries.
     createApiDeleteSentence(tn::String) create sql delete sentence by query.
     createApiSelectSentence(item_d::Vector{String},subq_d::String) create select sentence of SQL from posting data,
-    function createExecutionSqlSentence(item_d::Vector{String},subq_d::String) create real execution SQL sentence.
+    createExecutionSqlSentence(item_d::Vector{String},subq_d::String) create real execution SQL sentence.
 """
 module PgSQLSentenceManager
 
@@ -433,18 +433,55 @@ module PgSQLSentenceManager
     function createExecutionSqlSentence(item_arr::Vector{SubString{String}}, df::DataFrame)
         keyword1::String = "ignore" # protocol
         keyword2::String = "subquery" # protocol
-        ret::String = ""
+        ret::String = "" # return sql sentence
+        n_column::Array = []
+        v_column::Array = []
 
-        if ismissing(df.subquery[1]) || contains(df.subquery[1],keyword1)
-            ret = df.sql[1]
-        else
-            postedSubquery = item_arr[findfirst(x -> contains(x,keyword2),item_arr)]
-            if 0<length(postedSubquery)
-                p = split(postedSubquery,":")
-                sub_str = replace(p[2],"\""=>"")
-    
-                ret = string(df.sql[1]," ",sub_str)
+        for i in eachindex(item_arr)
+            p = split(item_arr[i], ":")
+            if !isnothing(p)
+                push!(n_column,p[1])
+                push!(v_column,p[2])
             end
         end
+
+        if 0<length(n_column)
+            #===
+                Tips:
+                    because n_column[1] is absolutly 'apino"
+            ===#
+            if contains(v_column[1],"js")
+                # select
+                if ismissing(df.subquery[1]) || contains(df.subquery[1],keyword1)
+                    ret = df.sql[1]
+                else
+                    postedSubquery = item_arr[findfirst(x -> contains(x,keyword2),item_arr)]
+                    if 0<length(postedSubquery)
+                        p = split(postedSubquery,":")
+                        sub_str = replace(p[2],"\""=>"")
+            
+                        ret = string(df.sql[1]," ",sub_str)
+                    end
+                end
+            elseif contains(v_column[1],"jd")
+                # delete
+            else
+                # insert/update
+                println("sql:",df.sql[1])
+                println("n_col:",n_column)
+                println("v_col:",v_column)
+                # 以下、データバインディング処理になるが、なにカッコいいやりかたないかと探している
+                if contains(v_column[1],"ju")
+                    # update
+                    ss = split(df.sql[1],"set")
+                    cols = split(ss[2],",")
+                    println("cols:",cols)
+                else
+                end
+            end
+            
+        end
+
+        return ret
     end
 end

@@ -1734,3 +1734,11 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
 ┌ Info: 2023-11-03 11:53:39 PgDBController.executeApi() with ju442 : update ftest set name='{name}',sex='{sex}',age={age},ave={ave} where ftest.jt_id=1 error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"{\"\nLINE 1: update ftest set name='{name}',sex='{sex}',age={age},ave={av...\n                                                       ^\n")
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-03 12:45:56 PgDBController.executeApi() with ju442 : update ftest set name='{name}',sex='{sex}',age={age},ave={ave} where ftest.jt_id=1 error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"{\"\nLINE 1: update ftest set name='{name}',sex='{sex}',age={age},ave={av...\n                                                       ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-03 12:49:02 PgDBController.executeApi() with ju442 : update ftest set name='{name}',sex='{sex}',age={age},ave={ave} where ftest.jt_id=1 error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"{\"\nLINE 1: update ftest set name='{name}',sex='{sex}',age={age},ave={av...\n                                                       ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-03 13:01:41 PgDBController.executeApi() with ju442 : update ftest set name='{name}',sex='{sex}',age={age},ave={ave} where ftest.jt_id=1 error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"{\"\nLINE 1: update ftest set name='{name}',sex='{sex}',age={age},ave={av...\n                                                       ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-03 13:13:01 PgDBController.executeApi() with ju442 : update ftest set name='{name}',sex='{sex}',age={age},ave={ave} where ftest.jt_id=1 error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"{\"\nLINE 1: update ftest set name='{name}',sex='{sex}',age={age},ave={av...\n                                                       ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
