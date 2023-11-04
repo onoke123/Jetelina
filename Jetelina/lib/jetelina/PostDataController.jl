@@ -34,8 +34,7 @@ module PostDataController
               error                -> false
     """
     function handleApipostdata()
-        d = rawpayload()
-        return DBDataController.executeApi(d)
+        return DBDataController.executeApi(jsonpayload())
     end
 
     """
@@ -49,10 +48,7 @@ module PostDataController
                            fail to append it to     -> false
     """
     function createApi()
-        item_d = jsonpayload("item")
-        subq_d = jsonpayload("subquery")
-        
-        return PgSQLSentenceManager.createApiSelectSentence(item_d,subq_d)
+        return PgSQLSentenceManager.createApiSelectSentence(jsonpayload())
     end
     """
     function getColumns()

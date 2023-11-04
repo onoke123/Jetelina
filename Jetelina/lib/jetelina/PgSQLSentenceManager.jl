@@ -16,7 +16,7 @@ functions
     createApiInsertSentence(tn::String,cs::String,ds::String) create sql input sentence by queries.
     createApiUpdateSentence(tn::String,us::Any) create sql update sentence by queries.
     createApiDeleteSentence(tn::String) create sql delete sentence by query.
-    createApiSelectSentence(item_d::Vector{String},subq_d::String) create select sentence of SQL from posting data,
+    createApiSelectSentence(json_d::Dict) create select sentence of SQL from posting data,
     createExecutionSqlSentence(item_d::Vector{String},subq_d::String) create real execution SQL sentence.
 """
 module PgSQLSentenceManager
@@ -25,7 +25,7 @@ module PgSQLSentenceManager
     using Genie, Genie.Requests, Genie.Renderer.Json
     using DBDataController, JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
 
-    export writeTolist,updateSqlList,deleteFromlist,fileBackup,sqlDuplicationCheck
+    export writeTolist,updateSqlList,deleteFromlist,fileBackup,sqlDuplicationCheck,checkSubQuery,createApiInsertSentence,createApiUpdateSentence,createApiDeleteSentence,createApiSelectSentence,createExecutionSqlSentence
     
     # sqli list file
     sqlFile = getFileNameFromConfigPath(JetelinaSQLListfile)
@@ -332,19 +332,21 @@ module PgSQLSentenceManager
         return  """update $tn set jetelina_delete_flg=1""", """where jt_id={jt_id}"""
     end
     """
-    function createApiSelectSentence(item_d::Vector{String},subq_d::String)
+    function createApiSelectSentence(json_d::Dict)
 
         create API and SQL select sentence from posting data,then append it to JetelinaTableApifile.
 
     # Arguments
-    - `item_d::Vector{String}`: column data part in posted json data
-    - `subq_d::String`: subquery part in posted json data
+    - `json_d::Dict`: json data
     - return: this sql is already existing -> json {"resembled":true}
               new sql then success to append it to  -> json {"apino":"<something no>"}
                            fail to append it to     -> false
     """
-    function createApiSelectSentence(item_d,subq_d)
-            #==
+    function createApiSelectSentence(json_d::Dict)
+        item_d = json_d("item")
+        subq_d = json_d("subquery")
+
+        #==
             Tips:
                 item_d:column post data from dashboard.html is expected below json style
                     { 'item'.'["<table name>.<column name>","<table name>.<column name>",...]' }
@@ -424,33 +426,22 @@ module PgSQLSentenceManager
         create real execution SQL sentence.
         using 'ignore' and 'subquery' as keywords to create SQL sentence. 
         These are the 'PROTOCOL' in using DataFrame of SQL list and posting data I/F.
+        
+        Attention: this select sentence searchs only 'jetelina_delete_flg=0" data.
 
     # Arguments
     - `item_arr::Vector{String}`: posted column data
     - `df::DataFrame`: dataframe of target api data. a part of Df_JetelinaSqlList 
     - return::String SQL sentence
     """
-    function createExecutionSqlSentence(item_arr::Vector{SubString{String}}, df::DataFrame)
+#    function createExecutionSqlSentence(item_arr::Vector{SubString{String}}, df::DataFrame)
+    function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
         keyword1::String = "ignore" # protocol
         keyword2::String = "subquery" # protocol
+        j_del_flg::String = "jetelina_delete_flg=0" # absolute select condition
         ret::String = "" # return sql sentence
-        json_dict = Dict()
         json_subquery_dict = Dict()
         execution_sql::String = ""
-
-        for i in eachindex(item_arr)
-            #===
-                Tips:
-                    because item_arr is "\"apino\"":\"js111\"...
-                    "\"apino\"" should be "apino" to use json_dict["apino"], not json_dict["\"apino\""] in Dict().
-            ===#
-            item_arr[i] = replace(item_arr[i],"\""=>"")
-
-            p = split(item_arr[i], ":")
-            if !isnothing(p)
-                json_dict[p[1]] = p[2]
-            end
-        end
 
         if 0<length(json_dict)
             if contains(json_dict["apino"],"js")
@@ -462,30 +453,29 @@ module PgSQLSentenceManager
                             because it combines later with df.sql.
                             managing df.subquery is very advantageous process at here.
                     ===#
-                    if haskey(json_dict,"subquery")
-                        @info "json_dict subquery" json_dict["subquery"] typeof(json_dict["subquery"])
-
-                        sp = split(json_dict["subquery"],"=")
+                    if haskey(json_dict,keyword2)
+                        sp = split(json_dict[keyword2],",")
                         if !isnothing(sp)
-                            json_subquery_dict[sp[1]] = sp[2]
+                            for ii in eachindex(sp)
+                                if ii == 1 || ii == length(sp)
+                                    sp[ii] = replace(sp[ii],"["=>"","]"=>"","\""=>"")
+                                end
+
+                                ssp = split(sp[ii],":")
+                                json_subquery_dict[ssp[1]] = ssp[2]
+                            end
                         end
 
                         for (k,v) in json_subquery_dict
+                            @info "k and v " k v
                             kk = string("{",k,"}")
                             df.subquery[1] = replace(df.subquery[1],kk=>v)
                         end
+
+                        df.subquery[1] = string(df.subquery[1]," ","and ", j_del_flg)
                     end
                 else
-                    #execution_sql = string(df.sql[1]," ",df.subquery[1])
-                    #===
-                    postedSubquery = item_arr[findfirst(x -> contains(x,keyword2),item_arr)]
-                    if 0<length(postedSubquery)
-                        p = split(postedSubquery,":")
-                        sub_str = replace(p[2],"\""=>"")
-            
-                        ret = string(df.sql[1]," ",sub_str)
-                    end
-                    ===#
+                    df.subquery[1] =string("where ", j_del_flg)
                 end
             elseif contains(json_dict["apino"],"ju") || contains(json_dict["apino"],"jd")
                 # update/delete
@@ -510,7 +500,6 @@ module PgSQLSentenceManager
                     json data bind to the sql sentence.
                     Dict() is used alike associative array.
             ===#
-            @info "exec...sql:" execution_sql
             for (k,v) in json_dict
                 kk = string("{",k,"}")
                 execution_sql = replace(execution_sql,kk=>v)
