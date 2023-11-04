@@ -375,22 +375,31 @@ const setApiIF_In = (t, s) => {
 
     }
   } else if (ta.startsWith("ji")) {
-    //insert
-    // insert into table values(a,b,...) -> a,b,...
+    /*
+      insert
+        a,b,... in insert into table values(a,b,...) 
+    */
     let i_sql = s.sql.split("values(");
     i_sql[1] = i_sql[1].slice(0, i_sql[1].length - 1).replaceAll('\'', '').replaceAll('{', '').replaceAll('}', '');
     ret = buildJetelinaJsonForm(ta, i_sql[1]);
   } else if (ta.startsWith("ju") || ta.startsWith("jd")) {
-    //update and delete(indeed update)
-    // update table set a=d_a,b=d_b..... -> a=d_a,b=d_b...
+    /*
+      update and delete(the true color is update)
+        a=d_a,b=d_b... in update table set a=d_a,b=d_b..... 
+    */
     let u_sql = s.sql.split("set");
     ret = buildJetelinaJsonForm(ta, u_sql[1]);
-    // special for 'ju and 'jd'
-//    ret = ret.slice(0, ret.length - 1) + ",\"jt_id\":{jt_id}" + ret.slice(ret.length - 1, ret.length);
+    /*
+      special for 'ju and 'jd'
+         because the subquery in update/delete is executed with jt_id in 'where' sentence.
+         this is the protocol so far.
+    */
+    ret = ret.slice(0, ret.length - 1) + `,\"subquery\":\"{jt_id}\"` + ret.slice(ret.length - 1, ret.length);
+
+    /*
     if (s.subquery != null && 0 < s.subquery.length && s.subquery != "ignore") {
       ret = ret.slice(0, ret.length - 1) + `,\"subquery\":\"${s.subquery}\"` + ret.slice(ret.length - 1, ret.length);
-//ret = `${ret},"subquery":\"${s.subquery}\"}`;
-    }
+    }*/
 } else {
     // who knows
   }

@@ -434,23 +434,24 @@ module PgSQLSentenceManager
         keyword1::String = "ignore" # protocol
         keyword2::String = "subquery" # protocol
         ret::String = "" # return sql sentence
-        n_column::Array = []
-        v_column::Array = []
+        json_dict = Dict()
 
         for i in eachindex(item_arr)
+            #===
+                Tips:
+                    because item_arr is "\"apino\"":\"js111\"...
+                    "\"apino\"" should be "apino" to use json_dict["apino"], not json_dict["\"apino\""] in Dict().
+            ===#
+            item_arr[i] = replace(item_arr[i],"\""=>"")
+
             p = split(item_arr[i], ":")
             if !isnothing(p)
-                push!(n_column,p[1])
-                push!(v_column,p[2])
+                json_dict[p[1]] = p[2]
             end
         end
 
-        if 0<length(n_column)
-            #===
-                Tips:
-                    because n_column[1] is absolutly 'apino"
-            ===#
-            if contains(v_column[1],"js")
+        if 0<length(json_dict)
+            if contains(json_dict["apino"],"js")
                 # select
                 if ismissing(df.subquery[1]) || contains(df.subquery[1],keyword1)
                     ret = df.sql[1]
@@ -463,21 +464,29 @@ module PgSQLSentenceManager
                         ret = string(df.sql[1]," ",sub_str)
                     end
                 end
-            elseif contains(v_column[1],"jd")
-                # delete
+            elseif contains(json_dict["apino"],"ju") || contains(json_dict["apino"],"jd")
+                # update/delete
+                target_sql = string(df.sql[1]," ",df.subquery[1])
+                println("sql:",target_sql)
+                println("json dict:",json_dict)
+                # json_dict["subquery"] is always point to {jt_id}
+                json_dict["jt_id"] = json_dict["subquery"]
+                for (k,v) in json_dict
+                    kk = string("{",k,"}")
+                    target_sql = replace(target_sql,kk=>v)
+                end
+                
+                ret = target_sql
             else
                 # insert/update
-                println("sql:",df.sql[1])
-                println("n_col:",n_column)
-                println("v_col:",v_column)
-                # 以下、データバインディング処理になるが、なにカッコいいやりかたないかと探している
+                #=== 以下、データバインディング処理になるが、なにカッコいいやりかたないかと探している
                 if contains(v_column[1],"ju")
                     # update
                     ss = split(df.sql[1],"set")
                     cols = split(ss[2],",")
                     println("cols:",cols)
-                else
-                end
+                else 
+                end===#
             end
             
         end
