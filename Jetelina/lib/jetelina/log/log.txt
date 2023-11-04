@@ -1742,3 +1742,29 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
 ┌ Info: 2023-11-03 13:13:01 PgDBController.executeApi() with ju442 : update ftest set name='{name}',sex='{sex}',age={age},ave={ave} where ftest.jt_id=1 error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"{\"\nLINE 1: update ftest set name='{name}',sex='{sex}',age={age},ave={av...\n                                                       ^\n")
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-04 10:56:43 PgDBController.executeApi() with js445 : select ftest.name,ftest.age from ftest as ftest where ftest.jt_id={jt_id} error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"{\"\nLINE 1: ...name,ftest.age from ftest as ftest where ftest.jt_id={jt_id}\n                                                                ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-04 10:58:41 PgDBController.executeApi() with js445 : select ftest.name,ftest.age from ftest as ftest where ftest.jt_id={jt_id} error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"{\"\nLINE 1: ...name,ftest.age from ftest as ftest where ftest.jt_id={jt_id}\n                                                                ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-04 11:03:00 PgDBController.executeApi() with ji441 : insert into ftest (jt_id,'name','sex',age,ave) values(5,'EEE','m',60,0.5) error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"'name'\"\nLINE 1: insert into ftest (jt_id,'name','sex',age,ave) values(5,'EEE...\n                                 ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-04 11:11:42 PgDBController.executeApi() with ji441 : insert into ftest (jt_id,'name','sex',age,ave) values(5,'EEE','m',60,0.5) error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"'name'\"\nLINE 1: insert into ftest (jt_id,'name','sex',age,ave) values(5,'EEE...\n                                 ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-04 11:12:14 csv file: lib/jetelina/repo/ftest.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-04 11:21:15 csv file: lib/jetelina/repo/ftest.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-04 11:23:08 csv file: lib/jetelina/repo/ftest.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-04 11:24:06 csv file: lib/jetelina/repo/ftest.csv
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-04 12:35:31 PgDBController.executeApi() with js458 : select ftest.name,ftest.age from ftest as ftest where jt_id={jt_id} error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"{\"\nLINE 1: ...ftest.name,ftest.age from ftest as ftest where jt_id={jt_id}\n                                                                ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-04 12:58:09 PgDBController.executeApi() with js458 : select ftest.name,ftest.age from ftest as ftest where jt_id={jt_id} error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"{\"\nLINE 1: ...ftest.name,ftest.age from ftest as ftest where jt_id={jt_id}\n                                                                ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-04 13:04:58 PgDBController.executeApi() with js458 : select ftest.name,ftest.age from ftest as ftest where jt_id={jt_id} error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"{\"\nLINE 1: ...ftest.name,ftest.age from ftest as ftest where jt_id={jt_id}\n                                                                ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-04 13:10:43 PgDBController.executeApi() with js458 : select ftest.name,ftest.age from ftest as ftest where jt_id={jt_id} error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"{\"\nLINE 1: ...ftest.name,ftest.age from ftest as ftest where jt_id={jt_id}\n                                                                ^\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58
+┌ Info: 2023-11-04 13:14:41 PgDBController.executeApi() with js458 : select ftest.name,ftest.age from ftest as ftest where jt_id=1@name error : LibPQ.Errors.UndefinedFunction("ERROR:  operator does not exist: integer @ character varying\nLINE 1: ... ftest.name,ftest.age from ftest as ftest where jt_id=1@name\n                                                                  ^\nHINT:  No operator matches the given name and argument types. You might need to add explicit type casts.\n")
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:58

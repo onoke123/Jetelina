@@ -435,6 +435,8 @@ module PgSQLSentenceManager
         keyword2::String = "subquery" # protocol
         ret::String = "" # return sql sentence
         json_dict = Dict()
+        json_subquery_dict = Dict()
+        execution_sql::String = ""
 
         for i in eachindex(item_arr)
             #===
@@ -453,9 +455,29 @@ module PgSQLSentenceManager
         if 0<length(json_dict)
             if contains(json_dict["apino"],"js")
                 # select
-                if ismissing(df.subquery[1]) || contains(df.subquery[1],keyword1)
-                    ret = df.sql[1]
+                if !ismissing(df.subquery[1]) && !contains(df.subquery[1],keyword1)
+                    #===
+                        Tips:
+                            set subquery data in json to df.subquery.
+                            because it combines later with df.sql.
+                            managing df.subquery is very advantageous process at here.
+                    ===#
+                    if haskey(json_dict,"subquery")
+                        @info "json_dict subquery" json_dict["subquery"] typeof(json_dict["subquery"])
+
+                        sp = split(json_dict["subquery"],"=")
+                        if !isnothing(sp)
+                            json_subquery_dict[sp[1]] = sp[2]
+                        end
+
+                        for (k,v) in json_subquery_dict
+                            kk = string("{",k,"}")
+                            df.subquery[1] = replace(df.subquery[1],kk=>v)
+                        end
+                    end
                 else
+                    #execution_sql = string(df.sql[1]," ",df.subquery[1])
+                    #===
                     postedSubquery = item_arr[findfirst(x -> contains(x,keyword2),item_arr)]
                     if 0<length(postedSubquery)
                         p = split(postedSubquery,":")
@@ -463,32 +485,40 @@ module PgSQLSentenceManager
             
                         ret = string(df.sql[1]," ",sub_str)
                     end
+                    ===#
                 end
             elseif contains(json_dict["apino"],"ju") || contains(json_dict["apino"],"jd")
                 # update/delete
-                target_sql = string(df.sql[1]," ",df.subquery[1])
-                println("sql:",target_sql)
-                println("json dict:",json_dict)
-                # json_dict["subquery"] is always point to {jt_id}
+                #   json_dict["subquery"] is always point to {jt_id}
                 json_dict["jt_id"] = json_dict["subquery"]
-                for (k,v) in json_dict
-                    kk = string("{",k,"}")
-                    target_sql = replace(target_sql,kk=>v)
-                end
-                
-                ret = target_sql
             else
                 # insert/update
-                #=== 以下、データバインディング処理になるが、なにカッコいいやりかたないかと探している
-                if contains(v_column[1],"ju")
-                    # update
-                    ss = split(df.sql[1],"set")
-                    cols = split(ss[2],",")
-                    println("cols:",cols)
-                else 
-                end===#
+                #   insert always needs to add 'jetelina_delete_flg' as 0.
+                json_dict["jetelina_delete_flg"] = 0;
+            end
+
+            if ismissing(df.subquery[1]) || contains(df.subquery[1],keyword1)
+                # no subquery in there
+                execution_sql = df.sql[1]
+            else
+                # in the case of being subquery (where.....)
+                execution_sql = string(df.sql[1]," ",df.subquery[1])
+            end
+
+            #==
+                Tips:
+                    json data bind to the sql sentence.
+                    Dict() is used alike associative array.
+            ===#
+            @info "exec...sql:" execution_sql
+            for (k,v) in json_dict
+                kk = string("{",k,"}")
+                execution_sql = replace(execution_sql,kk=>v)
+#                replace!(execution_sql,kk=>v)                 may need julia1.8 over :p
             end
             
+            ret = execution_sql
+        
         end
 
         return ret

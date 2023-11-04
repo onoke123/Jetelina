@@ -447,6 +447,11 @@ const setApiIF_Sql = (s) => {
     ret = `${s.sql};`;
   }
 
+  let reject_jetelina_delete_flg = "jetelina_delete_flg";
+  if(ret.startsWith("insert")){
+    ret = ret.replaceAll(`,{${reject_jetelina_delete_flg}}`,'').replaceAll(`,${reject_jetelina_delete_flg}`);
+  }
+
   return ret;
 }
 /**
@@ -482,7 +487,7 @@ const buildJetelinaJsonForm = (t, s) => {
         }
     }
 
-    if (ss.indexOf("jetelina_delete_flg") <= 0) {
+    if (ss.indexOf("jetelina_delete_flg") < 0) {
       ret = `${ret}\"${$.trim(ss)}\":\"{${$.trim(ss)}}\",`;
     }
   }

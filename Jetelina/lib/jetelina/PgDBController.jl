@@ -306,8 +306,8 @@ module PgDBController
         column_type = eltype.(eachcol(df))
         column_type_string = Array{Union{Nothing,String}}(nothing, length(column_name)) # using for creating table
         column_str = string() # using for creating table
-        insert_column_str = string() # columns definition field
-        insert_data_str = string() # data field
+        insert_column_str = string() # columns definition string
+        insert_data_str = string() # data string
         update_str = string()
         tablename_arr::Vector{String} = []
         #===
@@ -317,18 +317,14 @@ module PgDBController
             cn = column_name[i]
             column_type_string[i] = PgDataTypeList.getDataType(string(column_type[i]))
             column_str = string(column_str, " ", column_name[i], " ", column_type_string[i])
+            insert_column_str = string(insert_column_str, "$cn")
             if startswith(column_type_string[i], "varchar")
                 #string data
-                insert_column_str = string(insert_column_str, "'$cn'")
                 insert_data_str = string(insert_data_str,"'{$cn}'") 
                 update_str = string(update_str, "$cn='{$cn}'")
             else
                 #number data
-                if !contains(cn,keyword1)
-                    insert_column_str = string(insert_column_str, "$cn")
-                    insert_data_str = string(insert_data_str,"{$cn}")
-                end
-
+                insert_data_str = string(insert_data_str,"{$cn}")
                 if !contains(cn,keyword1) && !contains(cn,keyword2)
                     update_str = string(update_str, "$cn={$cn}")
                 end
@@ -336,15 +332,14 @@ module PgDBController
 
             if 0 < i < length(column_name)
                 column_str = string(column_str,",")
-#                update_str = string(update_str,",")
+                insert_column_str = string(insert_column_str,",")
+                insert_data_str = string(insert_data_str,",")
                 #==
                     Tips:
                         because 'jetelina_delete_flg' always comes into the tail
                 ==#
                 if i<length(column_name)-1
                     update_str = string(update_str,",")
-                    insert_column_str = string(insert_column_str,",")
-                    insert_data_str = string(insert_data_str,",")
                 end
             end
         end
