@@ -281,10 +281,11 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
         scenarioNumber = 4;
         if (result != null) {
             const o = result;
-            let m;
-            //ユーザが特定できた
-            Object.keys(o).forEach(function (key) {
-                let sex, firstname;
+            let m = "";
+            // found user
+            Object.keys(o).some(function (key) {
+//            Object.keys(o).forEach(function (key) {
+                    let sex, firstname;
 
                 if (key == "Jetelina" && o[key].length == 1) {
                     $.each(o[key][0], function (k, v) {
@@ -304,18 +305,19 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
                     scenarioNumber = 5;
                     stage = 'login_success';
                 } else if (1 < o[key].length) {
-                    //候補が複数いる
-                    m = "please tell me more detail.";
+                    // some candidates
+                    scenarioNumber = "5-multi-candidates";
                     stage = 'login';
                 } else {
-                    //候補がいない
-                    m = "you are not registered, try again.";
+                    // no user
+                    scenarioNumber = "5-not-registered";
                     stage = 'login';
                 }
 
                 m = chooseMsg(scenarioNumber, m, "a");
 
                 typingControll(m);
+                return true;
             });
         }
     });

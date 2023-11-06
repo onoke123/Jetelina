@@ -149,7 +149,7 @@ function getTableList(s::String)
 function getTableList(s::String)
     df = _getTableList()
     if s == "json"
-        return json(Dict("Jetelina" => copy.(eachrow(df))))
+        return json(Dict("result"=>true,"Jetelina" => copy.(eachrow(df))))
     elseif s == "dataframe"
         return df
     end
@@ -292,6 +292,7 @@ function dataInsertFromCSV(fname::String)
 function dataInsertFromCSV(fname::String)
     keyword1::String = "jetelina_delete_flg"
     keyword2::String = "jt_id"
+    keyword3::String = "unique"
 
     df = DataFrame(CSV.File(fname))
     rename!(lowercase, df)
@@ -313,7 +314,12 @@ function dataInsertFromCSV(fname::String)
     for i = 1:length(column_name)
         cn = column_name[i]
         column_type_string[i] = PgDataTypeList.getDataType(string(column_type[i]))
-        column_str = string(column_str, " ", column_name[i], " ", column_type_string[i])
+        if contains(cn,keyword2)
+            column_str = string(column_str, " ", cn, " ", column_type_string[i]," ", keyword3)
+        else
+            column_str = string(column_str, " ", cn, " ", column_type_string[i])
+        end
+
         insert_column_str = string(insert_column_str, "$cn")
         if startswith(column_type_string[i], "varchar")
             #string data
@@ -496,7 +502,7 @@ function getColumns(tableName::String)
 - return: String: in success -> column data in json, in fail -> ""
 """
 function getColumns(tableName::String)
-    j = ""
+    ret = ""
 
     sql = """   
         SELECT
@@ -510,14 +516,15 @@ function getColumns(tableName::String)
         cols = map(x -> x, names(df))
         select!(df, cols)
 
-        j = json(Dict("tablename" => "$tableName", "Jetelina" => copy.(eachrow(df))))
+        ret = json(Dict("result"=>true, "tablename" => "$tableName", "Jetelina" => copy.(eachrow(df))))
     catch err
+        ret = json(Dict("result"=>false, "tablename"=>"$tableName", "errmsg" => "$err"))
         JetelinaLog.writetoLogfile("PgDBController.getColumns() with $tableName error : $err")
     finally
         close_connection(conn)
     end
 
-    return j
+    return ret
 end
 """
 function executeApi(d::Dict)
@@ -550,23 +557,62 @@ function executeApi(d::Dict)
         # Step2:
         sql_str = PgSQLSentenceManager.createExecutionSqlSentence(d, target_api)
         if 0 < length(sql_str)
+            ret = ""
+
             if debugflg
                 @info "PgDBController.executeApi sql " sql_str
             end
             # Step3:
             conn = open_connection()
             try
-                df = DataFrame(LibPQ.execute(conn, sql_str))
-                return json(Dict("Jetelina" => copy.(eachrow(df))))
+                sql_ret = LibPQ.execute(conn, sql_str)
+                #===
+                    Tips:
+                        case in insert/update/delete, we cannot see if it got success or not by .execute().
+                        using .num_affected_rows() to see the worth.
+                            in insert -> 0: normal end, the fault is caught in 'catch'
+                            in update/delete -> 0: swin' and miss
+                                             -> 1: hit the ball
+                ===#
+                affected_ret =  LibPQ.num_affected_rows(sql_ret)
+                
+                if debugflg
+                    @info "PgDBController.executeApi .num_affected_rows(): " affected_ret
+                end
+
+                if startswith(d["apino"],"js")
+                    # select 
+                    df = DataFrame(sql_ret)
+                    ret = json(Dict("result"=>true,"Jetelina" => copy.(eachrow(df))))
+                elseif startswith(d["apino"], "ji")
+                    # insert
+                    if affected_ret == 0
+                        # this may will not happen
+                        ret = json(Dict("result"=>true,"Jetelina" => "[{\"message from Jetelina\":\"it is not my fault\"}]"))
+                    else
+                        # done correctly
+                        ret = json(Dict("result"=>true,"Jetelina" => "[{\"message from Jetelina\":\"compliment me!\"}]"))
+                    end
+                else
+                    # update & delete
+                    if affected_ret == 0
+                        # the target data was not in there, guess wrong 'jt_id'
+                        ret = json(Dict("result"=>true,"Jetelina" => "[{\"message from Jetelina\":\"there was not it\"}]"))
+                    else
+                        # done correctly
+                        ret = json(Dict("result"=>true,"Jetelina" => "[{\"message from Jetelina\":\"compliment me!\"}]"))
+                    end
+                end
             catch err
-                println(err)
                 apino = d["apino"]
                 JetelinaLog.writetoLogfile("PgDBController.executeApi() with $apino : $sql_str error : $err")
-                return false
+                ret = json(Dict("result"=>false,"apino"=>"$apino","errmsg"=>"$err"))
             finally
                 # close the connection finally
                 close_connection(conn)
             end
+
+            return ret
         end
     end
 
@@ -585,6 +631,7 @@ function doSelect(sql::String,mode::String)
 """
 function doSelect(sql::String, mode::String)
     conn = open_connection()
+    ret = ""
     try
         if mode == "measure"
             #===
@@ -601,12 +648,11 @@ function doSelect(sql::String, mode::String)
         end
 
         df = DataFrame(columntable(LibPQ.execute(conn, sql)))
-        j = json(Dict("Jetelina" => copy.(eachrow(df))))
-        return true, j
+        ret = json(Dict("result"=>true,"Jetelina" => copy.(eachrow(df))))
+        return true, ret
     catch err
-        println(err)
         JetelinaLog.writetoLogfile("PgDBController.doSelect() with $mode $sql error : $err")
-        return false
+        return false, err
     finally
         # close the connection finally
         close_connection(conn)
@@ -622,7 +668,7 @@ function getUserAccount(s::String)
 - return: success -> user data in json, fail -> ""
 """
 function getUserAccount(s::String)
-    j = ""
+    ret = ""
 
     sql = """   
     SELECT
@@ -633,14 +679,15 @@ function getUserAccount(s::String)
     conn = open_connection()
     try
         df = DataFrame(columntable(LibPQ.execute(conn, sql)))
-        j = json(Dict("Jetelina" => copy.(eachrow(df))))
+        ret = json(Dict("result"=>true,"Jetelina" => copy.(eachrow(df))))
     catch err
+        ret = json(Dict("result"=>false,"errmsg" => "$err"))
         JetelinaLog.writetoLogfile("PgDBController.getUserAccount() with $s error : $err")
     finally
         close_connection(conn)
     end
 
-    return j
+    return ret
 end
 
 """

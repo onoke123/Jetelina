@@ -404,7 +404,7 @@ module PgSQLSentenceManager
         ck = sqlDuplicationCheck(selectSql, subq_d)
         if ck[1] 
             # already exist it. return it and do nothing.
-            return json(Dict("resembled" => ck[2]))
+            return json(Dict("result"=>false,"resembled" => ck[2]))
         else
             # yes this is the new
             ret = writeTolist(selectSql, subq_d, tablename_arr)
@@ -414,7 +414,7 @@ module PgSQLSentenceManager
                     return apino in json style if the first in tuple were true.
             ===#
             if ret[1] 
-                return json(Dict("apino" => ret[2]))
+                return json(Dict("result"=>true,"apino" => ret[2]))
             else
                 return ret[1]
             end

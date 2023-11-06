@@ -94,7 +94,7 @@ module PostDataController
         api list is refered in Df_JetelinaSqlList.
     """
     function getApiList()
-        return json(Dict("Jetelina" => copy.(eachrow(Df_JetelinaSqlList))))
+        return json(Dict("result"=>true,"Jetelina" => copy.(eachrow(Df_JetelinaSqlList))))
     end
     """
     function deleteTable()

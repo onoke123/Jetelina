@@ -25,6 +25,8 @@ scenario[3] = ['What?','Are you kidding me?','Never mind'];
 scenario[4] = ['I am sorry, but ', 'Something wrong, hum, '];
 /* greeting to u after successing login */
 scenario[5] = [`Welcome `, `I missed you, `];
+scenario['5-multi-candidates'] = ['please tell me more detail.','next question.','more...'];
+scenario['5-not-registered'] = ['you are not registered, try again.','you are not here yet.','I do not know you, sorry.'];
 /* after login */
 scenario[6] = ['How can I help you today?', 'What do you do now?'];
 scenario['success'] = ['Done','Success','I am so happy','Yes'];
