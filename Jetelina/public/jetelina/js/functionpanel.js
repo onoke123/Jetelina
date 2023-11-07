@@ -11,23 +11,24 @@
       isVisibleGenelicPanel() checking "#genelic_panel" is visible or not
       isVisibleColumns() checking "#columns" is visible or not
       itemSelect(p) select table column
-      deleteSelectedItems(p) delete the selected columns from #container field   選択されているcolumnsを#containerから削除する
+      deleteSelectedItems(p) delete the selected columns from #container field
       cleanUp(s)  droped items & columns of selecting table
       cleanupItems4Switching() clear screen in activeItem class when switching table list/api list 
       cleanupContainers() clear screen in the detail zone showing when switching table list/api list 
       fileupload() CSV file upload
-      getdataFromJson(o,k) aquire the ordered data from the ordered json object  指定されたJsonデータから指定されたデータを取得する
-      listClick(p)   do something by clicking tble list or api list items  Table list / API listをクリックした時の処理 
+      getdataFromJson(o,k) aquire the ordered data from the ordered json object
+      listClick(p)   do something by clicking tble list or api list items  
       setApiIF_In(t,s) Show Json of 'API　IN'
       setApiIF_Out(t,s) Show Json of 'API OUT'
       setApiIF_Sql(s) Show sample execution sql sentence
       buildJetelinaJsonForm(t,s)  Create display Json form data from a API
-      getColumn(tablename) Ajax function for getting the column names of the ordered table  指定されたtableのカラムデータを取得する
-      removeColumn(tablename) Delete a column from selected item list on the display カラム表示されている要素を指定して表示から削除する
-      deleteThisTable(tablename)　Ajax function for deleting the target table from DataBase. 指定されたtableをDBから削除する
+      buildJetelinaOutJsonForm(t, s) Create display 'OUT' Json form data from a API. mainly using in 'select' API.
+      getColumn(tablename) Ajax function for getting the column names of the ordered table 
+      removeColumn(tablename) Delete a column from selected item list on the display 
+      deleteThisTable(tablename)　Ajax function for deleting the target table from DataBase. 
       postSelectedColumns() Ajax function for posting the selected columns.
-      functionPanelFunctions(ut)　Exectute some functions ordered by user chat input message    Function Panel 機能操作
-      procTableApiList(s) Execute some functions for table list and/or api list order by user chat input commands  チャットでtable/apiの操作を行う
+      functionPanelFunctions(ut)　Exectute some functions ordered by user chat input message    
+      procTableApiList(s) Execute some functions for table list and/or api list order by user chat input commands  
       containsMultiTables() Judge demanding 'where sentence' before post to the server
       showGenelicPanel(b) genelic panel open or close. 
       checkGenelicInput() check genelic panel input. caution: will imprement this in V2 if necessary
@@ -424,8 +425,11 @@ const setApiIF_Out = (t, s) => {
     let pf = pb[1].split("from");
     // there is the items in pf[0]
     if (pf[0] != null && 0 < pf[0].length) {
-      ret = buildJetelinaJsonForm(ta, pf[0]);
+      ret = buildJetelinaOutJsonForm(ta, pf[0]);
     }
+  }else{
+    // insert, update, delete
+    ret = '{"result":true or false,"Jetelina":"[{\"message from Jetelina\":\".....\"}]"}';
   }
 
   return ret;
@@ -499,6 +503,54 @@ const buildJetelinaJsonForm = (t, s) => {
 
   return ret;
 }
+
+/**
+ * @function buildJetelinaOutJsonForm
+ * @param {string} t targeted desiring data (json name part)
+ * @param {string} s tables(after 'from' sentence in a sql)
+ * @returns {string} Json form string
+ * 
+ * Create display 'OUT' Json form data from a API
+ * mainly using in 'select' API.
+ */
+const buildJetelinaOutJsonForm = (t, s) => {
+  let ret = "";
+
+  let c = s.split(",");
+  for (let i = 0; i < c.length; i++) {
+    let cn = c[i].split('.');
+    if (ret.length == 0) {
+      ret = `{"result":true or false,"Jetelina":"[{`;
+    }
+
+    let ss = "";
+    if (cn[1] != null && 0 < cn[1].length) {
+      // select
+      ss = cn[1];
+    } else {
+        //insert update delete
+        if (c[i].indexOf("=") != -1) {
+          //update
+          ss = c[i].split("=")[0];
+        } else {
+          //insert delete
+          ss = c[i];
+        }
+    }
+
+    if (ss.indexOf("jetelina_delete_flg") < 0) {
+      ret = `${ret}\"${$.trim(ss)}\":\"{${$.trim(ss)}}\",`;
+    }
+  }
+
+  if (0 < ret.length) {
+    ret = ret.slice(0, ret.length - 1);// reject ',' from the tail
+    ret = `${ret}]"}`; // caution: the last '}' is necessary
+  }
+
+  return ret;
+}
+
 /**
  * @function getColumn
  * @param {string} tablename  targeted table name
