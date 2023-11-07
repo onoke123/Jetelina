@@ -342,9 +342,10 @@ module PgSQLSentenceManager
               new sql then success to append it to  -> json {"apino":"<something no>"}
                            fail to append it to     -> false
     """
-    function createApiSelectSentence(json_d::Dict)
-        item_d = json_d("item")
-        subq_d = json_d("subquery")
+    function createApiSelectSentence(json_d)
+        @info "creatApi... type: " typeof(json_d)
+        item_d = json_d["item"]
+        subq_d = json_d["subquery"]
 
         #==
             Tips:
@@ -439,14 +440,30 @@ module PgSQLSentenceManager
         keyword1::String = "ignore" # protocol
         keyword2::String = "subquery" # protocol
         j_del_flg::String = "jetelina_delete_flg=0" # absolute select condition
+        subquery_str::String = "" # contain df.subquery[1]. see Tips
         ret::String = "" # return sql sentence
         json_subquery_dict = Dict()
         execution_sql::String = ""
 
         if 0<length(json_dict)
+            #===
+                Tips:
+                    case in 'insert' has a chance of 'missing' in df.subquery[1].
+                    
+                    Attention: 
+                        using 'subquery_str' String type has a benefit rather than using df.subquery[1],
+                        because df fiels length are fixed as DataFrame when it was created.
+                        I mean using straight as df.* may happen over flow in the case of concate strings.
+                            ex. df.subquery[1] -> fixed String(10) in DataFrame
+                                     df.subquery[1] = string(df.subquery[1], "AAAAAAAA") -> maybe get over flow 
+            ===#
+            if !ismissing(df.subquery[1])
+                subquery_str = df.subquery[1]
+            end
+
             if contains(json_dict["apino"],"js")
                 # select
-                if !ismissing(df.subquery[1]) && !contains(df.subquery[1],keyword1)
+                if !isnothing(subquery_str) && !contains(subquery_str,keyword1) && !ismissing(subquery_str)
                     #===
                         Tips:
                             set subquery data in json to df.subquery.
@@ -467,15 +484,14 @@ module PgSQLSentenceManager
                         end
 
                         for (k,v) in json_subquery_dict
-                            @info "k and v " k v
                             kk = string("{",k,"}")
-                            df.subquery[1] = replace(df.subquery[1],kk=>v)
+                            subquery_str = replace(subquery_str,kk=>v)
                         end
 
-                        df.subquery[1] = string(df.subquery[1]," ","and ", j_del_flg)
+                        subquery_str = string(subquery_str," ","and ", j_del_flg)
                     end
                 else
-                    df.subquery[1] =string("where ", j_del_flg)
+                    subquery_str =string("where ", j_del_flg)
                 end
             elseif contains(json_dict["apino"],"ju") || contains(json_dict["apino"],"jd")
                 # update/delete
@@ -487,13 +503,7 @@ module PgSQLSentenceManager
                 json_dict["jetelina_delete_flg"] = 0;
             end
 
-            if ismissing(df.subquery[1]) || contains(df.subquery[1],keyword1)
-                # no subquery in there
-                execution_sql = df.sql[1]
-            else
-                # in the case of being subquery (where.....)
-                execution_sql = string(df.sql[1]," ",df.subquery[1])
-            end
+            execution_sql = string(df.sql[1]," ",subquery_str)
 
             #==
                 Tips:

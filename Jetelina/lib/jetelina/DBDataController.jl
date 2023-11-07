@@ -19,14 +19,13 @@
         doUpdate()
         doDelete()
         getUserAccount(s::String) Get user account for authentication.
-        executeApi(d) Execute SQL sentence order by d: json raw data.
+        executeApi(json_d) Execute SQL sentence order by json_d: json raw data.
 """
 
 module DBDataController
 
     using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json
-    using JetelinaLog, JetelinaReadConfig
-    using PgDBController, JetelinaFiles
+    using JetelinaLog, JetelinaReadConfig, PgDBController, JetelinaFiles, JetelinaReadSqlList, PgSQLSentenceManager
 
     export init_Jetelina_table,dataInsertFromCSV,getTableList,getSequenceNumber,dropTable,getColumns,doInsert,doSelect,doUpdate,
     doDelete,getUserAccount,executeApi
@@ -211,19 +210,48 @@ module DBDataController
     end
 
     """
-    function executeApi(d)
+    function executeApi(json_d)
 
         Execute SQL sentence order by d: json raw data.
         
     # Arguments
-    - `d`:  json raw data, uncertain data type        
+    - `json_d`:  json raw data, uncertain data type        
     """
-    function executeApi(d)
-        if JetelinaDBtype == "postgresql"
-            # Case in PostgreSQL
-            PgDBController.executeApi(d)
+    function executeApi(json_d::Dict)
+        ret = ""
+        sql_str = ""
+        #===
+            Tips:
+                Steps
+                    1.search sql in Df_JetelinaSqlList with d["apino"]
+                    ex. ji1 -> update <table> set name='{name}', age={age} where jt_id={jt_id}
+                    2.json data bind to the sql sentence
+                    3.execute the binded sql sentence
+        ===#
+        # Step1
+        #===
+            Tips:
+                use subset() here, because Df_JetelinaSqlList may have missing data.
+                subset() supports 'skipmissing', but filter() does not.
+        ===#
+        target_api = subset(Df_JetelinaSqlList, :apino => ByRow(==(json_d["apino"])), skipmissing=true)
+        if 0 < nrow(target_api)
+            # Step2:
+            if JetelinaDBtype == "postgresql"
+                # Case in PostgreSQL
+                sql_str = PgSQLSentenceManager.createExecutionSqlSentence(json_d, target_api)
+                if 0 < length(sql_str)
+                    # Step3:
+                    ret = PgDBController.executeApi(json_d["apino"],sql_str)
+                end    
+            end
         elseif JetelinaDBtype == "mariadb"
         elseif JetelinaDBtype == "oracle"
         end
+
+        # write execution sql to log file
+        JetelinaLog.writetoSQLLogfile(json_d["apino"],sql_str)
+
+        return ret
     end
 end

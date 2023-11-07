@@ -8,13 +8,14 @@ Description:
 
 functions
     writetoLogfile(s)  write 's' to log file. date format is "yyyy-mm-dd HH:MM:SS".'s' is available whatever type.
+    writetoSQLLogfile(apino::String, sql::String)  write executed sql with its apino to SQL log file. date format is "yyyy-mm-dd HH:MM:SS".
 """
 module JetelinaLog
 
     using Logging, Dates
-    using JetelinaReadConfig,JetelinaFiles
+    using JetelinaReadConfig, JetelinaFiles
 
-    export writetoLogfile
+    export writetoLogfile, writetoSQLLogfile
 
     """
     function _logfileOpen()
@@ -23,21 +24,17 @@ module JetelinaLog
         open log file. the log file is defined in Jetelina config file.
 
     # Arguments
-    - return::tuple: IOStream, Logging.SimpleLogger
+    - return::tuple (IOStream, Logging.SimpleLogger)
     """
     function _logfileOpen()
         logfile = getFileNameFromLogPath(JetelinaLogfile)
 
-        if debugflg
-            println("JetelinaLog.jl logfile: ", logfile)
-        end
-        
         try
             io = open(logfile, "a+")
             logger = SimpleLogger(io)
             return io, logger
         catch err
-            println("JetelinaLog.logfileOpen(): "$err)
+            println("JetelinaLog._logfileOpen(): $err")
         end
     end
     """
@@ -50,7 +47,7 @@ module JetelinaLog
     """
     function writetoLogfile(s)
         # put date
-        ss = string(Dates.format(now(),"yyyy-mm-dd HH:MM:SS"), " ",s)
+        ss = string(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"), " ", s)
 
         io, logger = _logfileOpen()
         with_logger(logger) do
@@ -74,4 +71,27 @@ module JetelinaLog
         close(io)
     end
 
+    """
+    function writetoSQLLogfile(apino::String, sql::String)
+
+        write executed sql with its apino to SQL log file. date format is "yyyy-mm-dd HH:MM:SS".
+
+    # Arguments
+    - `apino::String`: apino ex. ji101
+    - `sql::String`  : SQL sentence. ex. select aa,bb from table
+    """
+    function writetoSQLLogfile(apino, sql)
+
+        # put date
+        log_str = string(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"), " ", apino, ":", sql)
+        sqllogfile = getFileNameFromLogPath(JetelinaSQLLogfile)
+        try
+            open(sqllogfile, "a+") do f
+                println(f, log_str)
+            end
+        catch err
+            writetoLogfile("JetelinaLog.writeToSQLLogfile() error: $err")
+            return
+        end
+    end
 end

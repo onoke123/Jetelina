@@ -1,10 +1,8 @@
 apino,sql
-js312,"select ftest.name,ftest.age,ftest2.name,ftest2.age,ftest3.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id"
-js312,"select ftest.name,ftest.age,ftest2.name,ftest2.age,ftest3.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id"
-js312,"select ftest.name,ftest.age,ftest2.name,ftest2.age,ftest3.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id"
-js312,"select ftest.name,ftest.age,ftest2.name,ftest2.age,ftest3.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id"
-js312,"select ftest.name,ftest.age,ftest2.name,ftest2.age,ftest3.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id"
-js313,"select ftest.sex,ftest.age,ftest2.age,ftest2.ave from ftest as ftest,ftest2 as ftest2 where ftest.id=ftest2.id"
-js313,"select ftest.sex,ftest.age,ftest2.age,ftest2.ave from ftest as ftest,ftest2 as ftest2 where ftest.id=ftest2.id"
-js313,"select ftest.sex,ftest.age,ftest2.age,ftest2.ave from ftest as ftest,ftest2 as ftest2 where ftest.id=ftest2.id"
-js314,"select ftest.sex,ftest.age,ftest.name from ftest as ftest "
+2023-11-07 12:01:55 jd466:update ftest set jetelina_delete_flg=1 where jt_id=2
+2023-11-07 12:21:30 js467:select ftest.name,ftest.age from ftest as ftest where jetelina_delete_flg=0
+2023-11-07 12:21:36 js467:select ftest.name,ftest.age from ftest as ftest where jetelina_delete_flg=0
+2023-11-07 12:21:47 js468:select ftest.name,ftest.age from ftest as ftest where ftest.jt_id=1 and jetelina_delete_flg=0
+2023-11-07 12:22:51 ju465:update ftest set name='AAA3',sex='f',age=30,ave=0.9 where jt_id=1
+2023-11-07 12:23:18 ji464:insert into ftest (jt_id,name,sex,age,ave,jetelina_delete_flg) values(5,'EEE','m',60,0.5,0) 
+2023-11-07 12:23:27 jd466:update ftest set jetelina_delete_flg=1 where jt_id=2
