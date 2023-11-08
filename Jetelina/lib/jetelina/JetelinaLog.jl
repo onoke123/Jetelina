@@ -81,9 +81,12 @@ module JetelinaLog
     - `sql::String`  : SQL sentence. ex. select aa,bb from table
     """
     function writetoSQLLogfile(apino, sql)
-
-        # put date
-        log_str = string(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"), " ", apino, ":", sql)
+        #==
+            Tips:
+                csv format is requested by SQLAnalyzer.
+                ref: SQLAnalyzer.createAnalyzedJsonFile()
+        ===#
+        log_str = string(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"), ",", apino, ",\"", sql,"\"")
         sqllogfile = getFileNameFromLogPath(JetelinaSQLLogfile)
         try
             open(sqllogfile, "a+") do f

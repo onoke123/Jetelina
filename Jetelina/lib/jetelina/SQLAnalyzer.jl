@@ -90,7 +90,7 @@ module SQLAnalyzer
                 steps for analyzing
                     1.make unique sql statements
                     2.pick up only the columns part
-                    3.find the max access number among the longest combination number sql sentence
+                    3.find the max access numbers among the longest combination number sql sentence
                     4.collect each sql access numbers
                     5.experimental sql execution in test db, if there were a target table that had possibilities in inproving
                     6.write this relation data to JetelinaTableCombiVsAccessRelation file in JSON form
@@ -99,26 +99,26 @@ module SQLAnalyzer
 
         #==
             step1:
-                unique 'apino' in 'u', then count access number in sql.log.  ex. u[i] === ....
+                unique 'apino' in 'u', then count access numbers in sql.log.  ex. u[i] === ....
         ==#
-        sql_df = DataFrame(apino=String[], sql=String[], combination=Vector{String}[], access_number=Float64[])
+        sql_df = DataFrame(apino=String[], sql=String[], combination=Vector{String}[], access_numbers=Float64[])
 
         #===
             Tips:
                 shape the data
                     ex. 
-                    apino      sql         combination         access number
+                    apino      sql         combination         access numbers
                     js10    select ....  ['ftest3','ftest2']      2
                     js22    select ....  ['ftest4','ftest2']      5
                     js30    select ....  ['ftest2']              10
 
-                hire js22 because it is the highest access number among higher combination number(js10,js22) to create a client view graph 'condition panel'.
+                hire js22 because it is the highest access numbers among higher combination number(js10,js22) to create a client view graph 'condition panel'.
                 js30 may does not need to be created in 'condition panel' so that it is the best number but it has low combination number. 
         ===#
-
+println("u is ", u)
         for i = 1:u_size
             ac = 0
-            # collect access numbers for each unique SQL. make "access_number"
+            # collect access numbers for each unique SQL. make "access_numbers"
             dd = filter(:apino=>x->x==u[i],df)
             ac = nrow(dd)
             table_arr = String[]
@@ -171,7 +171,7 @@ module SQLAnalyzer
 
                     then sql_df will be alike below, you can see 'basic table' is in the head of 'combination' array data,
 
-                        Row │ apino   sql                                    combination                        access_number 
+                        Row │ apino   sql                                    combination                        access_numbers 
                             │ String  String                                 Array…                             Float64       
                   ─────┼───────────────────────────────────────────────────
                           1 │ js312   select ftest.name,ftest.age,ftes…  ["ftest", "ftest", "ftest2", "ft…            5.0
@@ -189,7 +189,7 @@ module SQLAnalyzer
 
         #==
             step3:
-                first of all, collect each sql access number for showing it on condition panel. 
+                first of all, collect each sql access numbers for showing it on condition panel. 
         ==#
         collectSqlAccessNumbers(sql_df)
 
@@ -199,9 +199,9 @@ module SQLAnalyzer
 
         #==
             step4:
-                find the max access number among the longest combination number sql sentence.
+                find the max access numbers among the longest combination number sql sentence.
         ==#
-        accn = sql_df[p,:access_number]
+        accn = sql_df[p,:access_numbers]
         pp =  findall(x->x==maximum(accn),accn)
 
         # then the target sql sentence is this.
@@ -224,7 +224,7 @@ module SQLAnalyzer
                     the analyzing has been done above.
             ===#
             # delete ':sql' column from 'sql_df', because it is unnecessary in the json file.
-            select!(sql_df,:apino,:combination,:access_number)
+            select!(sql_df,:apino,:combination,:access_numbers)
 
             #===
                 Tips:
@@ -233,7 +233,7 @@ module SQLAnalyzer
                         ex.
                             replace 'combination' with 'Row No.' of each table.
 
-                            Row │ apino          combination                    access_number 
+                            Row │ apino          combination                    access_numbers 
                                 │ String           Array…                         Float64       
                             ──┼────────────────────────────────
                             1   │ js312  ["ftest", "ftest2", "ftest3"]            5.0
@@ -244,7 +244,7 @@ module SQLAnalyzer
                             ftest3.idはftest4+ftest2が代表値なので → (3+4)/2(tableが2つだから)=3.5 ←y座標になる
                             よって、ftest3.idの座標は(3,3.5)
 
-                            ”access number”はk-means法の"重み"として考えているけど、上記座標取得方法なら不要になる、が一応保持しておく、念のため。
+                            ”access numbers”はk-means法の"重み"として考えているけど、上記座標取得方法なら不要になる、が一応保持しておく、念のため。
 
 
                         最終的に、カラム名とカラム座標値のMatrixをファイルに格納する(一旦ね)。
@@ -266,8 +266,8 @@ module SQLAnalyzer
             d = Dict(table_df.tablename .=> axes(table_df, 1))
             sql_df.combination = [getindex.(Ref(d), x) for x in sql_df.combination]
 
-            # normalize all access number by the biggest 'access_number'
-            sql_df.access_number = sql_df.access_number / maximum(sql_df.access_number)
+            # normalize all access numbers by the biggest 'access_numbers'
+            sql_df.access_numbers = sql_df.access_numbers / maximum(sql_df.access_numbers)
 
             if debugflg
                 @info "SQLAnalyzer.createAnalyzedJsonFile(): " JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df))))
@@ -324,7 +324,7 @@ module SQLAnalyzer
 
         c_len = length.(df.combination) # length処理に'.'が付いているからね😁
         hightcomblen = findall(x -> x == (maximum(c_len)), c_len) # このhighcomblenにはmaxのデータのindex番号が入る
-        maxaccess_n = maximum(df[!, :access_number]) # 参考までに取得
+        maxaccess_n = maximum(df[!, :access_numbers]) # 参考までに取得
 
         if debugflg
             @info "combination max len: " length(hightcomblen) maxaccess_n
@@ -342,7 +342,7 @@ module SQLAnalyzer
             for i = 1:length(hightcomblen)
                 # dict作成処理の変数名が長くなるので、ここで短いヤツにしておく　<-単に見通しを良くするため
                 hl = hightcomblen[i]
-                acn = df[hl, :access_number]
+                acn = df[hl, :access_numbers]
                 #===
                     Dict形式 a=>b　でcandidate...に追加している
                 ===#
@@ -459,7 +459,7 @@ module SQLAnalyzer
         # delete this file if it exists, because this file is always fresh.
         rm(sqlaccessnumberfile, force=true)
 
-        select!(this_df,:apino,:access_number)
+        select!(this_df,:apino,:access_numbers)
         open(sqlaccessnumberfile, "w") do f
             println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(this_df)))))
         end

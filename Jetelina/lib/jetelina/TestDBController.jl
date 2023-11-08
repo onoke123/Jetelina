@@ -10,7 +10,7 @@ Description:
 functions
     open_connection()  open connection to the test db.
     close_connection( conn::LibPQ.Connection )  close the test db connection
-    doSelect(sql::String,flg::String)  execute ordered sql sentence on test db and acquire its speed.
+    doSelect(sql::String)  execute ordered sql sentence on test db and acquire its speed.
     measureSqlPerformance()  execute 'select' sql sentence and write the execution speed into a file
 """
 module TestDBController
@@ -53,7 +53,7 @@ module TestDBController
     end
 
     """
-    function doSelect(sql::String,flg::String)
+    function doSelect(sql::String)
 
         execute ordered sql sentence on test db and acquire its speed.
 
@@ -61,7 +61,7 @@ module TestDBController
     - `sql::String`: execute sql sentense
     - return: boolean: false in fale.
     """
-    function doSelect(sql)
+    function doSelect(sql::String)
         conn = open_connection()
         try
                 #===
