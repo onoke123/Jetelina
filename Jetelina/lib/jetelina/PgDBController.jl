@@ -675,7 +675,8 @@ module PgDBController
             Use JetelinaSqlList file here because the convenient Df_JetelinaSqlList is in the Genie zone,
             then need to use it via Web, it gives a reguration to use it in other process, for example cron.
         ===#
-        sqlFile = getFileNameFromConfigPath(JetelinaSQLListfile)
+#        sqlFile = getFileNameFromConfigPath(JetelinaSQLListfile)
+        sqlFile = getFileNameFromConfigPath(JetelinaExperimentSqlList)
         sqlPerformanceFile = getFileNameFromConfigPath(JetelinaSqlPerformancefile)
 
         open(sqlPerformanceFile, "w") do f

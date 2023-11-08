@@ -12,6 +12,7 @@ functions
     getFileNameFromLogPath(fname)  get full path of Jetelina log files
 """
 module JetelinaFiles
+    using JetelinaLog
 
     export getFileNameFromConfigPath,getJsFileNameFromPublicPath,getFileNameFromLogPath
 
@@ -25,7 +26,12 @@ module JetelinaFiles
     - return: full path of the tartget name. this path is under Genie zone.
     """
     function getFileNameFromConfigPath(fname)
-        return string( joinpath( @__DIR__, "config", fname ))
+        fn = string( joinpath( @__DIR__, "config", fname ))
+        if !isfile(fn)
+            JetelinaLog.writetoLogfile("JetelinaFiles.getFileNameFromConfigPath: $fn does not exist")
+        end
+
+        return fn            
     end
     """
     function getJsFileNameFromPublicPath(fname)
@@ -37,7 +43,12 @@ module JetelinaFiles
     - return: full path of the tartget name. this path is under Genie zone.
     """
     function getJsFileNameFromPublicPath(fname)
-        return string(joinpath(@__DIR__, "..", "..", "public", "jetelina", "js", fname))
+        fn = string(joinpath(@__DIR__, "..", "..", "public", "jetelina", "js", fname))
+        if !isfile(fn)
+            JetelinaLog.writetoLogfile("JetelinaFiles.getJsFileNameFromPublicPath: $fn does not exist")
+        end
+
+        return fn            
     end
     """
     function getJsFileNameFromPublicPath(fname)
@@ -49,7 +60,12 @@ module JetelinaFiles
     - return: full path of the tartget name. this path is under Genie zone.
     """
     function getFileNameFromLogPath(fname)
-        return string( joinpath( @__DIR__, "log", fname ) )
+        fn = string( joinpath( @__DIR__, "log", fname ) )
+        if !isfile(fn)
+            JetelinaLog.writetoLogfile("JetelinaFiles.getFileNameFromLogPath: $fn does not exist")
+        end
+
+        return fn            
     end
 
 end

@@ -75,6 +75,7 @@ module SQLAnalyzer
         #===
             Tips:
                 get uniqeness
+                Attention: analyze only select sql
                     ex. 
                     "js312,"  "select ftest.name,ftest.age,ftest2.name,ftest2.age,ftest3.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id"  ""
                     "js312,"  "select ftest.name,ftest.age,ftest2.name,ftest2.age,ftest3.age,ftest3.dumy from ftest as ftest,ftest2 as ftest2,ftest3 as ftest3 where ftest.id=ftest2.id and ftest.id=ftest3.id"  ""
@@ -84,6 +85,7 @@ module SQLAnalyzer
 
                 do uniqueness with 'apino' because of difference 'where' sentences, maybe.
         ===#
+        filter!(:apino=>p->startswith(p,"js"),df)
         u = unique(df[:, :apino])
         #===
             Tips:
@@ -95,14 +97,10 @@ module SQLAnalyzer
                     5.experimental sql execution in test db, if there were a target table that had possibilities in inproving
                     6.write this relation data to JetelinaTableCombiVsAccessRelation file in JSON form
         ===#
-        u_size = length(u)
-
         #==
             step1:
                 unique 'apino' in 'u', then count access numbers in sql.log.  ex. u[i] === ....
         ==#
-        sql_df = DataFrame(apino=String[], sql=String[], combination=Vector{String}[], access_numbers=Float64[])
-
         #===
             Tips:
                 shape the data
@@ -115,178 +113,196 @@ module SQLAnalyzer
                 hire js22 because it is the highest access numbers among higher combination number(js10,js22) to create a client view graph 'condition panel'.
                 js30 may does not need to be created in 'condition panel' so that it is the best number but it has low combination number. 
         ===#
-println("u is ", u)
-        for i = 1:u_size
-            ac = 0
-            # collect access numbers for each unique SQL. make "access_numbers"
-            dd = filter(:apino=>x->x==u[i],df)
-            ac = nrow(dd)
-            table_arr = String[]
-            tables = String[]
+        sql_df = DataFrame(apino=String[], sql=String[], combination=Vector{String}[], access_numbers=Float64[])
 
-            #==
-                step2:
-                    pick up columns from sql sentence. the columns are between 'select' and 'from'.
-                        ex. select <columns> from <tables> where ...  -> <columns> 
+        u_size = length(u)    
+        if 0<u_size
+            for i = 1:u_size
+                ac = 0
+                # collect access numbers for each unique SQL. make "access_numbers"
+                dd = filter(:apino=>x->x==u[i],df)
+                ac = nrow(dd)
+                table_arr = String[]
+                tables = String[]
 
-                    this can do because of unified sql sentence by Jetelina created.  <-- importance!
-            ==#
-            cols = extractColumnsFromSql(df[:,:sql][i])
-            c = split(cols[1], ",")
+                #==
+                    step2:
+                        pick up columns from sql sentence. the columns are between 'select' and 'from'.
+                            ex. select <columns> from <tables> where ...  -> <columns> 
 
-            for j = 1:length(c)
-                #===
-                    Tips:
-                        c[j] -> <table name>.<column name>
-                        then spliting to
-                        cc[1]:table name
-                        cc[2]:column name 
-                ===#
-                cc = split(c[j], ".")
-                
-                #===
-                    Tips:
-                        reject master tables.
-                        master tables has 'master' in their own name. this is the protocol. <-- importance!
-                ===#
-                if !contains( cc[1], "master" )
-                    # logical NOT in Julia, yes.
-                    if cc[1] ∉ table_arr
-                        push!(table_arr, cc[1]) # push except master table without duplication.
+                        this can do because of unified sql sentence by Jetelina created.  <-- importance!
+                ==#
+                cols = extractColumnsFromSql(df[:,:sql][i])
+                c = split(cols[1], ",")
+
+                for j = 1:length(c)
+                    #===
+                        Tips:
+                            c[j] -> <table name>.<column name>
+                            then spliting to
+                            cc[1]:table name
+                            cc[2]:column name 
+                    ===#
+                    cc = split(c[j], ".")
+                    
+                    #===
+                        Tips:
+                            reject master tables.
+                            master tables has 'master' in their own name. this is the protocol. <-- importance!
+                    ===#
+                    if !contains( cc[1], "master" )
+                        # logical NOT in Julia, yes.
+                        if cc[1] ∉ table_arr
+                            push!(table_arr, cc[1]) # push except master table without duplication.
+                        end
+
+                        push!(tables,cc[1])  # collect table names used in the sql sentence, whatever.
                     end
-
-                    push!(tables,cc[1])  # collect table names used in the sql sentence, whatever.
                 end
+
+                #===
+                    Tips:
+                        push the best number of table in tables[] as 'basic table' to the head of table_arr.
+                        in the case of multi candidates in 'basic table', they are ordered in Ascii.
+                            ex. there are candidates as 'a','b'(they are same number), will hire 'a'. hum.. alright. 
+
+                        this 'basic table' is to be x-axis order in 'Access vs Combination' graph in the conditon panel, that is drwawn by Plotly.js.
+                            
+                        mode() is included in StatsBase.jl to return the mode of tables array.
+
+                        then sql_df will be alike below, you can see 'basic table' is in the head of 'combination' array data,
+
+                            Row │ apino   sql                                    combination                        access_numbers 
+                                │ String  String                                 Array…                             Float64       
+                    ─────┼───────────────────────────────────────────────────
+                            1 │ js312   select ftest.name,ftest.age,ftes…  ["ftest", "ftest", "ftest2", "ft…            5.0
+                            2 │ js313   select ftest.name,ftest.age,ftes…  ["ftest", "ftest", "ftest2", "ft…            3.0
+                            3 │ js314   select ftest.name,ftest.age,ftes…  ["ftest", "ftest", "ftest2", "ft…            1.0
+                ===#
+                pushfirst!(table_arr,mode(tables))
+                # move it to here becase it has changed each column name to each sql name.
+                push!(sql_df, [u[i], df[:,:sql][i],table_arr, ac])
             end
 
             #===
-                Tips:
-                    push the best number of table in tables[] as 'basic table' to the head of table_arr.
-                    in the case of multi candidates in 'basic table', they are ordered in Ascii.
-                        ex. there are candidates as 'a','b'(they are same number), will hire 'a'. hum.. alright. 
-
-                    this 'basic table' is to be x-axis order in 'Access vs Combination' graph in the conditon panel, that is drwawn by Plotly.js.
-                        
-                    mode() is included in StatsBase.jl to return the mode of tables array.
-
-                    then sql_df will be alike below, you can see 'basic table' is in the head of 'combination' array data,
-
-                        Row │ apino   sql                                    combination                        access_numbers 
-                            │ String  String                                 Array…                             Float64       
-                  ─────┼───────────────────────────────────────────────────
-                          1 │ js312   select ftest.name,ftest.age,ftes…  ["ftest", "ftest", "ftest2", "ft…            5.0
-                          2 │ js313   select ftest.name,ftest.age,ftes…  ["ftest", "ftest", "ftest2", "ft…            3.0
-                          3 │ js314   select ftest.name,ftest.age,ftes…  ["ftest", "ftest", "ftest2", "ft…            1.0
+                create JetelinaExperimentSqlList for executing them on test db
             ===#
-            pushfirst!(table_arr,mode(tables))
-            # move it to here becase it has changed each column name to each sql name.
-            push!(sql_df, [u[i], df[:,:sql][i],table_arr, ac])
-        end
-        #===
-            ↑ preparation.
-            ↓ analyzing.
-        ===#
+            experimentFile = getFileNameFromConfigPath(JetelinaExperimentSqlList)
+            @info "experimentfile is " experimentFile
+            # delete this file if it exists, becaus this file is always fresh.
+            rm(experimentFile, force=true)
+            println("experi.. ", sql_df)
+            try
+                CSV.write(experimentFile,Dict(eachrow(sql_df)),header=[JetelinaFileColumnApino,JetelinaFileColumnSql] )
+            catch err
+                println(err)
+                return
+            end
+            #===
+                ↑ preparation.
+                ↓ analyzing.
+            ===#
 
-        #==
-            step3:
-                first of all, collect each sql access numbers for showing it on condition panel. 
-        ==#
-        collectSqlAccessNumbers(sql_df)
-
-        # find the sql that is the longest combination number
-        c_len = length.(sql_df.combination)
-        p = findall(x->x==maximum(c_len),c_len) # 'p' has the index number of the max data
-
-        #==
-            step4:
-                find the max access numbers among the longest combination number sql sentence.
-        ==#
-        accn = sql_df[p,:access_numbers]
-        pp =  findall(x->x==maximum(accn),accn)
-
-        # then the target sql sentence is this.
-        target = sql_df[pp,:]
-        
-        #===
-            Tips:
-                execute an experimental sql test(step5,6) on test db if there were a target.
-        ===#
-        if( 0<nrow(target))
             #==
-                step5: 
-                    good!. let's analyze it in testdb.
+                step3:
+                    first of all, collect each sql access numbers for showing it on condition panel. 
             ==#
-            experimentalCreateView(target)
+            collectSqlAccessNumbers(sql_df)
 
-            #===
-                Tips:
-                    from here for showing the anlyzed graph in conditional pane.
-                    the analyzing has been done above.
-            ===#
-            # delete ':sql' column from 'sql_df', because it is unnecessary in the json file.
-            select!(sql_df,:apino,:combination,:access_numbers)
+            # find the sql that is the longest combination number
+            c_len = length.(sql_df.combination)
+            p = findall(x->x==maximum(c_len),c_len) # 'p' has the index number of the max data
 
-            #===
-                Tips:
-                    this tips is complicated, that why still in Japanese.
-                    what here is doing, 
-                        ex.
-                            replace 'combination' with 'Row No.' of each table.
+            #==
+                step4:
+                    find the max access numbers among the longest combination number sql sentence.
+            ==#
+            accn = sql_df[p,:access_numbers]
+            pp =  findall(x->x==maximum(accn),accn)
 
-                            Row │ apino          combination                    access_numbers 
-                                │ String           Array…                         Float64       
-                            ──┼────────────────────────────────
-                            1   │ js312  ["ftest", "ftest2", "ftest3"]            5.0
-                            2   │ js313  ["ftest", "ftest2", "ftest3"]            5.0
-                            3   │ js314  ["ftest", "ftest2", "ftest3"]            5.0
-
-                            ftest3.idはftest3にあるので→x座標:3(ftest3)
-                            ftest3.idはftest4+ftest2が代表値なので → (3+4)/2(tableが2つだから)=3.5 ←y座標になる
-                            よって、ftest3.idの座標は(3,3.5)
-
-                            ”access numbers”はk-means法の"重み"として考えているけど、上記座標取得方法なら不要になる、が一応保持しておく、念のため。
-
-
-                        最終的に、カラム名とカラム座標値のMatrixをファイルに格納する(一旦ね)。
-            ===#
-            table_df = DBDataController.getTableList("dataframe")
-
-            #===
-                rejecting 'master' tables. master tables names 'master' in their own table name.
-                here is important .( ｰ`дｰ´)ｷﾘｯ
-            ===#
-            filter!(:tablename=>x->!contains(x,"master"),table_df)
+            # then the target sql sentence is this.
+            target = sql_df[pp,:]
             
             #===
                 Tips:
-                by Ph. Kaminski
-                    this is able to do because 'table_df.tablename' is unique.
-                    refer d("ftest"=>1 "ftest2=>4...) to get the index, then put them into combination.
+                    execute an experimental sql test(step5,6) on test db if there were a target.
             ===#
-            d = Dict(table_df.tablename .=> axes(table_df, 1))
-            sql_df.combination = [getindex.(Ref(d), x) for x in sql_df.combination]
+            if( 0<nrow(target))
+                #==
+                    step5: 
+                        good!. let's analyze it in testdb.
+                ==#
+                experimentalCreateView(target)
 
-            # normalize all access numbers by the biggest 'access_numbers'
-            sql_df.access_numbers = sql_df.access_numbers / maximum(sql_df.access_numbers)
+                #===
+                    Tips:
+                        from here for showing the anlyzed graph in conditional pane.
+                        the analyzing has been done above.
+                ===#
+                # delete ':sql' column from 'sql_df', because it is unnecessary in the json file.
+                select!(sql_df,:apino,:combination,:access_numbers)
 
-            if debugflg
-                @info "SQLAnalyzer.createAnalyzedJsonFile(): " JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df))))
-            end
-            #===
-                Tips:
-                    use plain JSON module insted of Genie.Renderer.Json module, because Genie's module put http protocol header(ex. HTTP 200) in the output.
-                    the conditional panel will call this as a plain file in being called RestAPI. 
-            ===#
-            #==
-                step6:
-                    write this relation data to JetelinaTableCombiVsAccessRelation file in JSON form.
-            ==#
-            open(tablecombinationfile, "w") do f
-                println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df)))))
+                #===
+                    Tips:
+                        this tips is complicated, that why still in Japanese.
+                        what here is doing, 
+                            ex.
+                                replace 'combination' with 'Row No.' of each table.
+
+                                Row │ apino          combination                    access_numbers 
+                                    │ String           Array…                         Float64       
+                                ──┼────────────────────────────────
+                                1   │ js312  ["ftest", "ftest2", "ftest3"]            5.0
+                                2   │ js313  ["ftest", "ftest2", "ftest3"]            5.0
+                                3   │ js314  ["ftest", "ftest2", "ftest3"]            5.0
+
+                                ftest3.idはftest3にあるので→x座標:3(ftest3)
+                                ftest3.idはftest4+ftest2が代表値なので → (3+4)/2(tableが2つだから)=3.5 ←y座標になる
+                                よって、ftest3.idの座標は(3,3.5)
+
+                                ”access numbers”はk-means法の"重み"として考えているけど、上記座標取得方法なら不要になる、が一応保持しておく、念のため。
+
+
+                            最終的に、カラム名とカラム座標値のMatrixをファイルに格納する(一旦ね)。
+                ===#
+                table_df = DBDataController.getTableList("dataframe")
+
+                #===
+                    rejecting 'master' tables. master tables names 'master' in their own table name.
+                    here is important .( ｰ`дｰ´)ｷﾘｯ
+                ===#
+                filter!(:tablename=>x->!contains(x,"master"),table_df)
+                
+                #===
+                    Tips:
+                    by Ph. Kaminski
+                        this is able to do because 'table_df.tablename' is unique.
+                        refer d("ftest"=>1 "ftest2=>4...) to get the index, then put them into combination.
+                ===#
+                d = Dict(table_df.tablename .=> axes(table_df, 1))
+                sql_df.combination = [getindex.(Ref(d), x) for x in sql_df.combination]
+
+                # normalize all access numbers by the biggest 'access_numbers'
+                sql_df.access_numbers = sql_df.access_numbers / maximum(sql_df.access_numbers)
+
+                if debugflg
+                    @info "SQLAnalyzer.createAnalyzedJsonFile(): " JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df))))
+                end
+                #===
+                    Tips:
+                        use plain JSON module insted of Genie.Renderer.Json module, because Genie's module put http protocol header(ex. HTTP 200) in the output.
+                        the conditional panel will call this as a plain file in being called RestAPI. 
+                ===#
+                #==
+                    step6:
+                        write this relation data to JetelinaTableCombiVsAccessRelation file in JSON form.
+                ==#
+                open(tablecombinationfile, "w") do f
+                    println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df)))))
+                end
             end
         end
     end
-
     """
     function  extractColumnsFromSql(s::String)
 
@@ -696,7 +712,7 @@ println("u is ", u)
                 execute(tconn, create_view_str[i])
 
                 # SQL update to JetelinaSQLListfile
-                PgSQLSentenceManager.updateSqlList(newapilist)
+#                PgSQLSentenceManager.updateSqlList(newapilist)
             end
         catch err
             println(err)
