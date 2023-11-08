@@ -1846,3 +1846,71 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
 ┌ Info: 2023-11-08 12:19:15 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:09:02 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaTableCombiVsAccessRelation.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:09:04 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSqlPerformance.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:09:04 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSqlPerformance.test.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:09:04 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:11:33 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaTableCombiVsAccessRelation.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:11:35 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSqlPerformance.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:11:35 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSqlPerformance.test.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:11:35 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:14:52 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaTableCombiVsAccessRelation.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:14:54 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSqlPerformance.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:14:54 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSqlPerformance.test.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:14:54 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:17:31 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaTableCombiVsAccessRelation.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:17:33 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSqlPerformance.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:17:33 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSqlPerformance.test.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:17:33 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:24:48 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaTableCombiVsAccessRelation.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:24:50 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSqlPerformance.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:24:50 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSqlPerformance.test.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:24:50 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:25:25 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:27:08 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaTableCombiVsAccessRelation.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:27:10 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSqlPerformance.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:27:10 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSqlPerformance.test.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:27:10 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:28:47 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:35:12 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaTableCombiVsAccessRelation.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:54:43 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:55:31 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:57:48 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:59:25 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaTableCombiVsAccessRelation.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:59:27 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSqlPerformance.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:59:27 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSqlPerformance.test.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-08 13:59:27 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55

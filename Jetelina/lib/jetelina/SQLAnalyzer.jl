@@ -606,22 +606,23 @@ module SQLAnalyzer
             ===#
             p = findall( x->x==dict_apino_arr[i],df_real.apino)
             if 0<length(p)
-
-                df_real[p,:apino] = uppercase(dict_apino_arr[i])
-                df_test[p,:apino] = uppercase(dict_apino_arr[i])
-
+                #===
+                    Tips:
+                        both df_real and df_test are Matrixfloat64} array,
+                        then diff_speed is also to be array.
+                ===#
                 diff_speed = df_test[p,:mean] / df_real[p,:mean]
 
                 if debugflg
-                    println("diff_speed:", dict_apino_arr[i], " -> ",diff_speed)
+                    println("diff_speed:", dict_apino_arr[i], " -> ",diff_speed[1], " ", typeof(diff_speed))
                 end
                 #===
                     Tips:
                         propose 'do?' if sql execution speed were improved over 25%.
                         '25%' is provisionally.
                 ===#
-                if diff_speed<0.75
-                    improve_apis = (dict_apino_arr[i],diff_speed)
+                if diff_speed[1]<0.75
+                    improve_apis[dict_apino_arr[i]] = diff_speed[1]
                 end
             end
         end
@@ -636,6 +637,7 @@ module SQLAnalyzer
 
         if 0<length(improve_apis)
             open(improveApisFile, "w") do f
+#                println(f, JSON.json("Jetelina" => improve_apis))
                 println(f, JSON.json("Jetelina" => improve_apis))
             end    
         end
