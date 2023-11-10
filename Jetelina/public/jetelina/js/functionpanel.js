@@ -246,7 +246,13 @@ const fileupload = () => {
     cache: false,
     contentType: false,
     processData: false,
-    dataType: "json"
+    dataType: "json",
+    xhr:function(){
+      ret = $.ajaxSettings.xhr();
+      inprogress=true;// in progress. for priventing accept a new command.
+      typingControll(chooseMsg('inprogress', "", ""));
+      return ret;
+    }
   }).done(function (result, textStatus, jqXHR) {
     // clean up
     $("input[type=file]").val("");
@@ -270,6 +276,9 @@ const fileupload = () => {
     // something error happened
     console.error("fileupload(): unexpected error");
     typingControll(chooseMsg(fail, "", ""));
+  }).always(function(){
+    // release it for allowing to input new command in the chatbox 
+    inprogress=false;
   });
 }
 
@@ -569,13 +578,22 @@ const getColumn = (tablename) => {
       type: "post",
       data: dd,
       contentType: 'application/json',
-      dataType: "json"
+      dataType: "json",
+      xhr:function(){
+        ret = $.ajaxSettings.xhr();
+        inprogress=true;// in progress. for priventing accept a new command.
+        typingControll(chooseMsg('inprogress', "", ""));
+        return ret;
+      }
     }).done(function (result, textStatus, jqXHR) {
       if (debug) console.info("getColumn() result: ", result);
       // got to data parse
       return getdata(result, 1);
     }).fail(function (result) {
       typingControll(chooseMsg('fail', "", ""));
+    }).always(function(){
+      // release it for allowing to input new command in the chatbox 
+      inprogress=false;
     });
   } else {
     console.error("getColumn() ajax url is not defined");
@@ -607,7 +625,13 @@ const deleteThisTable = (tablename) => {
       type: "post",
       data: dd,
       contentType: 'application/json',
-      dataType: "json"
+      dataType: "json",
+      xhr:function(){
+        ret = $.ajaxSettings.xhr();
+        inprogress=true;// in progress. for priventing accept a new command.
+        typingControll(chooseMsg('inprogress', "", ""));
+        return ret;
+      }
     }).done(function (result, textStatus, jqXHR) {
       $(`#table_container span:contains(${tablename})`).filter(function () {
         if ($(this).text() === tablename) {
@@ -622,6 +646,8 @@ const deleteThisTable = (tablename) => {
       console.error("deleteThisTable() faild: ", result);
       typingControll(chooseMsg('fail', "", ""));
     }).always(function () {
+        // release it for allowing to input new command in the chatbox 
+        inprogress=false;
     });
   } else {
     console.error("deleteThisTable() table is not defined");
@@ -650,7 +676,13 @@ const postSelectedColumns = () => {
     type: "POST",
     data: dd,
     contentType: 'application/json',
-    dataType: "json"
+    dataType: "json",
+    xhr:function(){
+      ret = $.ajaxSettings.xhr();
+      inprogress=true;// in progress. for priventing accept a new command.
+      typingControll(chooseMsg('inprogress', "", ""));
+      return ret;
+    }
   }).done(function (result, textStatus, jqXHR) {
     /*
       if there is not a quite similar api in there -> return as alike {"apino":"js10"} or false in error.
@@ -670,6 +702,8 @@ const postSelectedColumns = () => {
     console.error("postSelectedColumns() fail");
     typingControll(chooseMsg('fail', "", ""));
   }).always(function () {
+    // release it for allowing to input new command in the chatbox 
+    inprogress=false;
     // initializing
     preferent.cmd = "";
     $("#genelic_panel input[name='genelic_input']").val('');
@@ -1217,7 +1251,13 @@ const deleteThisApi = (apino) => {
       type: "post",
       data: dd,
       contentType: 'application/json',
-      dataType: "json"
+      dataType: "json",
+      xhr:function(){
+        ret = $.ajaxSettings.xhr();
+        inprogress=true;// in progress. for priventing accept a new command.
+        typingControll(chooseMsg('inprogress', "", ""));
+        return ret;
+      }
     }).done(function (result, textStatus, jqXHR) {
       $(`#api_container span:contains(${apino})`).filter(function () {
         if ($(this).text() === apino) {
@@ -1232,6 +1272,8 @@ const deleteThisApi = (apino) => {
       console.error("deleteThisApi() faild: ", result);
       typingControll(chooseMsg('fail', "", ""));
     }).always(function () {
+        // release it for allowing to input new command in the chatbox 
+        inprogress=false;
     });
   } else {
     console.error("deleteThisApi() apino is not defined");

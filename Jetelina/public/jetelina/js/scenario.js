@@ -23,6 +23,10 @@ scenario[2] = ['Could you give me your name?','Let me know your name, please','M
 scenario[3] = ['What?','Are you kidding me?','Never mind'];
 /* miss login */
 scenario[4] = ['I am sorry, but ', 'Something wrong, hum, '];
+/* something inprogress */
+scenario['inprogress'] = ['I am doing','happy workin','husle hustle','I AM DOING THIS JUST FOR YOU'];
+/* refuse any command due to progress something */
+scenario['refuse-command'] = ['I am busy now','I cannot do multi task at once','You kill me?','Later...'];
 /* greeting to u after successing login */
 scenario[5] = [`Welcome `, `I missed you, `];
 scenario['5-multi-candidates'] = ['please tell me more detail.','next question.','more...'];

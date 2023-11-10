@@ -108,7 +108,13 @@ const getAjaxData = (url) => {
             url: url,
             type: "GET",
             data: "",
-            dataType: "json"
+            dataType: "json",
+            xhr:function(){
+                ret = $.ajaxSettings.xhr();
+                inprogress=true;// in progress. for priventing accept a new command.
+                typingControll(chooseMsg('inprogress', "", ""));
+                return ret;
+            }        
         }).done(function (result, textStatus, jqXHR) {
             // go data parse
             const dataurls = scenario['analyzed-data-collect-url'];
@@ -193,6 +199,9 @@ const getAjaxData = (url) => {
         }).fail(function (result) {
             console.error("getAjaxData() fail");
             typingControll(chooseMsg("fail", "", ""));
+        }).always(function () {
+            // release it for allowing to input new command in the chatbox 
+            inprogress=false;
         });
     } else {
         console.error("getAjaxData() ajax url is not defined");
@@ -215,7 +224,13 @@ const postAjaxData = (url, data) => {
             type: "post",
             contentType: 'application/json',
             data: data,
-            dataType: "json"
+            dataType: "json",
+            xhr:function(){
+                ret = $.ajaxSettings.xhr();
+                inprogress=true;// in progress. for priventing accept a new command.
+                typingControll(chooseMsg('inprogress', "", ""));
+                return ret;
+            }
         }).done(function (result, textStatus, jqXHR) {
             const posturls = scenario['function-post-url'];
             if (url == posturls[0]) {
@@ -230,6 +245,9 @@ const postAjaxData = (url, data) => {
         }).fail(function (result) {
             console.error("postAjaxData() fail");
             typingControll(chooseMsg("fail", "", ""));
+        }).always(function(){
+            // release it for allowing to input new command in the chatbox 
+            inprogress=false;
         });
     } else {
         console.error("postAjaxData() ajax url is not defined");
@@ -274,7 +292,13 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
         type: "post",
         contentType: 'application/json',
         data: data,
-        dataType: "json"
+        dataType: "json",
+        xhr:function(){
+            ret = $.ajaxSettings.xhr();
+            inprogress=true;// in progress. for priventing accept a new command.
+            typingControll(chooseMsg('inprogress', "", ""));
+            return ret;
+        }
     }).done(function (result, textStatus, jqXHR) {
         if (debug) console.info("authAjax() result: ", result);
 
@@ -284,12 +308,10 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
             let m = "";
             // found user
             Object.keys(o).some(function (key) {
-//            Object.keys(o).forEach(function (key) {
-                    let sex, firstname;
+                let sex, firstname;
 
                 if (key == "Jetelina" && o[key].length == 1) {
                     $.each(o[key][0], function (k, v) {
-
                         if (k == "sex") {
                             if (v == "m") {
                                 sex = "Mr. ";
@@ -320,6 +342,13 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
                 return true;
             });
         }
+    }).fail(function (result) {
+        // something error happened
+        console.error("authAjax(): unexpected error");
+        typingControll(chooseMsg(fail, "", ""));
+    }).always(function(){
+        // release it for allowing to input new command in the chatbox 
+        inprogress=false;
     });
 }
 /**

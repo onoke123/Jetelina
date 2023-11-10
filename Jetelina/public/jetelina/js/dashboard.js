@@ -13,6 +13,7 @@ let isSuggestion = false; // set this to 'true' in getAjaxData() if there were J
 const debug = true;// debug flag   true or false
 let timerId;// interval timer of the idling comment in the opening screen。uses in jetelinalib.js burabura()
 let acVscom;// flg for exisiting the data of 'Access vs Combination'.
+let inprogress=false;// true -> ajax function is in progress , false -> is not i progress. set in $.ajax({xhr:})
 
 $(window).load(function () {
   /**
@@ -102,7 +103,12 @@ $("#jetelina_panel [name='chat_input']").keypress(function (e) {
       clearInterval(timerId);
     }
 
-    chatKeyDown();
+    if( !inprogress ){
+      chatKeyDown();
+    }else{
+      // refuse any commands so that something ajax() inprogress
+      typingControll(chooseMsg('refuse-command', "", ""));
+    }
   }
 });
 
