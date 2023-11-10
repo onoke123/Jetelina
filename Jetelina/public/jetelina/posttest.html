@@ -15,6 +15,10 @@
         <div>
             <text id="result"></text>
         </div>
+        <div>
+            <text>Message From Jetelina</text>
+            <text id="mfj"></text>
+        </div>
     </body>
 </html>
 <script type="text/javascript">
@@ -57,7 +61,15 @@
         }).fail( function( result ){
         }).always(function(result){
             console.log(result);
-            $("#result").text(result);
+            $.each(result, function (k, v) {
+                if( k == "Jetelina" ){
+                    $("#result").text(v);
+                }else if( k== "result" ){
+
+                }else if( k=="message from Jetelina" ){
+                    $("#mfj").text(v)
+                }
+            });
         });
     }
 </script>

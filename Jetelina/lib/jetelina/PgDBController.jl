@@ -552,29 +552,32 @@ module PgDBController
                                         -> 1: hit the ball
             ===#
             affected_ret = LibPQ.num_affected_rows(sql_ret)
+            jmsg::String = string("compliment me!")
 
             if startswith(apino, "js")
                 # select 
                 df = DataFrame(sql_ret)
-                ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
+                if 100<nrow(df)
+                    jmsg = "data number over 100, you should set paging paramter in this SQL, it is not my business"
+                end
+
+                ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
             elseif startswith(apino, "ji")
                 # insert
                 if affected_ret == 0
                     # this may will not happen
-                    ret = json(Dict("result" => true, "Jetelina" => "[{\"message from Jetelina\":\"it is not my fault\"}]"))
-                else
-                    # done correctly
-                    ret = json(Dict("result" => true, "Jetelina" => "[{\"message from Jetelina\":\"compliment me!\"}]"))
+                    jmsg = "looks happen something, it is not my fault."
                 end
+
+                ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
             else
                 # update & delete
                 if affected_ret == 0
                     # the target data was not in there, guess wrong 'jt_id'
-                    ret = json(Dict("result" => true, "Jetelina" => "[{\"message from Jetelina\":\"there was not it\"}]"))
-                else
-                    # done correctly
-                    ret = json(Dict("result" => true, "Jetelina" => "[{\"message from Jetelina\":\"compliment me!\"}]"))
+                    jmsg = "there was not it, jt_id is correct?. no matter what it is not my business."
                 end
+
+                ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
             end
         catch err
             JetelinaLog.writetoLogfile("PgDBController.executeApi() with $apino : $sql_str error : $err")
