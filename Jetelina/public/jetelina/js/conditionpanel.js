@@ -77,7 +77,7 @@ const conditionPanelFunctions = (ut) => {
                 if(isSuggestion){
                     cmd = "performance";
                 }else{
-                    cmd = "no_uggestion";
+                    cmd = "no_suggestion";
                 }
             }else if( inScenarioChk(ut,'confirmation-sentences') && isSuggestion ){
                 cmd = "performance";
@@ -141,7 +141,7 @@ const conditionPanelFunctions = (ut) => {
 
                 m = chooseMsg('6cond-graph-show', "", "");
                 break;
-            case 'no_uggestion':
+            case 'no_suggestion':
                 m = chooseMsg('6cond-no-suggestion', "", "");
                 break;
             default:
@@ -170,6 +170,10 @@ let realPerformanceData;
  */
 const setGraphData = (o, type) => {
     let ret = false;
+    const apino = "apino"; // ajax data field name
+    const combination = "combination"; // same above
+    const access_numbers = "access_numbers"; // same above
+    const mean = "mean"; // same above
 
     if (o != null) {
         Object.keys(o).forEach(function (key) {
@@ -189,9 +193,9 @@ const setGraphData = (o, type) => {
                 $.each(o[key], function (k, v) {
                     if (v != null) {
                         $.each(v, function (name, value) {
-                            if (name == "apino") {
+                            if (name == apino) {
                                 apino.push(value);
-                            } else if (name == "combination") {
+                            } else if (name == combination) {
                                 base_table_no.push(value[0]);// original table no -> x axis
                                 let pn = 0;
                                 if (2 < value.length) {
@@ -207,9 +211,9 @@ const setGraphData = (o, type) => {
 
                                 combination_table.push(pn);// table combination no -> y axis
                                 ret = true; // meaning of exisiting combination_table is there is the data of 'Access vs Combination'.                                     
-                            } else if (name == "access_number") {
+                            } else if (name == access_numbers) {
                                 access_count.push(value);// table access normarize no -> z axis
-                            } else if (name == "mean") {
+                            } else if (name == mean) {
                                 mean.push(value);
                             }
                         });
