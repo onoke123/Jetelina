@@ -1914,3 +1914,17 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
 ┌ Info: 2023-11-08 13:59:27 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-10 11:26:42 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-10 12:32:06 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-10 12:33:00 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/sql.txt does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-10 12:34:55 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaTableCombiVsAccessRelation.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-10 12:34:55 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/sql.txt does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-10 12:35:08 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaTableCombiVsAccessRelation.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-10 12:35:10 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55

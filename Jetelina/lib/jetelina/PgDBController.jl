@@ -359,7 +359,6 @@ module PgDBController
         end
 
         if debugflg
-            @info "update_str " update_str
             @info "PgDBController.dataInsertFromCSV() col str to create table: " column_str
         end
 
@@ -554,10 +553,6 @@ module PgDBController
             ===#
             affected_ret = LibPQ.num_affected_rows(sql_ret)
 
-            if debugflg
-                @info "PgDBController.executeApi .num_affected_rows(): " affected_ret
-            end
-
             if startswith(apino, "js")
                 # select 
                 df = DataFrame(sql_ret)
@@ -668,29 +663,33 @@ module PgDBController
     function measureSqlPerformance()
 
         measure exectution time of all listed sql sentences. then write it out to JetelinaSqlPerformancefile.
+        Attention: JetelinaExperimentSqlList is created when SQLAnalyzer.main()(indeed createAnalyzedJsonFile()) runs.
+                   JetelinaExperimentSqlList does not created if there were not sql.log file and data in it.
+
     """
     function measureSqlPerformance()
         #===
             Tips:
-            Use JetelinaSqlList file here because the convenient Df_JetelinaSqlList is in the Genie zone,
-            then need to use it via Web, it gives a reguration to use it in other process, for example cron.
+                I know it can use Df_JetelinaSqlList here, but wanna leave a evidence what sql are executed.
+                That's reason why JetelinaExperimentSqlList file is opend here.
         ===#
-#        sqlFile = getFileNameFromConfigPath(JetelinaSQLListfile)
         sqlFile = getFileNameFromConfigPath(JetelinaExperimentSqlList)
-        sqlPerformanceFile = getFileNameFromConfigPath(JetelinaSqlPerformancefile)
+        if isfile(sqlFile)
+            sqlPerformanceFile = getFileNameFromConfigPath(JetelinaSqlPerformancefile)
 
-        open(sqlPerformanceFile, "w") do f
-            println(f, string(JetelinaFileColumnApino, ',', JetelinaFileColumnMax, ',', JetelinaFileColumnMin, ',', JetelinaFileColumnMean))
-            df = CSV.read(sqlFile, DataFrame)
-            for i in 1:size(df, 1)
-                if startswith(df.apino[i], "js")
-                    p = doSelect(df.sql[i], "measure")
-                    fno::String = df.apino[i]
-                    fmax::Float64 = p[1][1]
-                    fmin::Float64 = p[2][1]
-                    fmean::Float64 = p[3]
-                    s = """$fno,$fmax,$fmin,$fmean"""
-                    println(f, s)
+            open(sqlPerformanceFile, "w") do f
+                println(f, string(JetelinaFileColumnApino, ',', JetelinaFileColumnMax, ',', JetelinaFileColumnMin, ',', JetelinaFileColumnMean))
+                df = CSV.read(sqlFile, DataFrame)
+                for i in 1:size(df, 1)
+                    if startswith(df.apino[i], "js")
+                        p = doSelect(df.sql[i], "measure")
+                        fno::String = df.apino[i]
+                        fmax::Float64 = p[1][1]
+                        fmin::Float64 = p[2][1]
+                        fmean::Float64 = p[3]
+                        s = """$fno,$fmax,$fmin,$fmean"""
+                        println(f, s)
+                    end
                 end
             end
         end

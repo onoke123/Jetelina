@@ -8,7 +8,6 @@ Description:
 
 functions
     writeTolist(sql::String, subquery::String, tablename_arr::Vector{String})  create api no and write it to JetelinaSQLListfile order by SQL sentence.
-    updateSqlList(dic::Dict)  update JetelinaSQLListfile file
     deleteFromlist(tablename::String)  delete table name from JetelinaSQLListfile synchronized with dropping table.
     fileBackup(fname::String)  back up the ordered file with date suffix. ex. <file>.txt -> <file>.txt.yyyymmdd-HHMMSS
     sqlDuplicationCheck(nsql::String, subq::String)  confirm duplication, if 'nsql' exists in JetelinaSQLListfile.but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
@@ -25,7 +24,7 @@ module PgSQLSentenceManager
     using Genie, Genie.Requests, Genie.Renderer.Json
     using DBDataController, JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
 
-    export writeTolist,updateSqlList,deleteFromlist,fileBackup,sqlDuplicationCheck,checkSubQuery,createApiInsertSentence,createApiUpdateSentence,createApiDeleteSentence,createApiSelectSentence,createExecutionSqlSentence
+    export writeTolist,deleteFromlist,fileBackup,sqlDuplicationCheck,checkSubQuery,createApiInsertSentence,createApiUpdateSentence,createApiDeleteSentence,createApiSelectSentence,createExecutionSqlSentence
     
     # sqli list file
     sqlFile = getFileNameFromConfigPath(JetelinaSQLListfile)
@@ -101,44 +100,6 @@ module PgSQLSentenceManager
         return true, string(suffix, seq_no)
     end
 
-    """
-    function updateSqlList(dic::Dict)
-
-        update JetelinaSQLListfile file
-
-    # Arguments
-    - `dic::Dict`: target sql for updating. ex.  js100=>select ....
-    - return: false -> if got something error.
-    """
-    function updateSqlList(dic::Dict)
-        #===
-            Tips:
-                SQL list is in Df_JetelinaSqlList as DataFrame type.
-                Both are OK as it transfers to Dict type and read original JetelinaSQLListfile with CSV.read() to transfer to Dict type.
-                This time hires reading original file.
-        ===#
-        orglist = CSV.File(sqlFile) |> Dict
-        newlist = merge!(orglist,dic)
-
-        experimentFile = getFileNameFromConfigPath(JetelinaExperimentSqlList)
-        # delete this file if it exists, becaus this file is always fresh.
-        rm(experimentFile, force=true)
-        #===
-            Tips:
-                ready for writing to files.
-                this writing file is to be for test list because of mesuring the execution speed.
-                use 'header' in CSV.write() because 'first','secound'... headers are put automatically without this parameter.
-                'header' is for customizing the file headers.
-        ===#
-        try
-            CSV.write( experimentFile, newlist, header=[JetelinaFileColumnApino,JetelinaFileColumnSql,JetelinaFileColumnSubQuery] )
-        catch err
-            println(err)
-            JetelinaLog.writetoLogfile("PgSQLSentenceManager.updateSqlList() error: $err")
-            return false
-        end
-        
-    end
     """
     function deleteFromlist(tablename::String)
 

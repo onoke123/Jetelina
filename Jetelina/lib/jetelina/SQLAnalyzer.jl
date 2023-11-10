@@ -19,16 +19,12 @@
 """
 module SQLAnalyzer
 
-    using CSV
-    using DataFrames
+    using JSON, LibPQ, Tables, CSV, DataFrames, StatsBase, DelimitedFiles
     using Genie, Genie.Renderer, Genie.Renderer.Json
-    using JSON, LibPQ, Tables
-    using StatsBase
     using JetelinaReadConfig, JetelinaLog
     using DBDataController, PgDBController
-    using DelimitedFiles
     using JetelinaFiles, JetelinaReadSqlList, PgSQLSentenceManager
-    using TestDBController, PgDataTypeList
+    using PgTestDBController, PgDataTypeList
 
     """
     function main()
@@ -70,6 +66,10 @@ module SQLAnalyzer
                 maybe should consider to rotate sql.log files. this is in #ticket 1254 
         ===#
         sqllogfile = getFileNameFromLogPath(JetelinaSQLLogfile)
+        if !isfile(sqllogfile)
+            return
+        end
+        
         maxrow::Int = JetelinaReadingLogMaxLine
         df = CSV.read( sqllogfile, DataFrame, limit=maxrow )
         #===
@@ -188,10 +188,9 @@ module SQLAnalyzer
                 create JetelinaExperimentSqlList for executing them on test db
             ===#
             experimentFile = getFileNameFromConfigPath(JetelinaExperimentSqlList)
-            @info "experimentfile is " experimentFile
             # delete this file if it exists, becaus this file is always fresh.
             rm(experimentFile, force=true)
-            println("experi.. ", sql_df)
+
             try
                 CSV.write(experimentFile,Dict(eachrow(sql_df)),header=[JetelinaFileColumnApino,JetelinaFileColumnSql] )
             catch err
@@ -329,138 +328,6 @@ module SQLAnalyzer
         return cs, ad
     end
 
-    #=== create view方式になったのでこの関数は使わない。でも参考のためにちょっと残しておく。
-    """
-        read sqlcsv.json then put it to DataFrame for experimental*()
-
-        引数のdfはSQL実行履歴
-    """
-    function _exeSQLAnalyze(df::DataFrame)
-        @info "df: " df eltype(eachcol(df))
-
-        c_len = length.(df.combination) # length処理に'.'が付いているからね😁
-        hightcomblen = findall(x -> x == (maximum(c_len)), c_len) # このhighcomblenにはmaxのデータのindex番号が入る
-        maxaccess_n = maximum(df[!, :access_numbers]) # 参考までに取得
-
-        if debugflg
-            @info "combination max len: " length(hightcomblen) maxaccess_n
-        end
-
-        #===
-            combination lengthが1であるのは単一table使用の意味になるので、
-            ここでは２つ以上のtable使用のモノを対象として調べることにする
-        ===#
-        if 1 < length(hightcomblen)
-            candidate_columns = Dict()
-            candidate_tables = Dict()
-            candidate_combination =[]
-            
-            for i = 1:length(hightcomblen)
-                # dict作成処理の変数名が長くなるので、ここで短いヤツにしておく　<-単に見通しを良くするため
-                hl = hightcomblen[i]
-                acn = df[hl, :access_numbers]
-                #===
-                    Dict形式 a=>b　でcandidate...に追加している
-                ===#
-                candidate_columns[df[hl, :column_name]] = acn
-                push!( candidate_combination, df[hl, :combination])
-            end
-
-            #=== 
-                このデータがTableレイアウト変更対象のデータになる
-                なぜなら、
-                　　1.一番複雑(関連tableが多い)なcombination
-                　　2.しかもアクセス数が多い
-                から
-            ===#
-            target_column = findall(x -> x == maximum(values(candidate_columns)), candidate_columns)
-
-            @info "target_column: " target_column
-            @info "candidate_combination: " candidate_combination
-
-            #===
-                レイアウト変更対象のデータを「どのtable」に移動したらいいかを判定する
-                target_columnとcandidate_combinationの組合せを作って、どの組合せが一番多いかSQLリストを検索する
-                検索対象はJetelinareadSqlList.readSqlList2DataFrame()で作成されているDataFrame Df_JetelinaSqlList
-
-                Df_JetelinaSqlList
-                    Row |  no    | sql
-                |-------|--------|----------------------
-                |      1| ji293  | insert into masterftest values(id,'name','sex',age,ave,jetelina_delete_flg)
-                |      2| ju294  | update masterftest set id=d_id,name='d_name',sex='d_sex',age=d_age,ave=d_ave,jetelina_delete_flg=d_jetelina_delete_flg
-                    .      .                 .
-                    .      .                 .
-
-                select文だけを対象とするので、startswith(df[!,:no],"js") かな
-            ===#
-            if 0<length(target_column) && 0<length(candidate_combination)
-                #===
-                    target_column[i] と candidate_combination[i] は対になっているから、
-                    (target_column[i],candidate_combination[i][ii])の組合せを作ってDf_JetelinaSqlList.sqlを検索する
-
-                    select t1.a,t2.b,t3.c from t1,t2,t3
-                　　　このSQLの実行回数が一番多くて且つ、combinationも多いとなると、
-                　　　対象はt1.a,t2.b,t3.cの3つになる。
-                　　　
-                　　　[t1.a + t2] [t1.a + t3]
-                    [t2.b + t1] [t2.b + t3]
-                    [t3.c + t1] [t3.c + t2]
-                　　　の組合せで
-                　　　1.静的比較：SQL文としてはどの組合せが一番多いか
-                　　　2.動的比較：SQL文としてはどの組合せの実行回数が多いか
-
-                　　　2->1　の順で比較する：1->2だと使われていないSQLの影響が最初に大きく出てしまうから
-
-                    JSON Analyze file
-                        t1.a,[t1,t2,t3],10     <-①
-                　 　　 t1.a,[t1,t2], 3        <-②
-                        t1.a,[t1,t3],5         <-③
-
-                        ①+②　or ①+③ のどちらか大きい方をとる
-                ===#
-
-                #== 
-                    Df_JetelinaSqlListはJenie空間にあるため、もしかしたらSQLAnalyzerを単独実行すると
-                    使えないかもしれない。そんな時は以下が実行されてDf_JetelinaS...を作る。
-                ===#
-                if( Df_JetelinaSqlList === nothing )
-                    JetelinareadSqlList.readSqlList2DataFrame()
-                end
-
-    #            println(Df_JetelinaSqlList)
-                # 1.静的比較            
-                for i=1:length(target_column)
-                    for ii=1:length(candidate_combination[i])
-                        p = split( target_column[i], '.' ) # ex. ftest.name -> [1]: ftest [2]:name
-                        if candidate_combination[i][ii] != p[1]
-                            p = nrow(filter([:no,:sql] => (n,s) -> startswith(n,"js") && contains(s,target_column[i]) && contains(s,candidate_combination[i][ii]),Df_JetelinaSqlList))
-                            #===
-                                Dict形式 (column,table) => 2
-                                という風に"target column","target table"のtupleにSQL句の関連数を格納している
-                            ===#
-                            candidate_tables[(target_column[i],candidate_combination[i][ii])] = p
-                        end
-                    end
-
-                end
-            end
-
-            #===
-                target_dataに(column,table)のtupleで入っているので、取り出し方は
-                    target_column = target_data[1][1]
-                    target_table  = target_data[1][2]
-
-                となるので、target_column -> target_table　にレイアウト変更することを考える
-            ===#
-            target_data = findall(x -> x == maximum(values(candidate_tables)), candidate_tables)
-
-            @info "target_data : " target_data target_data[1][1] target_data[1][2]
-
-            # testdbで操作するぜ
-            experimentalCreateView(target_data)
-        end
-    end
-    ===#
     """
     function collectSqlAccessNumbers(df::DataFrame)
 
@@ -519,14 +386,11 @@ module SQLAnalyzer
 
         #===
             Tips:
-                open JetelinaSQLListfile and call sql sentences.
-                execute PgTestDBController.doSelect(sql) with the 'sql'.
-                compare the experiment data(max,min,mean) with the latest data in Jetelina..file. ref: measureSqlPerformance()
-                change table layout if its performance has been improved. this is the Jetelina!
+                open JetelinaExperimentSqlList and call sql sentences.
+                execute PgTestDBController.doSelect(sql) with the 'sql' in the PgTestDBController.measureSqlPerformance().
         ===#
-
         #4
-        TestDBController.measureSqlPerformance()
+        PgTestDBController.measureSqlPerformance()
         #===
             Tips: Attention.
                 compare the each api performance between JetelinaSqlPerformancefile(running db) and ..test(test db).
@@ -540,6 +404,8 @@ module SQLAnalyzer
                     put something mark on the target api no in ① and ②.
 
                 then rely on js code in conditional panel after all.
+
+                does not check every file existing checking since here, because they are absolutely existing.
         ===#
         sqlPerformanceFile_real = getFileNameFromConfigPath(JetelinaSqlPerformancefile)
         sqlPerformanceFile_test = getFileNameFromConfigPath(string(JetelinaSqlPerformancefile,".test"))
@@ -548,6 +414,7 @@ module SQLAnalyzer
         df_test = CSV.read(sqlPerformanceFile_test,DataFrame)
 
         if debugflg
+            println("===SQLAnalyer.experimentalCreateView()===")
             println("before normalize df_real", df_real)
             println("before normalize df_test", df_test)
         end
@@ -574,6 +441,7 @@ module SQLAnalyzer
         df_test.mean = df_test.mean / std_mean
 
         if debugflg
+            println("===SQLAnalyer.experimentalCreateView()===")
             println("after normalize df_real", df_real)
             println("std_max:", std_max, " std_min:", std_min, " std_mean:", std_mean )
             println("df_real.max:", df_real.max, " df_real.min:", df_real.min, " df_real.mean:", df_real.mean )
@@ -614,6 +482,7 @@ module SQLAnalyzer
                 diff_speed = df_test[p,:mean] / df_real[p,:mean]
 
                 if debugflg
+                    println("===SQLAnalyer.experimentalCreateView()===")
                     println("diff_speed:", dict_apino_arr[i], " -> ",diff_speed[1], " ", typeof(diff_speed))
                 end
                 #===
@@ -707,20 +576,17 @@ module SQLAnalyzer
             push!(create_view_str,cvs)
         end
 
-        tconn = TestDBController.open_connection()
+        tconn = PgTestDBController.open_connection()
 
         try
             for i=1:length(create_view_str)
                 execute(tconn, create_view_str[i])
-
-                # SQL update to JetelinaSQLListfile
-#                PgSQLSentenceManager.updateSqlList(newapilist)
             end
         catch err
             println(err)
             JetelinaLog.writetoLogfile("SQLAnalyzer.createView() error: $err")
         finally
-            TestDBController.close_connection(tconn)
+            PgTestDBController.close_connection(tconn)
 
             return newapilist
         end
@@ -793,7 +659,7 @@ module SQLAnalyzer
     - `df::DataFrame`: DataFrame object.
     """
     function tableCopy(df::DataFrame)
-        tconn = TestDBController.open_connection()
+        tconn = PgTestDBController.open_connection()
         conn = PgDBController.open_connection()
 
         try
@@ -807,7 +673,7 @@ module SQLAnalyzer
             JetelinaLog.writetoLogfile("SQLAnalyzer.tableCopy() error: $err")
         finally
             PgDBController.close_connection(conn)
-            TestDBController.close_connection(tconn)
+            PgTestDBController.close_connection(tconn)
         end
     end
     """
@@ -868,66 +734,5 @@ module SQLAnalyzer
             execute(conn, "ROLLBACK;")
         end
     end
-
-    #===
-    """
-        tableAlter()
-
-        指定されたカラムデータを、指定されたテーブルに移動するべく、alterでカラムを作成する
-        ver1ではcreate viewにすることにしたので、このfunctionは使われていない
-
-        Args: target tuple data (column,table) ex. (ftest.name, ftest2)  <- meaning: name in ftest table try to moves to ftest2 table
-
-    """
-    function tableAlter(target)
-        tconn = TestDBController.open_connection()
-
-        #===
-            target[1][1]には元カラム名として table.column(ex. ftest.name)で入っている。
-            このcolumnをtarget[1][2]にaddしてやる。つまり、
-            ex.
-            ftest.name -> ftest, name の"name”をtarget[1][2]にalter add columnしてやる。
-        ===#
-        origin  = split(target[1][1],'.')
-        origin_table = origin[1]
-        origin_column = origin[2]
-        moveto_table = target[1][2]
-
-        #===
-            移動対象となる元カラムデータのデータタイプを取得しておく。
-            他でやっておくところがなかったのでここでやっておく。alterする時の移動先のカラムのデータタイプとして使用する。🙄
-        ===#
-        origin_column_datatype = """select pg_typeof($origin_column) from $origin_table;"""
-
-        try
-            #===
-                どうやらcolumn_types()は指定されたカラムデータのデータタイプをArrayで返してくるらしい。
-                つまり、ex.  id, name, sex とかのカラムデータを取ろうと思ったら　Type[Int64,String,String]　という風に。
-                なので、今回はorigin_columnは一つだけ指定しているのでType[..]で返ってくるので、これをPostgreのデータタイプに
-                するためにPgDataTypeList.getDataType()にType[..][1]を渡してやれば、それなりのデータタイプが得られると。
-            ===#
-            dtyp = LibPQ.column_types(execute(tconn, origin_column_datatype))
-            # dtype -> Type[String]とかで返ってくるので　dtyp[1] -> String　となる :o
-            dt = PgDataTypeList.getDataType(dtyp[1])
-
-            # add先のtableに同名があることもあるので、追加するcolumn名はオリジナル名(ex. ftest.age)を残すことにする(ex. ftest_age)。
-            add_column = replace(target[1][1], "." => "_", count=1)
-
-            # create table 実行文組み立て
-            table_alter_str = """alter table $moveto_table add column $add_column $dt;"""
-
-            if debugflg
-                @info "alter str: " table_alter_str
-            end
-
-            execute(tconn, table_alter_str)
-        catch err
-            println(err)
-            JetelinaLog.writetoLogfile("SQLAnalyzer.tableAlter() error: $err")
-        finally
-            TestDBController.close_connection(tconn)
-        end
-    end
-    ===#
-
+    
 end
