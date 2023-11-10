@@ -17,7 +17,7 @@ functions
     createApiUpdateSentence(tn::String,us::Any) create sql update sentence by queries.
     createApiDeleteSentence(tn::String) create sql delete sentence by query.
     createApiSelectSentence(json_d::Dict) create select sentence of SQL from posting data,
-    createExecutionSqlSentence(item_d::Vector{String},subq_d::String) create real execution SQL sentence.
+    createExecutionSqlSentence(json_dict::Dict, df::DataFrame) create real execution SQL sentence.
 """
 module PgSQLSentenceManager
 
@@ -422,7 +422,7 @@ module PgSQLSentenceManager
         end
     end
     """
-    function createExecutionSqlSentence(item_d::Vector{String},subq_d::String)
+    function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
 
         create real execution SQL sentence.
         using 'ignore' and 'subquery' as keywords to create SQL sentence. 
@@ -435,7 +435,6 @@ module PgSQLSentenceManager
     - `df::DataFrame`: dataframe of target api data. a part of Df_JetelinaSqlList 
     - return::String SQL sentence
     """
-#    function createExecutionSqlSentence(item_arr::Vector{SubString{String}}, df::DataFrame)
     function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
         keyword1::String = "ignore" # protocol
         keyword2::String = "subquery" # protocol
