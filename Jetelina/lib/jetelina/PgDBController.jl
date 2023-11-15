@@ -31,13 +31,21 @@ module PgDBController
 
     export create_jetelina_tables, create_jetelina_id_sequence, open_connection, close_connection, readJetelinatable,
         getTableList, getJetelinaSequenceNumber, insert2JetelinaTableManager, dataInsertFromCSV, dropTable, getColumns,
-        executeApi, doSelect, getUserAccount, measureSqlPerformance
+        executeApi, doSelect, getUserAccount, measureSqlPerformance, create_jetelina_user_table
 
 
     """
     function create_jetelina_table
 
         create 'jetelina_table_manager' table.
+
+        Attention: jetelina_table_manager is prepared for if table layouts have to be changed in Jetelina prototype.
+                   this table maintain an original relation between table and columns. this table would be updated if
+                   a column moved to other table, for example table_A.age and table_B.sex were united to as table_C, then
+                   *.age and *.sex should be table_C.age and table_C.sex, but maybe needed their origins when they are 
+                   updated and/or insert, I am not sure.
+                   In PostgreSQL, this table has been deprecated because of hiring 'incremental materialized view' system.
+                   I would like to leave this function as a reference func when have a chance similar function for other DB systems.
     """
     function create_jetelina_table()
         create_jetelina_table_manager_str = """
@@ -107,7 +115,9 @@ module PgDBController
     """
     function readJetelinatable()
 
-        read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame 
+        read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame
+
+        Attention: this function is deprecated in ver.1, but will be revived someday, who knows. :P
 
     # Arguments
     - return: boolean:  true->success, false->fail
@@ -548,8 +558,8 @@ module PgDBController
                     case in insert/update/delete, we cannot see if it got success or not by .execute().
                     using .num_affected_rows() to see the worth.
                         in insert -> 0: normal end, the fault is caught in 'catch'
-                        in update/delete -> 0: swin' and miss
-                                        -> 1: hit the ball
+                        in update/delete -> 0: swing and miss
+                                         -> 1: hit the ball
             ===#
             affected_ret = LibPQ.num_affected_rows(sql_ret)
             jmsg::String = string("compliment me!")
@@ -696,6 +706,110 @@ module PgDBController
                 end
             end
         end
+    end
+    """
+    function create_jetelina_user_table
+
+        create 'jetelina_table_user_table' table.
+
+    """
+    function create_jetelina_user_table()
+        create_jetelina_user_table_str = """
+            create table if not exists jetelina_user_table(
+                user_id integer not null primary key,
+                login varchar(256) not null,
+                firstname varchar(256),
+                lastname varchar(256),
+                nickname varchar(256),
+                logincount integer not null default 0,
+                logindate timestamp with time zone,
+                user_info json,
+                user_level integer not null default 0,
+                familiar_index integer default 0
+            );
+        """
+        conn = open_connection()
+        try
+            execute(conn, create_jetelina_user_table_str)
+        catch err
+            JetelinaLog.writetoLogfile("PgDBController.create_jetelina_user_table() error: $err")
+        finally
+            close_connection(conn)
+        end
+    end
+    """
+    function chkUserExist(s::String)
+
+        pre login, check the ordered user in jetelina_user_table or no
+        resume to chkUserAttribute() if existed
+        
+    # Arguments
+    - `s::String`:  user information. login account or first name or last name.
+    - return: success -> user data in json, fail -> ""
+    """
+    function chkUserExist(s::String)
+        ret = ""
+
+        sql = """   
+        SELECT
+            user_id,
+            login,
+            firstname,
+            lastname,
+            nickname,
+            logincount,
+            logindate,
+            json_object_keys (user_info) as user_info,
+            user_level,
+            familiar_index
+        from jetelina_user_table
+        where (login = '$s')or(firstname='$s')or(lastname='$s')
+        """
+        conn = open_connection()
+        try
+            df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+            ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
+        catch err
+            ret = json(Dict("result" => false, "errmsg" => "$err"))
+            JetelinaLog.writetoLogfile("PgDBController.chkUserExist() with $s error : $err")
+        finally
+            close_connection(conn)
+        end
+
+        return ret
+    end
+    """
+    function chkUserAttribute(uid::Integer,key::String,val)
+
+        pre login, check the ordered user in jetelina_user_table or no
+        
+    # Arguments
+    - `uid::Integer`: expect user_id
+    - `key::String`: key name in user_info json data
+    - `val`:  user input data. not sure the data type. String or Integer or something else
+    - return: success -> user data in json, fail -> ""
+    """
+    function chkUserAttribute(uid::Integer,key::String,val)
+        ret = ""
+
+        sql = """   
+        SELECT
+            user_id, user_info -> '$key' as u_info_$key
+        from jetelina_user_table
+        where (user_id=$uid)and(user_info->>'$key'='$val')
+        """
+        conn = open_connection()
+        try
+            df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+            ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
+        catch err
+            ret = json(Dict("result" => false, "errmsg" => "$err"))
+            JetelinaLog.writetoLogfile("PgDBController.chkUserAttribute() with user $uid $key->$val error : $err")
+        finally
+            close_connection(conn)
+        end
+
+        return ret
     end
 
 end
