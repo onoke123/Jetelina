@@ -1934,3 +1934,7 @@
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
 ┌ Info: 2023-11-10 14:30:57 JetelinaFiles.getFileNameFromLogPath: /home/onoke/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
 └ @ JetelinaLog /home/onoke/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-16 10:57:58 csv file: lib/jetelina/repo/ftest3.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-16 10:59:13 csv file: lib/jetelina/repo/ftest3.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55

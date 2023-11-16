@@ -45,6 +45,7 @@ module DBDataController
     function init_Jetelina_table()
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
+            PgDBController.create_jetelina_id_sequence()
             PgDBController.create_jetelina_table()
             PgDBController.readJetelinatable()
         elseif JetelinaDBtype == "mariadb"

@@ -8,7 +8,7 @@
 
     functions
         create_jetelina_tables() create 'jetelina_table_manager' table.
-        create_jetelina_id_sequence() create 'jetelina_id' sequence.
+        create_jetelina_id_sequence() create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
         open_connection() open connection to the DB.
         close_connection(conn::LibPQ.Connection)  close the DB connection
         readJetelinatable() read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame 
@@ -22,6 +22,13 @@
         doSelect(sql::String,mode::String) execute select data by ordering sql sentence, but get sql execution time of ordered sql if 'mode' is 'measure'.
         getUserAccount(s::String) get user account for authentication.
         measureSqlPerformance() measure exectution time of all listed sql sentences. then write it out to JetelinaSqlPerformancefile.
+        create_jetelina_user_table() create 'jetelina_table_user_table' table.
+        userRegist(username::String) register a new user
+        chkUserExist(s::String) pre login, check the ordered user in jetelina_user_table or not
+        chkUserAttribute(uid::Integer,key::String,val) inquiring user_info data 
+        updateUserInfo(uid::Integer,key::String,value) update user data (jetelina_user_table.user_info)
+        updateUserCountableData(uid::Integer,key::String,value) update user countable data
+        deleteUserAccount(uid::Integer) user delete
 """
 module PgDBController
 
@@ -66,11 +73,11 @@ module PgDBController
     """
     function create_jetelina_id_sequence()
 
-        create 'jetelina_id' sequence.
+        create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
     """
     function create_jetelina_id_sequence()
         create_jetelina_id_sequence = """
-            create sequence jetelina_id;
+            create sequence jetelina_table_id_sequence;create sequence jetelina_sql_sequence;create sequence jetelina_user_id_sequence;
         """
         conn = open_connection()
         try
@@ -217,12 +224,12 @@ module PgDBController
     """
     function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer)
 
-        get seaquence number from jetelina_id table, but this is a private function.
+        get seaquence number from jetelina_table_id_sequence or jetelina_sql_sequence or jetelina_user_id_sequence, but this is a private function.
         this function will never get fail, expectedly.:-P
 
     # Arguments
     - `conn: Object`: connection object
-    - `t: Integer`  : type order  0-> jetelina_id, 1-> jetelian_sql_sequence
+    - `t: Integer`  : type order  0-> jetelina_table_id_sequence, 1-> jetelian_sql_sequence 2->jetelina_user_id_sequence
     - return:Integer: sequence number 
     """
     function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer)
@@ -230,11 +237,15 @@ module PgDBController
 
         if t == 0
             sql = """
-                select nextval('jetelina_id');
+                select nextval('jetelina_id_sequence');
             """
         elseif t == 1
             sql = """
                 select nextval('jetelina_sql_sequence');
+            """
+        elseif t == 2
+            sql = """
+                select nextval('jetelina_user_id_sequence');
             """
         end
 
@@ -264,11 +275,11 @@ module PgDBController
         conn = open_connection()
 
         try
-            jetelina_id = _getJetelinaSequenceNumber(conn, 0)
+            jetelina_table_id = getJetelinaSequenceNumber(conn, 0)
 
             for i = 1:length(columns)
                 c = columns[i]
-                values_str = "'$jetelina_id','$tableName','$c'"
+                values_str = "'$jetelina_table_id','$tableName','$c'"
 
                 if debugflg
                     @info "PgDBController.insert2JetelinaTableManager() insert str:" values_str
@@ -708,7 +719,7 @@ module PgDBController
         end
     end
     """
-    function create_jetelina_user_table
+    function create_jetelina_user_table()
 
         create 'jetelina_table_user_table' table.
 
@@ -723,7 +734,7 @@ module PgDBController
                 nickname varchar(256),
                 logincount integer not null default 0,
                 logindate timestamp with time zone,
-                user_info json,
+                user_info jsonb,
                 user_level integer not null default 0,
                 familiar_index integer default 0
             );
@@ -737,10 +748,39 @@ module PgDBController
             close_connection(conn)
         end
     end
+
+    """
+    function userRegist(username::String)
+
+        register a new user
+        
+    # Arguments
+    - `username::String`:  user name. this data sets in as 'login','firstname' and 'lastname' at once.
+    - return::boolean: success->true  fail->false
+    """
+    function userRegist(username::String)
+        ret = true
+        user_id = getJetelinaSequenceNumber(2)
+        insert_st = """
+            insert into jetelina_user_table (user_id,login,firstname,lastname) values($user_id,'$username','$username','$username');
+        """
+
+        conn = open_connection()
+        try
+            execute(conn, insert_st)
+        catch err
+            ret = false
+            JetelinaLog.writetoLogfile("PgDBController.userRegist() with $username error : $err")
+        finally
+            close_connection(conn)
+        end
+
+        return ret
+    end
     """
     function chkUserExist(s::String)
 
-        pre login, check the ordered user in jetelina_user_table or no
+        pre login, check the ordered user in jetelina_user_table or not
         resume to chkUserAttribute() if existed
         
     # Arguments
@@ -759,7 +799,7 @@ module PgDBController
             nickname,
             logincount,
             logindate,
-            json_object_keys (user_info) as user_info,
+            jsonb_object_keys (user_info) as user_info,
             user_level,
             familiar_index
         from jetelina_user_table
@@ -781,15 +821,16 @@ module PgDBController
     """
     function chkUserAttribute(uid::Integer,key::String,val)
 
-        pre login, check the ordered user in jetelina_user_table or no
+        inquiring user_info data 
         
     # Arguments
     - `uid::Integer`: expect user_id
     - `key::String`: key name in user_info json data
     - `val`:  user input data. not sure the data type. String or Integer or something else
-    - return: success -> user data in json, fail -> ""
+    - `rettype::Integer`: return data type. 0->json 1->DataFrame 
+    - return: success -> user data in json or DataFrame, fail -> ""
     """
-    function chkUserAttribute(uid::Integer,key::String,val)
+    function chkUserAttribute(uid::Integer,key::String,val,rettype::Integer)
         ret = ""
 
         sql = """   
@@ -801,10 +842,130 @@ module PgDBController
         conn = open_connection()
         try
             df = DataFrame(columntable(LibPQ.execute(conn, sql)))
-            ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
+            if rettype == 0
+                ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
+            else
+                ret = df
+            end
         catch err
             ret = json(Dict("result" => false, "errmsg" => "$err"))
             JetelinaLog.writetoLogfile("PgDBController.chkUserAttribute() with user $uid $key->$val error : $err")
+        finally
+            close_connection(conn)
+        end
+
+        return ret
+    end
+    """
+    function updateUserInfo(uid::Integer,key::String,value)
+
+        update user data (jetelina_user_table.user_info)
+    
+    # Arguments
+    - `uid::Integer`: expect user_id
+    - `key::String`: key name in user_info json data
+    - `val`:  user input data. not sure the data type. String or Integer or something else
+    - return: success -> true, fail -> error message
+    """
+    function updateUserInfo(uid::Integer,key::String,value)
+        ret = ""
+
+        # get existing user info data
+        df = chkUserAttribute(uid,key,value,1)
+        # append new value data to old one
+        if 0<nrow(df)
+            value = string(df[:,:2],',',value)
+        end
+
+        #===
+            Tips:
+                in the case of updating JSONB data type, the data is added at the tail if it were not existing.
+                then do not need the hit or swing-miss by using LibPQ.num_affected_rows() alike in executeApi().
+        ===#
+        sql = """
+        update jetelina_user_table set
+            user_info = jsonb_set(user_info,'{$key}','"$value"')
+            where user_id=$uid;
+        """
+        conn = open_connection()
+        try
+            execute(conn, sql)
+
+            jmsg = """I have memorized your new $key, lucky knowing you more."""
+            ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
+        catch err
+            ret = json(Dict("result" => false, "errmsg" => "$err"))
+            JetelinaLog.writetoLogfile("PgDBController.updateUserInfo() with user $uid $key->$val error : $err")
+        finally
+            close_connection(conn)
+        end
+
+        return ret
+    end
+    """
+    function updateUserCountableData(uid::Integer,key::String,value)
+
+        update user countable data
+    
+    # Arguments
+    - `uid::Integer`: expect user_id
+    - `key::String`: name of countable columns. ex. logincount,user_level...
+    - `val::Integer`: data to set the ordered column  
+    - return: success -> true, fail -> error message
+    """
+    function updateUserCountableData(uid::Integer,key::String,value)
+        ret = ""
+
+        #===
+            Tips:
+                in the case of updating JSONB data type, the data is added at the tail if it were not existing.
+                then do not need the hit or swing-miss by using LibPQ.num_affected_rows() alike in executeApi().
+        ===#
+        sql = """
+        update jetelina_user_table set
+            $key = $value
+            where user_id=$uid;
+        """
+        conn = open_connection()
+        try
+            execute(conn, sql)
+
+            jmsg = """He he, you are counted up in me."""
+            ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
+        catch err
+            ret = json(Dict("result" => false, "errmsg" => "$err"))
+            JetelinaLog.writetoLogfile("PgDBController.updateUserCountableData() with user $uid $key->$val error : $err")
+        finally
+            close_connection(conn)
+        end
+
+        return ret
+    end
+    """
+    function deleteUserAccount(uid::Integer)
+
+        user delete
+
+    # Arguments
+    - `uid::Integer`: expect user_id
+    - return: success -> true, fail -> error message
+    """
+    function deleteUserAccount(uid::Integer)
+        ret = ""
+
+        sql = """
+        delete from jetelina_user_table 
+            where user_id=$uid;
+        """
+        conn = open_connection()
+        try
+            execute(conn, sql)
+
+            jmsg = """See you someday"""
+            ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
+        catch err
+            ret = json(Dict("result" => false, "errmsg" => "$err"))
+            JetelinaLog.writetoLogfile("PgDBController.deleteUserAccount() with user $uid $key->$val error : $err")
         finally
             close_connection(conn)
         end
