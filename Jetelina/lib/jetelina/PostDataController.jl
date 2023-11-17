@@ -12,6 +12,11 @@ functions
     getApiList()  get registering api list in json style.api list is refered in Df_JetelinaSqlList.
     deleteTable()  delete table by ordering. this function calls DBDataController.dropTable(tableName), so 'delete' meaning is really 'drop'.ordered table name is posted as the name 'tablename' in jsonpayload().
     login()  login procedure.user's login account is posted as the name 'username' in jsonpayload().
+    refUserAttribute() refer the user attribute after login().
+    updateUserInfo() update user information data
+    updateUserData() update user data
+    updateUserLoginData() update user login data like logincount,logindate,.....
+    deleteUserAccount() delete user account from jetelina_user_table
     deleteApi()  delete api by ordering from JetelinaSQLListfile file, then refresh the DataFrame.
 """
 module PostDataController
@@ -21,8 +26,9 @@ module PostDataController
     using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
     using PgSQLSentenceManager,JetelinaFiles
 
-    export createApi,getColumns,getApiList,deleteTable,login,deleteApi,handleApipostdata
-    
+    export createApi,getColumns,getApiList,deleteTable,login,refUserAttribute,updateUserInfo,
+            updateUserData,updateUserLoginData,deleteUserAccount,deleteApi,handleApipostdata
+            
     """
     function handleApipostdata()
 
@@ -57,36 +63,14 @@ module PostDataController
         ordered table name is posted as the name 'tablename' in jsonpayload().
     """
     function getColumns()
+        ret = ""
         tableName = jsonpayload("tablename")
-        if debugflg
-            @info "PostDataController.getColumns(): " tableName
+        if !isnothing(tableName)
+            ret = DBDataController.getColumns(tableName)
         end
 
-        DBDataController.getColumns(tableName)
+        return ret
     end
-
-    #==
-        This comment out is for future requests.
-
-        tableを指定してそれに関連するapiを返す関数。
-        なにかに使いそうなのでコメントアウトして残しておく。
-        function getApiList()
-            tableName = jsonpayload( "tablename" )
-            @info "getApiList: " tableName
-            target = contains( tableName )
-            #===
-            DataFrame Df_JetelinaSqlListから、指定したtableNameが含まれる"sql"カラムを
-            filter()で絞り込んでいる。
-            次は絞り込みをVectorにしてJson化したい。
-            Caution: filter!()は使わない。なぜならDf_Jete...はそのままにしておくから。
-            ===#
-            sql_list = filter( :sql => target, Df_JetelinaSqlList )
-            @info "sql_list: " sql_list
-            ret = json( Dict( "Jetelina" => copy.( eachrow( sql_list ))))
-            @info "sql list ret: " ret
-            return ret
-        end
-    ==#
     """
     function getApiList()
 
@@ -103,26 +87,121 @@ module PostDataController
         ordered table name is posted as the name 'tablename' in jsonpayload().
     """
     function deleteTable()
+        ret = ""
         tableName = jsonpayload("tablename")
-        if debugflg
-            @info "PostDataController.deleteTable() dropTable: " tableName
+        if !isnothing(tableName)
+            ret = DBDataController.dropTable(tableName)
         end
 
-        DBDataController.dropTable(tableName)
+        return ret
     end
     """
     function login()
 
-        login procedure.
+        login procedure. just checking the existence here.
         user's login account is posted as the name 'username' in jsonpayload().
     """
     function login()
+        ret = ""
         userName = jsonpayload("username")
-        if debugflg
-            @info "PostDataController.login(): " userName
+        if !isnothing(userName)
+            ret = DBDataController.chkUserExistence(userName)
         end
 
-        DBDataController.getUserAccount(userName)
+        return ret
+    end
+    """
+    function refUserAttribute()
+
+        refer the user attribute after login().
+        the user is not autherized here yet.
+
+    # Arguments
+    - return: ture/false in json form
+    """
+    function refUserAttribute()
+        ret = ""
+        uid = jsonpayload("uid")
+        key = jsonpayload("key")
+        val = jsonpayload("val")
+        if !isnothing(uid) && !isnothing(key) && !isnothing(val)
+            ret = DBDataController.refUserAttribute(uid,key,val)
+        end
+
+        return ret
+    end
+    """
+    function updateUserInfo()
+
+        update user information data
+
+    # Arguments
+    - return: ture/false in json form
+    """
+    function updateUserInfo()
+        ret = ""
+        uid = jsonpayload("uid")
+        key = jsonpayload("key")
+        val = jsonpayload("val")
+        if !isnothing(uid) && !isnothing(key) && !isnothing(val)
+            ret = DBDataController.updateUserInfo(uid,key,val)
+        end
+
+        return ret
+    end
+    """
+    function updateUserData()
+
+        update user data
+        this function can use for simple column form, I mean not for jsonb column.
+
+    # Arguments
+    - return: ture/false in json form
+    """
+    function updateUserData()
+        ret = ""
+        uid = jsonpayload("uid")
+        key = jsonpayload("key")
+        val = jsonpayload("val")
+        if !isnothing(uid) && !isnothing(key) && !isnothing(val)
+            ret = DBDataController.updateUserData(uid,key,val)
+        end
+
+        return ret
+    end
+    """
+    function updateUserLoginData()
+
+        update user login data like logincount,logindate,.....
+
+    # Arguments
+    - return: ture/false in json form
+    """
+    function updateUserLoginData()
+        ret = ""
+        uid = jsonpayload("uid")
+        if !isnothing(uid)
+            ret = DBDataController.updateUserLoginData(uid)
+        end
+
+        return ret
+    end
+    """
+    function deleteUserAccount()
+
+        delete user account from jetelina_user_table
+
+    # Arguments
+    - return: true/false in json form
+    """
+    function deleteUserAccount()
+        ret = ""
+        uid = jsonpayload("uid")
+        if !isnothing(uid)
+            ret = DBDataController.deleteUserAccount(uid)
+        end
+
+        return ret
     end
     """
     function _addJetelinaWords()

@@ -20,15 +20,15 @@
         getColumns(tableName::String) get columns name of ordereing table.
         executeApi(apino::String, sql_str::String) execute API with creating SQL sentence
         doSelect(sql::String,mode::String) execute select data by ordering sql sentence, but get sql execution time of ordered sql if 'mode' is 'measure'.
-        getUserAccount(s::String) get user account for authentication.
         measureSqlPerformance() measure exectution time of all listed sql sentences. then write it out to JetelinaSqlPerformancefile.
         create_jetelina_user_table() create 'jetelina_table_user_table' table.
         userRegist(username::String) register a new user
         chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
         refUserAttribute(uid::Integer,key::String,val) inquiring user_info data 
         updateUserInfo(uid::Integer,key::String,value) update user data (jetelina_user_table.user_info)
-        updateUserCountableData(uid::Integer,key::String,value) update user countable data
-        deleteUserAccount(uid::Integer) user delete
+        updateUserData(uid::Integer,key::String,value) update user data, exept jsonb column
+        updateUserLoginData(uid::Integer) update user login data if it succeeded to login
+        deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
 """
 module PgDBController
 
@@ -38,8 +38,8 @@ module PgDBController
 
     export create_jetelina_tables, create_jetelina_id_sequence, open_connection, close_connection, readJetelinatable,
         getTableList, getJetelinaSequenceNumber, insert2JetelinaTableManager, dataInsertFromCSV, dropTable, getColumns,
-        executeApi, doSelect, getUserAccount, measureSqlPerformance, create_jetelina_user_table, userRegist, chkUserExistence,
-        refUserAttribute, updateUserInfo, updateUserCountableData, deleteUserAccount
+        executeApi, doSelect, measureSqlPerformance, create_jetelina_user_table, userRegist, chkUserExistence,
+        refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount
 
 
     """
@@ -653,38 +653,6 @@ module PgDBController
         end
     end
     """
-    function getUserAccount(s::String)
-
-        get user account for authentication.
-        
-    # Arguments
-    - `s::String`:  user information. login account or first name or last name.
-    - return: success -> user data in json, fail -> ""
-    """
-    function getUserAccount(s::String)
-        ret = ""
-
-        sql = """   
-        SELECT
-            *
-        from usertable
-        where (login = '$s')or(firstname='$s')or(lastname='$s')
-        """
-        conn = open_connection()
-        try
-            df = DataFrame(columntable(LibPQ.execute(conn, sql)))
-            ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
-        catch err
-            ret = json(Dict("result" => false, "errmsg" => "$err"))
-            JetelinaLog.writetoLogfile("PgDBController.getUserAccount() with $s error : $err")
-        finally
-            close_connection(conn)
-        end
-
-        return ret
-    end
-
-    """
     function measureSqlPerformance()
 
         measure exectution time of all listed sql sentences. then write it out to JetelinaSqlPerformancefile.
@@ -917,9 +885,10 @@ module PgDBController
         return ret
     end
     """
-    function updateUserCountableData(uid::Integer,key::String,value)
+    function updateUserData(uid::Integer,key::String,value)
 
-        update user countable data
+        update user data, exept jsonb column
+        this function can use for simple columns.
     
     # Arguments
     - `uid::Integer`: expect user_id
@@ -927,17 +896,19 @@ module PgDBController
     - `val::Integer`: data to set the ordered column  
     - return: success -> true, fail -> error message
     """
-    function updateUserCountableData(uid::Integer,key::String,value)
+    function updateUserData(uid::Integer,key::String,value)
         ret = ""
+        set_str::String = ""
 
-        #===
-            Tips:
-                in the case of updating JSONB data type, the data is added at the tail if it were not existing.
-                then do not need the hit or swing-miss by using LibPQ.num_affected_rows() alike in executeApi().
-        ===#
+        if isa(value,String) 
+            set_str = """ $key='$value' """
+        else
+            set_str = """ $key=$value """
+        end
+
         sql = """
         update jetelina_user_table set
-            $key = $value
+            $set_str
             where user_id=$uid;
         """
         conn = open_connection()
@@ -948,7 +919,7 @@ module PgDBController
             ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
         catch err
             ret = json(Dict("result" => false, "errmsg" => "$err"))
-            JetelinaLog.writetoLogfile("PgDBController.updateUserCountableData() with user $uid $key->$val error : $err")
+            JetelinaLog.writetoLogfile("PgDBController.updateUserData() with user $uid $key->$val error : $err")
         finally
             close_connection(conn)
         end
