@@ -1938,3 +1938,17 @@
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
 ┌ Info: 2023-11-16 10:59:13 csv file: lib/jetelina/repo/ftest3.csv
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-17 09:50:59 PgDBController.userRegist() with testuser error : LibPQ.Errors.UniqueViolation("ERROR:  duplicate key value violates unique constraint \"jetelina_user_table_pkey\"\nDETAIL:  Key (user_id)=(1) already exists.\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-17 10:31:33 PgDBController.updateUserLoginData() with user 2 error : MethodError(isless, (Union{Missing, Int32}[1], 11), 0x0000000000007e91)
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-17 10:33:25 PgDBController.updateUserLoginData() with user 2 error : MethodError(isless, (Union{Missing, Int32}[1], 11), 0x0000000000007ef0)
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-17 10:33:58 PgDBController.updateUserLoginData() with user 2 error : MethodError(isless, (Union{Missing, Int32}[1], 11), 0x0000000000007f4f)
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-17 10:35:17 PgDBController.updateUserLoginData() with user 2 error : MethodError(isless, (Union{Missing, Int32}[1], 11), 0x0000000000007fae)
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-17 10:36:06 PgDBController.updateUserLoginData() with user 2 error : MethodError(isless, (Union{Missing, Int32}[1], 11), 0x000000000000800d)
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-17 10:36:25 PgDBController.updateUserLoginData() with user 2 error : UndefVarError(:jmsg)
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55

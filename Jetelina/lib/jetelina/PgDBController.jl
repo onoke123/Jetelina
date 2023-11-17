@@ -24,8 +24,8 @@
         measureSqlPerformance() measure exectution time of all listed sql sentences. then write it out to JetelinaSqlPerformancefile.
         create_jetelina_user_table() create 'jetelina_table_user_table' table.
         userRegist(username::String) register a new user
-        chkUserExist(s::String) pre login, check the ordered user in jetelina_user_table or not
-        chkUserAttribute(uid::Integer,key::String,val) inquiring user_info data 
+        chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
+        refUserAttribute(uid::Integer,key::String,val) inquiring user_info data 
         updateUserInfo(uid::Integer,key::String,value) update user data (jetelina_user_table.user_info)
         updateUserCountableData(uid::Integer,key::String,value) update user countable data
         deleteUserAccount(uid::Integer) user delete
@@ -38,7 +38,8 @@ module PgDBController
 
     export create_jetelina_tables, create_jetelina_id_sequence, open_connection, close_connection, readJetelinatable,
         getTableList, getJetelinaSequenceNumber, insert2JetelinaTableManager, dataInsertFromCSV, dropTable, getColumns,
-        executeApi, doSelect, getUserAccount, measureSqlPerformance, create_jetelina_user_table
+        executeApi, doSelect, getUserAccount, measureSqlPerformance, create_jetelina_user_table, userRegist, chkUserExistence,
+        refUserAttribute, updateUserInfo, updateUserCountableData, deleteUserAccount
 
 
     """
@@ -736,7 +737,8 @@ module PgDBController
                 logindate timestamp with time zone,
                 user_info jsonb,
                 user_level integer not null default 0,
-                familiar_index integer default 0
+                familiar_index integer default 0,
+                jetelina_delete_flg integer default 0
             );
         """
         conn = open_connection()
@@ -778,16 +780,17 @@ module PgDBController
         return ret
     end
     """
-    function chkUserExist(s::String)
+    function chkUserExistence(s::String)
 
         pre login, check the ordered user in jetelina_user_table or not
-        resume to chkUserAttribute() if existed
+        search only alive user (jetelina_delete_flg=0)
+        resume to refUserAttribute() if existed
         
     # Arguments
     - `s::String`:  user information. login account or first name or last name.
     - return: success -> user data in json, fail -> ""
     """
-    function chkUserExist(s::String)
+    function chkUserExistence(s::String)
         ret = ""
 
         sql = """   
@@ -803,7 +806,7 @@ module PgDBController
             user_level,
             familiar_index
         from jetelina_user_table
-        where (login = '$s')or(firstname='$s')or(lastname='$s')
+        where (jetelina_delete_flg=0)and((login = '$s')or(firstname='$s')or(lastname='$s'));
         """
         conn = open_connection()
         try
@@ -811,7 +814,7 @@ module PgDBController
             ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
         catch err
             ret = json(Dict("result" => false, "errmsg" => "$err"))
-            JetelinaLog.writetoLogfile("PgDBController.chkUserExist() with $s error : $err")
+            JetelinaLog.writetoLogfile("PgDBController.chkUserExistence() with $s error : $err")
         finally
             close_connection(conn)
         end
@@ -819,7 +822,7 @@ module PgDBController
         return ret
     end
     """
-    function chkUserAttribute(uid::Integer,key::String,val)
+    function refUserAttribute(uid::Integer,key::String,val)
 
         inquiring user_info data 
         
@@ -830,26 +833,37 @@ module PgDBController
     - `rettype::Integer`: return data type. 0->json 1->DataFrame 
     - return: success -> user data in json or DataFrame, fail -> ""
     """
-    function chkUserAttribute(uid::Integer,key::String,val,rettype::Integer)
+    function refUserAttribute(uid::Integer,key::String,val,rettype::Integer)
         ret = ""
+        result = false
 
+        #===
+            Tips:
+                search jsonb data here, it possibly contains some data in it,
+                thus using 'like' sentence.
+        ===#
         sql = """   
         SELECT
             user_id, user_info -> '$key' as u_info_$key
         from jetelina_user_table
-        where (user_id=$uid)and(user_info->>'$key'='$val')
+        where (user_id=$uid)and(user_info->>'$key' like '%$val%')
         """
         conn = open_connection()
         try
             df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+            if 0<nrow(df)
+                # match the info
+                result = true
+            end
+
             if rettype == 0
-                ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
+                ret = json(Dict("result" => result, "Jetelina" => copy.(eachrow(df))))
             else
                 ret = df
             end
         catch err
             ret = json(Dict("result" => false, "errmsg" => "$err"))
-            JetelinaLog.writetoLogfile("PgDBController.chkUserAttribute() with user $uid $key->$val error : $err")
+            JetelinaLog.writetoLogfile("PgDBController.refUserAttribute() with user $uid $key->$val error : $err")
         finally
             close_connection(conn)
         end
@@ -871,7 +885,7 @@ module PgDBController
         ret = ""
 
         # get existing user info data
-        df = chkUserAttribute(uid,key,value,1)
+        df = refUserAttribute(uid,key,value,1)
         # append new value data to old one
         if 0<nrow(df)
             value = string(df[:,:2],',',value)
@@ -942,9 +956,68 @@ module PgDBController
         return ret
     end
     """
+    function updateUserLoginData(uid::Integer)
+
+        update user login data if it succeeded to login
+    
+    # Arguments
+    - `uid::Integer`: expect user_id
+    - return: success -> true, fail -> error message
+    """
+    function updateUserLoginData(uid::Integer)
+        ret = ""
+        column_str::String = ""
+        jmsg::String = """He he, you are counted up in me."""
+        #===
+            Attention:
+                refer to 'logincount' number, then count up 'user_level' if 'logincount' over 11.
+                this does not have any important meaning, may use it in future for something, 
+                for example in respect mode, who knows. :P
+        ===#
+        lc_sql = """
+        select logincount from jetelina_user_table where user_id=$uid;
+        """
+
+        conn = open_connection()
+        try
+            df = DataFrame(columntable(LibPQ.execute(conn, lc_sql)))
+            #===
+                Tips:
+                    df[:,:logincount] is might be Vector, thus ..[1], because of getting only one column data.
+            ===#
+            if df[:,:logincount][1] < 11
+                column_str = """
+                logincount=logincount+1,logindate=now()  
+                """
+            else
+                column_str = """
+                logincount=1,user_level=user_level+1,logindate=now()  
+                """
+                jmsg = """Congrat, your level has been counted up in me."""
+            end
+
+            sql = """
+            update jetelina_user_table set
+                $column_str
+                where user_id=$uid;
+            """
+
+            execute(conn, sql)
+
+            ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
+        catch err
+            ret = json(Dict("result" => false, "errmsg" => "$err"))
+            JetelinaLog.writetoLogfile("PgDBController.updateUserLoginData() with user $uid error : $err")
+        finally
+            close_connection(conn)
+        end
+
+        return ret
+    end
+    """
     function deleteUserAccount(uid::Integer)
 
-        user delete
+        user delete, but not physical deleting, set jetelina_delete_flg to 1. 
 
     # Arguments
     - `uid::Integer`: expect user_id
@@ -954,7 +1027,8 @@ module PgDBController
         ret = ""
 
         sql = """
-        delete from jetelina_user_table 
+        update jetelina_user_table set
+            jetelina_delete_flg=1
             where user_id=$uid;
         """
         conn = open_connection()
