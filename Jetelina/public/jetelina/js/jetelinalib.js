@@ -303,35 +303,47 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
             let m = "";
             // found user
             Object.keys(o).some(function (key) {
-                let sex, firstname;
-                if (key == "result" && o[key] == true ){
-                    if (key == "Jetelina" && o[key].length == 1) {
-                        $.each(o[key][0], function (k, v) {
-                            if (k == "sex") {
-                                if (v == "m") {
-                                    sex = "Mr. ";
-                                } else {
-                                    sex = "Ms. ";
-                                }
-                            } else if (k == "firstname") {
-                                firstname = v;
-                            }
-                        });
+                if (key == "Jetelina" && o[key].length == 1) {
+                    $.each(o[key][0], function (k, v) {
+                        if (k == "user_id"){
+                            loginuser.user_id = v;
+                        }else if (k == "login"){
+                            loginuser.login = v;
+                        }else if (k == "firstname") {
+                            loginuser.firstname = v;
+                        }else if (k == "lastname"){
+                            loginuser.lastname = v;
+                            m = v;
+                        }else if (k == "nickname"){
+                            loginuser.nickname = v; 
+                        }else if (k == "logincount"){
+                            loginuser.logincount = v;
+                        }else if (k == "logindate" ){
+                            loginuser.lastlogin = v;
+                        }else if (k == "user_level"){
+                            loginuser.user_level = v;
+                        }else if (k == "familiar_index"){
+                            loginuser.familiar_index = v;
+                        }
+                    });
 
-                        m = sex + firstname;
-                        scenarioNumber = 5;
-                        stage = 'login_success';
-                    } else if (1 < o[key].length) {
+                    // nickname has a priority
+                    if (loginuser.nickname != null) {
+                        m = loginuser.nickname;
+                    }
+
+                    scenarioNumber = 5;
+                    stage = 'login_success';
+                } else if (1 < o[key].length) {
                         // some candidates
                         scenarioNumber = "5-multi-candidates";
                         stage = 'login';
-                    } else {
-                        // no user
-                        scenarioNumber = "5-not-registered";
-                        stage = 'login';
-                    }
+                } else {
+                    // no user
+                    scenarioNumber = "5-not-registered";
+                    stage = 'login';
                 }
-                
+
                 m = chooseMsg(scenarioNumber, m, "a");
 
                 typingControll(m);

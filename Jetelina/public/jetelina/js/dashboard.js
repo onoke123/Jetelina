@@ -13,6 +13,7 @@ let isSuggestion = false; // set this to 'true' in getAjaxData() if there were J
 let timerId;// interval timer of the idling comment in the opening screen。uses in jetelinalib.js burabura()
 let acVscom;// flg for exisiting the data of 'Access vs Combination'.
 let inprogress=false;// true -> ajax function is in progress , false -> is not i progress. set in $.ajax({xhr:})
+let loginuser = {}; // contains login user info
 
 $(window).load(function () {
   /**
