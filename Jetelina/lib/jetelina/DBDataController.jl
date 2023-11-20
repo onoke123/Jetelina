@@ -14,12 +14,15 @@
         getSequenceNumber(t::Integer) Get seaquence number from jetelina_id table depend on DB type.
         dropTable(tableName::String) Drop the table and delete its related data from jetelina_table_manager table
         getColumns(tableName::String) Get columns of ordered table name depend on DB type.
-        doInsert()
         doSelect(sql::String,mode::String)
-        doUpdate()
-        doDelete()
-        getUserAccount(s::String) Get user account for authentication.
         executeApi(json_d) Execute SQL sentence order by json_d: json raw data.
+        userRegist(username::String) register a new user
+        chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
+        refUserAttribute(uid::Integer,key::String,val) inquiring user_info data 
+        updateUserInfo(uid::Integer,key::String,value) update user data (jetelina_user_table.user_info)
+        updateUserData(uid::Integer,key::String,value) update user data, exept jsonb column
+        updateUserLoginData(uid::Integer) update user login data if it succeeded to login
+        deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
 """
 
 module DBDataController
@@ -27,8 +30,8 @@ module DBDataController
     using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json
     using JetelinaLog, JetelinaReadConfig, PgDBController, JetelinaFiles, JetelinaReadSqlList, PgSQLSentenceManager
 
-    export init_Jetelina_table,dataInsertFromCSV,getTableList,getSequenceNumber,dropTable,getColumns,doInsert,doSelect,doUpdate,
-    doDelete,getUserAccount,executeApi
+    export init_Jetelina_table, dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,
+        executeApi, userRegist, chkUserExistence, refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount
 
     """
     function __init__()
@@ -64,7 +67,7 @@ module DBDataController
     function dataInsertFromCSV(csvfname::String)
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
-            PgDBController.dataInsertFromCSV( csvfname )
+            PgDBController.dataInsertFromCSV(csvfname)
         elseif JetelinaDBtype == "mariadb"
         elseif JetelinaDBtype == "oracle"
         end
@@ -84,7 +87,7 @@ module DBDataController
 
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
-            PgDBController.getTableList( s )
+            PgDBController.getTableList(s)
         elseif JetelinaDBtype == "mariadb"
         elseif JetelinaDBtype == "oracle"
         end
@@ -116,7 +119,7 @@ module DBDataController
     function dropTable(tableName::String)
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
-            PgDBController.dropTable( tableName )
+            PgDBController.dropTable(tableName)
         elseif JetelinaDBtype == "mariadb"
         elseif JetelinaDBtype == "oracle"
         end
@@ -129,23 +132,10 @@ module DBDataController
     # Arguments
     - `tableName: String`: DB table name
     """
-    function getColumns( tableName::String )
+    function getColumns(tableName::String)
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
-            PgDBController.getColumns( tableName )
-        elseif JetelinaDBtype == "mariadb"
-        elseif JetelinaDBtype == "oracle"
-        end
-    end
-    """
-    function doInsert()
-
-        insert json data into table depend on DB type, but not imprement yet.
-    """
-    function doInsert()
-        if JetelinaDBtype == "postgresql"
-            # Case in PostgreSQL
-            PgDBController.doInsert()
+            PgDBController.getColumns(tableName)
         elseif JetelinaDBtype == "mariadb"
         elseif JetelinaDBtype == "oracle"
         end
@@ -159,7 +149,7 @@ module DBDataController
     - `sql: String`: execute sql sentense
     - `mode: String`: "run"->running mode  "measure"->measure speed. only called by measureSqlPerformance()        
     """
-    function doSelect(sql::String,mode::String)
+    function doSelect(sql::String, mode::String)
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.doSelect(sql.mode)
@@ -167,49 +157,6 @@ module DBDataController
         elseif JetelinaDBtype == "oracle"
         end
     end
-    """
-    function doUpdate()
-
-        update ordered table by json data, but not imprement yet.
-    """
-    function doUpdate()
-        if JetelinaDBtype == "postgresql"
-            # Case in PostgreSQL
-            PgDBController.doUpdate()
-        elseif JetelinaDBtype == "mariadb"
-        elseif JetelinaDBtype == "oracle"
-        end
-    end
-    """
-    function doDelete()
-
-        delete data ordered table, but not imprement yet.
-    """
-    function doDelete()
-        if JetelinaDBtype == "postgresql"
-            # Case in PostgreSQL
-            PgDBController.doDelete()
-        elseif JetelinaDBtype == "mariadb"
-        elseif JetelinaDBtype == "oracle"
-        end
-    end
-    """
-    function getUserAccount(s::String)
-
-        Get user account for authentication.
-        
-    # Arguments
-    - `s::String`:  user information. login account or first name or last name.        
-    """
-    function getUserAccount(s::String)
-        if JetelinaDBtype == "postgresql"
-            # Case in PostgreSQL
-            PgDBController.getUserAccount(s)
-        elseif JetelinaDBtype == "mariadb"
-        elseif JetelinaDBtype == "oracle"
-        end
-    end
-
     """
     function executeApi(json_d)
 
@@ -243,16 +190,145 @@ module DBDataController
                 sql_str = PgSQLSentenceManager.createExecutionSqlSentence(json_d, target_api)
                 if 0 < length(sql_str)
                     # Step3:
-                    ret = PgDBController.executeApi(json_d["apino"],sql_str)
-                end    
+                    ret = PgDBController.executeApi(json_d["apino"], sql_str)
+                end
             end
         elseif JetelinaDBtype == "mariadb"
         elseif JetelinaDBtype == "oracle"
         end
 
         # write execution sql to log file
-        JetelinaLog.writetoSQLLogfile(json_d["apino"],sql_str)
+        JetelinaLog.writetoSQLLogfile(json_d["apino"], sql_str)
 
         return ret
+    end
+    """
+    function userRegist()
+
+        register a new user
+
+    # Arguments
+    - `username::String`:  user name. this data sets in as 'login','firstname' and 'lastname' at once.
+    - return::boolean: success->true  fail->false
+    """
+    function userRegist(username::String)
+        if JetelinaDBtype == "postgresql"
+            # Case in PostgreSQL
+            PgDBController.userRegist(s)
+        elseif JetelinaDBtype == "mariadb"
+        elseif JetelinaDBtype == "oracle"
+        end
+    end
+    """
+    function chkUserExistence(s::String)
+
+        pre login, check the ordered user in jetelina_user_table or not
+        search only alive user (jetelina_delete_flg=0)
+        resume to refUserAttribute() if existed
+        
+    # Arguments
+    - `s::String`:  user information. login account or first name or last name.
+    - return: success -> user data in json, fail -> ""
+    """
+    function chkUserExistence(s::String)
+        if JetelinaDBtype == "postgresql"
+            # Case in PostgreSQL
+            PgDBController.chkUserExistence(s)
+        elseif JetelinaDBtype == "mariadb"
+        elseif JetelinaDBtype == "oracle"
+        end
+    end
+    """
+    function refUserAttribute(uid::Integer,key::String,val)
+
+        inquiring user_info data 
+        
+    # Arguments
+    - `uid::Integer`: expect user_id
+    - `key::String`: key name in user_info json data
+    - `val`:  user input data. not sure the data type. String or Integer or something else
+    - return: success -> user data in json or DataFrame, fail -> ""
+    """
+    function refUserAttribute(uid::Integer,key::String,val)
+        if JetelinaDBtype == "postgresql"
+            # Case in PostgreSQL
+            rettype::Integer = 0 # because wanna the return as json type
+            PgDBController.refUserAttribute(uid,key,val,rettype)
+        elseif JetelinaDBtype == "mariadb"
+        elseif JetelinaDBtype == "oracle"
+        end
+    end
+    """
+    function updateUserInfo(uid::Integer,key::String,value)
+
+        update user data (jetelina_user_table.user_info)
+
+    # Arguments
+    - `uid::Integer`: expect user_id
+    - `key::String`: key name in user_info json data
+    - `val`:  user input data. not sure the data type. String or Integer or something else
+    - return: success -> true, fail -> error message
+    """
+    function updateUserInfo(uid::Integer,key::String,value)
+        if JetelinaDBtype == "postgresql"
+            # Case in PostgreSQL
+            PgDBController.updateUserInfo(uid,key,val)
+        elseif JetelinaDBtype == "mariadb"
+        elseif JetelinaDBtype == "oracle"
+        end
+    end
+    """
+    function updateUserData(uid::Integer,key::String,value)
+
+        update user data, exept jsonb column
+        this function can use for simple columns.
+
+    # Arguments
+    - `uid::Integer`: expect user_id
+    - `key::String`: name of countable columns. ex. logincount,user_level...
+    - `val::Integer`: data to set the ordered column  
+    - return: success -> true, fail -> error message
+    """
+    function updateUserData(uid::Integer,key::String,value)
+        if JetelinaDBtype == "postgresql"
+            # Case in PostgreSQL
+            PgDBController.updateUserData(uid,key,val)
+        elseif JetelinaDBtype == "mariadb"
+        elseif JetelinaDBtype == "oracle"
+        end
+    end
+    """
+    function updateUserLoginData(uid::Integer)
+
+        update user login data if it succeeded to login
+
+    # Arguments
+    - `uid::Integer`: expect user_id
+    - return: success -> true, fail -> error message
+    """
+    function updateUserLoginData(uid::Integer)
+        if JetelinaDBtype == "postgresql"
+            # Case in PostgreSQL
+            PgDBController.updateUserLoginData(uid)
+        elseif JetelinaDBtype == "mariadb"
+        elseif JetelinaDBtype == "oracle"
+        end
+    end
+    """
+    function deleteUserAccount(uid::Integer)
+
+        user delete, but not physical deleting, set jetelina_delete_flg to 1. 
+
+    # Arguments
+    - `uid::Integer`: expect user_id
+    - return: success -> true, fail -> error message
+    """
+    function deleteUserAccount(uid::Integer)
+        if JetelinaDBtype == "postgresql"
+            # Case in PostgreSQL
+            PgDBController.deleteUserAccount(uid)
+        elseif JetelinaDBtype == "mariadb"
+        elseif JetelinaDBtype == "oracle"
+        end
     end
 end

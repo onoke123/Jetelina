@@ -29,6 +29,12 @@ end
 
 ===#
 route("/chkacount", PostDataController.login, method = POST )
+route("/userregist", PostDataController.userRegist, method = POST)
+route("/refuserattribute", PostDataController.refUserAttribute, method = POST)
+route("/updateuserinfo", PostDataController.updateUserInfo, method = POST)
+route("/updateuserdata", PostDataController.updateUserData, method = POST)
+route("/updateuserlogindata", PostDataController.updateUserLoginData, method = POST)
+route("/deleteuser", PostDataController.deleteUserAccount, method = POST)
 
 #===
   ■teach how to talk to Jetelina, very private feature

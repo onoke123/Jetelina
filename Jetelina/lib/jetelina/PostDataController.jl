@@ -11,6 +11,7 @@ functions
     getColumns()  get ordered tables's columns with json style.ordered table name is posted as the name 'tablename' in jsonpayload().
     getApiList()  get registering api list in json style.api list is refered in Df_JetelinaSqlList.
     deleteTable()  delete table by ordering. this function calls DBDataController.dropTable(tableName), so 'delete' meaning is really 'drop'.ordered table name is posted as the name 'tablename' in jsonpayload().
+    userRegist() register a new user
     login()  login procedure.user's login account is posted as the name 'username' in jsonpayload().
     refUserAttribute() refer the user attribute after login().
     updateUserInfo() update user information data
@@ -26,7 +27,7 @@ module PostDataController
     using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
     using PgSQLSentenceManager,JetelinaFiles
 
-    export createApi,getColumns,getApiList,deleteTable,login,refUserAttribute,updateUserInfo,
+    export createApi,getColumns,getApiList,deleteTable,userRegist,login,refUserAttribute,updateUserInfo,
             updateUserData,updateUserLoginData,deleteUserAccount,deleteApi,handleApipostdata
             
     """
@@ -91,6 +92,23 @@ module PostDataController
         tableName = jsonpayload("tablename")
         if !isnothing(tableName)
             ret = DBDataController.dropTable(tableName)
+        end
+
+        return ret
+    end
+    """
+    function userRegist()
+
+        register a new user
+
+    # Arguments
+    - return::boolean: success->true  fail->false        
+    """
+    function userRegist()
+        ret = ""
+        userName = jsonpayload("username")
+        if !isnothing(userName)
+            ret = DBDataController.userRegist(userName)
         end
 
         return ret

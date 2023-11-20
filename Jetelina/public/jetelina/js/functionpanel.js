@@ -237,7 +237,6 @@ const fileupload = () => {
 
   const uploadFilename = $("input[type=file]").prop("files")[0].name;
   const tablename = uploadFilename.split(".")[0];
-  if (debug) console.info("fileupload(): ", tablename);
 
   $.ajax({
     url: "/postcsvfile",
@@ -586,7 +585,6 @@ const getColumn = (tablename) => {
         return ret;
       }
     }).done(function (result, textStatus, jqXHR) {
-      if (debug) console.info("getColumn() result: ", result);
       // got to data parse
       return getdata(result, 1);
     }).fail(function (result) {
@@ -668,7 +666,6 @@ const postSelectedColumns = () => {
   */
   pd["subquery"] = $("#genelic_panel input[name='genelic_input']").val();
 
-  if (debug) console.info("postSelectedColumns() post data: ", pd);
   let dd = JSON.stringify(pd);
 
   $.ajax({
@@ -803,8 +800,6 @@ const functionPanelFunctions = (ut) => {
     if (inScenarioChk(ut, '6func-subpanel-open-cmd')) {
       cmd = "subquery";
     }
-
-    if (debug) console.info("functionPanelFunctions() cmd: ", cmd);
 
     /*
         this 'swich' commands manipulates 'table' and 'csv file upload' 

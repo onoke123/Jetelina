@@ -271,10 +271,7 @@ const typingControll = (m) => {
         $("#jetelina_panel [name='jetelina_tell']").text("");
     }
 
-    if (debug) console.info("typingControll() m:", m);
-
     typing(0, m);
-
 }
 /**
  * @function authAjax
@@ -300,8 +297,6 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
             return ret;
         }
     }).done(function (result, textStatus, jqXHR) {
-        if (debug) console.info("authAjax() result: ", result);
-
         scenarioNumber = 4;
         if (result != null) {
             const o = result;
@@ -361,8 +356,6 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
  * select a message to show in chat box from js/senario.js 
  */
 const chooseMsg = (i, m, p) => {
-    if (debug) console.info("chooseMsg() scenario number: ", i);
-
     scenario_name = i;// scenario追加に備えて対象番号を控えておく
 
     const n = Math.floor(Math.random() * scenario[i].length);
@@ -437,8 +430,6 @@ const chatKeyDown = (cmd) => {
 
     let logoutflg = false;
 
-    if (debug) console.info("chatKeyDown() ut: ", ut);
-
     if (ut != null && 0 < ut.length) {
         ut = $.trim(ut.toLowerCase());
         let m = "";
@@ -448,8 +439,6 @@ const chatKeyDown = (cmd) => {
             $("#jetelina_panel [name='jetelina_tell']").text("");
             $("#jetelina_panel [name='chat_input']").val("");
             $("#jetelina_panel [name='your_tell']").text(ut);
-
-            if (debug) console.info("chatKeyDown() stage: ", stage);
 
             // logout
             if (logoutChk(ut)) {

@@ -65,11 +65,6 @@ const conditionPanelFunctions = (ut) => {
         // use the prior command if it were
         let cmd = getPreferentPropertie('cmd');
 
-        if (debug) {
-            console.log("conditonpanel.js conditonPanelFunctions() starts with : ", ut);
-            console.log("conditonpanel.js conditonPanelFunctions() cmd : ", cmd);
-        }
-
         if (cmd == null || cmd.length <= 0) {
             if( inScenarioChk(ut,'6cond-graph-show-keywords')){
                 cmd = "graph";
@@ -345,13 +340,6 @@ const viewPerformanceGraph = (apino, mean, type) => {
  * show the 'combination graph' 
  */
 const viewCombinationGraph = (bname, bno, ct, ac) => {
-    if (debug) {
-        console.log("bname: ", bname);
-        console.log("bno: ", bno);
-        console.log("ct: ", ct);
-        console.log("at: ", ac);
-    }
-
     var data = [
         {
             opacity: 0.5,
