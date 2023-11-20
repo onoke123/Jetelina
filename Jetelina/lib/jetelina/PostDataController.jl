@@ -13,6 +13,7 @@ functions
     deleteTable()  delete table by ordering. this function calls DBDataController.dropTable(tableName), so 'delete' meaning is really 'drop'.ordered table name is posted as the name 'tablename' in jsonpayload().
     userRegist() register a new user
     login()  login procedure.user's login account is posted as the name 'username' in jsonpayload().
+    getUserInfoKeys()  get "user_info" column key data.
     refUserAttribute() refer the user attribute after login().
     updateUserInfo() update user information data
     updateUserData() update user data
@@ -27,7 +28,7 @@ module PostDataController
     using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
     using PgSQLSentenceManager,JetelinaFiles
 
-    export createApi,getColumns,getApiList,deleteTable,userRegist,login,refUserAttribute,updateUserInfo,
+    export createApi,getColumns,getApiList,deleteTable,userRegist,login,getUserInfoKeys,refUserAttribute,updateUserInfo,
             updateUserData,updateUserLoginData,deleteUserAccount,deleteApi,handleApipostdata
             
     """
@@ -128,6 +129,24 @@ module PostDataController
 
         return ret
     end
+    """
+    function getUserInfoKeys()
+
+        get "user_info" column key data.
+
+    # Arguments
+    - return: ture/false in json form
+    """
+    function getUserInfoKeys()
+        ret = ""
+        uid = jsonpayload("uid")
+        if !isnothing(uid)
+            ret = DBDataController.getUserInfoKeys(uid)
+        end
+
+        return ret
+    end
+
     """
     function refUserAttribute()
 

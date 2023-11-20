@@ -1956,3 +1956,9 @@
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
 ┌ Info: 2023-11-20 11:30:00 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-20 16:08:54 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-20 16:17:44 PgDBController.chkUserExistence() with keiji error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"Union\"\nLINE 5: where user_id=Union{Missing, Int32}[1];\n                      ^\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-20 16:43:35 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55

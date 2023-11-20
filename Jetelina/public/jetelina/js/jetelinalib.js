@@ -304,33 +304,34 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
             // found user
             Object.keys(o).some(function (key) {
                 let sex, firstname;
-
-                if (key == "Jetelina" && o[key].length == 1) {
-                    $.each(o[key][0], function (k, v) {
-                        if (k == "sex") {
-                            if (v == "m") {
-                                sex = "Mr. ";
-                            } else {
-                                sex = "Ms. ";
+                if (key == "result" && o[key] == true ){
+                    if (key == "Jetelina" && o[key].length == 1) {
+                        $.each(o[key][0], function (k, v) {
+                            if (k == "sex") {
+                                if (v == "m") {
+                                    sex = "Mr. ";
+                                } else {
+                                    sex = "Ms. ";
+                                }
+                            } else if (k == "firstname") {
+                                firstname = v;
                             }
-                        } else if (k == "firstname") {
-                            firstname = v;
-                        }
-                    });
+                        });
 
-                    m = sex + firstname;
-                    scenarioNumber = 5;
-                    stage = 'login_success';
-                } else if (1 < o[key].length) {
-                    // some candidates
-                    scenarioNumber = "5-multi-candidates";
-                    stage = 'login';
-                } else {
-                    // no user
-                    scenarioNumber = "5-not-registered";
-                    stage = 'login';
+                        m = sex + firstname;
+                        scenarioNumber = 5;
+                        stage = 'login_success';
+                    } else if (1 < o[key].length) {
+                        // some candidates
+                        scenarioNumber = "5-multi-candidates";
+                        stage = 'login';
+                    } else {
+                        // no user
+                        scenarioNumber = "5-not-registered";
+                        stage = 'login';
+                    }
                 }
-
+                
                 m = chooseMsg(scenarioNumber, m, "a");
 
                 typingControll(m);

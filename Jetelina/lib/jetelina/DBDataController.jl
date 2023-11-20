@@ -18,6 +18,7 @@
         executeApi(json_d) Execute SQL sentence order by json_d: json raw data.
         userRegist(username::String) register a new user
         chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
+        getUserInfoKeys(uid::Integer) get "user_info" column key data.
         refUserAttribute(uid::Integer,key::String,val) inquiring user_info data 
         updateUserInfo(uid::Integer,key::String,value) update user data (jetelina_user_table.user_info)
         updateUserData(uid::Integer,key::String,value) update user data, exept jsonb column
@@ -31,7 +32,7 @@ module DBDataController
     using JetelinaLog, JetelinaReadConfig, PgDBController, JetelinaFiles, JetelinaReadSqlList, PgSQLSentenceManager
 
     export init_Jetelina_table, dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,
-        executeApi, userRegist, chkUserExistence, refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount
+        executeApi, userRegist, chkUserExistence, getUserInfoKeys,refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount
 
     """
     function __init__()
@@ -234,6 +235,23 @@ module DBDataController
         if JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.chkUserExistence(s)
+        elseif JetelinaDBtype == "mariadb"
+        elseif JetelinaDBtype == "oracle"
+        end
+    end
+    """
+    function getUserInfoKeys(uid::Integer)
+
+        get "user_info" column key data.
+
+    # Arguments
+    - `uid::Integer`: expect user_id
+    - return: success -> user data in json or DataFrame, fail -> ""
+    """
+    function getUserInfoKeys(uid::Integer)
+        if JetelinaDBtype == "postgresql"
+            # Case in PostgreSQL
+            PgDBController.getUserInfoKeys(uid)
         elseif JetelinaDBtype == "mariadb"
         elseif JetelinaDBtype == "oracle"
         end

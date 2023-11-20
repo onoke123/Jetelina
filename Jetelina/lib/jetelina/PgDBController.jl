@@ -24,6 +24,7 @@
         create_jetelina_user_table() create 'jetelina_table_user_table' table.
         userRegist(username::String) register a new user
         chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
+        getUserInfoKeys(uid::Integer) get "user_info" column key data.
         refUserAttribute(uid::Integer,key::String,val) inquiring user_info data 
         updateUserInfo(uid::Integer,key::String,value) update user data (jetelina_user_table.user_info)
         updateUserData(uid::Integer,key::String,value) update user data, exept jsonb column
@@ -38,7 +39,7 @@ module PgDBController
 
     export create_jetelina_tables, create_jetelina_id_sequence, open_connection, close_connection, readJetelinatable,
         getTableList, getJetelinaSequenceNumber, insert2JetelinaTableManager, dataInsertFromCSV, dropTable, getColumns,
-        executeApi, doSelect, measureSqlPerformance, create_jetelina_user_table, userRegist, chkUserExistence,
+        executeApi, doSelect, measureSqlPerformance, create_jetelina_user_table, userRegist, chkUserExistence, getUserInfoKeys,
         refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount
 
 
@@ -770,7 +771,6 @@ module PgDBController
             nickname,
             logincount,
             logindate,
-            jsonb_object_keys (user_info) as user_info,
             user_level,
             familiar_index
         from jetelina_user_table
@@ -783,6 +783,40 @@ module PgDBController
         catch err
             ret = json(Dict("result" => false, "errmsg" => "$err"))
             JetelinaLog.writetoLogfile("PgDBController.chkUserExistence() with $s error : $err")
+        finally
+            close_connection(conn)
+        end
+
+        return ret
+    end
+    """
+    function getUserInfoKeys(uid::Integer)
+    
+        get "user_info" column key data.
+        "user_info" columns is json fromat. Indeed DataFrame() hard to handle this type, because
+        in chkUserExisence() has many rows due to the keys, thus this function is separated from 
+        chkUserExisence().
+
+    # Arguments
+    - `uid::Integer`: expect user_id
+    - return: success -> user data in json or DataFrame, fail -> ""
+    """
+    function getUserInfoKeys(uid::Integer)
+        ret = ""
+
+        sql = """   
+        SELECT
+            jsonb_object_keys (user_info) as user_info
+        from jetelina_user_table
+        where user_id=$uid;
+        """
+        conn = open_connection()
+        try
+            df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+            ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
+        catch err
+            ret = json(Dict("result" => false, "errmsg" => "$err"))
+            JetelinaLog.writetoLogfile("PgDBController.getUserInfoKeys() with $s error : $err")
         finally
             close_connection(conn)
         end

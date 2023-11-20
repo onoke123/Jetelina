@@ -29,6 +29,7 @@ end
 
 ===#
 route("/chkacount", PostDataController.login, method = POST )
+route("/getuserinfo", PostDataController.getUserInfoKeys, method = POST)
 route("/userregist", PostDataController.userRegist, method = POST)
 route("/refuserattribute", PostDataController.refUserAttribute, method = POST)
 route("/updateuserinfo", PostDataController.updateUserInfo, method = POST)
