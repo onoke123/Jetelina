@@ -331,6 +331,18 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
                     if (loginuser.nickname != null) {
                         m = loginuser.nickname;
                     }
+                    /*
+                        Tips:
+                            authentiaction count. this is the key to get auth in Jetelina.
+                            Jetelina asks some questions in order to user info, ex. hobby, living....
+                            these info are inquired to DB, then count up if it matched.
+                            after around 1 to 4 counted up, the user has been authenticated, then
+                            can move from 'login"success' to 'chose_func_or_cond' stage.
+
+                            loginuser and authcount are defined in dashboard.js as global.
+                    */
+                    loginuser.c = 0;
+                    authcount = Math.floor(Math.random() * 3) + 1;
 
                     scenarioNumber = 5;
                     stage = 'login_success';
@@ -501,20 +513,37 @@ const chatKeyDown = (cmd) => {
                     m = 'ignore';
                     break;
                 case 'login_success':
-                    m = chooseMsg(6, "", "");
-                    stage = 'chose_func_or_cond';
+                    /*
+                        Tips:
+                            login user's info has been contained in loginuser object. see authAjax().
+                            then take action in order to the user level.
+
+                            ask "firstname", "lastname" if these are as same as "login", because this person is a newcommer.
+                            show a guidance if "logincount" is less than 3, because this person is a beginner.
+                            cout up "user_level" if "logincount" is over 10, these attribute should send to server to update user's attribute.
+                            and ask "nickname" if "familiar_level" is being 2. Jetelina can speak slang to a user who is "familiar_level" 3, in future.
+
+                            anyhow give greeting order to "lastlogin".
+                    */
+                    if(loginuser.login==loginuser.fistname && loginuser.login==loginuser.lastname){
+                        m = chooseMsg();
+                    }
+                    
+                    if(loginuser.logincount<3){
+
+                    }else if(10<loginuser.logincount){
+
+                    }else{
+                    }
+
+                    if(authcount<loginuser.c){
+                        m = chooseMsg(6, "", "");
+                        stage = 'chose_func_or_cond';    
+                    }
+
                     break;
                 case 'chose_func_or_cond':
                     let panel;
-
-                    /*
-                    if (ut.indexOf('func') != -1) {
-                        panel = 'func';
-                    } else if (ut.indexOf('cond') != -1) {
-                        panel = 'cond';
-                    }
-                    */
-
                     if(inScenarioChk(ut,"function_panel")){
                         panel = 'func';
                     }else if(inScenarioChk(ut,"condition_panel")){
@@ -693,6 +722,7 @@ const logout = () => {
     stage = 0;
     preferent = {};
     presentaction = {};
+    loginuser = {};
 
     deleteSelectedItems();
     cleanUp("items");

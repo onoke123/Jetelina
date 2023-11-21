@@ -14,6 +14,7 @@ let timerId;// interval timer of the idling comment in the opening screen。uses
 let acVscom;// flg for exisiting the data of 'Access vs Combination'.
 let inprogress=false;// true -> ajax function is in progress , false -> is not i progress. set in $.ajax({xhr:})
 let loginuser = {}; // contains login user info
+let authcount = 0; // authentication count. this is randum number that is set in login function.
 
 $(window).load(function () {
   /**

@@ -32,6 +32,13 @@ scenario[5] = [`Welcome `, `I missed you, `];
 scenario['5-multi-candidates'] = ['please tell me more detail.','next question.','more...'];
 scenario['5-not-registered'] = ['you are not registered, try again.','you are not here yet.','I do not know you, sorry.'];
 /* after login */
+scenario['first-login'] = ['This is your first login to me, I would like to ask you something. OK?'];
+scenario['first-login-ask-firstname'] = ['Thank you. First of all, may I ask your first name?'];
+scenario['first-login-ask-lastname'] = ['Thank you. Next, could you give me your last name?'];
+scenario['first-login-ask-info'] = ['Thank you so much, then what is your favorits?, Whatever.'];
+scenario['first-login-ask-info-then'] = ['Sounds nice, and more?','Cool, others?','I love it too, and?','Great, you are lucky, and more?'];
+scenario['first-login-ask-info-end'] = ['Thank you so much. Now you can type "Guide" or "Manual" to see what can I do for you.'];
+
 scenario[6] = ['How can I help you today?', 'What do you do now?'];
 scenario['success'] = ['Done','Success','I am so happy','Yes'];
 scenario['fail'] = ['Uge','Noooooooo','Sorry something wrong'];
