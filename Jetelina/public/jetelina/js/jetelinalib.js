@@ -24,6 +24,9 @@
       instractionMode(s) confirmation in adding a new scenario
       commandlistShow(s) show/hide the command list panel
       inScenarioChk(s,sc) check if user input string is in the ordered scenario
+      checkNewCommer(s) check the login user is a newcommer or not.
+      checkBeginner() check the login user is a beginner or not.
+      getRandomNumber(i) create random number. the range is 0 to i.
 */
 /**
     @function getdata
@@ -871,6 +874,8 @@ const checkNewCommer = (s) =>{
 /**
  * @function checkBeginner
  * @returns {boolean}  true -> yes a beginner, false -> an expert
+ * 
+ * check the login user is a beginner or not.
  */
 const checkBeginner = () =>{
     if(loginuser.logincount<3){
@@ -885,7 +890,7 @@ const checkBeginner = () =>{
  * @param {integer} ordered random range
  * @returns {boolean}  true -> yes a beginner, false -> an expert
  * 
- * create random number
+ * create random number. the range is 0 to i.
  */
 const getRandomNumber = (i) =>{
     return Math.floor(Math.random() * i);
