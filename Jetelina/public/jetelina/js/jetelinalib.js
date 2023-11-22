@@ -342,7 +342,7 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
                             loginuser and authcount are defined in dashboard.js as global.
                     */
                     loginuser.c = 0;
-                    authcount = Math.floor(Math.random() * 3) + 1;
+                    authcount = getRandomNumber(3) + 1;
 
                     scenarioNumber = 5;
                     stage = 'login_success';
@@ -375,7 +375,7 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
  * @function chooseMsg
  * @param {string} i  array number of the scenario message 
  * @param {string} m  adding string to the defined message
- * @param {string} p  position number of adding 'm' to the message  b->before, else->after
+ * @param {string} p  position number of adding 'm' to the message  b->before, a->after, else->replace with {Q}
  * @returns {string}  displays message in the chat box
  * 
  * select a message to show in chat box from js/senario.js 
@@ -383,13 +383,15 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
 const chooseMsg = (i, m, p) => {
     scenario_name = i;// scenario追加に備えて対象番号を控えておく
 
-    const n = Math.floor(Math.random() * scenario[i].length);
+    const n = getRandomNumber(scenario[i].length);
     let s = scenario[`${i}`][n];
     if (0 < m.length) {
         if (p == "b") {
             s = `${m} ${s}`;
-        } else {
+        } else if(p=="a"){
             s = `${s} ${m}`;
+        }else{
+            s = s.replaceAll("{Q}",m);
         }
     }
 
@@ -520,20 +522,20 @@ const chatKeyDown = (cmd) => {
 
                             ask "firstname", "lastname" if these are as same as "login", because this person is a newcommer.
                             show a guidance if "logincount" is less than 3, because this person is a beginner.
-                            cout up "user_level" if "logincount" is over 10, these attribute should send to server to update user's attribute.
+                            count up "user_level" if "logincount" is over 10, these attribute should send to server to update user's attribute.
                             and ask "nickname" if "familiar_level" is being 2. Jetelina can speak slang to a user who is "familiar_level" 3, in future.
 
                             anyhow give greeting order to "lastlogin".
                     */
-                    if(loginuser.login==loginuser.fistname && loginuser.login==loginuser.lastname){
-                        m = chooseMsg();
-                    }
-                    
-                    if(loginuser.logincount<3){
-
-                    }else if(10<loginuser.logincount){
-
+                    let cnc = checkNewCommer(ut)
+                    if (cnc[0]){
+                        // set user's firstname,lastname and info
+                        m = cnc[1];
+                    }else if (checkBeginner()){
+                        // count up user level
                     }else{
+                        // true authentication process
+                        loginuser.c++;
                     }
 
                     if(authcount<loginuser.c){
@@ -815,4 +817,76 @@ const inScenarioChk = (s,sc) =>{
     }
 
     return ret;
+}
+/**
+ * @function checkNewCommer
+ * @param {string} s  user input data
+ * @returns {array[boolean,string]}  [true -> yes a newcommer, false -> an expert, "scenario message"]
+ * 
+ *  check the login user is a newcommer or not.
+ *  ask some attribute if a newcommer.
+ */
+const checkNewCommer = (s) =>{
+    if (loginuser.logincount==0){
+        let data;
+        let m;
+        if (usetcount<3){
+            // set user's firstname and lastname, these are mandatory.
+            switch(authcount){
+                case 0: // anyhow the first access
+                    m = chooseMsg('first-login', loginuser.login, "");
+                    break;
+                case 1: // set 'fiestname'
+                    data = `{"uid":${loginuser.user_id},"key":"firstname","val":"${s}"}`;
+                    m = chooseMsg('first-login-ask-lastname', "", "");
+                    break;
+                case 2: // set 'lastname'
+                    data = `{"uid":${loginuser.user_id},"key":"lastname","val":"${s}"}`;
+                    m = chooseMsg('first-login-ask-info', loginuser.login, "");
+                    break;
+                default:
+                    m = chooseMsg('first-login-ask-firstname', "", "");
+                    break;
+            }
+
+            postAjaxData("/updateuserdata",data);
+        }else{
+            // set user's info, these are using for authentication.
+            if (usetcount < usetcountmax){
+                m = chooseMsg('first-login-ask-info-then', "", "");
+                data = `{"uid":${loginuser.user_id},"key":"lastname","val":"${s}"}`;
+            }else{
+                m = chooseMsg('first-login-ask-info-end', "", "");
+            }
+        }
+
+        usetcount++;
+        return [true,m];
+    }
+    if(loginuser.login==loginuser.fistname && loginuser.login==loginuser.lastname){
+        m = chooseMsg('first-login',loginuser.login,"");
+        authcount++;
+    }
+}
+/**
+ * @function checkBeginner
+ * @returns {boolean}  true -> yes a beginner, false -> an expert
+ */
+const checkBeginner = () =>{
+    if(loginuser.logincount<3){
+
+    }else if(10<loginuser.logincount){
+
+    }else{
+    }
+}
+/**
+ * @function getRandomNumber
+ * @param {integer} ordered random range
+ * @returns {boolean}  true -> yes a beginner, false -> an expert
+ * 
+ * create random number
+ */
+const getRandomNumber = (i) =>{
+    return Math.floor(Math.random() * i);
 }

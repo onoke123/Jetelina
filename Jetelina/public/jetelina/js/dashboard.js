@@ -14,7 +14,9 @@ let timerId;// interval timer of the idling comment in the opening screen。uses
 let acVscom;// flg for exisiting the data of 'Access vs Combination'.
 let inprogress=false;// true -> ajax function is in progress , false -> is not i progress. set in $.ajax({xhr:})
 let loginuser = {}; // contains login user info
-let authcount = 0; // authentication count. this is randum number that is set in login function.
+let authcount = 0; // authentication count. this is randum number that is set in login function
+let usetcount = 0; // only use for the first login in checkNewCommer function in jetelinalib.js
+const usetcountmax = getRandomNumber(4) + 1; // only use for the first login in checkNewCommer function in jetelinalib.js
 
 $(window).load(function () {
   /**
