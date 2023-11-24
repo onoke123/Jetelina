@@ -7,6 +7,7 @@
     
 
     Functions list:
+      getScenarioFile(l) read scenario.js file from server order by 'l' is language
       getdata(o, t) resolve the json object into each data
       getAjaxData(url) general purpose ajax get call function 
       postAjaxData(url,data) general purpose ajax post call function 
@@ -28,6 +29,37 @@
       checkBeginner() check the login user is a beginner or not.
       getRandomNumber(i) create random number. the range is 0 to i.
 */
+/**
+ * 
+ * @function getScenarioFile
+ * @param {l}  language
+ * 
+ * read scenario.js file order by 'l'. 
+ * 'l' is expected, for example 'spanish', 'german.... default is 'english'
+ * 
+ * Caution: does not work yet on  BBM 2023/11/23
+ */
+const getScenarioFile = (l) => {
+    let scenariofile;
+    
+    switch (l){
+        case 'spanish':
+            scenariofile = "spanish_scenario.js";
+            break;
+        default:
+            scenariofile = "english_scenario.js";
+            break;
+    }
+
+    let url = `jetelina/js/${scenariofile}`;
+    
+    $.ajax({
+        url: url,
+        type: "GET",
+        dataType: "script",
+    }).done(function (result, textStatus, jqXHR) {
+    });
+}
 /**
     @function getdata
     @param {object} o mostry json data
@@ -478,7 +510,7 @@ const chatKeyDown = (cmd) => {
             }
 
             // check ordered the command list
-            commandlistShow(ut);
+            m= commandlistShow(ut);
 
             // check the instraction mode that is teaching 'words' to Jetelina or not
             instractionMode(ut);
@@ -530,6 +562,7 @@ const chatKeyDown = (cmd) => {
 
                             anyhow give greeting order to "lastlogin".
                     */
+                    /* the authentication process has been postphoned in BBM.  2023/11/24
                     let cnc = checkNewCommer(ut)
                     if (cnc[0]){
                         // set user's firstname,lastname and info
@@ -540,11 +573,11 @@ const chatKeyDown = (cmd) => {
                         // true authentication process
                         loginuser.c++;
                     }
-
-                    if(authcount<loginuser.c){
+                    */
+//                    if(authcount<loginuser.c){
                         m = chooseMsg(6, "", "");
                         stage = 'chose_func_or_cond';    
-                    }
+//                    }
 
                     break;
                 case 'chose_func_or_cond':
@@ -564,7 +597,13 @@ const chatKeyDown = (cmd) => {
                         }, animateDuration);
                         m = chooseMsg('6a', "", "");
                     } else {
-                        m = chooseMsg(3, "", "");
+                        /*
+                            Tips:
+                                may 'm' has already been set in commandlistShow().
+                        */
+                        if(m.length == 0){
+                            m = chooseMsg(3, "", "");
+                        }
                     }
                     // show func panel
                     if (panel == 'func') {
@@ -790,16 +829,22 @@ const instractionMode = (s) => {
  * 
  */
 const commandlistShow = (s) => {
-    if( inScenarioChk(s,"command_list") ){
-        $("#command_list").show().animate({
+    let ret = "";
+
+    if( inScenarioChk(s,"guidance") ){
+        $("#guidance").show().animate({
             width: window.innerWidth * 0.8,
             height: window.innerHeight * 0.8,
             top: "10%",
             left: "10%"
-        }, animateDuration);
+        }, animateDuration).draggable();
+        ret = chooseMsg('6a',"","");
     }else{
-        $("#command_list").hide();
+        $("#guidance").hide();
+        ret = chooseMsg(6,"","");
     }
+
+    return ret;
 }
 /**
  * @function inScenarioChk

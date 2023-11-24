@@ -8,7 +8,8 @@ scenario['function-post-url'] = ['/getapilist','/jetelinawords'];
 /* null */
 scenario['null'] = ['',''];
 /* command list order */
-scenario['command_list'] = ['show me command','show command','what can i','what can you','how start','where can i','manual'];
+scenario['guidance'] = ['can i','can you','start','manual','guide me','guidance','teach me','tell me'];
+scenario['command_list'] = ['command','commands','commandlist','commandslist'];
 /* opening */
 scenario[0] = ['Hi','Hello'];
 userresponse[0] = ['hi','hello','hola','good ','sorry'];
@@ -45,7 +46,7 @@ scenario['fail'] = ['Uge','Noooooooo','Sorry something wrong'];
 scenario['cancel'] = ['It has been canceld','Has been withdrawn','Canceled','Withdrew','Called off']
 scenario['confirmation-sentences'] = ['yes','sure','why not','do it','do','i want to do it','i wanna do it','kick ass'];
 //scenario['6func_in'] = ['Do you wanna open the function panel?'];
-scenario['6func'] = ['Let me your command, if you need'];
+//scenario['6func'] = ['Let me your command, if you need'];
 scenario['6func-post-err'] = ['Hey, no columns','You should select post data','Boo'];
 //scenario['6cond_in'] = ['Do you wanna open the condition panel?'];
 
@@ -54,11 +55,11 @@ scenario['function_panel'] = ['function panel', 'open func','show me func','func
 //open the condition panel
 scenario['condition_panel'] = ['condition panel', 'open cond','show me cond','condition'];
 //open table list
-scenario['6func-show-table-list'] = ['open table','show me table','table list','tables list'];
+scenario['6func-show-table-list'] = ['open table','show me table','table list','tables list','tables','tablelist','tableslist'];
 //open api list
-scenario['6func-show-api-list'] = ['open api','show me api','api list','apis list'];
+scenario['6func-show-api-list'] = ['open api','show me api','api list','apis list','apis','apilist'];
 
-scenario['6cond'] = ['Let me your command, if you need'];
+//scenario['6cond'] = ['Let me your command, if you need'];
 scenario['6cond-graph-show'] = ['here you are','tatta laan'];
 // Access vs Combination graph 
 scenario['6cond-graph-show-keywords'] = ['combination data','analyzed','show the result','graph'];
