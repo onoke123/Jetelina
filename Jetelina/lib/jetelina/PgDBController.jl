@@ -390,6 +390,11 @@ module PgDBController
                 ex. /home/upload/test.csv -> splitdir() -> ("/home/upload","test.csv") -> splitext() -> ("test",".csv")
         ===#
         tableName = splitext(splitdir(fname)[2])[1]
+        #===
+            Tips:
+                Postgresql does not forgive to use '-' in a table name
+        ===#
+        tableName = replace(tableName, "-" => "_")
 
         #===
             check if the same name table already exists.
