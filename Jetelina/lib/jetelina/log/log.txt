@@ -1968,3 +1968,89 @@
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
 ┌ Info: 2023-11-24 11:45:32 JetelinaFiles.getFileNameFromLogPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 12:54:47 csv file: lib/jetelina/repo/people-1000.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 12:54:49 PgDBController.dataInsertFromCSV() with lib/jetelina/repo/people-1000.csv error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"-\"\nLINE 1:     create table if not exists people-1000(\n                                             ^\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 12:56:55 csv file: lib/jetelina/repo/people1000.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 12:56:55 PgDBController.dataInsertFromCSV() with lib/jetelina/repo/people1000.csv error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"user\"\nLINE 2:          jt_id integer unique, user id varchar, first name v...\n                                       ^\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 12:58:07 csv file: lib/jetelina/repo/people1000.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 12:58:07 PgDBController.dataInsertFromCSV() with lib/jetelina/repo/people1000.csv error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"user\"\nLINE 2:          jt_id integer unique, user id varchar, first name v...\n                                       ^\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 12:59:27 csv file: lib/jetelina/repo/people1000.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 12:59:27 PgDBController.dataInsertFromCSV() with lib/jetelina/repo/people1000.csv error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \",\"\nLINE 2: ...archar, email varchar, phone varchar, dateofbirth , jobtitle...\n                                                             ^\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 13:01:50 csv file: lib/jetelina/repo/organizations1000.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 13:01:51 PgDBController.dataInsertFromCSV() with lib/jetelina/repo/organizations1000.csv error : LibPQ.Errors.BadCopyFileFormat("ERROR:  extra data after last expected column\nCONTEXT:  COPY organizations1000, line 6: \"6,6774DC1dB00BD11,Farmer, Edwards and Andrade,http://wolfe-boyd.com/,Norfolk Island,Virtual leadinge...\"\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 13:07:18 JetelinaFiles.getFileNameFromConfigPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/config/JetelinaSqlList.tmp does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 13:07:18 JetelinaFiles.getFileNameFromConfigPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/config/JetelinaTableApi.tmp does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 13:07:31 csv file: lib/jetelina/repo/organizations1000.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 13:07:32 PgDBController.insert2JetelinaTableManager() error: MethodError(PgDBController.getJetelinaSequenceNumber, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = postgres
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = disable
+│   krbsrvname = postgres
+│   target_session_attrs = any, 0), 0x0000000000007b9a)
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 13:16:20 JetelinaFiles.getFileNameFromConfigPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/config/JetelinaSqlList.tmp does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 13:16:20 JetelinaFiles.getFileNameFromConfigPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/config/JetelinaTableApi.tmp does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 13:17:11 JetelinaFiles.getFileNameFromConfigPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/config/JetelinaSqlList.tmp does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 13:17:11 JetelinaFiles.getFileNameFromConfigPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/config/JetelinaTableApi.tmp does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 13:18:33 csv file: lib/jetelina/repo/sample_org1000.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 13:23:28 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 13:25:28 csv file: lib/jetelina/repo/org1000.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 13:25:31 PgDBController.insert2JetelinaTableManager() error: MethodError(PgDBController.getJetelinaSequenceNumber, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = postgres
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = disable
+│   krbsrvname = postgres
+│   target_session_attrs = any, 0), 0x0000000000007b9a)
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 13:26:00 csv file: lib/jetelina/repo/people1000.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 13:26:01 PgDBController.dataInsertFromCSV() with lib/jetelina/repo/people1000.csv error : LibPQ.Errors.BadCopyFileFormat("ERROR:  extra data after last expected column\nCONTEXT:  COPY people1000, line 9: \"9,421fAB9a3b98F30,Cheryl,Mays,Male,jake50@example.com,013.820.4758,Designer, multimedia,0\"\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 13:28:33 JetelinaFiles.getFileNameFromConfigPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/config/JetelinaSqlList.tmp does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 13:28:33 JetelinaFiles.getFileNameFromConfigPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/config/JetelinaTableApi.tmp does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-24 13:28:45 csv file: lib/jetelina/repo/people1000.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55

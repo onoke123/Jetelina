@@ -190,7 +190,7 @@ module PgDBController
         try
             df = DataFrame(columntable(LibPQ.execute(conn, table_str)))
             # do not include 'jetelina_table_manager and usertable in the return
-            DataFrames.filter!(row -> row.tablename != "jetelina_table_manager" && row.tablename != "usertable", df)
+            DataFrames.filter!(row -> row.tablename != "jetelina_table_manager" && row.tablename != "jetelina_user_table", df)
         catch err
             JetelinaLog.writetoLogfile("PgDBController._getTableList() error: $err")
             return DataFrame() # return empty DataFrame if got fail
