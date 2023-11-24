@@ -509,8 +509,14 @@ const chatKeyDown = (cmd) => {
                 logoutflg = true;
             }
 
-            // check ordered the command list
-            m= commandlistShow(ut);
+            /*
+                Tips:
+                    may, 'm' has already been set in logout process.
+            */
+            if ( m.length == 0 ){
+                // check ordered the command list
+                m= commandlistShow(ut);
+            }
 
             // check the instraction mode that is teaching 'words' to Jetelina or not
             instractionMode(ut);
