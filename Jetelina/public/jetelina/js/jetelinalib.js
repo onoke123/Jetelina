@@ -92,6 +92,17 @@ const getdata = (o, t) => {
                                     get data then show as the list in below loop as t=0/1(table list and column list) is simply object.
                            */
                             $.each(v, function (name, value) {
+                                /*
+                                    Tips:
+                                        in the case of value is url. ex. http://aaaa.com/  
+                                            <- this last '/' is be interfered its rendering.
+                                */
+                                if ($.type(value) === "string"){
+                                    if(value.endsWith("/")){
+                                        value = value.slice(0,-1);
+                                    }
+                                }
+
                                 if (t == 0) {
                                     // table list
                                     str += `<span class="table">${value}</span>`;

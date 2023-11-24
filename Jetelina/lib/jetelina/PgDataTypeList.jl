@@ -46,6 +46,8 @@ module PgDataTypeList
             ret = "varchar"
         elseif startswith( c_type, "String" )
             ret = "varchar"
+        elseif startswith( c_type, "Dates" )
+            ret = "Date"
         end
 
         return ret
