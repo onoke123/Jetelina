@@ -170,10 +170,10 @@ const getAjaxData = (url) => {
                     // access vs combination
                     type = "ac";
                 } else if (url == dataurls[1]) {
-                    // real performance
+                    // real performance. execute sql on the DB. considering needs or not, 2023/11/25
                     type = "real";
                 } else if (url == dataurls[2]) {
-                    // test performance
+                    // test performance. execute sql on test DB
                     type = "test";
                 } else if (url == dataurls[4]) {
                     // sql access
@@ -775,6 +775,7 @@ const logout = () => {
     $("#condition_panel").hide();
     $("#genelic_panel").hide();
     $("#plot").hide();
+    $("#api_access").hide();
     $("#performance_real").hide();
     $("#performance_test").hide();
     $("#command_list").hide();

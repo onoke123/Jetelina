@@ -62,7 +62,7 @@ scenario['6func-show-api-list'] = ['open api','show me api','api list','apis lis
 //scenario['6cond'] = ['Let me your command, if you need'];
 scenario['6cond-graph-show'] = ['here you are','tatta laan'];
 // Access vs Combination graph 
-scenario['6cond-graph-show-keywords'] = ['combination data','analyzed','show the result','graph'];
+scenario['6cond-graph-show-keywords'] = ['data','analyzed','report','graph'];
 // SQL Exectuon Time graph
 scenario['6cond-sql-performance-graph-show-keywords'] = ['your suggestion','suggest','sql test','improved performance'];
 

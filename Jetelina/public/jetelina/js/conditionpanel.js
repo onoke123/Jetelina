@@ -7,13 +7,28 @@
     This js lib works with dashboard.js, functionpanel.js and conditionpanel.js for the Condition Panel.
     
     Functions:
+      isVisibleApiAccessNumbers() checking "#api_access_numbers" is visible or not
       isVisiblePerformanceReal() checking "#performance_real" is visible or not
       isVisiblePerformanceTest() checking "#performance_test" is visible or not
       conditionPanelFunctions(ut)  Exectute some functions ordered by user chat input message
       setGraphData(o,type)  set data to a graph of creating by plot.js. data and 'type' are passed by getAjaxData() in jetelinalib.js 
-      viewPerformanceGraph(apino, mean, type)  show 'performance graph'
+      viewPerformanceGraph(apino, data, type)  show 'performance graph'
       viewCombinationGraph(bname, bno, ct, ac)  show the 'combination graph'
 */
+/**
+ * @function isVisibleApiAccessNumbers
+ * @returns {boolean}  true -> visible, false -> invisible
+ * 
+ * checking "#api_access_numbers" is visible or not
+ */
+const isVisibleApiAccessNumbers = () =>{
+    let ret = false;
+    if ($("#api_access_numbers").is(":visible")){
+      ret = true;
+    }
+  
+    return ret;
+  }
 /**
  * @function isVisiblePerformanceReal
  * @returns {boolean}  true -> visible, false -> invisible
@@ -79,8 +94,19 @@ const conditionPanelFunctions = (ut) => {
             }
         }
 
+        /*
+            Tips:
+                cmd
+                    'graph': show 'api access numbers' graph
+                    'performance: show the result of analyzing sql exection on test db.
+                                  this cmd can execute in the case of being a suggestion.
+        */
         switch (cmd) {
             case 'graph':
+                if(isVisiblePerformanceReal()){
+                    $("#performance_real").hide();
+                }
+
                 if(isVisiblePerformanceTest()){
                     $("#performance_test").hide();
                 }        
@@ -90,33 +116,39 @@ const conditionPanelFunctions = (ut) => {
                         #plot rotates 3D graph, so the div panel is not to be draggable.
                         this graph is shown when the data exsists. this is judged by 'acVsCom' 
                         global valiable, and it is set in setGraphData() in jetelinalib.js.
-                */
+                
                 if(acVscom){
                     $("#plot").show().animate({
                         top: "5%",
                         left: "-5%"
                     }, animateDuration);
                 }
+                */
                 /*
                     Tips:
                         This graph is 2D, the graph can zoom/pan...., 
                         so the div panel is also not to be draggable after getting its position.
-                        the "#performance_real" will fly away to somewhere when "#plot" is invisible,
+                        the "#api_access_numbers" will fly away to somewhere when "#plot" is invisible,
                         if the "top" variable is unchangeable. :-P
                 */
-               let ppp = "-50%";
+               let ppp = "20%";
+               /*
                 if(!$("#plot").is(":visible")){
                     ppp = "-5%";
                 }
-
-                $("#performance_real").show().draggable().animate({
+                */
+                $("#api_access_numbers").show().draggable().animate({
                     top: ppp,
-                    left: "50%"
+                    left: "20%"
                 }, animateDuration).draggable('disable');
 
                 m = chooseMsg('6cond-graph-show', "", "");
                 break;
             case 'performance':
+                if(isVisibleApiAccessNumbers()){
+                    $("#api_access_numbers").hide();
+                }
+
                 if(isVisiblePerformanceReal()){
                     $("#performance_real").hide();
                 }        
@@ -159,7 +191,7 @@ let realPerformanceData;
 /**
  * @function setGraphData
  * @param {object} o   json object data
- * @param {string} type  'ac'-> access vs combination  'real'->real performance  'test->test performance    this is ordered in jetelinalib.js
+ * @param {string} type  'ac'-> access vs combination  'real'->real performance 'access'->sql access numbers 'test'->test performance    this is ordered in jetelinalib.js
  * @return {boolean} true->exists 'Access vs Combination data'  false-> not exists it
  * set data to a graph of creating by plot.js. data and 'type' are passed by getAjaxData() in jetelinalib.js  
  */
@@ -188,7 +220,7 @@ const setGraphData = (o, type) => {
                 $.each(o[key], function (k, v) {
                     if (v != null) {
                         $.each(v, function (name, value) {
-                            if (name == apino) {
+                            if (name == "apino") {
                                 apino.push(value);
                             } else if (name == combination) {
                                 base_table_no.push(value[0]);// original table no -> x axis
@@ -222,7 +254,9 @@ const setGraphData = (o, type) => {
                 setTimeout(function () {
                     if (type == "ac") {
                         viewCombinationGraph(apino, base_table_no, combination_table, access_count);
-                    } else {
+                    } else if (type == "access"){
+                        viewPerformanceGraph(apino, access_count, type);
+                    }else{
                         viewPerformanceGraph(apino, mean, type);
                     }
                 }, 1000);
@@ -236,22 +270,22 @@ const setGraphData = (o, type) => {
 /**
  * @function viewPerformanceGraph
  * @param {string} apino 
- * @param {Float64Array} mean  array of mean data 
- * @param {string} type  'ac'-> access vs combination  'real'->real performance  'test->test performance    this is ordered in jetelinalib.js
+ * @param {Float64Array} d  array of any data 
+ * @param {string} type  'ac'-> access vs combination  'real'->real performance 'access'->sql access numbers 'test->test performance    this is ordered in jetelinalib.js
  * 
  * show 'performance graph'
  */
-const viewPerformanceGraph = (apino, mean, type) => {
+const viewPerformanceGraph = (apino, d, type) => {
     let data;
 
-    if (type == "real"){
+    if (type == "real" || type == "access"){
         data = [
             {
                 opacity: 0.5,
                 type: 'scatter',
                 text: apino,
                 x: apino,
-                y: mean,
+                y: d,
                 mode: 'markers',
                 marker: {
                     color: 'rgb(255,255,255)',
@@ -282,7 +316,7 @@ const viewPerformanceGraph = (apino, mean, type) => {
                 type: 'scatter',
                 text: apino,
                 x: apino,
-                y: mean,
+                y: d,
                 mode: 'markers',
                 name: 'test sql',
                 marker: {
@@ -303,6 +337,11 @@ const viewPerformanceGraph = (apino, mean, type) => {
 //        font_col = 'rgb(255,0,0)';
     }
 
+    let title = "exection speed";
+    if (type == "access"){
+        title = "access numbers";
+    }
+
     let layout = {
         plot_bgcolor: 'rgb(0,0,0)',
         paper_bgcolor: paper_bgc,
@@ -320,11 +359,13 @@ const viewPerformanceGraph = (apino, mean, type) => {
             gridcolor: 'rgb(0,153,153)',
             color: font_col,
             size: 20,
-            title: 'exection speed'
+            title: title
         }
     };
 
-    if (type == "real") {
+    if (type == "access"){
+        Plotly.newPlot('api_access_numbers_graph', data, layout);
+    } else if (type == "real") {
         Plotly.newPlot('performance_real_graph', data, layout);
     } else {
         Plotly.newPlot('performance_test_graph', data, layout);
