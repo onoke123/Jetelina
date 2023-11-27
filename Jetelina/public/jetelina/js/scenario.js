@@ -87,7 +87,7 @@ scenario['6func-fileupload-open-cmd'] = ['file open','open file','open the file 
 scenario['6func-fileupload-open-msg'] = ['Which file?'];
 scenario['6func-fileupload-cmd'] = ['file up','upload','up load','file up load','fileup load','fileupload','up'];
 scenario['6func-fileupload-msg'] = ['File?'];
-scenario['6func-csv-format-error'] = ['CSV format is not good, maybe lacked \'jt_id\'','Unacceptable CSV format, maybe lacked \'jt_id\''];
+scenario['6func-csv-format-error'] = ['CSV format is not good, see the error message','Unacceptable CSV format, see the error message,'];
 scenario['6func-postcolumn-where-option-msg'] = ['Wanna set the \'Where\' sentence? This is an option.'];
 scenario['6func-postcolumn-where-indispensable-msg'] = ['Set the \'Where\' sentence. This is an indispensable.'];
 scenario['6func-postcolumn-available-msg'] = ['Now you can post them','Do post them','Type \'post\' now'];
@@ -99,3 +99,6 @@ scenario['logout'] = ['logout','exit','log out','out','return','have a nice day'
 scenario['afterlogout'] = ['Bye', 'Have a good day','Hope you will back soon','I am looking forward you'];
 /* unknow command */
 scenario['unknown-msg'] = ['Hey hey hey','Ah.... what?','Could not catch yours, what?','Oh oh oh, what?'];
+/* show or hide error message */
+scenario['hide-error-message'] = ['hide error'];
+scenario['show-error-message'] = ['show error'];

@@ -60,6 +60,26 @@ const getScenarioFile = (l) => {
     }).done(function (result, textStatus, jqXHR) {
     });
 }
+
+const checkResult = (o) =>{
+    let ret = true;
+
+    if (o != null) {
+        console.log("result ", o.result);
+        if(!o.result){
+            let em = o["errmsg"];
+            $("#something_error [name='error_message']").text(em);
+            $("#something_error").show();
+
+            ret = false;
+        }else{
+            $("#something_error [name='error_message']").text("");
+            $("#something_error").hide();
+        }
+    }
+
+    return ret;
+}
 /**
     @function getdata
     @param {object} o mostry json data
@@ -69,6 +89,7 @@ const getScenarioFile = (l) => {
 */
 const getdata = (o, t) => {
     if (o != null) {
+        checkResult(o);
         Object.keys(o).forEach(function (key) {
             /*
                 Tips:
@@ -531,6 +552,15 @@ const chatKeyDown = (cmd) => {
 
             // check the instraction mode that is teaching 'words' to Jetelina or not
             instractionMode(ut);
+
+            // check the error message panel hide or not
+            if(inScenarioChk(ut,'hide-error-message')){
+                $("#something_error").hide();
+                m = 'ignore';
+            }else if(inScenarioChk(ut,'show-error-message')){
+                $("#something_error").show();
+                m = 'ignore';
+            }
 
             /*
                 switch 1:between 'before login' and 'at login'

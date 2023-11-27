@@ -34,7 +34,7 @@ module GetDataController
     """
     function getSqlAccessData()
 
-        get JetelinaSqlAccess data file name. this file  contains access cound data in each sql due to sql.txt log file.
+        get JetelinaSqlAccess data file name. this file  contains access numbers data in each sql due to sql.txt log file.
 
     # Arguments
     - return: JetelinaSqlAccess file name with its path

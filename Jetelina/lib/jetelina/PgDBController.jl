@@ -316,6 +316,8 @@ module PgDBController
         keyword1::String = "jetelina_delete_flg"
         keyword2::String = "jt_id"
         keyword3::String = "unique"
+        ret = ""
+        jmsg::String = string("compliment me!")
 
         df = DataFrame(CSV.File(fname))
         rename!(lowercase, df)
@@ -419,9 +421,10 @@ module PgDBController
             execute(conn, create_table_str)
         catch err
             close_connection(conn)
-            println(err)
+#            println(err)
+            ret = json(Dict("result" => false, "filename" => "$fname", "errmsg" => "$err"))
             JetelinaLog.writetoLogfile("PgDBController.dataInsertFromCSV() with $fname error : $err")
-            return false
+            return ret
         finally
             # do not close the connection because of resuming below yet.
         end
@@ -447,10 +450,12 @@ module PgDBController
         copyin = LibPQ.CopyIn("COPY $tableName FROM STDIN (FORMAT CSV);", row_strings)
         try
             execute(conn, copyin)
+            ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
         catch err
-            println(err)
+#            println(err)
+            ret = json(Dict("result" => false, "filename" => "$fname", "errmsg" => "$err"))
             JetelinaLog.writetoLogfile("PgDBController.dataInsertFromCSV() with $fname error : $err")
-            return false
+            return ret
         finally
             # ok. close the connection finally
             close_connection(conn)
@@ -478,7 +483,7 @@ module PgDBController
             insert2JetelinaTableManager(tableName, names(df0))
         end
 
-        return true
+        return ret
     end
 
     """
@@ -491,6 +496,9 @@ module PgDBController
     - return: boolean: true -> success, false -> get fail
     """
     function dropTable(tableName::String)
+        ret = ""
+        jmsg::String = string("compliment me!")
+
         # drop the tableName
         drop_table_str = """
             drop table $tableName
@@ -505,8 +513,10 @@ module PgDBController
         try
             execute(conn, drop_table_str)
             execute(conn, delete_data_str)
+            ret = json(Dict("result" => true, "tablename" => "$tableName", "message from Jetelina" => jmsg))
         catch err
-            println(err)
+#            println(err)
+            ret = json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err"))
             JetelinaLog.writetoLogfile("PgDBController.dropTable() with $tableName error : $err")
             return false
         finally
@@ -516,7 +526,7 @@ module PgDBController
         # update SQL list
         PgSQLSentenceManager.deleteFromlist(tableName)
 
-        return true
+        return ret
     end
 
     """
@@ -530,6 +540,8 @@ module PgDBController
     """
     function getColumns(tableName::String)
         ret = ""
+        jmsg::String = string("compliment me!")
+
 
         sql = """   
             SELECT
@@ -543,7 +555,7 @@ module PgDBController
             cols = map(x -> x, names(df))
             select!(df, cols)
 
-            ret = json(Dict("result" => true, "tablename" => "$tableName", "Jetelina" => copy.(eachrow(df))))
+            ret = json(Dict("result" => true, "tablename" => "$tableName", "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
         catch err
             ret = json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err"))
             JetelinaLog.writetoLogfile("PgDBController.getColumns() with $tableName error : $err")
@@ -735,7 +747,9 @@ module PgDBController
     - return::boolean: success->true  fail->false
     """
     function userRegist(username::String)
-        ret = true
+        ret = ""
+        jmsg::String = string("compliment me!")
+
         user_id = getJetelinaSequenceNumber(2)
         insert_st = """
             insert into jetelina_user_table (user_id,login,firstname,lastname) values($user_id,'$username','$username','$username');
@@ -744,8 +758,9 @@ module PgDBController
         conn = open_connection()
         try
             execute(conn, insert_st)
+            ret = json(Dict("result" => true, "message from Jetelina" => jmsg))
         catch err
-            ret = false
+            ret = json(Dict("result" => false, "username" => "$username", "errmsg" => "$err"))
             JetelinaLog.writetoLogfile("PgDBController.userRegist() with $username error : $err")
         finally
             close_connection(conn)
@@ -766,6 +781,7 @@ module PgDBController
     """
     function chkUserExistence(s::String)
         ret = ""
+        jmsg::String = string("compliment me!")
 
         sql = """   
         SELECT
@@ -784,7 +800,7 @@ module PgDBController
         conn = open_connection()
         try
             df = DataFrame(columntable(LibPQ.execute(conn, sql)))
-            ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
+            ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
         catch err
             ret = json(Dict("result" => false, "errmsg" => "$err"))
             JetelinaLog.writetoLogfile("PgDBController.chkUserExistence() with $s error : $err")
@@ -808,6 +824,7 @@ module PgDBController
     """
     function getUserInfoKeys(uid::Integer)
         ret = ""
+        jmsg::String = string("compliment me!")
 
         sql = """   
         SELECT
@@ -818,7 +835,7 @@ module PgDBController
         conn = open_connection()
         try
             df = DataFrame(columntable(LibPQ.execute(conn, sql)))
-            ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
+            ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
         catch err
             ret = json(Dict("result" => false, "errmsg" => "$err"))
             JetelinaLog.writetoLogfile("PgDBController.getUserInfoKeys() with $s error : $err")
@@ -843,6 +860,7 @@ module PgDBController
     function refUserAttribute(uid::Integer,key::String,val,rettype::Integer)
         ret = ""
         result = false
+        jmsg::String = string("compliment me!")
 
         #===
             Tips:
@@ -864,7 +882,7 @@ module PgDBController
             end
 
             if rettype == 0
-                ret = json(Dict("result" => result, "Jetelina" => copy.(eachrow(df))))
+                ret = json(Dict("result" => result, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
             else
                 ret = df
             end

@@ -257,7 +257,8 @@ const fileupload = () => {
     $("input[type=file]").val("");
     $("#upbtn").prop("disabled", false);
 
-    if (result) {
+//    if (result) {
+    if(checkResult(result)){
       $("#my_form label span").text("Upload CSV File");
 
       //refresh table list 

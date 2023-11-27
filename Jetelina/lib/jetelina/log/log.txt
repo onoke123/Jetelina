@@ -2176,3 +2176,45 @@
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
 ┌ Info: 2023-11-25 11:01:06 JetelinaFiles.getFileNameFromLogPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-27 09:23:21 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-27 09:29:17 csv file: lib/jetelina/repo/date-test.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-27 09:29:21 PgDBController.dataInsertFromCSV() with lib/jetelina/repo/date-test.csv error : LibPQ.Errors.UniqueViolation("ERROR:  duplicate key value violates unique constraint \"date_test_jt_id_key\"\nDETAIL:  Key (jt_id)=(1) already exists.\nCONTEXT:  COPY date_test, line 1\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-27 09:57:45 csv file: lib/jetelina/repo/date-test.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-27 09:57:45 PgDBController.dataInsertFromCSV() with lib/jetelina/repo/date-test.csv error : LibPQ.Errors.UniqueViolation("ERROR:  duplicate key value violates unique constraint \"date_test_jt_id_key\"\nDETAIL:  Key (jt_id)=(1) already exists.\nCONTEXT:  COPY date_test, line 1\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-27 10:32:43 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-27 10:41:58 csv file: lib/jetelina/repo/date-test.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-27 10:42:01 PgDBController.dataInsertFromCSV() with lib/jetelina/repo/date-test.csv error : LibPQ.Errors.UniqueViolation("ERROR:  duplicate key value violates unique constraint \"date_test_jt_id_key\"\nDETAIL:  Key (jt_id)=(1) already exists.\nCONTEXT:  COPY date_test, line 1\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-27 10:45:51 JetelinaFiles.getFileNameFromLogPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-27 11:37:40 csv file: lib/jetelina/repo/date-test.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-27 11:37:40 PgDBController.dataInsertFromCSV() with lib/jetelina/repo/date-test.csv error : LibPQ.Errors.UniqueViolation("ERROR:  duplicate key value violates unique constraint \"date_test_jt_id_key\"\nDETAIL:  Key (jt_id)=(1) already exists.\nCONTEXT:  COPY date_test, line 1\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-27 11:42:34 csv file: lib/jetelina/repo/date-test.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-27 11:42:34 PgDBController.dataInsertFromCSV() with lib/jetelina/repo/date-test.csv error : LibPQ.Errors.UniqueViolation("ERROR:  duplicate key value violates unique constraint \"date_test_jt_id_key\"\nDETAIL:  Key (jt_id)=(1) already exists.\nCONTEXT:  COPY date_test, line 1\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-27 11:44:51 csv file: lib/jetelina/repo/date-test.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-27 11:44:51 PgDBController.dataInsertFromCSV() with lib/jetelina/repo/date-test.csv error : LibPQ.Errors.UniqueViolation("ERROR:  duplicate key value violates unique constraint \"date_test_jt_id_key\"\nDETAIL:  Key (jt_id)=(1) already exists.\nCONTEXT:  COPY date_test, line 1\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-27 11:56:34 csv file: lib/jetelina/repo/date-test.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-27 11:56:34 PgDBController.dataInsertFromCSV() with lib/jetelina/repo/date-test.csv error : LibPQ.Errors.UniqueViolation("ERROR:  duplicate key value violates unique constraint \"date_test_jt_id_key\"\nDETAIL:  Key (jt_id)=(1) already exists.\nCONTEXT:  COPY date_test, line 1\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-27 12:00:49 csv file: lib/jetelina/repo/date-test.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-27 12:00:49 PgDBController.dataInsertFromCSV() with lib/jetelina/repo/date-test.csv error : LibPQ.Errors.UniqueViolation("ERROR:  duplicate key value violates unique constraint \"date_test_jt_id_key\"\nDETAIL:  Key (jt_id)=(1) already exists.\nCONTEXT:  COPY date_test, line 1\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-27 12:06:05 csv file: lib/jetelina/repo/date-test.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-27 12:06:05 PgDBController.dataInsertFromCSV() with lib/jetelina/repo/date-test.csv error : LibPQ.Errors.UniqueViolation("ERROR:  duplicate key value violates unique constraint \"date_test_jt_id_key\"\nDETAIL:  Key (jt_id)=(1) already exists.\nCONTEXT:  COPY date_test, line 1\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
