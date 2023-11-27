@@ -738,6 +738,8 @@ const functionPanelFunctions = (ut) => {
       } else if (inScenarioChk(ut, '6func-show-api-list')) {
         // same as above
         cmd = 'api';
+      } else if (inScenarioChk(ut, '6func-selected-column-post-cmd')){
+        cmd = 'post';
       } else {
         cmd = ut;
       }
@@ -950,9 +952,8 @@ const functionPanelFunctions = (ut) => {
               return $(this).text() === dropTable;
             });
 
-
             // execute this if 6func-tabledrop-confirm is 'yes'
-            if (ut.indexOf('yes') != -1) {
+            if (inScenarioChk(ut,'confirmation-sentences')) {
               let t = preferent.droptable;
 
               delete preferent.cmd;
@@ -978,7 +979,7 @@ const functionPanelFunctions = (ut) => {
             preferent.cmd = cmd;
           }
           // cancel an order of table drop 
-          if (ut.indexOf('cancel') != -1) {
+          if(inScenarioChk(ut,'6func-tabledrop-cancel-cmd')){
             preferent.cmd = "";
             m = chooseMsg('cancel', "", "");
           }
@@ -988,7 +989,6 @@ const functionPanelFunctions = (ut) => {
 
         break;
       case 'deleteapi':
-        console.log("delteApi:", deleteApi);
         if (isVisibleApiContainer()) {
           if (deleteApi != null && 0 < deleteApi.length) {
             // Hit the table
@@ -1095,12 +1095,22 @@ const procTableApiList = (s) => {
     t[0] = $.trim(t[0]);
     t[1] = $.trim(t[1]);
 
+    /*
+      Tips:
+        there are some candidates command to select column.
+        these are unified to 'select'.
+    */
+    if (inScenarioChk(t[0], '6func-list-cmd-select-cmd')){
+      t[0] = 'select';
+    }
+
     if (inScenarioChk(t[0], '6func-list-cmd')) {
       switch (t[0]) {
         case 'open': case 'close':
           /* 
-            do not break because of open/close are same
-            go to 'close' if it were 'open' as well, this is tricky! :-)
+            Caution:
+              do not break because of open/close are same
+              go to 'close' if it were 'open' as well, this is tricky! :-)
           */
           m = chooseMsg('unknown-msg', "", "");
           $(targetlist).find("span").each(function (i, v) {

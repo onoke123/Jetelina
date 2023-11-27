@@ -55,7 +55,7 @@ scenario['function_panel'] = ['function panel', 'open func','show me func','func
 //open the condition panel
 scenario['condition_panel'] = ['condition panel', 'open cond','show me cond','condition'];
 //open table list
-scenario['6func-show-table-list'] = ['open table','show me table','table list','tables list','tables','tablelist','tableslist'];
+scenario['6func-show-table-list'] = ['open table','show me table','table list','tables','tablelist','tableslist'];
 //open api list
 scenario['6func-show-api-list'] = ['open api','show me api','api list','apis list','apis','apilist'];
 
@@ -71,21 +71,26 @@ scenario['6cond-no-suggestion'] = ['I do not have any suggestions so far.','No s
 
 scenario['6a'] = ['OK, here you are','Hey ho','This'];
 scenario['6b'] = ['Command me, if you need'];
+
+// basic commands in function panel
 scenario['6func-list-cmd'] = ['open','close','select','cancel'];
+scenario['6func-list-cmd-select-cmd'] = ['select','choose','pick'];
+scenario['6func-selected-column-post-cmd'] = ['post','send','push'];
 scenario['6func-cleanup-cmd'] = ['refresh','cleanup','clean'];
 scenario['6func-tabledrop-cmd'] = ['drop','drop table','table drop','tabledrop','droptable'];
 scenario['6func-tabledrop-msg'] = ['Which table do you want to drop?','correct order is \'droptable <table name>\' and so on'];
 scenario['6func-tabledrop-ng-msg'] = ['Hey open the table list first!','Huum?','Check it first','Watch it'];
 scenario['6func-tabledrop-confirm'] = ['Sure?','Really?','Won\'t you regret?'];
+scenario['6func-tabledrop-cancel-cmd'] = scenario['6func-postcolumn-cancel-cmd'];
 
 scenario['6func-apidelete-cmd'] = ['delete','delete api','api delete','apidelete','deleteapi'];
 scenario['6func-apidelete-msg'] = ['Which api do you want to delete?','correct order is \'delete <api name>\' and so on'];
 scenario['6func-apidelete-ng-msg'] = ['Hey open the api list first!','Huum?','Check it first','Watch it'];
 scenario['6func-apidelete-confirm'] = scenario['6func-tabledrop-confirm'];
 
-scenario['6func-fileupload-open-cmd'] = ['file open','open file','open the file box','open file box','open filebox','file box','csv file','csv file select','choose csv file'];
+scenario['6func-fileupload-open-cmd'] = ['file open','open file','open filebox','file box','csv file'];
 scenario['6func-fileupload-open-msg'] = ['Which file?'];
-scenario['6func-fileupload-cmd'] = ['file up','upload','up load','file up load','fileup load','fileupload','up'];
+scenario['6func-fileupload-cmd'] = ['upload','fileup','fileupload','up','csv up'];
 scenario['6func-fileupload-msg'] = ['File?'];
 scenario['6func-csv-format-error'] = ['CSV format is not good, see the error message','Unacceptable CSV format, see the error message,'];
 scenario['6func-postcolumn-where-option-msg'] = ['Wanna set the \'Where\' sentence? This is an option.'];
@@ -93,7 +98,7 @@ scenario['6func-postcolumn-where-indispensable-msg'] = ['Set the \'Where\' sente
 scenario['6func-postcolumn-available-msg'] = ['Now you can post them','Do post them','Type \'post\' now'];
 scenario['6func-subpanel-open-cmd'] = ['sub please','subquery','sub panel','where panel','sub query'];
 scenario['6func-subpanel-opened'] =['Set your sub query in \'Sub Query\' field','Ready to \'Sub Query\' field'];
-scenario['6func-postcolumn-cancel-cmd'] = ['cancel','withdraw','abandon','postpone','give up','stop','quit'];
+scenario['6func-postcolumn-cancel-cmd'] = ['cancel','withdraw','abandon','postpone','give up','stop','quit','no'];
 /* log out */
 scenario['logout'] = ['logout','exit','log out','out','return','have a nice day', 'bye','see you'];
 scenario['afterlogout'] = ['Bye', 'Have a good day','Hope you will back soon','I am looking forward you'];

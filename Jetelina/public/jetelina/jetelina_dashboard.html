@@ -92,7 +92,7 @@
 		--->
 	</div>
 	<!--
-		command list, another word 'help'
+		manual, another word 'help'
 	-->
 	<div id="guidance" class="functionpanel-parts commonpanel squarepanel" hidden>
 		<div  style="width:50%;height:50%">
@@ -142,6 +142,42 @@
 					This mean is Jetelina manages the server side by itself, you just rely on Jetelina. The is the future style. :-)
 				</pre>
 			</div>
+		</div>
+	</div>
+	<!--
+		command list, another word 'help'
+	-->
+	<div id="command_list" class="functionpanel-parts commonpanel squarepanel" hidden>
+		<div  style="width:50%;height:50%">
+			<div><text style="size:a3;color:lightgreen;">This is the command list that you can order to me.</text></div>
+			<br>
+			<div>
+				<p style="size:a3;color:lightgreen;">■On Function Panel</p>
+				<pre style="size:a3;color:lightgreen;">
+					1. CSV file upload
+						(1)'file open','open file','csv file'...: open file box
+						(2)'file up','upload', 'csv up'...: csv file upload to me
+					2. Table List
+						(1)'show me tables','table list'...: show table List
+						(2)'open <table name>': show columns of the specifiled table. ex. open table1
+						(2)'select <column name>','choose <column name>'...: choose column name to create api. ex. select table1.name
+						(3)'post','send'...: post selected column data to me
+						(4)'drop table <table name>','table drop <table name>'...: drop table from me. ex. drop table table1
+							then I ask you 'Sure?' or like that, you type 'yes','sure' or 'do it'... into me if you wanna really do it.
+							CAUTION: all api related with the drop table are also deleted at the same time.
+					3. API list
+						(1)'show me apis','api list'...: show api list
+						(2)'open <api name>': show columns of the specifiled api. ex. open js100
+						(3)'api delete <api name>','delete api <api name>'...: delete the api. ex. api delete js100
+							CAUTION: delete only the specifiled api.						
+				</pre>
+				<p style="size:a3;color:lightgreen;">■On Condition Panel</p>
+				<pre style="size:a3;color:lightgreen;">
+				</pre>	
+				<p style="size:a3;color:lightgreen;">■Log Out</p>
+				<pre style="size:a3;color:lightgreen;">
+				</pre>
+				</div>
 		</div>
 	</div>
 	<!--
