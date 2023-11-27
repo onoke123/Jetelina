@@ -8,6 +8,7 @@
 
     Functions list:
       getScenarioFile(l) read scenario.js file from server order by 'l' is language
+      checkResult(o) check the 'return' field in the object
       getdata(o, t) resolve the json object into each data
       getAjaxData(url) general purpose ajax get call function 
       postAjaxData(url,data) general purpose ajax post call function 
@@ -60,7 +61,13 @@ const getScenarioFile = (l) => {
     }).done(function (result, textStatus, jqXHR) {
     });
 }
-
+/**
+ *    @function checkResult
+ *    @param {object} o mostry json data
+ *    @returns {boolean} true/false
+ * 
+ *   check the 'return' field in the object
+ */
 const checkResult = (o) =>{
     let ret = true;
 
@@ -81,11 +88,11 @@ const checkResult = (o) =>{
     return ret;
 }
 /**
-    @function getdata
-    @param {object} o mostry json data
-    @param {integer} t 0->db table list, 1->table columns list or csv file columns 2-> sql list
-
-    resolve the json object into each data
+ *  @function getdata
+ *  @param {object} o mostry json data
+ *  @param {integer} t 0->db table list, 1->table columns list or csv file columns 2-> sql list
+ *
+ *  resolve the json object into each data
 */
 const getdata = (o, t) => {
     if (o != null) {
