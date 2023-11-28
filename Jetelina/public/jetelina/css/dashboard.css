@@ -174,3 +174,8 @@ input.user-input {
 .apisql.apiout {
   top:50%;
 }
+
+.error_message {
+    color: #e32910;  
+    font-style: italic;
+}
