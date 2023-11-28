@@ -945,9 +945,9 @@ const functionPanelFunctions = (ut) => {
         /* 
         18th Oct 
           comment outed below, but not sure it was OK or not. 
-        
-        presentaction.cmd = "";
         */
+        presentaction.cmd = "";
+        
         break;
       case 'droptable':
         if (isVisibleTableContainer()) {
