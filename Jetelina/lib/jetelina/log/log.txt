@@ -2292,3 +2292,15 @@
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
 ┌ Info: 2023-11-28 11:12:29 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-28 12:04:46 JetelinaFiles.getFileNameFromConfigPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/config/JetelinaSqlList.tmp does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-28 12:13:47 JetelinaFiles.getFileNameFromLogPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-28 12:14:02 JetelinaFiles.getJsFileNameFromPublicPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/../../public/jetelina/js/scenario.tmp does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-28 12:20:35 JetelinaFiles.getJsFileNameFromPublicPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/../../public/jetelina/js/scenario.tmp does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-28 12:31:51 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-28 12:42:44 JetelinaFiles.getJsFileNameFromPublicPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/../../public/jetelina/js/scenario.tmp does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55

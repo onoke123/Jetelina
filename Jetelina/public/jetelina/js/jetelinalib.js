@@ -72,7 +72,6 @@ const checkResult = (o) =>{
     let ret = true;
 
     if (o != null) {
-        console.log("result ", o.result);
         if(!o.result){
             let em = o["errmsg"];
             $("#something_error [name='error_message']").text(em);
@@ -312,7 +311,7 @@ const postAjaxData = (url, data) => {
                 preferent.apilist = result;
                 getdata(result, 2);
             } else if (url == posturls[1]) {
-                // nothing do
+                // jetelinawords -> nothing do
             }
 
             typingControll(chooseMsg("success", "", ""));
@@ -455,7 +454,14 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
  * select a message to show in chat box from js/senario.js 
  */
 const chooseMsg = (i, m, p) => {
-    scenario_name = i;// scenario追加に備えて対象番号を控えておく
+    /*
+        Tips:
+            copy the array number of the scenario message 
+            in order to add a new sentence.
+            this adding is realized by using instractionMode(),
+            but this function is just for a developer, basically.
+    */
+    scenario_name = i;
 
     const n = getRandomNumber(scenario[i].length);
     let s = scenario[`${i}`][n];
@@ -471,11 +477,9 @@ const chooseMsg = (i, m, p) => {
 
     return s;
 }
-/* チャットメッセージをタイピング風に表示する
-        i:次に表示する文字番号
-        m:表示する文字列
-*/
+
 let typingTimeoutID;
+
 /**
  * @function typing
  * @param {integer} i  the next character number 
@@ -884,7 +888,7 @@ const instractionMode = (s) => {
  * 
  */
 const showManualCommandList = (s) => {
-    let ret = "";
+    let ret = "ignore";
     let tagid1 = "";
     let showflg = true;
 
@@ -903,12 +907,15 @@ const showManualCommandList = (s) => {
             top: "10%",
             left: "10%"
         }, animateDuration).draggable();
+
+        ret = chooseMsg('6a',"","");
     }else{
         $("#guidance").hide();
         $("#command_list").hide();
+        ret = chooseMsg('waiting-next',"","");
     }
 
-    return chooseMsg('6a',"","");
+    return ret; 
 }
 /**
  * @function inScenarioChk

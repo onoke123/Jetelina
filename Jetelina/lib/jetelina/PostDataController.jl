@@ -278,6 +278,8 @@ module PostDataController
 
         #全部終わったら scenarioTmpFile->scenarioFileとする
         mv( scenarioTmpFile,scenarioFile,force=true)
+
+        return true
     end
     """
     function deleteApi()
