@@ -9,7 +9,6 @@ Description:
 functions
     createApi()  create API and SQL select sentence from posting data.
     getColumns()  get ordered tables's columns with json style.ordered table name is posted as the name 'tablename' in jsonpayload().
-    getApiList()  get registering api list in json style.api list is refered in Df_JetelinaSqlList.
     deleteTable()  delete table by ordering. this function calls DBDataController.dropTable(tableName), so 'delete' meaning is really 'drop'.ordered table name is posted as the name 'tablename' in jsonpayload().
     userRegist() register a new user
     login()  login procedure.user's login account is posted as the name 'username' in jsonpayload().
@@ -28,7 +27,7 @@ module PostDataController
     using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
     using PgSQLSentenceManager,JetelinaFiles
 
-    export createApi,getColumns,getApiList,deleteTable,userRegist,login,getUserInfoKeys,refUserAttribute,updateUserInfo,
+    export createApi,getColumns,deleteTable,userRegist,login,getUserInfoKeys,refUserAttribute,updateUserInfo,
             updateUserData,updateUserLoginData,deleteUserAccount,deleteApi,handleApipostdata
             
     """
@@ -72,15 +71,6 @@ module PostDataController
         end
 
         return ret
-    end
-    """
-    function getApiList()
-
-        get registering api list in json style.
-        api list is refered in Df_JetelinaSqlList.
-    """
-    function getApiList()
-        return json(Dict("result"=>true,"Jetelina" => copy.(eachrow(Df_JetelinaSqlList))))
     end
     """
     function deleteTable()
@@ -259,16 +249,21 @@ module PostDataController
             @info "scenario path: " scenarioFile
         end
 
-        target_scenario = "scenario['$arr']"
+        target_scenario = "scenario[\"$arr\"]"
         rewritestring = ""
 
         open(scenarioTmpFile, "w") do tf
             open(scenarioFile, "r") do f
-                # keep=falseにして改行文字を取り除いておく。そしてprintln()する
+                #===
+                    Tips:
+                        reject a new line char by keep=false,
+                        then do println()
+                ===#
                 for ss in eachline(f, keep=false)
                     if startswith(ss, target_scenario)
-                        #ここで入れ替える
-                        ss = ss[1:length(ss)-2] * ",'$newwords'];"                    
+                        # add the new word to there at here
+                        ss = ss[1:length(ss)-2] * ",\"$newwords\"];"                    
+#                        ss = ss[1:length(ss)-2] * ",'$newwords'];"                    
                     end
 
                     println(tf, ss)

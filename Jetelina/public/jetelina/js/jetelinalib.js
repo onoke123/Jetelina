@@ -265,9 +265,16 @@ const getAjaxData = (url) => {
                 */
                 getAjaxData(dataurls[4]);
             } else {
-                // mainly, data for function panel
-                getdata(result, 0);
-                typingControll(chooseMsg("success", "", ""));
+                const geturl = scenario['function-get-url'];
+                if(url == geturl[0]){
+                    //rendering api list
+                    preferent.apilist = result;
+                    getdata(result, 2);
+                }else{
+                    // mainly, data for function panel
+                    getdata(result, 0);
+                    typingControll(chooseMsg("success", "", ""));
+                }
             }
         }).fail(function (result) {
             console.error("getAjaxData() fail");
@@ -307,10 +314,6 @@ const postAjaxData = (url, data) => {
         }).done(function (result, textStatus, jqXHR) {
             const posturls = scenario['function-post-url'];
             if (url == posturls[0]) {
-                //rendering api list
-                preferent.apilist = result;
-                getdata(result, 2);
-            } else if (url == posturls[1]) {
                 // jetelinawords -> nothing do
             }
 
@@ -876,8 +879,12 @@ const getPreferentPropertie = (p) => {
  */
 const instractionMode = (s) => {
     if (s.indexOf("say:") != -1) {
-        let data = `{"sayjetelina":"${s.split("say:")[1]}","arr":"${scenario_name}"}`;
-        postAjaxData("/jetelinawords", data);
+        let newword = s.split("say:");
+        if(newword[1] != null && 0<newword[1].length ){
+            newword[1] = newword[1].replaceAll("\"","'");
+            let data = `{"sayjetelina":"${newword[1]}","arr":"${scenario_name}"}`;
+            postAjaxData("/jetelinawords", data);
+        }
     }
 }
 /**

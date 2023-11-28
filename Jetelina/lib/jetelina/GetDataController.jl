@@ -13,6 +13,7 @@ functions
     getPerformanceRealData()  get JetelinaSqlPerformancefile data file name. this file is analyzed data for real sql execution speed.
     getPerformanceTestData()  get JetelinaSqlPerformancefile data file name but it is '.test' suffix. this file is analyzed data for sql execution speed on test db.
     checkExistImproveApiFile()  get JetelinaImprApis data file name. this file contains an improving suggestion data of a target api. 
+    getApiList()  get registering api list in json style.api list is refered in Df_JetelinaSqlList.
 """
 module GetDataController
 
@@ -20,7 +21,7 @@ module GetDataController
     using DBDataController
     using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
 
-    export getTableList,getTableCombiVsAccessRelationData,getPerformanceRealData,getPerformanceTestData,checkExistImproveApiFile
+    export getTableList,getTableCombiVsAccessRelationData,getPerformanceRealData,getPerformanceTestData,checkExistImproveApiFile,getApiList
 
     """
     function getTableList()
@@ -110,5 +111,14 @@ module GetDataController
         else
             return false
         end
+    end
+    """
+    function getApiList()
+
+        get registering api list in json style.
+        api list is refered in Df_JetelinaSqlList.
+    """
+    function getApiList()
+        return json(Dict("result"=>true,"Jetelina" => copy.(eachrow(Df_JetelinaSqlList))))
     end
 end

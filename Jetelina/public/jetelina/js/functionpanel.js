@@ -865,7 +865,7 @@ const functionPanelFunctions = (ut) => {
 
         // cleanup once because getting apilist and contain to preferent.aplist by calling postAjaxData()
         delete preferent.apilist;
-        postAjaxData("/getapilist");
+        getAjaxData("/getapilist");
         m = 'ignore';
         break;
       case 'post':

@@ -67,7 +67,7 @@ route( "/apiactions", PostDataController.handleApipostdata, method = POST )
 # create api from posting data of db table columns
 route( "/createapi", PostDataController.createApi, method = POST )
 # returns API(SQL) list in Json
-route( "getapilist", PostDataController.getApiList, method = POST )
+route( "getapilist", GetDataController.getApiList )
 # delete api from  JetelinaSQLListfile file
 route("/deleteapi", PostDataController.deleteApi, method = POST)
 #===
