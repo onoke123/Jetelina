@@ -24,7 +24,7 @@
       logout() logout
       getPreferentPropertie(p) get prior object if there were
       instractionMode(s) confirmation in adding a new scenario
-      commandlistShow(s) show/hide the command list panel
+      showManualCommandList(s) show/hide manual and/or command list panel
       inScenarioChk(s,sc) check if user input string is in the ordered scenario
       checkNewCommer(s) check the login user is a newcommer or not.
       checkBeginner() check the login user is a beginner or not.
@@ -554,7 +554,7 @@ const chatKeyDown = (cmd) => {
             */
             if ( m.length == 0 ){
                 // check ordered the command list
-                m= commandlistShow(ut);
+                m= showManualCommandList(ut);
             }
 
             // check the instraction mode that is teaching 'words' to Jetelina or not
@@ -653,7 +653,7 @@ const chatKeyDown = (cmd) => {
                     } else {
                         /*
                             Tips:
-                                may 'm' has already been set in commandlistShow().
+                                may 'm' has already been set in showManualCommandList().
                         */
                         if(m.length == 0){
                             m = chooseMsg(3, "", "");
@@ -722,7 +722,7 @@ const chatKeyDown = (cmd) => {
                         m = chooseMsg(1, "", "");
                         stage = 1;/* into the login stage */
                     } else {
-                        if (!logoutflg) {
+                        if (!logoutflg && m.length == 0) {
                             m = chooseMsg(3, "", "");
                         }
                     }
@@ -877,29 +877,38 @@ const instractionMode = (s) => {
     }
 }
 /**
- * @function commandlistShow
+ * @function showManualCommandList
  * @param {string} s  user input data
  * 
- * show/hide the command list panel
+ * show/hide manual and/or command list panel
  * 
  */
-const commandlistShow = (s) => {
+const showManualCommandList = (s) => {
     let ret = "";
+    let tagid1 = "";
+    let showflg = true;
 
-    if( inScenarioChk(s,"guidance") ){
-        $("#guidance").show().animate({
+    if( inScenarioChk(s,'guidance') ){
+        tagid = 'guidance';
+    }else if(inScenarioChk(s,'command_list')){
+        tagid = 'command_list';
+    }else{
+        showflg = false;
+    }
+
+    if(showflg){
+        $(`#${tagid}`).show().animate({
             width: window.innerWidth * 0.8,
             height: window.innerHeight * 0.8,
             top: "10%",
             left: "10%"
         }, animateDuration).draggable();
-        ret = chooseMsg('6a',"","");
     }else{
         $("#guidance").hide();
-        ret = chooseMsg(6,"","");
+        $("#command_list").hide();
     }
 
-    return ret;
+    return chooseMsg('6a',"","");
 }
 /**
  * @function inScenarioChk

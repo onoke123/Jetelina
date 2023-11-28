@@ -788,7 +788,12 @@ const functionPanelFunctions = (ut) => {
         if (ut.indexOf(scenario['6func-apidelete-cmd'][i]) != -1) {
           let dam = ut.split(scenario['6func-apidelete-cmd'][i]);
           deleteApi = $.trim(dam[dam.length - 1]);
-          cmd = 'deleteapi';
+          if(deleteApi.startsWith('js')){
+            cmd = 'deleteapi';
+          }else{
+            // jd,ju,ji are forbidden to delete
+            m = chooseMsg("6func-apidelete-forbidden-msg","","");
+          }
         }
       }
     }

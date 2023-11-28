@@ -290,7 +290,16 @@ module PostDataController
         if debugflg
             @info "PostDataController.deleteApi() target api: " targetapi
         end
-    
+
+        #===
+            Tips:
+                insert(ji*),update(ju*),delete(jd*) api are forbidden to delete.
+                only select(js*) is able to be rejected from api list.
+        ===#
+        if (!startswith(targetapi,"js"))
+            return false
+        end
+        
         apiFile = getFileNameFromConfigPath(JetelinaSQLListfile)
         apiFile_tmp = getFileNameFromConfigPath(string(JetelinaSQLListfile,".tmp"))
 

@@ -2232,3 +2232,63 @@
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
 ┌ Info: 2023-11-27 14:13:35 JetelinaFiles.getFileNameFromConfigPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/config/JetelinaSqlList.tmp does not exist
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-28 10:43:37 JetelinaFiles.getFileNameFromConfigPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/config/JetelinaSqlList.tmp does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-28 10:48:00 JetelinaFiles.getFileNameFromConfigPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/config/JetelinaSqlList.tmp does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-28 10:48:00 JetelinaFiles.getFileNameFromConfigPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/config/JetelinaTableApi.tmp does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-28 10:48:09 JetelinaFiles.getFileNameFromConfigPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/config/JetelinaSqlList.tmp does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-28 10:48:09 JetelinaFiles.getFileNameFromConfigPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/config/JetelinaTableApi.tmp does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-28 10:48:17 JetelinaFiles.getFileNameFromConfigPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/config/JetelinaSqlList.tmp does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-28 10:48:17 JetelinaFiles.getFileNameFromConfigPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/config/JetelinaTableApi.tmp does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-28 10:48:36 csv file: lib/jetelina/repo/org1000.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-28 10:48:37 PgDBController.insert2JetelinaTableManager() error: MethodError(PgDBController.getJetelinaSequenceNumber, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = postgres
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = disable
+│   krbsrvname = postgres
+│   target_session_attrs = any, 0), 0x0000000000007b9a)
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-28 10:48:51 csv file: lib/jetelina/repo/people1000.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-28 10:48:51 PgDBController.insert2JetelinaTableManager() error: MethodError(PgDBController.getJetelinaSequenceNumber, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = postgres
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = disable
+│   krbsrvname = postgres
+│   target_session_attrs = any, 0), 0x0000000000007b9a)
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-28 10:49:01 csv file: lib/jetelina/repo/org1000.csv
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-28 10:49:01 PgDBController.dataInsertFromCSV() with lib/jetelina/repo/org1000.csv error : LibPQ.Errors.UniqueViolation("ERROR:  duplicate key value violates unique constraint \"org1000_jt_id_key\"\nDETAIL:  Key (jt_id)=(1) already exists.\nCONTEXT:  COPY org1000, line 1\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-28 11:12:29 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55

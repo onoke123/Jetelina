@@ -8,15 +8,15 @@ scenario['function-post-url'] = ['/getapilist','/jetelinawords'];
 /* null */
 scenario['null'] = ['',''];
 /* command list order */
-scenario['guidance'] = ['can i','can you','start','manual','guide me','guidance','teach me','tell me'];
-scenario['command_list'] = ['command','commands','commandlist','commandslist'];
+scenario['guidance'] = ['what can i','can you','start','manual','guide me','guidance','teach me','tell me'];
+scenario['command_list'] = ['how can i','command','commands','commandlist','commandslist'];
 /* opening */
-scenario[0] = ['Hi','Hello'];
-userresponse[0] = ['hi','hello','hola','good ','sorry'];
+scenario[0] = ['Hi','Hello','what\'s up'];
+userresponse[0] = ['hi','hello','hola','good ','sorry','what\'s up','what is up','nice to see you','how are you'];
 scenario['bura'] = ['Hi Ho','Fun fun fun','Someone is there?','Waiting for.....','Do you know the meaning of .... love?'];
 /* greeting */
 scenario[1] = ['Nice to see you', 'How are you?'];
-scenario['1a'] = ['Nice to hear it', 'Wow, super','lucky you'];
+scenario['1a'] = ['Nice to hear it', 'Wow, super','lucky you','envy you'];
 userresponse[1] = ['fine','good','great'];
 /* login */
 scenario[2] = ['Could you give me your name?','Let me know your name, please','May I ask your name?'];
@@ -62,7 +62,7 @@ scenario['6func-show-api-list'] = ['open api','show me api','api list','apis lis
 //scenario['6cond'] = ['Let me your command, if you need'];
 scenario['6cond-graph-show'] = ['here you are','tatta laan'];
 // Access vs Combination graph 
-scenario['6cond-graph-show-keywords'] = ['data','analyzed','report','graph'];
+scenario['6cond-graph-show-keywords'] = ['access numbers','access number','analyzed','report','graph'];
 // SQL Exectuon Time graph
 scenario['6cond-sql-performance-graph-show-keywords'] = ['your suggestion','suggest','sql test','improved performance'];
 
@@ -86,6 +86,7 @@ scenario['6func-tabledrop-cancel-cmd'] = scenario['6func-postcolumn-cancel-cmd']
 scenario['6func-apidelete-cmd'] = ['delete','delete api','api delete','apidelete','deleteapi'];
 scenario['6func-apidelete-msg'] = ['Which api do you want to delete?','correct order is \'delete <api name>\' and so on'];
 scenario['6func-apidelete-ng-msg'] = ['Hey open the api list first!','Huum?','Check it first','Watch it'];
+scenario['6func-apidelete-forbidden-msg'] = ['this api cannot be deleted, sorry'];
 scenario['6func-apidelete-confirm'] = scenario['6func-tabledrop-confirm'];
 
 scenario['6func-fileupload-open-cmd'] = ['file open','open file','open filebox','file box','csv file'];
