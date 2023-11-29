@@ -96,55 +96,56 @@
 		manual, another word 'help'
 	-->
 	<div id="guidance" class="functionpanel-parts commonpanel squarepanel" hidden>
-		<div style="width:50%;height:50%">
-			<div><text style="size:a3;color:lightgreen;">This is my current skills.</text></div>
-			<br>
-			<div>
-				<p style="size:a3;color:lightgreen;">■Login/Logout</p>
-				<pre style="size:a3;color:lightgreen;">
-					 We always start with 'Hi','Hello' or some greetings. When you wanna login to me, you just type your account in my chatbox.
-					 After you enter in me, you can logout whenever by typing 'logout',,'exit','bye' and so on, but I am pleasure if you type 'have a nice day'.
-				</pre>
-			</div>
-			<br>
-			<div>
-				<p style="size:a3;color:lightgreen;">■Function Panel</p>
-				<pre style="size:a3;color:lightgreen;">
-					This panel handles relation with DB.
+		<div style="size:a3;color:lightgreen;width:80%;height:50%">
+			This is my current skills.<br><br>
+			<table style="margin:auto;text-align:left;">
+				<tr>
+					<td>
+						■Login/Logout<br>
+						We always start with 'Hi','Hello' or some greetings. When you wanna login to me, you just type your account in my chatbox.
+						After you enter in me, you can logout whenever by typing 'logout',,'exit','bye' and so on, but I am pleasure if you type 'have a nice day'.   
+						<br><br>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						■Function Panel<br>
+						This panel handles relation with DB.
+						<br>
+						First, you type 'show me function panel', 'open function panel', even 'function', with 'please'.
+						Then you can type 'show me tables', 'table lists' and so on, if you have already registered some tables in it.
+						You can upload your CSV file to me with typing 'file open','open the file box'... etc, then you can post
+						the selected file to there with typing 'file up','upload'...
+						The CSV file is going to be imported to DB and created its table automatically, then appeare in the table list.
+	
+						You can type 'open &lt;target table name&gt;' among the lists, the columns belongs the table are shown.
+						To select them with typing 'select &lt;column name&gt;'.<br><br>					
+					</td>
+				</tr>
+				<tr>
+					<td>
+						■Condition Panel<br>
+						This panel show you the analyzed data of your DB status.
 
-					First, you type 'show me function panel', 'open function panel', even 'function', with 'please'.
-					Then you can type 'show me tables', 'table lists' and so on, if you have already registered some tables in it.
-					You can upload your CSV file to me with typing 'file open','open the file box'... etc, then you can post
-					the selected file to there with typing 'file up','upload'...
-					The CSV file is going to be imported to DB and created its table automatically, then appeare in the table list.
-
-					You can type 'open &lt;target table name&gt;' among the lists, the columns belongs the table are shown.
-					To select them with typing 'select &lt;column name&gt;'.					
-				</pre>
-			</div>
-			<div>
-				<p style="size:a3;color:lightgreen;">■Condition Panel</p>
-				<pre style="size:a3;color:lightgreen;">
-					This panel show you the analyzed data of your DB status.
-
-					First, you type 'show me condition panel', 'open condition panel', even 'condition', with 'please'.
-					I wanna try to keep simple DB layout because the simpleness is the best solution for your DB performance.
-					All SQL execution performance are tested automatically and occasionally by me.
-					You can see the result with typing 'show me combination data', 'show analyzed data' or simply 'graph'. 
-					Then you can see the present DB analyzed data graph.
-					
-					I always provide all api access numbers to you by typing 'show me access numbers','display report' or something else.
-					I also keep watching your DB health. Especially I worry about your tables to be chaos.
-					Then I sometimes check you table relation, and give a suggestion if I found a improving point.
-					You also can see 'TEST' performance data graph by typing 'what is your suggestion','show your suggestion',
-					or simply 'sql test', if Jetelina said 'There is an improve sugestion'.
-
-					This is my biggest advantage feature.
-					In ver.1, I do only analyze then.
-					In the future version, I am going to change the table layout automatically, then gives you an after action report.
-					This mean is I manage the server side by myself, you just rely on me. The is the future style. :-)
-				</pre>
-			</div>
+						First, you type 'show me condition panel', 'open condition panel', even 'condition', with 'please'.
+						I wanna try to keep simple DB layout because the simpleness is the best solution for your DB performance.
+						All SQL execution performance are tested automatically and occasionally by me.
+						You can see the result with typing 'show me combination data', 'show analyzed data' or simply 'graph'. 
+						Then you can see the present DB analyzed data graph.
+						
+						I always provide all api access numbers to you by typing 'show me access numbers','display report' or something else.
+						I also keep watching your DB health. Especially I worry about your tables to be chaos.
+						Then I sometimes check you table relation, and give a suggestion if I found a improving point.
+						You also can see 'TEST' performance data graph by typing 'what is your suggestion','show your suggestion',
+						or simply 'sql test', if Jetelina said 'There is an improve sugestion'.
+	
+						This is my biggest advantage feature.
+						In ver.1, I do only analyze then.
+						In the future version, I am going to change the table layout automatically, then gives you an after action report.
+						This mean is I manage the server side by myself, you just rely on me. The is the future style. :-)	
+					</td>
+				</tr>
+			</table>
 		</div>
 	</div>
 	<!--
@@ -319,7 +320,7 @@
 					<tr>
 						<td></td>
 						<td colspan="2">
-							I will tell you my suggestion, if I have it, when this conditon panel opening.<br>
+							I will tell you my suggestion, if I have it, when this conditon panel opening.
 							You will never see it even if you hit below commands, if I do not have it.<br>
 							CAUTION: this suggestion is just showing in BBM, the execution is goin' to be
 							implemented next version.<br><br>
