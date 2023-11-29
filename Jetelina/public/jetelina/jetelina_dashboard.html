@@ -76,7 +76,8 @@
 				<input type="text" name="genelic_input" class="user-input"></input>
 			</div>
 		</div>
-		<div id="something_error" class="commonpanel squarepanel genelic_panel" style="width:600px;height:70px;top:80%;left:20%" hidden>
+		<div id="something_error" class="commonpanel squarepanel genelic_panel"
+			style="width:600px;height:70px;top:80%;left:20%" hidden>
 			<text name="error_message" class="error_message"></text>
 		</div>
 		<!---
@@ -95,52 +96,53 @@
 		manual, another word 'help'
 	-->
 	<div id="guidance" class="functionpanel-parts commonpanel squarepanel" hidden>
-		<div  style="width:50%;height:50%">
+		<div style="width:50%;height:50%">
 			<div><text style="size:a3;color:lightgreen;">This is my current skills.</text></div>
 			<br>
 			<div>
 				<p style="size:a3;color:lightgreen;">■Login/Logout</p>
 				<pre style="size:a3;color:lightgreen;">
-					 We always start with 'Hi','Hello' or some greetings.
-                	 When you wanna login to me, you just type your account in my chatbox.
+					 We always start with 'Hi','Hello' or some greetings. When you wanna login to me, you just type your account in my chatbox.
 					 After you enter in me, you can logout whenever by typing 'logout',,'exit','bye' and so on, but I am pleasure if you type 'have a nice day'.
 				</pre>
 			</div>
 			<br>
 			<div>
-				<p  style="size:a3;color:lightgreen;">■Function Panel</p>
+				<p style="size:a3;color:lightgreen;">■Function Panel</p>
 				<pre style="size:a3;color:lightgreen;">
 					This panel handles relation with DB.
 
 					First, you type 'show me function panel', 'open function panel', even 'function', with 'please'.
 					Then you can type 'show me tables', 'table lists' and so on, if you have already registered some tables in it.
-					You can upload your CSV file to Jetelina with typing 'file open','open the file box'... etc, then you can post the selected file to there with typing 'file up','upload'...
+					You can upload your CSV file to me with typing 'file open','open the file box'... etc, then you can post
+					the selected file to there with typing 'file up','upload'...
 					The CSV file is going to be imported to DB and created its table automatically, then appeare in the table list.
 
 					You can type 'open &lt;target table name&gt;' among the lists, the columns belongs the table are shown.
-					To select them with typing 'select &lt;column name&gt;'.
-					
-					post and subquery
+					To select them with typing 'select &lt;column name&gt;'.					
 				</pre>
 			</div>
 			<div>
-				<p  style="size:a3;color:lightgreen;">■Condition Panel</p>
+				<p style="size:a3;color:lightgreen;">■Condition Panel</p>
 				<pre style="size:a3;color:lightgreen;">
 					This panel show you the analyzed data of your DB status.
 
 					First, you type 'show me condition panel', 'open condition panel', even 'condition', with 'please'.
-					Jetelina wanna try to keep simple DB layout because the simpleness is the best solution for your DB performance.
-					All SQL execution performance are tested automatically and occasionally by Jetelina.
-					You can see the result with typing 'show me combination data', 'show analyzed data' or simply 'graph'. Then you can see the present DB analyzed data graph.
+					I wanna try to keep simple DB layout because the simpleness is the best solution for your DB performance.
+					All SQL execution performance are tested automatically and occasionally by me.
+					You can see the result with typing 'show me combination data', 'show analyzed data' or simply 'graph'. 
+					Then you can see the present DB analyzed data graph.
 					
-					Jetelina also keeps watching your DB health. Especially Jetelina worries about your tables to be chaos.
-					Then Jetelina sometimes check you table relation, and give a suggestion if Jetelina found a improving point.
-					You also can see 'TEST' performance data graph by typing 'what is your suggestion','show your suggestion', or simply 'sql test', if Jetelina said 'There is an improve sugestion'.
+					I always provide all api access numbers to you by typing 'show me access numbers','display report' or something else.
+					I also keep watching your DB health. Especially I worry about your tables to be chaos.
+					Then I sometimes check you table relation, and give a suggestion if I found a improving point.
+					You also can see 'TEST' performance data graph by typing 'what is your suggestion','show your suggestion',
+					or simply 'sql test', if Jetelina said 'There is an improve sugestion'.
 
-					This is the biggest advantage feature of Jetelina.
-					In ver.1, Jetelina does only analyze then.
-					In the future version, Jetelina is going to change the table layout automatically, then gives you an after action report.
-					This mean is Jetelina manages the server side by itself, you just rely on Jetelina. The is the future style. :-)
+					This is my biggest advantage feature.
+					In ver.1, I do only analyze then.
+					In the future version, I am going to change the table layout automatically, then gives you an after action report.
+					This mean is I manage the server side by myself, you just rely on me. The is the future style. :-)
 				</pre>
 			</div>
 		</div>
@@ -149,57 +151,187 @@
 		command list, another word 'help'
 	-->
 	<div id="command_list" class="functionpanel-parts commonpanel squarepanel" hidden>
-		<div  style="width:50%;height:50%">
-			<div><text style="size:a3;color:lightgreen;">This is the command list that you can order to me.</text></div>
-			<br>
-			<div>
-				<p style="size:a3;color:lightgreen;">■After Log-In</p>
-				<pre style="size:a3;color:lightgreen;">
-					1. Display my manual and command List
-						(1)'what can i do','guide me','teach me'...: THIS IS!!!, display what can i do for you
-						(2)'how can i do','show me your command list'...: display how can you work me
-					2. Move to Function/Condition panel
-						(1)'show me function panel','open function panel'...: open to Function panel
-						(2)'show me condition panel','open condition panel'...: open to Condition panel
-					3. To Log-Out
-						(1)'logout','exit','see you'...: to leave from me
-				</pre>
-
-				<p style="size:a3;color:lightgreen;">■On Function Panel</p>
-				<pre style="size:a3;color:lightgreen;">
-					1. CSV file upload
-						(1)'file open','open file','csv file'...: open file box
-						(2)'file up','upload', 'csv up'...: csv file upload to me
-					2. Table List
-						(1)'show me tables','table list'...: show table List
-						(2)'open &lt;table name&gt;': show columns of the specifiled table. ex. open table1
-						(2)'select &lt;column name&gt;','choose &lt;column name&gt;'...: choose column name to create api. ex. select table1.name
-						(3)'post','send'...: post selected column data to me
-						(4)'drop table &lt;table name&gt;','table drop &lt;table name&gt;'...: drop table from me. ex. drop table table1
-							then I ask you 'Sure?' or like that, you type 'yes','sure' or 'do it'... into me if you wanna really do it.
+		<div style="size:a3;color:lightgreen;width:80%;height:50%;">
+			This is the command list that you can order to me.<br>
+			<table style="margin:auto;text-align:left;">
+				<thead>
+					<tr>
+						<th colspan="3">■After Log-In</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>1.</td>
+						<td>Display my manual and command List</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>(1)'what can i do','what can you do','guide me','teach me'...</td>
+						<td>THIS IS!!!, display what can i do for you</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td nowrap>(2)'how can i do','how do you work','show me command list'...</td>
+						<td>display how can i do for you</td>
+					</tr>
+					<tr>
+						<td>2.</td>
+						<td>Move to Function/Condition panel</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>(1)'show me function panel','open function panel'...</td>
+						<td>open to Function panel</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>(2)'show me condition panel','open condition panel'...</td>
+						<td>open to Condition panel</td>
+					</tr>
+					<tr>
+						<td>3.</td>
+						<td>To Log-Out</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>(1)'logout','exit','see you'...</td>
+						<td>to leave from me</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td></td>
+						<td><br></td>
+					</tr>
+					<tr>
+						<th colspan="3">■On Function Panel</th>
+					</tr>
+					<tr>
+						<td>1.</td>
+						<td>CSV file upload</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>(1)'file open','open file','csv file'...:</td>
+						<td>open file box</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>(2)'file up','upload', 'csv up'...</td>
+						<td>csv file upload to me</td>
+					</tr>
+					<tr>
+						<td>2.</td>
+						<td>Table List</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>(1)'show me tables','table list'...</td>
+						<td>show table List</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>(2)'open &lt;table name&gt;'</td>
+						<td>show columns of the specifiled table. ex. open table1</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>(3)'select &lt;column name&gt;','choose &lt;column name&gt;'...</td>
+						<td>choose column name to create api. ex. select table1.name</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>(4)'post','send'...</td>
+						<td>post selected column data to me</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>'drop table &lt;table name&gt;','table drop &lt;table name&gt;'...</td>
+						<td nowrap>
+							drop table from me. ex. drop table table1<br>
+							then I ask you 'Sure?' or like that, you type 'yes','sure' or 'do it'... into me if you
+							wanna really do it.<br>
 							CAUTION: all api related with the drop table are also deleted at the same time.
-					3. API list
-						(1)'show me apis','api list'...: show api list
-						(2)'open &lt;api name&gt;': show columns of the specifiled api. ex. open js100
-						(3)'api delete &lt;api name&gt;','delete api &lt;api name&gt;'...: delete the api. ex. api delete js100
-							CAUTION: delete only the specifiled api.
-					4. Error Message	
-						When something happen in me, I display it, then.
-						(1)'hide error': close the error message 
-						(2)'show error': display the error message again					
-				</pre>
-				<p style="size:a3;color:lightgreen;">■On Condition Panel</p>
-				<pre style="size:a3;color:lightgreen;">
-					1. API access numbers graph
-						(1)'show your report','access numbers'...: display api access numbers
-					2. My suggestion graph
-						I will tell you my suggestion, if I have it, when this conditon panel opening.
-						You will never see it even if you hit below commands, if I do not have it.
-						(1)'your suggestion please','show me your suggestion'...: display graphs that is my suggestion about improving db performance
-
-						CAUTION: this suggestion is just showing in BBM, the execution is goin' to be implemented next version.
-				</pre>
-				</div>
+						</td>
+					</tr>
+					<tr>
+						<td>3.</td>
+						<td>API List</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>(1)'show me apis','api list'...</td>
+						<td>show api list</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>(2)'open &lt;api name&gt;'</td>
+						<td>show columns of the specifiled api. ex. open js100</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>(3)'api delete &lt;api name&gt;','delete api &lt;api name&gt;'...</td>
+						<td>delete the api. ex. api delete js100</td>
+					</tr>
+					<tr>
+						<td>4.</td>
+						<td>Error Message</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>(1)'hide error'</td>
+						<td>close the error message</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>(2)'show error'</td>
+						<td>display the error message again</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td></td>
+						<td><br></td>
+					</tr>
+					<tr>
+						<th colspan="3">■On Condition Panel</th>
+					</tr>
+					<tr>
+						<td>1.</td>
+						<td>API access numbers graph</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>(1)'show your report','access numbers'...</td>
+						<td>display api access numbers</td>
+					</tr>
+					<tr>
+						<td>2.</td>
+						<td>My suggestion graph</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td colspan="2">
+							I will tell you my suggestion, if I have it, when this conditon panel opening.<br>
+							You will never see it even if you hit below commands, if I do not have it.<br>
+							CAUTION: this suggestion is just showing in BBM, the execution is goin' to be
+							implemented next version.<br><br>
+						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>(1)'your suggestion please','show me your suggestion'...</td>
+						<td>display graphs that is my suggestion about improving db performance</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
 

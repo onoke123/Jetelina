@@ -32,7 +32,7 @@ scenario["inprogress"] = ["I am doing","happy workin","husle hustle","I AM DOING
 /* refuse any command due to progress something */
 scenario["refuse-command"] = ["I am busy now","I cannot do multi task at once","You kill me?","Later..."];
 /* greeting to u after successing login */
-scenario[5] = [`Welcome `, `I missed you, `];
+scenario[5] = ["Welcome ", "I missed you, ","Oh my.. incredible, "];
 scenario["5-multi-candidates"] = ["please tell me more detail.","next question.","more..."];
 scenario["5-not-registered"] = ["you are not registered, try again.","you are not here yet.","I do not know you, sorry."];
 /* after login */
@@ -104,7 +104,7 @@ scenario["6func-subpanel-open-cmd"] = ["sub please","subquery","sub panel","wher
 scenario["6func-subpanel-opened"] =["Set your sub query in \"Sub Query\" field","Ready to \"Sub Query\" field"];
 scenario["6func-postcolumn-cancel-cmd"] = ["cancel","withdraw","abandon","postpone","give up","stop","quit"];
 /* log out */
-scenario["logout"] = ["logout","exit","log out","out","return","have a nice day", "bye","see you"];
+scenario["logout"] = ["logout","exit","log out","out","return","bye","see you","nice day"];
 scenario["afterlogout"] = ["Bye", "Have a good day","Hope you will back soon","I am looking forward you"];
 /* unknow command */
 scenario["unknown-msg"] = ["Hey hey hey","Ah.... what?","Could not catch yours, what?","Oh oh oh, what?"];
