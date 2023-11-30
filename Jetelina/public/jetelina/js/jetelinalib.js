@@ -744,11 +744,13 @@ const chatKeyDown = (cmd) => {
 
             if (0 < m.length && m != 'ignore') {
                 typingControll(m);
-            } else if (m == null || m.length == 0) {
+            }else if ( m == 'ignore'){
+                typingControll(chooseMsg('waiting-next',"",""));
+            }else if (m == null || m.length == 0) {
                 // cannot understand what the user is typing
                 typingControll(chooseMsg('unknown-msg', "", ""));
             }
-
+            
             if (logoutflg) {
                 const t = 10000;// switch to the opening screen after 10 sec
                 setTimeout(function () {
@@ -771,6 +773,7 @@ const chatKeyDown = (cmd) => {
 const openingMessage = () => {
     const t = 10000;// into idling mode after 10 sec if nothing input into the chat box
     $("#jetelina_panel [name='jetelina_tell']").text("");
+    $("#jetelina_panel [name='your_tell']").text("");
     typing(0, chooseMsg(0, "", ""));
 
     setTimeout(function () { burabura() }, t);
@@ -781,9 +784,10 @@ const openingMessage = () => {
  * idling message in the initial screen
  */
 const burabura = () => {
-    const t = 20000;// chage the idling message after 20 sec
+    const t = 30000;// chage the idling message after 20 sec
     timerId = setInterval(function () {
         $("#jetelina_panel [name='jetelina_tell']").text("");
+        $("#jetelina_panel [name='your_tell']").text("");
         typing(0, chooseMsg('bura', "", ""))
     }, t);
 }

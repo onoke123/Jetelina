@@ -1077,7 +1077,7 @@ const functionPanelFunctions = (ut) => {
  * Execute some functions for table list and/or api list order by user chat input commands
  */
 const procTableApiList = (s) => {
-  let m = "";
+  let m = "ignore";
   let targetlist = "";
 
   if (presentaction.cmd == 'table') {

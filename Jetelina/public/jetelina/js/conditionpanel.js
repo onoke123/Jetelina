@@ -172,7 +172,6 @@ const conditionPanelFunctions = (ut) => {
                 m = chooseMsg('6cond-no-suggestion', "", "");
                 break;
             default:
-                m = "";
                 break;
         }
     }
