@@ -3,21 +3,23 @@
         <script type=""text/javascript" src="../js/genie/jquery.min.js"></script>
     </head>
     <body>
-        <button onclick="getAjaxData('s')">Simple Select</button>
+        <button onclick="getAjaxData('s')">js87  is very simple Select</button>
         <br>
-        <button onclick="getAjaxData('w')">Select where ftest.jt_id=1</button>
+        <button onclick="getAjaxData('w')">js92 is a complecate Select</button>
         <br>
+        <!--
         <button onclick="getAjaxData('u')">Update</button>
         <br>
         <button onclick="getAjaxData('i')">Insert</button>
         <br>
         <button onclick="getAjaxData('d')">Delete</button>
-        <div>
-            <text id="result"></text>
-        </div>
+        -->
         <div>
             <text>Message From Jetelina</text>
             <text id="mfj"></text>
+        </div>
+        <div>
+            <text id="result"></text>
         </div>
     </body>
 </html>
@@ -25,10 +27,10 @@
     const getAjaxData = (s) => {
         let pd = {};
         if(s=="s"){
-            pd["apino"] = "js467";
+            pd["apino"] = "js87";
         }else if(s=="w"){
-            pd["apino"] = "js468";
-            pd["subquery"] = "[\"jt_id\":1]";
+            pd["apino"] = "js91";
+            pd["subquery"] = "[\"sex\":\"Male\",\"num\":100]";
         }else if(s=="u"){
             pd["apino"] = "ju465";
             pd["name"] = "AAA3";
@@ -58,16 +60,21 @@
             contentType: 'application/json',
             dataType: "json",
         }).done(function(result, textStatus, jqXHR) {
+            $(".re").remove();
         }).fail( function( result ){
         }).always(function(result){
-            console.log(result);
-            $.each(result, function (k, v) {
-                if( k == "Jetelina" ){
-                    $("#result").text(v);
-                }else if( k== "result" ){
-
-                }else if( k=="message from Jetelina" ){
-                    $("#mfj").text(v)
+            Object.keys(result).forEach(function (key) {
+                console.log(key,result[key]);
+                if(key=="Jetelina"){
+                    $.each(result[key],function (k, v) {
+                        console.log(k,":",v);
+                        vv = JSON.stringify(v);
+                            $("#result").append(`<div class="re"><text>${vv}</text></div>`);
+                    });
+                }
+                
+                if( key=="message from Jetelina" ){
+                    $("#mfj").text(result[key])
                 }
             });
         });

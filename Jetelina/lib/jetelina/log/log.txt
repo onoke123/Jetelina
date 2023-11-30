@@ -2336,3 +2336,15 @@
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
 ┌ Info: 2023-11-30 11:47:42 JetelinaFiles.getFileNameFromLogPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-30 13:29:51 PgDBController.executeApi() with js92 : select people1000.userid,people1000.lastname,people1000.email,org1000.name,org1000.country,org1000.founded from people1000 as people1000,org1000 as org1000 where people1000.sex=Male and org1000.numberofemployees>100 and jetelina_delete_flg=0 error : LibPQ.Errors.UndefinedColumn("ERROR:  column \"male\" does not exist\nLINE 1: ...eople1000,org1000 as org1000 where people1000.sex=Male and o...\n                                                             ^\nHINT:  Perhaps you meant to reference the column \"org1000.name\".\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-30 13:33:03 JetelinaFiles.getFileNameFromConfigPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/config/JetelinaSqlList.tmp does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-30 13:35:28 PgDBController.executeApi() with js93 : select people1000.userid,people1000.lastname,people1000.firstname,org1000.name,org1000.country from people1000 as people1000,org1000 as org1000 where people1000.sex='{sex]' and org1000.founded>100 and jetelina_delete_flg=0 error : LibPQ.Errors.AmbiguousColumn("ERROR:  column reference \"jetelina_delete_flg\" is ambiguous\nLINE 1: ...eople1000.sex='{sex]' and org1000.founded>100 and jetelina_d...\n                                                             ^\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-30 13:37:26 PgDBController.executeApi() with js93 : select people1000.userid,people1000.lastname,people1000.firstname,org1000.name,org1000.country from people1000 as people1000,org1000 as org1000 where people1000.sex='{sex]' and org1000.founded>100 and jetelina_delete_flg=0 error : LibPQ.Errors.AmbiguousColumn("ERROR:  column reference \"jetelina_delete_flg\" is ambiguous\nLINE 1: ...eople1000.sex='{sex]' and org1000.founded>100 and jetelina_d...\n                                                             ^\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-30 13:38:22 JetelinaFiles.getFileNameFromConfigPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/config/JetelinaSqlList.tmp does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-11-30 13:41:54 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55

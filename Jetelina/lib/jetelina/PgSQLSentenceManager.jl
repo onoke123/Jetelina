@@ -435,7 +435,7 @@ module PgSQLSentenceManager
                         if !isnothing(sp)
                             for ii in eachindex(sp)
                                 if ii == 1 || ii == length(sp)
-                                    sp[ii] = replace(sp[ii],"["=>"","]"=>"","\""=>"")
+                                    sp[ii] = replace(sp[ii],"["=>"","]"=>"","\""=>"","'"=>"")
                                 end
 
                                 ssp = split(sp[ii],":")
