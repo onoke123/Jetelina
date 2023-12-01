@@ -1,7 +1,0 @@
-apino,sql,subquery
-ji455,"insert into ftest (jt_id,name,sex,age,ave,jetelina_delete_flg) values({jt_id},'{name}','{sex}',{age},{ave},{jetelina_delete_flg})",""
-ju456,"update ftest set name='{name}',sex='{sex}',age={age},ave={ave}","where jt_id={jt_id}"
-jd457,"update ftest set jetelina_delete_flg=1","where jt_id={jt_id}"
-js458,"select ftest.name,ftest.age from ftest as ftest","where jt_id={jt_id}"
-js459,"select ftest.name,ftest.sex from ftest as ftest","ignore"
-js463,"select ftest.name,ftest.sex from ftest as ftest","where ftest.jt_id={jt_id} and ftest.name='{name}'"

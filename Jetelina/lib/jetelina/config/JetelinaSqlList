@@ -10,4 +10,4 @@ js88,"select people1000.userid,people1000.phone,people1000.jobtitle from people1
 js89,"select people1000.jt_id,people1000.firstname,people1000.sex from people1000 as people1000","ignore"
 js90,"select people1000.jt_id,people1000.firstname,people1000.dateofbirth,people1000.lastname from people1000 as people1000","where dateofbirth<'{date}'"
 js91,"select org1000.jt_id,org1000.name,org1000.website,org1000.industry from org1000 as org1000","where numberofemployees>{num}"
-js95,"select people1000.firstname,people1000.lastname,org1000.name,org1000.website from people1000 as people1000,org1000 as org1000","where people1000.sex='{sex}' and org1000.numberofemployees>{num}"
+js95,"select people1000.firstname,people1000.lastname,org1000.name,org1000.website from people1000 as people1000,org1000 as org1000","where people1000.sex='{sex}' and org1000.numberofemployees>{num} limit 100"

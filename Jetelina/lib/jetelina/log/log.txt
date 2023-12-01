@@ -2370,3 +2370,13 @@
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
 ┌ Info: 2023-12-01 12:32:28 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-12-01 16:11:39 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-12-01 16:15:03 PgDBController.executeApi() with js95 : select people1000.firstname,people1000.lastname,org1000.name,org1000.website from people1000 as people1000,org1000 as org1000 people1000.jetelina_delete_flg=0 and org1000.jetelina_delete_flg=0 and where people1000.sex='Male' and org1000.numberofemployees>100 limit 100 error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"people1000\"\nLINE 1: ... from people1000 as people1000,org1000 as org1000 people1000...\n                                                             ^\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-12-01 16:29:14 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-12-01 16:30:36 PgDBController.executeApi() with js95 : select people1000.firstname,people1000.lastname,org1000.name,org1000.website from people1000 as people1000,org1000 as org1000 where people1000.jetelina_delete_flg=0 and org1000.jetelina_delete_flg=0 and num:100 error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \":\"\nLINE 1: ...a_delete_flg=0 and org1000.jetelina_delete_flg=0 and num:100\n                                                                   ^\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-12-01 16:36:48 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55

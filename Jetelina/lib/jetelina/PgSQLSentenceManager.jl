@@ -411,7 +411,9 @@ module PgSQLSentenceManager
                 this function manages building 'jetelina_delete_flg' subquery.
                 in order to handle multi table, this 'jetelina_delete_flg' is also set as multi.
                 i mean
-                    table1.jetelina_delete_flg=0 and table2.jetelina_delete_flg=0 and....           
+                    table1.jetelina_delete_flg=0 and table2.jetelina_delete_flg=0 and....
+                    
+                Caution: any local variables are not be duplicated with global ones. 
         ===#
         function __create_j_del_flg(sql::String)
             del_flg::String = "jetelina_delete_flg=0" # absolute select condition
@@ -439,6 +441,29 @@ module PgSQLSentenceManager
             end
 
             return del_flg
+        end
+
+        #===
+            Tips:
+                this is a private function.
+                this function manages building subquery string.
+                because of 'limit' or something like this additions, 'jetelina_delete_flg' position has to be arranged.
+                i think it is good as setting it at the head, like
+                    select .... where jetelina_delete_flg=0 and table1.something='aaa' limit 10 
+
+                Caution: any local variables are not be duplicated with global ones. 
+        ===#
+        function __create_subquery_str(sub_str::String,del_str::String)
+            sub_ret::String = sub_str
+
+            if contains(sub_str,"where")
+                ss = split(sub_str,"where")
+                if !isnothing(ss)
+                    sub_ret = string("where ",del_str," and ", strip(ss[2]))
+                end
+            end
+
+            return sub_ret
         end
 
         if 0<length(json_dict)
@@ -486,7 +511,8 @@ module PgSQLSentenceManager
 
                         # this private function __create_j_del_flg() is defined above.
                         j_del_flg = __create_j_del_flg(df.sql[1])
-                        subquery_str = string(subquery_str," ","and ", j_del_flg)
+                        # this private function __create_subquery_str is defined above as well.
+                        subquery_str = __create_subquery_str(subquery_str,j_del_flg)
                     end
                 else
                     subquery_str =string("where ", j_del_flg)
@@ -501,11 +527,7 @@ module PgSQLSentenceManager
                 json_dict["jetelina_delete_flg"] = 0;
             end
 
-            #===
-                Caution: 'limit 100' regulation is just for demo in Dec. 2023
-                         delete this if found something better solution instead of this 
-            ===#
-            execution_sql = string(df.sql[1]," ",subquery_str," limit 100")
+            execution_sql = string(df.sql[1]," ",subquery_str)
 
             #==
                 Tips:

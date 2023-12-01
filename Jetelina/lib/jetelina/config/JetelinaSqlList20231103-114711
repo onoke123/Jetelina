@@ -1,2 +1,0 @@
-apino,sql,subquery
-ji440,"insert into ftest (jt_id,'name','sex',age,ave) values({jt_id},'{name}','{sex}',{age},{ave})",""
