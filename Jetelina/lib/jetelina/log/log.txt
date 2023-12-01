@@ -2380,3 +2380,17 @@
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
 ┌ Info: 2023-12-01 16:36:48 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-12-01 16:51:24 SQLAnalyzer._load_table!() error: LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \",\"\nLINE 1: ...archar, email varchar, phone varchar, dateofbirth , jobtitle...\n                                                             ^\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-12-01 17:05:25 JetelinaFiles.getFileNameFromLogPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/log/JetelinaTableCombiVsAccessRelation.json does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-12-01 17:05:27 JetelinaFiles.getFileNameFromLogPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-12-01 17:08:34 JetelinaFiles.getFileNameFromLogPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-12-01 17:09:06 JetelinaFiles.getFileNameFromLogPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-12-01 17:09:15 JetelinaFiles.getFileNameFromLogPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-12-01 17:09:43 JetelinaFiles.getFileNameFromLogPath: /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/log/JetelinaSuggestion.json does not exist
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55

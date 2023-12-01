@@ -62,6 +62,8 @@ module PgDataTypeList
         
         Caution: This func is not as same as a variable in getDataType().
 
+        2023/12/1 deprecated 
+
     # Arguments
     - `c_type::String`:  data type string. ex 'Int'
     """

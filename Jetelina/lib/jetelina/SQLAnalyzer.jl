@@ -703,7 +703,8 @@ module SQLAnalyzer
                     'column_type[i]' are 'DataType' due to eltype().
                     need to change the data type to 'String' to call getDataTypeInDataFrame().
             ===#
-            column_type_string[i] = PgDataTypeList.getDataTypeInDataFrame(string(column_type[i]))
+#            column_type_string[i] = PgDataTypeList.getDataTypeInDataFrame(string(column_type[i]))
+            column_type_string[i] = PgDataTypeList.getDataType(string(column_type[i]))
             column_str = string(column_str, " ", columns[i], " ", column_type_string[i], ",")
         end
 
