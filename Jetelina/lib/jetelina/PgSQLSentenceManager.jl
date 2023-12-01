@@ -405,6 +405,14 @@ module PgSQLSentenceManager
         json_subquery_dict = Dict()
         execution_sql::String = ""
 
+        #===
+            Tips:
+                this is a private function.
+                this function manages building 'jetelina_delete_flg' subquery.
+                in order to handle multi table, this 'jetelina_delete_flg' is also set as multi.
+                i mean
+                    table1.jetelina_delete_flg=0 and table2.jetelina_delete_flg=0 and....           
+        ===#
         function __create_j_del_flg(sql::String)
             del_flg::String = "jetelina_delete_flg=0" # absolute select condition
             
@@ -476,6 +484,7 @@ module PgSQLSentenceManager
                             subquery_str = replace(subquery_str,kk=>v)
                         end
 
+                        # this private function __create_j_del_flg() is defined above.
                         j_del_flg = __create_j_del_flg(df.sql[1])
                         subquery_str = string(subquery_str," ","and ", j_del_flg)
                     end
@@ -492,7 +501,11 @@ module PgSQLSentenceManager
                 json_dict["jetelina_delete_flg"] = 0;
             end
 
-            execution_sql = string(df.sql[1]," ",subquery_str)
+            #===
+                Caution: 'limit 100' regulation is just for demo in Dec. 2023
+                         delete this if found something better solution instead of this 
+            ===#
+            execution_sql = string(df.sql[1]," ",subquery_str," limit 100")
 
             #==
                 Tips:
@@ -508,7 +521,7 @@ module PgSQLSentenceManager
             ret = execution_sql
         
         end
-@info ret
+
         return ret
     end
 end
