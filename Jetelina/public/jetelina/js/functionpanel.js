@@ -378,7 +378,29 @@ const setApiIF_In = (t, s) => {
   if (ta.startsWith("js")) {
     //select. 'ignore' -> no sub query
     if (s.subquery != null && 0 < s.subquery.length && s.subquery != "ignore") {
-      ret = `{"apino":\"${t}\","subquery":\"${s.subquery}\"}`;
+      let s_subquery = s.subquery;
+      let subquery_str = "";
+      let isCurry = s_subquery.indexOf('{');
+      while(-1<isCurry){
+        let sp = s_subquery.indexOf('{');
+        let ep = s_subquery.indexOf('}');
+        if(sp != -1 && ep != -1){
+          let cd = s_subquery.substring(sp+1,ep);
+          subquery_str += `'${cd}':`;
+          if(s_subquery[sp-1] == "\'"){
+            subquery_str += `'{${cd}}',`;
+          }else{
+            subquery_str += `{${cd}},`;
+          }
+
+          s_subquery = s_subquery.substring(ep+1,s_subquery.length);
+        }
+        isCurry = s_subquery.indexOf('{');
+      }
+
+      subquery_str = subquery_str.slice(0,-1);
+      ret = `{"apino":\"${t}\","subquery":\"[${subquery_str}]\"}`;
+//      ret = `{"apino":\"${t}\","subquery":\"${s.subquery}\"}`;
     } else {
       ret = `{"apino":\"${t}\"}`;
 
