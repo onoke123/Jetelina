@@ -405,6 +405,34 @@ module PgSQLSentenceManager
         json_subquery_dict = Dict()
         execution_sql::String = ""
 
+        function __create_j_del_flg(sql::String)
+            del_flg::String = "jetelina_delete_flg=0" # absolute select condition
+            
+            div_sql = split(sql,"from")
+            if !isnothing(div_sql)
+                if contains(div_sql[2],',')
+                    tables = split(div_sql[2],',')
+                    if !isnothing(tables)
+                        multi_del_flg::String = ""
+                        for i in eachindex(tables)
+                            table = split(tables[i],"as")
+                            if !isnothing(table)
+                                if length(multi_del_flg) == 0
+                                    multi_del_flg = string(strip(table[1]),".jetelina_delete_flg=0")
+                                else
+                                    multi_del_flg = string(multi_del_flg," and ",strip(table[1]),".jetelina_delete_flg=0")
+                                end
+                            end
+                        end
+
+                        del_flg = multi_del_flg
+                    end
+                end
+            end
+
+            return del_flg
+        end
+
         if 0<length(json_dict)
             #===
                 Tips:
@@ -448,6 +476,7 @@ module PgSQLSentenceManager
                             subquery_str = replace(subquery_str,kk=>v)
                         end
 
+                        j_del_flg = __create_j_del_flg(df.sql[1])
                         subquery_str = string(subquery_str," ","and ", j_del_flg)
                     end
                 else
@@ -479,7 +508,7 @@ module PgSQLSentenceManager
             ret = execution_sql
         
         end
-
+@info ret
         return ret
     end
 end

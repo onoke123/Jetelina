@@ -2352,3 +2352,9 @@
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
 ┌ Info: 2023-12-01 10:12:55 PgDBController.executeApi() with js95 : select people1000.firstname,people1000.lastname,org1000.name,org1000.website from people1000 as people1000,org1000 as org1000 where people1000.sex='Male' and org1000.numberofemployees>100 and jetelina_delete_flg=0 error : LibPQ.Errors.AmbiguousColumn("ERROR:  column reference \"jetelina_delete_flg\" is ambiguous\nLINE 1: ....sex='Male' and org1000.numberofemployees>100 and jetelina_d...\n                                                             ^\n")
 └ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-12-01 11:09:33 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-12-01 11:14:56 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
+┌ Info: 2023-12-01 11:26:54 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ JetelinaLog /Users/onokeiji/Desktop/Jetelina/Jetelina/lib/jetelina/JetelinaLog.jl:55
