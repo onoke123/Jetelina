@@ -179,3 +179,8 @@ input.user-input {
     color: #e32910;  
     font-style: italic;
 }
+
+.jetelina_suggestion {
+  color: #7dc37f;
+  font-style: italic;
+}

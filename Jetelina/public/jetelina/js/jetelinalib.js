@@ -72,6 +72,13 @@ const checkResult = (o) =>{
     let ret = true;
 
     if (o != null) {
+        /*
+            Tips:
+                remove 'jetelina_suggestion' class if it is.
+                it does not need to confirm its existence.
+        */
+        $("#something_msg [name='jetelina_message']").removeClass("jetelina_suggestion");
+
         if(!o.result){
             let em = "";
             let errmsg = o["errmsg"];
@@ -210,6 +217,7 @@ const getAjaxData = (url) => {
                     // set suggestion existing flag to display my message
                     isSuggestion = true;
                     // set my suggestion
+                    $("#something_msg [name='jetelina_message']").addClass("jetelina_suggestion");
                     $("#something_msg [name='jetelina_message']").text(`${result.Jetelina.apino}:${result.Jetelina.suggestion}`);
                     // relation access & combination
                     getAjaxData(dataurls[0]);
