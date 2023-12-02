@@ -272,6 +272,7 @@ const fileupload = () => {
       typingControll(chooseMsg('6func-csv-format-error', "", ""));
     }
   }).fail(function (result) {
+    checkResult(result);
     // something error happened
     console.error("fileupload(): unexpected error");
     typingControll(chooseMsg(fail, "", ""));
@@ -610,6 +611,7 @@ const getColumn = (tablename) => {
       // got to data parse
       return getdata(result, 1);
     }).fail(function (result) {
+      checkResult(result);
       typingControll(chooseMsg('fail', "", ""));
     }).always(function(){
       // release it for allowing to input new command in the chatbox 
@@ -663,6 +665,7 @@ const deleteThisTable = (tablename) => {
 
       typingControll(chooseMsg('success', "", ""));
     }).fail(function (result) {
+      checkResult(result);
       console.error("deleteThisTable() faild: ", result);
       typingControll(chooseMsg('fail', "", ""));
     }).always(function () {
@@ -718,6 +721,7 @@ const postSelectedColumns = () => {
       $("#genelic_panel").hide();
     }
   }).fail(function (result) {
+    checkResult(result);
     console.error("postSelectedColumns() fail");
     typingControll(chooseMsg('fail', "", ""));
   }).always(function () {
@@ -1301,6 +1305,7 @@ const deleteThisApi = (apino) => {
 
       typingControll(chooseMsg('success', "", ""));
     }).fail(function (result) {
+      checkResult(result);
       console.error("deleteThisApi() faild: ", result);
       typingControll(chooseMsg('fail', "", ""));
     }).always(function () {

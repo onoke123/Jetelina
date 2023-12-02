@@ -42,6 +42,7 @@ $(function () {
             });
         }).fail(function (result) {
             // something error happened
+            checkResult(result);
         });
     }
 

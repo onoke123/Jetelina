@@ -315,6 +315,7 @@ const postAjaxData = (url, data) => {
 
             typingControll(chooseMsg("success", "", ""));
         }).fail(function (result) {
+            checkResult(result);
             console.error("postAjaxData() fail");
             typingControll(chooseMsg("fail", "", ""));
         }).always(function(){
@@ -435,6 +436,7 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
             });
         }
     }).fail(function (result) {
+        checkResult(result);
         // something error happened
         console.error("authAjax(): unexpected error");
         typingControll(chooseMsg(fail, "", ""));
@@ -708,10 +710,12 @@ const chatKeyDown = (cmd) => {
                     }
                     break;
                 case 'func':
+                    $("#something_msg").hide();
                     // defined in functionpanel.js
                     m = functionPanelFunctions(ut);
                     break;
                 case 'cond':
+                    $("#something_msg").hide();
                     // defined in conditionpanel.js
                     m = conditionPanelFunctions(ut);
                     break;
