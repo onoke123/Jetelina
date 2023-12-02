@@ -506,7 +506,6 @@ module SQLAnalyzer
 
         if 0<length(improve_apis)
             open(improveApisFile, "w") do f
-#                println(f, JSON.json("Jetelina" => improve_apis))
                 println(f, JSON.json("Jetelina" => improve_apis))
             end    
         end

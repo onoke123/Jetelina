@@ -7,6 +7,7 @@
     This js lib works with dashboard.js, functionpanel.js and conditionpanel.js for the Condition Panel.
     
     Functions:
+      isVisibleAccessCombination() checking "#plot" is visible or not
       isVisibleApiAccessNumbers() checking "#api_access_numbers" is visible or not
       isVisiblePerformanceReal() checking "#performance_real" is visible or not
       isVisiblePerformanceTest() checking "#performance_test" is visible or not
@@ -24,6 +25,20 @@
 const isVisibleApiAccessNumbers = () =>{
     let ret = false;
     if ($("#api_access_numbers").is(":visible")){
+      ret = true;
+    }
+  
+    return ret;
+  }
+/**
+ * @function isVisibleAccessCombination
+ * @returns {boolean}  true -> visible, false -> invisible
+ * 
+ * checking "#plot" is visible or not
+ */
+const isVisibleAccessCombination = () =>{
+    let ret = false;
+    if ($("#plot").is(":visible")){
       ret = true;
     }
   
@@ -109,36 +124,16 @@ const conditionPanelFunctions = (ut) => {
 
                 if(isVisiblePerformanceTest()){
                     $("#performance_test").hide();
-                }        
-                
-                /*
-                    Tips:
-                        #plot rotates 3D graph, so the div panel is not to be draggable.
-                        this graph is shown when the data exsists. this is judged by 'acVsCom' 
-                        global valiable, and it is set in setGraphData() in jetelinalib.js.
-                
-                if(acVscom){
-                    $("#plot").show().animate({
-                        top: "5%",
-                        left: "-5%"
-                    }, animateDuration);
                 }
-                */
-                /*
-                    Tips:
-                        This graph is 2D, the graph can zoom/pan...., 
-                        so the div panel is also not to be draggable after getting its position.
-                        the "#api_access_numbers" will fly away to somewhere when "#plot" is invisible,
-                        if the "top" variable is unchangeable. :-P
-                */
-               let ppp = "20%";
-               /*
-                if(!$("#plot").is(":visible")){
-                    ppp = "-5%";
+
+                if(isVisibleAccessCombination()){
+                    $("#plot").hide();
                 }
-                */
+
+                $("#something_msg").hide();
+
                 $("#api_access_numbers").show().draggable().animate({
-                    top: ppp,
+                    top: "20%",
                     left: "20%"
                 }, animateDuration).draggable('disable');
 
@@ -166,6 +161,7 @@ const conditionPanelFunctions = (ut) => {
                     left: "50%"
                 }, animateDuration).draggable('disable');
 
+                $("#something_msg").show();
                 m = chooseMsg('6cond-graph-show', "", "");
                 break;
             case 'no_suggestion':

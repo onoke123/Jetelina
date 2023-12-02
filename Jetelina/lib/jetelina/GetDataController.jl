@@ -107,7 +107,8 @@ module GetDataController
     function checkExistImproveApiFile()
         f = getFileNameFromLogPath( JetelinaImprApis )
         if isfile(f)
-            return isfile(f)
+            return readchomp(f)
+            #            return isfile(f)
         else
             return false
         end

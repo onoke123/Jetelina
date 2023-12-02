@@ -73,14 +73,22 @@ const checkResult = (o) =>{
 
     if (o != null) {
         if(!o.result){
-            let em = o["errmsg"];
-            $("#something_error [name='error_message']").text(em);
-            $("#something_error").show();
+            let em = "";
+            let errmsg = o["errmsg"];
+            let error = o["error"];
+            if(errmsg != null ){
+                em = errmsg;
+            }else if(error != null ){
+                em = "Oh my, something server error happened ";
+            }
+
+            $("#something_msg [name='jetelina_message']").text(em);
+            $("#something_msg").show();
 
             ret = false;
         }else{
-            $("#something_error [name='error_message']").text("");
-            $("#something_error").hide();
+            $("#something_msg [name='jetelina_message']").text("");
+            $("#something_msg").hide();
         }
     }
 
@@ -191,7 +199,34 @@ const getAjaxData = (url) => {
         }).done(function (result, textStatus, jqXHR) {
             // go data parse
             const dataurls = scenario['analyzed-data-collect-url'];
-            if (inScenarioChk(url, 'analyzed-data-collect-url')) {
+
+            if (url == dataurls[3]) {
+                /*
+                    Tips:
+                        dataurls[3] is for checking existing Jetelina's suggestion.
+                        resume below if the return were true,meaning exsit her one.
+                */
+                if(result){
+                    // set suggestion existing flag to display my message
+                    isSuggestion = true;
+                    // set my suggestion
+                    $("#something_msg [name='jetelina_message']").text(`${result.Jetelina.apino}:${result.Jetelina.suggestion}`);
+                    // relation access & combination
+                    getAjaxData(dataurls[0]);
+                    // simply sql speed
+                    getAjaxData(dataurls[1]);
+                    // sql speed on test db
+                    getAjaxData(dataurls[2]);
+                }
+
+                /*
+                    Tips:
+                        dataurls[4] is for sql access count data.
+                        this data always is executed.
+                */
+                getAjaxData(dataurls[4]);
+
+            }else if (inScenarioChk(url, 'analyzed-data-collect-url')) {
                 let type = "";
                 if (url == dataurls[0]) {
                     // access vs combination
@@ -205,25 +240,6 @@ const getAjaxData = (url) => {
                 } else if (url == dataurls[4]) {
                     // sql access
                     type = "access";
-                } else if (url == dataurls[3]) {
-                    /*
-                        Tips:
-                            dataurls[3] is for checking existing Jetelina's suggestion.
-                            resume below if the return were false,meaning no-exsit her one.
-                            Once gettablecombivsaccessrelationdata is called, the data has already set in the graph.
-                            This data does not change often, that why set 'isSuggestion' flag to use for the decision. 
-                    */
-                    if (!result) {
-                        getAjaxData(dataurls[4]);
-                    }else{
-                        isSuggestion = true;
-                        // relation access & combination
-                        getAjaxData(dataurls[0]);
-                        // simply sql speed
-                        getAjaxData(dataurls[1]);
-                        // check existing for improve file
-                        getAjaxData(dataurls[2]);
-                    }
                 }
                 /*
                     Tips:
@@ -243,27 +259,6 @@ const getAjaxData = (url) => {
                 }else{
                     typingControll(chooseMsg("success", "", ""));
                 }      
-            } else if (url == dataurls[3]) {
-                /*
-                    Tips:
-                        dataurls[3] is for checking existing Jetelina's suggestion.
-                        resume below if the return were true,meaning exsit her one.
-                */
-                if(result){
-                    // relation access & combination
-                    getAjaxData(dataurls[0]);
-                    // simply sql speed
-                    getAjaxData(dataurls[1]);
-                    // sql speed on test db
-                    getAjaxData(dataurls[2]);
-                }
-
-                /*
-                    Tips:
-                        dataurls[4] is for sql access count data.
-                        this data always is executed.
-                */
-                getAjaxData(dataurls[4]);
             } else {
                 const geturl = scenario['function-get-url'];
                 if(url == geturl[0]){
@@ -277,6 +272,7 @@ const getAjaxData = (url) => {
                 }
             }
         }).fail(function (result) {
+            checkResult(result);
             console.error("getAjaxData() fail");
             typingControll(chooseMsg("fail", "", ""));
         }).always(function () {
@@ -569,10 +565,10 @@ const chatKeyDown = (cmd) => {
 
             // check the error message panel hide or not
             if(inScenarioChk(ut,'hide-error-message')){
-                $("#something_error").hide();
+                $("#something_msg").hide();
                 m = 'ignore';
             }else if(inScenarioChk(ut,'show-error-message')){
-                $("#something_error").show();
+                $("#something_msg").show();
                 m = 'ignore';
             }
 
@@ -827,6 +823,7 @@ const logout = () => {
     $("#performance_real").hide();
     $("#performance_test").hide();
     $("#command_list").hide();
+    $("#something_msg").hide();
 
     // global variables initialize
     stage = 0;
