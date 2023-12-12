@@ -1,5 +1,5 @@
 """
-    module: DBDataCOntroller
+    module: DBDataController
 
     Author: Ono keiji
     Version: 1.0
@@ -29,7 +29,7 @@
 module DBDataController
 
     using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json
-    using JetelinaLog, JetelinaReadConfig, PgDBController, JetelinaFiles, JetelinaReadSqlList, PgSQLSentenceManager
+    using JetelinaLog, JetelinaReadConfig, JetelinaFiles, JetelinaReadSqlList, PgDBController, PgSQLSentenceManager
 
     export init_Jetelina_table, dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,
         executeApi, userRegist, chkUserExistence, getUserInfoKeys,refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount

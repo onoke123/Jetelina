@@ -37,7 +37,7 @@ module PgDBController
     using CSV, LibPQ, DataFrames, IterTools, Tables, DataFrames
     using JetelinaLog, JetelinaReadConfig, JetelinaReadSqlList, PgDataTypeList, JetelinaFiles, PgSQLSentenceManager
 
-    export create_jetelina_tables, create_jetelina_id_sequence, open_connection, close_connection, readJetelinatable,
+    export create_jetelina_table,create_jetelina_id_sequence, open_connection, close_connection, readJetelinatable,
         getTableList, getJetelinaSequenceNumber, insert2JetelinaTableManager, dataInsertFromCSV, dropTable, getColumns,
         executeApi, doSelect, measureSqlPerformance, create_jetelina_user_table, userRegist, chkUserExistence, getUserInfoKeys,
         refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount
@@ -78,12 +78,12 @@ module PgDBController
         create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
     """
     function create_jetelina_id_sequence()
-        create_jetelina_id_sequence = """
+        jetelina_id_sequence = """
             create sequence jetelina_table_id_sequence;create sequence jetelina_sql_sequence;create sequence jetelina_user_id_sequence;
         """
         conn = open_connection()
         try
-            execute(conn, create_jetelina_id_sequence)
+            execute(conn, jetelina_id_sequence)
         catch err
             JetelinaLog.writetoLogfile("PgDBController.create_jetelina_id_sequence() error: $err")
         finally
