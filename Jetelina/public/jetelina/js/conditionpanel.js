@@ -151,14 +151,15 @@ const conditionPanelFunctions = (ut) => {
                     Tips:
                         below graphs performance is as same as 'case:graph'.
                 */
+               /*
                 $("#plot").show().animate({
                     top: "5%",
                     left: "-5%"
                 }, animateDuration);
-
+                */
                 $("#performance_test").show().draggable().animate({
-                    top: "-50%",
-                    left: "50%"
+                    top: "20%", //-50%",
+                    left: "20%" //"50%"
                 }, animateDuration).draggable('disable');
 
                 $("#something_msg").show();

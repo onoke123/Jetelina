@@ -752,7 +752,7 @@ const chatKeyDown = (cmd) => {
 
             if (0 < m.length && m != 'ignore') {
                 typingControll(m);
-            }else if ( m == 'ignore'){
+            }else if ( m == 'ignore' && stage != 'login'){
                 typingControll(chooseMsg('waiting-next',"",""));
             }else if (m == null || m.length == 0) {
                 // cannot understand what the user is typing
