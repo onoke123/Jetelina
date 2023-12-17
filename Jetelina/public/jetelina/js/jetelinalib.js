@@ -519,6 +519,15 @@ const typing = (i, m) => {
  * check if the user input message is what is expected in userresponse[] 
  */
 const chkUResponse = (n, s) => {
+    /*
+        Tips:
+            privent to display the opening messages are dublicated.
+            logouttimeId is set at logout process for returning to the inital screen in openingMessage().
+    */
+    if(logouttimerId){
+        clearTimeout(logouttimerId);
+    }
+    
     if (userresponse[n].includes(s)) {
         return true;
     }
@@ -761,7 +770,7 @@ const chatKeyDown = (cmd) => {
             
             if (logoutflg) {
                 const t = 10000;// switch to the opening screen after 10 sec
-                setTimeout(function () {
+                logouttimerId = setTimeout(function () {
                     $("#jetelina_panel [name='your_tell']").text("");
                     openingMessage();
                 }, t);
