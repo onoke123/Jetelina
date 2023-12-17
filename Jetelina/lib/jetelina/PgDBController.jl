@@ -781,7 +781,13 @@ module PgDBController
     """
     function chkUserExistence(s::String)
         ret = ""
+        u::String = s
         jmsg::String = string("compliment me!")
+
+        if contains(s," ")
+            ss = split(s," ")
+            u = ss[1]
+        end
 
         sql = """   
         SELECT
@@ -795,7 +801,7 @@ module PgDBController
             user_level,
             familiar_index
         from jetelina_user_table
-        where (jetelina_delete_flg=0)and((login = '$s')or(firstname='$s')or(lastname='$s'));
+        where (jetelina_delete_flg=0)and((login = '$u')or(firstname='$u')or(lastname='$u'));
         """
         conn = open_connection()
         try
