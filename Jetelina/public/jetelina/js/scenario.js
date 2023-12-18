@@ -12,7 +12,7 @@ scenario["null"] = ["",""];
 /* command list order */
 scenario["guidance"] = ["what can i","can you","start","manual","guide me","guidance","teach me","tell me"];
 scenario["command_list"] = ["how can i","command","commands","commandlist","commandslist"];
-scenario["waiting-next"] = ["then","next please"];
+scenario["waiting-next"] = ["then?","next please"];
 /* opening */
 scenario[0] = ["Hi","Hello"];
 userresponse[0] = ["hi","hello","hola","good ","sorry","what\"s up","what is up","nice to see you","how are you"];
