@@ -29,7 +29,14 @@
 module DBDataController
 
     using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json
-    using JetelinaLog, JetelinaReadConfig, JetelinaFiles, JetelinaReadSqlList, PgDBController, PgSQLSentenceManager
+#    using JetelinaLog, JetelinaReadConfig, JetelinaFiles, JetelinaReadSqlList, PgDBController, PgSQLSentenceManager
+
+    include("JetelinaLog.jl")
+    include("JetelinaReadConfig.jl")
+    include("JetelinaFiles.jl")
+    include("JetelinaReadSqlList.jl")
+    include("PgDBController.jl")
+    include("PgSQLSentenceManager.jl")
 
     export init_Jetelina_table, dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,
         executeApi, userRegist, chkUserExistence, getUserInfoKeys,refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount

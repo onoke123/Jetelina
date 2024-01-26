@@ -21,10 +21,21 @@ module SQLAnalyzer
 
     using JSON, LibPQ, Tables, CSV, DataFrames, StatsBase, DelimitedFiles
     using Genie, Genie.Renderer, Genie.Renderer.Json
-    using JetelinaReadConfig, JetelinaLog
-    using DBDataController, PgDBController
-    using JetelinaFiles, JetelinaReadSqlList, PgSQLSentenceManager
-    using PgTestDBController, PgDataTypeList
+
+#    using JetelinaReadConfig, JetelinaLog
+#    using DBDataController, PgDBController
+#    using JetelinaFiles, JetelinaReadSqlList, PgSQLSentenceManager
+#    using PgTestDBController, PgDataTypeList
+
+    include("JetelinaReadConfig.jl")
+    include("JetelinaLog.jl")
+    include("DBDataController.jl")
+    include("PgDBController.jl")
+    include("JetelinaFiles.jl")
+    include("JetelinaReadSqlList.jl")
+    include("PgSQLSentenceManager.jl")
+    include("PgTestDBController.jl")
+    include("PgDataTypeList.jl")
 
     """
     function main()

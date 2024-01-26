@@ -14,8 +14,14 @@ module CSVFileController
     using CSV
     using DataFrames
 #    using Genie, Genie.Renderer, Genie.Renderer.Json
-    using JetelinaReadConfig, JetelinaLog
-    using DBDataController
+
+
+#    using JetelinaReadConfig, JetelinaLog
+#    using DBDataController
+
+    include("JetelinaReadConfig.jl")
+    include("JetelinaLog.jl")
+    include("DBDataContoller.jl")
 
     export read
     

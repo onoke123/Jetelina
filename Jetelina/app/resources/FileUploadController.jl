@@ -12,8 +12,12 @@ functions
 module FileUploadController
 
     using Genie, Genie.Requests
-    using JetelinaReadConfig, JetelinaLog
-    using CSVFileController
+#    using JetelinaReadConfig, JetelinaLog
+#    using CSVFileController
+
+    include("JetelinaReadConfig.jl")
+    include("JetelinaLog.jl")
+    include("CSVFileController.jl")    
 
     export fup
     

@@ -18,8 +18,14 @@ functions
 module GetDataController
 
     using Genie, Genie.Requests,Genie.Renderer.Json
-    using DBDataController
-    using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
+#    using DBDataController
+#    using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
+
+    include("DBDataController.jl")
+    include("JetelinaReadConfig.jl")
+    include("JetelinaLog.jl")
+    include("JetelinaReasSqlList.jl")
+    include("JetelinaFiles.jl")
 
     export getTableList,getTableCombiVsAccessRelationData,getPerformanceRealData,getPerformanceTestData,checkExistImproveApiFile,getApiList
 

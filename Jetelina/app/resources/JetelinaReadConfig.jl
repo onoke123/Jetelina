@@ -10,8 +10,10 @@ module: JetelinaReadConfig
 
 module JetelinaReadConfig
 
-    using JetelinaFiles, JetelinaLog
+#    using JetelinaFiles, JetelinaLog
 
+    include("JetelinaFiles.jl")
+    
     export  JetelinaLogfile,# log file name
         debugflg,# debug configuration true/false
         JetelinaFileUploadPath,# csv file upload path
@@ -58,7 +60,7 @@ module JetelinaReadConfig
         then set them to the global variables.
     """
     function _readConfig()
-        configfile = getFileNameFromConfigPath("JetelinaConfig.cnf")
+        configfile = JetelinaFiles.getFileNameFromConfigPath("JetelinaConfig.cnf")
 
         try
             f = open(configfile, "r")
@@ -147,7 +149,7 @@ module JetelinaReadConfig
 
             close(f)
         catch err
-            JetelinaLog.writetoLogfile("Jetelina_readConfig._readConfig() error: $err")
+#            JetelinaLog.writetoLogfile("Jetelina_readConfig._readConfig() error: $err")
             return false
         end
 

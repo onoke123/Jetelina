@@ -16,9 +16,14 @@ functions
 module PgTestDBController
 
     using CSV, LibPQ, DataFrames, IterTools, Tables
-    using JetelinaLog, JetelinaReadConfig
-    using JetelinaFiles
-    using PgSQLSentenceManager
+#    using JetelinaLog, JetelinaReadConfig
+#    using JetelinaFiles
+#    using PgSQLSentenceManager
+
+    include("JetelinaLog.jl")
+    include("JetelinaReadConfig.jl")
+    include("JetelinaFiles.jl")
+    include("PgSQLSentenceManager.jl")
 
     export measureSqlPerformance
 

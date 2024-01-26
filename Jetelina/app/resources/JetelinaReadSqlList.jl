@@ -14,8 +14,11 @@ functions
 module JetelinaReadSqlList
 
     using DataFrames, CSV
-    using JetelinaReadConfig, JetelinaFiles
+#    using JetelinaReadConfig, JetelinaFiles
 
+    include("JetelinaReadConfig.jl")
+    include("JetelinaFiles.jl")
+    
     export Df_JetelinaSqlList, readSqlList2DataFrame
 
     """

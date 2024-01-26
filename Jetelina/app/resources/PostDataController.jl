@@ -23,9 +23,16 @@ functions
 module PostDataController
 
     using Genie, Genie.Requests, Genie.Renderer.Json
-    using DBDataController
-    using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
-    using PgSQLSentenceManager,JetelinaFiles
+#    using DBDataController
+#    using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
+#    using PgSQLSentenceManager,JetelinaFiles
+
+    include("DBDataController.jl")
+    include("JetelinaReadConfig.jl")
+    include("JetelinaLog.jl")
+    include("JetelinaReadSqlList.jl")
+    include("PgSQLSentenceManager.jl")
+    include("JetelinaFiles.jl")
 
     export createApi,getColumns,deleteTable,userRegist,login,getUserInfoKeys,refUserAttribute,updateUserInfo,
             updateUserData,updateUserLoginData,deleteUserAccount,deleteApi,handleApipostdata

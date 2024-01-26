@@ -12,8 +12,10 @@ functions
 """
 module PgDataTypeList
 
-    using JetelinaReadConfig
+#    using JetelinaReadConfig
 
+    include("JetelinaReadConfig.jl")
+    
     export getDataType,getDataTypeInDataFrame
 
     """

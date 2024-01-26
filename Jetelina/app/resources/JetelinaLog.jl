@@ -13,7 +13,10 @@ functions
 module JetelinaLog
 
     using Logging, Dates
-    using JetelinaReadConfig, JetelinaFiles
+#    using JetelinaReadConfig, JetelinaFiles
+
+    include("JetelinaReadConfig.jl")
+    include("JetelinaFiles.jl")
 
     export writetoLogfile, writetoSQLLogfile
 
@@ -27,7 +30,7 @@ module JetelinaLog
     - return::tuple (IOStream, Logging.SimpleLogger)
     """
     function _logfileOpen()
-        logfile = getFileNameFromLogPath(JetelinaLogfile)
+        logfile = JetelinaFiles.getFileNameFromLogPath(JetelinaLogfile)
 
         try
             io = open(logfile, "a+")
@@ -87,7 +90,7 @@ module JetelinaLog
                 ref: SQLAnalyzer.createAnalyzedJsonFile()
         ===#
         log_str = string(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"), ",", apino, ",\"", sql,"\"")
-        sqllogfile = getFileNameFromLogPath(JetelinaSQLLogfile)
+        sqllogfile = JetelinaFiles.getFileNameFromLogPath(JetelinaSQLLogfile)
         try
             open(sqllogfile, "a+") do f
                 println(f, log_str)

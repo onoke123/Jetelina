@@ -12,8 +12,8 @@ functions
     getFileNameFromLogPath(fname)  get full path of Jetelina log files
 """
 module JetelinaFiles
-    using JetelinaLog
-
+#    using JetelinaLog
+    
     export getFileNameFromConfigPath,getJsFileNameFromPublicPath,getFileNameFromLogPath
 
     """
@@ -28,7 +28,7 @@ module JetelinaFiles
     function getFileNameFromConfigPath(fname)
         fn = string( joinpath( @__DIR__, "config", fname ))
         if !isfile(fn)
-            JetelinaLog.writetoLogfile("JetelinaFiles.getFileNameFromConfigPath: $fn does not exist")
+            fn ="JetelinaFiles.getFileNameFromConfigPath: $fn does not exist"
         end
 
         return fn            
@@ -45,7 +45,7 @@ module JetelinaFiles
     function getJsFileNameFromPublicPath(fname)
         fn = string(joinpath(@__DIR__, "..", "..", "public", "jetelina", "js", fname))
         if !isfile(fn)
-            JetelinaLog.writetoLogfile("JetelinaFiles.getJsFileNameFromPublicPath: $fn does not exist")
+            fn = "JetelinaFiles.getJsFileNameFromPublicPath: $fn does not exist"
         end
 
         return fn            
@@ -62,7 +62,7 @@ module JetelinaFiles
     function getFileNameFromLogPath(fname)
         fn = string( joinpath( @__DIR__, "log", fname ) )
         if !isfile(fn)
-            JetelinaLog.writetoLogfile("JetelinaFiles.getFileNameFromLogPath: $fn does not exist")
+            fn = "JetelinaFiles.getFileNameFromLogPath: $fn does not exist"
         end
 
         return fn            
