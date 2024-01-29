@@ -23,10 +23,11 @@ module PgTestDBController
     include("JetelinaLog.jl")
     include("JetelinaReadConfig.jl")
     include("JetelinaFiles.jl")
-    include("PgSQLSentenceManager.jl")
+#1/29    include("PgSQLSentenceManager.jl")
 
     export measureSqlPerformance
 
+    const j_config = JetelinaReadConfig
     """
     function open_connection()
 
@@ -37,12 +38,23 @@ module PgTestDBController
     - return: LibPQ.Connection object    
     """
     function open_connection()
+        con_str = string("host='",j_config.JetelinaDBhost,
+        "' port='",j_config.JetelinaDBport,
+        "' user='",j_config.JetelinaDBuser,
+        "' password='",j_config.JetelinaDBpassword,
+        "' sslmode='",j_config.JetelinaDBsslmode,
+        "' dbname='",j_config.JetelinaTestDBname,"'")
+
+        return conn = LibPQ.Connection(con_str)
+
+#==1/29
         conn = LibPQ.Connection("""host = '$JetelinaDBhost' 
             port = '$JetelinaDBport'
             user = '$JetelinaDBuser'
             password = '$JetelinaDBpassword'
             sslmode = '$JetelinaDBsslmode'
             dbname = '$JetelinaTestDBname' """)
+===#
     end
 
     """
@@ -107,11 +119,11 @@ module PgTestDBController
                 I know it can use Df_JetelinaSqlList here, but wanna leave a evidence what sql are executed.
                 That's reason why JetelinaExperimentSqlList file is opend here.
         ===#
-        sqlFile = getFileNameFromConfigPath(JetelinaExperimentSqlList)
+        sqlFile = getFileNameFromConfigPath(j_config.JetelinaExperimentSqlList)
         if isfile(sqlFile)
-            sqlPerformanceFile = getFileNameFromConfigPath(string(JetelinaSqlPerformancefile,".test"))
+            sqlPerformanceFile = getFileNameFromConfigPath(string(j_config.JetelinaSqlPerformancefile,".test"))
             open(sqlPerformanceFile, "w") do f
-                println(f,string(JetelinaFileColumnApino,',',JetelinaFileColumnMax,',',JetelinaFileColumnMin,',',JetelinaFileColumnMean))
+                println(f,string(j_config.JetelinaFileColumnApino,',',j_config.JetelinaFileColumnMax,',',j_config.JetelinaFileColumnMin,',',j_config.JetelinaFileColumnMean))
                 df = CSV.read( sqlFile, DataFrame )
                 for i in 1:size(df,1)
                     if startswith(df.apino[i] ,"js")

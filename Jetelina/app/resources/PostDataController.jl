@@ -31,7 +31,7 @@ module PostDataController
     include("JetelinaReadConfig.jl")
     include("JetelinaLog.jl")
     include("JetelinaReadSqlList.jl")
-    include("PgSQLSentenceManager.jl")
+#1/29    include("PgSQLSentenceManager.jl")
     include("JetelinaFiles.jl")
 
     export createApi,getColumns,deleteTable,userRegist,login,getUserInfoKeys,refUserAttribute,updateUserInfo,
@@ -62,7 +62,7 @@ module PostDataController
                            fail to append it to     -> false
     """
     function createApi()
-        return PgSQLSentenceManager.createApiSelectSentence(jsonpayload())
+#1/29        return PgSQLSentenceManager.createApiSelectSentence(jsonpayload())
     end
     """
     function getColumns()
@@ -324,7 +324,7 @@ module PostDataController
                 end
             end
         catch err
-            JetelinaLog.writetoLogfile("PgSQLSentenceManager.deleteApi() error: $err")
+            JetelinaLog.writetoLogfile("PostDataController.deleteApi() error: $err")
             return false
         end
 

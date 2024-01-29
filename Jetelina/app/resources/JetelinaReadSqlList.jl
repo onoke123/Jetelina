@@ -21,6 +21,8 @@ module JetelinaReadSqlList
     
     export Df_JetelinaSqlList, readSqlList2DataFrame
 
+    const j_config = JetelinaReadConfig
+
     """
     function __init__()
 
@@ -36,12 +38,12 @@ module JetelinaReadSqlList
         this function set the sql list data in the global variable 'Df_JetelinaSqlList' as DataFrame object.
     """
     function readSqlList2DataFrame()
-        sqlFile = getFileNameFromConfigPath(JetelinaSQLListfile)
+        sqlFile = JetelinaFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
         if isfile(sqlFile)
             df = CSV.read( sqlFile, DataFrame )
             global Df_JetelinaSqlList = df
 
-            if debugflg
+            if j_config.debugflg
                 @info "JetelinaReadSqlList.readSqlList2DataFrame() sql list in DataFrame: ", Df_JetelinaSqlList 
             end
         end

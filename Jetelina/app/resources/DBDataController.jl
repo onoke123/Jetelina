@@ -27,19 +27,21 @@
 """
 
 module DBDataController
-
+    @info "DBDataController"
     using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json
 #    using JetelinaLog, JetelinaReadConfig, JetelinaFiles, JetelinaReadSqlList, PgDBController, PgSQLSentenceManager
 
-    include("JetelinaLog.jl")
+#    include("JetelinaLog.jl")
     include("JetelinaReadConfig.jl")
     include("JetelinaFiles.jl")
     include("JetelinaReadSqlList.jl")
     include("PgDBController.jl")
-    include("PgSQLSentenceManager.jl")
+#1/29    include("PgSQLSentenceManager.jl")
 
     export init_Jetelina_table, dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,
         executeApi, userRegist, chkUserExistence, getUserInfoKeys,refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount
+
+    const j_config = JetelinaReadConfig
 
     """
     function __init__()
@@ -54,13 +56,13 @@ module DBDataController
         Execute *.readJetelinatable() depend on DB type.
     """
     function init_Jetelina_table()
-        if JetelinaDBtype == "postgresql"
+        if j_config.JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.create_jetelina_id_sequence()
             PgDBController.create_jetelina_table()
             PgDBController.readJetelinatable()
-        elseif JetelinaDBtype == "mariadb"
-        elseif JetelinaDBtype == "oracle"
+        elseif j_config.JetelinaDBtype == "mariadb"
+        elseif j_config.JetelinaDBtype == "oracle"
         end
 
     end
@@ -73,11 +75,11 @@ module DBDataController
     - `csvfname: String`: csv file name. Expect string data of JetelinaFileUploadPath + <csv file name>.
     """
     function dataInsertFromCSV(csvfname::String)
-        if JetelinaDBtype == "postgresql"
+        if j_config.JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.dataInsertFromCSV(csvfname)
-        elseif JetelinaDBtype == "mariadb"
-        elseif JetelinaDBtype == "oracle"
+        elseif j_config.JetelinaDBtype == "mariadb"
+        elseif j_config.JetelinaDBtype == "oracle"
         end
     end
     """
@@ -93,11 +95,11 @@ module DBDataController
             s = "json"
         end
 
-        if JetelinaDBtype == "postgresql"
+        if j_config.JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.getTableList(s)
-        elseif JetelinaDBtype == "mariadb"
-        elseif JetelinaDBtype == "oracle"
+        elseif j_config.JetelinaDBtype == "mariadb"
+        elseif j_config.JetelinaDBtype == "oracle"
         end
     end
     """
@@ -109,11 +111,11 @@ module DBDataController
     - `t: Integer`  : type order  0-> jetelina_id, 1-> jetelian_sql_sequence        
     """
     function getSequenceNumber(t::Integer)
-        if JetelinaDBtype == "postgresql"
+        if j_config.JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.getJetelinaSequenceNumber(t)
-        elseif JetelinaDBtype == "mariadb"
-        elseif JetelinaDBtype == "oracle"
+        elseif j_config.JetelinaDBtype == "mariadb"
+        elseif j_config.JetelinaDBtype == "oracle"
         end
     end
     """
@@ -125,11 +127,11 @@ module DBDataController
     - `tableName: String`: name of the table
     """
     function dropTable(tableName::String)
-        if JetelinaDBtype == "postgresql"
+        if j_config.JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.dropTable(tableName)
-        elseif JetelinaDBtype == "mariadb"
-        elseif JetelinaDBtype == "oracle"
+        elseif j_config.JetelinaDBtype == "mariadb"
+        elseif j_config.JetelinaDBtype == "oracle"
         end
     end
     """
@@ -141,11 +143,11 @@ module DBDataController
     - `tableName: String`: DB table name
     """
     function getColumns(tableName::String)
-        if JetelinaDBtype == "postgresql"
+        if j_config.JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.getColumns(tableName)
-        elseif JetelinaDBtype == "mariadb"
-        elseif JetelinaDBtype == "oracle"
+        elseif j_config.JetelinaDBtype == "mariadb"
+        elseif j_config.JetelinaDBtype == "oracle"
         end
     end
     """
@@ -158,11 +160,11 @@ module DBDataController
     - `mode: String`: "run"->running mode  "measure"->measure speed. only called by measureSqlPerformance()        
     """
     function doSelect(sql::String, mode::String)
-        if JetelinaDBtype == "postgresql"
+        if j_config.JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.doSelect(sql.mode)
-        elseif JetelinaDBtype == "mariadb"
-        elseif JetelinaDBtype == "oracle"
+        elseif j_config.JetelinaDBtype == "mariadb"
+        elseif j_config.JetelinaDBtype == "oracle"
         end
     end
     """
@@ -193,16 +195,18 @@ module DBDataController
         target_api = subset(Df_JetelinaSqlList, :apino => ByRow(==(json_d["apino"])), skipmissing=true)
         if 0 < nrow(target_api)
             # Step2:
-            if JetelinaDBtype == "postgresql"
+            if j_config.JetelinaDBtype == "postgresql"
                 # Case in PostgreSQL
+#==1/29
                 sql_str = PgSQLSentenceManager.createExecutionSqlSentence(json_d, target_api)
                 if 0 < length(sql_str)
                     # Step3:
                     ret = PgDBController.executeApi(json_d["apino"], sql_str)
                 end
+===#
             end
-        elseif JetelinaDBtype == "mariadb"
-        elseif JetelinaDBtype == "oracle"
+        elseif j_config.JetelinaDBtype == "mariadb"
+        elseif j_config.JetelinaDBtype == "oracle"
         end
 
         # write execution sql to log file
@@ -220,11 +224,11 @@ module DBDataController
     - return::boolean: success->true  fail->false
     """
     function userRegist(username::String)
-        if JetelinaDBtype == "postgresql"
+        if j_config.JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.userRegist(s)
-        elseif JetelinaDBtype == "mariadb"
-        elseif JetelinaDBtype == "oracle"
+        elseif j_config.JetelinaDBtype == "mariadb"
+        elseif j_config.JetelinaDBtype == "oracle"
         end
     end
     """
@@ -239,11 +243,11 @@ module DBDataController
     - return: success -> user data in json, fail -> ""
     """
     function chkUserExistence(s::String)
-        if JetelinaDBtype == "postgresql"
+        if j_config.JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.chkUserExistence(s)
-        elseif JetelinaDBtype == "mariadb"
-        elseif JetelinaDBtype == "oracle"
+        elseif j_config.JetelinaDBtype == "mariadb"
+        elseif j_config.JetelinaDBtype == "oracle"
         end
     end
     """
@@ -256,11 +260,11 @@ module DBDataController
     - return: success -> user data in json or DataFrame, fail -> ""
     """
     function getUserInfoKeys(uid::Integer)
-        if JetelinaDBtype == "postgresql"
+        if j_config.JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.getUserInfoKeys(uid)
-        elseif JetelinaDBtype == "mariadb"
-        elseif JetelinaDBtype == "oracle"
+        elseif j_config.JetelinaDBtype == "mariadb"
+        elseif j_config.JetelinaDBtype == "oracle"
         end
     end
     """
@@ -275,12 +279,12 @@ module DBDataController
     - return: success -> user data in json or DataFrame, fail -> ""
     """
     function refUserAttribute(uid::Integer,key::String,val)
-        if JetelinaDBtype == "postgresql"
+        if j_config.JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             rettype::Integer = 0 # because wanna the return as json type
             PgDBController.refUserAttribute(uid,key,val,rettype)
-        elseif JetelinaDBtype == "mariadb"
-        elseif JetelinaDBtype == "oracle"
+        elseif j_config.JetelinaDBtype == "mariadb"
+        elseif j_config.JetelinaDBtype == "oracle"
         end
     end
     """
@@ -295,11 +299,11 @@ module DBDataController
     - return: success -> true, fail -> error message
     """
     function updateUserInfo(uid::Integer,key::String,value)
-        if JetelinaDBtype == "postgresql"
+        if j_config.JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.updateUserInfo(uid,key,val)
-        elseif JetelinaDBtype == "mariadb"
-        elseif JetelinaDBtype == "oracle"
+        elseif j_config.JetelinaDBtype == "mariadb"
+        elseif j_config.JetelinaDBtype == "oracle"
         end
     end
     """
@@ -315,11 +319,11 @@ module DBDataController
     - return: success -> true, fail -> error message
     """
     function updateUserData(uid::Integer,key::String,value)
-        if JetelinaDBtype == "postgresql"
+        if j_config.JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.updateUserData(uid,key,val)
-        elseif JetelinaDBtype == "mariadb"
-        elseif JetelinaDBtype == "oracle"
+        elseif j_config.JetelinaDBtype == "mariadb"
+        elseif j_config.JetelinaDBtype == "oracle"
         end
     end
     """
@@ -332,11 +336,11 @@ module DBDataController
     - return: success -> true, fail -> error message
     """
     function updateUserLoginData(uid::Integer)
-        if JetelinaDBtype == "postgresql"
+        if j_config.JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.updateUserLoginData(uid)
-        elseif JetelinaDBtype == "mariadb"
-        elseif JetelinaDBtype == "oracle"
+        elseif j_config.JetelinaDBtype == "mariadb"
+        elseif j_config.JetelinaDBtype == "oracle"
         end
     end
     """
@@ -349,11 +353,11 @@ module DBDataController
     - return: success -> true, fail -> error message
     """
     function deleteUserAccount(uid::Integer)
-        if JetelinaDBtype == "postgresql"
+        if j_config.JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
             PgDBController.deleteUserAccount(uid)
-        elseif JetelinaDBtype == "mariadb"
-        elseif JetelinaDBtype == "oracle"
+        elseif j_config.JetelinaDBtype == "mariadb"
+        elseif j_config.JetelinaDBtype == "oracle"
         end
     end
 end

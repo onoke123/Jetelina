@@ -19,7 +19,7 @@ functions
     createExecutionSqlSentence(json_dict::Dict, df::DataFrame) create real execution SQL sentence.
 """
 module PgSQLSentenceManager
-
+    @info "PgSQLSentenceManager"
     using Dates, StatsBase, CSV, DataFrames
     using Genie, Genie.Requests, Genie.Renderer.Json
 #    using DBDataController, JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
@@ -32,9 +32,11 @@ module PgSQLSentenceManager
 
     export writeTolist,deleteFromlist,fileBackup,sqlDuplicationCheck,checkSubQuery,createApiInsertSentence,createApiUpdateSentence,createApiDeleteSentence,createApiSelectSentence,createExecutionSqlSentence
     
+    const j_config = JetelinaReadConfig
+
     # sqli list file
-    sqlFile = getFileNameFromConfigPath(JetelinaSQLListfile)
-    tableapiFile = getFileNameFromConfigPath(JetelinaTableApifile)
+#    sqlFile = JetelinaFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
+#    tableapiFile = JetelinaFiles.getFileNameFromConfigPath(j_config.JetelinaTableApifile)
 
     """
     function writeTolist(sql::String, tablename_arr::Vector{String})
@@ -47,6 +49,9 @@ module PgSQLSentenceManager
     - `tablename_arr::Vector{String}`: table name list that are used in 'sql'
     """
     function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String})
+        sqlFile = JetelinaFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
+        tableapiFile = JetelinaFiles.getFileNameFromConfigPath(j_config.JetelinaTableApifile)
+
         # get the sequence name then create the sql sentence
         seq_no = DBDataController.getSequenceNumber(1)
         suffix = string()
@@ -79,7 +84,7 @@ module PgSQLSentenceManager
         try
             open(sqlFile, "a") do f
                 if !thefirstflg
-                    println(f, string(JetelinaFileColumnApino,',',JetelinaFileColumnSql,',',JetelinaFileColumnSubQuery))
+                    println(f, string(j_config.JetelinaFileColumnApino,',',j_config.JetelinaFileColumnSql,',',j_config.JetelinaFileColumnSubQuery))
                 end
 
 
@@ -116,8 +121,10 @@ module PgSQLSentenceManager
     - return: boolean: true -> all done ,  false -> something failed
     """
     function deleteFromlist(tablename::String)
-        sqlTmpFile = getFileNameFromConfigPath("$JetelinaSQLListfile.tmp")
-        tableapiTmpFile = getFileNameFromConfigPath("JetelinaTableApi.tmp")
+        sqlFile = JetelinaFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
+        tableapiFile = JetelinaFiles.getFileNameFromConfigPath(j_config.JetelinaTableApifile)
+        sqlTmpFile = JetelinaFiles.getFileNameFromConfigPath(string(j_config.JetelinaSQLListfile,".tmp"))
+        tableapiTmpFile = JetelinaFiles.getFileNameFromConfigPath("JetelinaTableApi.tmp")
 
         targetapi = []
         # take the backup file

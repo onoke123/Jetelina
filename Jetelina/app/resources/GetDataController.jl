@@ -22,10 +22,10 @@ module GetDataController
 #    using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
 
     include("DBDataController.jl")
-    include("JetelinaReadConfig.jl")
-    include("JetelinaLog.jl")
-    include("JetelinaReasSqlList.jl")
-    include("JetelinaFiles.jl")
+#    include("JetelinaReadConfig.jl")
+#    include("JetelinaLog.jl")
+#    include("JetelinaReadSqlList.jl")
+#    include("JetelinaFiles.jl")
 
     export getTableList,getTableCombiVsAccessRelationData,getPerformanceRealData,getPerformanceTestData,checkExistImproveApiFile,getApiList
 

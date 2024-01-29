@@ -11,10 +11,10 @@ functions
     getDataTypeInDataFrame(c_type::String)  determaine 'c_type' to DataFrame data. ex. c_type=='Int' -> 'Integer'
 """
 module PgDataTypeList
-
+    @info "PgDataTypeList"
 #    using JetelinaReadConfig
 
-    include("JetelinaReadConfig.jl")
+#    include("JetelinaReadConfig.jl")
     
     export getDataType,getDataTypeInDataFrame
 

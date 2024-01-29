@@ -32,7 +32,7 @@
         deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
 """
 module PgDBController
-
+    @info "PgDBController"
     using Genie, Genie.Renderer, Genie.Renderer.Json
     using CSV, LibPQ, DataFrames, IterTools, Tables, DataFrames
 #    using JetelinaLog, JetelinaReadConfig, JetelinaReadSqlList, PgDataTypeList, JetelinaFiles, PgSQLSentenceManager
@@ -42,13 +42,14 @@ module PgDBController
     include("PgDataTypeList.jl")
     include("JetelinaFiles.jl")
     include("JetelinaReadSqlList.jl")
-    include("PgSQLSentenceManager.jl")
+###1/29    include("PgSQLSentenceManager.jl")
 
     export create_jetelina_table,create_jetelina_id_sequence, open_connection, close_connection, readJetelinatable,
         getTableList, getJetelinaSequenceNumber, insert2JetelinaTableManager, dataInsertFromCSV, dropTable, getColumns,
         executeApi, doSelect, measureSqlPerformance, create_jetelina_user_table, userRegist, chkUserExistence, getUserInfoKeys,
         refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount
 
+    const j_config = JetelinaReadConfig
 
     """
     function create_jetelina_table
@@ -108,12 +109,22 @@ module PgDBController
     - return: LibPQ.Connection object
     """
     function open_connection()
-        return conn = LibPQ.Connection("""host = '$JetelinaDBhost' 
-            port = '$JetelinaDBport'
+        con_str = string("host='",j_config.JetelinaDBhost,
+        "' port='",j_config.JetelinaDBport,
+        "' user='",j_config.JetelinaDBuser,
+        "' password='",j_config.JetelinaDBpassword,
+        "' sslmode='",j_config.JetelinaDBsslmode,
+        "' dbname='",j_config.JetelinaDBname,"'")
+
+        return conn = LibPQ.Connection(con_str)
+#==1/29        
+        return conn = LibPQ.Connection("""host = '$j_config.JetelinaDBhost' 
+            port = '$j_config.JetelinaDBport'
             user = '$JetelinaDBuser'
             password = '$JetelinaDBpassword'
             sslmode = '$JetelinaDBsslmode'
             dbname = '$JetelinaDBname' """)
+==#
     end
 
     """
@@ -154,7 +165,7 @@ module PgDBController
             close_connection(conn)
         end
 
-        if debugflg
+        if j_config.debugflg
             @info "PgDBController.readJetelinatable() Df_JetelinaTableManager: " Df_JetelinaTableManager
         end
 
@@ -290,7 +301,7 @@ module PgDBController
                 c = columns[i]
                 values_str = "'$jetelina_table_id','$tableName','$c'"
 
-                if debugflg
+                if j_config.debugflg
                     @info "PgDBController.insert2JetelinaTableManager() insert str:" values_str
                 end
 
@@ -390,7 +401,7 @@ module PgDBController
             update_str = lstrip(update_str, ',')
         end
 
-        if debugflg
+        if j_config.debugflg
             @info "PgDBController.dataInsertFromCSV() col str to create table: " column_str
         end
 
@@ -474,6 +485,7 @@ module PgDBController
             that why do not use cols here. writing select sentence is done in PostDataController.createApiSelectSentence(). 
         ===#
         push!(tablename_arr, tableName)
+#==1/29
         insert_str = PgSQLSentenceManager.createApiInsertSentence(tableName, insert_column_str, insert_data_str)
         PgSQLSentenceManager.writeTolist(insert_str, "", tablename_arr)
 
@@ -484,7 +496,7 @@ module PgDBController
         # delete
         delete_str = PgSQLSentenceManager.createApiDeleteSentence(tableName)
         PgSQLSentenceManager.writeTolist(delete_str[1], delete_str[2], tablename_arr)
-
+==#
         if isempty(df_tl)
             # manage to jetelina_table_manager
             insert2JetelinaTableManager(tableName, names(df0))
@@ -531,7 +543,7 @@ module PgDBController
         end
 
         # update SQL list
-        PgSQLSentenceManager.deleteFromlist(tableName)
+#1/29        PgSQLSentenceManager.deleteFromlist(tableName)
 
         return ret
     end

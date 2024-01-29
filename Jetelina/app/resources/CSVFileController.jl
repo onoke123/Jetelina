@@ -10,7 +10,7 @@
         read(csvfname::String)
 """
 module CSVFileController
-
+    @info "CSVFileController"
     using CSV
     using DataFrames
 #    using Genie, Genie.Renderer, Genie.Renderer.Json
@@ -19,9 +19,9 @@ module CSVFileController
 #    using JetelinaReadConfig, JetelinaLog
 #    using DBDataController
 
-    include("JetelinaReadConfig.jl")
-    include("JetelinaLog.jl")
-    include("DBDataContoller.jl")
+#    include("JetelinaReadConfig.jl")
+#    include("JetelinaLog.jl")
+    include("DBDataController.jl")
 
     export read
     
