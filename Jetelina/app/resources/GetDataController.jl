@@ -24,7 +24,7 @@ module GetDataController
     include("DBDataController.jl")
 #    include("JetelinaReadConfig.jl")
 #    include("JetelinaLog.jl")
-#    include("JetelinaReadSqlList.jl")
+    include("JetelinaReadSqlList.jl")
 #    include("JetelinaFiles.jl")
 
     export getTableList,getTableCombiVsAccessRelationData,getPerformanceRealData,getPerformanceTestData,checkExistImproveApiFile,getApiList
@@ -126,6 +126,6 @@ module GetDataController
         api list is refered in Df_JetelinaSqlList.
     """
     function getApiList()
-        return json(Dict("result"=>true,"Jetelina" => copy.(eachrow(Df_JetelinaSqlList))))
+        return json(Dict("result"=>true,"Jetelina" => copy.(eachrow(JetelinaReadSqlList.Df_JetelinaSqlList))))
     end
 end

@@ -196,7 +196,7 @@ module DBDataController
                 use subset() here, because Df_JetelinaSqlList may have missing data.
                 subset() supports 'skipmissing', but filter() does not.
         ===#
-        target_api = subset(Df_JetelinaSqlList, :apino => ByRow(==(json_d["apino"])), skipmissing=true)
+        target_api = subset(JetelinaReadSqlList.Df_JetelinaSqlList, :apino => ByRow(==(json_d["apino"])), skipmissing=true)
         if 0 < nrow(target_api)
             # Step2:
             if j_config.JetelinaDBtype == "postgresql"
