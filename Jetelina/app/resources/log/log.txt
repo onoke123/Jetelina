@@ -2538,3 +2538,19 @@
 └ @ Jetelina.GetDataController.DBDataController.PgDBController.JetelinaLog /home/onoke/Jetelina/Jetelina/app/resources/JetelinaLog.jl:60
 ┌ Info: 2024-02-01 15:13:09 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
 └ @ Jetelina.PostDataController.DBDataController.PgDBController.JetelinaLog /home/onoke/Jetelina/Jetelina/app/resources/JetelinaLog.jl:60
+┌ Info: 2024-02-01 15:35:34 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.CSVFileController.DBDataController.PgDBController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:60
+┌ Info: 2024-02-01 15:35:43 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.FileUploadController.CSVFileController.DBDataController.PgDBController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:60
+┌ Info: 2024-02-01 15:35:46 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.GetDataController.DBDataController.PgDBController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:60
+┌ Info: 2024-02-01 15:35:50 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.PostDataController.DBDataController.PgDBController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:60
+┌ Info: 2024-02-01 15:38:22 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.CSVFileController.DBDataController.PgDBController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:60
+┌ Info: 2024-02-01 15:38:30 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.FileUploadController.CSVFileController.DBDataController.PgDBController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:60
+┌ Info: 2024-02-01 15:38:33 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.GetDataController.DBDataController.PgDBController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:60
+┌ Info: 2024-02-01 15:38:38 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.PostDataController.DBDataController.PgDBController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:60

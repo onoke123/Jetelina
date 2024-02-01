@@ -22,12 +22,12 @@ module GetDataController
 #    using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
 
     include("DBDataController.jl")
-    include("JetelinaReadConfig.jl")
-    include("JetelinaLog.jl")
-    include("JetelinaReadSqlList.jl")
-    include("JetelinaFiles.jl")
+    include("ReadConfig.jl")
+#    include("JetelinaLog.jl")
+    include("ReadSqlList.jl")
+    include("JFiles.jl")
 
-    const j_config = JetelinaReadConfig
+    const j_config = ReadConfig
 
     export getTableList,getTableCombiVsAccessRelationData,getPerformanceRealData,getPerformanceTestData,checkExistImproveApiFile,getApiList
 
@@ -49,7 +49,7 @@ module GetDataController
     - return: JetelinaSqlAccess file name with its path
     """
     function getSqlAccessData()
-        f = JetelinaFiles.getFileNameFromLogPath( j_config.JetelinaSqlAccess )
+        f = JFiles.getFileNameFromLogPath( j_config.JetelinaSqlAccess )
         if isfile(f) 
             return readchomp(f)        
         else
@@ -65,7 +65,7 @@ module GetDataController
     - return: JetelinaTableCombiVsAccessRelation file name with its path
     """
     function getTableCombiVsAccessRelationData()        
-        f = JetelinaFiles.getFileNameFromLogPath( j_config.JetelinaTableCombiVsAccessRelation )
+        f = JFiles.getFileNameFromLogPath( j_config.JetelinaTableCombiVsAccessRelation )
         if isfile(f) 
             return readchomp(f)        
         else
@@ -81,7 +81,7 @@ module GetDataController
     - return: JetelinaSqlPerformancefile of json style with its path
     """
     function getPerformanceRealData()
-        f = JetelinaFiles.getFileNameFromLogPath( string(j_config.JetelinaSqlPerformancefile,".json") )
+        f = JFiles.getFileNameFromLogPath( string(j_config.JetelinaSqlPerformancefile,".json") )
         if isfile(f)
             return readchomp(f)
         else
@@ -97,7 +97,7 @@ module GetDataController
     - return: JetelinaSqlPerformancefile of json style with its path
     """
     function getPerformanceTestData()
-        f = JetelinaFiles.getFileNameFromLogPath( string(j_config.JetelinaSqlPerformancefile,".test.json") )
+        f = JFiles.getFileNameFromLogPath( string(j_config.JetelinaSqlPerformancefile,".test.json") )
         if isfile(f)
             return readchomp(f)
         else
@@ -113,7 +113,7 @@ module GetDataController
     - return: JetelinaImprApis file name with its path    
     """
     function checkExistImproveApiFile()
-        f = JetelinaFiles.getFileNameFromLogPath( j_config.JetelinaImprApis )
+        f = JFiles.getFileNameFromLogPath( j_config.JetelinaImprApis )
         if isfile(f)
             return readchomp(f)
             #            return isfile(f)
@@ -128,6 +128,6 @@ module GetDataController
         api list is refered in Df_JetelinaSqlList.
     """
     function getApiList()
-        return json(Dict("result"=>true,"Jetelina" => copy.(eachrow(JetelinaReadSqlList.Df_JetelinaSqlList))))
+        return json(Dict("result"=>true,"Jetelina" => copy.(eachrow(ReadSqlList.Df_JetelinaSqlList))))
     end
 end

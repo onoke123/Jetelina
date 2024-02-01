@@ -33,9 +33,9 @@ module DBDataController
 #    using JetelinaLog, JetelinaReadConfig, JetelinaFiles, JetelinaReadSqlList, PgDBController, PgSQLSentenceManager
 
 #    include("JetelinaLog.jl")
-    include("JetelinaReadConfig.jl")
-    include("JetelinaFiles.jl")
-    include("JetelinaReadSqlList.jl")
+    include("ReadConfig.jl")
+#    include("JFiles.jl")
+    include("ReadSqlList.jl")
     include("libs/postgres/PgDBController.jl")
 #1/29    include("PgSQLSentenceManager.jl")
 
@@ -43,7 +43,7 @@ module DBDataController
         executeApi, userRegist, chkUserExistence, getUserInfoKeys,refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount,
         createApiSelectSentence
 
-    const j_config = JetelinaReadConfig
+    const j_config = ReadConfig
 
     """
     function __init__()
@@ -196,7 +196,7 @@ module DBDataController
                 use subset() here, because Df_JetelinaSqlList may have missing data.
                 subset() supports 'skipmissing', but filter() does not.
         ===#
-        target_api = subset(JetelinaReadSqlList.Df_JetelinaSqlList, :apino => ByRow(==(json_d["apino"])), skipmissing=true)
+        target_api = subset(ReadSqlList.Df_JetelinaSqlList, :apino => ByRow(==(json_d["apino"])), skipmissing=true)
         if 0 < nrow(target_api)
             # Step2:
             if j_config.JetelinaDBtype == "postgresql"

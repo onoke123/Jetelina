@@ -28,11 +28,11 @@ module PostDataController
 #    using PgSQLSentenceManager,JetelinaFiles
 
     include("DBDataController.jl")
-    include("JetelinaReadConfig.jl")
-    include("JetelinaLog.jl")
-    include("JetelinaReadSqlList.jl")
+    include("ReadConfig.jl")
+    include("JLog.jl")
+#    include("ReadSqlList.jl")
 #1/29    include("PgSQLSentenceManager.jl")
-    include("JetelinaFiles.jl")
+#    include("JetelinaFiles.jl")
 
     export createApi,getColumns,deleteTable,userRegist,login,getUserInfoKeys,refUserAttribute,updateUserInfo,
             updateUserData,updateUserLoginData,deleteUserAccount,deleteApi,handleApipostdata
@@ -325,7 +325,7 @@ module PostDataController
                 end
             end
         catch err
-            JetelinaLog.writetoLogfile("PostDataController.deleteApi() error: $err")
+            JLog.writetoLogfile("PostDataController.deleteApi() error: $err")
             return false
         end
 
@@ -333,7 +333,7 @@ module PostDataController
         mv(apiFile_tmp, apiFile, force=true)
 
         # update DataFrame
-        JetelinaReadSqlList.readSqlList2DataFrame()
+        ReadSqlList.readSqlList2DataFrame()
 
         return true
     end  

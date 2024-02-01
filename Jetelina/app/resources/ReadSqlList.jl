@@ -1,5 +1,5 @@
 """
-module: JetelinaReadSqlList
+module: ReadSqlList
 
 Author: Ono keiji
 Version: 1.0
@@ -11,17 +11,17 @@ functions
     readSqlList2DataFrame()   import registered SQL sentence list in JetelinaSQLListfile to DataFrame.
                               this function set the sql list data in the global variable 'Df_JetelinaSqlList' as DataFrame object.
 """
-module JetelinaReadSqlList
+module ReadSqlList
 
     using DataFrames, CSV
 #    using JetelinaReadConfig, JetelinaFiles
 
-    include("JetelinaReadConfig.jl")
-    include("JetelinaFiles.jl")
+    include("ReadConfig.jl")
+    include("JFiles.jl")
     
     export Df_JetelinaSqlList, readSqlList2DataFrame
 
-    const j_config = JetelinaReadConfig
+    const j_config = ReadConfig
 
     """
     function __init__()
@@ -38,13 +38,13 @@ module JetelinaReadSqlList
         this function set the sql list data in the global variable 'Df_JetelinaSqlList' as DataFrame object.
     """
     function readSqlList2DataFrame()
-        sqlFile = JetelinaFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
+        sqlFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
         if isfile(sqlFile)
             df = CSV.read( sqlFile, DataFrame )
             global Df_JetelinaSqlList = df
 
             if j_config.debugflg
-                @info "JetelinaReadSqlList.readSqlList2DataFrame() sql list in DataFrame: ", Df_JetelinaSqlList 
+                @info "ReadSqlList.readSqlList2DataFrame() sql list in DataFrame: ", Df_JetelinaSqlList 
             end
         end
     end

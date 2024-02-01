@@ -1,5 +1,5 @@
 """
-module: JetelinaLog
+module: JLog
 
 Author: Ono keiji
 Version: 1.0
@@ -10,17 +10,17 @@ functions
     writetoLogfile(s)  write 's' to log file. date format is "yyyy-mm-dd HH:MM:SS".'s' is available whatever type.
     writetoSQLLogfile(apino::String, sql::String)  write executed sql with its apino to SQL log file. date format is "yyyy-mm-dd HH:MM:SS".
 """
-module JetelinaLog
+module JLog
 
     using Logging, Dates
 #    using JetelinaReadConfig, JetelinaFiles
 
-    include("JetelinaReadConfig.jl")
-    include("JetelinaFiles.jl")
+    include("ReadConfig.jl")
+    include("JFiles.jl")
 
     export writetoLogfile, writetoSQLLogfile
 
-    const j_config = JetelinaReadConfig
+    const j_config = ReadConfig
 
     """
     function _logfileOpen()
@@ -32,14 +32,14 @@ module JetelinaLog
     - return::tuple (IOStream, Logging.SimpleLogger)
     """
     function _logfileOpen()
-        logfile = JetelinaFiles.getFileNameFromLogPath(j_config.JetelinaLogfile)
+        logfile = JFiles.getFileNameFromLogPath(j_config.JetelinaLogfile)
 
         try
             io = open(logfile, "a+")
             logger = SimpleLogger(io)
             return io, logger
         catch err
-            println("JetelinaLog._logfileOpen(): $err")
+            println("JLog._logfileOpen(): $err")
         end
     end
     """
@@ -92,13 +92,13 @@ module JetelinaLog
                 ref: SQLAnalyzer.createAnalyzedJsonFile()
         ===#
         log_str = string(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"), ",", apino, ",\"", sql,"\"")
-        sqllogfile = JetelinaFiles.getFileNameFromLogPath(j_config.JetelinaSQLLogfile)
+        sqllogfile = JFiles.getFileNameFromLogPath(j_config.JetelinaSQLLogfile)
         try
             open(sqllogfile, "a+") do f
                 println(f, log_str)
             end
         catch err
-            writetoLogfile("JetelinaLog.writeToSQLLogfile() error: $err")
+            writetoLogfile("JLog.writeToSQLLogfile() error: $err")
             return
         end
     end

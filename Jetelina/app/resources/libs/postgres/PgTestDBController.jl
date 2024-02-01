@@ -20,14 +20,14 @@ module PgTestDBController
 #    using JetelinaFiles
 #    using PgSQLSentenceManager
 
-    include("../../JetelinaLog.jl")
-    include("../../JetelinaReadConfig.jl")
-    include("../../JetelinaFiles.jl")
+    include("../../JLog.jl")
+    include("../../ReadConfig.jl")
+#    include("../../JFiles.jl")
 #1/29    include("PgSQLSentenceManager.jl")
 
     export measureSqlPerformance
 
-    const j_config = JetelinaReadConfig
+    const j_config = ReadConfig
     """
     function open_connection()
 
@@ -95,7 +95,7 @@ module PgTestDBController
                 return findmax(exetime), findmin(exetime), sum(exetime)/looptime
         catch err
             println(err)
-            JetelinaLog.writetoLogfile("PgTestDBController.doSelect() with $mode $sql error : $err")
+            JLog.writetoLogfile("PgTestDBController.doSelect() with $mode $sql error : $err")
             return false
         finally
             # close the connection

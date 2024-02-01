@@ -20,7 +20,7 @@ module CSVFileController
 #    using DBDataController
 
 #    include("JetelinaReadConfig.jl")
-#    include("JetelinaLog.jl")
+    include("JLog.jl")
     include("DBDataController.jl")
 
     export read
@@ -37,7 +37,7 @@ module CSVFileController
     function read( csvfname::String )       
         if debugflg
             debugmsg = "csv file: $csvfname"
-            JetelinaLog.writetoLogfile( debugmsg )
+            JLog.writetoLogfile( debugmsg )
         end
 
         # read line count number from the head of the csv file

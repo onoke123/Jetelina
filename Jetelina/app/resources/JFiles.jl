@@ -1,5 +1,5 @@
 """
-module: JetelinaFiles
+module: JFiles
 
 Author: Ono keiji
 Version: 1.0
@@ -12,7 +12,7 @@ functions
     getFileNameFromLogPath(fname)  get full path of Jetelina log files
     fileBackup(fname::String) back up the ordered file with date suffix. ex. <file>.txt -> <file>.txt.yyyymmdd-HHMMSS
 """
-module JetelinaFiles
+module JFiles
 #    using JetelinaLog
     
     export getFileNameFromConfigPath,getJsFileNameFromPublicPath,getFileNameFromLogPath,fileBackup
@@ -29,7 +29,7 @@ module JetelinaFiles
     function getFileNameFromConfigPath(fname)
         fn = string( joinpath( @__DIR__, "config", fname ))
         if !isfile(fn)
-            fn ="JetelinaFiles.getFileNameFromConfigPath: $fn does not exist"
+            fn ="JFiles.getFileNameFromConfigPath: $fn does not exist"
         end
 
         return fn            
@@ -46,7 +46,7 @@ module JetelinaFiles
     function getJsFileNameFromPublicPath(fname)
         fn = string(joinpath(@__DIR__, "..", "..", "public", "jetelina", "js", fname))
         if !isfile(fn)
-            fn = "JetelinaFiles.getJsFileNameFromPublicPath: $fn does not exist"
+            fn = "JFiles.getJsFileNameFromPublicPath: $fn does not exist"
         end
 
         return fn            
@@ -63,7 +63,7 @@ module JetelinaFiles
     function getFileNameFromLogPath(fname)
         fn = string( joinpath( @__DIR__, "log", fname ) )
         if !isfile(fn)
-            fn = "JetelinaFiles.getFileNameFromLogPath: $fn does not exist"
+            fn = "JFiles.getFileNameFromLogPath: $fn does not exist"
         end
 
         return fn            

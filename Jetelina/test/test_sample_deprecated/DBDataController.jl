@@ -1,7 +1,7 @@
 module DBDataController
 
     using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json, SQLite
-    using JetelinaLog, JetelinaReadConfig
+    using JetelinaLog, ReadConfig
     using ExeSql
 
     function getalldbdata()

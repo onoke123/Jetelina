@@ -1,5 +1,5 @@
 """
-module: JetelinaReadConfig
+module: ReadConfig
 
     read configuration parameters from Jetelina.cnf file
     then set them to global variables
@@ -8,11 +8,11 @@ module: JetelinaReadConfig
         __init__()
 """
 
-module JetelinaReadConfig
+module ReadConfig
 
 #    using JetelinaFiles, JetelinaLog
 
-    include("JetelinaFiles.jl")
+    include("JFiles.jl")
     
     export  JetelinaLogfile,# log file name
         debugflg,# debug configuration true/false
@@ -60,7 +60,7 @@ module JetelinaReadConfig
         then set them to the global variables.
     """
     function _readConfig()
-        configfile = JetelinaFiles.getFileNameFromConfigPath("JetelinaConfig.cnf")
+        configfile = JFiles.getFileNameFromConfigPath("JetelinaConfig.cnf")
 
         try
             f = open(configfile, "r")
@@ -124,7 +124,7 @@ module JetelinaReadConfig
                         # type of database
                         global JetelinaDBtype = _getSetting(l[i])
                         if debugflg
-                            @info "JetelinaReadConfig._readConfig() db type:", JetelinaDBtype
+                            @info "ReadConfig._readConfig() db type:", JetelinaDBtype
                         end
 
                         if JetelinaDBtype == "postgresql"
