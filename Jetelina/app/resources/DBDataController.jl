@@ -24,6 +24,7 @@
         updateUserData(uid::Integer,key::String,value) update user data, exept jsonb column
         updateUserLoginData(uid::Integer) update user login data if it succeeded to login
         deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
+        createApiSelectSentence(json_d::Dict) create API and SQL select sentence from posting data.
 """
 
 module DBDataController
@@ -39,7 +40,8 @@ module DBDataController
 #1/29    include("PgSQLSentenceManager.jl")
 
     export init_Jetelina_table, dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,
-        executeApi, userRegist, chkUserExistence, getUserInfoKeys,refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount
+        executeApi, userRegist, chkUserExistence, getUserInfoKeys,refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount,
+        createApiSelectSentence
 
     const j_config = JetelinaReadConfig
 
@@ -102,6 +104,7 @@ module DBDataController
         elseif j_config.JetelinaDBtype == "oracle"
         end
     end
+    #==2/1 deprecated 
     """
     function getSequenceNumber(t::Integer)
 
@@ -118,6 +121,7 @@ module DBDataController
         elseif j_config.JetelinaDBtype == "oracle"
         end
     end
+    ==#
     """
     function dropTable(tableName::String)
             
@@ -197,6 +201,7 @@ module DBDataController
             # Step2:
             if j_config.JetelinaDBtype == "postgresql"
                 # Case in PostgreSQL
+                PgDBController.executeApi(jsond_d, target_api)
 #==1/29
                 sql_str = PgSQLSentenceManager.createExecutionSqlSentence(json_d, target_api)
                 if 0 < length(sql_str)
@@ -360,4 +365,28 @@ module DBDataController
         elseif j_config.JetelinaDBtype == "oracle"
         end
     end
+    """
+    function createApiSelectSentence(json_d::Dict)
+
+        create API and SQL select sentence from posting data.
+
+    # Arguments
+    - `json_d`:  json raw data, uncertain data type        
+    - return: this sql is already existing -> json {"resembled":true}
+              new sql then success to append it to  -> json {"apino":"<something no>"}
+                           fail to append it to     -> false
+    """
+    function createApiSelectSentence(json_d::Dict)
+        ret = ""
+
+        if j_config.JetelinaDBtype == "postgresql"
+            # Case in PostgreSQL
+            ret = PgDBController.createApiSelectSentence(json_d)
+        elseif j_config.JetelinaDBtype == "mariadb"
+        elseif j_config.JetelinaDBtype == "oracle"
+        end
+
+        return ret
+    end
+
 end

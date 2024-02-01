@@ -63,6 +63,7 @@ module PostDataController
     """
     function createApi()
 #1/29        return PgSQLSentenceManager.createApiSelectSentence(jsonpayload())
+        return DBDataController.createApiSelectSentence(jsonpayload())
     end
     """
     function getColumns()

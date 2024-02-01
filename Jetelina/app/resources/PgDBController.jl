@@ -18,7 +18,8 @@
         dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
         dropTable(tableName::String) drop the table and delete its related data from jetelina_table_manager table
         getColumns(tableName::String) get columns name of ordereing table.
-        executeApi(apino::String, sql_str::String) execute API with creating SQL sentence
+        executeApi(json_d::Dict,target_api::DataFrame) execute API order by json data
+        _executeApi(apino::String, sql_str::String) execute API with creating SQL sentence,this is a private function that is called by executeApi()
         doSelect(sql::String,mode::String) execute select data by ordering sql sentence, but get sql execution time of ordered sql if 'mode' is 'measure'.
         measureSqlPerformance() measure exectution time of all listed sql sentences. then write it out to JetelinaSqlPerformancefile.
         create_jetelina_user_table() create 'jetelina_table_user_table' table.
@@ -30,11 +31,14 @@
         updateUserData(uid::Integer,key::String,value) update user data, exept jsonb column
         updateUserLoginData(uid::Integer) update user login data if it succeeded to login
         deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
+        writeTolist(sql::String, tablename_arr::Vector{String}) create api no and write it to JetelinaSQLListfile order by SQL sentence.
+        deleteFromlist(tablename::String) delete table name from JetelinaSQLListfile synchronized with dropping table.
+        createApiSelectSentence(json_d::Dict) create select sentence for api order by pot data
 """
 module PgDBController
     @info "PgDBController"
     using Genie, Genie.Renderer, Genie.Renderer.Json
-    using CSV, LibPQ, DataFrames, IterTools, Tables, DataFrames
+    using CSV, LibPQ, DataFrames, IterTools, Tables
 #    using JetelinaLog, JetelinaReadConfig, JetelinaReadSqlList, PgDataTypeList, JetelinaFiles, PgSQLSentenceManager
 
     include("JetelinaLog.jl")
@@ -42,7 +46,7 @@ module PgDBController
     include("PgDataTypeList.jl")
     include("JetelinaFiles.jl")
     include("JetelinaReadSqlList.jl")
-###1/29    include("PgSQLSentenceManager.jl")
+    include("PgSQLSentenceManager.jl")
 
     export create_jetelina_table,create_jetelina_id_sequence, open_connection, close_connection, readJetelinatable,
         getTableList, getJetelinaSequenceNumber, insert2JetelinaTableManager, dataInsertFromCSV, dropTable, getColumns,
@@ -485,18 +489,20 @@ module PgDBController
             that why do not use cols here. writing select sentence is done in PostDataController.createApiSelectSentence(). 
         ===#
         push!(tablename_arr, tableName)
-#==1/29
         insert_str = PgSQLSentenceManager.createApiInsertSentence(tableName, insert_column_str, insert_data_str)
-        PgSQLSentenceManager.writeTolist(insert_str, "", tablename_arr)
+#        PgSQLSentenceManager.writeTolist(insert_str, "", tablename_arr)
+        writeTolist(insert_str, "", tablename_arr)
 
         # update
         update_str = PgSQLSentenceManager.createApiUpdateSentence(tableName, update_str)
-        PgSQLSentenceManager.writeTolist(update_str[1], update_str[2], tablename_arr)
+#        PgSQLSentenceManager.writeTolist(update_str[1], update_str[2], tablename_arr)
+        writeTolist(update_str[1], update_str[2], tablename_arr)
 
         # delete
         delete_str = PgSQLSentenceManager.createApiDeleteSentence(tableName)
-        PgSQLSentenceManager.writeTolist(delete_str[1], delete_str[2], tablename_arr)
-==#
+#        PgSQLSentenceManager.writeTolist(delete_str[1], delete_str[2], tablename_arr)
+        writeTolist(delete_str[1], delete_str[2], tablename_arr)
+
         if isempty(df_tl)
             # manage to jetelina_table_manager
             insert2JetelinaTableManager(tableName, names(df0))
@@ -543,7 +549,8 @@ module PgDBController
         end
 
         # update SQL list
-#1/29        PgSQLSentenceManager.deleteFromlist(tableName)
+#        PgSQLSentenceManager.deleteFromlist(tableName)
+        deleteFromlist(tableName)
 
         return ret
     end
@@ -585,9 +592,33 @@ module PgDBController
         return ret
     end
     """
-    function executeApi(apino::String,sql_str::String)
+    function executeApi(json_d::Dict,target_api::DataFrame)
+
+        execute API order by json data
+        this function is a parent function that calls _executeApi()
+        determine the target then executs it in _executeApi()
+
+    # Arguments
+    - `json_d::Dict`:  json raw data, uncertain data type        
+    - `target_api::DataFrame`: a part of api/sql DataFrame data        
+    - return: insert/update/delete -> true/false
+            select               -> json format data
+            error                -> false
+    """
+    function executeApi(json_d::Dict,target_api::DataFrame)
+        ret = ""
+        sql_str = PgSQLSentenceManager.createExecutionSqlSentence(json_d, target_api)
+        if 0 < length(sql_str)
+            ret = _executeApi(json_d["apino"], sql_str)
+        end
+
+        return ret
+    end
+    """
+    function _executeApi(apino::String,sql_str::String)
 
         execute API with creating SQL sentence
+        this is a private function that is called by executeApi()
 
     # Arguments
     - `apino::String`:  apino
@@ -596,7 +627,7 @@ module PgDBController
             select               -> json format data
             error                -> false
     """
-    function executeApi(apino::String, sql_str::String)
+    function _executeApi(apino::String, sql_str::String)
         ret = ""
 
         conn = open_connection()
@@ -1099,5 +1130,164 @@ module PgDBController
 
         return ret
     end
+    """
+    function writeTolist(sql::String, tablename_arr::Vector{String})
 
+        create api no and write it to JetelinaSQLListfile order by SQL sentence.
+        
+    # Arguments
+    - `sql::String`: sql sentence
+    - `subquery::String`: sub query sentence
+    - `tablename_arr::Vector{String}`: table name list that are used in 'sql'
+    """
+    function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String})
+        sqlFile = JetelinaFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
+        tableapiFile = JetelinaFiles.getFileNameFromConfigPath(j_config.JetelinaTableApifile)
+
+        # get the sequence name then create the sql sentence
+        seq_no = getJetelinaSequenceNumber(1)
+        suffix = string()
+
+        if startswith(sql, "insert")
+            suffix = "ji"
+        elseif startswith(sql,"update") && contains(sql,"jetelina_delete_flg=1")
+            suffix = "jd"
+        elseif startswith(sql, "update")
+            suffix = "ju"
+        elseif startswith(sql, "select")
+            suffix = "js"
+#        elseif startswith(sql, "delete")
+#            suffix = "jd"
+        end
+
+        sql = strip(sql)
+        sqlsentence = """$suffix$seq_no,\"$sql\",\"$subquery\""""
+
+        if debugflg
+            @info "PgDBController.writeTolist() sql sentence: ", sqlsentence
+        end
+
+        # write the sql to the file
+        thefirstflg = true
+        if !isfile(sqlFile)
+            thefirstflg = false
+        end
+
+        try
+            open(sqlFile, "a") do f
+                if !thefirstflg
+                    println(f, string(j_config.JetelinaFileColumnApino,',',j_config.JetelinaFileColumnSql,',',j_config.JetelinaFileColumnSubQuery))
+                end
+
+
+                println(f, sqlsentence)
+            end
+        catch err
+            JetelinaLog.writetoLogfile("PgDBController.writeTolist() error: $err")
+            return false, nothing
+        end
+
+        # write the relation between tables and api to the file
+        try
+            open(tableapiFile, "a") do ff
+                println(ff, string(suffix, seq_no, ":", join(tablename_arr, ",")))
+            end
+        catch err
+            JetelinaLog.writetoLogfile("PgDBController.writeTolist() error: $err")
+            return false, nothing
+        end
+
+        # update DataFrame
+        JetelinaReadSqlList.readSqlList2DataFrame()
+
+        return true, string(suffix, seq_no)
+    end
+    """
+    function deleteFromlist(tablename::String)
+
+        delete table name from JetelinaSQLListfile synchronized with dropping table.
+
+    # Arguments
+    - `tablename::String`: target table name
+    - return: boolean: true -> all done ,  false -> something failed
+    """
+    function deleteFromlist(tablename::String)
+        sqlFile = JetelinaFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
+        tableapiFile = JetelinaFiles.getFileNameFromConfigPath(j_config.JetelinaTableApifile)
+        sqlTmpFile = JetelinaFiles.getFileNameFromConfigPath(string(j_config.JetelinaSQLListfile,".tmp"))
+        tableapiTmpFile = JetelinaFiles.getFileNameFromConfigPath("JetelinaTableApi.tmp")
+
+        targetapi = []
+        # take the backup file
+        fileBackup(tableapiFile)
+        fileBackup(sqlFile)
+
+        try
+            open(tableapiTmpFile, "w") do ttaf
+                open(tableapiFile, "r") do taf
+                    # Tips: delete line feed by 'keep=false', then do println()
+                    for ss in eachline(taf, keep=false)
+                        if contains( ss, ':' )
+                            p = split(ss, ":") # api_name:table,table,....
+                            tmparr = split(p[2], ',')
+                            if tablename ∈ tmparr
+                                push!(targetapi, p[1]) # ["js1","ji2,.....]
+                            else
+                                # remain others in the file
+                                println(ttaf, ss)
+                            end
+                        end
+                    end
+                end
+            end
+        catch err
+            JetelinaLog.writetoLogfile("PgDBController.deleteFromlist() error: $err")
+            return false
+        end
+
+        # remain SQL sentence not include in the target api
+        try
+            open(sqlTmpFile, "w") do tf
+                open(sqlFile, "r") do f
+                    for ss in eachline(f, keep=false)
+                        p = split(ss, "\"") # js1,"select..."
+                        if rstrip(p[1], ',') ∈ targetapi # yes, this is＼(^o^)／
+                        # skip it because of including in it
+                        else
+                            # write out sql that does not contain the target table
+                            println(tf, ss)
+                        end
+                    end
+                end
+            end
+        catch err
+            JetelinaLog.writetoLogfile("PgDBController.deleteFromlist() error: $err")
+            return false
+        end
+
+        # change the file name
+        mv(sqlTmpFile, sqlFile, force=true)
+        mv(tableapiTmpFile, tableapiFile, force=true)
+
+        # update DataFrame
+        JetelinaReadSqlList.readSqlList2DataFrame()
+
+        return true
+    end
+
+    """
+    function createApiSelectSentence(json_d::Dict)
+
+        create select sentence for api order by pot data
+        this function is an interface function meet DBDataController to PgSQLSentencemanager 
+
+    # Arguments
+    - `json_d::Dict`: json data
+    - return: this sql is already existing -> json {"resembled":true}
+              new sql then success to append it to  -> json {"apino":"<something no>"}
+                           fail to append it to     -> false
+    """
+    function createApiSelectSentence(json_d::Dict)
+        return PgSQLSentenceManager.createApiSelectSentence(json_d)
+    end
 end

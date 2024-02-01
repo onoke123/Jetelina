@@ -10,11 +10,12 @@ functions
     getFileNameFromConfigPath(fname)  get full path of Jetelina Configuration files
     getJsFileNameFromPublicPath(fname)  get full path of Jetelina public files
     getFileNameFromLogPath(fname)  get full path of Jetelina log files
+    fileBackup(fname::String) back up the ordered file with date suffix. ex. <file>.txt -> <file>.txt.yyyymmdd-HHMMSS
 """
 module JetelinaFiles
 #    using JetelinaLog
     
-    export getFileNameFromConfigPath,getJsFileNameFromPublicPath,getFileNameFromLogPath
+    export getFileNameFromConfigPath,getJsFileNameFromPublicPath,getFileNameFromLogPath,fileBackup
 
     """
     function getFileNameFromConfigPath(fname)
@@ -66,6 +67,18 @@ module JetelinaFiles
         end
 
         return fn            
+    end
+    """
+    function fileBackup(fname::String)
+
+        back up the ordered file with date suffix. ex. <file>.txt -> <file>.txt.yyyymmdd-HHMMSS
+
+    # Arguments
+    - `fname::String`: target file name
+    """
+    function fileBackup(fname::String)
+        backupfilesuffix = Dates.format(now(), "yyyymmdd-HHMMSS")
+        cp(fname, string(fname, backupfilesuffix), force=true)
     end
 
 end

@@ -7,9 +7,6 @@ Description:
     General DB action controller
 
 functions
-    writeTolist(sql::String, subquery::String, tablename_arr::Vector{String})  create api no and write it to JetelinaSQLListfile order by SQL sentence.
-    deleteFromlist(tablename::String)  delete table name from JetelinaSQLListfile synchronized with dropping table.
-    fileBackup(fname::String)  back up the ordered file with date suffix. ex. <file>.txt -> <file>.txt.yyyymmdd-HHMMSS
     sqlDuplicationCheck(nsql::String, subq::String)  confirm duplication, if 'nsql' exists in JetelinaSQLListfile.but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
     checkSubQuery(subquery::String) check posted subquery strings wheather exists any illegal strings in it.
     createApiInsertSentence(tn::String,cs::String,ds::String) create sql input sentence by queries.
@@ -20,17 +17,19 @@ functions
 """
 module PgSQLSentenceManager
     @info "PgSQLSentenceManager"
-    using Dates, StatsBase, CSV, DataFrames
+#    using Dates, StatsBase, CSV, DataFrames
+    using DataFrames
     using Genie, Genie.Requests, Genie.Renderer.Json
 #    using DBDataController, JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
 
-    include("DBDataController.jl")
+#    include("DBDataController.jl")
     include("JetelinaReadConfig.jl")
     include("JetelinaLog.jl")
-    include("JetelinaReadSqlList.jl")
+#    include("JetelinaReadSqlList.jl")
     include("JetelinaFiles.jl")
 
-    export writeTolist,deleteFromlist,fileBackup,sqlDuplicationCheck,checkSubQuery,createApiInsertSentence,createApiUpdateSentence,createApiDeleteSentence,createApiSelectSentence,createExecutionSqlSentence
+#    export writeTolist,deleteFromlist,fileBackup,sqlDuplicationCheck,checkSubQuery,createApiInsertSentence,createApiUpdateSentence,createApiDeleteSentence,createApiSelectSentence,createExecutionSqlSentence
+    export sqlDuplicationCheck,checkSubQuery,createApiInsertSentence,createApiUpdateSentence,createApiDeleteSentence,createApiSelectSentence,createExecutionSqlSentence
     
     const j_config = JetelinaReadConfig
 
@@ -38,6 +37,7 @@ module PgSQLSentenceManager
 #    sqlFile = JetelinaFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
 #    tableapiFile = JetelinaFiles.getFileNameFromConfigPath(j_config.JetelinaTableApifile)
 
+    #==2/1 deprecated
     """
     function writeTolist(sql::String, tablename_arr::Vector{String})
 
@@ -110,7 +110,8 @@ module PgSQLSentenceManager
 
         return true, string(suffix, seq_no)
     end
-
+    ==#
+    #==2/1 deprecated
     """
     function deleteFromlist(tablename::String)
 
@@ -196,7 +197,7 @@ module PgSQLSentenceManager
         backupfilesuffix = Dates.format(now(), "yyyymmdd-HHMMSS")
         cp(fname, string(fname, backupfilesuffix), force=true)
     end
-
+    ==#
     """
     function sqlDuplicationCheck(nsql::String, subq::String)
 
