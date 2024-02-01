@@ -36,7 +36,7 @@ module DBDataController
     include("JetelinaReadConfig.jl")
     include("JetelinaFiles.jl")
     include("JetelinaReadSqlList.jl")
-    include("PgDBController.jl")
+    include("libs/postgres/PgDBController.jl")
 #1/29    include("PgSQLSentenceManager.jl")
 
     export init_Jetelina_table, dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,

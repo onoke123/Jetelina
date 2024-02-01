@@ -20,9 +20,9 @@ module PgTestDBController
 #    using JetelinaFiles
 #    using PgSQLSentenceManager
 
-    include("JetelinaLog.jl")
-    include("JetelinaReadConfig.jl")
-    include("JetelinaFiles.jl")
+    include("../../JetelinaLog.jl")
+    include("../../JetelinaReadConfig.jl")
+    include("../../JetelinaFiles.jl")
 #1/29    include("PgSQLSentenceManager.jl")
 
     export measureSqlPerformance

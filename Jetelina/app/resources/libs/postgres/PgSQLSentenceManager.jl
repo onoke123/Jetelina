@@ -23,10 +23,10 @@ module PgSQLSentenceManager
 #    using DBDataController, JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
 
 #    include("DBDataController.jl")
-    include("JetelinaReadConfig.jl")
-    include("JetelinaLog.jl")
-    include("JetelinaReadSqlList.jl")
-    include("JetelinaFiles.jl")
+    include("../../JetelinaReadConfig.jl")
+    include("../../JetelinaLog.jl")
+    include("../../JetelinaReadSqlList.jl")
+    include("../../JetelinaFiles.jl")
 
 #    export writeTolist,deleteFromlist,fileBackup,sqlDuplicationCheck,checkSubQuery,createApiInsertSentence,createApiUpdateSentence,createApiDeleteSentence,createApiSelectSentence,createExecutionSqlSentence
     export sqlDuplicationCheck,checkSubQuery,createApiInsertSentence,createApiUpdateSentence,createApiDeleteSentence,createApiSelectSentence,createExecutionSqlSentence

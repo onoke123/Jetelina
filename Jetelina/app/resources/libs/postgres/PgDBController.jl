@@ -41,11 +41,11 @@ module PgDBController
     using CSV, LibPQ, DataFrames, IterTools, Tables
 #    using JetelinaLog, JetelinaReadConfig, JetelinaReadSqlList, PgDataTypeList, JetelinaFiles, PgSQLSentenceManager
 
-    include("JetelinaLog.jl")
-    include("JetelinaReadConfig.jl")
+    include("../../JetelinaLog.jl")
+    include("../../JetelinaReadConfig.jl")
+    include("../../JetelinaFiles.jl")
+    include("../../JetelinaReadSqlList.jl")
     include("PgDataTypeList.jl")
-    include("JetelinaFiles.jl")
-    include("JetelinaReadSqlList.jl")
     include("PgSQLSentenceManager.jl")
 
     export create_jetelina_table,create_jetelina_id_sequence, open_connection, close_connection, readJetelinatable,
