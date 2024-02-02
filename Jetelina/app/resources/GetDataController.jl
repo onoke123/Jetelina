@@ -18,12 +18,9 @@ functions
 module GetDataController
 
     using Genie, Genie.Requests,Genie.Renderer.Json
-#    using DBDataController
-#    using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
 
     include("DBDataController.jl")
     include("ReadConfig.jl")
-#    include("JetelinaLog.jl")
     include("ReadSqlList.jl")
     include("JFiles.jl")
 
@@ -116,7 +113,6 @@ module GetDataController
         f = JFiles.getFileNameFromLogPath( j_config.JetelinaImprApis )
         if isfile(f)
             return readchomp(f)
-            #            return isfile(f)
         else
             return false
         end

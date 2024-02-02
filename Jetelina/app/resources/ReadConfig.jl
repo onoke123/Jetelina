@@ -10,8 +10,6 @@ module: ReadConfig
 
 module ReadConfig
 
-#    using JetelinaFiles, JetelinaLog
-
     include("JFiles.jl")
     
     export  JetelinaLogfile,# log file name
@@ -149,7 +147,7 @@ module ReadConfig
 
             close(f)
         catch err
-#            JetelinaLog.writetoLogfile("Jetelina_readConfig._readConfig() error: $err")
+            @error "ReadConfig._readConfig() error: $err"
             return false
         end
 

@@ -11,7 +11,6 @@
         init_Jetelina_table() Execute *.create_jetelina_table() depend on DB type.Execute *.readJetelinatable() depend on DB type.
         dataInsertFromCSV(csvfname::String) CSV data inserts into DB. It executes in *.dataInsertFromCSV depend on DB type.
         getTableList(s::String) Get the ordered table list by executing *.getTable() depend on DB type
-        getSequenceNumber(t::Integer) Get seaquence number from jetelina_id table depend on DB type.
         dropTable(tableName::String) Drop the table and delete its related data from jetelina_table_manager table
         getColumns(tableName::String) Get columns of ordered table name depend on DB type.
         doSelect(sql::String,mode::String)
@@ -28,16 +27,12 @@
 """
 
 module DBDataController
-    @info "DBDataController"
-    using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json
-#    using JetelinaLog, JetelinaReadConfig, JetelinaFiles, JetelinaReadSqlList, PgDBController, PgSQLSentenceManager
 
-#    include("JetelinaLog.jl")
+    using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json
+
     include("ReadConfig.jl")
-#    include("JFiles.jl")
     include("ReadSqlList.jl")
     include("libs/postgres/PgDBController.jl")
-#1/29    include("PgSQLSentenceManager.jl")
 
     export init_Jetelina_table, dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,
         executeApi, userRegist, chkUserExistence, getUserInfoKeys,refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount,
@@ -104,24 +99,6 @@ module DBDataController
         elseif j_config.JetelinaDBtype == "oracle"
         end
     end
-    #==2/1 deprecated 
-    """
-    function getSequenceNumber(t::Integer)
-
-        Get seaquence number from jetelina_id table depend on DB type.
-
-    # Arguments
-    - `t: Integer`  : type order  0-> jetelina_id, 1-> jetelian_sql_sequence        
-    """
-    function getSequenceNumber(t::Integer)
-        if j_config.JetelinaDBtype == "postgresql"
-            # Case in PostgreSQL
-            PgDBController.getJetelinaSequenceNumber(t)
-        elseif j_config.JetelinaDBtype == "mariadb"
-        elseif j_config.JetelinaDBtype == "oracle"
-        end
-    end
-    ==#
     """
     function dropTable(tableName::String)
             
@@ -202,13 +179,6 @@ module DBDataController
             if j_config.JetelinaDBtype == "postgresql"
                 # Case in PostgreSQL
                 PgDBController.executeApi(jsond_d, target_api)
-#==1/29
-                sql_str = PgSQLSentenceManager.createExecutionSqlSentence(json_d, target_api)
-                if 0 < length(sql_str)
-                    # Step3:
-                    ret = PgDBController.executeApi(json_d["apino"], sql_str)
-                end
-===#
             end
         elseif j_config.JetelinaDBtype == "mariadb"
         elseif j_config.JetelinaDBtype == "oracle"

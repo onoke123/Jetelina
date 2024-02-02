@@ -14,7 +14,6 @@ functions
 module ReadSqlList
 
     using DataFrames, CSV
-#    using JetelinaReadConfig, JetelinaFiles
 
     include("ReadConfig.jl")
     include("JFiles.jl")

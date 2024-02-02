@@ -13,7 +13,6 @@ functions
 module JLog
 
     using Logging, Dates
-#    using JetelinaReadConfig, JetelinaFiles
 
     include("ReadConfig.jl")
     include("JFiles.jl")

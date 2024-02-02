@@ -7,6 +7,7 @@ Description:
     all controll for poting data from clients
 
 functions
+    handleApipostdata() execute ordered API by posting data.
     createApi()  create API and SQL select sentence from posting data.
     getColumns()  get ordered tables's columns with json style.ordered table name is posted as the name 'tablename' in jsonpayload().
     deleteTable()  delete table by ordering. this function calls DBDataController.dropTable(tableName), so 'delete' meaning is really 'drop'.ordered table name is posted as the name 'tablename' in jsonpayload().
@@ -23,19 +24,14 @@ functions
 module PostDataController
 
     using Genie, Genie.Requests, Genie.Renderer.Json
-#    using DBDataController
-#    using JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList
-#    using PgSQLSentenceManager,JetelinaFiles
 
     include("DBDataController.jl")
     include("ReadConfig.jl")
     include("JLog.jl")
-#    include("ReadSqlList.jl")
-#1/29    include("PgSQLSentenceManager.jl")
-#    include("JetelinaFiles.jl")
+    include("JFiles.jl")
 
-    export createApi,getColumns,deleteTable,userRegist,login,getUserInfoKeys,refUserAttribute,updateUserInfo,
-            updateUserData,updateUserLoginData,deleteUserAccount,deleteApi,handleApipostdata
+    export handleApipostdata,createApi,getColumns,deleteTable,userRegist,login,getUserInfoKeys,refUserAttribute,updateUserInfo,
+            updateUserData,updateUserLoginData,deleteUserAccount,deleteApi
             
     """
     function handleApipostdata()
@@ -62,7 +58,6 @@ module PostDataController
                            fail to append it to     -> false
     """
     function createApi()
-#1/29        return PgSQLSentenceManager.createApiSelectSentence(jsonpayload())
         return DBDataController.createApiSelectSentence(jsonpayload())
     end
     """
@@ -250,8 +245,8 @@ module PostDataController
 
         # adding scenario
         #        scenarioFile = string( joinpath( "..","..","public","jetelina","js","scenario.js" ))
-        scenarioFile = getJsFileNameFromPublicPath("scenario.js")
-        scenarioTmpFile = getJsFileNameFromPublicPath("scenario.tmp")
+        scenarioFile = JFiles.getJsFileNameFromPublicPath("scenario.js")
+        scenarioTmpFile = JFiles.getJsFileNameFromPublicPath("scenario.tmp")
         if debugflg
             @info "PostDataController._addJetelinaWords(): " newwords, arr
             @info "scenario path: " scenarioFile
@@ -271,7 +266,6 @@ module PostDataController
                     if startswith(ss, target_scenario)
                         # add the new word to there at here
                         ss = ss[1:length(ss)-2] * ",\"$newwords\"];"                    
-#                        ss = ss[1:length(ss)-2] * ",'$newwords'];"                    
                     end
 
                     println(tf, ss)
@@ -279,7 +273,7 @@ module PostDataController
             end
         end
 
-        #全部終わったら scenarioTmpFile->scenarioFileとする
+        #after all, return the name of scenarioTmpFile to scenarioFile
         mv( scenarioTmpFile,scenarioFile,force=true)
 
         return true

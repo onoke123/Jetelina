@@ -7,16 +7,12 @@ Description:
     csv file upload controller
 
 functions
-    fup()
+    fup() upload the csv file from fileuplaod.html.
 """
 module FileUploadController
 
     using Genie, Genie.Requests
-#    using JetelinaReadConfig, JetelinaLog
-#    using CSVFileController
 
-#1/29    include("JetelinaReadConfig.jl")
-#1/29    include("JetelinaLog.jl")
     include("CSVFileController.jl")    
 
     export fup

@@ -7,19 +7,12 @@
         Handles CSV files.
 
     functions:
-        read(csvfname::String)
+        read(csvfname::String) read csv file, then insert the csv data into DB.
 """
 module CSVFileController
-    @info "CSVFileController"
     using CSV
     using DataFrames
-#    using Genie, Genie.Renderer, Genie.Renderer.Json
 
-
-#    using JetelinaReadConfig, JetelinaLog
-#    using DBDataController
-
-#    include("JetelinaReadConfig.jl")
     include("JLog.jl")
     include("DBDataController.jl")
 
