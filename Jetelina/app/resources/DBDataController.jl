@@ -34,6 +34,7 @@ module DBDataController
     include("ApiSqlListManager.jl")
     include("ApiSqlListManager.jl")
     include("libs/postgres/PgDBController.jl")
+    include("libs/postgres/PgSQLSentenceManager.jl")
 
     export init_Jetelina_table, dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,
         executeApi, userRegist, chkUserExistence, getUserInfoKeys,refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount,
@@ -187,15 +188,20 @@ module DBDataController
                 use subset() here, because Df_JetelinaSqlList may have missing data.
                 subset() supports 'skipmissing', but filter() does not.
         ===#
-        target_api = subset(ApiSqlListManager.Df_JetelinaSqlList, :apino => ByRow(==(json_d["apino"])), skipmissing=true)
-        if 0 < nrow(target_api)
-            # Step2:
-            if j_config.JetelinaDBtype == "postgresql"
-                # Case in PostgreSQL
-                PgDBController.executeApi(jsond_d, target_api)
+        if ApiSqlListManager.readSqlList2DataFrame()[1]
+            Df_JetelinaSqlList = ApiSqlListManager.readSqlList2DataFrame()[2]
+            target_api = subset(ApiSqlListManager.Df_JetelinaSqlList, :apino => ByRow(==(json_d["apino"])), skipmissing=true)
+            if 0 < nrow(target_api)
+                # Step2:
+                if j_config.JetelinaDBtype == "postgresql"
+                    # Case in PostgreSQL
+                    PgDBController.executeApi(jsond_d, target_api)
+                end
+            elseif j_config.JetelinaDBtype == "mariadb"
+            elseif j_config.JetelinaDBtype == "oracle"
             end
-        elseif j_config.JetelinaDBtype == "mariadb"
-        elseif j_config.JetelinaDBtype == "oracle"
+        else
+            # not found SQL list 
         end
 
         # write execution sql to log file
@@ -365,7 +371,12 @@ module DBDataController
 
         if j_config.JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
-            ret = PgSQLSentenceManager.createApiSelectSentence(json_d)
+            sqn = PgDBController.getJetelinaSequenceNumber(1) # attr '1' means 'jetelian_sql_sequence'. see its function.
+            if 0<sqn
+                ret = PgSQLSentenceManager.createApiSelectSentence(json_d, sqn)
+            else
+                ret = "fail"
+            end
         elseif j_config.JetelinaDBtype == "mariadb"
         elseif j_config.JetelinaDBtype == "oracle"
         end

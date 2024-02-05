@@ -124,6 +124,12 @@ module GetDataController
         api list is refered in Df_JetelinaSqlList.
     """
     function getApiList()
-        return json(Dict("result"=>true,"Jetelina" => copy.(eachrow(ApiSqlListManager.Df_JetelinaSqlList))))
+        if ApiSqlListManager.readSqlList2DataFrame()[1]
+            Df_JetelinaSqlList = ApiSqlListManager.readSqlList2DataFrame()[2]
+            return json(Dict("result"=>true,"Jetelina" => copy.(eachrow(Df_JetelinaSqlList))))
+        else
+            # not found SQL list
+            return false
+        end
     end
 end

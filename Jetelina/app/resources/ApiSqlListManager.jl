@@ -19,7 +19,7 @@ using DataFrames, CSV
     include("ReadConfig.jl")
     include("JFiles.jl")
 
-    export Df_JetelinaSqlList, readSqlList2DataFrame, writeTolist, deleteFromlist
+    export readSqlList2DataFrame, writeTolist, deleteFromlist #, Df_JetelinaSqlList
 
     const j_config = ReadConfig
 
@@ -36,20 +36,28 @@ using DataFrames, CSV
 
         import registered SQL sentence list in JetelinaSQLListfile to DataFrame.
         this function set the sql list data in the global variable 'Df_JetelinaSqlList' as DataFrame object.
+
+    # Arguments
+    - return: Tuple: suceeded (true::Boolean, list of api/sql::DataFrames)
+                     failed   (false::Boolean, nothing)
+
     """
     function readSqlList2DataFrame()
         sqlFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
         if isfile(sqlFile)
             df = CSV.read( sqlFile, DataFrame )
-            global Df_JetelinaSqlList = df
-
+#            global Df_JetelinaSqlList = df
             if j_config.debugflg
-                @info "ApiSqlListManager.readSqlList2DataFrame() sql list in DataFrame: ", Df_JetelinaSqlList 
+                @info "ApiSqlListManager.readSqlList2DataFrame() sql list in DataFrame: ", df #Df_JetelinaSqlList 
             end
+
+            return true, df
         end
+
+        return false, nothing
     end
     """
-    function writeTolist(sql::String, tablename_arr::Vector{String})
+    function writeTolist(sql::String, tablename_arr::Vector{String}, seq_no::Integer)
 
         create api no and write it to JetelinaSQLListfile order by SQL sentence.
         
@@ -57,13 +65,14 @@ using DataFrames, CSV
     - `sql::String`: sql sentence
     - `subquery::String`: sub query sentence
     - `tablename_arr::Vector{String}`: table name list that are used in 'sql'
+    - `seq_no::Integer`: number of jetelian_sql_sequence
+    - return: Tuple: suceeded (true::Boolean, api number name::String)
+                     failed   (false::Boolean, nothing)
     """
-    function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String})
+    function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String}, seq_no::Integer)
         sqlFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
         tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaTableApifile)
 
-        # get the sequence name then create the sql sentence
-        seq_no = getJetelinaSequenceNumber(1)
         suffix = string()
 
         if startswith(sql, "insert")
@@ -92,7 +101,6 @@ using DataFrames, CSV
                 if !thefirstflg
                     println(f, string(j_config.JetelinaFileColumnApino,',',j_config.JetelinaFileColumnSql,',',j_config.JetelinaFileColumnSubQuery))
                 end
-
 
                 println(f, sqlsentence)
             end

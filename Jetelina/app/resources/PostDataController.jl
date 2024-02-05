@@ -33,7 +33,9 @@ module PostDataController
 
     export handleApipostdata,createApi,getColumns,deleteTable,userRegist,login,getUserInfoKeys,refUserAttribute,updateUserInfo,
             updateUserData,updateUserLoginData,deleteUserAccount,deleteApi
-            
+
+    const j_config = ReadConfig    
+
     """
     function handleApipostdata()
 
@@ -290,13 +292,14 @@ module PostDataController
             return false
         end
         
-        apiFile = getFileNameFromConfigPath(JetelinaSQLListfile)
-        apiFile_tmp = getFileNameFromConfigPath(string(JetelinaSQLListfile,".tmp"))
+        apiFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
+        apiFile_tmp = JFiles.getFileNameFromConfigPath(string(j_config.JetelinaSQLListfile,".tmp"))
 
         try
             open(apiFile_tmp, "w") do tio
                 # write header first
-                println(tio,string("$JetelinaFileColumnApino,$JetelinaFileColumnSql,$JetelinaFileColumnSubQuery"))
+                colstr = string(j_config.JetelinaFileColumnApino,",",j_config.JetelinaFileColumnSql,",", j_config.JetelinaFileColumnSubQuery)
+                println(tio, colstr)
                 open(apiFile, "r") do io
                     for ss in eachline(io,keep=false)
                         if contains( ss, '\"' )

@@ -31,7 +31,6 @@
         updateUserData(uid::Integer,key::String,value) update user data, exept jsonb column
         updateUserLoginData(uid::Integer) update user login data if it succeeded to login
         deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
-        writeTolist(sql::String, tablename_arr::Vector{String}) create api no and write it to JetelinaSQLListfile order by SQL sentence.
 """
 module PgDBController
 
@@ -475,22 +474,22 @@ using Genie, Genie.Renderer, Genie.Renderer.Json
             Tips:
             cols(see above) is ["id", "name", "sex", "age", "ave", "jetelina_delete_flg"], so can use it when
             wanna use column name, but need to judge the data type both the case of 'insert' and 'update', 
-            that why do not use cols here. writing select sentence is done in PostDataController.createApiSelectSentence(). 
+            that why do not use cols here. writing select sentence is done in PgSQLSentenceManager.createApiSelectSentence(). 
         ===#
         push!(tablename_arr, tableName)
         insert_str = PgSQLSentenceManager.createApiInsertSentence(tableName, insert_column_str, insert_data_str)
 #        PgSQLSentenceManager.writeTolist(insert_str, "", tablename_arr)
-        writeTolist(insert_str, "", tablename_arr)
+        ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, getJetelinaSequenceNumber(1))
 
         # update
         update_str = PgSQLSentenceManager.createApiUpdateSentence(tableName, update_str)
 #        PgSQLSentenceManager.writeTolist(update_str[1], update_str[2], tablename_arr)
-        writeTolist(update_str[1], update_str[2], tablename_arr)
+        ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, getJetelinaSequenceNumber(1))
 
         # delete
         delete_str = PgSQLSentenceManager.createApiDeleteSentence(tableName)
 #        PgSQLSentenceManager.writeTolist(delete_str[1], delete_str[2], tablename_arr)
-        writeTolist(delete_str[1], delete_str[2], tablename_arr)
+        ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, getJetelinaSequenceNumber(1))
 
         if isempty(df_tl)
             # manage to jetelina_table_manager
@@ -1113,73 +1112,5 @@ using Genie, Genie.Renderer, Genie.Renderer.Json
         end
 
         return ret
-    end
-    """
-    function writeTolist(sql::String, tablename_arr::Vector{String})
-
-        create api no and write it to JetelinaSQLListfile order by SQL sentence.
-        
-    # Arguments
-    - `sql::String`: sql sentence
-    - `subquery::String`: sub query sentence
-    - `tablename_arr::Vector{String}`: table name list that are used in 'sql'
-    """
-    function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String})
-        sqlFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
-        tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaTableApifile)
-
-        # get the sequence name then create the sql sentence
-        seq_no = getJetelinaSequenceNumber(1)
-        suffix = string()
-
-        if startswith(sql, "insert")
-            suffix = "ji"
-        elseif startswith(sql,"update") && contains(sql,"jetelina_delete_flg=1")
-            suffix = "jd"
-        elseif startswith(sql, "update")
-            suffix = "ju"
-        elseif startswith(sql, "select")
-            suffix = "js"
-#        elseif startswith(sql, "delete")
-#            suffix = "jd"
-        end
-
-        sql = strip(sql)
-        sqlsentence = """$suffix$seq_no,\"$sql\",\"$subquery\""""
-
-        # write the sql to the file
-        thefirstflg = true
-        if !isfile(sqlFile)
-            thefirstflg = false
-        end
-
-        try
-            open(sqlFile, "a") do f
-                if !thefirstflg
-                    println(f, string(j_config.JetelinaFileColumnApino,',',j_config.JetelinaFileColumnSql,',',j_config.JetelinaFileColumnSubQuery))
-                end
-
-
-                println(f, sqlsentence)
-            end
-        catch err
-            JLog.writetoLogfile("PgDBController.writeTolist() error: $err")
-            return false, nothing
-        end
-
-        # write the relation between tables and api to the file
-        try
-            open(tableapiFile, "a") do ff
-                println(ff, string(suffix, seq_no, ":", join(tablename_arr, ",")))
-            end
-        catch err
-            JLog.writetoLogfile("PgDBController.writeTolist() error: $err")
-            return false, nothing
-        end
-
-        # update DataFrame
-        ApiSqlListManager.readSqlList2DataFrame()
-
-        return true, string(suffix, seq_no)
     end
 end

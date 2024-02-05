@@ -12,12 +12,12 @@ functions
     createApiInsertSentence(tn::String,cs::String,ds::String) create sql input sentence by queries.
     createApiUpdateSentence(tn::String,us::Any) create sql update sentence by queries.
     createApiDeleteSentence(tn::String) create sql delete sentence by query.
-    createApiSelectSentence(json_d::Dict) create select sentence of SQL from posting data,
+    createApiSelectSentence(json_d::Dict, seq_no::Integer) create select sentence of SQL from posting data,
     createExecutionSqlSentence(json_dict::Dict, df::DataFrame) create real execution SQL sentence.
 """
 module PgSQLSentenceManager
 
-    using DataFrames
+    using DataFrames, StatsBase
     using Genie, Genie.Requests, Genie.Renderer.Json
 
     include("../../ReadConfig.jl")
@@ -41,38 +41,41 @@ module PgSQLSentenceManager
                not exist -> false
     """
     function sqlDuplicationCheck(nsql::String, subq::String)
-        # already exist?
-        for i=1:nrow(ApiSqlListManager.Df_JetelinaSqlList)
-            #===
-                Tips:
-                    the result in process4 will be
-                        exist -> length(process4)=1
-                        not exist -> length(process4)=2
-                    because coutmap() do group together.
-            ===#
-            # duplication check for SQL
-            strs = [nsql,ApiSqlListManager.Df_JetelinaSqlList[!,:sql][i]]
-            process1 = split.(strs,r"\W",keepempty=false)
-            process2 = map(x->lowercase.(x),process1)
-            process3 = sort.(process2)
-            process4 = countmap(process3)
-            # duplication check for Sub query
-            sq = ApiSqlListManager.Df_JetelinaSqlList[!,:subquery][i]
-            if !ismissing(sq)
-                s_strs = [subq,sq]
-                s_process1 = split.(s_strs,r"\W",keepempty=false)
-                s_process2 = map(y->lowercase.(y),s_process1)
-                s_process3 = sort.(s_process2)
-                s_process4 = countmap(s_process3)
-            else
-                # in the case of all were 'missing',be length(s_prrocess4)=1, anyhow :p
-                s_process4 = ["dummy"];
-            end
+        if ApiSqlListManager.readSqlList2DataFrame()[1]
+            Df_JetelinaSqlList = ApiSqlListManager.readSqlList2DataFrame()
+            # already exist?
+            for i=1:nrow(Df_JetelinaSqlList)
+                #===
+                    Tips:
+                        the result in process4 will be
+                            exist -> length(process4)=1
+                            not exist -> length(process4)=2
+                        because coutmap() do group together.
+                ===#
+                # duplication check for SQL
+                strs = [nsql,Df_JetelinaSqlList[!,:sql][i]]
+                process1 = split.(strs,r"\W",keepempty=false)
+                process2 = map(x->lowercase.(x),process1)
+                process3 = sort.(process2)
+                process4 = countmap(process3)
+                # duplication check for Sub query
+                sq = Df_JetelinaSqlList[!,:subquery][i]
+                if !ismissing(sq)
+                    s_strs = [subq,sq]
+                    s_process1 = split.(s_strs,r"\W",keepempty=false)
+                    s_process2 = map(y->lowercase.(y),s_process1)
+                    s_process3 = sort.(s_process2)
+                    s_process4 = countmap(s_process3)
+                else
+                    # in the case of all were 'missing',be length(s_prrocess4)=1, anyhow :p
+                    s_process4 = ["dummy"];
+                end
 
-            if length(process4) == 1 && length(s_process4) == 1
-                return true, ApiSqlListManager.Df_JetelinaSqlList[!,:apino][i]
-            end
+                if length(process4) == 1 && length(s_process4) == 1
+                    return true, Df_JetelinaSqlList[!,:apino][i]
+                end
 
+            end
         end
 
         # consequently, not exist.
@@ -134,17 +137,18 @@ module PgSQLSentenceManager
         return  """update $tn set jetelina_delete_flg=1""", """where jt_id={jt_id}"""
     end
     """
-    function createApiSelectSentence(json_d::Dict)
+    function createApiSelectSentence(json_d::Dict, seq_no::Integer)
 
         create API and SQL select sentence from posting data,then append it to JetelinaTableApifile.
 
     # Arguments
     - `json_d::Dict`: json data
+    - `seq_no::Integer`: number of jetelian_sql_sequence
     - return: this sql is already existing -> json {"resembled":true}
               new sql then success to append it to  -> json {"apino":"<something no>"}
                            fail to append it to     -> false
     """
-    function createApiSelectSentence(json_d)
+    function createApiSelectSentence(json_d, seq_no::Integer)
         item_d = json_d["item"]
         subq_d = json_d["subquery"]
 
@@ -172,7 +176,7 @@ module PgSQLSentenceManager
         #===
             Tips: 
                 put into array to write it to JetelinaTableApifile. 
-                This is used in writeTolist().
+                This is used in ApiSqlListManager.writeTolist().
         ===#
         tablename_arr::Vector{String} = []
         
@@ -209,7 +213,7 @@ module PgSQLSentenceManager
             return json(Dict("result"=>false,"resembled" => ck[2]))
         else
             # yes this is the new
-            ret = writeTolist(selectSql, subq_d, tablename_arr)
+            ret = ApiSqlListManager.writeTolist(selectSql, subq_d, tablename_arr, seq_no)
             #===
                 Tips:
                     writeTolist() returns tuple({true/false,apino/null}).
