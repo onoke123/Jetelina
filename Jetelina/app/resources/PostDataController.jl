@@ -26,6 +26,7 @@ module PostDataController
     using Genie, Genie.Requests, Genie.Renderer.Json
 
     include("DBDataController.jl")
+    include("ApiSqlListManager.jl")
     include("ReadConfig.jl")
     include("JLog.jl")
     include("JFiles.jl")
@@ -317,7 +318,7 @@ module PostDataController
         mv(apiFile_tmp, apiFile, force=true)
 
         # update DataFrame
-        ReadSqlList.readSqlList2DataFrame()
+        ApiSqlListManager.readSqlList2DataFrame()
 
         return true
     end  

@@ -21,7 +21,7 @@ module GetDataController
 
     include("DBDataController.jl")
     include("ReadConfig.jl")
-    include("ReadSqlList.jl")
+    include("ApiSqlListManager.jl")
     include("JFiles.jl")
 
     const j_config = ReadConfig
@@ -124,6 +124,6 @@ module GetDataController
         api list is refered in Df_JetelinaSqlList.
     """
     function getApiList()
-        return json(Dict("result"=>true,"Jetelina" => copy.(eachrow(ReadSqlList.Df_JetelinaSqlList))))
+        return json(Dict("result"=>true,"Jetelina" => copy.(eachrow(ApiSqlListManager.Df_JetelinaSqlList))))
     end
 end

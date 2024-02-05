@@ -21,7 +21,7 @@ module PgSQLSentenceManager
     using Genie, Genie.Requests, Genie.Renderer.Json
 
     include("../../ReadConfig.jl")
-    include("../../ReadSqlList.jl")
+    include("../../ApiSqlListManager.jl")
 
     export sqlDuplicationCheck,checkSubQuery,createApiInsertSentence,createApiUpdateSentence,createApiDeleteSentence,createApiSelectSentence,createExecutionSqlSentence
     
@@ -42,7 +42,7 @@ module PgSQLSentenceManager
     """
     function sqlDuplicationCheck(nsql::String, subq::String)
         # already exist?
-        for i=1:nrow(ReadSqlList.Df_JetelinaSqlList)
+        for i=1:nrow(ApiSqlListManager.Df_JetelinaSqlList)
             #===
                 Tips:
                     the result in process4 will be
@@ -51,13 +51,13 @@ module PgSQLSentenceManager
                     because coutmap() do group together.
             ===#
             # duplication check for SQL
-            strs = [nsql,ReadSqlList.Df_JetelinaSqlList[!,:sql][i]]
+            strs = [nsql,ApiSqlListManager.Df_JetelinaSqlList[!,:sql][i]]
             process1 = split.(strs,r"\W",keepempty=false)
             process2 = map(x->lowercase.(x),process1)
             process3 = sort.(process2)
             process4 = countmap(process3)
             # duplication check for Sub query
-            sq = ReadSqlList.Df_JetelinaSqlList[!,:subquery][i]
+            sq = ApiSqlListManager.Df_JetelinaSqlList[!,:subquery][i]
             if !ismissing(sq)
                 s_strs = [subq,sq]
                 s_process1 = split.(s_strs,r"\W",keepempty=false)
@@ -70,7 +70,7 @@ module PgSQLSentenceManager
             end
 
             if length(process4) == 1 && length(s_process4) == 1
-                return true, ReadSqlList.Df_JetelinaSqlList[!,:apino][i]
+                return true, ApiSqlListManager.Df_JetelinaSqlList[!,:apino][i]
             end
 
         end

@@ -44,7 +44,7 @@ using DataFrames, CSV
             global Df_JetelinaSqlList = df
 
             if j_config.debugflg
-                @info "ReadSqlList.readSqlList2DataFrame() sql list in DataFrame: ", Df_JetelinaSqlList 
+                @info "ApiSqlListManager.readSqlList2DataFrame() sql list in DataFrame: ", Df_JetelinaSqlList 
             end
         end
     end
@@ -112,7 +112,7 @@ using DataFrames, CSV
         end
 
         # update DataFrame
-        ReadSqlList.readSqlList2DataFrame()
+        readSqlList2DataFrame()
 
         return true, string(suffix, seq_no)
     end

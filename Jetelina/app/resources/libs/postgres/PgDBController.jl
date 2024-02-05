@@ -41,7 +41,7 @@ using Genie, Genie.Renderer, Genie.Renderer.Json
     include("../../JLog.jl")
     include("../../ReadConfig.jl")
     include("../../JFiles.jl")
-    include("../../ReadSqlList.jl")
+    include("../../ApiSqlListManager.jl")
     include("PgDataTypeList.jl")
     include("PgSQLSentenceManager.jl")
 
@@ -1178,7 +1178,7 @@ using Genie, Genie.Renderer, Genie.Renderer.Json
         end
 
         # update DataFrame
-        ReadSqlList.readSqlList2DataFrame()
+        ApiSqlListManager.readSqlList2DataFrame()
 
         return true, string(suffix, seq_no)
     end
