@@ -16,188 +16,17 @@ functions
     createExecutionSqlSentence(json_dict::Dict, df::DataFrame) create real execution SQL sentence.
 """
 module PgSQLSentenceManager
-    @info "PgSQLSentenceManager"
-#    using Dates, StatsBase, CSV, DataFrames
+
     using DataFrames
     using Genie, Genie.Requests, Genie.Renderer.Json
-#    using DBDataController, JetelinaReadConfig, JetelinaLog, JetelinaReadSqlList, JetelinaFiles
 
-#    include("DBDataController.jl")
     include("../../ReadConfig.jl")
-#    include("../../JLog.jl")
     include("../../ReadSqlList.jl")
-    include("../../JFiles.jl")
 
-#    export writeTolist,deleteFromlist,fileBackup,sqlDuplicationCheck,checkSubQuery,createApiInsertSentence,createApiUpdateSentence,createApiDeleteSentence,createApiSelectSentence,createExecutionSqlSentence
     export sqlDuplicationCheck,checkSubQuery,createApiInsertSentence,createApiUpdateSentence,createApiDeleteSentence,createApiSelectSentence,createExecutionSqlSentence
     
     const j_config = ReadConfig
 
-    # sqli list file
-#    sqlFile = JetelinaFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
-#    tableapiFile = JetelinaFiles.getFileNameFromConfigPath(j_config.JetelinaTableApifile)
-
-    #==2/1 deprecated
-    """
-    function writeTolist(sql::String, tablename_arr::Vector{String})
-
-        create api no and write it to JetelinaSQLListfile order by SQL sentence.
-        
-    # Arguments
-    - `sql::String`: sql sentence
-    - `subquery::String`: sub query sentence
-    - `tablename_arr::Vector{String}`: table name list that are used in 'sql'
-    """
-    function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String})
-        sqlFile = JetelinaFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
-        tableapiFile = JetelinaFiles.getFileNameFromConfigPath(j_config.JetelinaTableApifile)
-
-        # get the sequence name then create the sql sentence
-        seq_no = DBDataController.getSequenceNumber(1)
-        suffix = string()
-
-        if startswith(sql, "insert")
-            suffix = "ji"
-        elseif startswith(sql,"update") && contains(sql,"jetelina_delete_flg=1")
-            suffix = "jd"
-        elseif startswith(sql, "update")
-            suffix = "ju"
-        elseif startswith(sql, "select")
-            suffix = "js"
-#        elseif startswith(sql, "delete")
-#            suffix = "jd"
-        end
-
-        sql = strip(sql)
-        sqlsentence = """$suffix$seq_no,\"$sql\",\"$subquery\""""
-
-        if debugflg
-            @info "PgSQLSentenceManager.writeTolist() sql sentence: ", sqlsentence
-        end
-
-        # write the sql to the file
-        thefirstflg = true
-        if !isfile(sqlFile)
-            thefirstflg = false
-        end
-
-        try
-            open(sqlFile, "a") do f
-                if !thefirstflg
-                    println(f, string(j_config.JetelinaFileColumnApino,',',j_config.JetelinaFileColumnSql,',',j_config.JetelinaFileColumnSubQuery))
-                end
-
-
-                println(f, sqlsentence)
-            end
-        catch err
-            JetelinaLog.writetoLogfile("PgSQLSentenceManager.writeTolist() error: $err")
-            return false, nothing
-        end
-
-        # write the relation between tables and api to the file
-        try
-            open(tableapiFile, "a") do ff
-                println(ff, string(suffix, seq_no, ":", join(tablename_arr, ",")))
-            end
-        catch err
-            JetelinaLog.writetoLogfile("PgSQLSentenceManager.writeTolist() error: $err")
-            return false, nothing
-        end
-
-        # update DataFrame
-        JetelinaReadSqlList.readSqlList2DataFrame()
-
-        return true, string(suffix, seq_no)
-    end
-    ==#
-    #==2/1 deprecated
-    """
-    function deleteFromlist(tablename::String)
-
-        delete table name from JetelinaSQLListfile synchronized with dropping table.
-
-    # Arguments
-    - `tablename::String`: target table name
-    - return: boolean: true -> all done ,  false -> something failed
-    """
-    function deleteFromlist(tablename::String)
-        sqlFile = JetelinaFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
-        tableapiFile = JetelinaFiles.getFileNameFromConfigPath(j_config.JetelinaTableApifile)
-        sqlTmpFile = JetelinaFiles.getFileNameFromConfigPath(string(j_config.JetelinaSQLListfile,".tmp"))
-        tableapiTmpFile = JetelinaFiles.getFileNameFromConfigPath("JetelinaTableApi.tmp")
-
-        targetapi = []
-        # take the backup file
-        fileBackup(tableapiFile)
-        fileBackup(sqlFile)
-
-        try
-            open(tableapiTmpFile, "w") do ttaf
-                open(tableapiFile, "r") do taf
-                    # Tips: delete line feed by 'keep=false', then do println()
-                    for ss in eachline(taf, keep=false)
-                        if contains( ss, ':' )
-                            p = split(ss, ":") # api_name:table,table,....
-                            tmparr = split(p[2], ',')
-                            if tablename ∈ tmparr
-                                push!(targetapi, p[1]) # ["js1","ji2,.....]
-                            else
-                                # remain others in the file
-                                println(ttaf, ss)
-                            end
-                        end
-                    end
-                end
-            end
-        catch err
-            JetelinaLog.writetoLogfile("PgSQLSentenceManager.deleteFromlist() error: $err")
-            return false
-        end
-
-        # remain SQL sentence not include in the target api
-        try
-            open(sqlTmpFile, "w") do tf
-                open(sqlFile, "r") do f
-                    for ss in eachline(f, keep=false)
-                        p = split(ss, "\"") # js1,"select..."
-                        if rstrip(p[1], ',') ∈ targetapi # yes, this is＼(^o^)／
-                        # skip it because of including in it
-                        else
-                            # write out sql that does not contain the target table
-                            println(tf, ss)
-                        end
-                    end
-                end
-            end
-        catch err
-            JetelinaLog.writetoLogfile("PgSQLSentenceManager.deleteFromlist() error: $err")
-            return false
-        end
-
-        # change the file name
-        mv(sqlTmpFile, sqlFile, force=true)
-        mv(tableapiTmpFile, tableapiFile, force=true)
-
-        # update DataFrame
-        JetelinaReadSqlList.readSqlList2DataFrame()
-
-        return true
-    end
-
-    """
-    function fileBackup(fname::String)
-
-        back up the ordered file with date suffix. ex. <file>.txt -> <file>.txt.yyyymmdd-HHMMSS
-
-    # Arguments
-    - `fname::String`: target file name
-    """
-    function fileBackup(fname::String)
-        backupfilesuffix = Dates.format(now(), "yyyymmdd-HHMMSS")
-        cp(fname, string(fname, backupfilesuffix), force=true)
-    end
-    ==#
     """
     function sqlDuplicationCheck(nsql::String, subq::String)
 
@@ -223,7 +52,6 @@ module PgSQLSentenceManager
             ===#
             # duplication check for SQL
             strs = [nsql,ReadSqlList.Df_JetelinaSqlList[!,:sql][i]]
-            @info "strs" strs
             process1 = split.(strs,r"\W",keepempty=false)
             process2 = map(x->lowercase.(x),process1)
             process3 = sort.(process2)
@@ -232,7 +60,6 @@ module PgSQLSentenceManager
             sq = ReadSqlList.Df_JetelinaSqlList[!,:subquery][i]
             if !ismissing(sq)
                 s_strs = [subq,sq]
-                @info "s_strs" s_strs
                 s_process1 = split.(s_strs,r"\W",keepempty=false)
                 s_process2 = map(y->lowercase.(y),s_process1)
                 s_process3 = sort.(s_process2)
@@ -318,7 +145,6 @@ module PgSQLSentenceManager
                            fail to append it to     -> false
     """
     function createApiSelectSentence(json_d)
-        @info "creatApi... type: " typeof(json_d)
         item_d = json_d["item"]
         subq_d = json_d["subquery"]
 
@@ -550,8 +376,7 @@ module PgSQLSentenceManager
             ===#
             for (k,v) in json_dict
                 kk = string("{",k,"}")
-                execution_sql = replace(execution_sql,kk=>v)
-#                replace!(execution_sql,kk=>v)                 may need julia1.8 over :p
+                replace!(execution_sql,kk=>v)
             end
             
             ret = execution_sql

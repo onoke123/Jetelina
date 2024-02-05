@@ -28,11 +28,7 @@ module FileUploadController
             csvfilename = ""
             files = Genie.Requests.filespayload()
             for f in files
-                csvfilename = joinpath( JetelinaFileUploadPath, f[2].name )
-                if debugflg == true
-                    @info "FileUploadController.fup() csvfilename:" * csvfilename
-                end 
-    
+                csvfilename = joinpath( JetelinaFileUploadPath, f[2].name )    
                 write( csvfilename, f[2].data)
             end
     

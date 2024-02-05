@@ -32,6 +32,7 @@ module DBDataController
 
     include("ReadConfig.jl")
     include("ReadSqlList.jl")
+    include("ApiSqlListManager.jl")
     include("libs/postgres/PgDBController.jl")
 
     export init_Jetelina_table, dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,
@@ -110,7 +111,20 @@ module DBDataController
     function dropTable(tableName::String)
         if j_config.JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
-            PgDBController.dropTable(tableName)
+            ret = PgDBController.dropTable(tableName)
+            if ret[1]
+                # update SQL list
+                ApiSqlListManager.deleteFromlist(tableName)
+            end
+            #==
+                Tips:
+                    ret[2] is expected
+                        delete succeeded
+                            json(Dict("result" => true, "tablename" => "$tableName", "message from Jetelina" => jmsg))
+                        something error happened
+                            json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err"))
+            ==#
+            return ret[2]
         elseif j_config.JetelinaDBtype == "mariadb"
         elseif j_config.JetelinaDBtype == "oracle"
         end
@@ -351,7 +365,7 @@ module DBDataController
 
         if j_config.JetelinaDBtype == "postgresql"
             # Case in PostgreSQL
-            ret = PgDBController.createApiSelectSentence(json_d)
+            ret = PgSQLSentenceManager.createApiSelectSentence(json_d)
         elseif j_config.JetelinaDBtype == "mariadb"
         elseif j_config.JetelinaDBtype == "oracle"
         end

@@ -24,10 +24,6 @@ module PgDataTypeList
     function getDataType(c_type::String)
         ret::String = ""
 
-        if debugflg
-            @info "PgDataTypeList.getDataType() c_type: ", c_type
-        end
-        
         c_type = string( c_type )
         if startswith( c_type, "Int" ) 
             ret = "integer"

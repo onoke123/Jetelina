@@ -32,14 +32,11 @@
         updateUserLoginData(uid::Integer) update user login data if it succeeded to login
         deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
         writeTolist(sql::String, tablename_arr::Vector{String}) create api no and write it to JetelinaSQLListfile order by SQL sentence.
-        deleteFromlist(tablename::String) delete table name from JetelinaSQLListfile synchronized with dropping table.
-        createApiSelectSentence(json_d::Dict) create select sentence for api order by pot data
 """
 module PgDBController
-    @info "PgDBController"
-    using Genie, Genie.Renderer, Genie.Renderer.Json
+
+using Genie, Genie.Renderer, Genie.Renderer.Json
     using CSV, LibPQ, DataFrames, IterTools, Tables
-#    using JetelinaLog, JetelinaReadConfig, JetelinaReadSqlList, PgDataTypeList, JetelinaFiles, PgSQLSentenceManager
 
     include("../../JLog.jl")
     include("../../ReadConfig.jl")
@@ -121,14 +118,6 @@ module PgDBController
         "' dbname='",j_config.JetelinaDBname,"'")
 
         return conn = LibPQ.Connection(con_str)
-#==1/29        
-        return conn = LibPQ.Connection("""host = '$j_config.JetelinaDBhost' 
-            port = '$j_config.JetelinaDBport'
-            user = '$JetelinaDBuser'
-            password = '$JetelinaDBpassword'
-            sslmode = '$JetelinaDBsslmode'
-            dbname = '$JetelinaDBname' """)
-==#
     end
 
     """
@@ -518,7 +507,7 @@ module PgDBController
 
     # Arguments
     - `tableName: String`: ordered table name
-    - return: boolean: true -> success, false -> get fail
+    - return: tuple (boolean: true -> success/false -> get fail, JSON)
     """
     function dropTable(tableName::String)
         ret = ""
@@ -540,19 +529,14 @@ module PgDBController
             execute(conn, delete_data_str)
             ret = json(Dict("result" => true, "tablename" => "$tableName", "message from Jetelina" => jmsg))
         catch err
-#            println(err)
             ret = json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err"))
             JLog.writetoLogfile("PgDBController.dropTable() with $tableName error : $err")
-            return false
+            return false, ret
         finally
             close_connection(conn)
         end
 
-        # update SQL list
-#        PgSQLSentenceManager.deleteFromlist(tableName)
-        deleteFromlist(tableName)
-
-        return ret
+        return true, ret
     end
 
     """
@@ -1163,10 +1147,6 @@ module PgDBController
         sql = strip(sql)
         sqlsentence = """$suffix$seq_no,\"$sql\",\"$subquery\""""
 
-        if debugflg
-            @info "PgDBController.writeTolist() sql sentence: ", sqlsentence
-        end
-
         # write the sql to the file
         thefirstflg = true
         if !isfile(sqlFile)
@@ -1201,93 +1181,5 @@ module PgDBController
         ReadSqlList.readSqlList2DataFrame()
 
         return true, string(suffix, seq_no)
-    end
-    """
-    function deleteFromlist(tablename::String)
-
-        delete table name from JetelinaSQLListfile synchronized with dropping table.
-
-    # Arguments
-    - `tablename::String`: target table name
-    - return: boolean: true -> all done ,  false -> something failed
-    """
-    function deleteFromlist(tablename::String)
-        sqlFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
-        tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaTableApifile)
-        sqlTmpFile = JFiles.getFileNameFromConfigPath(string(j_config.JetelinaSQLListfile,".tmp"))
-        tableapiTmpFile = JFiles.getFileNameFromConfigPath("JetelinaTableApi.tmp")
-
-        targetapi = []
-        # take the backup file
-        fileBackup(tableapiFile)
-        fileBackup(sqlFile)
-
-        try
-            open(tableapiTmpFile, "w") do ttaf
-                open(tableapiFile, "r") do taf
-                    # Tips: delete line feed by 'keep=false', then do println()
-                    for ss in eachline(taf, keep=false)
-                        if contains( ss, ':' )
-                            p = split(ss, ":") # api_name:table,table,....
-                            tmparr = split(p[2], ',')
-                            if tablename ∈ tmparr
-                                push!(targetapi, p[1]) # ["js1","ji2,.....]
-                            else
-                                # remain others in the file
-                                println(ttaf, ss)
-                            end
-                        end
-                    end
-                end
-            end
-        catch err
-            JLog.writetoLogfile("PgDBController.deleteFromlist() error: $err")
-            return false
-        end
-
-        # remain SQL sentence not include in the target api
-        try
-            open(sqlTmpFile, "w") do tf
-                open(sqlFile, "r") do f
-                    for ss in eachline(f, keep=false)
-                        p = split(ss, "\"") # js1,"select..."
-                        if rstrip(p[1], ',') ∈ targetapi # yes, this is＼(^o^)／
-                        # skip it because of including in it
-                        else
-                            # write out sql that does not contain the target table
-                            println(tf, ss)
-                        end
-                    end
-                end
-            end
-        catch err
-            JLog.writetoLogfile("PgDBController.deleteFromlist() error: $err")
-            return false
-        end
-
-        # change the file name
-        mv(sqlTmpFile, sqlFile, force=true)
-        mv(tableapiTmpFile, tableapiFile, force=true)
-
-        # update DataFrame
-        ReadSqlList.readSqlList2DataFrame()
-
-        return true
-    end
-
-    """
-    function createApiSelectSentence(json_d::Dict)
-
-        create select sentence for api order by pot data
-        this function is an interface function meet DBDataController to PgSQLSentencemanager 
-
-    # Arguments
-    - `json_d::Dict`: json data
-    - return: this sql is already existing -> json {"resembled":true}
-              new sql then success to append it to  -> json {"apino":"<something no>"}
-                           fail to append it to     -> false
-    """
-    function createApiSelectSentence(json_d::Dict)
-        return PgSQLSentenceManager.createApiSelectSentence(json_d)
     end
 end

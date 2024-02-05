@@ -247,11 +247,6 @@ module PostDataController
         #        scenarioFile = string( joinpath( "..","..","public","jetelina","js","scenario.js" ))
         scenarioFile = JFiles.getJsFileNameFromPublicPath("scenario.js")
         scenarioTmpFile = JFiles.getJsFileNameFromPublicPath("scenario.tmp")
-        if debugflg
-            @info "PostDataController._addJetelinaWords(): " newwords, arr
-            @info "scenario path: " scenarioFile
-        end
-
         target_scenario = "scenario[\"$arr\"]"
         rewritestring = ""
 
@@ -285,11 +280,6 @@ module PostDataController
     """
     function deleteApi()
         targetapi = jsonpayload("apino")
-
-        if debugflg
-            @info "PostDataController.deleteApi() target api: " targetapi
-        end
-
         #===
             Tips:
                 insert(ji*),update(ju*),delete(jd*) api are forbidden to delete.

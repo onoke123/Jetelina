@@ -28,11 +28,6 @@ module CSVFileController
     - `csvfname: String`: csv file name. Expect string data of JetelinaFileUploadPath + <csv file name>.
     """
     function read( csvfname::String )       
-        if debugflg
-            debugmsg = "csv file: $csvfname"
-            JLog.writetoLogfile( debugmsg )
-        end
-
         # read line count number from the head of the csv file
         row::Int = 1
         df = CSV.read( csvfname, DataFrame, limit=row )
