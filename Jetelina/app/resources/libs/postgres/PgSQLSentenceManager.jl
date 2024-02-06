@@ -42,7 +42,7 @@ module PgSQLSentenceManager
     """
     function sqlDuplicationCheck(nsql::String, subq::String)
         if ApiSqlListManager.readSqlList2DataFrame()[1]
-            Df_JetelinaSqlList = ApiSqlListManager.readSqlList2DataFrame()
+            Df_JetelinaSqlList = ApiSqlListManager.readSqlList2DataFrame()[2]
             # already exist?
             for i=1:nrow(Df_JetelinaSqlList)
                 #===

@@ -7,16 +7,48 @@ Description:
     csv file upload controller
 
 functions
+    read(csvfname::String) read csv file, then insert the csv data into DB.
     fup() upload the csv file from fileuplaod.html.
 """
 module FileUploadController
 
     using Genie, Genie.Requests
+    using CSV
+    using DataFrames
 
-    include("CSVFileController.jl")    
+    include("JLog.jl")
+    include("ReadConfig.jl")
+    include("DBDataController.jl")
 
-    export fup
+    export read,fup
     
+    const j_config = ReadConfig
+    """
+    function read( csvfname::String )
+
+        read csv file, then insert the csv data into DB.
+
+
+    # Arguments
+    - `csvfname: String`: csv file name. Expect string data of JetelinaFileUploadPath + <csv file name>.
+    """
+    function read( csvfname::String )       
+        # read line count number from the head of the csv file
+        row::Int = 1
+        df = CSV.read( csvfname, DataFrame, limit=row )
+
+        #===
+            Tips:
+                CSV files must have 'jt_id' name in its column.
+                This is the protocol.
+        ===#
+        if("jt_id" ∉ names(df))
+            return false
+        else
+            return DBDataController.dataInsertFromCSV( csvfname )
+        end
+    end
+
     """
     function fup()
 
@@ -28,7 +60,7 @@ module FileUploadController
             csvfilename = ""
             files = Genie.Requests.filespayload()
             for f in files
-                csvfilename = joinpath( JetelinaFileUploadPath, f[2].name )    
+                csvfilename = joinpath( @__DIR__, j_config.JetelinaFileUploadPath, f[2].name )    
                 write( csvfilename, f[2].data)
             end
     
@@ -36,7 +68,7 @@ module FileUploadController
                 @info "FileUploadController.fup() No file uploaded"
             end
         
-            CSVFileController.read( csvfilename )
+            read( csvfilename )
         else
             "No file uploaded"
         end
