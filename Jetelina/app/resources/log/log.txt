@@ -2714,3 +2714,27 @@
 │   krbsrvname = postgres
 │   target_session_attrs = any, 0), 0x00000000000084f2)
 └ @ Jetelina.FileUploadController.DBDataController.PgDBController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:59
+┌ Info: 2024-02-06 10:15:06 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.FileUploadController.DBDataController.PgDBController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:59
+┌ Info: 2024-02-06 10:15:12 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.GetDataController.DBDataController.PgDBController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:59
+┌ Info: 2024-02-06 10:15:18 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.PostDataController.DBDataController.PgDBController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:59
+┌ Info: 2024-02-06 11:11:27 PgDBController.insert2JetelinaTableManager() error: MethodError(Jetelina.FileUploadController.DBDataController.PgDBController.getJetelinaSequenceNumber, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = postgres
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 0), 0x0000000000008360)
+└ @ Jetelina.FileUploadController.DBDataController.PgDBController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:59

@@ -29,9 +29,9 @@ module JFiles
     """
     function getFileNameFromConfigPath(fname)
         fn = string( joinpath( @__DIR__, "config", fname ))
-        if !isfile(fn)
-            fn ="JFiles.getFileNameFromConfigPath: $fn does not exist"
-        end
+#        if !isfile(fn)
+#            fn ="JFiles.getFileNameFromConfigPath: $fn does not exist"
+#        end
 
         return fn            
     end
@@ -46,9 +46,9 @@ module JFiles
     """
     function getJsFileNameFromPublicPath(fname)
         fn = string(joinpath(@__DIR__, "..", "..", "public", "jetelina", "js", fname))
-        if !isfile(fn)
-            fn = "JFiles.getJsFileNameFromPublicPath: $fn does not exist"
-        end
+#        if !isfile(fn)
+#            fn = "JFiles.getJsFileNameFromPublicPath: $fn does not exist"
+#        end
 
         return fn            
     end
@@ -63,9 +63,9 @@ module JFiles
     """
     function getFileNameFromLogPath(fname)
         fn = string( joinpath( @__DIR__, "log", fname ) )
-        if !isfile(fn)
-            fn = "JFiles.getFileNameFromLogPath: $fn does not exist"
-        end
+#        if !isfile(fn)
+#            fn = "JFiles.getFileNameFromLogPath: $fn does not exist"
+#        end
 
         return fn            
     end

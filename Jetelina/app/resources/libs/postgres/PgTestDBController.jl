@@ -16,18 +16,15 @@ functions
 module PgTestDBController
 
     using CSV, LibPQ, DataFrames, IterTools, Tables
-#    using JetelinaLog, JetelinaReadConfig
-#    using JetelinaFiles
-#    using PgSQLSentenceManager
+    using Jetelina.ReadConfig, Jetelina.JLog
 
-    include("../../JLog.jl")
-    include("../../ReadConfig.jl")
-#    include("../../JFiles.jl")
-#1/29    include("PgSQLSentenceManager.jl")
+#    include("../../JLog.jl")
+#    include("../../ReadConfig.jl")
 
     export measureSqlPerformance
 
     const j_config = ReadConfig
+
     """
     function open_connection()
 
@@ -46,15 +43,6 @@ module PgTestDBController
         "' dbname='",j_config.JetelinaTestDBname,"'")
 
         return conn = LibPQ.Connection(con_str)
-
-#==1/29
-        conn = LibPQ.Connection("""host = '$JetelinaDBhost' 
-            port = '$JetelinaDBport'
-            user = '$JetelinaDBuser'
-            password = '$JetelinaDBpassword'
-            sslmode = '$JetelinaDBsslmode'
-            dbname = '$JetelinaTestDBname' """)
-===#
     end
 
     """
@@ -100,7 +88,6 @@ module PgTestDBController
         finally
             # close the connection
             close_connection(conn)
-#            PgTestDBController.close_connection(conn)
         end
     end
 
