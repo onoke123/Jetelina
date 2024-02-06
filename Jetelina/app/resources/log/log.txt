@@ -2618,3 +2618,17 @@
 └ @ Jetelina.PostDataController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:59
 ┌ Info: 2024-02-05 15:21:28 PostDataController.deleteApi() error: SystemError("opening file \"JFiles.getFileNameFromConfigPath: /home/onoke/Jetelina/Jetelina/app/resources/config/JetelinaSqlList.tmp does not exist\"", 2, nothing)
 └ @ Jetelina.PostDataController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:59
+┌ Info: 2024-02-06 08:42:50 PostDataController.deleteApi() error: SystemError("opening file \"JFiles.getFileNameFromConfigPath: /home/onoke/Jetelina/Jetelina/app/resources/config/JetelinaSqlList.tmp does not exist\"", 2, nothing)
+└ @ Jetelina.PostDataController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:59
+┌ Info: 2024-02-06 08:46:35 PostDataController.deleteApi() error: SystemError("opening file \"JFiles.getFileNameFromConfigPath: /home/onoke/Jetelina/Jetelina/app/resources/config/JetelinaSqlList.tmp does not exist\"", 2, nothing)
+└ @ Jetelina.PostDataController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:59
+┌ Info: 2024-02-06 08:47:04 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Main.PostDataController.DBDataController.PgDBController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:59
+┌ Info: 2024-02-06 08:47:18 PostDataController.deleteApi() error: SystemError("opening file \"JFiles.getFileNameFromConfigPath: /home/onoke/Jetelina/Jetelina/app/resources/config/JetelinaSqlList.tmp does not exist\"", 2, nothing)
+└ @ Jetelina.PostDataController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:59
+┌ Info: 2024-02-06 08:48:25 PostDataController.deleteApi() error: SystemError("opening file \"JFiles.getFileNameFromConfigPath: /home/onoke/Jetelina/Jetelina/app/resources/config/JetelinaSqlList.tmp does not exist\"", 2, nothing)
+└ @ Jetelina.PostDataController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:59
+┌ Info: 2024-02-06 09:02:24 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Main.PostDataController.DBDataController.PgDBController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:59
+┌ Info: 2024-02-06 09:08:37 PgDBController.dropTable() with dummytable error : LibPQ.Errors.UndefinedTable("ERROR:  table \"dummytable\" does not exist\n")
+└ @ Jetelina.PostDataController.DBDataController.PgDBController.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:59

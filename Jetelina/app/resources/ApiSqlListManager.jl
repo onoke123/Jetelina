@@ -136,13 +136,14 @@ using DataFrames, CSV
     function deleteFromlist(tablename::String)
         sqlFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
         tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaTableApifile)
-        sqlTmpFile = JFiles.getFileNameFromConfigPath(string(j_config.JetelinaSQLListfile,".tmp"))
-        tableapiTmpFile = JFiles.getFileNameFromConfigPath("JetelinaTableApi.tmp")
+        sqlTmpFile = string(sqlFile,".tmp")
+        tableapiTmpFile = string(tableapiFile,",tmp")
 
         targetapi = []
+
         # take the backup file
-        fileBackup(tableapiFile)
-        fileBackup(sqlFile)
+        JFiles.fileBackup(tableapiFile)
+        JFiles.fileBackup(sqlFile)
 
         try
             open(tableapiTmpFile, "w") do ttaf

@@ -293,7 +293,7 @@ module PostDataController
         end
         
         apiFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
-        apiFile_tmp = JFiles.getFileNameFromConfigPath(string(j_config.JetelinaSQLListfile,".tmp"))
+        apiFile_tmp = string(apiFile,".tmp")
 
         try
             open(apiFile_tmp, "w") do tio
