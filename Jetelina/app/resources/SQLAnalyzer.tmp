@@ -18,7 +18,7 @@
         tableCopy(df::DataFrame) copy some data from the running db to the test db. the number of copy data are ordered in JetelinaTestDBDataLimitNumber.
 """
 module SQLAnalyzer
-
+@info "SQLAnalyzer comiling.."
     using JSON, LibPQ, Tables, CSV, DataFrames, StatsBase, DelimitedFiles
     using Genie, Genie.Renderer, Genie.Renderer.Json
 

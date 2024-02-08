@@ -4,199 +4,197 @@ module: ApiSqlListManager
 Author: Ono keiji
 Version: 1.0
 Description:
-    manage JetelinaSQLListfile file.
-    this file determines a corrensponding SQL sentence to API.
+	manage JetelinaSQLListfile file.
+	this file determines a corrensponding SQL sentence to API.
 
 functions
-    readSqlList2DataFrame() import registered SQL sentence list in JetelinaSQLListfile to DataFrame.this function set the sql list data in the global variable 'Df_JetelinaSqlList' as DataFrame object.
-    writeTolist(sql::String, tablename_arr::Vector{String}) create api no and write it to JetelinaSQLListfile order by SQL sentence.
-    deleteFromlist(tablename::String) delete table name from JetelinaSQLListfile synchronized with dropping table.
+	readSqlList2DataFrame() import registered SQL sentence list in JetelinaSQLListfile to DataFrame.this function set the sql list data in the global variable 'Df_JetelinaSqlList' as DataFrame object.
+	writeTolist(sql::String, tablename_arr::Vector{String}) create api no and write it to JetelinaSQLListfile order by SQL sentence.
+	deleteFromlist(tablename::String) delete table name from JetelinaSQLListfile synchronized with dropping table.
 """
 module ApiSqlListManager
-@info "ApiSqlListManager"
-    using DataFrames, CSV
-    using ..JFiles
-#    using ..ReadConfig
-    include("ReadConfig.jl")
-#    include("JFiles.jl")
+@info "ApiSqlListManager compiling..."
+using DataFrames, CSV
+using ..JFiles
 
-    export readSqlList2DataFrame, writeTolist, deleteFromlist #, Df_JetelinaSqlList
+include("ReadConfig.jl")
 
-    const j_config = ReadConfig
+export readSqlList2DataFrame, writeTolist, deleteFromlist
 
-    """
-    function __init__()
+const j_config = ReadConfig
 
-        this is the initialize proces for importing registered SQL sentence list in JetelinaSQLListfile to DataFrame.
-    """
-    function __init__()
-        readSqlList2DataFrame()
-    end
-    """
-    function readSqlList2DataFrame()
+"""
+function __init__()
 
-        import registered SQL sentence list in JetelinaSQLListfile to DataFrame.
-        this function set the sql list data in the global variable 'Df_JetelinaSqlList' as DataFrame object.
+	this is the initialize proces for importing registered SQL sentence list in JetelinaSQLListfile to DataFrame.
+"""
+function __init__()
+	readSqlList2DataFrame()
+end
+"""
+function readSqlList2DataFrame()
 
-    # Arguments
-    - return: Tuple: suceeded (true::Boolean, list of api/sql::DataFrames)
-                     failed   (false::Boolean, nothing)
+	import registered SQL sentence list in JetelinaSQLListfile to DataFrame.
+	this function set the sql list data in the global variable 'Df_JetelinaSqlList' as DataFrame object.
 
-    """
-    function readSqlList2DataFrame()
-        sqlFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
-        if isfile(sqlFile)
-            df = CSV.read( sqlFile, DataFrame )
-#            global Df_JetelinaSqlList = df
-            if j_config.debugflg
-                @info "ApiSqlListManager.readSqlList2DataFrame() sql list in DataFrame: ", df #Df_JetelinaSqlList 
-            end
+# Arguments
+- return: Tuple: suceeded (true::Boolean, list of api/sql::DataFrames)
+				 failed   (false::Boolean, nothing)
 
-            return true, df
-        end
+"""
+function readSqlList2DataFrame()
+	sqlFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
+	if isfile(sqlFile)
+		df = CSV.read(sqlFile, DataFrame)
+		if j_config.debugflg
+			@info "ApiSqlListManager.readSqlList2DataFrame() sql list in DataFrame: ", df
+		end
 
-        return false, nothing
-    end
-    """
-    function writeTolist(sql::String, tablename_arr::Vector{String}, seq_no::Integer)
+		return true, df
+	end
 
-        create api no and write it to JetelinaSQLListfile order by SQL sentence.
-        
-    # Arguments
-    - `sql::String`: sql sentence
-    - `subquery::String`: sub query sentence
-    - `tablename_arr::Vector{String}`: table name list that are used in 'sql'
-    - `seq_no::Integer`: number of jetelian_sql_sequence
-    - return: Tuple: suceeded (true::Boolean, api number name::String)
-                     failed   (false::Boolean, nothing)
-    """
-    function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String}, seq_no::Integer)
-        sqlFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
-        tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaTableApifile)
+	return false, nothing
+end
+"""
+function writeTolist(sql::String, tablename_arr::Vector{String}, seq_no::Integer)
 
-        suffix = string()
+	create api no and write it to JetelinaSQLListfile order by SQL sentence.
+	
+# Arguments
+- `sql::String`: sql sentence
+- `subquery::String`: sub query sentence
+- `tablename_arr::Vector{String}`: table name list that are used in 'sql'
+- `seq_no::Integer`: number of jetelian_sql_sequence
+- return: Tuple: suceeded (true::Boolean, api number name::String)
+				 failed   (false::Boolean, nothing)
+"""
+function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String}, seq_no::Integer)
+	sqlFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
+	tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaTableApifile)
 
-        if startswith(sql, "insert")
-            suffix = "ji"
-        elseif startswith(sql,"update") && contains(sql,"jetelina_delete_flg=1")
-            suffix = "jd"
-        elseif startswith(sql, "update")
-            suffix = "ju"
-        elseif startswith(sql, "select")
-            suffix = "js"
-#        elseif startswith(sql, "delete")
-#            suffix = "jd"
-        end
+	suffix = string()
 
-        sql = strip(sql)
-        sqlsentence = """$suffix$seq_no,\"$sql\",\"$subquery\""""
+	if startswith(sql, "insert")
+		suffix = "ji"
+	elseif startswith(sql, "update") && contains(sql, "jetelina_delete_flg=1")
+		suffix = "jd"
+	elseif startswith(sql, "update")
+		suffix = "ju"
+	elseif startswith(sql, "select")
+		suffix = "js"
+		#        elseif startswith(sql, "delete")
+		#            suffix = "jd"
+	end
 
-        # write the sql to the file
-        thefirstflg = true
-        if !isfile(sqlFile)
-            thefirstflg = false
-        end
+	sql = strip(sql)
+	sqlsentence = """$suffix$seq_no,\"$sql\",\"$subquery\""""
 
-        try
-            open(sqlFile, "a") do f
-                if !thefirstflg
-                    println(f, string(j_config.JetelinaFileColumnApino,',',j_config.JetelinaFileColumnSql,',',j_config.JetelinaFileColumnSubQuery))
-                end
+	# write the sql to the file
+	thefirstflg = true
+	if !isfile(sqlFile)
+		thefirstflg = false
+	end
 
-                println(f, sqlsentence)
-            end
-        catch err
-            JLog.writetoLogfile("ApiSqlListManager.writeTolist() error: $err")
-            return false, nothing
-        end
+	try
+		open(sqlFile, "a") do f
+			if !thefirstflg
+				println(f, string(j_config.JetelinaFileColumnApino, ',', j_config.JetelinaFileColumnSql, ',', j_config.JetelinaFileColumnSubQuery))
+			end
 
-        # write the relation between tables and api to the file
-        try
-            open(tableapiFile, "a") do ff
-                println(ff, string(suffix, seq_no, ":", join(tablename_arr, ",")))
-            end
-        catch err
-            JLog.writetoLogfile("ApiSqlListManager.writeTolist() error: $err")
-            return false, nothing
-        end
+			println(f, sqlsentence)
+		end
+	catch err
+		JLog.writetoLogfile("ApiSqlListManager.writeTolist() error: $err")
+		return false, nothing
+	end
 
-        # update DataFrame
-        readSqlList2DataFrame()
+	# write the relation between tables and api to the file
+	try
+		open(tableapiFile, "a") do ff
+			println(ff, string(suffix, seq_no, ":", join(tablename_arr, ",")))
+		end
+	catch err
+		JLog.writetoLogfile("ApiSqlListManager.writeTolist() error: $err")
+		return false, nothing
+	end
 
-        return true, string(suffix, seq_no)
-    end
-    """
-    function deleteFromlist(tablename::String)
+	# update DataFrame
+	readSqlList2DataFrame()
 
-        delete table name from JetelinaSQLListfile synchronized with dropping table.
+	return true, string(suffix, seq_no)
+end
+"""
+function deleteFromlist(tablename::String)
 
-    # Arguments
-    - `tablename::String`: target table name
-    - return: boolean: true -> all done ,  false -> something failed
-    """
-    function deleteFromlist(tablename::String)
-        sqlFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
-        tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaTableApifile)
-        sqlTmpFile = string(sqlFile,".tmp")
-        tableapiTmpFile = string(tableapiFile,",tmp")
+	delete table name from JetelinaSQLListfile synchronized with dropping table.
 
-        targetapi = []
+# Arguments
+- `tablename::String`: target table name
+- return: boolean: true -> all done ,  false -> something failed
+"""
+function deleteFromlist(tablename::String)
+	sqlFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
+	tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaTableApifile)
+	sqlTmpFile = string(sqlFile, ".tmp")
+	tableapiTmpFile = string(tableapiFile, ",tmp")
 
-        # take the backup file
-        JFiles.fileBackup(tableapiFile)
-        JFiles.fileBackup(sqlFile)
+	targetapi = []
 
-        try
-            open(tableapiTmpFile, "w") do ttaf
-                open(tableapiFile, "r") do taf
-                    # Tips: delete line feed by 'keep=false', then do println()
-                    for ss in eachline(taf, keep=false)
-                        if contains( ss, ':' )
-                            p = split(ss, ":") # api_name:table,table,....
-                            tmparr = split(p[2], ',')
-                            if tablename ∈ tmparr
-                                push!(targetapi, p[1]) # ["js1","ji2,.....]
-                            else
-                                # remain others in the file
-                                println(ttaf, ss)
-                            end
-                        end
-                    end
-                end
-            end
-        catch err
-            JLog.writetoLogfile("ApiSqlListManager.deleteFromlist() error: $err")
-            return false
-        end
+	# take the backup file
+	JFiles.fileBackup(tableapiFile)
+	JFiles.fileBackup(sqlFile)
 
-        # remain SQL sentence not include in the target api
-        try
-            open(sqlTmpFile, "w") do tf
-                open(sqlFile, "r") do f
-                    for ss in eachline(f, keep=false)
-                        p = split(ss, "\"") # js1,"select..."
-                        if rstrip(p[1], ',') ∈ targetapi # yes, this is＼(^o^)／
-                        # skip it because of including in it
-                        else
-                            # write out sql that does not contain the target table
-                            println(tf, ss)
-                        end
-                    end
-                end
-            end
-        catch err
-            JLog.writetoLogfile("ApiSqlListManager.deleteFromlist() error: $err")
-            return false
-        end
+	try
+		open(tableapiTmpFile, "w") do ttaf
+			open(tableapiFile, "r") do taf
+				# Tips: delete line feed by 'keep=false', then do println()
+				for ss in eachline(taf, keep = false)
+					if contains(ss, ':')
+						p = split(ss, ":") # api_name:table,table,....
+						tmparr = split(p[2], ',')
+						if tablename ∈ tmparr
+							push!(targetapi, p[1]) # ["js1","ji2,.....]
+						else
+							# remain others in the file
+							println(ttaf, ss)
+						end
+					end
+				end
+			end
+		end
+	catch err
+		JLog.writetoLogfile("ApiSqlListManager.deleteFromlist() error: $err")
+		return false
+	end
 
-        # change the file name
-        mv(sqlTmpFile, sqlFile, force=true)
-        mv(tableapiTmpFile, tableapiFile, force=true)
+	# remain SQL sentence not include in the target api
+	try
+		open(sqlTmpFile, "w") do tf
+			open(sqlFile, "r") do f
+				for ss in eachline(f, keep = false)
+					p = split(ss, "\"") # js1,"select..."
+					if rstrip(p[1], ',') ∈ targetapi # yes, this is＼(^o^)／
+					# skip it because of including in it
+					else
+						# write out sql that does not contain the target table
+						println(tf, ss)
+					end
+				end
+			end
+		end
+	catch err
+		JLog.writetoLogfile("ApiSqlListManager.deleteFromlist() error: $err")
+		return false
+	end
 
-        # update DataFrame
-        readSqlList2DataFrame()
+	# change the file name
+	mv(sqlTmpFile, sqlFile, force = true)
+	mv(tableapiTmpFile, tableapiFile, force = true)
 
-        return true
-    end
+	# update DataFrame
+	readSqlList2DataFrame()
+
+	return true
+end
 
 end
