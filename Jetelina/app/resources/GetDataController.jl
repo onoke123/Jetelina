@@ -16,13 +16,13 @@ functions
     getApiList()  get registering api list in json style.api list is refered in Df_JetelinaSqlList.
 """
 module GetDataController
-
+@info "GetDataController"
     using Genie, Genie.Requests,Genie.Renderer.Json
-
-    include("DBDataController.jl")
+    using ..JFiles, ..ApiSqlListManager,..DBDataController 
+#    include("DBDataController.jl")
     include("ReadConfig.jl")
-    include("ApiSqlListManager.jl")
-    include("JFiles.jl")
+#    include("ApiSqlListManager.jl")
+#    include("JFiles.jl")
 
     const j_config = ReadConfig
 

@@ -16,16 +16,16 @@ functions
     createExecutionSqlSentence(json_dict::Dict, df::DataFrame) create real execution SQL sentence.
 """
 module PgSQLSentenceManager
-
+@info "PgSQLSentenceManager"
     using DataFrames, StatsBase
     using Genie, Genie.Requests, Genie.Renderer.Json
-
-    include("../../ReadConfig.jl")
-    include("../../ApiSqlListManager.jl")
+    using Jetelina.ReadConfig, Jetelina.ApiSqlListManager
+#    include("../../ReadConfig.jl")
+#    include("../../ApiSqlListManager.jl")
 
     export sqlDuplicationCheck,checkSubQuery,createApiInsertSentence,createApiUpdateSentence,createApiDeleteSentence,createApiSelectSentence,createExecutionSqlSentence
     
-    const j_config = ReadConfig
+#    const j_config = ReadConfig
 
     """
     function sqlDuplicationCheck(nsql::String, subq::String)

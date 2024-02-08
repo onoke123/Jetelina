@@ -33,14 +33,14 @@
         deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
 """
 module PgDBController
-
+@info "PgDBController"
 using Genie, Genie.Renderer, Genie.Renderer.Json
     using CSV, LibPQ, DataFrames, IterTools, Tables
-
-    include("../../JLog.jl")
+    using Jetelina.JFiles, Jetelina.JLog, Jetelina.ApiSqlListManager
+#    include("../../JLog.jl")
     include("../../ReadConfig.jl")
-    include("../../JFiles.jl")
-    include("../../ApiSqlListManager.jl")
+#    include("../../JFiles.jl")
+#    include("../../ApiSqlListManager.jl")
     include("PgDataTypeList.jl")
     include("PgSQLSentenceManager.jl")
 

@@ -9,8 +9,9 @@ module: ReadConfig
 """
 
 module ReadConfig
-
-    include("JFiles.jl")
+@info "ReadConfig"
+    using Jetelina.JFiles
+#    include("JFiles.jl")
     
     export  JetelinaLogfile,# log file name
         debugflg,# debug configuration true/false

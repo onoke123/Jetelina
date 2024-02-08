@@ -13,7 +13,7 @@ functions
     fileBackup(fname::String) back up the ordered file with date suffix. ex. <file>.txt -> <file>.txt.yyyymmdd-HHMMSS
 """
 module JFiles
-
+@info "JFiles"
     using Dates
 
     export getFileNameFromConfigPath,getJsFileNameFromPublicPath,getFileNameFromLogPath,fileBackup

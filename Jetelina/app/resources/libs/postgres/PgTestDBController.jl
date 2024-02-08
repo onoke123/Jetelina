@@ -14,12 +14,11 @@ functions
     measureSqlPerformance()  execute 'select' sql sentence and write the execution speed into a file
 """
 module PgTestDBController
-
+@info "PgTestDBController"
     using CSV, LibPQ, DataFrames, IterTools, Tables
-    using Jetelina.ReadConfig, Jetelina.JLog
-
+    using Jetelina.JLog
 #    include("../../JLog.jl")
-#    include("../../ReadConfig.jl")
+    include("../../ReadConfig.jl")
 
     export measureSqlPerformance
 

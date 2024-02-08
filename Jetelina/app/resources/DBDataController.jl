@@ -27,12 +27,11 @@
 """
 
 module DBDataController
-
+@info "DBDataController"
     using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json
-
+    using ..ApiSqlListManager
     include("ReadConfig.jl")
-    include("ApiSqlListManager.jl")
-    include("ApiSqlListManager.jl")
+#    include("ApiSqlListManager.jl")
     include("libs/postgres/PgDBController.jl")
     include("libs/postgres/PgSQLSentenceManager.jl")
 

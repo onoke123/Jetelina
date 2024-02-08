@@ -22,14 +22,14 @@ functions
     deleteApi()  delete api by ordering from JetelinaSQLListfile file, then refresh the DataFrame.
 """
 module PostDataController
-
+@info "PostDataController"
     using Genie, Genie.Requests, Genie.Renderer.Json
-
-    include("DBDataController.jl")
-    include("ApiSqlListManager.jl")
+    using ..JFiles, ..JLog, ..ApiSqlListManager, ..DBDataController
+#    include("DBDataController.jl")
+#    include("ApiSqlListManager.jl")
     include("ReadConfig.jl")
-    include("JLog.jl")
-    include("JFiles.jl")
+#    include("JLog.jl")
+#    include("JFiles.jl")
 
     export handleApipostdata,createApi,getColumns,deleteTable,userRegist,login,getUserInfoKeys,refUserAttribute,updateUserInfo,
             updateUserData,updateUserLoginData,deleteUserAccount,deleteApi

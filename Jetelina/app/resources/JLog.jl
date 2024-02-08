@@ -11,11 +11,11 @@ functions
     writetoSQLLogfile(apino::String, sql::String)  write executed sql with its apino to SQL log file. date format is "yyyy-mm-dd HH:MM:SS".
 """
 module JLog
-
+@info "JLog"
     using Logging, Dates
-
+    using ..JFiles
     include("ReadConfig.jl")
-    include("JFiles.jl")
+#    include("JFiles.jl")
 
     export writetoLogfile, writetoSQLLogfile
 

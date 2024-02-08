@@ -11,18 +11,18 @@ functions
     fup() upload the csv file from fileuplaod.html.
 """
 module FileUploadController
-
+@info "FileUploadController"
     using Genie, Genie.Requests
-    using CSV
-    using DataFrames
-
-    include("JLog.jl")
+    using CSV, DataFrames
+    using ..JLog, ..DBDataController
+#    include("JLog.jl")
     include("ReadConfig.jl")
-    include("DBDataController.jl")
+#    include("DBDataController.jl")
 
     export read,fup
     
     const j_config = ReadConfig
+
     """
     function read( csvfname::String )
 
