@@ -15,7 +15,7 @@ functions
 module ApiSqlListManager
 @info "ApiSqlListManager compiling..."
 using DataFrames, CSV
-using ..JFiles
+using Jetelina.JFiles
 
 include("ReadConfig.jl")
 

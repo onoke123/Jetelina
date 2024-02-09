@@ -14,7 +14,7 @@ module FileUploadController
 @info "FileUploadController compiling..."
 using Genie, Genie.Requests
 using CSV, DataFrames
-using ..JLog, ..DBDataController
+using Jetelina.JLog, Jetelina.DBDataController
 
 include("ReadConfig.jl")
 

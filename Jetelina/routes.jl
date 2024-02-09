@@ -8,7 +8,6 @@
 
 using Genie.Router
 using Jetelina.PostDataController, Jetelina.GetDataController, Jetelina.FileUploadController
-  #, Jetelina.SQLAnalyzer
 
 #===
   HTML Pages

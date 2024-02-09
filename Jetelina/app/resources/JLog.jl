@@ -13,7 +13,7 @@ functions
 module JLog
 @info "JLog compiling..."
 using Logging, Dates
-using ..JFiles
+using Jetelina.JFiles
 
 include("ReadConfig.jl")
 

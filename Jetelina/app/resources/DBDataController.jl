@@ -29,18 +29,25 @@
 module DBDataController
 @info "DBDataController compiling..."
 using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json
-using ..ApiSqlListManager
+using Jetelina.ApiSqlListManager
 
 include("ReadConfig.jl")
-include("libs/postgres/PgDBController.jl")
-include("libs/postgres/PgSQLSentenceManager.jl")
+
+const j_config = ReadConfig
+
+#if j_config.JetelinaDBtype == "postgresql"
+	# Case in PostgreSQL
+	include("libs/postgres/PgDBController.jl")
+	include("libs/postgres/PgSQLSentenceManager.jl")
+#elseif j_config.JetelinaDBtype == "mariadb"
+#elseif j_config.JetelinaDBtype == "oracle"
+#end
 
 export init_Jetelina_table,
 	dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,
 	executeApi, userRegist, chkUserExistence, getUserInfoKeys, refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount,
 	createApiSelectSentence
 
-const j_config = ReadConfig
 
 """
 function __init__()

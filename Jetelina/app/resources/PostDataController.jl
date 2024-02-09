@@ -24,7 +24,7 @@ functions
 module PostDataController
 @info "PostDataController compiling..."
 using Genie, Genie.Requests, Genie.Renderer.Json
-using ..JFiles, ..JLog, ..ApiSqlListManager, ..DBDataController
+using Jetelina.JFiles, Jetelina.JLog, Jetelina.ApiSqlListManager, Jetelina.DBDataController
 
 include("ReadConfig.jl")
 

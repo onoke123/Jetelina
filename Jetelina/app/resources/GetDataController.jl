@@ -18,7 +18,7 @@ functions
 module GetDataController
 @info "GetDataController compiling..."
 using Genie, Genie.Requests, Genie.Renderer.Json
-using ..JFiles, ..ApiSqlListManager, ..DBDataController
+using Jetelina.JFiles, Jetelina.ApiSqlListManager, Jetelina.DBDataController
 
 include("ReadConfig.jl")
 
