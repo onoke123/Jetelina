@@ -16,10 +16,12 @@ functions
 	createExecutionSqlSentence(json_dict::Dict, df::DataFrame) create real execution SQL sentence.
 """
 module PgSQLSentenceManager
-@info "PgSQLSentenceManager compiling..." parentmodule(PgSQLSentenceManager)
+
 using DataFrames, StatsBase
 using Genie, Genie.Requests, Genie.Renderer.Json
-using Jetelina.ReadConfig, Jetelina.ApiSqlListManager
+using Jetelina.ReadConfig, Jetelina.ApiSqlListManager, Jetelina.JMessage
+
+JMessage.showModuleInCompiling(@__MODULE__)
 
 export sqlDuplicationCheck, checkSubQuery, createApiInsertSentence, createApiUpdateSentence, createApiDeleteSentence, createApiSelectSentence, createExecutionSqlSentence
 

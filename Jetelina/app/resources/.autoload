@@ -1,9 +1,18 @@
+JMessage.jl
 JFiles.jl
 ReadConfig.jl
-ApiSqlListManager.jl
 JLog.jl
+ApiSqlListManager.jl
 DBDataController.jl
 FileUploadController.jl
 GetDataController.jl
 PostDataController.jl
-ExecTimerPrg.jl
+JTimer.jl
+
+-#'these are neglect auto loading'
+-SQLAnalyzer.jl
+-TimerExecuter.jl
+-#'these under layer prgs do not get effect at all :P'
+-libs/postgres/PgDataTypeList.jl
+-libs/postgres/PgDBController.jl
+-libs/postgres/PgSQLSentenceManager.jl

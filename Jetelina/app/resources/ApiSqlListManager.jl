@@ -13,9 +13,11 @@ functions
 	deleteFromlist(tablename::String) delete table name from JetelinaSQLListfile synchronized with dropping table.
 """
 module ApiSqlListManager
-@info "ApiSqlListManager compiling..."
+
 using DataFrames, CSV
-using Jetelina.JFiles
+using Jetelina.JFiles, Jetelina.JMessage
+
+JMessage.showModuleInCompiling(@__MODULE__)
 
 include("ReadConfig.jl")
 

@@ -10,7 +10,11 @@ functions
 	getDataType(c_type::String)   determaine 'c_type' to PostgreSQL data. ex. c_type=='Int' -> 'Integer'
 """
 module PgDataTypeList
-@info "PgDataTypeList compiling..." parentmodule(PgDataTypeList)
+
+using Jetelina.JMessage
+
+JMessage.showModuleInCompiling(@__MODULE__)
+
 export getDataType
 
 """

@@ -27,21 +27,23 @@
 """
 
 module DBDataController
-@info "DBDataController compiling..."
+
 using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json
-using Jetelina.ApiSqlListManager
+using Jetelina.ApiSqlListManager, Jetelina.JMessage
+
+JMessage.showModuleInCompiling(@__MODULE__)
 
 include("ReadConfig.jl")
 
-const j_config = ReadConfig
+#===
+	Note: 
+		wanna these include() in init(), but not alll DBData.. is been included(), thus sometimes 'not found method ..' happen.
+	    guess should have a procedure alike JTimer.jl, I mean should include these in a dummy file to kick init(). :P  2024/2/10
+===#
+include("libs/postgres/PgDBController.jl")
+include("libs/postgres/PgSQLSentenceManager.jl")
 
-#if j_config.JetelinaDBtype == "postgresql"
-	# Case in PostgreSQL
-	include("libs/postgres/PgDBController.jl")
-	include("libs/postgres/PgSQLSentenceManager.jl")
-#elseif j_config.JetelinaDBtype == "mariadb"
-#elseif j_config.JetelinaDBtype == "oracle"
-#end
+const j_config = ReadConfig
 
 export init_Jetelina_table,
 	dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,
@@ -54,6 +56,13 @@ function __init__()
 	Initial action. Execute init_Jetelina_table()
 """
 function __init__()
+	@info "==========DBDataController init================"
+	#===
+		Note: 
+			if got error as "LoadError: MethodError: Method too new to be called from this world context.", this function maybe need to use invokelatest().
+				ex. invokelatest(init_Jete....) or @invokelatest init_Jete....
+			ref. https://stackoverflow.com/questions/69492334/loaderror-methoderror-method-too-new-to-be-called-from-this-world-context-i
+	===#
 	init_Jetelina_table()
 end
 """

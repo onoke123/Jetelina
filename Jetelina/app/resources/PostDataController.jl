@@ -22,9 +22,11 @@ functions
 	deleteApi()  delete api by ordering from JetelinaSQLListfile file, then refresh the DataFrame.
 """
 module PostDataController
-@info "PostDataController compiling..."
+
 using Genie, Genie.Requests, Genie.Renderer.Json
-using Jetelina.JFiles, Jetelina.JLog, Jetelina.ApiSqlListManager, Jetelina.DBDataController
+using Jetelina.JFiles, Jetelina.JLog, Jetelina.ApiSqlListManager, Jetelina.DBDataController, Jetelina.JMessage
+
+JMessage.showModuleInCompiling(@__MODULE__)
 
 include("ReadConfig.jl")
 

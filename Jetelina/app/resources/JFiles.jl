@@ -13,8 +13,11 @@ functions
 	fileBackup(fname::String) back up the ordered file with date suffix. ex. <file>.txt -> <file>.txt.yyyymmdd-HHMMSS
 """
 module JFiles
-@info "JFiles compiling..."
+
 using Dates
+using Jetelina.JMessage
+
+JMessage.showModuleInCompiling(@__MODULE__)
 
 export getFileNameFromConfigPath, getJsFileNameFromPublicPath, getFileNameFromLogPath, fileBackup
 

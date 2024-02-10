@@ -18,18 +18,21 @@
 		tableCopy(df::DataFrame) copy some data from the running db to the test db. the number of copy data are ordered in JetelinaTestDBDataLimitNumber.
 """
 module SQLAnalyzer
-@info "SQLAnalyzer compiling.."
+
 using JSON, LibPQ, Tables, CSV, DataFrames, StatsBase, DelimitedFiles
 using Genie, Genie.Renderer, Genie.Renderer.Json
-using Jetelina.JLog, Jetelina.JFiles
+using Jetelina.JLog, Jetelina.JFiles, Jetelina.JMessage
+
+JMessage.showModuleInCompiling(@__MODULE__)
 
 include("ReadConfig.jl")
-include("DBDataController.jl")
 
 const j_config = ReadConfig
 
 function __init__()
 	@info "=========SQLAnalyzer.jl init==========="
+	include("DBDataController.jl")
+#===
 	if j_config.JetelinaDBtype == "postgresql"
 		include("libs/postgres/PgDBController.jl")
 		include("libs/postgres/PgTestDBController.jl")
@@ -37,6 +40,7 @@ function __init__()
 	elseif j_config.JetelinaDBtype == "mariadb"
 	elseif j_config.JetelinaDBtype == "oracle"
 	end
+===#
 end
 
 """

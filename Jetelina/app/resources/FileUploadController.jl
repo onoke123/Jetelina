@@ -11,10 +11,12 @@ functions
 	fup() upload the csv file from fileuplaod.html.
 """
 module FileUploadController
-@info "FileUploadController compiling..."
+
 using Genie, Genie.Requests
 using CSV, DataFrames
-using Jetelina.JLog, Jetelina.DBDataController
+using Jetelina.JLog, Jetelina.DBDataController, Jetelina.JMessage
+
+JMessage.showModuleInCompiling(@__MODULE__)
 
 include("ReadConfig.jl")
 

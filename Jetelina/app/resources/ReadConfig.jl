@@ -9,8 +9,9 @@ module: ReadConfig
 """
 
 module ReadConfig
-@info "ReadConfig compiling..."
-using Jetelina.JFiles
+using Jetelina.JFiles, Jetelina.JMessage
+
+JMessage.showModuleInCompiling(@__MODULE__)
 
 export JetelinaLogfile,# log file name
 	debugflg,# debug configuration true/false
@@ -47,6 +48,7 @@ function __init__()
 	this function calls _readConfig function.
 """
 function __init__()
+	@info "=======ReadConfig init=========="
 	_readConfig()
 end
 
@@ -121,10 +123,6 @@ function _readConfig()
 				elseif startswith(l[i], "dbtype")
 					# type of database
 					global JetelinaDBtype = _getSetting(l[i])
-					if debugflg
-						@info "ReadConfig._readConfig() db type:", JetelinaDBtype
-					end
-
 					if JetelinaDBtype == "postgresql"
 						# for PostgreSQL
 						_setPostgres(l, i + 1)
