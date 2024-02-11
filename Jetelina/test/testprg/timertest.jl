@@ -1,13 +1,24 @@
 module timertest
+    using Dates
 
-    function __init__()
-        t = Timer(test,2,interval=2)
-        wait(t)
-        sleep(1.0)
-        close(t)
+    function dosomething(interval)
+        global stopper = Ref(false)
+        i=0
+        task = @async while !stopper[]
+            hi(i)
+            i += 1
+            sleep(interval)
+        end
     end
 
-    function test(timer)
-        @show "test()"
+    function stopsomething()
+        stopper[] = true
+    end
+
+    function hi(i::Integer)
+        if 0<i
+            str = string(i,":",Dates.format(now(), "yyyy-mm-dd HH:MM:SS"), "hi ho")
+            println(str)
+        end
     end
 end
