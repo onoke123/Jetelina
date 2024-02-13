@@ -7,8 +7,7 @@
 """
 
 using Genie.Router
-using CSVFileController, PostDataController, GetDataController, FileUploadController, SQLAnalyzer
-using JetelinaReadConfig
+using Jetelina.PostDataController, Jetelina.GetDataController, Jetelina.FileUploadController
 
 #===
   HTML Pages
@@ -76,7 +75,7 @@ route("/deleteapi", PostDataController.deleteApi, method = POST)
 # csv file upload and insert to DB
 route("/postcsvfile", FileUploadController.fup, method = POST)
 # reads uploaded csv file, but does not be used now, really?
-route( "/getcsvdata", CSVFileController.read )
+route( "/getcsvdata", FileUploadController.read )
 
 #===
 

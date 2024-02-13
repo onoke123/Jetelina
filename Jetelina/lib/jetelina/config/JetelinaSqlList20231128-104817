@@ -1,3 +1,0 @@
-apino,sql,subquery
-ju70,"update people1000 set userid='{userid}',firstname='{firstname}',lastname='{lastname}',sex='{sex}',email='{email}',phone='{phone}',dateofbirth={dateofbirth},jobtitle='{jobtitle}'","where jt_id={jt_id}"
-jd71,"update people1000 set jetelina_delete_flg=1","where jt_id={jt_id}"
