@@ -30,9 +30,9 @@ include("ReadConfig.jl")
 const j_config = ReadConfig
 
 function __init__()
-	@info "=========SQLAnalyzer.jl init==========="
+	@info "=========SQLAnalyzer.jl init===========" j_config.JetelinaDBtype
 	include("DBDataController.jl")
-#===
+#===#
 	if j_config.JetelinaDBtype == "postgresql"
 		include("libs/postgres/PgDBController.jl")
 		include("libs/postgres/PgTestDBController.jl")
@@ -40,7 +40,7 @@ function __init__()
 	elseif j_config.JetelinaDBtype == "mariadb"
 	elseif j_config.JetelinaDBtype == "oracle"
 	end
-===#
+#===#
 end
 
 """
@@ -618,7 +618,7 @@ function dropTestDB(conn)
 - return: 
 """
 function dropTestDB(conn)
-	dbdrop = """drop database if exists $JetelinaTestDBname"""
+	dbdrop = string("drop database if exists ",j_config.JetelinaTestDBname)
 	return PgDBController.execute(conn, dbdrop)
 end
 
@@ -630,7 +630,7 @@ function creatTestDB()
 	only postgresql now. other db should be impremented later.
 """
 function creatTestDB()
-	if JetelinaDBtype == "postgresql"
+	if j_config.JetelinaDBtype == "postgresql"
 		conn = PgDBController.open_connection()
 
 		try
@@ -641,7 +641,7 @@ function creatTestDB()
 			===#
 			dropTestDB(conn)
 
-			dbcopy = """create database $JetelinaTestDBname"""
+			dbcopy = string("create database ",j_config.JetelinaTestDBname)
 			execute(conn, dbcopy)
 
 			#===
@@ -655,8 +655,8 @@ function creatTestDB()
 			PgDBController.close_connection(conn)
 		end
 
-	elseif JetelinaDBtype == "mariadb"
-	elseif JetelinaDBtype == "oracle"
+	elseif j_config.JetelinaDBtype == "mariadb"
+	elseif j_config.JetelinaDBtype == "oracle"
 	end
 end
 

@@ -2798,3 +2798,51 @@
 └ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
 ┌ Info: 2024-02-19 10:00:08 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
 └ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 10:12:44 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 12:45:50 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 12:51:44 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 12:53:55 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 12:54:11 SQLAnalyzer.creatTestDB() error: UndefVarError(:JetelinaTestDBname)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 12:56:05 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 13:02:10 SQLAnalyzer.creatTestDB() error: UndefVarError(:JetelinaTestDBname)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 13:03:46 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 13:03:50 SQLAnalyzer.creatTestDB() error: UndefVarError(:JetelinaTestDBname)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 13:05:09 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 13:05:13 SQLAnalyzer.creatTestDB() error: UndefVarError(:JetelinaTestDBname)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 13:07:57 SQLAnalyzer.creatTestDB() error: UndefVarError(:JetelinaTestDBname)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 13:08:00 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 13:08:10 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 13:08:29 SQLAnalyzer.creatTestDB() error: UndefVarError(:JetelinaTestDBname)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 13:10:13 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 13:10:23 SQLAnalyzer.tableCopy() error: UndefVarError(:JetelinaTestDBDataLimitNumber)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 13:10:23 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"org1000\" does not exist\nLINE 1: ...1000_name,org1000.country as org1000_country from org1000 as...\n                                                             ^\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 13:12:28 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 13:13:00 SQLAnalyzer.tableCopy() error: UndefVarError(:JetelinaTestDBDataLimitNumber)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 13:13:00 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"org1000\" does not exist\nLINE 1: ...1000_name,org1000.country as org1000_country from org1000 as...\n                                                             ^\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 13:13:58 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 13:14:04 SQLAnalyzer.tableCopy() error: UndefVarError(:JetelinaTestDBDataLimitNumber)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-19 13:14:04 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"org1000\" does not exist\nLINE 1: ...1000_name,org1000.country as org1000_country from org1000 as...\n                                                             ^\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
