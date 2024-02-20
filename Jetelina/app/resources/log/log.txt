@@ -2846,3 +2846,19 @@
 └ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
 ┌ Info: 2024-02-19 13:14:04 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"org1000\" does not exist\nLINE 1: ...1000_name,org1000.country as org1000_country from org1000 as...\n                                                             ^\n")
 └ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-20 09:23:38 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-20 09:23:50 SQLAnalyzer.creatTestDB() error: LibPQ.Errors.ObjectInUse("ERROR:  database \"testdb\" is being accessed by other users\nDETAIL:  There is 1 other session using the database.\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-20 09:25:56 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-20 09:26:05 SQLAnalyzer.creatTestDB() error: LibPQ.Errors.ObjectInUse("ERROR:  database \"testdb\" is being accessed by other users\nDETAIL:  There is 1 other session using the database.\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-20 09:26:33 SQLAnalyzer.tableCopy() error: UndefVarError(:strin)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-20 09:26:33 SQLAnalyzer.createView() error: LibPQ.Errors.UndefinedTable("ERROR:  relation \"org1000\" does not exist\nLINE 1: ...1000_name,org1000.country as org1000_country from org1000 as...\n                                                             ^\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-20 09:28:01 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61
+┌ Info: 2024-02-20 09:29:03 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:61

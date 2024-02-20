@@ -301,7 +301,7 @@ function createAnalyzedJsonFile()
 			# normalize all access numbers by the biggest 'access_numbers'
 			sql_df.access_numbers = sql_df.access_numbers / maximum(sql_df.access_numbers)
 
-			if debugflg
+			if j_config.debugflg
 				@info "SQLAnalyzer.createAnalyzedJsonFile(): " JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df))))
 			end
 			#===
@@ -430,7 +430,7 @@ function experimentalCreateView(df::DataFrame)
 	df_real = CSV.read(sqlPerformanceFile_real, DataFrame)
 	df_test = CSV.read(sqlPerformanceFile_test, DataFrame)
 
-	if debugflg
+	if j_config.debugflg
 		println("===SQLAnalyer.experimentalCreateView()===")
 		println("before normalize df_real", df_real)
 		println("before normalize df_test", df_test)
@@ -457,7 +457,7 @@ function experimentalCreateView(df::DataFrame)
 	df_test.min  = df_test.min / std_min
 	df_test.mean = df_test.mean / std_mean
 
-	if debugflg
+	if j_config.debugflg
 		println("===SQLAnalyer.experimentalCreateView()===")
 		println("after normalize df_real", df_real)
 		println("std_max:", std_max, " std_min:", std_min, " std_mean:", std_mean)
@@ -498,7 +498,7 @@ function experimentalCreateView(df::DataFrame)
 			===#
 			diff_speed = df_test[p, :mean] / df_real[p, :mean]
 
-			if debugflg
+			if j_config.debugflg
 				println("===SQLAnalyer.experimentalCreateView()===")
 				println("diff_speed:", dict_apino_arr[i], " -> ", diff_speed[1], " ", typeof(diff_speed))
 			end
@@ -681,11 +681,12 @@ function tableCopy(df::DataFrame)
 	try
 		for i ∈ 1:size(df)[1]
 			tn = df[!, :tablename][i]
-			selectsql = """select * from $tn limit $JetelinaTestDBDataLimitNumber"""
+			selectsql = string("select * from ",tn," limit ",j_config.JetelinaTestDBDataLimitNumber)
 			altdf = DataFrame(columntable(LibPQ.execute(conn, selectsql)))
 			_load_table!(tconn, altdf, tn)
 		end
 	catch err
+		@info err
 		JLog.writetoLogfile("SQLAnalyzer.tableCopy() error: $err")
 	finally
 		PgDBController.close_connection(conn)
