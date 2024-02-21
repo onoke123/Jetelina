@@ -39,7 +39,8 @@ export JetelinaLogfile,# log file name
 	JetelinaDBname,# DB database name
 	JetelinaTestDBname,# DB database for testing by analyzing
 	JetelinaTestDBDataLimitNumber,# execution limit number of select sentence in test db
-	JetelinaReadingLogMaxLine # maxmum lines to read 'sqllogfile'
+	JetelinaReadingLogMaxLine, # maxmum lines to read 'sqllogfile'
+	JetelinaAnalyzerInterval # sql analyze execute interval 
 
 """
 function __init__()
@@ -137,6 +138,8 @@ function _readConfig()
 				elseif startswith(l[i], "reading_max_lines")
 					# maxmum lines to read 'sqllogfile'
 					global JetelinaReadingLogMaxLine = _getSetting(l[i])
+				elseif startswith(l[i], "analyze_interval")
+					global JetelinaAnalyzerInterval = _getSetting(l[i])
 				end
 			else
 				# ignore as comment
