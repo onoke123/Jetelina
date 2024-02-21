@@ -14,9 +14,11 @@ using Jetelina.JFiles, Jetelina.JMessage
 JMessage.showModuleInCompiling(@__MODULE__)
 
 export JetelinaLogfile,# log file name
+	JetelinaLogfileSize, # log file size
 	debugflg,# debug configuration true/false
 	JetelinaFileUploadPath,# csv file upload path
 	JetelinaSQLLogfile,# SQL log file name
+	JetelinaSQLLogfileSize, # SQL log file size
 	JetelinaTableCombiVsAccessRelation,# real sql execution test data in json form
 	JetelinaSQLListfile,# real sql list file name
 	JetelinaSqlAccess,# sql access count data file name
@@ -72,6 +74,9 @@ function _readConfig()
 				if startswith(l[i], "logfile")
 					# log file name
 					global JetelinaLogfile = _getSetting(l[i])
+				elseif startswith(l[i], "size_logfile")
+					# log file size
+					global JetelinaLogfileSize = _getSetting(l[i])
 				elseif startswith(l[i], "debug")
 					# debug configuration true/false
 					global debugflg = parse(Bool, _getSetting(l[i]))
@@ -81,6 +86,9 @@ function _readConfig()
 				elseif startswith(l[i], "sqllogfile")
 					# SQL log file name
 					global JetelinaSQLLogfile = _getSetting(l[i])
+				elseif startswith(l[i], "size_sqllogfile")
+					# SQL log file name
+					global JetelinaSQLLogfileSize = _getSetting(l[i])
 				elseif startswith(l[i], "tablecombinationfile")
 					# real sql execution test data file name in json form
 					global JetelinaTableCombiVsAccessRelation = _getSetting(l[i])
