@@ -65,3 +65,9 @@ selectlimit = 10
 # not sure what number is the best, but this is for secure the system
 #
 reading_max_lines = 1000
+
+#
+# sql analyze execute interval 
+#   this param is used in SQLAnalyzer.jl for repeat analyzing processing
+#   this number is be hour unit  ex. 10hr interval -> 10 
+analyze_interval = 48

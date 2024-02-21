@@ -16,10 +16,11 @@
 		dropTestDB(conn)  drop testdb. doubtfull. :-p
 		creatTestDB()    create testdb by using running db(JetelinaDBname). only postgresql now. other db should be impremented later.
 		tableCopy(df::DataFrame) copy some data from the running db to the test db. the number of copy data are ordered in JetelinaTestDBDataLimitNumber.
+		function stopanalyzer() manual stopper for analyzring repeat
 """
 module SQLAnalyzer
 
-using JSON, LibPQ, Tables, CSV, DataFrames, StatsBase, DelimitedFiles
+using JSON, LibPQ, Tables, CSV, DataFrames, StatsBase, DelimitedFiles, Dates
 using Genie, Genie.Renderer, Genie.Renderer.Json
 using Jetelina.JLog, Jetelina.JFiles, Jetelina.JMessage
 
@@ -28,11 +29,11 @@ JMessage.showModuleInCompiling(@__MODULE__)
 include("ReadConfig.jl")
 
 const j_config = ReadConfig
+procflg = Ref(true) # analyze process progressable -> true, stop/error -> false
 
 function __init__()
-	@info "=========SQLAnalyzer.jl init==========="
+	@info "=========SQLAnalyzer.jl init===========" j_config.JetelinaDBtype
 	include("DBDataController.jl")
-#===
 	if j_config.JetelinaDBtype == "postgresql"
 		include("libs/postgres/PgDBController.jl")
 		include("libs/postgres/PgTestDBController.jl")
@@ -40,7 +41,6 @@ function __init__()
 	elseif j_config.JetelinaDBtype == "mariadb"
 	elseif j_config.JetelinaDBtype == "oracle"
 	end
-===#
 end
 
 """
@@ -53,7 +53,20 @@ function main()
 
 """
 function main()
-	createAnalyzedJsonFile()
+	interval::Integer = parse(Int,j_config.JetelinaAnalyzerInterval)
+	if isinteger(interval)
+		interval = interval*60*60 # transfer hr -> sec
+		JLog.writetoLogfile(string("SQLAnalyzer.main() start with : ",j_config.JetelinaAnalyzerInterval," hr interval"))
+
+		task = @async while procflg[]
+			createAnalyzedJsonFile()
+			sleep(interval)
+		end
+	else
+		err = "JetelinaAnalyzerInterval is not set in perfect"
+		println(err)
+		JLog.writetoLogfile("SQLAnalyzer.main() error: $err")
+	end
 end
 
 """
@@ -211,8 +224,11 @@ function createAnalyzedJsonFile()
 		try
 			CSV.write(experimentFile, Dict(eachrow(sql_df)), header = [j_config.JetelinaFileColumnApino, j_config.JetelinaFileColumnSql])
 		catch err
+			procflg[] = false
 			println(err)
+			JLog.writetoLogfile("SQLAnalyzer.createAnalyzedJsonFile() error: $err")
 			return
+		finally
 		end
 		#===
 			↑ preparation.
@@ -301,7 +317,7 @@ function createAnalyzedJsonFile()
 			# normalize all access numbers by the biggest 'access_numbers'
 			sql_df.access_numbers = sql_df.access_numbers / maximum(sql_df.access_numbers)
 
-			if debugflg
+			if j_config.debugflg
 				@info "SQLAnalyzer.createAnalyzedJsonFile(): " JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df))))
 			end
 			#===
@@ -430,7 +446,7 @@ function experimentalCreateView(df::DataFrame)
 	df_real = CSV.read(sqlPerformanceFile_real, DataFrame)
 	df_test = CSV.read(sqlPerformanceFile_test, DataFrame)
 
-	if debugflg
+	if j_config.debugflg
 		println("===SQLAnalyer.experimentalCreateView()===")
 		println("before normalize df_real", df_real)
 		println("before normalize df_test", df_test)
@@ -457,7 +473,7 @@ function experimentalCreateView(df::DataFrame)
 	df_test.min  = df_test.min / std_min
 	df_test.mean = df_test.mean / std_mean
 
-	if debugflg
+	if j_config.debugflg
 		println("===SQLAnalyer.experimentalCreateView()===")
 		println("after normalize df_real", df_real)
 		println("std_max:", std_max, " std_min:", std_min, " std_mean:", std_mean)
@@ -498,7 +514,7 @@ function experimentalCreateView(df::DataFrame)
 			===#
 			diff_speed = df_test[p, :mean] / df_real[p, :mean]
 
-			if debugflg
+			if j_config.debugflg
 				println("===SQLAnalyer.experimentalCreateView()===")
 				println("diff_speed:", dict_apino_arr[i], " -> ", diff_speed[1], " ", typeof(diff_speed))
 			end
@@ -599,11 +615,11 @@ function createView(df::DataFrame)
 			execute(tconn, create_view_str[i])
 		end
 	catch err
+		procflg[] = false
 		println(err)
 		JLog.writetoLogfile("SQLAnalyzer.createView() error: $err")
 	finally
 		PgTestDBController.close_connection(tconn)
-
 		return newapilist
 	end
 end
@@ -618,7 +634,7 @@ function dropTestDB(conn)
 - return: 
 """
 function dropTestDB(conn)
-	dbdrop = """drop database if exists $JetelinaTestDBname"""
+	dbdrop = string("drop database if exists ",j_config.JetelinaTestDBname)
 	return PgDBController.execute(conn, dbdrop)
 end
 
@@ -630,7 +646,7 @@ function creatTestDB()
 	only postgresql now. other db should be impremented later.
 """
 function creatTestDB()
-	if JetelinaDBtype == "postgresql"
+	if j_config.JetelinaDBtype == "postgresql"
 		conn = PgDBController.open_connection()
 
 		try
@@ -641,7 +657,7 @@ function creatTestDB()
 			===#
 			dropTestDB(conn)
 
-			dbcopy = """create database $JetelinaTestDBname"""
+			dbcopy = string("create database ",j_config.JetelinaTestDBname)
 			execute(conn, dbcopy)
 
 			#===
@@ -650,13 +666,15 @@ function creatTestDB()
 			===#
 			return DBDataController.getTableList("dataframe")
 		catch err
+			procflg[] = false
+			println(err)
 			JLog.writetoLogfile("SQLAnalyzer.creatTestDB() error: $err")
 		finally
 			PgDBController.close_connection(conn)
 		end
 
-	elseif JetelinaDBtype == "mariadb"
-	elseif JetelinaDBtype == "oracle"
+	elseif j_config.JetelinaDBtype == "mariadb"
+	elseif j_config.JetelinaDBtype == "oracle"
 	end
 end
 
@@ -681,11 +699,13 @@ function tableCopy(df::DataFrame)
 	try
 		for i ∈ 1:size(df)[1]
 			tn = df[!, :tablename][i]
-			selectsql = """select * from $tn limit $JetelinaTestDBDataLimitNumber"""
+			selectsql = string("select * from ",tn," limit ",j_config.JetelinaTestDBDataLimitNumber)
 			altdf = DataFrame(columntable(LibPQ.execute(conn, selectsql)))
 			_load_table!(tconn, altdf, tn)
 		end
 	catch err
+		procflg[] = false
+		println(err)
 		JLog.writetoLogfile("SQLAnalyzer.tableCopy() error: $err")
 	finally
 		PgDBController.close_connection(conn)
@@ -746,9 +766,20 @@ function _load_table!(conn, df::DataFrame, tablename::String, columns = names(df
 
 		execute(conn, "COMMIT;")
 	catch err
+		procflg[] = false
+		println(err)
 		JLog.writetoLogfile("SQLAnalyzer._load_table!() error: $err")
 		execute(conn, "ROLLBACK;")
+	finally
 	end
+end
+"""
+function stopanalyzer()
+
+	manual stopper for analyzring repeat
+"""
+function stopanalyzer()
+	procflg[] = false
 end
 
 end

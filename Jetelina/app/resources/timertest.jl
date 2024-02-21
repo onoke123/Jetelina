@@ -1,8 +1,10 @@
 module timertest
     using Dates
 
+    stopper = Ref(false)
+
     function dosomething(interval)
-        global stopper = Ref(false)
+    #    global stopper = Ref(false)
         i=0
         task = @async while !stopper[]
             hi(i)

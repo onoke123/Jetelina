@@ -16,7 +16,7 @@ functions
 module PgTestDBController
 
 using CSV, LibPQ, DataFrames, IterTools, Tables
-using Jetelina.JLog, Jetelina.JMessage
+using Jetelina.JFiles, Jetelina.JLog, Jetelina.JMessage
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
@@ -107,9 +107,9 @@ function measureSqlPerformance()
 			I know it can use Df_JetelinaSqlList here, but wanna leave a evidence what sql are executed.
 			That's reason why JetelinaExperimentSqlList file is opend here.
 	===#
-	sqlFile = getFileNameFromConfigPath(j_config.JetelinaExperimentSqlList)
+	sqlFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaExperimentSqlList)
 	if isfile(sqlFile)
-		sqlPerformanceFile = getFileNameFromConfigPath(string(j_config.JetelinaSqlPerformancefile, ".test"))
+		sqlPerformanceFile = JFiles.getFileNameFromConfigPath(string(j_config.JetelinaSqlPerformancefile, ".test"))
 		open(sqlPerformanceFile, "w") do f
 			println(f, string(j_config.JetelinaFileColumnApino, ',', j_config.JetelinaFileColumnMax, ',', j_config.JetelinaFileColumnMin, ',', j_config.JetelinaFileColumnMean))
 			df = CSV.read(sqlFile, DataFrame)
