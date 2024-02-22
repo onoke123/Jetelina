@@ -15,12 +15,12 @@ using Jetelina.JMessage
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-#include("SQLAnalyzer.jl")
+include("SQLAnalyzer.jl")
 include("LogFileRotator.jl")
 
 function __init__()
     @info "==============TimerExecuter init==============="
-#    SQLAnalyzer.main()
+    SQLAnalyzer.main()
     LogFileRotator.main()
 end
 
