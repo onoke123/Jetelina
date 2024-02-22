@@ -18,7 +18,9 @@ export JetelinaLogfile,# log file name
 	debugflg,# debug configuration true/false
 	JetelinaFileUploadPath,# csv file upload path
 	JetelinaSQLLogfile,# SQL log file name
-	JetelinaSQLLogfileSize, # SQL log file size
+	JetelinaSQLLogfileSize,# SQL log file size
+	JetelinaLogRotationTimeF,# log file rotation execute time 'from'
+	JetelinaLogRotationTimeT,# log file rotation execute time 'till'
 	JetelinaTableCombiVsAccessRelation,# real sql execution test data in json form
 	JetelinaSQLListfile,# real sql list file name
 	JetelinaSqlAccess,# sql access count data file name
@@ -89,6 +91,12 @@ function _readConfig()
 				elseif startswith(l[i], "size_sqllogfile")
 					# SQL log file name
 					global JetelinaSQLLogfileSize = _getSetting(l[i])
+				elseif startswith(l[i], "time1_logfile_rotation")
+					# log file rotation execute time 'from'
+					global JetelinaLogRotationTimeF = _getSetting(l[i])
+				elseif startswith(l[i], "time2_logfile_rotation")
+					# log file rotation execute time 'till'
+					global JetelinaLogRotationTimeT = _getSetting(l[i])
 				elseif startswith(l[i], "tablecombinationfile")
 					# real sql execution test data file name in json form
 					global JetelinaTableCombiVsAccessRelation = _getSetting(l[i])

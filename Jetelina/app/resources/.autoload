@@ -12,6 +12,7 @@ JTimer.jl
 -#'these are neglect auto loading'
 -SQLAnalyzer.jl
 -TimerExecuter.jl
+-LogFileRotator.jl
 -#'these under layer prgs do not get effect at all :P'
 -libs/postgres/PgDataTypeList.jl
 -libs/postgres/PgDBController.jl

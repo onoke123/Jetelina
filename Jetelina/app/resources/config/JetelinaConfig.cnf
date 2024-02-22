@@ -10,6 +10,10 @@
 #      fileuploadpath: define csv file upload path
 #      sqllogfile: be executed SQL sentences log file
 #      sqllogfilesize: MB order ex. 10MB -> 10
+#      time1_logfile_rotation: log file rotation execute time 'from'
+#      time2_logfile_rotation: log file rotation execute time 'till'
+#           *log file rotation executes between 'time1_logfile_rotation' and 'time2_logfile_rotation'
+#           *the watching interval time is default 1hr
 #      tablecombinationfile: real sql execution test data file name in json form
 #      sqllistfile: real sql list file name
 #      sqlperformancefile: sql execution speed data file
@@ -22,6 +26,8 @@ size_logfile = 10
 fileuploadpath = repo
 sqllogfile = sql.txt
 size_sqllogfile = 10
+time1_logfile_rotation = 00:00
+time2_logfile_rotation = 01:02
 tablecombinationfile = JetelinaTableCombiVsAccessRelation.json
 sqllistfile = JetelinaSqlList
 sqlaccesscountfile = JetelinaSqlAccess

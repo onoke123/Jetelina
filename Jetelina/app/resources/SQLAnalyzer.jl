@@ -46,11 +46,8 @@ end
 """
 function main()
 
-	rap function for executing createAnalyzedJsonFile() that is the real analyzing function.
+	wrap function for executing createAnalyzedJsonFile() that is the real analyzing function.
 	this function set as for kicking createAna..() from outer function.
-
-# Arguments
-
 """
 function main()
 	interval::Integer = parse(Int,j_config.JetelinaAnalyzerInterval)
