@@ -17,14 +17,11 @@ module PgTestDBController
 
 using CSV, LibPQ, DataFrames, IterTools, Tables
 using Jetelina.JFiles, Jetelina.JLog, Jetelina.JMessage
+import Jetelina.CallReadConfig.ReadConfig as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-include("../../ReadConfig.jl")
-
 export measureSqlPerformance
-
-const j_config = ReadConfig
 
 """
 function open_connection()

@@ -23,12 +23,10 @@ module SQLAnalyzer
 using JSON, LibPQ, Tables, CSV, DataFrames, StatsBase, DelimitedFiles, Dates
 using Genie, Genie.Renderer, Genie.Renderer.Json
 using Jetelina.JLog, Jetelina.JFiles, Jetelina.JMessage
+import Jetelina.CallReadConfig.ReadConfig as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-include("ReadConfig.jl")
-
-const j_config = ReadConfig
 procflg = Ref(true) # analyze process progressable -> true, stop/error -> false
 
 function __init__()

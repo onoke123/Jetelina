@@ -19,12 +19,9 @@ module GetDataController
 
 using Genie, Genie.Requests, Genie.Renderer.Json
 using Jetelina.JFiles, Jetelina.ApiSqlListManager, Jetelina.DBDataController, Jetelina.JMessage
+import Jetelina.CallReadConfig.ReadConfig as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
-
-include("ReadConfig.jl")
-
-const j_config = ReadConfig
 
 export getTableList, getTableCombiVsAccessRelationData, getPerformanceRealData, getPerformanceTestData, checkExistImproveApiFile, getApiList
 

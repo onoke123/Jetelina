@@ -37,10 +37,10 @@ module PgDBController
 using Genie, Genie.Renderer, Genie.Renderer.Json
 using CSV, LibPQ, DataFrames, IterTools, Tables
 using Jetelina.JFiles, Jetelina.JLog, Jetelina.ApiSqlListManager, Jetelina.JMessage
+import Jetelina.CallReadConfig.ReadConfig as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-include("../../ReadConfig.jl")
 include("PgDataTypeList.jl")
 include("PgSQLSentenceManager.jl")
 
@@ -48,8 +48,6 @@ export create_jetelina_table, create_jetelina_id_sequence, open_connection, clos
 	getTableList, getJetelinaSequenceNumber, insert2JetelinaTableManager, dataInsertFromCSV, dropTable, getColumns,
 	executeApi, doSelect, measureSqlPerformance, create_jetelina_user_table, userRegist, chkUserExistence, getUserInfoKeys,
 	refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount
-
-const j_config = ReadConfig
 
 """
 function create_jetelina_table

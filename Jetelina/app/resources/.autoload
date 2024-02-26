@@ -1,6 +1,6 @@
 JMessage.jl
 JFiles.jl
-ReadConfig.jl
+CallReadConfig.jl
 JLog.jl
 ApiSqlListManager.jl
 DBDataController.jl
@@ -9,7 +9,8 @@ GetDataController.jl
 PostDataController.jl
 JTimer.jl
 
--#'these are neglect auto loading'
+-#'these are neglected in auto loading'
+-ReadConfig.jl
 -SQLAnalyzer.jl
 -TimerExecuter.jl
 -LogFileRotator.jl

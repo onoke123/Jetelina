@@ -14,14 +14,11 @@ module JLog
 
 using Logging, Dates
 using Jetelina.JFiles, Jetelina.JMessage
+import Jetelina.CallReadConfig.ReadConfig as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-include("ReadConfig.jl")
-
 export writetoLogfile, writetoSQLLogfile
-
-const j_config = ReadConfig
 
 """
 function _logfileOpen()

@@ -15,14 +15,11 @@ module FileUploadController
 using Genie, Genie.Requests
 using CSV, DataFrames
 using Jetelina.JLog, Jetelina.DBDataController, Jetelina.JMessage
+import Jetelina.CallReadConfig.ReadConfig as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-include("ReadConfig.jl")
-
 export read, fup
-
-const j_config = ReadConfig
 
 """
 function read( csvfname::String )

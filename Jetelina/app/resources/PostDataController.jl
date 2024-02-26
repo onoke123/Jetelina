@@ -25,15 +25,12 @@ module PostDataController
 
 using Genie, Genie.Requests, Genie.Renderer.Json
 using Jetelina.JFiles, Jetelina.JLog, Jetelina.ApiSqlListManager, Jetelina.DBDataController, Jetelina.JMessage
+import Jetelina.CallReadConfig.ReadConfig as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-include("ReadConfig.jl")
-
 export handleApipostdata, createApi, getColumns, deleteTable, userRegist, login, getUserInfoKeys, refUserAttribute, updateUserInfo,
 	updateUserData, updateUserLoginData, deleteUserAccount, deleteApi
-
-const j_config = ReadConfig
 
 """
 function handleApipostdata()
