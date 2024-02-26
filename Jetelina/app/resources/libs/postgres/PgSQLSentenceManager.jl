@@ -19,7 +19,7 @@ module PgSQLSentenceManager
 
 using DataFrames, StatsBase
 using Genie, Genie.Requests, Genie.Renderer.Json
-using Jetelina.ReadConfig, Jetelina.ApiSqlListManager, Jetelina.JMessage
+using Jetelina.ApiSqlListManager, Jetelina.JMessage
 
 JMessage.showModuleInCompiling(@__MODULE__)
 

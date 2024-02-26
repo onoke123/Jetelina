@@ -16,14 +16,11 @@ module ApiSqlListManager
 
 using DataFrames, CSV
 using Jetelina.JFiles, Jetelina.JMessage
+import Jetelina.CallReadConfig.ReadConfig as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-include("ReadConfig.jl")
-
 export readSqlList2DataFrame, writeTolist, deleteFromlist
-
-const j_config = ReadConfig
 
 """
 function __init__()

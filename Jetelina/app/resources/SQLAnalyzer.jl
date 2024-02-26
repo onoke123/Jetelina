@@ -23,12 +23,10 @@ module SQLAnalyzer
 using JSON, LibPQ, Tables, CSV, DataFrames, StatsBase, DelimitedFiles, Dates
 using Genie, Genie.Renderer, Genie.Renderer.Json
 using Jetelina.JLog, Jetelina.JFiles, Jetelina.JMessage
+import Jetelina.CallReadConfig.ReadConfig as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-include("ReadConfig.jl")
-
-const j_config = ReadConfig
 procflg = Ref(true) # analyze process progressable -> true, stop/error -> false
 
 function __init__()
@@ -46,11 +44,8 @@ end
 """
 function main()
 
-	rap function for executing createAnalyzedJsonFile() that is the real analyzing function.
+	wrap function for executing createAnalyzedJsonFile() that is the real analyzing function.
 	this function set as for kicking createAna..() from outer function.
-
-# Arguments
-
 """
 function main()
 	interval::Integer = parse(Int,j_config.JetelinaAnalyzerInterval)

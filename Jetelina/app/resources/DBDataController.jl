@@ -30,10 +30,9 @@ module DBDataController
 
 using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json
 using Jetelina.ApiSqlListManager, Jetelina.JMessage
+import Jetelina.CallReadConfig.ReadConfig as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
-
-include("ReadConfig.jl")
 
 #===
 	Note: 
@@ -42,8 +41,6 @@ include("ReadConfig.jl")
 ===#
 include("libs/postgres/PgDBController.jl")
 include("libs/postgres/PgSQLSentenceManager.jl")
-
-const j_config = ReadConfig
 
 export init_Jetelina_table,
 	dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,
