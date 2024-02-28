@@ -1,5 +1,5 @@
 """
-module: ReadConfig
+module: ConfigManager
 
 	read configuration parameters from Jetelina.cnf file
 	then set them to global variables
@@ -8,43 +8,47 @@ module: ReadConfig
 		__init__()
 """
 
-module ReadConfig
+module ConfigManager
 using Jetelina.JFiles, Jetelina.JMessage
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export JetelinaLogfile,# log file name
-	JetelinaLogfileSize, # log file size
-	debugflg,# debug configuration true/false
-	JetelinaFileUploadPath,# csv file upload path
-	JetelinaSQLLogfile,# SQL log file name
-	JetelinaSQLLogfileSize,# SQL log file size
-	JetelinaLogRotationTimeF,# log file rotation execute time 'from'
-	JetelinaLogRotationTimeT,# log file rotation execute time 'till'
-	JetelinaTableCombiVsAccessRelation,# real sql execution test data in json form
-	JetelinaSQLListfile,# real sql list file name
-	JetelinaSqlAccess,# sql access count data file name
-	JetelinaSqlPerformancefile,# sql execution speed data file name
-	JetelinaTableApifile,# file name for relation between talbe name and api no
-	JetelinaExperimentSqlList,# sql list file for execution in test db
-	JetelinaImprApis,# suggestion file name due to execute test db
-	JetelinaFileColumnApino,# column title of sqllogfile/sqllistfile/experimentalsqllistfile
-	JetelinaFileColumnSql,# column title of sqllogfile/sqllistfile/experimentalsqllistfile
-	JetelinaFileColumnSubQuery,# column title of sqllogfile/sqllistfile/experimentalsqllistfile
-	JetelinaFileColumnMax,# column title of sqllogfile/sqllistfile/experimentalsqllistfile
-	JetelinaFileColumnMin,# column title of sqllogfile/sqllistfile/experimentalsqllistfile
-	JetelinaFileColumnMean,# column title of sqllogfile/sqllistfile/experimentalsqllistfile
-	JetelinaDBtype,# type of database
-	JetelinaDBhost,# DB host name
-	JetelinaDBport,# DB port number
-	JetelinaDBuser,# DB access user account
-	JetelinaDBpassword,# DB access user password
-	JetelinaDBsslmode,# DB access ssl mode (in PostgreSQL)
-	JetelinaDBname,# DB database name
-	JetelinaTestDBname,# DB database for testing by analyzing
-	JetelinaTestDBDataLimitNumber,# execution limit number of select sentence in test db
-	JetelinaReadingLogMaxLine, # maxmum lines to read 'sqllogfile'
-	JetelinaAnalyzerInterval # sql analyze execute interval 
+export JC
+
+#===
+export JC["logfile"],# log file name
+	JC["logfilesize"], # log file size
+	JC["debug"],# debug configuration true/false
+	JC["fileuploadpath"],# csv file upload path
+	JC["sqllogfile"],# SQL log file name
+	JC["sqllogfilesize"],# SQL log file size
+	JC["logfile_rotation_open"],# log file rotation execute time 'from'
+	JC["logfile_rotation_close"],# log file rotation execute time 'till'
+	JC["tablecombinationfile"],# real sql execution test data in json form
+	JC["sqllistfile"],# real sql list file name
+	JC["sqlaccesscountfile"],# sql access count data file name
+	JC["sqlperformancefile"],# sql execution speed data file name
+	JC["tableapifile"],# file name for relation between talbe name and api no
+	JC["experimentsqllistfile"],# sql list file for execution in test db
+	JC["improvesuggestionfile"],# suggestion file name due to execute test db
+	JC["file_column_apino"],# column title of sqllogfile/sqllistfile/experimentalsqllistfile
+	JC["file_column_sql"],# column title of sqllogfile/sqllistfile/experimentalsqllistfile
+	JC["file_column_subquery"],# column title of sqllogfile/sqllistfile/experimentalsqllistfile
+	JC["file_column_max"],# column title of sqllogfile/sqllistfile/experimentalsqllistfile
+	JC["file_column_min"],# column title of sqllogfile/sqllistfile/experimentalsqllistfile
+	JC["file_column_mean"],# column title of sqllogfile/sqllistfile/experimentalsqllistfile
+	JC["dbtype"],# type of database
+	JC["pg_host"],# DB host name
+	JC["pg_port"],# DB port number
+	JC["pg_user"],# DB access user account
+	JC["pg_password"],# DB access user password
+	JC["pg_sslmode"],# DB access ssl mode (in PostgreSQL)
+	JC["pg_dbname"],# DB database name
+	JC["pg_testdbname"],# DB database for testing by analyzing
+	JC["selectlimit"],# execution limit number of select sentence in test db
+	JC["reading_max_lines"], # maxmum lines to read 'sqllogfile'
+	JC["analyze_interval"] # sql analyze execute interval 
+===#
 
 """
 function __init__()
@@ -53,7 +57,7 @@ function __init__()
 	this function calls _readConfig function.
 """
 function __init__()
-	@info "=======ReadConfig init=========="
+	@info "=======ConfigManager init=========="
 	_readConfig()
 end
 
@@ -70,9 +74,18 @@ function _readConfig()
 	try
 		f = open(configfile, "r")
 		l = readlines(f)
+		global JC = Dict{String,Any}()
 
 		for i ∈ 1:length(l)
-			if !startswith(l[i], "#")
+			if !startswith(l[i], "#") && 0<length(l[i])
+				ret = _getSetting(l[i])
+				if ret[2] == "true" || ret[2] == "false"
+					JC[ret[1]] = parse(Bool,ret[2])
+				else
+					JC[ret[1]] = ret[2]
+				end
+#				JetelinaConfig[ret[1]] = ret[2]
+#===
 				if startswith(l[i], "logfile")
 					# log file name
 					global JetelinaLogfile = _getSetting(l[i])
@@ -155,8 +168,9 @@ function _readConfig()
 					# maxmum lines to read 'sqllogfile'
 					global JetelinaReadingLogMaxLine = _getSetting(l[i])
 				elseif startswith(l[i], "analyze_interval")
-					global JetelinaAnalyzerInterval = _getSetting(l[i])
+					global JC["analyze_interval"] = _getSetting(l[i])
 				end
+===#
 			else
 				# ignore as comment
 			end
@@ -164,7 +178,7 @@ function _readConfig()
 
 		close(f)
 	catch err
-		@error "ReadConfig._readConfig() error: $err"
+		@error "ConfigManager._readConfig() error: $err"
 		return false
 	end
 
@@ -176,15 +190,18 @@ function _getSetting(s::String)
 
 	this function is hopefully be private.
 	get value from 's'. 's' is expected 'name=value' style.
+	return trimed array.
 
 # Arguments
 - `s::String`:  configuration data in 'name=value'. ex. 'debug = true'
-- return: configuration parameter   ex. 'debug = true' parses and gets 'true' 
+- return: trimed array [1]:NAME,[2]:value  ex. [1]:"DEBUG",[2]:"true"
 """
 function _getSetting(s::String)
 	t = split(s, "=")
-	tt = strip(t[2])
-	return tt
+	t[1] = strip(t[1])
+	t[2] = strip(t[2])
+
+	return t
 end
 
 """
@@ -192,6 +209,8 @@ function _setPostgres(l::String, c::Integer)
 
 	this function is hopefully be private.
 	parses and gets then set PostgreSQL connection parameterss to the global variables.
+
+	deprecated.
 
 # Arguments
 - `l::Vector{String}`: configuration file strings
@@ -202,7 +221,7 @@ function _setPostgres(l::Vector{String}, c::Int64)
 		if !startswith(l[i], "#")
 			if startswith(l[i], "host")
 				# DB host
-				global JetelinaDBhost = _getSetting(l[i])
+				global JC["dbtype"] = _getSetting(l[i])
 			elseif startswith(l[i], "port")
 				# DB port
 				global JetelinaDBport = parse(Int16, _getSetting(l[i]))
@@ -223,6 +242,42 @@ function _setPostgres(l::Vector{String}, c::Int64)
 				global JetelinaTestDBname = _getSetting(l[i])
 			end
 		end
+	end
+end
+function update(param::String, var)
+	@info "param = var is " param var
+	if contains(param,"db type")
+		prevparam = j_config.JC["dbtype"] 
+		j_config.JC["dbtype"] = var
+		_fileupdate(JC["dbtype"],prevparam,var)
+	end
+end
+
+function _fileupdate(param::String, prev,var)
+	configfile = JFiles.getFileNameFromConfigPath("JetelinaConfig.cnf")
+	configfile_tmp = string(configfile,".1")
+	try
+		f = open(configfile,"r+")
+		tf = open(configfile_tmp,"w")
+		l = readlines(f)
+		for i ∈ 1:length(l)
+			if startswith(l[i],"dbname")
+				@info "find dbname" l[i] prev var
+				p = replace(l[i],prev => var, count=1)
+				@info "later " l[i] p
+			else
+				p = l[i]
+			end
+			#@info i " -> " l[i]
+			println(tf,p)
+		end
+
+		close(tf)
+		close(f)
+
+		mv(configfile_tmp,configfile, force=true)
+	catch err
+		@error "ChangeParams._fileupdate() error: $err"
 	end
 end
 end

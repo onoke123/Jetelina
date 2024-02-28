@@ -22,12 +22,12 @@
 #      improvesuggestionfile: suggestion file name due to execute test db
 debug = true
 logfile = log.txt
-size_logfile = 10
+logfilesize = 10
 fileuploadpath = repo
 sqllogfile = sql.txt
-size_sqllogfile = 10
-time1_logfile_rotation = 00:00
-time2_logfile_rotation = 01:02
+sqllogfilesize = 10
+logfile_rotation_open = 00:00
+logfile_rotation_close = 01:02
 tablecombinationfile = JetelinaTableCombiVsAccessRelation.json
 sqllistfile = JetelinaSqlList
 sqlaccesscountfile = JetelinaSqlAccess
@@ -47,25 +47,40 @@ file_column_min = min
 file_column_mean = mean
 
 #
-#  section of database
+#  default database
+#      this parameter is used in calling api if db type were not specified
 #      dbtype: type of database   
 #                PostgreSQL -> portgresql
-#                MariaDB    -> mariadb
+#                MySQL      -> mysql
 #                Oracle     -> oracle
 dbtype = postgresql
 
 # PostgreSQL setting
-host = localhost
-port = 5432
-user = postgres
-password = postgres
-sslmode = prefer
-dbname = postgres
-testdbname = testdb
+pg_host = localhost
+pg_port = 5432
+pg_user = postgres
+pg_password = postgres
+pg_sslmode = prefer
+pg_dbname = postgres
+pg_testdbname = testdb
 
-# MariaDB setting
+# MySQL setting
+my_host = localhost
+my_port = 
+my_user = 
+my_password = 
+my_sslmode = prefer
+my_dbname = 
+my_testdbname = testdb
 
 # Oracle setting
+or_host = localhost
+or_port = 
+or_user = 
+or_password = 
+or_sslmode = prefer
+or_dbname = 
+or_testdbname = testdb
 
 # execution limit number of select sentence in test db
 selectlimit = 10

@@ -1,15 +1,15 @@
 module ChangeParams
     using Jetelina.JFiles, Jetelina.JMessage
-    import Jetelina.CallReadConfig.ReadConfig as j_config
+    import Jetelina.InitConfigManager.ConfigManager as j_config
 
     JMessage.showModuleInCompiling(@__MODULE__)
 
     function update(param::String, var)
         @info "param = var is " param var
         if contains(param,"db type")
-            prevparam = j_config.JetelinaDBtype 
-            j_config.JetelinaDBtype = var
-            _fileupdate("JetelinaDBtype",prevparam,var)
+            prevparam = j_config.JC["dbtype"] 
+            j_config.JC["dbtype"] = var
+            _fileupdate(JC["dbtype"],prevparam,var)
         end
     end
 

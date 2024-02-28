@@ -14,7 +14,7 @@ module JLog
 
 using Logging, Dates
 using Jetelina.JFiles, Jetelina.JMessage
-import Jetelina.CallReadConfig.ReadConfig as j_config
+import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
@@ -30,8 +30,8 @@ function _logfileOpen()
 - return::tuple (IOStream, Logging.SimpleLogger)
 """
 function _logfileOpen()
-	logfile = JFiles.getFileNameFromLogPath(j_config.JetelinaLogfile)
-	logfilemaxsize = parse(Int, j_config.JetelinaLogfileSize)
+	logfile = JFiles.getFileNameFromLogPath(j_config.JC["logfile"])
+	logfilemaxsize = parse(Int, j_config.JC["logfilesize"])
 
 	try
 		if ispath(logfile)
@@ -101,7 +101,7 @@ function writetoSQLLogfile(apino, sql)
 			ref: SQLAnalyzer.createAnalyzedJsonFile()
 	===#
 	log_str = string(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"), ",", apino, ",\"", sql, "\"")
-	sqllogfile = JFiles.getFileNameFromLogPath(j_config.JetelinaSQLLogfile)
+	sqllogfile = JFiles.getFileNameFromLogPath(j_config.JC["sqllogfile"])
 	sqlfilemaxsize = parse(Int, sqlfilemaxsize)
 
 	try

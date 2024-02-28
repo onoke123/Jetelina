@@ -19,13 +19,13 @@ functions
 	updateUserData() update user data
 	updateUserLoginData() update user login data like logincount,logindate,.....
 	deleteUserAccount() delete user account from jetelina_user_table
-	deleteApi()  delete api by ordering from JetelinaSQLListfile file, then refresh the DataFrame.
+	deleteApi()  delete api by ordering from JC["sqllistfile"] file, then refresh the DataFrame.
 """
 module PostDataController
 
 using Genie, Genie.Requests, Genie.Renderer.Json
 using Jetelina.JFiles, Jetelina.JLog, Jetelina.ApiSqlListManager, Jetelina.DBDataController, Jetelina.JMessage
-import Jetelina.CallReadConfig.ReadConfig as j_config
+import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
@@ -275,7 +275,7 @@ end
 """
 function deleteApi()
 
-	delete api by ordering from JetelinaSQLListfile file, then refresh the DataFrame.
+	delete api by ordering from JC["sqllistfile"] file, then refresh the DataFrame.
 """
 function deleteApi()
 	targetapi = jsonpayload("apino")
@@ -288,13 +288,13 @@ function deleteApi()
 		return false
 	end
 
-	apiFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
+	apiFile = JFiles.getFileNameFromConfigPath(j_config.JC["sqllistfile"])
 	apiFile_tmp = string(apiFile, ".tmp")
 
 	try
 		open(apiFile_tmp, "w") do tio
 			# write header first
-			colstr = string(j_config.JetelinaFileColumnApino, ",", j_config.JetelinaFileColumnSql, ",", j_config.JetelinaFileColumnSubQuery)
+			colstr = string(j_config.JC["file_column_apino"], ",", j_config.JC["file_column_sql"], ",", j_config.JC["file_column_subquery"])
 			println(tio, colstr)
 			open(apiFile, "r") do io
 				for ss in eachline(io, keep = false)

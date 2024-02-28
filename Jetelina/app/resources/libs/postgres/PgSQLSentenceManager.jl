@@ -7,7 +7,7 @@ Description:
 	General DB action controller
 
 functions
-	sqlDuplicationCheck(nsql::String, subq::String)  confirm duplication, if 'nsql' exists in JetelinaSQLListfile.but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
+	sqlDuplicationCheck(nsql::String, subq::String)  confirm duplication, if 'nsql' exists in JC["sqllistfile"].but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
 	checkSubQuery(subquery::String) check posted subquery strings wheather exists any illegal strings in it.
 	createApiInsertSentence(tn::String,cs::String,ds::String) create sql input sentence by queries.
 	createApiUpdateSentence(tn::String,us::Any) create sql update sentence by queries.
@@ -28,7 +28,7 @@ export sqlDuplicationCheck, checkSubQuery, createApiInsertSentence, createApiUpd
 """
 function sqlDuplicationCheck(nsql::String, subq::String)
 
-	confirm duplication, if 'nsql' exists in JetelinaSQLListfile.
+	confirm duplication, if 'nsql' exists in JC["sqllistfile"].
 	but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
 
 # Arguments
@@ -137,7 +137,7 @@ end
 """
 function createApiSelectSentence(json_d::Dict, seq_no::Integer)
 
-	create API and SQL select sentence from posting data,then append it to JetelinaTableApifile.
+	create API and SQL select sentence from posting data,then append it to JC["tableapifile"].
 
 # Arguments
 - `json_d::Dict`: json data
@@ -173,7 +173,7 @@ function createApiSelectSentence(json_d, seq_no::Integer)
 	tableName::String = ""
 	#===
 		Tips: 
-			put into array to write it to JetelinaTableApifile. 
+			put into array to write it to JC["tableapifile"]. 
 			This is used in ApiSqlListManager.writeTolist().
 	===#
 	tablename_arr::Vector{String} = []

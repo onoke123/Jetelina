@@ -4,19 +4,19 @@ module: ApiSqlListManager
 Author: Ono keiji
 Version: 1.0
 Description:
-	manage JetelinaSQLListfile file.
+	manage JC["sqllistfile"] file.
 	this file determines a corrensponding SQL sentence to API.
 
 functions
-	readSqlList2DataFrame() import registered SQL sentence list in JetelinaSQLListfile to DataFrame.this function set the sql list data in the global variable 'Df_JetelinaSqlList' as DataFrame object.
-	writeTolist(sql::String, tablename_arr::Vector{String}) create api no and write it to JetelinaSQLListfile order by SQL sentence.
-	deleteFromlist(tablename::String) delete table name from JetelinaSQLListfile synchronized with dropping table.
+	readSqlList2DataFrame() import registered SQL sentence list in JC["sqllistfile"] to DataFrame.this function set the sql list data in the global variable 'Df_JetelinaSqlList' as DataFrame object.
+	writeTolist(sql::String, tablename_arr::Vector{String}) create api no and write it to JC["sqllistfile"] order by SQL sentence.
+	deleteFromlist(tablename::String) delete table name from JC["sqllistfile"] synchronized with dropping table.
 """
 module ApiSqlListManager
 
 using DataFrames, CSV
 using Jetelina.JFiles, Jetelina.JMessage
-import Jetelina.CallReadConfig.ReadConfig as j_config
+import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
@@ -25,7 +25,7 @@ export readSqlList2DataFrame, writeTolist, deleteFromlist
 """
 function __init__()
 
-	this is the initialize proces for importing registered SQL sentence list in JetelinaSQLListfile to DataFrame.
+	this is the initialize proces for importing registered SQL sentence list in JC["sqllistfile"] to DataFrame.
 """
 function __init__()
 	readSqlList2DataFrame()
@@ -33,7 +33,7 @@ end
 """
 function readSqlList2DataFrame()
 
-	import registered SQL sentence list in JetelinaSQLListfile to DataFrame.
+	import registered SQL sentence list in JC["sqllistfile"] to DataFrame.
 	this function set the sql list data in the global variable 'Df_JetelinaSqlList' as DataFrame object.
 
 # Arguments
@@ -42,10 +42,10 @@ function readSqlList2DataFrame()
 
 """
 function readSqlList2DataFrame()
-	sqlFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
+	sqlFile = JFiles.getFileNameFromConfigPath(j_config.JC["sqllistfile"])
 	if isfile(sqlFile)
 		df = CSV.read(sqlFile, DataFrame)
-		if j_config.debugflg
+		if j_config.JC["debug"]
 			@info "ApiSqlListManager.readSqlList2DataFrame() sql list in DataFrame: ", df
 		end
 
@@ -57,7 +57,7 @@ end
 """
 function writeTolist(sql::String, tablename_arr::Vector{String}, seq_no::Integer)
 
-	create api no and write it to JetelinaSQLListfile order by SQL sentence.
+	create api no and write it to JC["sqllistfile"] order by SQL sentence.
 	
 # Arguments
 - `sql::String`: sql sentence
@@ -68,8 +68,8 @@ function writeTolist(sql::String, tablename_arr::Vector{String}, seq_no::Integer
 				 failed   (false::Boolean, nothing)
 """
 function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String}, seq_no::Integer)
-	sqlFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
-	tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaTableApifile)
+	sqlFile = JFiles.getFileNameFromConfigPath(j_config.JC["sqllistfile"])
+	tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JC["tableapifile"])
 
 	suffix = string()
 
@@ -97,7 +97,7 @@ function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String
 	try
 		open(sqlFile, "a") do f
 			if !thefirstflg
-				println(f, string(j_config.JetelinaFileColumnApino, ',', j_config.JetelinaFileColumnSql, ',', j_config.JetelinaFileColumnSubQuery))
+				println(f, string(j_config.JC["file_column_apino"], ',', j_config.JC["file_column_sql"], ',', j_config.JC["file_column_subquery"]))
 			end
 
 			println(f, sqlsentence)
@@ -125,15 +125,15 @@ end
 """
 function deleteFromlist(tablename::String)
 
-	delete table name from JetelinaSQLListfile synchronized with dropping table.
+	delete table name from JC["sqllistfile"] synchronized with dropping table.
 
 # Arguments
 - `tablename::String`: target table name
 - return: boolean: true -> all done ,  false -> something failed
 """
 function deleteFromlist(tablename::String)
-	sqlFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
-	tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaTableApifile)
+	sqlFile = JFiles.getFileNameFromConfigPath(j_config.JC["sqllistfile"])
+	tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JC["tableapifile"])
 	sqlTmpFile = string(sqlFile, ".tmp")
 	tableapiTmpFile = string(tableapiFile, ",tmp")
 

@@ -1,8 +1,8 @@
 module testparamupdate
 
-    import Jetelina.CallReadConfig.ReadConfig as j_config
+    import Jetelina.InitConfigManager.ConfigManager as j_config
 
     function dbtype()
-        @info "dbtype() " j_config.JetelinaDBtype 
+        @info "dbtype() " j_config.JC["dbtype"] 
     end
 end

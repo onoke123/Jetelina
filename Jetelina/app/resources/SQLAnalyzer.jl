@@ -10,12 +10,12 @@
 		main() this function set as for kicking createAna..() from outer function.
 		createAnalyzedJsonFile() create json file for result of sql execution speed analyze data.
 		extractColumnsFromSql(s::String)  pick up columns data from 's'.
-		collectSqlAccessNumbers(df::DataFrame)  collect each sql access numbers then write out it to JetelinaSqlAccess file in JSON form for showing its graph in condition panel.
+		collectSqlAccessNumbers(df::DataFrame)  collect each sql access numbers then write out it to JC["sqlaccesscountfile"] file in JSON form for showing its graph in condition panel.
 		experimentalCreateView(df::DataFrame)  create view tables for test and execute all sql sentences for analyzing.
 		createView(df::DataFrame)  create view table from a sql sentence that has multi tables and hight use in the running db.
 		dropTestDB(conn)  drop testdb. doubtfull. :-p
-		creatTestDB()    create testdb by using running db(JetelinaDBname). only postgresql now. other db should be impremented later.
-		tableCopy(df::DataFrame) copy some data from the running db to the test db. the number of copy data are ordered in JetelinaTestDBDataLimitNumber.
+		creatTestDB()    create testdb by using running db(JC["pg_dbname"]). only postgresql now. other db should be impremented later.
+		tableCopy(df::DataFrame) copy some data from the running db to the test db. the number of copy data are ordered in JC["selectlimit"].
 		function stopanalyzer() manual stopper for analyzring repeat
 """
 module SQLAnalyzer
@@ -23,21 +23,21 @@ module SQLAnalyzer
 using JSON, LibPQ, Tables, CSV, DataFrames, StatsBase, DelimitedFiles, Dates
 using Genie, Genie.Renderer, Genie.Renderer.Json
 using Jetelina.JLog, Jetelina.JFiles, Jetelina.JMessage
-import Jetelina.CallReadConfig.ReadConfig as j_config
+import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
 procflg = Ref(true) # analyze process progressable -> true, stop/error -> false
 
 function __init__()
-	@info "=========SQLAnalyzer.jl init===========" j_config.JetelinaDBtype
+	@info "=========SQLAnalyzer.jl init===========" j_config.JC["dbtype"]
 	include("DBDataController.jl")
-	if j_config.JetelinaDBtype == "postgresql"
+	if j_config.JC["dbtype"] == "postgresql"
 		include("libs/postgres/PgDBController.jl")
 		include("libs/postgres/PgTestDBController.jl")
 		include("libs/postgres/PgDataTypeList.jl")
-	elseif j_config.JetelinaDBtype == "mariadb"
-	elseif j_config.JetelinaDBtype == "oracle"
+	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
 
@@ -48,17 +48,17 @@ function main()
 	this function set as for kicking createAna..() from outer function.
 """
 function main()
-	interval::Integer = parse(Int,j_config.JetelinaAnalyzerInterval)
+	interval::Integer = parse(Int,j_config.JC["analyze_interval"])
 	if isinteger(interval)
 		interval = interval*60*60 # transfer hr -> sec
-		JLog.writetoLogfile(string("SQLAnalyzer.main() start with : ",j_config.JetelinaAnalyzerInterval," hr interval"))
+		JLog.writetoLogfile(string("SQLAnalyzer.main() start with : ",j_config.JC["analyze_interval"]," hr interval"))
 
 		task = @async while procflg[]
 			createAnalyzedJsonFile()
 			sleep(interval)
 		end
 	else
-		err = "JetelinaAnalyzerInterval is not set in perfect"
+		err = string(JC["analyze_interval"]," is not set in perfect")
 		println(err)
 		JLog.writetoLogfile("SQLAnalyzer.main() error: $err")
 	end
@@ -73,7 +73,7 @@ function createAnalyzedJsonFile()
 
 """
 function createAnalyzedJsonFile()
-	tablecombinationfile = JFiles.getFileNameFromLogPath(j_config.JetelinaTableCombiVsAccessRelation)
+	tablecombinationfile = JFiles.getFileNameFromLogPath(j_config.JC["tablecombinationfile"])
 	# delete this file if it exists, because this file is always fresh.
 	rm(tablecombinationfile, force = true)
 
@@ -90,12 +90,12 @@ function createAnalyzedJsonFile()
 			wondering is it ok if sql.log has more than one milion lines.
 			maybe should consider to rotate sql.log files. this is in #ticket 1254 
 	===#
-	sqllogfile = getFileNameFromLogPath(j_config.JetelinaSQLLogfile)
+	sqllogfile = getFileNameFromLogPath(j_config.JC["sqllogfile"])
 	if !isfile(sqllogfile)
 		return
 	end
 
-	maxrow::Int = j_config.JetelinaReadingLogMaxLine
+	maxrow::Int = j_config.JC["reading_max_lines"]
 	df = CSV.read(sqllogfile, DataFrame, limit = maxrow)
 	#===
 		Tips:
@@ -120,7 +120,7 @@ function createAnalyzedJsonFile()
 				3.find the max access numbers among the longest combination number sql sentence
 				4.collect each sql access numbers
 				5.experimental sql execution in test db, if there were a target table that had possibilities in inproving
-				6.write this relation data to JetelinaTableCombiVsAccessRelation file in JSON form
+				6.write this relation data to JC["tablecombinationfile"] file in JSON form
 	===#
 	#==
 		step1:
@@ -210,14 +210,14 @@ function createAnalyzedJsonFile()
 		end
 
 		#===
-			create JetelinaExperimentSqlList for executing them on test db
+			create JC["experimentsqllistfile"] for executing them on test db
 		===#
-		experimentFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaExperimentSqlList)
+		experimentFile = JFiles.getFileNameFromConfigPath(j_config.JC["experimentsqllistfile"])
 		# delete this file if it exists, becaus this file is always fresh.
 		rm(experimentFile, force = true)
 
 		try
-			CSV.write(experimentFile, Dict(eachrow(sql_df)), header = [j_config.JetelinaFileColumnApino, j_config.JetelinaFileColumnSql])
+			CSV.write(experimentFile, Dict(eachrow(sql_df)), header = [j_config.JC["file_column_apino"], j_config.JC["file_column_sql"]])
 		catch err
 			procflg[] = false
 			println(err)
@@ -312,7 +312,7 @@ function createAnalyzedJsonFile()
 			# normalize all access numbers by the biggest 'access_numbers'
 			sql_df.access_numbers = sql_df.access_numbers / maximum(sql_df.access_numbers)
 
-			if j_config.debugflg
+			if j_config.JC["debug"]
 				@info "SQLAnalyzer.createAnalyzedJsonFile(): " JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df))))
 			end
 			#===
@@ -322,7 +322,7 @@ function createAnalyzedJsonFile()
 			===#
 			#==
 				step6:
-					write this relation data to JetelinaTableCombiVsAccessRelation file in JSON form.
+					write this relation data to JC["tablecombinationfile"] file in JSON form.
 			==#
 			open(tablecombinationfile, "w") do f
 				println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(sql_df)))))
@@ -359,14 +359,14 @@ end
 """
 function collectSqlAccessNumbers(df::DataFrame)
 
-	collect each sql access numbers then write out it to JetelinaSqlAccess file in JSON form for showing its graph in condition panel.
+	collect each sql access numbers then write out it to JC["sqlaccesscountfile"] file in JSON form for showing its graph in condition panel.
 
 # Arguments
 - `df::DataFrame`: target dataframe data
 """
 function collectSqlAccessNumbers(df::DataFrame)
 	this_df = copy(df)
-	sqlaccessnumberfile = JFiles.getFileNameFromLogPath(j_config.JetelinaSqlAccess)
+	sqlaccessnumberfile = JFiles.getFileNameFromLogPath(j_config.JC["sqlaccesscountfile"])
 	# delete this file if it exists, because this file is always fresh.
 	rm(sqlaccessnumberfile, force = true)
 
@@ -414,14 +414,14 @@ function experimentalCreateView(df::DataFrame)
 
 	#===
 		Tips:
-			open JetelinaExperimentSqlList and call sql sentences.
+			open JC["experimentsqllistfile"] and call sql sentences.
 			execute PgTestDBController.doSelect(sql) with the 'sql' in the PgTestDBController.measureSqlPerformance().
 	===#
 	#4
 	PgTestDBController.measureSqlPerformance()
 	#===
 		Tips: Attention.
-			compare the each api performance between JetelinaSqlPerformancefile(running db) and ..test(test db).
+			compare the each api performance between JC["sqlperformancefile"](running db) and ..test(test db).
 			each data(max/min/mean) are normalized by the max data.
 			each data in test db are normalized by the real db max data.
 
@@ -435,13 +435,13 @@ function experimentalCreateView(df::DataFrame)
 
 			does not check every file existing checking since here, because they are absolutely existing.
 	===#
-	sqlPerformanceFile_real = JFiles.getFileNameFromConfigPath(j_config.JetelinaSqlPerformancefile)
+	sqlPerformanceFile_real = JFiles.getFileNameFromConfigPath(j_config.JC["sqlperformancefile"])
 	sqlPerformanceFile_test = string(sqlPerformanceFile_real, ".test")
 
 	df_real = CSV.read(sqlPerformanceFile_real, DataFrame)
 	df_test = CSV.read(sqlPerformanceFile_test, DataFrame)
 
-	if j_config.debugflg
+	if j_config.JC["debug"]
 		println("===SQLAnalyer.experimentalCreateView()===")
 		println("before normalize df_real", df_real)
 		println("before normalize df_test", df_test)
@@ -468,7 +468,7 @@ function experimentalCreateView(df::DataFrame)
 	df_test.min  = df_test.min / std_min
 	df_test.mean = df_test.mean / std_mean
 
-	if j_config.debugflg
+	if j_config.JC["debug"]
 		println("===SQLAnalyer.experimentalCreateView()===")
 		println("after normalize df_real", df_real)
 		println("std_max:", std_max, " std_min:", std_min, " std_mean:", std_mean)
@@ -477,9 +477,9 @@ function experimentalCreateView(df::DataFrame)
 		println("df_test.max:", df_test.max, " df_test.min:", df_test.min, " df_test.mean:", df_test.mean)
 	end
 
-	sqlPerformanceFile_real_json = JFiles.getFileNameFromLogPath(string(j_config.JetelinaSqlPerformancefile, ".json"))
+	sqlPerformanceFile_real_json = JFiles.getFileNameFromLogPath(string(j_config.JC["sqlperformancefile"], ".json"))
 	sqlPerformanceFile_test_json = string(sqlPerformanceFile_real_json, ".test.json")
-	improveApisFile = JFiles.getFileNameFromLogPath(string(j_config.JetelinaImprApis))
+	improveApisFile = JFiles.getFileNameFromLogPath(string(j_config.JC["improvesuggestionfile"]))
 
 	# delete all files if they exists, because these files are always fresh.
 	rm(sqlPerformanceFile_real_json, force = true)
@@ -509,7 +509,7 @@ function experimentalCreateView(df::DataFrame)
 			===#
 			diff_speed = df_test[p, :mean] / df_real[p, :mean]
 
-			if j_config.debugflg
+			if j_config.JC["debug"]
 				println("===SQLAnalyer.experimentalCreateView()===")
 				println("diff_speed:", dict_apino_arr[i], " -> ", diff_speed[1], " ", typeof(diff_speed))
 			end
@@ -629,19 +629,19 @@ function dropTestDB(conn)
 - return: 
 """
 function dropTestDB(conn)
-	dbdrop = string("drop database if exists ",j_config.JetelinaTestDBname)
+	dbdrop = string("drop database if exists ",j_config.JC["pg_testdbname"])
 	return PgDBController.execute(conn, dbdrop)
 end
 
 """
 function creatTestDB()
 
-	create testdb by using running db(JetelinaDBname).
+	create testdb by using running db(JC["pg_dbname"]).
 	
 	only postgresql now. other db should be impremented later.
 """
 function creatTestDB()
-	if j_config.JetelinaDBtype == "postgresql"
+	if j_config.JC["dbtype"] == "postgresql"
 		conn = PgDBController.open_connection()
 
 		try
@@ -652,7 +652,7 @@ function creatTestDB()
 			===#
 			dropTestDB(conn)
 
-			dbcopy = string("create database ",j_config.JetelinaTestDBname)
+			dbcopy = string("create database ",j_config.JC["pg_testdbname"])
 			execute(conn, dbcopy)
 
 			#===
@@ -668,15 +668,15 @@ function creatTestDB()
 			PgDBController.close_connection(conn)
 		end
 
-	elseif j_config.JetelinaDBtype == "mariadb"
-	elseif j_config.JetelinaDBtype == "oracle"
+	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
 
 """
 function tableCopy(df::DataFrame)
 
-	copy some data from the running db to the test db. the number of copy data are ordered in JetelinaTestDBDataLimitNumber.
+	copy some data from the running db to the test db. the number of copy data are ordered in JC["selectlimit"].
 	has taken 2 steps,
 		1.create table
 		2.copy data
@@ -694,7 +694,7 @@ function tableCopy(df::DataFrame)
 	try
 		for i ∈ 1:size(df)[1]
 			tn = df[!, :tablename][i]
-			selectsql = string("select * from ",tn," limit ",j_config.JetelinaTestDBDataLimitNumber)
+			selectsql = string("select * from ",tn," limit ",j_config.JC["selectlimit"])
 			altdf = DataFrame(columntable(LibPQ.execute(conn, selectsql)))
 			_load_table!(tconn, altdf, tn)
 		end

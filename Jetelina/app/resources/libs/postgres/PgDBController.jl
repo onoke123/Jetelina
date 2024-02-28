@@ -21,7 +21,7 @@
 		executeApi(json_d::Dict,target_api::DataFrame) execute API order by json data
 		_executeApi(apino::String, sql_str::String) execute API with creating SQL sentence,this is a private function that is called by executeApi()
 		doSelect(sql::String,mode::String) execute select data by ordering sql sentence, but get sql execution time of ordered sql if 'mode' is 'measure'.
-		measureSqlPerformance() measure exectution time of all listed sql sentences. then write it out to JetelinaSqlPerformancefile.
+		measureSqlPerformance() measure exectution time of all listed sql sentences. then write it out to JC["sqlperformancefile"].
 		create_jetelina_user_table() create 'jetelina_table_user_table' table.
 		userRegist(username::String) register a new user
 		chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
@@ -37,7 +37,7 @@ module PgDBController
 using Genie, Genie.Renderer, Genie.Renderer.Json
 using CSV, LibPQ, DataFrames, IterTools, Tables
 using Jetelina.JFiles, Jetelina.JLog, Jetelina.ApiSqlListManager, Jetelina.JMessage
-import Jetelina.CallReadConfig.ReadConfig as j_config
+import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
@@ -107,12 +107,12 @@ function open_connection()
 - return: LibPQ.Connection object
 """
 function open_connection()
-	con_str = string("host='", j_config.JetelinaDBhost,
-		"' port='", j_config.JetelinaDBport,
-		"' user='", j_config.JetelinaDBuser,
-		"' password='", j_config.JetelinaDBpassword,
-		"' sslmode='", j_config.JetelinaDBsslmode,
-		"' dbname='", j_config.JetelinaDBname, "'")
+	con_str = string("host='", j_config.JC["pg_host"],
+		"' port='", j_config.JC["pg_port"],
+		"' user='", j_config.JC["pg_user"],
+		"' password='", j_config.JC["pg_password"],
+		"' sslmode='", j_config.JC["pg_sslmode"],
+		"' dbname='", j_config.JC["pg_dbname"], "'")
 
 	return conn = LibPQ.Connection(con_str)
 end
@@ -155,7 +155,7 @@ function readJetelinatable()
 		close_connection(conn)
 	end
 
-	if j_config.debugflg
+	if j_config.JC["debug"]
 		@info "PgDBController.readJetelinatable() Df_JetelinaTableManager: " Df_JetelinaTableManager
 	end
 
@@ -291,7 +291,7 @@ function insert2JetelinaTableManager(tableName::String, columns::Array)
 			c = columns[i]
 			values_str = "'$jetelina_table_id','$tableName','$c'"
 
-			if j_config.debugflg
+			if j_config.JC["debug"]
 				@info "PgDBController.insert2JetelinaTableManager() insert str:" values_str
 			end
 
@@ -391,7 +391,7 @@ function dataInsertFromCSV(fname::String)
 		update_str = lstrip(update_str, ',')
 	end
 
-	if j_config.debugflg
+	if j_config.JC["debug"]
 		@info "PgDBController.dataInsertFromCSV() col str to create table: " column_str
 	end
 
@@ -704,23 +704,23 @@ end
 """
 function measureSqlPerformance()
 
-	measure exectution time of all listed sql sentences. then write it out to JetelinaSqlPerformancefile.
-	Attention: JetelinaExperimentSqlList is created when SQLAnalyzer.main()(indeed createAnalyzedJsonFile()) runs.
-			   JetelinaExperimentSqlList does not created if there were not sql.log file and data in it.
+	measure exectution time of all listed sql sentences. then write it out to JC["sqlperformancefile"].
+	Attention: JC["experimentsqllistfile"] is created when SQLAnalyzer.main()(indeed createAnalyzedJsonFile()) runs.
+			   JC["experimentsqllistfile"] does not created if there were not sql.log file and data in it.
 
 """
 function measureSqlPerformance()
 	#===
 		Tips:
 			I know it can use Df_JetelinaSqlList here, but wanna leave a evidence what sql are executed.
-			That's reason why JetelinaExperimentSqlList file is opend here.
+			That's reason why JC["experimentsqllistfile"] file is opend here.
 	===#
-	sqlFile = getFileNameFromConfigPath(JetelinaExperimentSqlList)
+	sqlFile = getFileNameFromConfigPath(JC["experimentsqllistfile"])
 	if isfile(sqlFile)
-		sqlPerformanceFile = getFileNameFromConfigPath(JetelinaSqlPerformancefile)
+		sqlPerformanceFile = getFileNameFromConfigPath(JC["sqlperformancefile"])
 
 		open(sqlPerformanceFile, "w") do f
-			println(f, string(JetelinaFileColumnApino, ',', JetelinaFileColumnMax, ',', JetelinaFileColumnMin, ',', JetelinaFileColumnMean))
+			println(f, string(JC["file_column_apino"], ',', JC["file_column_max"], ',', JC["file_column_min"], ',', JC["file_column_mean"]))
 			df = CSV.read(sqlFile, DataFrame)
 			for i in 1:size(df, 1)
 				if startswith(df.apino[i], "js")
