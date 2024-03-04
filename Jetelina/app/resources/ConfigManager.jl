@@ -40,17 +40,23 @@ function _readConfig()
 		f = open(configfile, "r")
 		l = readlines(f)
 		global JC = Dict{String,Any}()
+		global JS_DRAFT_CONFIG = Dict{String,Any}()
+		dicmark::String = "@jdic" # a line text that has this mark is for jetelina dictionary
+		k::Integer = 0
 
 		for i ∈ 1:length(l)
-			if !startswith(l[i], "#") && !startswith(l[i], "@jdic") && 0<length(l[i])
+			lowertext = lowercase(l[i])
+			if !startswith(lowertext, "#") && !startswith(lowertext, dicmark) && 0<length(l[i])
 				ret = _getSetting(l[i])
 				if ret[2] == "true" || ret[2] == "false"
 					JC[ret[1]] = parse(Bool,ret[2])
 				else
 					JC[ret[1]] = ret[2]
 				end
-			elseif startswith(l[i], "@jdic")
-				@info l[i]
+			elseif startswith(lowertext, dicmark)
+				ret = _getDic(l[i])
+#				JS_DRAFT_CONFIG[ret[1]] = string("scenario[\"",ret[1],"\"]=",ret[2])
+				JS_DRAFT_CONFIG[ret[1]] = ret[2]
 			end
 		end
 
@@ -80,6 +86,31 @@ function _getSetting(s::String)
 	t[2] = strip(t[2])
 
 	return t
+end
+
+"""
+function _getDic(s::String)
+
+	this function is hopefully be private.
+	get value from 's'. 's' is expected '@jdic name:value' style.
+	return trimed array.
+
+# Arguments
+- `s::String`:  configuration data in '@jdic name:value'. ex. '@jdic debug:'debug command''
+- return: trimed array [1]:NAME,[2]:value  ex. [1]:"debug",[2]:"[debug command]"
+"""
+function _getDic(s::String)
+	t = split(s, "@jdic")
+	if !isnothing(t[2]) && 0<length(t[2])
+		if contains(t[2],':')
+			p = split(t[2],':')
+			p[1] = strip(p[1])
+			p[2] = strip(p[2])
+			val = SubString(t[2],length(p[1])+3)
+			p[2] = string('[',val,']')
+			return p
+		end
+	end
 end
 
 """
