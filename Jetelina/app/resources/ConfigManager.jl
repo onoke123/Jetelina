@@ -42,15 +42,15 @@ function _readConfig()
 		global JC = Dict{String,Any}()
 
 		for i ∈ 1:length(l)
-			if !startswith(l[i], "#") && 0<length(l[i])
+			if !startswith(l[i], "#") && !startswith(l[i], "@jdic") && 0<length(l[i])
 				ret = _getSetting(l[i])
 				if ret[2] == "true" || ret[2] == "false"
 					JC[ret[1]] = parse(Bool,ret[2])
 				else
 					JC[ret[1]] = ret[2]
 				end
-			else
-				# ignore as comment
+			elseif startswith(l[i], "@jdic")
+				@info l[i]
 			end
 		end
 
