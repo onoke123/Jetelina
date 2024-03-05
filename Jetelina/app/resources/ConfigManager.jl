@@ -6,6 +6,7 @@ module: ConfigManager
 
 	contain functions
 		__init__()
+		createScenario()  create scenario.js file from base.jdic and JetelinaConfig.cnf files. this function is mandatory working to realize Jetelina Chatting.
 """
 
 module ConfigManager
@@ -13,7 +14,7 @@ using Jetelina.JFiles, Jetelina.JMessage
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export JC
+export JC, createScenario
 
 """
 function __init__()
@@ -24,6 +25,7 @@ function __init__()
 function __init__()
 	@info "=======ConfigManager init=========="
 	_readConfig()
+	createScenario()
 end
 
 """
@@ -55,7 +57,6 @@ function _readConfig()
 				end
 			elseif startswith(lowertext, dicmark)
 				ret = _getDic(l[i])
-#				JS_DRAFT_CONFIG[ret[1]] = string("scenario[\"",ret[1],"\"]=",ret[2])
 				JS_DRAFT_CONFIG[ret[1]] = ret[2]
 			end
 		end
@@ -112,7 +113,61 @@ function _getDic(s::String)
 		end
 	end
 end
+"""
+function createScenario()
 
+	create scenario.js file from base.jdic and JetelinaConfig.cnf files.
+	this function is mandatory working to realize Jetelina Chatting.
+
+# Arguments
+"""
+function createScenario()
+	basefile = getFileNameFromConfigPath("base.jdic")
+	scenariofile = getJsFileNameFromPublicPath("scenario.js")
+	scenariofile_tmp = getJsFileNameFromPublicPath("scenario.js.tmp")
+	jdicmark::String = "@jdic"
+
+	try
+		#
+		# read base.jdic
+		#
+		f = open(basefile,"r")
+		l = readlines(f)
+		close(f)
+
+		#
+		# create scenario temp file then write base.jdic into it
+		#
+		tf = open(scenariofile_tmp,"w")
+		#
+		# Tips:
+		#   this "let scena..." is for definiting as parameters in js file.
+		#   printing "scenario[...]=[...]" has meaning of array parameters because of this difinition.
+		#
+		println(tf,"let scenario = [];")
+
+		for i ∈ 1:length(l)
+			if startswith(l[i],jdicmark)
+				ret = _getDic(l[i])
+
+				println(tf, string("scenario[\"",ret[1],"\"]=",ret[2],";"))
+			end
+		end
+
+		#
+		# append the config file dictionary to scenario file
+		#
+		js_d_c::Array = collect(keys(JS_DRAFT_CONFIG))
+		for i ∈ 1:length(js_d_c)
+			println(tf, string("scenario[\"",js_d_c[i],"\"]=",JS_DRAFT_CONFIG[js_d_c[i]],";"))
+		end
+
+		close(tf)
+		mv(scenariofile_tmp,scenariofile, force=true)
+	catch err
+		@error "ConfigManager._fileupdate() error $param changes with $prev -> $var: $err"
+	end
+end
 """
 function _update(param::String, var)
 

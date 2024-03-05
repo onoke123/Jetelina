@@ -74,3 +74,15 @@
 └ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
 ┌ Info: 2024-02-28 10:57:49 SQLAnalyzer.main() start with : 48 hr interval
 └ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-05 10:13:56 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-05 10:13:58 SQLAnalyzer.main() start with : 48 hr interval
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-05 10:52:25 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-05 10:52:27 SQLAnalyzer.main() start with : 48 hr interval
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-05 10:53:39 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-05 10:53:41 SQLAnalyzer.main() start with : 48 hr interval
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68

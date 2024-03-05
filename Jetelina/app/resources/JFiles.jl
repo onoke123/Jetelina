@@ -46,7 +46,7 @@ function getJsFileNameFromPublicPath(fname)
 	return string(joinpath(@__DIR__, "..", "..", "public", "jetelina", "js", fname))
 end
 """
-function getJsFileNameFromPublicPath(fname)
+function getFileNameFromLogPath(fname)
 
 	get full path of Jetelina log files
 

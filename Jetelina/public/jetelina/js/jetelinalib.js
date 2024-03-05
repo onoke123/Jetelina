@@ -16,7 +16,7 @@
       authAjax(posturl, chunk, scenarioNumber) Authentication ajax call
       chooseMsg(i,m,p) select a message to show in chat box from js/senario.js 
       typing(i,m) show a chat message alike typing style 
-      chkUResponse(n, s) check if the user input message is what is expected in userresponse[] 
+      chkUResponse(n, s) check if the user input message is what is expected in scenario[] 
       chatKeyDown(cmd) behavior of hitting enter key in the chat box by user 
       openingMessage() Initial chat opening message
       burabura() idling message in the initial screen 
@@ -516,7 +516,7 @@ const typing = (i, m) => {
  * @param {string} s  user input character
  * @returns {boolean}  true -> as expected  false -> unexpected user response
  * 
- * check if the user input message is what is expected in userresponse[] 
+ * check if the user input message is what is expected in scenario[] 
  */
 const chkUResponse = (n, s) => {
     /*
@@ -528,7 +528,7 @@ const chkUResponse = (n, s) => {
         clearTimeout(logouttimerId);
     }
     
-    if (userresponse[n].includes(s)) {
+    if (scenario[n].includes(s)) {
         return true;
     }
 
@@ -602,7 +602,7 @@ const chatKeyDown = (cmd) => {
             */
             switch (stage) {
                 case 1:
-                    if (!chkUResponse(1, ut)) {
+                    if (!chkUResponse("1r", ut)) {
                         m = chooseMsg(2, "", "");
                         stage = 'login';
                     } else {
@@ -741,7 +741,7 @@ const chatKeyDown = (cmd) => {
                         location.reload();
                     }
 
-                    if (chkUResponse(0, ut)) {
+                    if (chkUResponse("0r", ut)) {
                         // greeting
                         m = chooseMsg(1, "", "");
                         stage = 1;/* into the login stage */
