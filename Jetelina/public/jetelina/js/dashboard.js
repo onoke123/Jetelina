@@ -17,6 +17,7 @@ let inprogress=false;// true -> ajax function is in progress , false -> is not i
 let loginuser = {}; // contains login user info
 let authcount = 0; // authentication count. this is randum number that is set in login function
 let usetcount = 0; // only use for the first login in checkNewCommer function in jetelinalib.js
+const localparam = "login2jetelina"; // local strage parameter
 const usetcountmax = getRandomNumber(4) + 1; // only use for the first login in checkNewCommer function in jetelinalib.js
 
 $(window).load(function () {

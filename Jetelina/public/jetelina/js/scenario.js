@@ -90,5 +90,5 @@ scenario["analyze_interval"]=["analyze interval","analyzing interval"];
 scenario["pg_dbname"]=["database name","db name","dbname"];
 scenario["pg_host"]=["host"];
 scenario["pg_testdb"]=["test"];
-scenario["logfile_rotation_close"]=["rotatin end","rotation close"];
+scenario["logfile_rotation_close"]=["rotation end","rotation close"];
 scenario["logfile_rotation_open"]=["rotation start","rotation open"];

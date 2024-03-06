@@ -388,6 +388,7 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
                     $.each(o[key][0], function (k, v) {
                         if (k == "user_id"){
                             loginuser.user_id = v;
+                            localStorage[localparam] = true;
                         }else if (k == "login"){
                             loginuser.login = v;
                         }else if (k == "firstname") {
@@ -768,6 +769,19 @@ const chatKeyDown = (cmd) => {
                 typingControll(chooseMsg('unknown-msg', "", ""));
             }
             
+            /*
+                3/6
+                here is a block for experimental of changing configuration parameters
+            */
+            if ( localStorage[localparam] ){
+                // work if user has loged in
+                for (zzz in scenario){
+                    if(inScenarioChk(ut,zzz)){
+                        console.log(ut, zzz, scenario[zzz]);
+                    }
+                }
+            }
+
             if (logoutflg) {
                 const t = 10000;// switch to the opening screen after 10 sec
                 logouttimerId = setTimeout(function () {
@@ -828,6 +842,7 @@ const logout = () => {
     enterNumber = 0;
     stage = 0;
     isSuggestion = false;
+    localStorage[localparam] = false;
 
     $("#jetelina_panel").animate({
         width: "400px",
@@ -958,9 +973,27 @@ const showManualCommandList = (s) => {
 const inScenarioChk = (s,sc) =>{
     const order = scenario[`${sc}`];
     let ret=false;
+    let c=0;
+    let candidate=[];
     for(key in order){
+        /*
+          Tips:
+             order[] has multiple sentence as in the array.
+             this 'if' sentence compares s(user input sentence) with the scenario array sentences.
+             then possible multi candidates because of realizing vague cpmparing.
+        */
         if (s.indexOf(order[key]) != -1) {
+            c++;
             ret = true;
+            candidate[key] = order[key];
+            console.log("this? ", key, order[key],"-->",candidate[key]);
+        }
+    }
+
+    if (1<c){
+        console.log("there are multiple candidate");
+        for(zzz in candidate){
+            console.log(c,"candidate ", zzz, candidate[zzz]);
         }
     }
 

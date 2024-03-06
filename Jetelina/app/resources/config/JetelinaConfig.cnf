@@ -41,7 +41,7 @@ sqllogfilesize = 10
 @jdic logfile_rotation_open:"rotation start","rotation open"
 logfile_rotation_open = 00:00
 
-@jdic logfile_rotation_close:"rotatin end","rotation close"
+@jdic logfile_rotation_close:"rotation end","rotation close"
 logfile_rotation_close = 01:02
 
 #
