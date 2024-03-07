@@ -17,6 +17,29 @@
       viewCombinationGraph(bname, bno, ct, ac)  show the 'combination graph'
 */
 /**
+ *  @function openFunctionPanel
+ * 
+ *  open and visible "#function_panel"
+ */
+const openConditionPanel = () => {
+    if( isVisibleFunctionPanel() ){
+        $("#function_panel").hide();
+    }
+    
+    $("#condition_panel").show().animate({
+        width: window.innerWidth * 0.8,
+        height: window.innerHeight * 0.8,
+        top: "10%",
+        left: "10%"
+    }, animateDuration);
+
+    const dataurls = scenario['analyzed-data-collect-url'];
+    /*
+        check for existing Jetelina's suggestion
+    */
+    getAjaxData(dataurls[3]);
+}
+/**
  * @function isVisibleApiAccessNumbers
  * @returns {boolean}  true -> visible, false -> invisible
  * 
@@ -116,6 +139,10 @@ const conditionPanelFunctions = (ut) => {
                     'performance: show the result of analyzing sql exection on test db.
                                   this cmd can execute in the case of being a suggestion.
         */
+        if(-1<$.inArray(cmd,['graph','performance'])){
+            openConditionPanel();
+        }
+
         switch (cmd) {
             case 'graph':
                 if(isVisiblePerformanceReal()){

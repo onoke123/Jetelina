@@ -6,6 +6,7 @@
     This js lib works with dashboard.js, functionpanel.js and conditionpanel.js for the Function Panel.
     
     Functions:
+      openFunctionPanel() open and visible "#function_panel"
       isVisibleTableContainer() checking "#table_container" is visible or not
       isVisibleApiContainer() checking "#api_container" is visible or not
       isVisibleGenelicPanel() checking "#genelic_panel" is visible or not
@@ -66,6 +67,43 @@ $(document).on({
       itemSelect($(this));
     }
 }, ".item");
+/**
+ * @function openFunctionPanel
+ * 
+ * open and visible "#function_panel"
+ * hide "#condition_panel" at the same time if it is visible
+ */
+const openFunctionPanel = () => {
+  if( isVIsibleConditionPanel() ){
+    $("#condition_panel").hide();
+  }
+
+  $("#function_panel").show().animate({
+      width: window.innerWidth * 0.8,
+      height: window.innerHeight * 0.8,
+      top: "10%",
+      left: "10%"
+  }, animateDuration);
+
+  if (isVisibleColumns()) {
+      $("#fileup").draggable().animate({
+          top: "4%",
+          left: "5%"
+      }, animateDuration);
+      $("#left_panel").draggable().animate({
+          top: "10%",
+          left: "5%"
+      }, animateDuration);
+      $("#columns").draggable().animate({
+          top: "10%",
+          left: "30%"
+      }, animateDuration);
+      $("#container").draggable().animate({
+          bottom: "5%",
+          left: "30%"
+      }, animateDuration);
+  }
+}
 /**
  * @function isVisibleTableContainer
  * @returns {boolean}  true -> visible, false -> invisible
@@ -838,16 +876,16 @@ const functionPanelFunctions = (ut) => {
         this 'swich' commands manipulates 'table' and 'csv file upload' 
         
         'cmd'
-          table: show table list
-          api: switch to show api list
-          post: post selected columns 
-          cancel: cancel all selected columns
-          droptable: drop table(post)
-          deleteapi: delete api(post)
-          fileselectoropen: open file selector
-          fileupload: csv file upload
-          creanup: cleanup column/selecteditem field
-          subquery: open subquery panel
+          1.table: show table list
+          2.api: switch to show api list
+          3.post: post selected columns 
+          4.cancel: cancel all selected columns
+          5.droptable: drop table(post)
+          6.deleteapi: delete api(post)
+          7.fileselectoropen: open file selector
+          8.fileupload: csv file upload
+          9.creanup: cleanup column/selecteditem field
+          10.subquery: open subquery panel
           default: non
 
         Attention:
@@ -855,6 +893,10 @@ const functionPanelFunctions = (ut) => {
           yes it is, but I did not want to make long switch/case sentence.
           if these 'cmd' will duplicate, you know what will happen. :-p
     */
+    if(-1<$.inArray(cmd,['table','api','post','cancel','droptable','deleteapi','fileselectoropen','fileupload','creanup','subquery'])){
+      openFunctionPanel();
+    }
+
     switch (cmd) {
       case 'table':
         /*  

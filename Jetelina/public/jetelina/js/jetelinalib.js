@@ -29,6 +29,8 @@
       checkNewCommer(s) check the login user is a newcommer or not.
       checkBeginner() check the login user is a beginner or not.
       getRandomNumber(i) create random number. the range is 0 to i.
+      isVisibleFunctionPanel() check the function panel is visible or not
+      isVIsibleConditionPanel() check the condition panel is visible or not
 */
 /**
  * 
@@ -653,11 +655,28 @@ const chatKeyDown = (cmd) => {
                     */
 //                    if(authcount<loginuser.c){
                         m = chooseMsg(6, "", "");
-                        stage = 'chose_func_or_cond';    
+                        stage = 'chose_func_or_cond';
 //                    }
 
                     break;
                 case 'chose_func_or_cond':
+                    const panelTop = window.innerHeight - 110;
+                    $("#jetelina_panel").animate({
+                        height: "70px",
+                        top: `${panelTop}px`,
+                        left: "210px"
+                    }, animateDuration);
+
+                    m = functionPanelFunctions(ut);
+                    if (0 < m.length && m != 'ignore') {
+                    }else{
+                        m = conditionPanelFunctions(ut);
+                        if (0 < m.length && m != 'ignore') {
+                        }else{
+                            m = chooseMsg('6a', "", "");
+                        }
+                    }
+/*
                     let panel;
                     if(inScenarioChk(ut,"function_panel")){
                         panel = 'func';
@@ -674,14 +693,15 @@ const chatKeyDown = (cmd) => {
                         }, animateDuration);
                         m = chooseMsg('6a', "", "");
                     } else {
-                        /*
+                        //
                             Tips:
                                 may 'm' has already been set in showManualCommandList().
-                        */
+                        //
                         if(m.length == 0){
                             m = chooseMsg(3, "", "");
                         }
                     }
+
                     // show func panel
                     if (panel == 'func') {
                         stage = 'func';
@@ -721,11 +741,12 @@ const chatKeyDown = (cmd) => {
                             left: "10%"
                         }, animateDuration);
                         const dataurls = scenario['analyzed-data-collect-url'];
-                        /*
+                        //
                             check for existing Jetelina's suggestion
-                        */
+                        //
                         getAjaxData(dataurls[3]);
                     }
+*/
                     break;
                 case 'func':
                     $("#something_msg").hide();
@@ -760,6 +781,27 @@ const chatKeyDown = (cmd) => {
                 enterNumber = 0;
             }
 
+
+            /*
+                3/6
+                here is a block for experimental of changing configuration parameters
+
+                Caution:
+                   'localStrage' contains it as String, even you would set it as Boolean.
+            */
+            if ( localStorage[localparam] == "true" ){
+                // work if user has loged in
+                if (0 < m.length && m != 'ignore') {
+                    console.log("m is ", m);
+                }else{
+                    for (zzz in scenario){
+                        if(inScenarioChk(ut,zzz)){
+                            console.log(ut, zzz, scenario[zzz]);
+                        }
+                    }
+                }
+            }
+
             if (0 < m.length && m != 'ignore') {
                 typingControll(m);
             }else if ( m == 'ignore' && stage != 'login'){
@@ -769,18 +811,6 @@ const chatKeyDown = (cmd) => {
                 typingControll(chooseMsg('unknown-msg', "", ""));
             }
             
-            /*
-                3/6
-                here is a block for experimental of changing configuration parameters
-            */
-            if ( localStorage[localparam] ){
-                // work if user has loged in
-                for (zzz in scenario){
-                    if(inScenarioChk(ut,zzz)){
-                        console.log(ut, zzz, scenario[zzz]);
-                    }
-                }
-            }
 
             if (logoutflg) {
                 const t = 10000;// switch to the opening screen after 10 sec
@@ -1073,3 +1103,31 @@ const checkBeginner = () =>{
 const getRandomNumber = (i) =>{
     return Math.floor(Math.random() * i);
 }
+/**
+ * @function isVisibleFunctionPanel
+ * @returns {boolean}  true -> visible, false -> invisible
+ * 
+ * checking "#function_panel" is visible or not
+ */
+const isVisibleFunctionPanel = () => {
+    let ret = false;
+    if ($("#function_panel").is(":visible")) {
+      ret = true;
+    }
+  
+    return ret;
+  }
+  /**
+ * @function isVIsibleConditionPanel
+ * @returns {boolean}  true -> visible, false -> invisible
+ * 
+ * checking "#condition_panel" is visible or not
+ */
+const isVIsibleConditionPanel = () => {
+    let ret = false;
+    if ($("#condition_panel").is(":visible")) {
+      ret = true;
+    }
+  
+    return ret;
+  }  
