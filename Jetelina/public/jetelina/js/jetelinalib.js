@@ -680,15 +680,27 @@ const chatKeyDown = (cmd) => {
                                 if 'ut' is a command for driving configuration
                                 localStrage checking is for secure reason
                             */
+                           let multi=0;
+                           let multiscript = [];
                             if ( localStorage[localparam] == "true" ){
                                 for (zzz in config){
                                     if(inScenarioChk(ut,zzz,'config')){
-                                        console.log(ut, zzz, config[zzz]);
+                                        let r = countCandidates(ut,zzz,'config');
+                                        multi += r[0];
+                                        multiscript.push(r[1]);
                                     }
                                 }
                             }
+                            // multiscriptに候補が入っているので、適切なメッセージを出すようにする
+                            console.log("multi? ", multi," ", multiscript);
+                            if(1<multi){
+                                // show candidates
+                                m = chooseMsg('multi-candidates', "", "");
+                            }else{
+                                // here you are, this,.... and so on
+                                m = chooseMsg('6a', "", "");
+                            }
 
-                            m = chooseMsg('6a', "", "");
                         }
                     }
 /*
@@ -1017,7 +1029,7 @@ const showManualCommandList = (s) => {
  * check if user input string is in the ordered scenario
  * 
  */
-const inScenarioChk = (s,sc, type) =>{console.log("sc inScena..",s,'-->', sc, 'with ',type);
+const inScenarioChk = (s,sc, type) =>{
     let order;
     if(type == null){
         order = scenario[`${sc}`];
@@ -1026,8 +1038,41 @@ const inScenarioChk = (s,sc, type) =>{console.log("sc inScena..",s,'-->', sc, 'w
     }
 
     let ret=false;
+    for(key in order){
+        /*
+          Tips:
+             order[] has multiple sentence as in the array.
+             this 'if' sentence compares s(user input sentence) with the scenario array sentences.
+             then possible multi candidates because of realizing vague cpmparing.
+        */
+        if (s.indexOf(order[key]) != -1) {
+            return true;
+        }
+    }
+
+    return ret;
+}
+/**
+ * @function countCandidates
+ * @param {string} s  user input data
+ * @param {string} sc scenario data array name 
+ * @param {string} type type=null -> searching 'scenario[]', type='config' -> searching 'config[]'
+ * @returns {integer}  candidates number
+ * 
+ * count config/scenario candidates
+ * 
+ */
+const countCandidates = (s,sc,type) =>{
+    let order;
     let c=0;
-    let candidate=[];
+    let candidate = "";
+
+    if(type == null){
+        order = scenario[`${sc}`];
+    }else if(type == "config"){
+        order = config[`${sc}`];
+    }
+
     for(key in order){
         /*
           Tips:
@@ -1037,20 +1082,11 @@ const inScenarioChk = (s,sc, type) =>{console.log("sc inScena..",s,'-->', sc, 'w
         */
         if (s.indexOf(order[key]) != -1) {
             c++;
-            ret = true;
-            candidate[key] = order[key];
-            console.log("this? ", key, order[key],"-->",candidate[key]);
+            candidate = order[key];
         }
     }
 
-    if (1<c){
-        console.log("there are multiple candidate");
-        for(zzz in candidate){
-            console.log(c,"candidate ", zzz, candidate[zzz]);
-        }
-    }
-
-    return ret;
+    return [c,candidate];
 }
 /**
  * @function checkNewCommer
