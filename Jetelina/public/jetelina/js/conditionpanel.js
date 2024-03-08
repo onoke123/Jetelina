@@ -109,12 +109,12 @@ const conditionPanelFunctions = (ut) => {
         presentaction.push('cond');
     }
 
-    if (inScenarioChk(ut,'function_panel')) {
-        delete preferent;
-        delete presentaction;
-        stage = 'chose_func_or_cond';
-        chatKeyDown(ut);
-    } else {
+//    if (inScenarioChk(ut,'function_panel')) {
+//        delete preferent;
+//        delete presentaction;
+//        stage = 'chose_func_or_cond';
+//        chatKeyDown(ut);
+//    } else {
         // use the prior command if it were
         let cmd = getPreferentPropertie('cmd');
 
@@ -198,7 +198,7 @@ const conditionPanelFunctions = (ut) => {
             default:
                 break;
         }
-    }
+//    }
 
     return m;
 }

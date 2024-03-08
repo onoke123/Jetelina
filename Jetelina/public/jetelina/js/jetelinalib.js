@@ -16,7 +16,7 @@
       authAjax(posturl, chunk, scenarioNumber) Authentication ajax call
       chooseMsg(i,m,p) select a message to show in chat box from js/senario.js 
       typing(i,m) show a chat message alike typing style 
-      chkUResponse(n, s) check if the user input message is what is expected in scenario[] 
+      chkUResponse(n, s) check if the user input message is what is expected in scenario[] or config[]
       chatKeyDown(cmd) behavior of hitting enter key in the chat box by user 
       openingMessage() Initial chat opening message
       burabura() idling message in the initial screen 
@@ -25,7 +25,7 @@
       getPreferentPropertie(p) get prior object if there were
       instractionMode(s) confirmation in adding a new scenario
       showManualCommandList(s) show/hide manual and/or command list panel
-      inScenarioChk(s,sc) check if user input string is in the ordered scenario
+      inScenarioChk(s,sc,type) check if user input string is in the ordered scenario
       checkNewCommer(s) check the login user is a newcommer or not.
       checkBeginner() check the login user is a beginner or not.
       getRandomNumber(i) create random number. the range is 0 to i.
@@ -432,11 +432,11 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
                     stage = 'login_success';
                 } else if (1 < o[key].length) {
                         // some candidates
-                        scenarioNumber = "5-multi-candidates";
+                        scenarioNumber = "multi-candidates";
                         stage = 'login';
                 } else {
                     // no user
-                    scenarioNumber = "5-not-registered";
+                    scenarioNumber = "not-registered";
                     stage = 'login';
                 }
 
@@ -519,7 +519,7 @@ const typing = (i, m) => {
  * @param {string} s  user input character
  * @returns {boolean}  true -> as expected  false -> unexpected user response
  * 
- * check if the user input message is what is expected in scenario[] 
+ * check if the user input message is what is expected in scenario[] or config[]
  */
 const chkUResponse = (n, s) => {
     /*
@@ -530,8 +530,9 @@ const chkUResponse = (n, s) => {
     if(logouttimerId){
         clearTimeout(logouttimerId);
     }
-    
-    if (scenario[n].includes(s)) {
+
+    if ((scenario[n] != null && scenario[n].includes(s)) ||
+        (config[n] != null && config[n].includes(s))){
         return true;
     }
 
@@ -667,12 +668,26 @@ const chatKeyDown = (cmd) => {
                         left: "210px"
                     }, animateDuration);
 
+                    // if 'ut' is a command for driving function
                     m = functionPanelFunctions(ut);
                     if (0 < m.length && m != 'ignore') {
                     }else{
+                        // if 'ut' is a command for driving condition
                         m = conditionPanelFunctions(ut);
                         if (0 < m.length && m != 'ignore') {
                         }else{
+                            /*
+                                if 'ut' is a command for driving configuration
+                                localStrage checking is for secure reason
+                            */
+                            if ( localStorage[localparam] == "true" ){
+                                for (zzz in config){
+                                    if(inScenarioChk(ut,zzz,'config')){
+                                        console.log(ut, zzz, config[zzz]);
+                                    }
+                                }
+                            }
+
                             m = chooseMsg('6a', "", "");
                         }
                     }
@@ -761,6 +776,7 @@ const chatKeyDown = (cmd) => {
                 default:
                     if (ut == "reload") {
                         location.reload();
+//                        m = chooseMsg("reloading-msg", "", "");
                     }
 
                     if (chkUResponse("0r", ut)) {
@@ -788,7 +804,7 @@ const chatKeyDown = (cmd) => {
 
                 Caution:
                    'localStrage' contains it as String, even you would set it as Boolean.
-            */
+            
             if ( localStorage[localparam] == "true" ){
                 // work if user has loged in
                 if (0 < m.length && m != 'ignore') {
@@ -800,7 +816,7 @@ const chatKeyDown = (cmd) => {
                         }
                     }
                 }
-            }
+            }*/
 
             if (0 < m.length && m != 'ignore') {
                 typingControll(m);
@@ -995,13 +1011,20 @@ const showManualCommandList = (s) => {
  * @function inScenarioChk
  * @param {string} s  user input data
  * @param {string} sc scenario data array name 
+ * @param {string} type type=null -> searching 'scenario[]', type='config' -> searching 'config[]'
  * @returns {boolean}  true -> in the list, false -> no
  * 
  * check if user input string is in the ordered scenario
  * 
  */
-const inScenarioChk = (s,sc) =>{
-    const order = scenario[`${sc}`];
+const inScenarioChk = (s,sc, type) =>{console.log("sc inScena..",s,'-->', sc, 'with ',type);
+    let order;
+    if(type == null){
+        order = scenario[`${sc}`];
+    }else if(type == "config"){
+        order = config[`${sc}`];
+    }
+
     let ret=false;
     let c=0;
     let candidate=[];

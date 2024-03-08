@@ -307,7 +307,7 @@ const fileupload = () => {
       }
     } else {
       // csv file format error
-      typingControll(chooseMsg('6func-csv-format-error', "", ""));
+      typingControll(chooseMsg('func-csv-format-error', "", ""));
     }
   }).fail(function (result) {
     checkResult(result);
@@ -793,16 +793,16 @@ const functionPanelFunctions = (ut) => {
     let cmd = getPreferentPropertie('cmd');
     // use input data if there were not a prior command 
     if (cmd == null || cmd.length <= 0) {
-      if (inScenarioChk(ut, '6func-fileupload-cmd')) {
+      if (inScenarioChk(ut, 'func-fileupload-cmd')) {
         cmd = 'fileupload';
-      } else if (inScenarioChk(ut, '6func-fileupload-open-cmd')) {
+      } else if (inScenarioChk(ut, 'func-fileupload-open-cmd')) {
         cmd = 'fileselectoropen';
-      } else if (inScenarioChk(ut, '6func-show-table-list')) {
+      } else if (inScenarioChk(ut, 'func-show-table-list')) {
         cmd = 'table';
-      } else if (inScenarioChk(ut, '6func-show-api-list')) {
+      } else if (inScenarioChk(ut, 'func-show-api-list')) {
         // same as above
         cmd = 'api';
-      } else if (inScenarioChk(ut, '6func-selected-column-post-cmd')){
+      } else if (inScenarioChk(ut, 'func-selected-column-post-cmd')){
         cmd = 'post';
       } else {
         cmd = ut;
@@ -832,9 +832,9 @@ const functionPanelFunctions = (ut) => {
     let dropTable = getPreferentPropertie('droptable');
     // the input data is prefered if there were a prior table name.
     if (dropTable == null || dropTable.length <= 0) {
-      for (let i = 0; i < scenario['6func-tabledrop-cmd'].length; i++) {
-        if (ut.indexOf(scenario['6func-tabledrop-cmd'][i]) != -1) {
-          let dpm = ut.split(scenario['6func-tabledrop-cmd'][i]);
+      for (let i = 0; i < scenario['func-tabledrop-cmd'].length; i++) {
+        if (ut.indexOf(scenario['func-tabledrop-cmd'][i]) != -1) {
+          let dpm = ut.split(scenario['func-tabledrop-cmd'][i]);
           dropTable = $.trim(dpm[dpm.length - 1]);
           cmd = 'droptable';
         }
@@ -848,27 +848,27 @@ const functionPanelFunctions = (ut) => {
     let deleteApi = getPreferentPropertie('deleteapi');
     // the input data is prefered if there were a prior api name.
     if (deleteApi == null || deleteApi.length <= 0) {
-      for (let i = 0; i < scenario['6func-apidelete-cmd'].length; i++) {
-        if (ut.indexOf(scenario['6func-apidelete-cmd'][i]) != -1) {
-          let dam = ut.split(scenario['6func-apidelete-cmd'][i]);
+      for (let i = 0; i < scenario['func-apidelete-cmd'].length; i++) {
+        if (ut.indexOf(scenario['func-apidelete-cmd'][i]) != -1) {
+          let dam = ut.split(scenario['func-apidelete-cmd'][i]);
           deleteApi = $.trim(dam[dam.length - 1]);
           if(deleteApi.startsWith('js')){
             cmd = 'deleteapi';
           }else{
             // jd,ju,ji are forbidden to delete
-            m = chooseMsg("6func-apidelete-forbidden-msg","","");
+            m = chooseMsg("func-apidelete-forbidden-msg","","");
           }
         }
       }
     }
 
     // cleanup command of item, selecteditem field
-    if (inScenarioChk(ut, '6func-cleanup-cmd')) {
+    if (inScenarioChk(ut, 'func-cleanup-cmd')) {
       cmd = 'cleanup';
     }
 
     // genelic panel(subquery panel)
-    if (inScenarioChk(ut, '6func-subpanel-open-cmd')) {
+    if (inScenarioChk(ut, 'func-subpanel-open-cmd')) {
       cmd = "subquery";
     }
 
@@ -953,11 +953,11 @@ const functionPanelFunctions = (ut) => {
             if (containsMultiTables()) {
               // 'where sentence' is demanded if there were multi tables
               showGenelicPanel(true);
-              m = chooseMsg('6func-postcolumn-where-indispensable-msg', "", "");
+              m = chooseMsg('func-postcolumn-where-indispensable-msg', "", "");
             } else {
               // 'where sentence' is not demanded but ask it once time
               if (subquerysentence != "ignore") {
-                m = chooseMsg('6func-postcolumn-where-option-msg', "", "");
+                m = chooseMsg('func-postcolumn-where-option-msg', "", "");
               } else {
 
               }
@@ -968,20 +968,20 @@ const functionPanelFunctions = (ut) => {
             }
 
             //}
-          } else if (inScenarioChk(ut, '6func-postcolumn-cancel-cmd')) {
+          } else if (inScenarioChk(ut, 'func-postcolumn-cancel-cmd')) {
             preferent.cmd = "cancel";
           } else {
             // the secound calling, sub query open or not
             if (inScenarioChk(ut, 'confirmation-sentences')) {
               showGenelicPanel(true);
-              m = chooseMsg('6func-subpanel-opened', "", "");
+              m = chooseMsg('func-subpanel-opened', "", "");
             } else {
               $("#genelic_panel input[name='genelic_input']").val("ignore");
             }
 
             // use $(..).val() because this may was set 'ignore' just above.
             if ($("#genelic_panel input[name='genelic_input']").val() != "") {
-              m = chooseMsg('6func-postcolumn-available-msg', "", "");
+              m = chooseMsg('func-postcolumn-available-msg', "", "");
             }
 
           }
@@ -991,7 +991,7 @@ const functionPanelFunctions = (ut) => {
             preferent.cmd = cmd;
           }
         } else {
-          m = chooseMsg('6func-post-err', "", "");
+          m = chooseMsg('func-post-err', "", "");
         }
 
         break;
@@ -1025,7 +1025,7 @@ const functionPanelFunctions = (ut) => {
               return $(this).text() === dropTable;
             });
 
-            // execute this if 6func-tabledrop-confirm is 'yes'
+            // execute this if func-tabledrop-confirm is 'yes'
             if (inScenarioChk(ut,'confirmation-sentences')) {
               let t = preferent.droptable;
 
@@ -1037,27 +1037,27 @@ const functionPanelFunctions = (ut) => {
             } else {
               if (p != null && 0 < p.length) {
                 // Yes there is, show the delete confirmation message.
-                m = chooseMsg('6func-tabledrop-confirm', "", "");
+                m = chooseMsg('func-tabledrop-confirm', "", "");
                 preferent.cmd = cmd;
                 preferent.droptable = dropTable;
               } else {
-                // Well, there is nothing. Show the message fo '6func-table....'
-                m = chooseMsg('6func-tabledrop-msg', "", "");
+                // Well, there is nothing. Show the message fo 'func-table....'
+                m = chooseMsg('func-tabledrop-msg', "", "");
                 preferent.cmd = cmd;
               }
             }
           } else {
             // the request message for ordering table name
-            m = chooseMsg('6func-tabledrop-msg', "", "");
+            m = chooseMsg('func-tabledrop-msg', "", "");
             preferent.cmd = cmd;
           }
           // cancel an order of table drop 
-          if(inScenarioChk(ut,'6func-tabledrop-cancel-cmd')){
+          if(inScenarioChk(ut,'func-tabledrop-cancel-cmd')){
             preferent.cmd = "";
             m = chooseMsg('cancel', "", "");
           }
         } else {
-          m = chooseMsg('6func-tabledrop-ng-msg', "", "");
+          m = chooseMsg('func-tabledrop-ng-msg', "", "");
         }
 
         break;
@@ -1070,7 +1070,7 @@ const functionPanelFunctions = (ut) => {
             });
 
 
-            // execute this if 6func-tabledrop-confirm is 'yes'
+            // execute this if func-tabledrop-confirm is 'yes'
             if (inScenarioChk(ut, 'confirmation-sentences')) {
               let t = preferent.deleteapi;
 
@@ -1082,18 +1082,18 @@ const functionPanelFunctions = (ut) => {
             } else {
               if (p != null && 0 < p.length) {
                 // Yes there is, show the delete confirmation message.
-                m = chooseMsg('6func-apidelete-confirm', "", "");
+                m = chooseMsg('func-apidelete-confirm', "", "");
                 preferent.cmd = cmd;
                 preferent.deleteapi = deleteApi;
               } else {
-                // Well, there is nothing. Show the message fo '6func-table....'
-                m = chooseMsg('6func-apidelete-msg', "", "");
+                // Well, there is nothing. Show the message fo 'func-table....'
+                m = chooseMsg('func-apidelete-msg', "", "");
                 preferent.cmd = cmd;
               }
             }
           } else {
             // the request message for ordering table name
-            m = chooseMsg('6func-apidelete-msg', "", "");
+            m = chooseMsg('func-apidelete-msg', "", "");
             preferent.cmd = cmd;
           }
           // cancel an order of table drop 
@@ -1102,13 +1102,13 @@ const functionPanelFunctions = (ut) => {
             m = chooseMsg('cancel', "", "");
           }
         } else {
-          m = chooseMsg('6func-apidelete-ng-msg', "", "");
+          m = chooseMsg('func-apidelete-ng-msg', "", "");
         }
 
         break;
       case 'fileselectoropen'://open file selector
         $("#my_form input[name='upfile']").click();
-        m = chooseMsg('6func-fileupload-open-msg', "", "");
+        m = chooseMsg('func-fileupload-open-msg', "", "");
         break;
       case 'fileupload'://csv file upload
         const f = $("input[type=file]").prop("files");
@@ -1116,7 +1116,7 @@ const functionPanelFunctions = (ut) => {
           m = 'ignore';
           fileupload();
         } else {
-          m = chooseMsg('6func-fileupload-msg', "", "");
+          m = chooseMsg('func-fileupload-msg', "", "");
         }
 
         break;
@@ -1129,7 +1129,7 @@ const functionPanelFunctions = (ut) => {
         break;
       case 'subquery': //open subquery panel
         showGenelicPanel(true);
-        m = chooseMsg('6func-subpanel-opened', '', '');
+        m = chooseMsg('func-subpanel-opened', '', '');
         break;
       default:
         break;
@@ -1173,11 +1173,11 @@ const procTableApiList = (s) => {
         there are some candidates command to select column.
         these are unified to 'select'.
     */
-    if (inScenarioChk(t[0], '6func-list-cmd-select-cmd')){
+    if (inScenarioChk(t[0], 'func-list-cmd-select-cmd')){
       t[0] = 'select';
     }
 
-    if (inScenarioChk(t[0], '6func-list-cmd')) {
+    if (inScenarioChk(t[0], 'func-list-cmd')) {
       switch (t[0]) {
         case 'open': case 'close':
           /* 

@@ -118,6 +118,8 @@ function createScenario()
 
 	create scenario.js file from base.jdic and JetelinaConfig.cnf files.
 	this function is mandatory working to realize Jetelina Chatting.
+	'scenario[]' is handling for the function/condition panel.
+	'config[]' is handling for configuration parameters that are defined in JetelinaConfig.cnf.
 
 # Arguments
 """
@@ -144,7 +146,7 @@ function createScenario()
 		#   this "let scena..." is for definiting as parameters in js file.
 		#   printing "scenario[...]=[...]" has meaning of array parameters because of this difinition.
 		#
-		println(tf,"let scenario = [];")
+		println(tf,"let scenario = []; let config = [];")
 
 		for i ∈ 1:length(l)
 			if startswith(l[i],jdicmark)
@@ -159,7 +161,7 @@ function createScenario()
 		#
 		js_d_c::Array = collect(keys(JS_DRAFT_CONFIG))
 		for i ∈ 1:length(js_d_c)
-			println(tf, string("scenario[\"",js_d_c[i],"\"]=",JS_DRAFT_CONFIG[js_d_c[i]],";"))
+			println(tf, string("config[\"",js_d_c[i],"\"]=",JS_DRAFT_CONFIG[js_d_c[i]],";"))
 		end
 
 		close(tf)
