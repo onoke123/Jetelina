@@ -1,6 +1,6 @@
 let scenario = []; let config = [];
 scenario["analyzed-data-collect-url"]=["/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getsqlaccessdata"];
-scenario["function-post-url"]=["/jetelinawords"];
+scenario["function-post-url"]=["/jetelinawords","/getconfigdata"];
 scenario["function-get-url"]=["/getapilist"];
 scenario["null"]=["",""];
 scenario["guidance"]=["what can i","can you","start","manual","guide me","guidance","teach me","tell me"];

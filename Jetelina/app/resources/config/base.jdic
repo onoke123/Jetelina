@@ -5,7 +5,7 @@
 @jdic analyzed-data-collect-url:"/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getsqlaccessdata"
 
 # post urls for function panel 
-@jdic function-post-url:"/jetelinawords"
+@jdic function-post-url:"/jetelinawords","/getconfigdata"
 
 # get urls for function panel 
 @jdic function-get-url:"/getapilist"

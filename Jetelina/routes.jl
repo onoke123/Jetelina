@@ -98,4 +98,5 @@ route("/chkexistimprapifile",GetDataController.checkExistImproveApiFile)
     urls for using in updating or something in Configuration parameters. 
 
 ===#
+route("/getconfigdata", PostDataController.getConfigData, method = POST)
 route("/updateconfig", PostDataController.configParamUpdate, method = POST)

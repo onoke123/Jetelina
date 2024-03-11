@@ -30,8 +30,17 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 JMessage.showModuleInCompiling(@__MODULE__)
 
 export handleApipostdata, createApi, getColumns, deleteTable, userRegist, login, getUserInfoKeys, refUserAttribute, updateUserInfo,
-	updateUserData, updateUserLoginData, deleteUserAccount, deleteApi, configParamUpdate
+	updateUserData, updateUserLoginData, deleteUserAccount, deleteApi, configParamUpdate, getConfigData
 
+
+	function getConfigData()
+		d = jsonpayload("param")
+		if !isnothing(j_config.JC[d])
+#			return json(Dict("result" => true, "Jetelina" => copy.(eachrow(j_config.JC[d]))))
+			return json(Dict("result" => true, d => j_config.JC[d]))
+		end
+	end
+	
 """
 function handleApipostdata()
 

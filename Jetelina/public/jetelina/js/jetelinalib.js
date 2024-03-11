@@ -321,6 +321,9 @@ const postAjaxData = (url, data) => {
             const posturls = scenario['function-post-url'];
             if (url == posturls[0]) {
                 // jetelinawords -> nothing do
+            }else if(url == posturls[1]){
+                // get configuration parameter
+                console.log("config is ", result);
             }
 
             typingControll(chooseMsg("success", "", ""));
@@ -687,12 +690,14 @@ const chatKeyDown = (cmd) => {
                                     if(inScenarioChk(ut,zzz,'config')){
                                         let r = countCandidates(ut,zzz,'config');
                                         multi += r[0];
-                                        multiscript.push(r[1]);
+                                        multiscript.push(zzz);
+//                                        multiscript.push(r[1]);
                                     }
                                 }
                             }
                             // multiscriptに候補が入っているので、適切なメッセージを出すようにする
                             console.log("multi? ", multi," ", multiscript);
+                            let configMsg = "";
                             if(1<multi){
                                 // show candidates
                                 m = chooseMsg('multi-candidates', "", "");
@@ -701,13 +706,17 @@ const chatKeyDown = (cmd) => {
                                     multimsg += `'${multiscript[i]}',`; 
                                 }
 
-                                $("#something_msg [name='jetelina_message']").text(multimsg);
-                                $("#something_msg").show();
-                    
+                                configMsg = multimsg;                    
                             }else{
                                 // here you are, this,.... and so on
                                 m = chooseMsg('6a', "", "");
+                                let data = `{"param":"${multiscript[0]}"}`;
+                                console.log("data is ", data);
+//                                postAjaxData("/getconfigdata", data);
                             }
+
+                            $("#something_msg [name='jetelina_message']").text(configMsg);
+                            $("#something_msg").show();
 
                         }
                     }
