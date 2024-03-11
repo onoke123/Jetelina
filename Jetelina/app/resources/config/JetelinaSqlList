@@ -15,3 +15,4 @@ ji110,"insert into ftest2 (jt_id,name,sex,age,ave,jetelina_delete_flg) values({j
 ju111,"update ftest2 set name='{name}',sex='{sex}',age={age},ave={ave}","where jt_id={jt_id}"
 jd112,"update ftest2 set jetelina_delete_flg=1","where jt_id={jt_id}"
 js115,"select ftest2.name,ftest2.age from ftest2 as ftest2","where jt_id={jt_id}"
+js124,"select ftest2.jt_id,ftest2.sex from ftest2 as ftest2","where ave={%ave}"

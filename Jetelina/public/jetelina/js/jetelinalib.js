@@ -696,6 +696,14 @@ const chatKeyDown = (cmd) => {
                             if(1<multi){
                                 // show candidates
                                 m = chooseMsg('multi-candidates', "", "");
+                                let multimsg = "there are multi candidates ";
+                                for(i=0;i<multi;i++){
+                                    multimsg += `'${multiscript[i]}',`; 
+                                }
+
+                                $("#something_msg [name='jetelina_message']").text(multimsg);
+                                $("#something_msg").show();
+                    
                             }else{
                                 // here you are, this,.... and so on
                                 m = chooseMsg('6a', "", "");

@@ -91,3 +91,11 @@ route("/getsqlaccessdata",GetDataController.getSqlAccessData)
 route("/getperformancedata_real",GetDataController.getPerformanceRealData)
 route("/getperformancedata_test",GetDataController.getPerformanceTestData)
 route("/chkexistimprapifile",GetDataController.checkExistImproveApiFile)
+
+#===
+
+  ■Configuration features
+    urls for using in updating or something in Configuration parameters. 
+
+===#
+route("/updateconfig", PostDataController.configParamUpdate, method = POST)

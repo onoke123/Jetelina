@@ -30,7 +30,7 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 JMessage.showModuleInCompiling(@__MODULE__)
 
 export handleApipostdata, createApi, getColumns, deleteTable, userRegist, login, getUserInfoKeys, refUserAttribute, updateUserInfo,
-	updateUserData, updateUserLoginData, deleteUserAccount, deleteApi
+	updateUserData, updateUserLoginData, deleteUserAccount, deleteApi, configParamUpdate
 
 """
 function handleApipostdata()
@@ -321,4 +321,22 @@ function deleteApi()
 
 	return true
 end
+"""
+function configParamUpdate()
+
+	update configuration parameter
+
+# Arguments
+- return: ture/false in json form
+"""
+function configParamUpdate()
+	ret = ""
+	param = jsonpayload("configparam")
+	if !isnothing(param)
+		ret = j_config.configParamUpdate(param)
+	end
+
+	return ret
+end
+
 end

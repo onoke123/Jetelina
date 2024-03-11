@@ -7,6 +7,8 @@
         <br>
         <button onclick="getAjaxData('w')">js95 is a complecate Select</button>
         <br>
+        <button onclick="changeParam()">Change Configuration Parameter test</button>
+        <br>
         <!--
         <button onclick="getAjaxData('u')">Update</button>
         <br>
@@ -24,6 +26,22 @@
     </body>
 </html>
 <script type="text/javascript">
+    const changeParam = () =>{
+        let pd = {};
+        pd["configparam"] = "debug=true<p-d>logfile=log.txt";
+        let dd = JSON.stringify(pd);
+        $.ajax( {
+            url: "/updateconfig",
+            type: "post",
+            data: dd,
+            contentType: 'application/json',
+            dataType: "json",
+        }).done(function(result, textStatus, jqXHR) {
+        }).fail( function( result ){
+        }).always(function(result){
+        });
+    }
+
     const getAjaxData = (s) => {
         let pd = {};
         if(s=="s"){
