@@ -118,7 +118,7 @@ or_testdbname = testdb
 #
 # execution limit number of select sentence in test db
 #
-@jdic selectlimt:"limit"
+@jdic selectlimit:"limit"
 selectlimit = 10
 
 # 

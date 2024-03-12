@@ -324,6 +324,15 @@ const postAjaxData = (url, data) => {
             }else if(url == posturls[1]){
                 // get configuration parameter
                 console.log("config is ", result);
+                let configMsg = "";
+                $.each(result,function(name,value){
+                    if( name != "result" ){
+                       configMsg = `${name} is '${value}' so far`;
+                    }
+                });
+
+                $("#something_msg [name='jetelina_message']").text(configMsg);
+                $("#something_msg").show();
             }
 
             typingControll(chooseMsg("success", "", ""));
@@ -687,11 +696,17 @@ const chatKeyDown = (cmd) => {
                            let multiscript = [];
                             if ( localStorage[localparam] == "true" ){
                                 for (zzz in config){
-                                    if(inScenarioChk(ut,zzz,'config')){
-                                        let r = countCandidates(ut,zzz,'config');
-                                        multi += r[0];
+                                    if(ut == zzz){
+                                        multiscript = [];
                                         multiscript.push(zzz);
+                                        break;
+                                    }else{
+                                        if(inScenarioChk(ut,zzz,'config')){
+                                            let r = countCandidates(ut,zzz,'config');
+                                            multi += r[0];
+                                            multiscript.push(zzz);
 //                                        multiscript.push(r[1]);
+                                        }
                                     }
                                 }
                             }
@@ -710,9 +725,11 @@ const chatKeyDown = (cmd) => {
                             }else{
                                 // here you are, this,.... and so on
                                 m = chooseMsg('6a', "", "");
-                                let data = `{"param":"${multiscript[0]}"}`;
-                                console.log("data is ", data);
-//                                postAjaxData("/getconfigdata", data);
+                                if(multiscript[0] != null && multiscript[0] != undefined){
+                                    let data = `{"param":"${multiscript[0]}"}`;
+                                    console.log("data is ", data);
+                                    postAjaxData("/getconfigdata", data);
+                                }
                             }
 
                             $("#something_msg [name='jetelina_message']").text(configMsg);
@@ -1097,8 +1114,9 @@ const countCandidates = (s,sc,type) =>{
              this 'if' sentence compares s(user input sentence) with the scenario array sentences.
              then possible multi candidates because of realizing vague cpmparing.
         */
-        if (s.indexOf(order[key]) != -1) {
-            c++;
+//        if ($.inArray(s,order[key]) != -1) {
+            if (s.indexOf(order[key]) != -1) {
+                c++;
             candidate = order[key];
         }
     }
