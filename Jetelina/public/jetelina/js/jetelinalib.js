@@ -26,6 +26,7 @@
       instractionMode(s) confirmation in adding a new scenario
       showManualCommandList(s) show/hide manual and/or command list panel
       inScenarioChk(s,sc,type) check if user input string is in the ordered scenario
+      countCandidates(s,sc,type) count config/scenario candidates
       checkNewCommer(s) check the login user is a newcommer or not.
       checkBeginner() check the login user is a beginner or not.
       getRandomNumber(i) create random number. the range is 0 to i.
@@ -322,9 +323,8 @@ const postAjaxData = (url, data) => {
             if (url == posturls[0]) {
                 // jetelinawords -> nothing do
             }else if(url == posturls[1]){
-                // get configuration parameter
-                console.log("config is ", result);
-                let configMsg = "";
+                // get a configuration parameter, then show it in there
+                let configMsg = "Oh oh, I do not know it, another one plz.";
                 $.each(result,function(name,value){
                     if( name != "result" ){
                        configMsg = `${name} is '${value}' so far`;
@@ -696,7 +696,18 @@ const chatKeyDown = (cmd) => {
                            let multiscript = [];
                             if ( localStorage[localparam] == "true" ){
                                 for (zzz in config){
+                                    /*
+                                        Tips:
+                                            in the case of vague inputing, may have multi candidates.
+                                            but after showing them to user, may the right one inputing.
+                                            the first 'if' is maybe not hit, but secondly inputing may kit it.
+                                    */
                                     if(ut == zzz){
+                                        /*
+                                            Tips:
+                                                there is possilbility someting in multiscript[] yet.
+                                                needs to clear it before pushing the right one.
+                                        */
                                         multiscript = [];
                                         multiscript.push(zzz);
                                         break;
@@ -705,16 +716,15 @@ const chatKeyDown = (cmd) => {
                                             let r = countCandidates(ut,zzz,'config');
                                             multi += r[0];
                                             multiscript.push(zzz);
-//                                        multiscript.push(r[1]);
                                         }
                                     }
                                 }
                             }
-                            // multiscriptに候補が入っているので、適切なメッセージを出すようにする
-                            console.log("multi? ", multi," ", multiscript);
+
+                            // right message should be displayed if there were any candidates.
                             let configMsg = "";
                             if(1<multi){
-                                // show candidates
+                                // pick candidates up
                                 m = chooseMsg('multi-candidates', "", "");
                                 let multimsg = "there are multi candidates ";
                                 for(i=0;i<multi;i++){
@@ -727,87 +737,17 @@ const chatKeyDown = (cmd) => {
                                 m = chooseMsg('6a', "", "");
                                 if(multiscript[0] != null && multiscript[0] != undefined){
                                     let data = `{"param":"${multiscript[0]}"}`;
-                                    console.log("data is ", data);
                                     postAjaxData("/getconfigdata", data);
                                 }
                             }
 
-                            $("#something_msg [name='jetelina_message']").text(configMsg);
-                            $("#something_msg").show();
-
-                        }
-                    }
-/*
-                    let panel;
-                    if(inScenarioChk(ut,"function_panel")){
-                        panel = 'func';
-                    }else if(inScenarioChk(ut,"condition_panel")){
-                        panel = 'cond';
-                    }
-                    // move Jetelina Chat panel
-                    if (panel == 'func' || panel == 'cond') {
-                        const panelTop = window.innerHeight - 110;
-                        $("#jetelina_panel").animate({
-                            height: "70px",
-                            top: `${panelTop}px`,
-                            left: "210px"
-                        }, animateDuration);
-                        m = chooseMsg('6a', "", "");
-                    } else {
-                        //
-                            Tips:
-                                may 'm' has already been set in showManualCommandList().
-                        //
-                        if(m.length == 0){
-                            m = chooseMsg(3, "", "");
+                            if(0<configMsg.length){
+                                $("#something_msg [name='jetelina_message']").text(configMsg);
+                                $("#something_msg").show();
+                            }
                         }
                     }
 
-                    // show func panel
-                    if (panel == 'func') {
-                        stage = 'func';
-                        $("#condition_panel").hide();
-                        $("#function_panel").show().animate({
-                            width: window.innerWidth * 0.8,
-                            height: window.innerHeight * 0.8,
-                            top: "10%",
-                            left: "10%"
-                        }, animateDuration);
-
-                        if (isVisibleColumns()) {
-                            $("#fileup").draggable().animate({
-                                top: "4%",
-                                left: "5%"
-                            }, animateDuration);
-                            $("#left_panel").draggable().animate({
-                                top: "10%",
-                                left: "5%"
-                            }, animateDuration);
-                            $("#columns").draggable().animate({
-                                top: "10%",
-                                left: "30%"
-                            }, animateDuration);
-                            $("#container").draggable().animate({
-                                bottom: "5%",
-                                left: "30%"
-                            }, animateDuration);
-                        }
-                    } else if (panel == 'cond') {
-                        stage = 'cond';
-                        $("#function_panel").hide().animate({}, animateDuration);
-                        $("#condition_panel").show().animate({
-                            width: window.innerWidth * 0.8,
-                            height: window.innerHeight * 0.8,
-                            top: "10%",
-                            left: "10%"
-                        }, animateDuration);
-                        const dataurls = scenario['analyzed-data-collect-url'];
-                        //
-                            check for existing Jetelina's suggestion
-                        //
-                        getAjaxData(dataurls[3]);
-                    }
-*/
                     break;
                 case 'func':
                     $("#something_msg").hide();
@@ -822,7 +762,6 @@ const chatKeyDown = (cmd) => {
                 default:
                     if (ut == "reload") {
                         location.reload();
-//                        m = chooseMsg("reloading-msg", "", "");
                     }
 
                     if (chkUResponse("0r", ut)) {
@@ -842,27 +781,6 @@ const chatKeyDown = (cmd) => {
                 $("#jetelina_panel [name='jetelina_tell']").val("");
                 enterNumber = 0;
             }
-
-
-            /*
-                3/6
-                here is a block for experimental of changing configuration parameters
-
-                Caution:
-                   'localStrage' contains it as String, even you would set it as Boolean.
-            
-            if ( localStorage[localparam] == "true" ){
-                // work if user has loged in
-                if (0 < m.length && m != 'ignore') {
-                    console.log("m is ", m);
-                }else{
-                    for (zzz in scenario){
-                        if(inScenarioChk(ut,zzz)){
-                            console.log(ut, zzz, scenario[zzz]);
-                        }
-                    }
-                }
-            }*/
 
             if (0 < m.length && m != 'ignore') {
                 typingControll(m);
@@ -1114,9 +1032,8 @@ const countCandidates = (s,sc,type) =>{
              this 'if' sentence compares s(user input sentence) with the scenario array sentences.
              then possible multi candidates because of realizing vague cpmparing.
         */
-//        if ($.inArray(s,order[key]) != -1) {
-            if (s.indexOf(order[key]) != -1) {
-                c++;
+        if (s.indexOf(order[key]) != -1) {
+            c++;
             candidate = order[key];
         }
     }

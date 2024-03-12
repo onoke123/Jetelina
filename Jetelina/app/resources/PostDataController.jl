@@ -7,6 +7,7 @@ Description:
 	all controll for poting data from clients
 
 functions
+	getConfigData()	get a configuration parameter data ordered by posting data.
 	handleApipostdata() execute ordered API by posting data.
 	createApi()  create API and SQL select sentence from posting data.
 	getColumns()  get ordered tables's columns with json style.ordered table name is posted as the name 'tablename' in jsonpayload().
@@ -29,18 +30,27 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export handleApipostdata, createApi, getColumns, deleteTable, userRegist, login, getUserInfoKeys, refUserAttribute, updateUserInfo,
-	updateUserData, updateUserLoginData, deleteUserAccount, deleteApi, configParamUpdate, getConfigData
+export getConfigData, handleApipostdata, createApi, getColumns, deleteTable, userRegist, login, getUserInfoKeys, refUserAttribute, updateUserInfo,
+	updateUserData, updateUserLoginData, deleteUserAccount, deleteApi, configParamUpdate
 
 
-	function getConfigData()
-		d = jsonpayload("param")
-		if !isnothing(j_config.JC[d])
-#			return json(Dict("result" => true, "Jetelina" => copy.(eachrow(j_config.JC[d]))))
-			return json(Dict("result" => true, d => j_config.JC[d]))
-		end
+"""
+function getConfigData()
+
+	get a configuration parameter data ordered by posting data.
+
+# Arguments
+- return: json data including ordered a configuration if there were. ex. {"result":true,"logfile":"log.txt"}
+"""
+function getConfigData()
+	d = jsonpayload("param")
+	if !isnothing(j_config.JC[d])
+		return json(Dict("result" => true, d => j_config.JC[d]))
+	else
+		return json(Dict("result" => false))
 	end
-	
+end
+
 """
 function handleApipostdata()
 
