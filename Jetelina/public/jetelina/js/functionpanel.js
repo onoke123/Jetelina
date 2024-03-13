@@ -287,7 +287,7 @@ const fileupload = () => {
     xhr:function(){
       ret = $.ajaxSettings.xhr();
       inprogress=true;// in progress. for priventing accept a new command.
-      typingControll(chooseMsg('inprogress', "", ""));
+      typingControll(chooseMsg('inprogress-msg', "", ""));
       return ret;
     }
   }).done(function (result, textStatus, jqXHR) {
@@ -303,17 +303,17 @@ const fileupload = () => {
         cleanUp("tables");
         getAjaxData("getalldbtable");
       } else {
-        typingControll(chooseMsg('success', "", ""));
+        typingControll(chooseMsg('success-msg', "", ""));
       }
     } else {
       // csv file format error
-      typingControll(chooseMsg('func-csv-format-error', "", ""));
+      typingControll(chooseMsg('func-csv-format-error-msg', "", ""));
     }
   }).fail(function (result) {
     checkResult(result);
     // something error happened
     console.error("fileupload(): unexpected error");
-    typingControll(chooseMsg(fail, "", ""));
+    typingControll(chooseMsg(fail-msg, "", ""));
   }).always(function(){
     // release it for allowing to input new command in the chatbox 
     inprogress=false;
@@ -642,7 +642,7 @@ const getColumn = (tablename) => {
       xhr:function(){
         ret = $.ajaxSettings.xhr();
         inprogress=true;// in progress. for priventing accept a new command.
-        typingControll(chooseMsg('inprogress', "", ""));
+        typingControll(chooseMsg('inprogress-msg', "", ""));
         return ret;
       }
     }).done(function (result, textStatus, jqXHR) {
@@ -650,7 +650,7 @@ const getColumn = (tablename) => {
       return getdata(result, 1);
     }).fail(function (result) {
       checkResult(result);
-      typingControll(chooseMsg('fail', "", ""));
+      typingControll(chooseMsg('fail-msg', "", ""));
     }).always(function(){
       // release it for allowing to input new command in the chatbox 
       inprogress=false;
@@ -689,7 +689,7 @@ const deleteThisTable = (tablename) => {
       xhr:function(){
         ret = $.ajaxSettings.xhr();
         inprogress=true;// in progress. for priventing accept a new command.
-        typingControll(chooseMsg('inprogress', "", ""));
+        typingControll(chooseMsg('inprogress-msg', "", ""));
         return ret;
       }
     }).done(function (result, textStatus, jqXHR) {
@@ -701,11 +701,11 @@ const deleteThisTable = (tablename) => {
         }
       });
 
-      typingControll(chooseMsg('success', "", ""));
+      typingControll(chooseMsg('success-msg', "", ""));
     }).fail(function (result) {
       checkResult(result);
       console.error("deleteThisTable() faild: ", result);
-      typingControll(chooseMsg('fail', "", ""));
+      typingControll(chooseMsg('fail-msg', "", ""));
     }).always(function () {
         // release it for allowing to input new command in the chatbox 
         inprogress=false;
@@ -740,7 +740,7 @@ const postSelectedColumns = () => {
     xhr:function(){
       ret = $.ajaxSettings.xhr();
       inprogress=true;// in progress. for priventing accept a new command.
-      typingControll(chooseMsg('inprogress', "", ""));
+      typingControll(chooseMsg('inprogress-msg', "", ""));
       return ret;
     }
   }).done(function (result, textStatus, jqXHR) {
@@ -750,7 +750,7 @@ const postSelectedColumns = () => {
     */
     if (result.apino != null && 0 < result.apino.length) {
       $("#container").append(`<span class="apisql"><p>api no is ${result.apino}</p></span>`);
-      typingControll(chooseMsg('success', "", ""));
+      typingControll(chooseMsg('success-msg', "", ""));
     } else if (result.resembled != null && 0 < result.resembled.length) {
       $("#container").append(`<span class="apisql"><p>there is similar API already exist:  ${result.resembled}</p></span>`);
     }
@@ -761,7 +761,7 @@ const postSelectedColumns = () => {
   }).fail(function (result) {
     checkResult(result);
     console.error("postSelectedColumns() fail");
-    typingControll(chooseMsg('fail', "", ""));
+    typingControll(chooseMsg('fail-msg', "", ""));
   }).always(function () {
     // release it for allowing to input new command in the chatbox 
     inprogress=false;
@@ -783,7 +783,7 @@ const postSelectedColumns = () => {
 const functionPanelFunctions = (ut) => {
   let m = 'ignore';
 
-  if (inScenarioChk(ut, 'condition_panel')) {
+  if (inScenarioChk(ut, 'condition_panel-cmd')) {
     delete preferent;
     delete presentaction;
     stage = 'chose_func_or_cond';
@@ -797,9 +797,9 @@ const functionPanelFunctions = (ut) => {
         cmd = 'fileupload';
       } else if (inScenarioChk(ut, 'func-fileupload-open-cmd')) {
         cmd = 'fileselectoropen';
-      } else if (inScenarioChk(ut, 'func-show-table-list')) {
+      } else if (inScenarioChk(ut, 'func-show-table-list-cmd')) {
         cmd = 'table';
-      } else if (inScenarioChk(ut, 'func-show-api-list')) {
+      } else if (inScenarioChk(ut, 'func-show-api-list-cmd')) {
         // same as above
         cmd = 'api';
       } else if (inScenarioChk(ut, 'func-selected-column-post-cmd')){
@@ -972,9 +972,9 @@ const functionPanelFunctions = (ut) => {
             preferent.cmd = "cancel";
           } else {
             // the secound calling, sub query open or not
-            if (inScenarioChk(ut, 'confirmation-sentences')) {
+            if (inScenarioChk(ut, 'confirmation-sentences-cmd')) {
               showGenelicPanel(true);
-              m = chooseMsg('func-subpanel-opened', "", "");
+              m = chooseMsg('func-subpanel-opened-cmd', "", "");
             } else {
               $("#genelic_panel input[name='genelic_input']").val("ignore");
             }
@@ -991,7 +991,7 @@ const functionPanelFunctions = (ut) => {
             preferent.cmd = cmd;
           }
         } else {
-          m = chooseMsg('func-post-err', "", "");
+          m = chooseMsg('func-post-err-msg', "", "");
         }
 
         break;
@@ -1000,12 +1000,12 @@ const functionPanelFunctions = (ut) => {
           // cleanup the screen
           cleanupItems4Switching();
           cleanupContainers();
-          m = chooseMsg('cancel', "", "");
+          m = chooseMsg('cancel-msg', "", "");
         } else {
           // table list
           if (deleteSelectedItems()) {
             showGenelicPanel(false);
-            m = chooseMsg('cancel', "", "");
+            m = chooseMsg('cancel-msg', "", "");
           } else {
             m = chooseMsg('unknown-msg', "", "");
           }
@@ -1026,7 +1026,7 @@ const functionPanelFunctions = (ut) => {
             });
 
             // execute this if func-tabledrop-confirm is 'yes'
-            if (inScenarioChk(ut,'confirmation-sentences')) {
+            if (inScenarioChk(ut,'confirmation-sentences-cmd')) {
               let t = preferent.droptable;
 
               delete preferent.cmd;
@@ -1037,7 +1037,7 @@ const functionPanelFunctions = (ut) => {
             } else {
               if (p != null && 0 < p.length) {
                 // Yes there is, show the delete confirmation message.
-                m = chooseMsg('func-tabledrop-confirm', "", "");
+                m = chooseMsg('func-tabledrop-confirm-msg', "", "");
                 preferent.cmd = cmd;
                 preferent.droptable = dropTable;
               } else {
@@ -1054,7 +1054,7 @@ const functionPanelFunctions = (ut) => {
           // cancel an order of table drop 
           if(inScenarioChk(ut,'func-tabledrop-cancel-cmd')){
             preferent.cmd = "";
-            m = chooseMsg('cancel', "", "");
+            m = chooseMsg('cancel-msg', "", "");
           }
         } else {
           m = chooseMsg('func-tabledrop-ng-msg', "", "");
@@ -1071,7 +1071,7 @@ const functionPanelFunctions = (ut) => {
 
 
             // execute this if func-tabledrop-confirm is 'yes'
-            if (inScenarioChk(ut, 'confirmation-sentences')) {
+            if (inScenarioChk(ut, 'confirmation-sentences-cmd')) {
               let t = preferent.deleteapi;
 
               delete preferent.cmd;
@@ -1082,7 +1082,7 @@ const functionPanelFunctions = (ut) => {
             } else {
               if (p != null && 0 < p.length) {
                 // Yes there is, show the delete confirmation message.
-                m = chooseMsg('func-apidelete-confirm', "", "");
+                m = chooseMsg('func-apidelete-confirm-msg', "", "");
                 preferent.cmd = cmd;
                 preferent.deleteapi = deleteApi;
               } else {
@@ -1097,9 +1097,9 @@ const functionPanelFunctions = (ut) => {
             preferent.cmd = cmd;
           }
           // cancel an order of table drop 
-          if (inScenarioChk(ut, 'cancel')) {
+          if (inScenarioChk(ut, 'cancel-msg')) {
             preferent.cmd = "";
-            m = chooseMsg('cancel', "", "");
+            m = chooseMsg('cancel-msg', "", "");
           }
         } else {
           m = chooseMsg('func-apidelete-ng-msg', "", "");
@@ -1125,11 +1125,11 @@ const functionPanelFunctions = (ut) => {
         deleteSelectedItems();
         cleanUp("items");
         cleanupContainers();
-        m = chooseMsg('success', '', '');
+        m = chooseMsg('success-msg', '', '');
         break;
       case 'subquery': //open subquery panel
         showGenelicPanel(true);
-        m = chooseMsg('func-subpanel-opened', '', '');
+        m = chooseMsg('func-subpanel-opened-cmd', '', '');
         break;
       default:
         break;
@@ -1203,7 +1203,7 @@ const procTableApiList = (s) => {
               if ((t[0] == 'close' && $(this).hasClass("activeItem")) ||
                 (t[0] == 'open' && !$(this).hasClass("activeItem"))) {
                 listClick($(this));
-                m = chooseMsg('success', "", "");
+                m = chooseMsg('success-msg', "", "");
                 return;
               }
             }
@@ -1226,7 +1226,7 @@ const procTableApiList = (s) => {
 
               if (findselect) {
                 itemSelect($(this));
-                m = chooseMsg('success', "", "");
+                m = chooseMsg('success-msg', "", "");
               }
             });
           }
@@ -1333,7 +1333,7 @@ const deleteThisApi = (apino) => {
       xhr:function(){
         ret = $.ajaxSettings.xhr();
         inprogress=true;// in progress. for priventing accept a new command.
-        typingControll(chooseMsg('inprogress', "", ""));
+        typingControll(chooseMsg('inprogress-msg', "", ""));
         return ret;
       }
     }).done(function (result, textStatus, jqXHR) {
@@ -1345,11 +1345,11 @@ const deleteThisApi = (apino) => {
         }
       });
 
-      typingControll(chooseMsg('success', "", ""));
+      typingControll(chooseMsg('success-msg', "", ""));
     }).fail(function (result) {
       checkResult(result);
       console.error("deleteThisApi() faild: ", result);
-      typingControll(chooseMsg('fail', "", ""));
+      typingControll(chooseMsg('fail-msg', "", ""));
     }).always(function () {
         // release it for allowing to input new command in the chatbox 
         inprogress=false;

@@ -11,86 +11,87 @@
 @jdic function-get-url:"/getapilist"
 
 # null 
-@jdic null:"",""
+@jdic null-msg:"",""
 
 # command list order 
-@jdic guidance:"what can i","can you","start","manual","guide me","guidance","teach me","tell me"
-@jdic command_list:"how can i","command","commands","commandlist","commandslist"
-@jdic waiting-next:"then?","next please"
+@jdic guidance-cmd:"what can i","can you","start","manual","guide me","guidance","teach me","tell me"
+@jdic command_list-cmd:"how can i","command","commands","commandlist","commandslist"
+@jdic waiting-next-msg:"then?","next please"
 
 # opening 
-@jdic 0:"Hi","Hello"
-@jdic 0r:"hi","hello","hola","good ","sorry","what\"s up","what is up","nice to see you","how are you"
-@jdic bura:"Hi Ho","Fun fun fun","Someone is there?","Waiting for.....","Do you know the meaning of .... love?"
+@jdic starting-0-msg:"Hi","Hello"
+@jdic starting-0r-cmd:"hi","hello","hola","good ","sorry","what\"s up","what is up","nice to see you","how are you"
+@jdic bura-msg:"Hi Ho","Fun fun fun","Someone is there?","Waiting for.....","Do you know the meaning of .... love?"
 
 # greeting 
-@jdic 1:"Nice to see you", "How are you?"
-@jdic 1r:"fine","good","great"
-@jdic 1a:"Nice to hear it", "Wow, super","lucky you","envy you"
+@jdic starting-1-msg:"Nice to see you", "How are you?"
+@jdic starting-1r-cmd:"fine","good","great"
+@jdic starting-1a-msg:"Nice to hear it", "Wow, super","lucky you","envy you"
 
 # login 
-@jdic 2:"Could you give me your name?","Let me know your name, please","May I ask your name?"
+@jdic starting-2-msg:"Could you give me your name?","Let me know your name, please","May I ask your name?"
 
 # etc 
-@jdic 3:"What?","Are you kidding me?","Never mind"
+@jdic starting-3-msg:"What?","Are you kidding me?","Never mind"
 
 # miss login 
-@jdic 4:"I am sorry, but ", "Something wrong, hum, "
+@jdic starting-4-msg:"I am sorry, but ", "Something wrong, hum, "
 
 # something inprogress 
-@jdic inprogress:"I am doing","happy workin","husle hustle","I AM DOING THIS JUST FOR YOU"
+@jdic inprogress-msg:"I am doing","happy workin","husle hustle","I AM DOING THIS JUST FOR YOU"
 
 # refuse any command due to progress something 
-@jdic refuse-command:"I am busy now","I cannot do multi task at once","You kill me?","Later..."
+@jdic refuse-command-msg:"I am busy now","I cannot do multi task at once","You kill me?","Later..."
 
 # greeting to u after successing login 
-@jdic 5:"Welcome ", "I missed you, ","Oh my.. incredible, "
-@jdic multi-candidates:"there are a few candidates as your order","which is your order?","may you should say more detail","please tell me more detail.","next question.","more..."
-@jdic not-registered:"you are not registered, try again.","you are not here yet.","I do not know you, sorry."
+@jdic starting-5-msg:"Welcome ", "I missed you, ","Oh my.. incredible, "
+@jdic multi-candidates-msg:"there are a few candidates as your order","which is your order?","may you should say more detail","please tell me more detail.","next question.","more..."
+@jdic not-registered-msg:"you are not registered, try again.","you are not here yet.","I do not know you, sorry."
 
 #
 # after login 
 #
-@jdic first-login:"This is your first login to me,{Q}, I would like to ask you something."
-@jdic first-login-ask-firstname:"Thank you. First of all, may I ask your first name?"
-@jdic first-login-ask-lastname:"Thank you. Next, could you give me your last name?"
-@jdic first-login-ask-info:"Thank you so much,{Q}, then what is your favorits?, Whatever."
-@jdic first-login-ask-info-then:"Sounds nice, and more?","Cool, others?","I love it too, and?","Great, you are lucky, and more?"
-@jdic first-login-ask-info-end:"Thank you so much,{Q}. Now you can type 'Guide' or 'Manual' to see what can I do for you."
+@jdic first-login-msg:"This is your first login to me,{Q}, I would like to ask you something."
+@jdic first-login-ask-firstname-msg:"Thank you. First of all, may I ask your first name?"
+@jdic first-login-ask-lastname-msg:"Thank you. Next, could you give me your last name?"
+@jdic first-login-ask-info-msg:"Thank you so much,{Q}, then what is your favorits?, Whatever."
+@jdic first-login-ask-info-then-msg:"Sounds nice, and more?","Cool, others?","I love it too, and?","Great, you are lucky, and more?"
+@jdic first-login-ask-info-end-msg:"Thank you so much,{Q}. Now you can type 'Guide' or 'Manual' to see what can I do for you."
 
-@jdic 6:"How can I help you today?", "What do you do now?"
-@jdic success:"Done","Success","I am so happy","Yes"
-@jdic fail:"Uge","Noooooooo","Sorry something wrong"
-@jdic cancel:"It has been canceld","Has been withdrawn","Canceled","Withdrew","Called off"
-@jdic confirmation-sentences:"yes","sure","why not","do it","do","i want to do it","i wanna do it","kick ass"
-@jdic func-post-err:"Hey, no columns","You should select post data","Boo"
+@jdic starting-6-msg:"How can I help you today?", "What do you do now?"
+@jdic success-msg:"Done","Success","I am so happy","Yes"
+@jdic fail-msg:"Uge","Noooooooo","Sorry something wrong"
+@jdic cancel-msg:"It has been canceld","Has been withdrawn","Canceled","Withdrew","Called off"
+@jdic confirmation-sentences-cmd:"yes","sure","why not","do it","do","i want to do it","i wanna do it","kick ass"
+@jdic func-post-err-msg:"Hey, no columns","You should select post data","Boo"
+@jdic config-update-cmd:"change","replace","rewrite"
 
 #open the function panel
-@jdic function_panel:"function panel", "open func","show me func","function"
+@jdic function_panel-cmd:"function panel", "open func","show me func","function"
 
 #open the condition panel
-@jdic condition_panel:"condition panel", "open cond","show me cond","condition"
+@jdic condition_panel-cmd:"condition panel", "open cond","show me cond","condition"
 
 #open table list
-@jdic func-show-table-list:"open table","show me table","table list","tables","tablelist","tableslist"
+@jdic func-show-table-list-cmd:"open table","show me table","table list","tables","tablelist","tableslist"
 
 #open api list
-@jdic func-show-api-list:"open api","show me api","api list","apis list","apis","apilist"
+@jdic func-show-api-list-cmd:"open api","show me api","api list","apis list","apis","apilist"
 
 ###@jdic 6cond:"Let me your command, if you need"
-@jdic 6cond-graph-show:"here you are","tatta laan"
+@jdic cond-graph-show-msg:"here you are","tatta laan"
 
 # Access vs Combination graph 
-@jdic 6cond-graph-show-keywords:"access numbers","access number","analyzed","report","graph"
+@jdic cond-graph-show-cmd:"access numbers","access number","analyzed","report","graph"
 
 # SQL Exectuon Time graph
-@jdic 6cond-sql-performance-graph-show-keywords:"your suggestion","suggest","sql test","improved performance"
+@jdic cond-sql-performance-graph-show-cmd:"your suggestion","suggest","sql test","improved performance"
 
-@jdic 6cond-performance-improve:"There is an improving suggestion.","Do you wanna know my great idea?","Attention please. I have an idea."
-@jdic 6cond-no-suggestion:"I do not have any suggestions so far.","No suggestions","I do not give it to you.","Hey, Nothing at all"
+@jdic cond-performance-improve-msg:"There is an improving suggestion.","Do you wanna know my great idea?","Attention please. I have an idea."
+@jdic cond-no-suggestion-msg:"I do not have any suggestions so far.","No suggestions","I do not give it to you.","Hey, Nothing at all"
 
-@jdic 6a:"OK, here you are","Hey ho","This"
-@jdic 6b:"Command me, if you need"
+@jdic starting-6a-msg:"OK, here you are","Hey ho","This"
+@jdic starting-6b-msg:"Command me, if you need"
 
 #
 # basic commands in function panel
@@ -102,32 +103,32 @@
 @jdic func-tabledrop-cmd:"drop","drop table","table drop","tabledrop","droptable"
 @jdic func-tabledrop-msg:"Which table do you want to drop?","correct order is \"droptable <table name>\" and so on"
 @jdic func-tabledrop-ng-msg:"Hey open the table list first!","Huum?","Check it first","Watch it"
-@jdic func-tabledrop-confirm:"Sure?","Really?","Won\"t you regret?"
+@jdic func-tabledrop-confirm-msg:"Sure?","Really?","Won\"t you regret?"
 @jdic func-tabledrop-cancel-cmd:"cancel","withdraw","abandon","postpone","give up","stop","quit"
 
 @jdic func-apidelete-cmd:"delete","delete api","api delete","apidelete","deleteapi"
 @jdic func-apidelete-msg:"Which api do you want to delete?","correct order is \"delete <api name>\" and so on"
 @jdic func-apidelete-ng-msg:"Hey open the api list first!","Huum?","Check it first","Watch it"
 @jdic func-apidelete-forbidden-msg:"this api cannot be deleted, sorry"
-@jdic func-apidelete-confirm:"Sure?","Really?","Won\"t you regret?"
+@jdic func-apidelete-confirm-msg:"Sure?","Really?","Won\"t you regret?"
 
 @jdic func-fileupload-open-cmd:"file open","open file","open filebox","file box","csv file"
 @jdic func-fileupload-open-msg:"Which file?"
 @jdic func-fileupload-cmd:"upload","fileup","fileupload","up","csv up"
 @jdic func-fileupload-msg:"File?"
-@jdic func-csv-format-error:"CSV format is not good, see the error message","Unacceptable CSV format, see the error message,"
+@jdic func-csv-format-error-msg:"CSV format is not good, see the error message","Unacceptable CSV format, see the error message,"
 @jdic func-postcolumn-where-option-msg:"Wanna set the \"Where\" sentence? This is an option."
 @jdic func-postcolumn-where-indispensable-msg:"Set the \"Where\" sentence. This is an indispensable."
 @jdic func-postcolumn-available-msg:"Now you can post them","Do post them","Type \"post\" now"
 @jdic func-subpanel-open-cmd:"sub please","subquery","sub panel","where panel","sub query"
-@jdic func-subpanel-opened:"Set your sub query in \"Sub Query\" field","Ready to \"Sub Query\" field"
+@jdic func-subpanel-opened-cmd:"Set your sub query in \"Sub Query\" field","Ready to \"Sub Query\" field"
 @jdic func-postcolumn-cancel-cmd:"cancel","withdraw","abandon","postpone","give up","stop","quit"
 
 #
 # log out 
 #
-@jdic logout:"logout","exit","log out","out","return","bye","see you","nice day"
-@jdic afterlogout:"Bye", "Have a good day","Hope you will back soon","I am looking forward you"
+@jdic logout-cmd:"logout","exit","log out","out","return","bye","see you","nice day"
+@jdic afterlogout-msg:"Bye", "Have a good day","Hope you will back soon","I am looking forward you"
 
 #
 # unknow command 
@@ -137,5 +138,5 @@
 #
 # show or hide error message 
 #
-@jdic hide-error-message:"hide error"
-@jdic show-error-message:"show error"
+@jdic hide-error-message-cmd:"hide error"
+@jdic show-error-message-cmd:"show error"

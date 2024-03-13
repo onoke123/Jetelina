@@ -109,7 +109,7 @@ const conditionPanelFunctions = (ut) => {
         presentaction.push('cond');
     }
 
-//    if (inScenarioChk(ut,'function_panel')) {
+//    if (inScenarioChk(ut,'function_panel-cmd')) {
 //        delete preferent;
 //        delete presentaction;
 //        stage = 'chose_func_or_cond';
@@ -119,15 +119,15 @@ const conditionPanelFunctions = (ut) => {
         let cmd = getPreferentPropertie('cmd');
 
         if (cmd == null || cmd.length <= 0) {
-            if( inScenarioChk(ut,'6cond-graph-show-keywords')){
+            if( inScenarioChk(ut,'cond-graph-show-cmd')){
                 cmd = "graph";
-            }else if( inScenarioChk(ut,'6cond-sql-performance-graph-show-keywords')){
+            }else if( inScenarioChk(ut,'cond-sql-performance-graph-show-cmd')){
                 if(isSuggestion){
                     cmd = "performance";
                 }else{
                     cmd = "no_suggestion";
                 }
-            }else if( inScenarioChk(ut,'confirmation-sentences') && isSuggestion ){
+            }else if( inScenarioChk(ut,'confirmation-sentences-cmd') && isSuggestion ){
                 cmd = "performance";
             }
         }
@@ -164,7 +164,7 @@ const conditionPanelFunctions = (ut) => {
                     left: "20%"
                 }, animateDuration).draggable('disable');
 
-                m = chooseMsg('6cond-graph-show', "", "");
+                m = chooseMsg('cond-graph-show-msg', "", "");
                 break;
             case 'performance':
                 if(isVisibleApiAccessNumbers()){
@@ -190,10 +190,10 @@ const conditionPanelFunctions = (ut) => {
                 }, animateDuration).draggable('disable');
 
                 $("#something_msg").show();
-                m = chooseMsg('6cond-graph-show', "", "");
+                m = chooseMsg('cond-graph-show-msg', "", "");
                 break;
             case 'no_suggestion':
-                m = chooseMsg('6cond-no-suggestion', "", "");
+                m = chooseMsg('cond-no-suggestion-msg', "", "");
                 break;
             default:
                 break;

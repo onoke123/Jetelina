@@ -6,7 +6,7 @@
  * 
  */
 let stage = 0;// action stage number ex. 1:before login  'login':at login
-let preferent = {};// contains precedence commands
+let preferent = {};// contains precedence commands. ex. droptable, deliteApi...
 let presentaction = {};// contains the present function  ex. functionpanel -> table
 const animateDuration = 1500;// animate() duration
 let isSuggestion = false; // set this to 'true' in getAjaxData() if there were Jetelina's suggestion
@@ -112,7 +112,7 @@ $("#jetelina_panel [name='chat_input']").keypress(function (e) {
       chatKeyDown();
     }else{
       // refuse any commands so that something ajax() inprogress
-      typingControll(chooseMsg('refuse-command', "", ""));
+      typingControll(chooseMsg('refuse-command-msg', "", ""));
     }
   }
 });
