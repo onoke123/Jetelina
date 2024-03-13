@@ -183,14 +183,18 @@ function configParamUpdate(d::String)
 # Arguments
 - `d::String`:  configuration parameter name and value. ex. debug=true<p-d>logfile=log1.txt...
 """
-function configParamUpdate(d::String)
+function configParamUpdate(d::Dict)
 	#
 	#	Tips:
 	#		transfered parameter data is possible multiple, then required to be devided them with something unique delimiter.
 	#		in this data, "<p-d>" is hired in javascript library.
 	#
-	delimiter::String = "<p-d>"
-	dn = split(d, delimiter)
+#	delimiter::String = "," #"<p-d>"
+#	dn = split(d, delimiter)
+
+	dn = collect(keys(d))
+
+
 	configfile = JFiles.getFileNameFromConfigPath(defaultConfigFile)
 	configfile_tmp = string(configfile, ".tmp")
 	try
@@ -199,9 +203,12 @@ function configParamUpdate(d::String)
 		l = readlines(f)
 
 		for n ∈ 1:length(dn)
-			t = split(dn[n], "=")
-			param = strip(t[1])
-			var = strip(t[2])
+#			t = split(dn[n], "=")
+#			param = strip(t[1])
+#			var = strip(t[2])
+			param = dn[n]
+			var = d[dn[n]]
+			@info "configPara... param and var" n param var
 			prev = string(JC[param])
 			#
 			#  Tips:
@@ -235,7 +242,7 @@ function configParamUpdate(d::String)
 		close(tf)
 		close(f)
 
-		mv(configfile_tmp, configfile, force = true)
+#		mv(configfile_tmp, configfile, force = true)
 	catch err
 		@error "ConfigManager.configParamUpdate() error: $err"
 	end

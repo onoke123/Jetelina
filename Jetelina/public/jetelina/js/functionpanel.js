@@ -301,7 +301,7 @@ const fileupload = () => {
       //refresh table list 
       if (isVisibleTableContainer()) {
         cleanUp("tables");
-        getAjaxData("getalldbtable");
+        getAjaxData(scenario["function-get-url"][1]);
       } else {
         typingControll(chooseMsg('success-msg', "", ""));
       }
@@ -385,7 +385,7 @@ const listClick = (p) => {
       cleanupItems4Switching();
       cleanupContainers();
 
-      // showing ordered sql from preferent.apilist that is gotten by postAjaxData("/getapilist",...)
+      // showing ordered sql from preferent.apilist that is gotten by getAjaxData("/getapilist",...)
       if (preferent.apilist != null && preferent.apilist.length != 0) {
         let s = getdataFromJson(preferent.apilist, t);
         if (0 < s.sql.length) {
@@ -914,7 +914,7 @@ const functionPanelFunctions = (ut) => {
         }
 
         cleanUp("tables");
-        getAjaxData("getalldbtable");
+        getAjaxData(scenario["function-get-url"][1]);
         m = 'ignore';
         break;
       case 'api':
@@ -933,7 +933,7 @@ const functionPanelFunctions = (ut) => {
 
         // cleanup once because getting apilist and contain to preferent.aplist by calling postAjaxData()
         delete preferent.apilist;
-        getAjaxData("/getapilist");
+        getAjaxData(scenario["function-get-url"][0]);
         m = 'ignore';
         break;
       case 'post':

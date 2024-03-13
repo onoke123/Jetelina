@@ -21,6 +21,7 @@ functions
 	updateUserLoginData() update user login data like logincount,logindate,.....
 	deleteUserAccount() delete user account from jetelina_user_table
 	deleteApi()  delete api by ordering from JC["sqllistfile"] file, then refresh the DataFrame.
+	configParamUpdate()	update configuration parameter
 """
 module PostDataController
 
@@ -350,7 +351,9 @@ function configParamUpdate()
 """
 function configParamUpdate()
 	ret = ""
-	param = jsonpayload("configparam")
+#	param = jsonpayload("configparam")
+	param = jsonpayload()
+	@info "configPara... " param typeof(param)
 	if !isnothing(param)
 		ret = j_config.configParamUpdate(param)
 	end

@@ -99,6 +99,15 @@ const checkResult = (o) => {
         } else {
             $("#something_msg [name='jetelina_message']").text("");
             $("#something_msg").hide();
+            /*
+                Tips:
+                    in the case of a configuration parameter is called, set null all for 
+                    preventing its unexpected updating 
+            */
+            if(presentaction.config_name != null ){
+                presentaction.config_name = null;
+                presentaction.config_data = null;
+            }
         }
     }
 
@@ -320,9 +329,11 @@ const postAjaxData = (url, data) => {
             }
         }).done(function (result, textStatus, jqXHR) {
             const posturls = scenario['function-post-url'];
-            if (url == posturls[0]) {
+            if(url == posturls[0]){
+                // userdata update
+            }else if (url == posturls[1]) {
                 // jetelinawords -> nothing do
-            } else if (url == posturls[1]) {
+            } else if (url == posturls[2]) {
                 // get a configuration parameter, then show it in there
                 let configMsg = "Oh oh, I do not know it, another one plz.";
                 $.each(result, function (name, value) {
@@ -334,6 +345,8 @@ const postAjaxData = (url, data) => {
 
                 $("#something_msg [name='jetelina_message']").text(configMsg);
                 $("#something_msg").show();
+            }else if(url == posturls[3]){
+                // configuration parameter change
             }
 
             typingControll(chooseMsg("success-msg", "", ""));
@@ -697,9 +710,27 @@ const chatKeyDown = (cmd) => {
                             let multiscript = [];
                             if (localStorage[localparam] == "true") {
                                 // configuration parameter updating
-                                if (inScenarioChk(ut, "config-update-cmd")) {
+                                if (presentaction.cmd != null && presentaction.cmd == "config-change"){
+                                    if(presentaction.config_name != null && presentaction.config_data != null){
+                                        /*
+                                            Caution:
+                                                if set multi parameters in data, it have to be used a delimiter as '<p-d>'.
+                                                this is the protocol in ConfigManager.configParamUpdate().
+                                                it means ex. debug=true<p-d>logfilename=log.txt<p-d>database.....
+                                        */
+ //                                       let data = `{"configparam":"${presentaction.config_name}=${ut}"}`;
+                                        $("#something_msg [name='jetelina_message']").append(`<config-new-data id="newconfigvalue">${ut}</config-new-data>`);
+                                        let data = `{"${presentaction.config_name}":"${ut}"}`; 
+
+//                                        postAjaxData(scenario["function-post-url"][3], data);
+                                    }else{
+                                        m = "Hey, no pointed configuration data";
+                                    }
+                                }else if (inScenarioChk(ut, "config-update-cmd")) {
+                                    presentaction.cmd = "config-change";
                                     if (presentaction.config_name != null && presentaction.config_data != null) {
-                                        m = `${presentaction.config_name}:'${presentaction.config_data}' => `;
+                                        let configdata = `<br>Change this to => `;
+                                        $("#something_msg [name='jetelina_message']").append(configdata);
                                     } else {
                                         m = "which config?";
                                     }
@@ -751,7 +782,7 @@ const chatKeyDown = (cmd) => {
                                 if (multiscript[0] != null && multiscript[0] != undefined) {
                                     presentaction.config_name = multiscript[0];
                                     let data = `{"param":"${multiscript[0]}"}`;
-                                    postAjaxData("/getconfigdata", data);
+                                    postAjaxData(scenario["function-post-url"][2], data);
                                 }
                             }
 
@@ -946,7 +977,7 @@ const instractionMode = (s) => {
         if (newword[1] != null && 0 < newword[1].length) {
             newword[1] = newword[1].replaceAll("\"", "'");
             let data = `{"sayjetelina":"${newword[1]}","arr":"${scenario_name}"}`;
-            postAjaxData("/jetelinawords", data);
+            postAjaxData(scenario["function-post-url"][1], data);
         }
     }
 }
@@ -1087,7 +1118,7 @@ const checkNewCommer = (s) => {
                     break;
             }
 
-            postAjaxData("/updateuserdata", data);
+            postAjaxData(scenario["function-post-url"][0], data);
         } else {
             // set user's info, these are using for authentication.
             if (usetcount < usetcountmax) {

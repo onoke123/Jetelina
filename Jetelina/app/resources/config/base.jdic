@@ -5,10 +5,10 @@
 @jdic analyzed-data-collect-url:"/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getsqlaccessdata"
 
 # post urls for function panel 
-@jdic function-post-url:"/jetelinawords","/getconfigdata"
+@jdic function-post-url:"/updateuserdata","/jetelinawords","/getconfigdata","/changeconfigdata"
 
 # get urls for function panel 
-@jdic function-get-url:"/getapilist"
+@jdic function-get-url:"/getapilist","/getalldbtable"
 
 # null 
 @jdic null-msg:"",""
