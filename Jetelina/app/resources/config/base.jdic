@@ -98,13 +98,12 @@
 #
 @jdic func-list-cmd:"open","close","select","cancel"
 @jdic func-list-cmd-select-cmd:"select","choose","pick"
-@jdic func-selected-column-post-cmd:"post","send","push"
+@jdic common-post-cmd:"post","send","push"
 @jdic func-cleanup-cmd:"refresh","cleanup","clean"
 @jdic func-tabledrop-cmd:"drop","drop table","table drop","tabledrop","droptable"
 @jdic func-tabledrop-msg:"Which table do you want to drop?","correct order is \"droptable <table name>\" and so on"
 @jdic func-tabledrop-ng-msg:"Hey open the table list first!","Huum?","Check it first","Watch it"
 @jdic func-tabledrop-confirm-msg:"Sure?","Really?","Won\"t you regret?"
-@jdic func-tabledrop-cancel-cmd:"cancel","withdraw","abandon","postpone","give up","stop","quit"
 
 @jdic func-apidelete-cmd:"delete","delete api","api delete","apidelete","deleteapi"
 @jdic func-apidelete-msg:"Which api do you want to delete?","correct order is \"delete <api name>\" and so on"
@@ -122,7 +121,7 @@
 @jdic func-postcolumn-available-msg:"Now you can post them","Do post them","Type \"post\" now"
 @jdic func-subpanel-open-cmd:"sub please","subquery","sub panel","where panel","sub query"
 @jdic func-subpanel-opened-cmd:"Set your sub query in \"Sub Query\" field","Ready to \"Sub Query\" field"
-@jdic func-postcolumn-cancel-cmd:"cancel","withdraw","abandon","postpone","give up","stop","quit"
+@jdic common-cancel-cmd:"cancel","withdraw","abandon","postpone","give up","stop","quit"
 
 #
 # log out 
@@ -138,5 +137,5 @@
 #
 # show or hide error message 
 #
-@jdic hide-error-message-cmd:"hide error"
-@jdic show-error-message-cmd:"show error"
+@jdic hide-something-msg-cmd:"hide error","close error","delete error","hide message","close message","delete message"
+@jdic show-something-msg-cmd:"show error","open error", "display error","show message","open message","display message"

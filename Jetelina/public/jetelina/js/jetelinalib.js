@@ -31,7 +31,10 @@
       checkBeginner() check the login user is a beginner or not.
       getRandomNumber(i) create random number. the range is 0 to i.
       isVisibleFunctionPanel() check the function panel is visible or not
-      isVIsibleConditionPanel() check the condition panel is visible or not
+      inVisibleConditionPanel() check the condition panel is visible or not
+      isVisibleSomethingMsgPanel() checking "#something_msg" is visible or not
+      showSomethingInputField(b) "#something_input_field" show or hide
+
 */
 /**
  * 
@@ -104,7 +107,7 @@ const checkResult = (o) => {
                     in the case of a configuration parameter is called, set null all for 
                     preventing its unexpected updating 
             */
-            if(presentaction.config_name != null ){
+            if (presentaction.config_name != null) {
                 presentaction.config_name = null;
                 presentaction.config_data = null;
             }
@@ -329,9 +332,9 @@ const postAjaxData = (url, data) => {
             }
         }).done(function (result, textStatus, jqXHR) {
             const posturls = scenario['function-post-url'];
-            if(url == posturls[0]){
+            if (url == posturls[0]) {
                 // userdata update
-            }else if (url == posturls[1]) {
+            } else if (url == posturls[1]) {
                 // jetelinawords -> nothing do
             } else if (url == posturls[2]) {
                 // get a configuration parameter, then show it in there
@@ -345,8 +348,10 @@ const postAjaxData = (url, data) => {
 
                 $("#something_msg [name='jetelina_message']").text(configMsg);
                 $("#something_msg").show();
-            }else if(url == posturls[3]){
-                // configuration parameter change
+            } else if (url == posturls[3]) {
+                // configuration parameter change success then cleanup the "#something_msg"
+                presentaction.cmd = null;
+                showSomethingInputField(false);
             }
 
             typingControll(chooseMsg("success-msg", "", ""));
@@ -447,7 +452,7 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
                             Jetelina asks some questions in order to user info, ex. hobby, living....
                             these info are inquired to DB, then count up if it matched.
                             after around 1 to 4 counted up, the user has been authenticated, then
-                            can move from 'login"success' to 'chose_func_or_cond' stage.
+                            can move from 'login"success' to 'lets_do_something' stage.
 
                             loginuser and authcount are defined in dashboard.js as global.
                     */
@@ -613,10 +618,10 @@ const chatKeyDown = (cmd) => {
             instractionMode(ut);
 
             // check the error message panel hide or not
-            if (inScenarioChk(ut, 'hide-error-message-cmd')) {
+            if (inScenarioChk(ut, 'hide-something-msg-cmd')) {
                 $("#something_msg").hide();
                 m = 'ignore';
-            } else if (inScenarioChk(ut, 'show-error-message-cmd')) {
+            } else if (inScenarioChk(ut, 'show-something-msg-cmd')) {
                 $("#something_msg").show();
                 m = 'ignore';
             }
@@ -625,7 +630,7 @@ const chatKeyDown = (cmd) => {
                 switch 1:between 'before login' and 'at login'
                        login:at login
                        login_success: after login
-                       chose_func_or_cond: the stage after 'login_success'
+                       lets_do_something: the stage after 'login_success'
                        func: the stage into function panel
                        cond: the stage into condition panel
                        default:before login
@@ -682,11 +687,11 @@ const chatKeyDown = (cmd) => {
                     */
                     //                    if(authcount<loginuser.c){
                     m = chooseMsg("starting-6-msg", "", "");
-                    stage = 'chose_func_or_cond';
+                    stage = 'lets_do_something';
                     //                    }
 
                     break;
-                case 'chose_func_or_cond':
+                case 'lets_do_something':
                     const panelTop = window.innerHeight - 110;
                     $("#jetelina_panel").animate({
                         height: "70px",
@@ -694,118 +699,113 @@ const chatKeyDown = (cmd) => {
                         left: "210px"
                     }, animateDuration);
 
-                    // if 'ut' is a command for driving function
-                    m = functionPanelFunctions(ut);
-                    if (0 < m.length && m != 'ignore') {
-                    } else {
-                        // if 'ut' is a command for driving condition
-                        m = conditionPanelFunctions(ut);
-                        if (0 < m.length && m != 'ignore') {
-                        } else {
-                            /*
-                                if 'ut' is a command for driving configuration
-                                localStrage checking is for secure reason
-                            */
-                            let multi = 0;
-                            let multiscript = [];
-                            if (localStorage[localparam] == "true") {
-                                // configuration parameter updating
-                                if (presentaction.cmd != null && presentaction.cmd == "config-change"){
-                                    if(presentaction.config_name != null && presentaction.config_data != null){
-                                        /*
-                                            Caution:
-                                                if set multi parameters in data, it have to be used a delimiter as '<p-d>'.
-                                                this is the protocol in ConfigManager.configParamUpdate().
-                                                it means ex. debug=true<p-d>logfilename=log.txt<p-d>database.....
-                                        */
- //                                       let data = `{"configparam":"${presentaction.config_name}=${ut}"}`;
-                                        $("#something_msg [name='jetelina_message']").append(`<config-new-data id="newconfigvalue">${ut}</config-new-data>`);
-                                        let data = `{"${presentaction.config_name}":"${ut}"}`; 
 
-//                                        postAjaxData(scenario["function-post-url"][3], data);
-                                    }else{
-                                        m = "Hey, no pointed configuration data";
-                                    }
-                                }else if (inScenarioChk(ut, "config-update-cmd")) {
-                                    presentaction.cmd = "config-change";
-                                    if (presentaction.config_name != null && presentaction.config_data != null) {
-                                        let configdata = `<br>Change this to => `;
-                                        $("#something_msg [name='jetelina_message']").append(configdata);
-                                    } else {
-                                        m = "which config?";
-                                    }
-                                }
-
-                                for (zzz in config) {
-                                    /*
-                                        Tips:
-                                            in the case of vague inputing, may have multi candidates.
-                                            but after showing them to user, may the right one inputing.
-                                            the first 'if' is maybe not hit, but secondly inputing may kit it.
-                                    */
-                                    if (ut == zzz) {
-                                        /*
-                                            Tips:
-                                                there is possilbility someting in multiscript[] yet.
-                                                needs to clear it before pushing the right one.
-                                        */
-                                        multiscript = [];
-                                        multiscript.push(zzz);
-                                        break;
-                                    } else {
-                                        if (inScenarioChk(ut, zzz, 'config')) {
-                                            let r = countCandidates(ut, zzz, 'config');
-                                            multi += r[0];
-                                            multiscript.push(zzz);
+                    /*
+                        if 'ut' is a command for driving configuration
+                        localStrage checking is for secure reason
+                    */
+                    if (localStorage[localparam] == "true") {
+                        let multi = 0;
+                        let multiscript = [];
+                        // configuration parameter updating
+                        if (inScenarioChk(ut, 'common-cancel-cmd')) {
+                            presentaction.cmd = null;
+                            presentaction.config_name = null;
+                            presentaction.config_data = null;
+                            showSomethingInputField(false);
+                            m = chooseMsg("cancel-msg", "", "");
+                        } else if (presentaction.cmd != null && presentaction.cmd == "config-change") {
+                            if (presentaction.config_name != null) {
+                                if ($("#something_input_field input[name='something_input']").is(":visible")) {
+                                    if(inScenarioChk(ut, 'common-post-cmd')){
+                                        let new_param = $("#something_input_field input[name='something_input']").val();
+                                        if (0 < new_param.length) {
+                                            let data = `{"${presentaction.config_name}":"${new_param}"}`;
+                                            postAjaxData(scenario["function-post-url"][3], data);
+                                        } else {
+                                            m = "Hey hey hey, put a new param in there";
                                         }
                                     }
                                 }
-                            }
-
-                            // right message should be displayed if there were any candidates.
-                            let configMsg = "";
-                            if (1 < multi) {
-                                // pick candidates up
-                                m = chooseMsg('multi-candidates-msg', "", "");
-                                let multimsg = "there are multi candidates ";
-                                for (i = 0; i < multi; i++) {
-                                    multimsg += `'${multiscript[i]}',`;
-                                }
-
-                                configMsg = multimsg;
                             } else {
-                                // here you are, this,.... and so on
-                                if (m.length == 0) {
-                                    m = chooseMsg("starting-6a-msg", "", "");
-                                }
+                                m = "Hey, no pointed configuration data";
+                            }
+                        } else if (inScenarioChk(ut, "config-update-cmd")) {
+                            presentaction.cmd = "config-change";
+                            if (presentaction.config_name != null && presentaction.config_data != null) {
+                                showSomethingInputField(true);
+                                m = "put someting in there";
+                            } else {
+                                m = "which config?";
+                            }
+                        }
 
-                                if (multiscript[0] != null && multiscript[0] != undefined) {
-                                    presentaction.config_name = multiscript[0];
-                                    let data = `{"param":"${multiscript[0]}"}`;
-                                    postAjaxData(scenario["function-post-url"][2], data);
+                        for (zzz in config) {
+                            /*
+                                Tips:
+                                    in the case of vague inputing, may have multi candidates.
+                                    but after showing them to user, may the right one inputing.
+                                    the first 'if' is maybe not hit, but secondly inputing may kit it.
+                            */
+                            if (ut == zzz) {
+                                /*
+                                    Tips:
+                                        there is possilbility someting in multiscript[] yet.
+                                        needs to clear it before pushing the right one.
+                                */
+                                multiscript = [];
+                                multiscript.push(zzz);
+                                break;
+                            } else {
+                                if (inScenarioChk(ut, zzz, 'config')) {
+                                    let r = countCandidates(ut, zzz, 'config');
+                                    multi += r[0];
+                                    multiscript.push(zzz);
                                 }
                             }
+                        }
 
-                            if (0 < configMsg.length) {
-                                $("#something_msg [name='jetelina_message']").text(configMsg);
-                                $("#something_msg").show();
+                        // right message should be displayed if there were any candidates.
+                        let configMsg = "";
+                        if (1 < multi) {
+                            // pick candidates up
+                            m = chooseMsg('multi-candidates-msg', "", "");
+                            let multimsg = "there are multi candidates ";
+                            for (i = 0; i < multi; i++) {
+                                multimsg += `'${multiscript[i]}',`;
                             }
+
+                            configMsg = multimsg;
+                        } else {
+                            // here you are, this,.... and so on
+                            if (m.length == 0) {
+                                m = chooseMsg("starting-6a-msg", "", "");
+                            }
+
+                            if (multiscript[0] != null && multiscript[0] != undefined) {
+                                presentaction.config_name = multiscript[0];
+                                let data = `{"param":"${multiscript[0]}"}`;
+                                postAjaxData(scenario["function-post-url"][2], data);
+                            }
+                        }
+
+                        if (0 < configMsg.length) {
+                            $("#something_msg [name='jetelina_message']").text(configMsg);
+                            $("#something_msg").show();
                         }
                     }
 
+                    if (!$("#something_input_field input[name='something_input']").is(":visible")) {
+                        // if 'ut' is a command for driving function
+                        m = functionPanelFunctions(ut);
+                        if (m.length == 0) {
+                            // if 'ut' is a command for driving condition
+                            m = conditionPanelFunctions(ut);
+                        }
+                    }
+
+
                     break;
-/*
-                    case 'func':
-                    $("#something_msg").hide();
-                    // defined in functionpanel.js
-                    m = functionPanelFunctions(ut);
-                    break;
-                case 'cond':
-                    $("#something_msg").hide();
-                    // defined in conditionpanel.js
-                    m = conditionPanelFunctions(ut);
-                    break;
-*/
                 default:
                     if (ut == "reload") {
                         location.reload();
@@ -1176,16 +1176,61 @@ const isVisibleFunctionPanel = () => {
     return ret;
 }
 /**
-* @function isVIsibleConditionPanel
+* @function inVisibleConditionPanel
 * @returns {boolean}  true -> visible, false -> invisible
 * 
 * checking "#condition_panel" is visible or not
 */
-const isVIsibleConditionPanel = () => {
+const inVisibleConditionPanel = () => {
     let ret = false;
     if ($("#condition_panel").is(":visible")) {
         ret = true;
     }
 
     return ret;
-}  
+}
+/**
+* @function isVisibleSomethingMsgPanel
+* @returns {boolean}  true -> visible, false -> invisible
+* 
+* checking "#something_msg" is visible or not
+*/
+const isVisibleSomethingMsgPanel = () => {
+    let ret = false;
+    if ($("#something_msg").is(":visible")) {
+        ret = true;
+    }
+
+    return ret;
+}
+/**
+ * @function showSomethingInputField
+ *
+ * @param {boolean} true -> show, false -> hide
+ *  
+ * "#something_input_field" show or hide
+ */
+const showSomethingInputField = (b) => {
+    if (b) {
+        if (isVisibleSomethingMsgPanel()) {
+            $("#something_input_field text[name='something_text']").text("Change this to =>");
+            $("#something_input_field input[name='something_input']").attr('placeholder', 'new parameter...');
+        }
+
+        $("#something_input_field").show();
+        $("#something_input_field input[name='something_input']").focus();
+    } else {
+        $("#something_msg [name='jetelina_message']").text("");
+        $("#something_input_field text[name='something_text']").text("");
+        $("#something_input_field input[name='something_input']").val("");
+        $("#something_input_field").hide();
+        $("#something_msg").hide();
+    }
+}
+
+// return to the chat box if 'return key' is typed in something_input_field
+$(document).on("keydown", "#something_input_field input[name='something_input']", function (e) {
+    if (e.keyCode == 13) {
+        $("#jetelina_panel [name='chat_input']").focus();
+    }
+});

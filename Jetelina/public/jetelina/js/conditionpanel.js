@@ -112,7 +112,7 @@ const conditionPanelFunctions = (ut) => {
 //    if (inScenarioChk(ut,'function_panel-cmd')) {
 //        delete preferent;
 //        delete presentaction;
-//        stage = 'chose_func_or_cond';
+//        stage = 'lets_do_something';
 //        chatKeyDown(ut);
 //    } else {
         // use the prior command if it were

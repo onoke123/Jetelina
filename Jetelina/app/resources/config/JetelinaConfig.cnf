@@ -90,7 +90,7 @@ pg_password = postgres
 pg_sslmode = prefer
 @jdic pg_dbname:"database name","db name","dbname"
 pg_dbname = postgres
-@jdic pg_testdb:"test"
+@jdic pg_testdbname:"test database"
 pg_testdbname = testdb
 
 #

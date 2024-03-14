@@ -74,7 +74,7 @@ $(document).on({
  * hide "#condition_panel" at the same time if it is visible
  */
 const openFunctionPanel = () => {
-  if( isVIsibleConditionPanel() ){
+  if( inVisibleConditionPanel() ){
     $("#condition_panel").hide();
   }
 
@@ -786,7 +786,7 @@ const functionPanelFunctions = (ut) => {
   if (inScenarioChk(ut, 'condition_panel-cmd')) {
     delete preferent;
     delete presentaction;
-    stage = 'chose_func_or_cond';
+    stage = 'lets_do_something';
     chatKeyDown(ut);
   } else {
     // use the prior command if it were
@@ -802,7 +802,7 @@ const functionPanelFunctions = (ut) => {
       } else if (inScenarioChk(ut, 'func-show-api-list-cmd')) {
         // same as above
         cmd = 'api';
-      } else if (inScenarioChk(ut, 'func-selected-column-post-cmd')){
+      } else if (inScenarioChk(ut, 'common-post-cmd')){
         cmd = 'post';
       } else {
         cmd = ut;
@@ -893,8 +893,8 @@ const functionPanelFunctions = (ut) => {
           yes it is, but I did not want to make long switch/case sentence.
           if these 'cmd' will duplicate, you know what will happen. :-p
     */
-    if(-1<$.inArray(cmd,['table','api','post','cancel','droptable','deleteapi','fileselectoropen','fileupload','creanup','subquery'])){
-      openFunctionPanel();
+    if(-1<$.inArray(cmd,['table','api','fileselectoropen'])){
+        openFunctionPanel();
     }
 
     switch (cmd) {
@@ -931,7 +931,7 @@ const functionPanelFunctions = (ut) => {
 
         cleanUp("apis");
 
-        // cleanup once because getting apilist and contain to preferent.aplist by calling postAjaxData()
+        // cleanup once because getting apilist and contain to preferent.aplist by calling getAjaxData()
         delete preferent.apilist;
         getAjaxData(scenario["function-get-url"][0]);
         m = 'ignore';
@@ -968,7 +968,7 @@ const functionPanelFunctions = (ut) => {
             }
 
             //}
-          } else if (inScenarioChk(ut, 'func-postcolumn-cancel-cmd')) {
+          } else if (inScenarioChk(ut, 'common-cancel-cmd')) {
             preferent.cmd = "cancel";
           } else {
             // the secound calling, sub query open or not
@@ -1052,7 +1052,7 @@ const functionPanelFunctions = (ut) => {
             preferent.cmd = cmd;
           }
           // cancel an order of table drop 
-          if(inScenarioChk(ut,'func-tabledrop-cancel-cmd')){
+          if(inScenarioChk(ut,'common-cancel-cmd')){
             preferent.cmd = "";
             m = chooseMsg('cancel-msg', "", "");
           }
@@ -1097,7 +1097,7 @@ const functionPanelFunctions = (ut) => {
             preferent.cmd = cmd;
           }
           // cancel an order of table drop 
-          if (inScenarioChk(ut, 'cancel-msg')) {
+          if (inScenarioChk(ut, 'common-cancel-cmd')) {
             preferent.cmd = "";
             m = chooseMsg('cancel-msg', "", "");
           }
@@ -1360,7 +1360,7 @@ const deleteThisApi = (apino) => {
 }
 
 // return to the chat box if 'return key' is typed in genelic_panel
-$("#genelic_panel input[name='genelic_input']").keypress(function (e) {
+$(document).on("keydown","#genelic_panel input[name='genelic_input']", function(e){
   if (e.keyCode == 13) {
     $("#jetelina_panel [name='chat_input']").focus();
   }

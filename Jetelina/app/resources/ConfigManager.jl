@@ -242,9 +242,11 @@ function configParamUpdate(d::Dict)
 		close(tf)
 		close(f)
 
-#		mv(configfile_tmp, configfile, force = true)
+		mv(configfile_tmp, configfile, force = true)
+		return true
 	catch err
 		@error "ConfigManager.configParamUpdate() error: $err"
+		return false
 	end
 end
 
