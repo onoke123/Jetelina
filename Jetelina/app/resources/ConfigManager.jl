@@ -7,7 +7,7 @@ module: ConfigManager
 	contain functions
 		__init__()
 		createScenario()  create scenario.js file from base.jdic and JetelinaConfig.cnf files. this function is mandatory working to realize Jetelina Chatting.
-		configParamUpdate(d::String) update a configuration parameter in the configuration file.
+		configParamUpdate(d::Dict) update a configuration parameter in the configuration file.
 """
 
 module ConfigManager
@@ -175,25 +175,16 @@ function createScenario()
 	end
 end
 """
-function configParamUpdate(d::String)
+function configParamUpdate(d::Dict)
 
 	update a configuration parameter in the configuration file.
 	the param is ensured as is not 'nothing' in PostDataController.configParamUpdate().
 
 # Arguments
-- `d::String`:  configuration parameter name and value. ex. debug=true<p-d>logfile=log1.txt...
+- `d::Dict`:  json style configuration parameter
 """
 function configParamUpdate(d::Dict)
-	#
-	#	Tips:
-	#		transfered parameter data is possible multiple, then required to be devided them with something unique delimiter.
-	#		in this data, "<p-d>" is hired in javascript library.
-	#
-#	delimiter::String = "," #"<p-d>"
-#	dn = split(d, delimiter)
-
 	dn = collect(keys(d))
-
 
 	configfile = JFiles.getFileNameFromConfigPath(defaultConfigFile)
 	configfile_tmp = string(configfile, ".tmp")
@@ -203,12 +194,8 @@ function configParamUpdate(d::Dict)
 		l = readlines(f)
 
 		for n ∈ 1:length(dn)
-#			t = split(dn[n], "=")
-#			param = strip(t[1])
-#			var = strip(t[2])
 			param = dn[n]
 			var = d[dn[n]]
-			@info "configPara... param and var" n param var
 			prev = string(JC[param])
 			#
 			#  Tips:

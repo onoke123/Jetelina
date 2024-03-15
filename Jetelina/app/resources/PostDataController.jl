@@ -45,10 +45,15 @@ function getConfigData()
 """
 function getConfigData()
 	d = jsonpayload("param")
-	if !isnothing(j_config.JC[d])
-		return json(Dict("result" => true, d => j_config.JC[d]))
+	if !contains(d,"password")
+		if !isnothing(j_config.JC[d])
+			return json(Dict("result" => true, d => j_config.JC[d]))
+		else
+			return json(Dict("result" => false))
+		end
 	else
-		return json(Dict("result" => false))
+		# if "password" is required
+		return json(Dict("result" => true, d => "keep it secret.(^^)v"))
 	end
 end
 

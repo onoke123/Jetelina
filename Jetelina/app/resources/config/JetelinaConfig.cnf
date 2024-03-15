@@ -84,7 +84,7 @@ pg_host = localhost
 pg_port = 5432
 @jdic pg_user:"user","login"
 pg_user = postgres
-@jdic pg_password:"do not show it, of course"
+@jdic pg_password:"postgres password","database password","password in postgres","password in database"
 pg_password = postgres
 @jdic pg_sslmode:"sslmode","ssl mode","ssl"
 pg_sslmode = prefer
