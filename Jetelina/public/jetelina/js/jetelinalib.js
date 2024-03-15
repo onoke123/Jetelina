@@ -76,6 +76,7 @@ const getScenarioFile = (l) => {
  */
 const checkResult = (o) => {
     let ret = true;
+    const msglength = 500; // displayed string length. over 500 is cut out.
 
     if (o != null) {
         /*
@@ -87,12 +88,20 @@ const checkResult = (o) => {
 
         if (!o.result) {
             let em = "";
-            let errmsg = o["errmsg"];
-            let error = o["error"];
+            let errmsg = o["responseJSON"]["errmsg"];
+            let error = o["responseJSON"]["error"];
             if (errmsg != null) {
+                if(msglength<errmsg.length){
+                    errmsg = errmsg.substr(0,msglength);
+                }
+
                 em = errmsg;
             } else if (error != null) {
-                em = "Oh my, something server error happened ";
+                if(msglength<error.length){
+                    error = error.substr(0,msglength);
+                }
+
+                em = `Oh my, something server error happened: ${error}`;
             }
 
             $("#something_msg [name='jetelina_message']").text(em);
