@@ -26,12 +26,25 @@
     </body>
 </html>
 <script type="text/javascript">
+//    const sample = {"date":"2024-03-18 11:28:40","name":"changed user name","previous":{"debug":"true","logfile":"log.txt"},"latest":{"debug":"false","logfile":"log1.txt"}};
+    const sample = {"date":"2024-03-18 11:28:40","name":"changed user name","previous":{},"latest":{"debug":"false","logfile":"log1.txt"}};
+    console.log(typeof(sample));
+    Object.keys(sample).forEach(function(key){
+        console.log("key is ", key);
+        if( key == "previous"){
+            $.each(sample[key],function(k,v){
+                console.log(sample[key], " -> key=value ", k,v);
+            });
+        }
+    });
+
     const changeParam = () =>{
         let pd = {};
-        pd["configparam"] = "debug=true<p-d>logfile=log.txt";
-        let dd = JSON.stringify(pd);
+//        pd["configparam"] = "debug=true,logfile=log.txt";
+//        let dd = JSON.stringify(pd);
+        let dd = "{\"debug\":\"false\",\"logfile\":\"log1.txt\"}";
         $.ajax( {
-            url: "/updateconfig",
+            url: "/changeconfigdata",
             type: "post",
             data: dd,
             contentType: 'application/json',

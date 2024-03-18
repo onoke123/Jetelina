@@ -11,6 +11,7 @@ module: ConfigManager
 """
 
 module ConfigManager
+using Dates
 using Jetelina.JFiles, Jetelina.JMessage
 
 JMessage.showModuleInCompiling(@__MODULE__)
@@ -188,15 +189,20 @@ function configParamUpdate(d::Dict)
 
 	configfile = JFiles.getFileNameFromConfigPath(defaultConfigFile)
 	configfile_tmp = string(configfile, ".tmp")
+	configChangeHistoryFile = JFiles.getFileNameFromLogPath(JC["config_change_history_file"])
+
 	try
 		f = open(configfile, "r+")
 		tf = open(configfile_tmp, "w")
 		l = readlines(f)
+		history_previous::String = ""
+		history_latest::String = ""
 
 		for n ∈ 1:length(dn)
 			param = dn[n]
 			var = d[dn[n]]
 			prev = string(JC[param])
+			@info "config update: " param prev var
 			#
 			#  Tips:
 			#     update it on memory as global parameters.
@@ -214,7 +220,14 @@ function configParamUpdate(d::Dict)
 			#
 			for i ∈ 1:length(l)
 				if startswith(l[i], param)
-					l[i] = replace(l[i], prev => var, count = 1)
+					pv = split(l[i],"=")
+					if param == strip(pv[1])
+						l[i] = replace(l[i], prev => var, count = 1)
+
+						history_previous = string("\"",param,"\":","\"",prev,"\",",history_previous)
+						history_latest = string(",\"",param,"\":","\"",var,"\"",history_latest)
+						@info n i history_previous history_latest
+					end
 				end
 			end
 		end
@@ -228,8 +241,19 @@ function configParamUpdate(d::Dict)
 
 		close(tf)
 		close(f)
-
 		mv(configfile_tmp, configfile, force = true)
+		#
+		#  write the history
+		#  Caution:2024/3/18 "change user name" will be login user's name, but not yet.
+		#
+		open(configChangeHistoryFile,"a+") do h 
+			hd = Dates.format(now(), "yyyy-mm-dd HH:MM:SS")
+			history_previous = strip(history_previous,',')
+			history_latest = strip(history_latest,',')
+			historyString = """{"date":"$hd","name":"changed user name","previous":{$history_previous},"latest":{$history_latest}}"""
+			println(h,historyString)
+		end
+
 		return true
 	catch err
 		@error "ConfigManager.configParamUpdate() error: $err"

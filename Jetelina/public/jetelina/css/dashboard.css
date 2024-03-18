@@ -175,6 +175,17 @@ input.user-input {
   top:50%;
 }
 
+.something_msg_def {
+  width:600px;
+  height:70px;
+  top:80%;
+  left:20%;
+}
+
+.something_msg_def.config_history {
+  height:200px;
+} 
+
 .jetelina_message {
     color: #e32910;  
     font-style: italic;

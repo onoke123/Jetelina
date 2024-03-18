@@ -125,10 +125,37 @@ const checkResult = (o) => {
 
     return ret;
 }
+
+const getconfighistory = (o) =>{
+    let ret = {};
+    ret.date = [];
+    ret.previous = [];
+    ret.latest = [];
+    let i = 0;
+
+    Object.keys(o).forEach(function(key){
+        if( key == "date" ){
+            let s = `date_${i}`;
+            ret.date[s] = v;
+        }else if( key == "previous"){
+            $.each(sample[key],function(k,v){
+                let s = `${k}_${i}`;
+                ret.previous[s] = v;
+            });
+        }else if( key == "latest"){
+            $.each(sample[key],function(k,v){
+                let s = `${k}_${i}`;
+                ret.latest[s] = v;
+            });
+        }
+    });
+
+    return ret;
+}
 /**
  *  @function getdata
  *  @param {object} o mostry json data
- *  @param {integer} t 0->db table list, 1->table columns list or csv file columns 2-> sql list
+ *  @param {integer} t 0->db table list, 1->table columns list or csv file columns 2-> api(sql) list
  *
  *  resolve the json object into each data
 */
@@ -148,7 +175,7 @@ const getdata = (o, t) => {
                     because Jetelina's value is object.  name=>key value=>o[key]
             */
             let row = 1, col = 1;
-            if (key == "Jetelina" && o[key].length > 0) {
+            if (key == "Jetelina" && o[key].length > 0) { console.log("o[key]length ", o[key].length);
                 $.each(o[key], function (k, v) {
                     if (v != null) {
                         let str = "";
@@ -179,13 +206,37 @@ const getdata = (o, t) => {
                                     }
                                 }
                             });
-                        } else {
+                        } else if(t == 2){
                             /*
                                 Tips:
                                     case t=2: wanna show it in one line
                                     this is the api list.
                             */
                             str += `<span class="api">${v.apino}</span>`;
+                        }else if(t==3){
+                            let ret = {};
+                            ret.date = [];
+                            ret.previous = [];
+                            ret.latest = [];
+                            let i = 0;
+                        
+                            if( k == "date" ){
+                                let s = `date_${i}`;
+                                ret.date[s] = v;
+                            }else if( k == "previous"){
+                                $.each(o[key].k,function(kk,vv){
+                                    let s = `${kk}_${i}`;
+                                    ret.previous[s] = vv;
+                                });
+                            }else if( k == "latest"){
+                                $.each(o[key].k,function(kk,vv){
+                                    let s = `${kk}_${i}`;
+                                    ret.latest[s] = vv;
+                                });
+                            }
+
+                            console.log("ret, date, prev, late ", ret);
+                    
                         }
 
                         let tagid = "";
@@ -297,11 +348,16 @@ const getAjaxData = (url) => {
                     //rendering api list
                     preferent.apilist = result;
                     getdata(result, 2);
-                } else {
-                    // mainly, data for function panel
+                } else if (url == geturl[1]) {
+                    // get db table list
                     getdata(result, 0);
-                    typingControll(chooseMsg("success-msg", "", ""));
+                }else if (url == geturl[2]) {
+                    // configuration change history
+                    let change_list = getdata(result, 3);
+                    console.log("configuration change history ", change_list);
                 }
+
+                typingControll(chooseMsg("success-msg", "", ""));
             }
         }).fail(function (result) {
             checkResult(result);
@@ -807,7 +863,7 @@ const chatKeyDown = (cmd) => {
                     if (!$("#something_input_field input[name='something_input']").is(":visible")) {
                         // if 'ut' is a command for driving function
                         m = functionPanelFunctions(ut);
-                        if (m.length == 0) {
+                        if (m.length == 0 || m == "ignore") {
                             // if 'ut' is a command for driving condition
                             m = conditionPanelFunctions(ut);
                         }

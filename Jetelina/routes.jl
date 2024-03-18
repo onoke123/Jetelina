@@ -100,3 +100,4 @@ route("/chkexistimprapifile",GetDataController.checkExistImproveApiFile)
 ===#
 route("/getconfigdata", PostDataController.getConfigData, method = POST)
 route("/changeconfigdata", PostDataController.configParamUpdate, method = POST)
+route("/getconfigchangehistory", GetDataController.getConfigHistory)

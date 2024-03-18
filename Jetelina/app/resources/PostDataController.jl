@@ -356,9 +356,8 @@ function configParamUpdate()
 """
 function configParamUpdate()
 	ret = ""
-#	param = jsonpayload("configparam")
 	param = jsonpayload()
-	@info "configPara... " param typeof(param)
+
 	if !isnothing(param)
 		ret = j_config.configParamUpdate(param)
 	end

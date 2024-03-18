@@ -1,7 +1,7 @@
 let scenario = []; let config = [];
 scenario["analyzed-data-collect-url"]=["/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getsqlaccessdata"];
 scenario["function-post-url"]=["/updateuserdata","/jetelinawords","/getconfigdata","/changeconfigdata"];
-scenario["function-get-url"]=["/getapilist","/getalldbtable"];
+scenario["function-get-url"]=["/getapilist","/getalldbtable","/getconfigchangehistory"];
 scenario["null-msg"]=["",""];
 scenario["guidance-cmd"]=["what can i","can you","start","manual","guide me","guidance","teach me","tell me"];
 scenario["command_list-cmd"]=["how can i","command","commands","commandlist","commandslist"];

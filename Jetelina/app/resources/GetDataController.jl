@@ -14,6 +14,7 @@ functions
 	getPerformanceTestData()  get JC["sqlperformancefile"] data file name but it is '.test' suffix. this file is analyzed data for sql execution speed on test db.
 	checkExistImproveApiFile()  get JC["improvesuggestionfile"] data file name. this file contains an improving suggestion data of a target api. 
 	getApiList()  get registering api list in json style.api list is refered in Df_JetelinaSqlList.
+	getConfigHistory() get configuration change history in json style.
 """
 module GetDataController
 
@@ -23,7 +24,7 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export getTableList, getTableCombiVsAccessRelationData, getPerformanceRealData, getPerformanceTestData, checkExistImproveApiFile, getApiList
+export getTableList, getTableCombiVsAccessRelationData, getPerformanceRealData, getPerformanceTestData, checkExistImproveApiFile, getApiList, getConfigHistory
 
 """
 function getTableList()
@@ -129,4 +130,31 @@ function getApiList()
 		return false
 	end
 end
+"""
+function getConfigHistory()
+
+	get configuration change history in json style.
+"""
+function getConfigHistory()
+	f = JFiles.getFileNameFromLogPath(j_config.JC["config_change_history_file"])
+
+	if isfile(f)
+		ret = "{\"Jetelina\":["
+
+		try
+			for line in eachline(f)
+				ret = string(ret,line,",")
+			end
+
+			ret = strip(ret,',')
+			return string(ret,"],\"result\":true}")
+		catch err
+			@error "ConfigManager.getConfigHistory() error: $err"
+			return false
+		end
+	else
+		return false
+	end
+end
+
 end
