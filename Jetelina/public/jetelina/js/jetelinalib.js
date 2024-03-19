@@ -324,6 +324,18 @@ const getAjaxData = (url) => {
                     //rendering api list
                     preferent.apilist = result;
                     getdata(result, 2);
+                    /*
+                        Tips:
+                            in the case of calling to show the newest api in table list panel, 
+                            it has a process as showing api-list then pointing the newest one.
+                            this process is executed by a chat word in chatKeyDown().
+                            the newest api no is set in presentaction.orderapino at the early line of chatKeyDown(). 
+                    */
+                    if (isVisibleApiContainer() && presentaction.orderapino != null){
+                        let orderdapino = presentaction.orderapino;
+                        presentaction.orderapino = null;
+                        chatKeyDown(`open ${orderdapino}`);
+                    }
                 } else if (url == geturl[1]) {
                     // get db table list
                     getdata(result, 0);
@@ -624,6 +636,14 @@ const chatKeyDown = (cmd) => {
         ut = $("#jetelina_panel [name='chat_input']").val().toLowerCase();
     } else {
         ut = cmd.toLowerCase();
+    }
+
+    if( $("#container [class='apisql']").text() != null && 0<$("#container [class='apisql']").text().length ){
+        let newapinostr = $("#container [class='apisql']").text();
+        let s = newapinostr.split("js");
+        presentaction.orderapino = `js${s[s.length-1]}`;
+        $("#container [class='apisql']").text("");
+        chatKeyDown(scenario["func-show-api-list-cmd"][0]);
     }
 
     let logoutflg = false;
