@@ -157,7 +157,7 @@ const conditionPanelFunctions = (ut) => {
                     $("#plot").hide();
                 }
 
-                $("#something_msg").hide();
+                showSomethingMsgPanel(false);
 
                 $("#api_access_numbers").show().draggable().animate({
                     top: "20%",
@@ -189,7 +189,7 @@ const conditionPanelFunctions = (ut) => {
                     left: "20%" //"50%"
                 }, animateDuration).draggable('disable');
 
-                $("#something_msg").show();
+                showSomethingMsgPanel(true);
                 m = chooseMsg('cond-graph-show-msg', "", "");
                 break;
             case 'no_suggestion':

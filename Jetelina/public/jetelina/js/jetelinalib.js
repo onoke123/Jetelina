@@ -34,7 +34,7 @@
       inVisibleConditionPanel() check the condition panel is visible or not
       isVisibleSomethingMsgPanel() checking "#something_msg" is visible or not
       showSomethingInputField(b) "#something_input_field" show or hide
-
+      showSomethingMsgPanel(b) "#something_msg" show or hide
 */
 /**
  * 
@@ -85,7 +85,6 @@ const checkResult = (o) => {
                 it does not need to confirm its existence.
         */
         $("#something_msg [name='jetelina_message']").removeClass("jetelina_suggestion");
-
         if (!o.result) {
             let em = "";
             let errmsg = o["responseJSON"]["errmsg"];
@@ -105,12 +104,12 @@ const checkResult = (o) => {
             }
 
             $("#something_msg [name='jetelina_message']").text(em);
-            $("#something_msg").show();
+            showSomethingMsgPanel(true);
 
             ret = false;
         } else {
             $("#something_msg [name='jetelina_message']").text("");
-            $("#something_msg").hide();
+            showSomethingMsgPanel(false);
             /*
                 Tips:
                     in the case of a configuration parameter is called, set null all for 
@@ -125,42 +124,18 @@ const checkResult = (o) => {
 
     return ret;
 }
-
-const getconfighistory = (o) =>{
-    let ret = {};
-    ret.date = [];
-    ret.previous = [];
-    ret.latest = [];
-    let i = 0;
-
-    Object.keys(o).forEach(function(key){
-        if( key == "date" ){
-            let s = `date_${i}`;
-            ret.date[s] = v;
-        }else if( key == "previous"){
-            $.each(sample[key],function(k,v){
-                let s = `${k}_${i}`;
-                ret.previous[s] = v;
-            });
-        }else if( key == "latest"){
-            $.each(sample[key],function(k,v){
-                let s = `${k}_${i}`;
-                ret.latest[s] = v;
-            });
-        }
-    });
-
-    return ret;
-}
 /**
  *  @function getdata
  *  @param {object} o mostry json data
- *  @param {integer} t 0->db table list, 1->table columns list or csv file columns 2-> api(sql) list
+ *  @param {integer} t 0->db table list, 1->table columns list or csv file columns 2-> api(sql) list 3-> conifguration changing history
+ *  @returns {object} only in the case of t=3, conifguration changing history object
  *
  *  resolve the json object into each data
 */
 const getdata = (o, t) => {
     if (o != null) {
+        let configChangeHistoryStr = "";
+
         checkResult(o);
         Object.keys(o).forEach(function (key) {
             /*
@@ -175,7 +150,7 @@ const getdata = (o, t) => {
                     because Jetelina's value is object.  name=>key value=>o[key]
             */
             let row = 1, col = 1;
-            if (key == "Jetelina" && o[key].length > 0) { console.log("o[key]length ", o[key].length);
+            if (key == "Jetelina" && o[key].length > 0) {
                 $.each(o[key], function (k, v) {
                     if (v != null) {
                         let str = "";
@@ -213,30 +188,26 @@ const getdata = (o, t) => {
                                     this is the api list.
                             */
                             str += `<span class="api">${v.apino}</span>`;
-                        }else if(t==3){
-                            let ret = {};
-                            ret.date = [];
-                            ret.previous = [];
-                            ret.latest = [];
-                            let i = 0;
-                        
-                            if( k == "date" ){
-                                let s = `date_${i}`;
-                                ret.date[s] = v;
-                            }else if( k == "previous"){
-                                $.each(o[key].k,function(kk,vv){
-                                    let s = `${kk}_${i}`;
-                                    ret.previous[s] = vv;
-                                });
-                            }else if( k == "latest"){
-                                $.each(o[key].k,function(kk,vv){
-                                    let s = `${kk}_${i}`;
-                                    ret.latest[s] = vv;
-                                });
+                        }else if(t == 3){                            
+                            if( v.date != null ){
+                                configChangeHistoryStr += `[${v.date}] `;
                             }
+                            
+                            if( v.previous != null){
+                                $.each(v.previous,function(kk,vv){
+                                    configChangeHistoryStr += `${kk}=${vv} `;
+                                });
 
-                            console.log("ret, date, prev, late ", ret);
-                    
+                                configChangeHistoryStr += " → ";
+                            }
+                            
+                            if( v.latest != null){
+                                $.each(v.latest,function(kk,vv){
+                                    configChangeHistoryStr += `${kk}=${vv} `;
+                                });
+
+                                configChangeHistoryStr += "<br>";
+                            }
                         }
 
                         let tagid = "";
@@ -254,6 +225,11 @@ const getdata = (o, t) => {
             }
         });
 
+        if(t==3){
+            $("#something_msg").addClass("config_history");
+            $("#something_msg [name='jetelina_message']").addClass("config_history_text").append(configChangeHistoryStr);
+            showSomethingMsgPanel(true);
+        }
     }
 }
 /**
@@ -353,8 +329,7 @@ const getAjaxData = (url) => {
                     getdata(result, 0);
                 }else if (url == geturl[2]) {
                     // configuration change history
-                    let change_list = getdata(result, 3);
-                    console.log("configuration change history ", change_list);
+                    getdata(result, 3);
                 }
 
                 typingControll(chooseMsg("success-msg", "", ""));
@@ -412,7 +387,7 @@ const postAjaxData = (url, data) => {
                 });
 
                 $("#something_msg [name='jetelina_message']").text(configMsg);
-                $("#something_msg").show();
+                showSomethingMsgPanel(true);
             } else if (url == posturls[3]) {
                 // configuration parameter change success then cleanup the "#something_msg"
                 presentaction.cmd = null;
@@ -684,10 +659,10 @@ const chatKeyDown = (cmd) => {
 
             // check the error message panel hide or not
             if (inScenarioChk(ut, 'hide-something-msg-cmd')) {
-                $("#something_msg").hide();
+                showSomethingMsgPanel(false);
                 m = 'ignore';
             } else if (inScenarioChk(ut, 'show-something-msg-cmd')) {
-                $("#something_msg").show();
+                showSomethingMsgPanel(true);
                 m = 'ignore';
             }
 
@@ -803,6 +778,8 @@ const chatKeyDown = (cmd) => {
                             } else {
                                 m = "which config?";
                             }
+                        } else if(inScenarioChk(ut,"get-config-change-history")){
+                            getAjaxData(scenario["function-get-url"][2]);
                         }
 
                         for (zzz in config) {
@@ -856,7 +833,7 @@ const chatKeyDown = (cmd) => {
 
                         if (0 < configMsg.length) {
                             $("#something_msg [name='jetelina_message']").text(configMsg);
-                            $("#something_msg").show();
+                            showSomethingMsgPanel(true);
                         }
                     }
 
@@ -981,7 +958,7 @@ const logout = () => {
     $("#performance_real").hide();
     $("#performance_test").hide();
     $("#command_list").hide();
-    $("#something_msg").hide();
+    showSomethingMsgPanel(false);
 
     // global variables initialize
     stage = 0;
@@ -1289,6 +1266,25 @@ const showSomethingInputField = (b) => {
         $("#something_input_field text[name='something_text']").text("");
         $("#something_input_field input[name='something_input']").val("");
         $("#something_input_field").hide();
+        showSomethingMsgPanel(false);
+    }
+}
+/**
+ * @function showSomethingMsgPanel
+ *
+ * @param {boolean} true -> show, false -> hide
+ *  
+ * "#something_msg" show or hide
+ */
+const showSomethingMsgPanel = (b) =>{
+    if(b){
+        $("#something_msg").show();
+    }else{
+        // these classes are for configuration changing history message
+        $("#something_msg").removeClass("config_history");
+        $("#something_msg [name='jetelina_message']").removeClass("config_history_text");
+        $("#something_msg [name='jetelina_message']").text("");
+
         $("#something_msg").hide();
     }
 }

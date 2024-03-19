@@ -184,11 +184,16 @@ input.user-input {
 
 .something_msg_def.config_history {
   height:200px;
+  top:50%;
 } 
 
 .jetelina_message {
     color: #e32910;  
     font-style: italic;
+}
+
+.jetelina_message.config_history_text {
+  color: #a8ce49;
 }
 
 .jetelina_suggestion {

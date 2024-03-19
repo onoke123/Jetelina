@@ -1,3 +1,3 @@
-{"date":"2024-03-18 11:28:40","name":"changed user name","previous":{"debug":"true","logfile":"log.txt"},"latest":{"debug":"false","logfile":"log1.txt"}}
-{"date":"2024-03-18 11:28:40","name":"changed user name","previous":{"debug":"true","logfile":"log.txt"},"latest":{"debug":"false","logfile":"log2.txt"}}
-{"date":"2024-03-18 11:28:40","name":"changed user name","previous":{"debug":"true","logfile":"log.txt"},"latest":{"debug":"false","logfile":"log3.txt"}}
+{"date":"2024-03-19 13:13:23","name":"changed user name","previous":{"logfile":"log10.txt"},"latest":{"logfile":"log.txt"}}
+{"date":"2024-03-19 13:17:13","name":"changed user name","previous":{"logfile":"log.txt"},"latest":{"logfile":"log10.txt"}}
+{"date":"2024-03-19 13:18:20","name":"changed user name","previous":{"logfile":"log10.txt"},"latest":{"logfile":"log.txt"}}

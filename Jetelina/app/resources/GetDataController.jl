@@ -142,8 +142,8 @@ function getConfigHistory()
 		ret = "{\"Jetelina\":["
 
 		try
-			for line in eachline(f)
-				ret = string(ret,line,",")
+			for line in Iterators.reverse(eachline(f))
+					ret = string(ret,line,",")
 			end
 
 			ret = strip(ret,',')

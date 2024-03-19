@@ -64,7 +64,8 @@
 @jdic cancel-msg:"It has been canceld","Has been withdrawn","Canceled","Withdrew","Called off"
 @jdic confirmation-sentences-cmd:"yes","sure","why not","do it","do","i want to do it","i wanna do it","kick ass"
 @jdic func-post-err-msg:"Hey, no columns","You should select post data","Boo"
-@jdic config-update-cmd:"change","replace","rewrite"
+@jdic config-update-cmd:"change parameter","parameter change","configuration change","change configuration","update configuration","configuration update","update parameter","parameter update","config change","change config","update config","config update"
+@jdic get-config-change-history:"configuration history", "change history","update history"
 
 #open the function panel
 @jdic function_panel-cmd:"function panel", "open func","show me func","function"
