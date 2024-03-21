@@ -9,6 +9,8 @@
         <br>
         <button onclick="changeParam()">Change Configuration Parameter test</button>
         <br>
+        <button onclick="sqlPreExecTest()">SQL pre execution test</button>
+        <br>
         <!--
         <button onclick="getAjaxData('u')">Update</button>
         <br>
@@ -45,6 +47,25 @@
         let dd = "{\"debug\":\"false\",\"logfile\":\"log1.txt\"}";
         $.ajax( {
             url: "/changeconfigdata",
+            type: "post",
+            data: dd,
+            contentType: 'application/json',
+            dataType: "json",
+        }).done(function(result, textStatus, jqXHR) {
+        }).fail( function( result ){
+        }).always(function(result){
+        });
+    }
+
+    const sqlPreExecTest = () => {
+        let pd = {};
+        pd["item"] = ["org1000.jt_id","org1000.name"];
+        pd["subquery"] = "where 2020<org1000.founded"; 
+        let dd = JSON.stringify(pd);
+        console.log("dd is ", dd);
+        
+        $.ajax( {
+            url: "/testapi",
             type: "post",
             data: dd,
             contentType: 'application/json',

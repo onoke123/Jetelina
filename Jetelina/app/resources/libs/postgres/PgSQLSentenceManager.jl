@@ -19,7 +19,7 @@ module PgSQLSentenceManager
 
 using DataFrames, StatsBase
 using Genie, Genie.Requests, Genie.Renderer.Json
-using Jetelina.ApiSqlListManager, Jetelina.JMessage
+using Jetelina.DBDataController, Jetelina.ApiSqlListManager, Jetelina.JMessage
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
@@ -141,7 +141,7 @@ function createApiSelectSentence(json_d::Dict, seq_no::Integer)
 
 # Arguments
 - `json_d::Dict`: json data
-- `seq_no::Integer`: number of jetelian_sql_sequence
+- `seq_no::Integer`: number of jetelian_sql_sequence. if sql_no=-1, then pre execution.
 - return: this sql is already existing -> json {"resembled":true}
 		  new sql then success to append it to  -> json {"apino":"<something no>"}
 					   fail to append it to     -> false
@@ -205,23 +205,30 @@ function createApiSelectSentence(json_d, seq_no::Integer)
 	end
 
 	selectSql = """select $selectSql from $tableName"""
-	ck = sqlDuplicationCheck(selectSql, subq_d)
-	if ck[1]
-		# already exist it. return it and do nothing.
-		return json(Dict("result" => false, "resembled" => ck[2]))
-	else
-		# yes this is the new
-		ret = ApiSqlListManager.writeTolist(selectSql, subq_d, tablename_arr, seq_no)
-		#===
-			Tips:
-				writeTolist() returns tuple({true/false,apino/null}).
-				return apino in json style if the first in tuple were true.
-		===#
-		if ret[1]
-			return json(Dict("result" => true, "apino" => ret[2]))
+
+	if seq_no != -1
+		ck = sqlDuplicationCheck(selectSql, subq_d)
+		if ck[1]
+			# already exist it. return it and do nothing.
+			return json(Dict("result" => false, "resembled" => ck[2]))
 		else
-			return ret[1]
+			# yes this is the new
+			ret = ApiSqlListManager.writeTolist(selectSql, subq_d, tablename_arr, seq_no)
+			#===
+				Tips:
+					writeTolist() returns tuple({true/false,apino/null}).
+					return apino in json style if the first in tuple were true.
+			===#
+			if ret[1]
+				return json(Dict("result" => true, "apino" => ret[2]))
+			else
+				return ret[1]
+			end
 		end
+	else
+		# pre execution
+		presql = string(selectSql," ",subq_d);
+		return DBDataController.doSelect(presql,"pre")
 	end
 end
 """

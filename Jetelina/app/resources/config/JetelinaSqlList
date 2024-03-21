@@ -20,3 +20,4 @@ js139,"select people1000.userid,people1000.lastname from people1000 as people100
 js140,"select people1000.jt_id,people1000.firstname from people1000 as people1000","ignore"
 js141,"select ftest2.ave,ftest2.age from ftest2 as ftest2","ignore"
 js142,"select org1000.jt_id,org1000.website from org1000 as org1000","ignore"
+js143,"select ftest2.jt_id,ftest2.sex from ftest2 as ftest2","where age<{age}"

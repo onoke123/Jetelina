@@ -666,10 +666,15 @@ function doSelect(sql::String,mode::String)
 	execute select data by ordering sql sentence, but get sql execution time of ordered sql if 'mode' is 'measure'.
 	'mode=mesure' is for the condition panel feture.
 
+	Attention: 2024/3/20
+		mode="run" does not be used indeed, because this doSelect() is called when measuring its performance.
+		true API execution does with executeApi().
+		pre execution mode uses this function therefore its only select sentence in SQL.
+
 # Arguments
 - `sql: String`: execute sql sentense
-- `mode: String`: "run"->running mode  "measure"->measure speed. only called by measureSqlPerformance()
-- return: no 'mesure' mode -> tuple(boolean,string in json). json string is missing when getting fail
+- `mode: String`: "run"->running mode  "measure"->measure speed. only called by measureSqlPerformance() "pre"->test exection before creating API
+- return: not 'mesure' mode -> sql execution result in json form
 		'mesure' mode -> exectution time of tuple(max,min,mean) 
 """
 function doSelect(sql::String, mode::String)
@@ -688,11 +693,11 @@ function doSelect(sql::String, mode::String)
 			end
 
 			return findmax(exetime), findmin(exetime), sum(exetime) / looptime
+
 		end
 
 		df = DataFrame(columntable(LibPQ.execute(conn, sql)))
-		ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
-		return true, ret
+		return json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
 	catch err
 		JLog.writetoLogfile("PgDBController.doSelect() with $mode $sql error : $err")
 		return false, err

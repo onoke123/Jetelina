@@ -10,6 +10,7 @@ functions
 	getConfigData()	get a configuration parameter data ordered by posting data.
 	handleApipostdata() execute ordered API by posting data.
 	createApi()  create API and SQL select sentence from posting data.
+	preExecApi() test execution before creating API, then go through doing as same as createApi()
 	getColumns()  get ordered tables's columns with json style.ordered table name is posted as the name 'tablename' in jsonpayload().
 	deleteTable()  delete table by ordering. this function calls DBDataController.dropTable(tableName), so 'delete' meaning is really 'drop'.ordered table name is posted as the name 'tablename' in jsonpayload().
 	userRegist() register a new user
@@ -31,7 +32,7 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export getConfigData, handleApipostdata, createApi, getColumns, deleteTable, userRegist, login, getUserInfoKeys, refUserAttribute, updateUserInfo,
+export getConfigData, handleApipostdata, createApi, preExecApi, getColumns, deleteTable, userRegist, login, getUserInfoKeys, refUserAttribute, updateUserInfo,
 	updateUserData, updateUserLoginData, deleteUserAccount, deleteApi, configParamUpdate
 
 
@@ -70,7 +71,6 @@ function handleApipostdata()
 function handleApipostdata()
 	return DBDataController.executeApi(jsonpayload())
 end
-
 """
 function createApi()
 
@@ -82,7 +82,23 @@ function createApi()
 					   fail to append it to     -> false
 """
 function createApi()
-	return DBDataController.createApiSelectSentence(jsonpayload())
+	mode = "ok"
+	return DBDataController.createApiSelectSentence(jsonpayload(), mode)
+end
+"""
+function preExecApi()
+
+	test execution before creating API, then go through doing as same as createApi()
+	if this test exection were OK.
+
+# Arguments
+- return: this sql is already existing -> json {"resembled":true}
+		  new sql then success to append it to  -> json {"apino":"<something no>"}
+					   fail to append it to     -> false
+"""
+function preExecApi()
+	mode = "pre"
+	return DBDataController.createApiSelectSentence(jsonpayload(), mode)
 end
 """
 function getColumns()

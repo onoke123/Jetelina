@@ -23,7 +23,7 @@
 		updateUserData(uid::Integer,key::String,value) update user data, exept jsonb column
 		updateUserLoginData(uid::Integer) update user login data if it succeeded to login
 		deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
-		createApiSelectSentence(json_d::Dict) create API and SQL select sentence from posting data.
+		createApiSelectSentence(json_d::Dict,mode::String) create API and SQL select sentence from posting data.
 """
 
 module DBDataController
@@ -164,14 +164,19 @@ function doSelect(sql::String,mode::String)
 
 	execute select sentence depend on DB type.
 
+	Attention: 2024/3/20
+		mode="run" does not be used indeed, because this doSelect() is called when measuring its performance.
+		true API execution does with executeApi().
+		pre execution mode uses this function therefore its only select sentence in SQL.
+
 # Arguments
 - `sql: String`: execute sql sentense
-- `mode: String`: "run"->running mode  "measure"->measure speed. only called by measureSqlPerformance()        
+- `mode: String`: "run"->running mode  "measure"->measure speed. only called by measureSqlPerformance() "pre"->test exection before creating API        
 """
 function doSelect(sql::String, mode::String)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
-		PgDBController.doSelect(sql.mode)
+		PgDBController.doSelect(sql,mode)
 	elseif j_config.JC["dbtype"] == "mariadb"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
@@ -369,26 +374,32 @@ function deleteUserAccount(uid::Integer)
 	end
 end
 """
-function createApiSelectSentence(json_d::Dict)
+function createApiSelectSentence(json_d::Dict,mode::String)
 
 	create API and SQL select sentence from posting data.
 
 # Arguments
-- `json_d`:  json raw data, uncertain data type        
+- `json_d::Dict`:  json raw data, uncertain data type        
+- `mode::String`:  execution mode  "ok" -> ultimate execution  "pre"->pre execution before creating API        
 - return: this sql is already existing -> json {"resembled":true}
 		  new sql then success to append it to  -> json {"apino":"<something no>"}
 					   fail to append it to     -> false
 """
-function createApiSelectSentence(json_d::Dict)
+function createApiSelectSentence(json_d::Dict, mode::String)
 	ret = ""
 
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
-		sqn = PgDBController.getJetelinaSequenceNumber(1) # attr '1' means 'jetelian_sql_sequence'. see its function.
-		if 0 < sqn
+		if mode == "ok"
+			sqn = PgDBController.getJetelinaSequenceNumber(1) # attr '1' means 'jetelian_sql_sequence'. see its function.
+		elseif mode == "pre"
+			sqn = -1
+		end
+
+		if sqn isa Integer
 			ret = PgSQLSentenceManager.createApiSelectSentence(json_d, sqn)
 		else
-			ret = "fail"
+			ret = "fail: Illegal Sequence Number"
 		end
 	elseif j_config.JC["dbtype"] == "mariadb"
 	elseif j_config.JC["dbtype"] == "oracle"

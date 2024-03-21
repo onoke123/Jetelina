@@ -81,7 +81,7 @@ function doSelect(sql::String)
 		return findmax(exetime), findmin(exetime), sum(exetime) / looptime
 	catch err
 		println(err)
-		JLog.writetoLogfile("PgTestDBController.doSelect() with $mode $sql error : $err")
+		JLog.writetoLogfile("PgTestDBController.doSelect() with $sql error : $err")
 		return false
 	finally
 		# close the connection
