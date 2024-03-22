@@ -227,6 +227,11 @@ function createApiSelectSentence(json_d, seq_no::Integer)
 		end
 	else
 		# pre execution sql sentence
+		keyword::String = "ignore" # protocol
+		if contains(subq_d,keyword)
+			subq_d = ""
+		end
+		
 		return string(selectSql," ",subq_d);
 	end
 end

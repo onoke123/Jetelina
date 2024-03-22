@@ -65,8 +65,6 @@ route( "/apiactions", PostDataController.handleApipostdata, method = POST )
 ===#
 # create api from posting data of db table columns
 route( "/createapi", PostDataController.createApi, method = POST )
-# test execution before creating api
-route( "/testapi", PostDataController.preExecApi, method = POST )
 # returns API(SQL) list in Json
 route( "getapilist", GetDataController.getApiList )
 # delete api from  JC["sqllistfile"] file

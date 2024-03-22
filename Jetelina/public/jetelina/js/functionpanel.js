@@ -27,7 +27,7 @@
       getColumn(tablename) Ajax function for getting the column names of the ordered table 
       removeColumn(tablename) Delete a column from selected item list on the display 
       deleteThisTable(tablename)　Ajax function for deleting the target table from DataBase. 
-      postSelectedColumns() Ajax function for posting the selected columns.
+      postSelectedColumns(mode) Ajax function for posting the selected columns.
       functionPanelFunctions(ut)　Exectute some functions ordered by user chat input message    
       procTableApiList(s) Execute some functions for table list and/or api list order by user chat input commands  
       containsMultiTables() Judge demanding 'where sentence' before post to the server
@@ -716,12 +716,17 @@ const deleteThisTable = (tablename) => {
 }
 /**
  * @function postSelectedColumns
+ * @param {string} mode  null->API registration  "pre"-> only test execution
  * 
  * Ajax function for posting the selected columns.
+ * in the case of mode is "pre", this post procedure executes API test.
+ * in the case of mode is null, this post executes API registration.
  */
-const postSelectedColumns = () => {
+const postSelectedColumns = (mode) => {
   let pd = {};
+
   pd["item"] = selectedItemsArr;
+  pd["mode"] = mode;
 
   /*
     absolutely something is in 'getelic_input'.
@@ -744,19 +749,31 @@ const postSelectedColumns = () => {
       return ret;
     }
   }).done(function (result, textStatus, jqXHR) {
-    /*
-      if there is not a quite similar api in there -> return as alike {"apino":"js10"} or false in error.
-      if there already is a quite similar api in there -> return api no as alike {"resembled":"js10"}.
-    */
-    if (result.apino != null && 0 < result.apino.length) {
-      $("#container").append(`<span class="apisql"><p>api no is ${result.apino}</p></span>`);
-      typingControll(chooseMsg('success-msg', "", ""));
-    } else if (result.resembled != null && 0 < result.resembled.length) {
-      $("#container").append(`<span class="apisql"><p>there is similar API already exist:  ${result.resembled}</p></span>`);
-    }
+    if(mode != "pre"){
+      /*
+        if there is not a quite similar api in there -> return as alike {"apino":"js10"} or false in error.
+        if there already is a quite similar api in there -> return api no as alike {"resembled":"js10"}.
+      */
+      if (result.apino != null && 0 < result.apino.length) {
+        $("#container").append(`<span class="apisql"><p>api no is ${result.apino}</p></span>`);
+        typingControll(chooseMsg('success-msg', "", ""));
+      } else if (result.resembled != null && 0 < result.resembled.length) {
+        $("#container").append(`<span class="apisql"><p>there is similar API already exist:  ${result.resembled}</p></span>`);
+      }
 
-    if (isVisibleGenelicPanel()) {
-      $("#genelic_panel").hide();
+      if (isVisibleGenelicPanel()) {
+        $("#genelic_panel").hide();
+      }
+    }else{
+      /* API test mode */
+      let datanumber = result.Jetelina.length;
+      let jetelinamessage = result["message from Jetelina"];
+      $("#container").append(`<span class="apisql"><p>Conguraturation, well done.</p></span>`);
+      $("#container").append(`<span class="apisql"><p>aquaiable data number is ${datanumber}</p></span>`);
+      // ここに取得できたデータを数件表示する　
+      if(0<jetelinamessage.length){
+        $("#container").append(`<span class="apisql"><p>Attention: ${jetelinamessage}</p></span>`);
+      }
     }
   }).fail(function (result) {
     checkResult(result);
@@ -810,7 +827,7 @@ const functionPanelFunctions = (ut) => {
     }
 
     if (cmd == 'table' || cmd == 'api') {
-      presentaction.stage = "func";
+//      presentaction.stage = "func";
       presentaction.cmd = cmd;
     }
 
@@ -827,7 +844,7 @@ const functionPanelFunctions = (ut) => {
 
     /*
       Attention:
-        the drop exection is a little bit special.
+        the drop execution is a little bit special.
     */
     let dropTable = getPreferentPropertie('droptable');
     // the input data is prefered if there were a prior table name.
@@ -843,7 +860,7 @@ const functionPanelFunctions = (ut) => {
 
     /*
       Attention:
-        the api deleting exection is a little bit special as well.
+        the api deleting execution is a little bit special as well.
     */
     let deleteApi = getPreferentPropertie('deleteapi');
     // the input data is prefered if there were a prior api name.
@@ -963,18 +980,22 @@ const functionPanelFunctions = (ut) => {
               }
             }
             if (checkGenelicInput(subquerysentence)) {
-              postSelectedColumns();
+              postSelectedColumns("");
               m = 'ignore';
             }
 
             //}
           } else if (inScenarioChk(ut, 'common-cancel-cmd')) {
             preferent.cmd = "cancel";
-          } else {
+          } else if (inScenarioChk(ut, 'func-api-test-cmd')){
+            // API test mode before registering
+            // before hitting this command, should desplya 'func-api-test-msg' in anywhere.
+            postSelectedColumns("pre");            
+          }else{
             // the secound calling, sub query open or not
             if (inScenarioChk(ut, 'confirmation-sentences-cmd')) {
               showGenelicPanel(true);
-              m = chooseMsg('func-subpanel-opened-cmd', "", "");
+              m = chooseMsg('func-subpanel-opened-msg', "", "");
             } else {
               $("#genelic_panel input[name='genelic_input']").val("ignore");
             }

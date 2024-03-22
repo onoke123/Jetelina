@@ -61,16 +61,19 @@
         let pd = {};
         pd["item"] = ["org1000.jt_id","org1000.name"];
         pd["subquery"] = "where 2020<org1000.founded"; 
+        pd["mode"] = "pre";
         let dd = JSON.stringify(pd);
         console.log("dd is ", dd);
         
         $.ajax( {
-            url: "/testapi",
+            url: "/createapi",
             type: "post",
             data: dd,
             contentType: 'application/json',
             dataType: "json",
         }).done(function(result, textStatus, jqXHR) {
+            console.log("data count: ", result.Jetelina.length);
+            console.log("message : ", result["message from Jetelina"]);
         }).fail( function( result ){
         }).always(function(result){
         });
