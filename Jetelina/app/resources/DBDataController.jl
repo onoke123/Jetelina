@@ -398,6 +398,14 @@ function createApiSelectSentence(json_d::Dict, mode::String)
 
 		if sqn isa Integer
 			ret = PgSQLSentenceManager.createApiSelectSentence(json_d, sqn)
+			if mode == "pre"
+				#===
+					Tips:
+						in the case of mode="pre", PgSQLSente...createApiSelect...() returns SQL sentence for pre executing.
+						it could not execute in PgSQLSentenceManager because of the relation in 'using'. :P 
+				===#
+				ret = PgDBController.doSelect(ret,"pre")
+			end
 		else
 			ret = "fail: Illegal Sequence Number"
 		end

@@ -628,7 +628,7 @@ function _executeApi(apino::String, sql_str::String)
 		if startswith(apino, "js")
 			# select 
 			df = DataFrame(sql_ret)
-			if 100 < nrow(df)
+			if j_config.JC["paging"] < nrow(df)
 				jmsg = "data number over 100, you should set paging paramter in this SQL, it is not my business"
 			end
 
@@ -697,7 +697,18 @@ function doSelect(sql::String, mode::String)
 		end
 
 		df = DataFrame(columntable(LibPQ.execute(conn, sql)))
-		return json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
+		jmsg::String = ""
+
+		if parse(Int,j_config.JC["selectlimit"]) < nrow(df)
+			dfmax::Integer = nrow(df)
+			if !contains(sql,"limit")
+				sql = string(sql," limit 10")		
+				df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+				jmsg = "this return is limited in 10 because the true result is $dfmax"
+			end
+		end
+
+		return json(Dict("result" => true, "message from Jetelina" => jmsg, "Jetelina" => copy.(eachrow(df))))
 	catch err
 		JLog.writetoLogfile("PgDBController.doSelect() with $mode $sql error : $err")
 		return false, err

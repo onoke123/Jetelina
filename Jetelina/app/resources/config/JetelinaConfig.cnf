@@ -121,6 +121,11 @@ or_testdbname = testdb
 @jdic selectlimit:"limit"
 selectlimit = 10
 
+#
+# paging number
+#    recomend for managing paging if the return overs this number
+paging = 100
+
 # 
 # maxmum lines to read "sqllogfile"
 # not sure what number is the best, but this is for secure the system

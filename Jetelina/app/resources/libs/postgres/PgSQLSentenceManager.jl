@@ -19,7 +19,7 @@ module PgSQLSentenceManager
 
 using DataFrames, StatsBase
 using Genie, Genie.Requests, Genie.Renderer.Json
-using Jetelina.DBDataController, Jetelina.ApiSqlListManager, Jetelina.JMessage
+using Jetelina.ApiSqlListManager, Jetelina.JMessage
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
@@ -226,9 +226,8 @@ function createApiSelectSentence(json_d, seq_no::Integer)
 			end
 		end
 	else
-		# pre execution
-		presql = string(selectSql," ",subq_d);
-		return DBDataController.doSelect(presql,"pre")
+		# pre execution sql sentence
+		return string(selectSql," ",subq_d);
 	end
 end
 """
