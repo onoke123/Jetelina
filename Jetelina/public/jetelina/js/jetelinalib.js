@@ -90,14 +90,14 @@ const checkResult = (o) => {
             let errmsg = o["responseJSON"]["errmsg"];
             let error = o["responseJSON"]["error"];
             if (errmsg != null) {
-                if(msglength<errmsg.length){
-                    errmsg = errmsg.substr(0,msglength);
+                if (msglength < errmsg.length) {
+                    errmsg = errmsg.substr(0, msglength);
                 }
 
                 em = errmsg;
             } else if (error != null) {
-                if(msglength<error.length){
-                    error = error.substr(0,msglength);
+                if (msglength < error.length) {
+                    error = error.substr(0, msglength);
                 }
 
                 em = `Oh my, something server error happened: ${error}`;
@@ -127,7 +127,11 @@ const checkResult = (o) => {
 /**
  *  @function getdata
  *  @param {object} o mostry json data
- *  @param {integer} t 0->db table list, 1->table columns list or csv file columns 2-> api(sql) list 3-> conifguration changing history
+ *  @param {integer} t 0->db table list
+ *                     1->table columns list or csv file columns 
+ *                     2->api(sql) list 
+ *                     3->conifguration changing history
+ *                     4->api(sql) test before registring 
  *  @returns {object} only in the case of t=3, conifguration changing history object
  *
  *  resolve the json object into each data
@@ -181,28 +185,28 @@ const getdata = (o, t) => {
                                     }
                                 }
                             });
-                        } else if(t == 2){
+                        } else if (t == 2) {
                             /*
                                 Tips:
                                     case t=2: wanna show it in one line
                                     this is the api list.
                             */
                             str += `<span class="api">${v.apino}</span>`;
-                        }else if(t == 3){                            
-                            if( v.date != null ){
+                        } else if (t == 3) {
+                            if (v.date != null) {
                                 configChangeHistoryStr += `[${v.date}] `;
                             }
-                            
-                            if( v.previous != null){
-                                $.each(v.previous,function(kk,vv){
+
+                            if (v.previous != null) {
+                                $.each(v.previous, function (kk, vv) {
                                     configChangeHistoryStr += `${kk}=${vv} `;
                                 });
 
                                 configChangeHistoryStr += " → ";
                             }
-                            
-                            if( v.latest != null){
-                                $.each(v.latest,function(kk,vv){
+
+                            if (v.latest != null) {
+                                $.each(v.latest, function (kk, vv) {
                                     configChangeHistoryStr += `${kk}=${vv} `;
                                 });
 
@@ -221,11 +225,23 @@ const getdata = (o, t) => {
 
                         $(tagid).append(`${str}`);
                     }
-                })
+                });
+
+                if (t == 4) {
+                    let datanumber = o[key].length;
+                    let jetelinamessage = o["message from Jetelina"];
+                    let testmsg = `<span class="apisql"><p>Conguraturation, well done.<br>aquaiable data number is ${datanumber}</p></span>`;
+                    let testdata = JSON.stringify(o[key]);
+                    $("#apitest [name='api-test-msg']").append(testmsg);
+                    $("#apitest [name='api-test-data'").append(`<span class=\"apisql\"><p>${testdata}</p></span>`);
+                    if(0<jetelinamessage.length){
+                        $("#apitest [name='api-test-msg']").append(`<span class="apisql"><p>Attention: ${jetelinamessage}</p></span>`);
+                    }
+                }
             }
         });
 
-        if(t==3){
+        if (t == 3) {
             $("#something_msg").addClass("config_history");
             $("#something_msg [name='jetelina_message']").addClass("config_history_text").append(configChangeHistoryStr);
             showSomethingMsgPanel(true);
@@ -331,7 +347,7 @@ const getAjaxData = (url) => {
                             this process is executed by a chat word in chatKeyDown().
                             the newest api no is set in presentaction.orderapino at the early line of chatKeyDown(). 
                     */
-                    if (isVisibleApiContainer() && presentaction.orderapino != null){
+                    if (isVisibleApiContainer() && presentaction.orderapino != null) {
                         let orderdapino = presentaction.orderapino;
                         presentaction.orderapino = null;
                         chatKeyDown(`open ${orderdapino}`);
@@ -339,7 +355,7 @@ const getAjaxData = (url) => {
                 } else if (url == geturl[1]) {
                     // get db table list
                     getdata(result, 0);
-                }else if (url == geturl[2]) {
+                } else if (url == geturl[2]) {
                     // configuration change history
                     getdata(result, 3);
                 }
@@ -557,20 +573,26 @@ const chooseMsg = (i, m, p) => {
             but this function is just for a developer, basically.
     */
     scenario_name = i;
-
-    const n = getRandomNumber(scenario[i].length);
-    let s = scenario[`${i}`][n];
-    if (0 < m.length) {
-        if (p == "b") {
-            s = `${m} ${s}`;
-        } else if (p == "a") {
-            s = `${s} ${m}`;
-        } else {
-            s = s.replaceAll("{Q}", m);
+    let ret = "";
+    if( scenario[i] != null && 0<scenario[i].length){
+        const n = getRandomNumber(scenario[i].length);
+        let s = scenario[`${i}`][n];
+        if (0 < m.length) {
+            if (p == "b") {
+                s = `${m} ${s}`;
+            } else if (p == "a") {
+                s = `${s} ${m}`;
+            } else {
+                s = s.replaceAll("{Q}", m);
+            }
         }
+
+        ret = s;
+    }else{
+        console.info(`scenario -> ${i} is null`);
     }
 
-    return s;
+    return ret;
 }
 
 let typingTimeoutID;
@@ -638,10 +660,10 @@ const chatKeyDown = (cmd) => {
         ut = cmd.toLowerCase();
     }
 
-    if( $("#container [class='apisql']").text() != null && 0<$("#container [class='apisql']").text().length ){
+    if ($("#container [class='apisql']").text() != null && 0 < $("#container [class='apisql']").text().length) {
         let newapinostr = $("#container [class='apisql']").text();
         let s = newapinostr.split("js");
-        presentaction.orderapino = `js${s[s.length-1]}`;
+        presentaction.orderapino = `js${s[s.length - 1]}`;
         $("#container [class='apisql']").text("");
         chatKeyDown(scenario["func-show-api-list-cmd"][0]);
     }
@@ -777,7 +799,7 @@ const chatKeyDown = (cmd) => {
                         } else if (presentaction.cmd != null && presentaction.cmd == "config-change") {
                             if (presentaction.config_name != null) {
                                 if ($("#something_input_field input[name='something_input']").is(":visible")) {
-                                    if(inScenarioChk(ut, 'common-post-cmd')){
+                                    if (inScenarioChk(ut, 'common-post-cmd')) {
                                         let new_param = $("#something_input_field input[name='something_input']").val();
                                         if (0 < new_param.length) {
                                             let data = `{"${presentaction.config_name}":"${new_param}"}`;
@@ -798,7 +820,7 @@ const chatKeyDown = (cmd) => {
                             } else {
                                 m = "which config?";
                             }
-                        } else if(inScenarioChk(ut,"get-config-change-history")){
+                        } else if (inScenarioChk(ut, "get-config-change-history")) {
                             getAjaxData(scenario["function-get-url"][2]);
                         }
 
@@ -1296,10 +1318,10 @@ const showSomethingInputField = (b) => {
  *  
  * "#something_msg" show or hide
  */
-const showSomethingMsgPanel = (b) =>{
-    if(b){
+const showSomethingMsgPanel = (b) => {
+    if (b) {
         $("#something_msg").show();
-    }else{
+    } else {
         // these classes are for configuration changing history message
         $("#something_msg").removeClass("config_history");
         $("#something_msg [name='jetelina_message']").removeClass("config_history_text");

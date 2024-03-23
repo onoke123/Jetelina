@@ -1,6 +1,8 @@
 <html>
     <head>
-        <script type=""text/javascript" src="../js/genie/jquery.min.js"></script>
+        <script type="text/javascript" src="../js/genie/jquery.min.js"></script>
+        <link rel="stylesheet" href="jetelina/css/dashboard.css">
+        <link type="text/css" rel="stylesheet" href="jetelina/css/tablelist.css">
     </head>
     <body>
         <button onclick="getAjaxData('s')">js89  is very simple Select</button>
@@ -18,6 +20,13 @@
         <br>
         <button onclick="getAjaxData('d')">Delete</button>
         -->
+        <div id="apitest">
+			<div name="api-test-msg">
+			</div>
+			<div name="api-test-data">
+			</div>
+		</div>
+
         <div>
             <text>Message From Jetelina</text>
             <text id="mfj"></text>
@@ -73,7 +82,15 @@
             dataType: "json",
         }).done(function(result, textStatus, jqXHR) {
             console.log("data count: ", result.Jetelina.length);
+            console.log("data strig ", JSON.stringify(result.Jetelina));
             console.log("message : ", result["message from Jetelina"]);
+            let datanumber = result.Jetelina.length;
+            let jetelinamessage = result["message from Jetelina"];
+            let testmsg =`<span class="apisql"><p>Conguraturation, well done.<br>aquaiable data number is ${datanumber}</p></span>`
+            $("#apitest [name='api-test-msg']").append(testmsg);
+            let testdata = JSON.stringify(result.Jetelina);
+            $("#apitest [name='api-test-data'").append(`<span class=\"apisql\"><p>${testdata}</p></span>`);
+
         }).fail( function( result ){
         }).always(function(result){
         });

@@ -5,7 +5,7 @@
 	<meta charset="utf-8">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
 	<link rel="stylesheet" href="jetelina/css/dashboard.css">
-	<link type="text/css" rel="stylesheet" href="jetelina/css/tablelist.css">
+	<link rel="stylesheet" href="jetelina/css/tablelist.css">
 
 	<script type="text/javascript" src="js/genie/jquery.min.js"></script>
 	<script type="text/javascript" src="js/jquery-ui-1.13.2/jquery-ui.min.js"></script>
@@ -76,30 +76,23 @@
 				<input type="text" name="genelic_input" class="user-input"></input>
 			</div>
 		</div>
-		<!---
-		<div id="genelic_panel" class="commonpanel squarepanel genelic_panel" style="width:200px;height:70px;top:80%;left:20%" hidden>
-			<text name="genelic_text" class="box_text">Set it HERE, plz</text>
-			<div>
-				&nbsp;
+		<!-- desplya the API test result area-->
+		<div id="apitest" style="width:700px;height:15%;top:80%;left:20%;"
+			class="functionpanel-parts commonpanel squarepanel">
+			<div name="api-test-msg">
 			</div>
-			<div>
-				<input type="text" name="genelic_input" class="user-input"></input>
+			<div name="api-test-data">
 			</div>
 		</div>
-		--->
 	</div>
-	<!--
-	<div id="something_msg" class="commonpanel squarepanel genelic_panel"
-		style="width:600px;height:70px;top:80%;left:20%" hidden>
-	-->
 	<div id="something_msg" class="commonpanel squarepanel genelic_panel something_msg_def" hidden>
 		<text name="jetelina_message" class="jetelina_message"></text>
 		<div id="something_input_field" hidden>
 			<text name="something_text" class="box_text"></text>
 			<input type="text" name="something_input" class="user-input"></input>
 		</div>
-</div>
-<!--
+	</div>
+	<!--
 		manual, another word 'help'
 	-->
 	<div id="guidance" class="functionpanel-parts commonpanel squarepanel" hidden>
@@ -109,8 +102,10 @@
 				<tr>
 					<td>
 						■Login/Logout<br>
-						We always start with 'Hi','Hello' or some greetings. When you wanna login to me, you just type your account in my chatbox.
-						After you enter in me, you can logout whenever by typing 'logout',,'exit','bye' and so on, but I am pleasure if you type 'have a nice day'.   
+						We always start with 'Hi','Hello' or some greetings. When you wanna login to me, you just type
+						your account in my chatbox.
+						After you enter in me, you can logout whenever by typing 'logout',,'exit','bye' and so on, but I
+						am pleasure if you type 'have a nice day'.
 						<br><br>
 					</td>
 				</tr>
@@ -120,13 +115,17 @@
 						This panel handles relation with DB.
 						<br>
 						First, you type 'show me function panel', 'open function panel', even 'function', with 'please'.
-						Then you can type 'show me tables', 'table lists' and so on, if you have already registered some tables in it.
-						You can upload your CSV file to me with typing 'file open','open the file box'... etc, then you can post
+						Then you can type 'show me tables', 'table lists' and so on, if you have already registered some
+						tables in it.
+						You can upload your CSV file to me with typing 'file open','open the file box'... etc, then you
+						can post
 						the selected file to there with typing 'file up','upload'...
-						The CSV file is going to be imported to DB and created its table automatically, then appeare in the table list.
-	
-						You can type 'open &lt;target table name&gt;' among the lists, the columns belongs the table are shown.
-						To select them with typing 'select &lt;column name&gt;'.<br><br>					
+						The CSV file is going to be imported to DB and created its table automatically, then appeare in
+						the table list.
+
+						You can type 'open &lt;target table name&gt;' among the lists, the columns belongs the table are
+						shown.
+						To select them with typing 'select &lt;column name&gt;'.<br><br>
 					</td>
 				</tr>
 				<tr>
@@ -134,22 +133,29 @@
 						■Condition Panel<br>
 						This panel show you the analyzed data of your DB status.
 
-						First, you type 'show me condition panel', 'open condition panel', even 'condition', with 'please'.
-						I wanna try to keep simple DB layout because the simpleness is the best solution for your DB performance.
+						First, you type 'show me condition panel', 'open condition panel', even 'condition', with
+						'please'.
+						I wanna try to keep simple DB layout because the simpleness is the best solution for your DB
+						performance.
 						All SQL execution performance are tested automatically and occasionally by me.
-						You can see the result with typing 'show me combination data', 'show analyzed data' or simply 'graph'. 
+						You can see the result with typing 'show me combination data', 'show analyzed data' or simply
+						'graph'.
 						Then you can see the present DB analyzed data graph.
-						
-						I always provide all api access numbers to you by typing 'show me access numbers','display report' or something else.
+
+						I always provide all api access numbers to you by typing 'show me access numbers','display
+						report' or something else.
 						I also keep watching your DB health. Especially I worry about your tables to be chaos.
 						Then I sometimes check you table relation, and give a suggestion if I found a improving point.
-						You also can see 'TEST' performance data graph by typing 'what is your suggestion','show your suggestion',
+						You also can see 'TEST' performance data graph by typing 'what is your suggestion','show your
+						suggestion',
 						or simply 'sql test', if Jetelina said 'There is an improve sugestion'.
-	
+
 						This is my biggest advantage feature.
 						In ver.1, I do only analyze then.
-						In the future version, I am going to change the table layout automatically, then gives you an after action report.
-						This mean is I manage the server side by myself, you just rely on me. The is the future style. :-)	
+						In the future version, I am going to change the table layout automatically, then gives you an
+						after action report.
+						This mean is I manage the server side by myself, you just rely on me. The is the future style.
+						:-)
 					</td>
 				</tr>
 			</table>
@@ -362,7 +368,6 @@
 <script type="text/javascript" src="jetelina/js/dashboard.js"></script>
 <script type="text/javascript" src="jetelina/js/scenario.js"></script>
 <script type="text/javascript" src="jetelina/js/functionpanel.js"></script>
-<!--script src="https://cdn.plot.ly/plotly-2.22.0.min.js" charset="utf-8"></script-->
 <script type="text/javascript" src="jetelina/js/conditionpanel.js"></script>
 
 </html>

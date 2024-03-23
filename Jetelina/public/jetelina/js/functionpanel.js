@@ -766,14 +766,7 @@ const postSelectedColumns = (mode) => {
       }
     }else{
       /* API test mode */
-      let datanumber = result.Jetelina.length;
-      let jetelinamessage = result["message from Jetelina"];
-      $("#container").append(`<span class="apisql"><p>Conguraturation, well done.</p></span>`);
-      $("#container").append(`<span class="apisql"><p>aquaiable data number is ${datanumber}</p></span>`);
-      // ここに取得できたデータを数件表示する　
-      if(0<jetelinamessage.length){
-        $("#container").append(`<span class="apisql"><p>Attention: ${jetelinamessage}</p></span>`);
-      }
+      getdata(result,4);
     }
   }).fail(function (result) {
     checkResult(result);
@@ -1150,7 +1143,7 @@ const functionPanelFunctions = (ut) => {
         break;
       case 'subquery': //open subquery panel
         showGenelicPanel(true);
-        m = chooseMsg('func-subpanel-opened-cmd', '', '');
+        m = chooseMsg('func-subpanel-opened-msg', '', '');
         break;
       default:
         break;

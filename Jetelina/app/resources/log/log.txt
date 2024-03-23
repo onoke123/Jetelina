@@ -302,3 +302,31 @@
 └ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
 ┌ Info: 2024-03-22 17:40:08 SQLAnalyzer.main() start with : 48 hr interval
 └ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-23 10:13:29 PgDBController.doSelect() with pre select ftest3.jt_id,ftest3.dumy from ftest3 as ftest3 where ftet3.age < 50 error : LibPQ.Errors.UndefinedTable("ERROR:  missing FROM-clause entry for table \"ftet3\"\nLINE 1: ...st3.jt_id,ftest3.dumy from ftest3 as ftest3 where ftet3.age ...\n                                                             ^\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-23 10:18:47 PgDBController.insert2JetelinaTableManager() error: MethodError(Jetelina.DBDataController.PgDBController.getJetelinaSequenceNumber, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = postgres
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 0), 0x0000000000007d59)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-23 10:34:06 PgDBController.doSelect() with pre select ftest3.jt_id,ftest3.dumy from ftest3 as ftest3 ftest3.age < 50 error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"ftest3\"\nLINE 1: ...ct ftest3.jt_id,ftest3.dumy from ftest3 as ftest3 ftest3.age...\n                                                             ^\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-23 11:13:43 PgDBController.doSelect() with pre select ftest3.jt_id,ftest3.dumy,ftest3.sex from ftest3 as ftest3 ftest3.age < 50 error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"ftest3\"\nLINE 1: ...t_id,ftest3.dumy,ftest3.sex from ftest3 as ftest3 ftest3.age...\n                                                             ^\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-23 13:17:31 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-23 13:17:33 SQLAnalyzer.main() start with : 48 hr interval
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
