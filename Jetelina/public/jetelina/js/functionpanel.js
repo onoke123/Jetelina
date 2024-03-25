@@ -74,34 +74,34 @@ $(document).on({
  * hide "#condition_panel" at the same time if it is visible
  */
 const openFunctionPanel = () => {
-  if( inVisibleConditionPanel() ){
+  if (inVisibleConditionPanel()) {
     $("#condition_panel").hide();
   }
 
   $("#function_panel").show().animate({
-      width: window.innerWidth * 0.8,
-      height: window.innerHeight * 0.8,
-      top: "10%",
-      left: "10%"
+    width: window.innerWidth * 0.8,
+    height: window.innerHeight * 0.8,
+    top: "10%",
+    left: "10%"
   }, animateDuration);
 
   if (isVisibleColumns()) {
-      $("#fileup").draggable().animate({
-          top: "4%",
-          left: "5%"
-      }, animateDuration);
-      $("#left_panel").draggable().animate({
-          top: "10%",
-          left: "5%"
-      }, animateDuration);
-      $("#columns").draggable().animate({
-          top: "10%",
-          left: "30%"
-      }, animateDuration);
-      $("#container").draggable().animate({
-          bottom: "5%",
-          left: "30%"
-      }, animateDuration);
+    $("#fileup").draggable().animate({
+      top: "4%",
+      left: "5%"
+    }, animateDuration);
+    $("#left_panel").draggable().animate({
+      top: "10%",
+      left: "5%"
+    }, animateDuration);
+    $("#columns").draggable().animate({
+      top: "10%",
+      left: "30%"
+    }, animateDuration);
+    $("#container").draggable().animate({
+      bottom: "5%",
+      left: "30%"
+    }, animateDuration);
   }
 }
 /**
@@ -284,9 +284,9 @@ const fileupload = () => {
     contentType: false,
     processData: false,
     dataType: "json",
-    xhr:function(){
+    xhr: function () {
       ret = $.ajaxSettings.xhr();
-      inprogress=true;// in progress. for priventing accept a new command.
+      inprogress = true;// in progress. for priventing accept a new command.
       typingControll(chooseMsg('inprogress-msg', "", ""));
       return ret;
     }
@@ -295,7 +295,7 @@ const fileupload = () => {
     $("input[type=file]").val("");
     $("#upbtn").prop("disabled", false);
 
-    if(checkResult(result)){
+    if (checkResult(result)) {
       $("#my_form label span").text("Upload CSV File");
 
       //refresh table list 
@@ -313,10 +313,10 @@ const fileupload = () => {
     checkResult(result);
     // something error happened
     console.error("fileupload(): unexpected error");
-    typingControll(chooseMsg(fail-msg, "", ""));
-  }).always(function(){
+    typingControll(chooseMsg(fail - msg, "", ""));
+  }).always(function () {
     // release it for allowing to input new command in the chatbox 
-    inprogress=false;
+    inprogress = false;
   });
 }
 
@@ -420,26 +420,26 @@ const setApiIF_In = (t, s) => {
       let s_subquery = s.subquery;
       let subquery_str = "";
       let isCurry = s_subquery.indexOf('{');
-      while(-1<isCurry){
+      while (-1 < isCurry) {
         let sp = s_subquery.indexOf('{');
         let ep = s_subquery.indexOf('}');
-        if(sp != -1 && ep != -1){
-          let cd = s_subquery.substring(sp+1,ep);
+        if (sp != -1 && ep != -1) {
+          let cd = s_subquery.substring(sp + 1, ep);
           subquery_str += `'${cd}':`;
-          if(s_subquery[sp-1] == "\'"){
+          if (s_subquery[sp - 1] == "\'") {
             subquery_str += `'{${cd}}',`;
-          }else{
+          } else {
             subquery_str += `{${cd}},`;
           }
 
-          s_subquery = s_subquery.substring(ep+1,s_subquery.length);
+          s_subquery = s_subquery.substring(ep + 1, s_subquery.length);
         }
         isCurry = s_subquery.indexOf('{');
       }
 
-      subquery_str = subquery_str.slice(0,-1);
+      subquery_str = subquery_str.slice(0, -1);
       ret = `{"apino":\"${t}\","subquery":\"[${subquery_str}]\"}`;
-//      ret = `{"apino":\"${t}\","subquery":\"${s.subquery}\"}`;
+      //      ret = `{"apino":\"${t}\","subquery":\"${s.subquery}\"}`;
     } else {
       ret = `{"apino":\"${t}\"}`;
 
@@ -470,7 +470,7 @@ const setApiIF_In = (t, s) => {
     if (s.subquery != null && 0 < s.subquery.length && s.subquery != "ignore") {
       ret = ret.slice(0, ret.length - 1) + `,\"subquery\":\"${s.subquery}\"` + ret.slice(ret.length - 1, ret.length);
     }*/
-} else {
+  } else {
     // who knows
   }
 
@@ -496,7 +496,7 @@ const setApiIF_Out = (t, s) => {
     if (pf[0] != null && 0 < pf[0].length) {
       ret = buildJetelinaOutJsonForm(ta, pf[0]);
     }
-  }else{
+  } else {
     // insert, update, delete
     ret = '{"result":true or false,"Jetelina":"[{\"message from Jetelina\":\".....\"}]"}';
   }
@@ -521,8 +521,8 @@ const setApiIF_Sql = (s) => {
   }
 
   let reject_jetelina_delete_flg = "jetelina_delete_flg";
-  if(ret.startsWith("insert")){
-    ret = ret.replaceAll(`,{${reject_jetelina_delete_flg}}`,'').replaceAll(`,${reject_jetelina_delete_flg}`);
+  if (ret.startsWith("insert")) {
+    ret = ret.replaceAll(`,{${reject_jetelina_delete_flg}}`, '').replaceAll(`,${reject_jetelina_delete_flg}`);
   }
 
   return ret;
@@ -550,14 +550,14 @@ const buildJetelinaJsonForm = (t, s) => {
       // select
       ss = cn[1];
     } else {
-        //insert update delete
-        if (c[i].indexOf("=") != -1) {
-          //update
-          ss = c[i].split("=")[0];
-        } else {
-          //insert delete
-          ss = c[i];
-        }
+      //insert update delete
+      if (c[i].indexOf("=") != -1) {
+        //update
+        ss = c[i].split("=")[0];
+      } else {
+        //insert delete
+        ss = c[i];
+      }
     }
 
     if (ss.indexOf("jetelina_delete_flg") < 0) {
@@ -597,14 +597,14 @@ const buildJetelinaOutJsonForm = (t, s) => {
       // select
       ss = cn[1];
     } else {
-        //insert update delete
-        if (c[i].indexOf("=") != -1) {
-          //update
-          ss = c[i].split("=")[0];
-        } else {
-          //insert delete
-          ss = c[i];
-        }
+      //insert update delete
+      if (c[i].indexOf("=") != -1) {
+        //update
+        ss = c[i].split("=")[0];
+      } else {
+        //insert delete
+        ss = c[i];
+      }
     }
 
     if (ss.indexOf("jetelina_delete_flg") < 0) {
@@ -639,9 +639,9 @@ const getColumn = (tablename) => {
       data: dd,
       contentType: 'application/json',
       dataType: "json",
-      xhr:function(){
+      xhr: function () {
         ret = $.ajaxSettings.xhr();
-        inprogress=true;// in progress. for priventing accept a new command.
+        inprogress = true;// in progress. for priventing accept a new command.
         typingControll(chooseMsg('inprogress-msg', "", ""));
         return ret;
       }
@@ -651,9 +651,9 @@ const getColumn = (tablename) => {
     }).fail(function (result) {
       checkResult(result);
       typingControll(chooseMsg('fail-msg', "", ""));
-    }).always(function(){
+    }).always(function () {
       // release it for allowing to input new command in the chatbox 
-      inprogress=false;
+      inprogress = false;
     });
   } else {
     console.error("getColumn() ajax url is not defined");
@@ -686,9 +686,9 @@ const deleteThisTable = (tablename) => {
       data: dd,
       contentType: 'application/json',
       dataType: "json",
-      xhr:function(){
+      xhr: function () {
         ret = $.ajaxSettings.xhr();
-        inprogress=true;// in progress. for priventing accept a new command.
+        inprogress = true;// in progress. for priventing accept a new command.
         typingControll(chooseMsg('inprogress-msg', "", ""));
         return ret;
       }
@@ -707,8 +707,8 @@ const deleteThisTable = (tablename) => {
       console.error("deleteThisTable() faild: ", result);
       typingControll(chooseMsg('fail-msg', "", ""));
     }).always(function () {
-        // release it for allowing to input new command in the chatbox 
-        inprogress=false;
+      // release it for allowing to input new command in the chatbox 
+      inprogress = false;
     });
   } else {
     console.error("deleteThisTable() table is not defined");
@@ -742,14 +742,14 @@ const postSelectedColumns = (mode) => {
     data: dd,
     contentType: 'application/json',
     dataType: "json",
-    xhr:function(){
+    xhr: function () {
       ret = $.ajaxSettings.xhr();
-      inprogress=true;// in progress. for priventing accept a new command.
+      inprogress = true;// in progress. for priventing accept a new command.
       typingControll(chooseMsg('inprogress-msg', "", ""));
       return ret;
     }
   }).done(function (result, textStatus, jqXHR) {
-    if(mode != "pre"){
+    if (mode != "pre") {
       /*
         if there is not a quite similar api in there -> return as alike {"apino":"js10"} or false in error.
         if there already is a quite similar api in there -> return api no as alike {"resembled":"js10"}.
@@ -764,9 +764,9 @@ const postSelectedColumns = (mode) => {
       if (isVisibleGenelicPanel()) {
         $("#genelic_panel").hide();
       }
-    }else{
+    } else {
       /* API test mode */
-      getdata(result,4);
+      getdata(result, 4);
     }
   }).fail(function (result) {
     checkResult(result);
@@ -774,13 +774,16 @@ const postSelectedColumns = (mode) => {
     typingControll(chooseMsg('fail-msg', "", ""));
   }).always(function () {
     // release it for allowing to input new command in the chatbox 
-    inprogress=false;
-    // initializing
-    preferent.cmd = "";
-    $("#genelic_panel input[name='genelic_input']").val('');
-    $("#container .selectedItem").remove();
-    cleanUp("items");
-    cleanupItems4Switching();// clear(=close) opened table items. defined in jetelinalib.js
+    inprogress = false;
+
+    if (mode != "pre") {
+      // initializing
+      preferent.cmd = "";
+      $("#genelic_panel input[name='genelic_input']").val('');
+      $("#container .selectedItem").remove();
+      cleanUp("items");
+      cleanupItems4Switching();// clear(=close) opened table items. defined in jetelinalib.js
+    }
   });
 }
 /**
@@ -812,7 +815,7 @@ const functionPanelFunctions = (ut) => {
       } else if (inScenarioChk(ut, 'func-show-api-list-cmd')) {
         // same as above
         cmd = 'api';
-      } else if (inScenarioChk(ut, 'common-post-cmd')){
+      } else if (inScenarioChk(ut, 'common-post-cmd')) {
         cmd = 'post';
       } else {
         cmd = ut;
@@ -820,7 +823,7 @@ const functionPanelFunctions = (ut) => {
     }
 
     if (cmd == 'table' || cmd == 'api') {
-//      presentaction.stage = "func";
+      //      presentaction.stage = "func";
       presentaction.cmd = cmd;
     }
 
@@ -862,11 +865,11 @@ const functionPanelFunctions = (ut) => {
         if (ut.indexOf(scenario['func-apidelete-cmd'][i]) != -1) {
           let dam = ut.split(scenario['func-apidelete-cmd'][i]);
           deleteApi = $.trim(dam[dam.length - 1]);
-          if(deleteApi.startsWith('js')){
+          if (deleteApi.startsWith('js')) {
             cmd = 'deleteapi';
-          }else{
+          } else {
             // jd,ju,ji are forbidden to delete
-            m = chooseMsg("func-apidelete-forbidden-msg","","");
+            m = chooseMsg("func-apidelete-forbidden-msg", "", "");
           }
         }
       }
@@ -903,8 +906,8 @@ const functionPanelFunctions = (ut) => {
           yes it is, but I did not want to make long switch/case sentence.
           if these 'cmd' will duplicate, you know what will happen. :-p
     */
-    if(-1<$.inArray(cmd,['table','api','fileselectoropen'])){
-        openFunctionPanel();
+    if (-1 < $.inArray(cmd, ['table', 'api', 'fileselectoropen'])) {
+      openFunctionPanel();
     }
 
     switch (cmd) {
@@ -980,11 +983,11 @@ const functionPanelFunctions = (ut) => {
             //}
           } else if (inScenarioChk(ut, 'common-cancel-cmd')) {
             preferent.cmd = "cancel";
-          } else if (inScenarioChk(ut, 'func-api-test-cmd')){
+          } else if (inScenarioChk(ut, 'func-api-test-cmd')) {
             // API test mode before registering
             // before hitting this command, should desplya 'func-api-test-msg' in anywhere.
-            postSelectedColumns("pre");            
-          }else{
+            postSelectedColumns("pre");
+          } else {
             // the secound calling, sub query open or not
             if (inScenarioChk(ut, 'confirmation-sentences-cmd')) {
               showGenelicPanel(true);
@@ -1029,7 +1032,8 @@ const functionPanelFunctions = (ut) => {
           comment outed below, but not sure it was OK or not. 
         */
         presentaction.cmd = "";
-        
+        preferent.cmd = "";
+
         break;
       case 'droptable':
         if (isVisibleTableContainer()) {
@@ -1040,7 +1044,7 @@ const functionPanelFunctions = (ut) => {
             });
 
             // execute this if func-tabledrop-confirm is 'yes'
-            if (inScenarioChk(ut,'confirmation-sentences-cmd')) {
+            if (inScenarioChk(ut, 'confirmation-sentences-cmd')) {
               let t = preferent.droptable;
 
               delete preferent.cmd;
@@ -1066,7 +1070,7 @@ const functionPanelFunctions = (ut) => {
             preferent.cmd = cmd;
           }
           // cancel an order of table drop 
-          if(inScenarioChk(ut,'common-cancel-cmd')){
+          if (inScenarioChk(ut, 'common-cancel-cmd')) {
             preferent.cmd = "";
             m = chooseMsg('cancel-msg', "", "");
           }
@@ -1187,7 +1191,7 @@ const procTableApiList = (s) => {
         there are some candidates command to select column.
         these are unified to 'select'.
     */
-    if (inScenarioChk(t[0], 'func-list-cmd-select-cmd')){
+    if (inScenarioChk(t[0], 'func-list-cmd-select-cmd')) {
       t[0] = 'select';
     }
 
@@ -1344,9 +1348,9 @@ const deleteThisApi = (apino) => {
       data: dd,
       contentType: 'application/json',
       dataType: "json",
-      xhr:function(){
+      xhr: function () {
         ret = $.ajaxSettings.xhr();
-        inprogress=true;// in progress. for priventing accept a new command.
+        inprogress = true;// in progress. for priventing accept a new command.
         typingControll(chooseMsg('inprogress-msg', "", ""));
         return ret;
       }
@@ -1365,8 +1369,8 @@ const deleteThisApi = (apino) => {
       console.error("deleteThisApi() faild: ", result);
       typingControll(chooseMsg('fail-msg', "", ""));
     }).always(function () {
-        // release it for allowing to input new command in the chatbox 
-        inprogress=false;
+      // release it for allowing to input new command in the chatbox 
+      inprogress = false;
     });
   } else {
     console.error("deleteThisApi() apino is not defined");
@@ -1374,7 +1378,7 @@ const deleteThisApi = (apino) => {
 }
 
 // return to the chat box if 'return key' is typed in genelic_panel
-$(document).on("keydown","#genelic_panel input[name='genelic_input']", function(e){
+$(document).on("keydown", "#genelic_panel input[name='genelic_input']", function (e) {
   if (e.keyCode == 13) {
     $("#jetelina_panel [name='chat_input']").focus();
   }
