@@ -262,6 +262,10 @@ const cleanupItems4Switching = () => {
 */
 const cleanupContainers = () => {
   $("#container span,#columns span").remove();
+  // if api test result panel is openend yet
+  if (isVisibleApiContainer()) {
+    showApiTestPanel(false);
+  }
 }
 /**
  * @function fileupload
@@ -768,6 +772,8 @@ const postSelectedColumns = (mode) => {
       /* API test mode */
       getdata(result, 4);
     }
+
+    typingControll(chooseMsg("success-msg", "", ""));
   }).fail(function (result) {
     checkResult(result);
     console.error("postSelectedColumns() fail");
@@ -912,6 +918,10 @@ const functionPanelFunctions = (ut) => {
 
     switch (cmd) {
       case 'table':
+        // if api test result panel is openend yet
+        if (isVisibleApiContainer()) {
+          showApiTestPanel(false);
+        }
         /*  
           Call getAjaxData() in jetelinalib.js for getting all table list in the Database.
           The url of general ajax call is 'getalldbtable'.
@@ -950,6 +960,10 @@ const functionPanelFunctions = (ut) => {
         m = 'ignore';
         break;
       case 'post':
+        // if api test result panel is openend yet
+        if (isVisibleApiContainer()) {
+          showApiTestPanel(false);
+        }
         /*
           Tips:
             the first 'post' is ut=cmd for asking 'sub query' sentnece.
@@ -1013,6 +1027,11 @@ const functionPanelFunctions = (ut) => {
 
         break;
       case 'cancel': case 'withdraw':
+        // if api test result panel is openend yet
+        if (isVisibleApiContainer()) {
+          showApiTestPanel(false);
+        }
+
         if (isVisibleApiContainer()) {
           // cleanup the screen
           cleanupItems4Switching();
@@ -1031,11 +1050,15 @@ const functionPanelFunctions = (ut) => {
         18th Oct 
           comment outed below, but not sure it was OK or not. 
         */
-        presentaction.cmd = "";
         preferent.cmd = "";
 
         break;
       case 'droptable':
+        // if api test result panel is openend yet
+        if (isVisibleApiContainer()) {
+          showApiTestPanel(false);
+        }
+
         if (isVisibleTableContainer()) {
           if (dropTable != null && 0 < dropTable.length) {
             // Hit the table
@@ -1125,6 +1148,11 @@ const functionPanelFunctions = (ut) => {
 
         break;
       case 'fileselectoropen'://open file selector
+        // if api test result panel is openend yet
+        if (isVisibleApiContainer()) {
+          showApiTestPanel(false);
+        }
+
         $("#my_form input[name='upfile']").click();
         m = chooseMsg('func-fileupload-open-msg', "", "");
         break;
@@ -1146,6 +1174,11 @@ const functionPanelFunctions = (ut) => {
         m = chooseMsg('success-msg', '', '');
         break;
       case 'subquery': //open subquery panel
+        // if api test result panel is openend yet
+        if (isVisibleApiContainer()) {
+          showApiTestPanel(false);
+        }
+
         showGenelicPanel(true);
         m = chooseMsg('func-subpanel-opened-msg', '', '');
         break;
@@ -1227,12 +1260,50 @@ const procTableApiList = (s) => {
             }
           });
           break;
-        case 'select':
+        case 'select': case 'set': case 'pick':
           if (presentaction.cmd == 'table') {
             $("#columns").find("span").each(function (i, v) {
               let findselect = false;
               if ($(".activeItem").length == 1) {
-                // can selct by only the column name when opening only one table. I mean 'ftest.id' -> 'id' is OK.
+                /*
+                  Tips:
+                    can selct by only the column name when opening only one table. 
+                    I mean 'ftest.id' -> 'id' is OK.
+                */
+                if (v.textContent.indexOf(t[1]) != -1) {
+                  findselect = true;
+                }
+              } else {
+                /*
+                  Tips:
+                    must match in full name when multi tables open
+                */
+                if (v.textContent == t[1]) {
+                  findselect = true;
+                }
+              }
+
+              if (findselect) {
+                itemSelect($(this));
+                m = chooseMsg('success-msg', "", "");
+              }
+            });
+          }
+
+          if (m.length == 0) {
+            m = chooseMsg('unknown-msg', "", "");
+          }
+
+          break;
+        case 'cancel': case 'remove': case 'reject':
+          if (presentaction.cmd == 'table') {
+            $("#container").find("span").each(function (i, v) {
+              let findselect = false;
+              /*
+                Tips:
+                  same logic as case 'select'
+              */
+              if ($(".activeItem").length == 1) {
                 if (v.textContent.indexOf(t[1]) != -1) {
                   findselect = true;
                 }

@@ -35,6 +35,8 @@
       isVisibleSomethingMsgPanel() checking "#something_msg" is visible or not
       showSomethingInputField(b) "#something_input_field" show or hide
       showSomethingMsgPanel(b) "#something_msg" show or hide
+      isVisibleApiTestPanel() checking "#apitest" is visible or not
+      showApiTestPanel(b) "#apitest" show or hide
 */
 /**
  * 
@@ -228,6 +230,10 @@ const getdata = (o, t) => {
                 });
 
                 if (t == 4) {
+                    if(!isVisibleApiTestPanel()){
+                        showApiTestPanel(true);
+                    }
+
                     let datanumber = o[key].length;
                     let jetelinamessage = o["message from Jetelina"];
                     let testmsg = `<span class="jetelina_suggestion"><p>Conguraturation, well done.<br>aquaiable data number is ${datanumber}</p></span>`;
@@ -791,7 +797,7 @@ const chatKeyDown = (cmd) => {
                         let multiscript = [];
                         // configuration parameter updating
                         if (inScenarioChk(ut, 'common-cancel-cmd')) {
-                            presentaction.cmd = null;
+                            preferent.cmd = null;
                             presentaction.config_name = null;
                             presentaction.config_data = null;
                             showSomethingInputField(false);
@@ -1387,6 +1393,40 @@ const showSomethingMsgPanel = (b) => {
         $("#something_msg").hide();
     }
 }
+
+/**
+* @function isVisibleApiTestPanel
+* @returns {boolean}  true -> visible, false -> invisible
+* 
+* checking "#apitest" is visible or not
+*/
+const isVisibleApiTestPanel = () => {
+    let ret = false;
+    if ($("#apitest").is(":visible")) {
+        ret = true;
+    }
+
+    return ret;
+}
+/**
+ * @function showApiTestPanel
+ *
+ * @param {boolean} true -> show, false -> hide
+ *  
+ * "#apitest" show or hide
+ */
+const showApiTestPanel = (b) => {
+    if (b) {
+        $("#apitest").show().draggable();
+    } else {
+        // delete all test results
+        $("#apitest span").remove();
+        $("#apitest").hide();
+    }
+}
+
+
+
 
 // return to the chat box if 'return key' is typed in something_input_field
 $(document).on("keydown", "#something_input_field input[name='something_input']", function (e) {
