@@ -735,13 +735,23 @@ const postSelectedColumns = (mode) => {
   /*
     absolutely something is in 'getelic_input'.
     'ignore' is if nothing done by the user.
+    'where' is mandatory
   */
-  pd["subquery"] = $("#genelic_panel input[name='genelic_input']").val();
+  let subq = $("#genelic_panel input[name='genelic_input']").val();
+  if((subq != "ignore" && subq != "") && subq.indexOf("where") == -1){
+    subq = `where ${subq}`;
+  }
+
+  pd["subquery"] = subq;
 
   let dd = JSON.stringify(pd);
+  let posturl = scenario["function-post-url"][4];
+  if(mode=="pre"){
+    posturl = scenario["function-post-url"][5];    
+  }
 
   $.ajax({
-    url: "/createapi",
+    url: posturl,
     type: "POST",
     data: dd,
     contentType: 'application/json',
@@ -759,10 +769,15 @@ const postSelectedColumns = (mode) => {
         if there already is a quite similar api in there -> return api no as alike {"resembled":"js10"}.
       */
       if (result.apino != null && 0 < result.apino.length) {
-        $("#container").append(`<span class="apisql"><p>api no is ${result.apino}</p></span>`);
+        // hide api test panel if it is desplayed
+        if (isVisibleApiTestPanel()) {
+          showApiTestPanel(false);
+        }
+
+        $("#container").append(`<span class="newapino"><p>api no is ${result.apino}</p></span>`);
         typingControll(chooseMsg('success-msg', "", ""));
       } else if (result.resembled != null && 0 < result.resembled.length) {
-        $("#container").append(`<span class="apisql"><p>there is similar API already exist:  ${result.resembled}</p></span>`);
+        $("#container").append(`<span class="newapino"><p>there is similar API already exist:  ${result.resembled}</p></span>`);
       }
 
       if (isVisibleGenelicPanel()) {
@@ -867,15 +882,18 @@ const functionPanelFunctions = (ut) => {
     let deleteApi = getPreferentPropertie('deleteapi');
     // the input data is prefered if there were a prior api name.
     if (deleteApi == null || deleteApi.length <= 0) {
-      for (let i = 0; i < scenario['func-apidelete-cmd'].length; i++) {
-        if (ut.indexOf(scenario['func-apidelete-cmd'][i]) != -1) {
-          let dam = ut.split(scenario['func-apidelete-cmd'][i]);
-          deleteApi = $.trim(dam[dam.length - 1]);
-          if (deleteApi.startsWith('js')) {
-            cmd = 'deleteapi';
-          } else {
-            // jd,ju,ji are forbidden to delete
-            m = chooseMsg("func-apidelete-forbidden-msg", "", "");
+      if (inScenarioChk(ut, 'func-apidelete-cmd')) {
+        for (let i = 0; i < scenario['func-apidelete-cmd'].length; i++) {
+          if (ut.indexOf(scenario['func-apidelete-cmd'][i]) != -1) {
+            let dam = ut.split(scenario['func-apidelete-cmd'][i]);
+            deleteApi = $.trim(dam[dam.length - 1]);
+            if (deleteApi.startsWith('js')) {
+              cmd = 'deleteapi';
+              break;
+            } else {
+              // jd,ju,ji are forbidden to delete
+              m = chooseMsg("func-apidelete-forbidden-msg", "", "");
+            }
           }
         }
       }
@@ -889,6 +907,10 @@ const functionPanelFunctions = (ut) => {
     // genelic panel(subquery panel)
     if (inScenarioChk(ut, 'func-subpanel-open-cmd')) {
       cmd = "subquery";
+    }
+
+    if (inScenarioChk(ut, 'func-api-test-cmd')) {
+      cmd = "apitest";
     }
 
     /*
@@ -905,8 +927,9 @@ const functionPanelFunctions = (ut) => {
           8.fileupload: csv file upload
           9.creanup: cleanup column/selecteditem field
           10.subquery: open subquery panel
+          11.apitest: api test before registring
           default: non
-
+ 
         Attention:
           these 'cmd' have to be difference within above procTableApiList(), you may think these are able to combine,
           yes it is, but I did not want to make long switch/case sentence.
@@ -970,7 +993,7 @@ const functionPanelFunctions = (ut) => {
             then if ut is positive answer alike 'yes' -> showGenelicPanel(true).
             'sub query' is mandatory if its contains multi tables, it is optional if it is single table.
             'ignore' is set in 'genelic_input' field if does not set the sub query.
-
+ 
             the secound post is ut!=cmd for execution of postion, maybe.
         */
         let subquerysentence = $("#genelic_panel input[name='genelic_input']").val();
@@ -997,10 +1020,10 @@ const functionPanelFunctions = (ut) => {
             //}
           } else if (inScenarioChk(ut, 'common-cancel-cmd')) {
             preferent.cmd = "cancel";
-          } else if (inScenarioChk(ut, 'func-api-test-cmd')) {
+            //          } else if (inScenarioChk(ut, 'func-api-test-cmd')) {
             // API test mode before registering
             // before hitting this command, should desplya 'func-api-test-msg' in anywhere.
-            postSelectedColumns("pre");
+            //           postSelectedColumns("pre");
           } else {
             // the secound calling, sub query open or not
             if (inScenarioChk(ut, 'confirmation-sentences-cmd')) {
@@ -1182,6 +1205,13 @@ const functionPanelFunctions = (ut) => {
         showGenelicPanel(true);
         m = chooseMsg('func-subpanel-opened-msg', '', '');
         break;
+      case 'apitest':
+        if (0 < selectedItemsArr.length) {
+          // API test mode before registering
+          // before hitting this command, should desplay 'func-api-test-msg' in anywhere.
+          postSelectedColumns("pre");
+        }
+        break;
       default:
         break;
     }
@@ -1224,8 +1254,12 @@ const procTableApiList = (s) => {
         there are some candidates command to select column.
         these are unified to 'select'.
     */
-    if (inScenarioChk(t[0], 'func-list-cmd-select-cmd')) {
+    if (inScenarioChk(t[0], 'func-item-select-cmd')) {
       t[0] = 'select';
+    }
+
+    if (inScenarioChk(t[0], 'func-selecteditem-cancel-cmd')) {
+      t[0] = 'cancel';
     }
 
     if (inScenarioChk(t[0], 'func-list-cmd')) {
@@ -1259,8 +1293,17 @@ const procTableApiList = (s) => {
               }
             }
           });
+
+          /*
+            Tips:
+              whichever table or api, this field should be initialized if there were.
+          */
+          if ($("#container .newapino").text() != null && 0 < $("#container .newapino").text().length) {
+            $("#container .newapino").remove();
+          }
+
           break;
-        case 'select': case 'set': case 'pick':
+        case 'select':
           if (presentaction.cmd == 'table') {
             $("#columns").find("span").each(function (i, v) {
               let findselect = false;
@@ -1295,7 +1338,7 @@ const procTableApiList = (s) => {
           }
 
           break;
-        case 'cancel': case 'remove': case 'reject':
+        case 'cancel':
           if (presentaction.cmd == 'table') {
             $("#container").find("span").each(function (i, v) {
               let findselect = false;

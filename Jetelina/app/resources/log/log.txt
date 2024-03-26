@@ -330,3 +330,17 @@
 └ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
 ┌ Info: 2024-03-23 13:17:33 SQLAnalyzer.main() start with : 48 hr interval
 └ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-26 10:36:14 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-26 10:36:16 SQLAnalyzer.main() start with : 48 hr interval
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-26 10:54:15 PgDBController.doSelect() with pre select ftest3.jt_id from ftest3 as ftest3 ftest3.age < 50 error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"ftest3\"\nLINE 1: select ftest3.jt_id from ftest3 as ftest3 ftest3.age < 50\n                                                  ^\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-26 12:32:28 PgDBController.doSelect() with pre select ftest3.jt_id,ftest3.sex from ftest3 as ftest3 age<20 error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"age\"\nLINE 1: select ftest3.jt_id,ftest3.sex from ftest3 as ftest3 age<20\n                                                             ^\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-26 12:46:17 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-26 12:46:19 SQLAnalyzer.main() start with : 48 hr interval
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-26 12:48:39 PgDBController.doSelect() with pre select ftest3.jt_id,ftest3.sex from ftest3 as ftest3 where  error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at end of input\nLINE 1: select ftest3.jt_id,ftest3.sex from ftest3 as ftest3 where \n                                                                   ^\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68

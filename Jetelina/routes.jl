@@ -65,6 +65,9 @@ route( "/apiactions", PostDataController.handleApipostdata, method = POST )
 ===#
 # create api from posting data of db table columns
 route( "/createapi", PostDataController.createApi, method = POST )
+# api test before doing createapi
+#     indeed '/createapi' and 'testapi' are same, but wanna indicate them difference url
+route( "/testapi", PostDataController.createApi, method = POST )
 # returns API(SQL) list in Json
 route( "getapilist", GetDataController.getApiList )
 # delete api from  JC["sqllistfile"] file

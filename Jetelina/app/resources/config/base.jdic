@@ -5,7 +5,7 @@
 @jdic analyzed-data-collect-url:"/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getsqlaccessdata"
 
 # post urls for function panel 
-@jdic function-post-url:"/updateuserdata","/jetelinawords","/getconfigdata","/changeconfigdata"
+@jdic function-post-url:"/updateuserdata","/jetelinawords","/getconfigdata","/changeconfigdata","/createapi","/testapi"
 
 # get urls for function panel 
 @jdic function-get-url:"/getapilist","/getalldbtable","/getconfigchangehistory"
@@ -86,7 +86,7 @@
 @jdic cond-graph-show-cmd:"access numbers","access number","analyzed","report","graph"
 
 # SQL Exectuon Time graph
-@jdic cond-sql-performance-graph-show-cmd:"your suggestion","suggest","sql test","improved performance"
+@jdic cond-sql-performance-graph-show-cmd:"your suggestion","suggest","improved performance"
 
 @jdic cond-performance-improve-msg:"There is an improving suggestion.","Do you wanna know my great idea?","Attention please. I have an idea."
 @jdic cond-no-suggestion-msg:"I do not have any suggestions so far.","No suggestions","I do not give it to you.","Hey, Nothing at all"
@@ -98,7 +98,8 @@
 # basic commands in function panel
 #
 @jdic func-list-cmd:"open","close","select","cancel"
-@jdic func-list-cmd-select-cmd:"select","choose","pick"
+@jdic func-item-select-cmd:"select","choose","pick"
+@jdic func-selecteditem-cancel-cmd:"cancel","remove","reject","withdraw"
 @jdic common-post-cmd:"post","send","push"
 @jdic func-cleanup-cmd:"refresh","cleanup","clean"
 @jdic func-tabledrop-cmd:"drop","drop table","table drop","tabledrop","droptable"
@@ -106,7 +107,7 @@
 @jdic func-tabledrop-ng-msg:"Hey open the table list first!","Huum?","Check it first","Watch it"
 @jdic func-tabledrop-confirm-msg:"Sure?","Really?","Won\"t you regret?"
 
-@jdic func-apidelete-cmd:"delete","delete api","api delete","apidelete","deleteapi"
+@jdic func-apidelete-cmd:"delete","delete api","api delete","apidelete","deleteapi","remove","reject"
 @jdic func-apidelete-msg:"Which api do you want to delete?","correct order is \"delete <api name>\" and so on"
 @jdic func-apidelete-ng-msg:"Hey open the api list first!","Huum?","Check it first","Watch it"
 @jdic func-apidelete-forbidden-msg:"this api cannot be deleted, sorry"

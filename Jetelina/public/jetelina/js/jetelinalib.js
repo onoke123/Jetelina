@@ -230,9 +230,7 @@ const getdata = (o, t) => {
                 });
 
                 if (t == 4) {
-                    if(!isVisibleApiTestPanel()){
-                        showApiTestPanel(true);
-                    }
+                    showApiTestPanel(true);
 
                     let datanumber = o[key].length;
                     let jetelinamessage = o["message from Jetelina"];
@@ -348,7 +346,9 @@ const getAjaxData = (url) => {
                     getdata(result, 2);
                     /*
                         Tips:
-                            in the case of calling to show the newest api in table list panel, 
+                            ②
+                            in the case of calling to show the newest api in table list panel,
+                            in fact it maybe called in chatKeyDonw() first (at ①), 
                             it has a process as showing api-list then pointing the newest one.
                             this process is executed by a chat word in chatKeyDown().
                             the newest api no is set in presentaction.orderapino at the early line of chatKeyDown(). 
@@ -666,18 +666,33 @@ const chatKeyDown = (cmd) => {
         ut = cmd.toLowerCase();
     }
 
-    if ($("#container [class='apisql']").text() != null && 0 < $("#container [class='apisql']").text().length) {
-        let newapinostr = $("#container [class='apisql']").text();
-        let s = newapinostr.split("js");
-        presentaction.orderapino = `js${s[s.length - 1]}`;
-        $("#container [class='apisql']").text("");
-        chatKeyDown(scenario["func-show-api-list-cmd"][0]);
-    }
-
     let logoutflg = false;
 
     if (ut != null && 0 < ut.length) {
         ut = $.trim(ut.toLowerCase());
+        /*
+            Tips:
+                After registring new api, maybe called it as opening.
+                the opening command will be duplicated with table opening one, 
+                therefore some conditions are there for judging them which one is. 
+        */
+        if ($("#container .newapino").text() != null && 0 < $("#container .newapino").text().length) {
+            let newapinostr = $("#container .newapino").text();
+            let s = newapinostr.split("js");
+            let apino = `js${s[s.length - 1]}`;
+            if(ut.indexOf(apino) != -1){
+                presentaction.orderapino = apino;
+                $("#container .newapino").text("");
+                /*
+                    Tips:
+                        ①
+                        this execution of chatKeyDown() is series to getAjaxData().done() at ②
+                */
+                chatKeyDown(scenario["func-show-api-list-cmd"][0]);
+            }
+        }
+    
+
         let m = "";
         /* do it only if there were a input character by user */
         if (0 < ut.length) {
@@ -1416,11 +1431,13 @@ const isVisibleApiTestPanel = () => {
  * "#apitest" show or hide
  */
 const showApiTestPanel = (b) => {
+    // initialize the field before it's desplayed
+    $("#apitest span").remove();
+
     if (b) {
         $("#apitest").show().draggable();
     } else {
         // delete all test results
-        $("#apitest span").remove();
         $("#apitest").hide();
     }
 }
