@@ -738,7 +738,7 @@ const postSelectedColumns = (mode) => {
     'where' is mandatory
   */
   let subq = $("#genelic_panel input[name='genelic_input']").val();
-  if((subq != "ignore" && subq != "") && subq.indexOf("where") == -1){
+  if ((subq != "ignore" && subq != "") && subq.indexOf("where") == -1) {
     subq = `where ${subq}`;
   }
 
@@ -746,8 +746,8 @@ const postSelectedColumns = (mode) => {
 
   let dd = JSON.stringify(pd);
   let posturl = scenario["function-post-url"][4];
-  if(mode=="pre"){
-    posturl = scenario["function-post-url"][5];    
+  if (mode == "pre") {
+    posturl = scenario["function-post-url"][5];
   }
 
   $.ajax({
@@ -1305,32 +1305,26 @@ const procTableApiList = (s) => {
           break;
         case 'select':
           if (presentaction.cmd == 'table') {
+            let items = [];
             $("#columns").find("span").each(function (i, v) {
-              let findselect = false;
-              if ($(".activeItem").length == 1) {
-                /*
-                  Tips:
-                    can selct by only the column name when opening only one table. 
-                    I mean 'ftest.id' -> 'id' is OK.
-                */
-                if (v.textContent.indexOf(t[1]) != -1) {
-                  findselect = true;
-                }
-              } else {
-                /*
-                  Tips:
-                    must match in full name when multi tables open
-                */
-                if (v.textContent == t[1]) {
-                  findselect = true;
-                }
-              }
-
-              if (findselect) {
-                itemSelect($(this));
-                m = chooseMsg('success-msg', "", "");
+              if (v.textContent.indexOf(t[1]) != -1) {
+                items.push(v.textContent);
               }
             });
+
+            if (items.length == 1) {
+              // unique candidate
+              $("#columns").find("span").each(function (i, v) {
+                if (v.textContent.indexOf(t[1]) != -1) {
+                  itemSelect($(this));
+                  m = chooseMsg('success-msg', "", "");
+                  return false;
+                }
+              });
+            } else {
+              // multi candidates
+              m = `which one, ${items}?`;
+            }
           }
 
           if (m.length == 0) {
