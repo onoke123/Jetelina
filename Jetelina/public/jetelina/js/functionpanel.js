@@ -26,7 +26,7 @@
       buildJetelinaOutJsonForm(t, s) Create display 'OUT' Json form data from a API. mainly using in 'select' API.
       getColumn(tablename) Ajax function for getting the column names of the ordered table 
       removeColumn(tablename) Delete a column from selected item list on the display 
-      deleteThisTable(tablename)　Ajax function for deleting the target table from DataBase. 
+      dropThisTable(tablename)　Ajax function for deleting the target table from DataBase. 
       postSelectedColumns(mode) Ajax function for posting the selected columns.
       functionPanelFunctions(ut)　Exectute some functions ordered by user chat input message    
       procTableApiList(s) Execute some functions for table list and/or api list order by user chat input commands  
@@ -308,6 +308,10 @@ const fileupload = () => {
         getAjaxData(scenario["function-get-url"][1]);
       } else {
         typingControll(chooseMsg('success-msg', "", ""));
+      }
+
+      if(isVisibleApiContainer()){
+        chatKeyDown(scenario["func-show-table-list-cmd"][0]);
       }
     } else {
       // csv file format error
@@ -670,15 +674,16 @@ const getColumn = (tablename) => {
  * delete a column from selected item list on the display  
  */
 const removeColumn = (p) => {
-  $(".item").not(".selectedItem").remove(`:contains(${p}.)`);
+//  $("#columns .item, #container .item").not(".selectedItem").remove(`:contains(${p}.)`);
+  $("#columns .item, #container .item").remove(`:contains(${p}.)`);
 }
 /**
- * @function deleteThisTable
+ * @function dropThisTable
  * @param {string} tablename  target table name
  * 
  * Ajax function for deleting the target table from DataBase. 
  */
-const deleteThisTable = (tablename) => {
+const dropThisTable = (tablename) => {
   if (0 < tablename.length || tablename != undefined) {
     let pd = {};
     pd["tablename"] = $.trim(tablename);
@@ -708,14 +713,14 @@ const deleteThisTable = (tablename) => {
       typingControll(chooseMsg('success-msg', "", ""));
     }).fail(function (result) {
       checkResult(result);
-      console.error("deleteThisTable() faild: ", result);
+      console.error("dropThisTable() faild: ", result);
       typingControll(chooseMsg('fail-msg', "", ""));
     }).always(function () {
       // release it for allowing to input new command in the chatbox 
       inprogress = false;
     });
   } else {
-    console.error("deleteThisTable() table is not defined");
+    console.error("dropThisTable() table is not defined");
   }
 }
 /**
@@ -1074,6 +1079,7 @@ const functionPanelFunctions = (ut) => {
           comment outed below, but not sure it was OK or not. 
         */
         preferent.cmd = "";
+        delete preferent.droptable;
 
         break;
       case 'droptable':
@@ -1096,7 +1102,7 @@ const functionPanelFunctions = (ut) => {
               delete preferent.cmd;
               delete preferent.droptable;
 
-              deleteThisTable(t);
+              dropThisTable(t);
               m = 'ignore';
             } else {
               if (p != null && 0 < p.length) {
@@ -1118,6 +1124,7 @@ const functionPanelFunctions = (ut) => {
           // cancel an order of table drop 
           if (inScenarioChk(ut, 'common-cancel-cmd')) {
             preferent.cmd = "";
+            preferent.droptable = "";
             m = chooseMsg('cancel-msg', "", "");
           }
         } else {
@@ -1305,25 +1312,33 @@ const procTableApiList = (s) => {
           break;
         case 'select':
           if (presentaction.cmd == 'table') {
-            let items = [];
-            $("#columns").find("span").each(function (i, v) {
-              if (v.textContent.indexOf(t[1]) != -1) {
-                items.push(v.textContent);
-              }
-            });
-
-            if (items.length == 1) {
-              // unique candidate
+            if (inScenarioChk(s, "func-item-select-all-cmd")) {
+              // select all items
               $("#columns").find("span").each(function (i, v) {
-                if (v.textContent.indexOf(t[1]) != -1) {
-                  itemSelect($(this));
-                  m = chooseMsg('success-msg', "", "");
-                  return false;
-                }
+                itemSelect($(this));
               });
             } else {
-              // multi candidates
-              m = `which one, ${items}?`;
+              // select each item
+              let items = [];
+              $("#columns").find("span").each(function (i, v) {
+                if (v.textContent.indexOf(t[1]) != -1) {
+                  items.push(v.textContent);
+                }
+              });
+
+              if (items.length == 1) {
+                // unique candidate
+                $("#columns").find("span").each(function (i, v) {
+                  if (v.textContent.indexOf(t[1]) != -1) {
+                    itemSelect($(this));
+                    m = chooseMsg('success-msg', "", "");
+                    return false;
+                  }
+                });
+              } else {
+                // multi candidates
+                m = `which one, ${items}?`;
+              }
             }
           }
 
@@ -1334,27 +1349,34 @@ const procTableApiList = (s) => {
           break;
         case 'cancel':
           if (presentaction.cmd == 'table') {
-            $("#container").find("span").each(function (i, v) {
-              let findselect = false;
-              /*
-                Tips:
-                  same logic as case 'select'
-              */
-              if ($(".activeItem").length == 1) {
-                if (v.textContent.indexOf(t[1]) != -1) {
-                  findselect = true;
-                }
-              } else {
-                if (v.textContent == t[1]) {
-                  findselect = true;
-                }
-              }
-
-              if (findselect) {
+            if (inScenarioChk(s, "func-selecteditem-all-cancel-cmd")) {
+              // cancel all items
+              $("#container").find("span").each(function (i, v) {
                 itemSelect($(this));
-                m = chooseMsg('success-msg', "", "");
+              });
+            } else {
+              // cancel each item
+              let items = [];
+              $("#container").find("span").each(function (i, v) {
+                if (v.textContent.indexOf(t[1]) != -1) {
+                  items.push(v.textContent);
+                }
+              });
+
+              if (items.length == 1) {
+                // unique candidate
+                $("#container").find("span").each(function (i, v) {
+                  if (v.textContent.indexOf(t[1]) != -1) {
+                    itemSelect($(this));
+                    m = chooseMsg('success-msg', "", "");
+                    return false;
+                  }
+                });
+              } else {
+                // multi candidates
+                m = `which one, ${items}?`;
               }
-            });
+            }
           }
 
           if (m.length == 0) {
@@ -1410,6 +1432,7 @@ const showGenelicPanel = (b) => {
       */
       $("#genelic_panel text[name='genelic_text']").text("Sub Query:");
       $("#genelic_panel input[name='genelic_input']").attr('placeholder', 'where .....');
+      $("#genelic_panel input[name='genelic_input']").after("<p class=\"jetelina_subquery_note\">writing the sub query is on your own responsibility. I'll never check it at all.:)</p>");
     }
 
     $("#genelic_panel").show();
@@ -1434,6 +1457,15 @@ const checkGenelicInput = (s) => {
     ret = false;
   } else if (s != "ignore") {
     // sub query check
+    /*
+      Tips:
+        check this sub query strings with #container->span text is in selected items,
+        check this string is collect,
+        check this string has its post query parameter, like '{parameter}',
+                                                                           etc...
+        well, there are a lot of tasks in here, therefore wanna set them beside now,
+        writing the sub query is on your own responsibility. :)
+    */
   }
 
   return ret;
@@ -1490,4 +1522,12 @@ $(document).on("keydown", "#genelic_panel input[name='genelic_input']", function
   if (e.keyCode == 13) {
     $("#jetelina_panel [name='chat_input']").focus();
   }
+});
+
+// catch event of selecting upload file, then type a message in the chatbox
+$("#my_form input[name='upfile']").on("change",function(){
+  let fullfilename = $(this).val();
+  let p = fullfilename.split("\\");
+  let filename = p[p.length-1];
+  typingControll(`you select "${filename}". then hit 'upload'.`);
 });

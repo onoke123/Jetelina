@@ -344,3 +344,147 @@
 └ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
 ┌ Info: 2024-03-26 12:48:39 PgDBController.doSelect() with pre select ftest3.jt_id,ftest3.sex from ftest3 as ftest3 where  error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at end of input\nLINE 1: select ftest3.jt_id,ftest3.sex from ftest3 as ftest3 where \n                                                                   ^\n")
 └ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-27 10:57:09 PgDBController.insert2JetelinaTableManager() error: MethodError(Jetelina.DBDataController.PgDBController.getJetelinaSequenceNumber, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = postgres
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 0), 0x0000000000007d59)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-27 11:14:21 PgDBController.insert2JetelinaTableManager() error: MethodError(Jetelina.DBDataController.PgDBController.getJetelinaSequenceNumber, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = postgres
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 0), 0x0000000000007d59)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-27 11:16:25 PgDBController.insert2JetelinaTableManager() error: MethodError(Jetelina.DBDataController.PgDBController.getJetelinaSequenceNumber, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = postgres
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 0), 0x0000000000007d59)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-27 11:23:05 PgDBController.insert2JetelinaTableManager() error: MethodError(Jetelina.DBDataController.PgDBController.getJetelinaSequenceNumber, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = postgres
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 0), 0x0000000000007d59)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-27 11:24:29 PgDBController.insert2JetelinaTableManager() error: MethodError(Jetelina.DBDataController.PgDBController.getJetelinaSequenceNumber, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = postgres
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 0), 0x0000000000007d59)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-27 12:16:00 PgDBController.insert2JetelinaTableManager() error: MethodError(Jetelina.DBDataController.PgDBController.getJetelinaSequenceNumber, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = postgres
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 0), 0x0000000000007d59)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-27 13:04:26 PgDBController.insert2JetelinaTableManager() error: MethodError(Jetelina.DBDataController.PgDBController.getJetelinaSequenceNumber, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = postgres
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 0), 0x0000000000007d59)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-27 13:13:23 PgDBController.insert2JetelinaTableManager() error: MethodError(Jetelina.DBDataController.PgDBController.getJetelinaSequenceNumber, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = postgres
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 0), 0x0000000000007d59)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68

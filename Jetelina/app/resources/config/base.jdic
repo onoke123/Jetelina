@@ -99,19 +99,22 @@
 #
 @jdic func-list-cmd:"open","close","select","cancel"
 @jdic func-item-select-cmd:"select","choose","pick"
+@jdic func-item-select-all-cmd:"all", "everything", "total";
 @jdic func-selecteditem-cancel-cmd:"cancel","remove","reject","withdraw"
+@jdic func-selecteditem-all-cancel-cmd:"cancel all","remove all","reject all","withdraw all"
+
 @jdic common-post-cmd:"post","send","push"
 @jdic func-cleanup-cmd:"refresh","cleanup","clean"
 @jdic func-tabledrop-cmd:"drop","drop table","table drop","tabledrop","droptable"
 @jdic func-tabledrop-msg:"Which table do you want to drop?","correct order is \"droptable <table name>\" and so on"
 @jdic func-tabledrop-ng-msg:"Hey open the table list first!","Huum?","Check it first","Watch it"
-@jdic func-tabledrop-confirm-msg:"Sure?","Really?","Won\"t you regret?"
+@jdic func-tabledrop-confirm-msg:"Sure?","Really?","Won't you regret?"
 
 @jdic func-apidelete-cmd:"delete","delete api","api delete","apidelete","deleteapi","remove","reject"
 @jdic func-apidelete-msg:"Which api do you want to delete?","correct order is \"delete <api name>\" and so on"
 @jdic func-apidelete-ng-msg:"Hey open the api list first!","Huum?","Check it first","Watch it"
 @jdic func-apidelete-forbidden-msg:"this api cannot be deleted, sorry"
-@jdic func-apidelete-confirm-msg:"Sure?","Really?","Won\"t you regret?"
+@jdic func-apidelete-confirm-msg:"Sure?","Really?","Won't you regret?"
 
 @jdic func-fileupload-open-cmd:"file open","open file","open filebox","file box","csv file"
 @jdic func-fileupload-open-msg:"Which file?"
