@@ -99,7 +99,7 @@
 #
 @jdic func-list-cmd:"open","close","select","cancel"
 @jdic func-item-select-cmd:"select","choose","pick"
-@jdic func-item-select-all-cmd:"all", "everything", "total";
+@jdic func-item-select-all-cmd:"all", "everything", "total"
 @jdic func-selecteditem-cancel-cmd:"cancel","remove","reject","withdraw"
 @jdic func-selecteditem-all-cancel-cmd:"cancel all","remove all","reject all","withdraw all"
 

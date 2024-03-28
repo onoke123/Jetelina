@@ -310,7 +310,7 @@ const fileupload = () => {
         typingControll(chooseMsg('success-msg', "", ""));
       }
 
-      if(isVisibleApiContainer()){
+      if (isVisibleApiContainer()) {
         chatKeyDown(scenario["func-show-table-list-cmd"][0]);
       }
     } else {
@@ -674,7 +674,7 @@ const getColumn = (tablename) => {
  * delete a column from selected item list on the display  
  */
 const removeColumn = (p) => {
-//  $("#columns .item, #container .item").not(".selectedItem").remove(`:contains(${p}.)`);
+  //  $("#columns .item, #container .item").not(".selectedItem").remove(`:contains(${p}.)`);
   $("#columns .item, #container .item").remove(`:contains(${p}.)`);
 }
 /**
@@ -1055,32 +1055,45 @@ const functionPanelFunctions = (ut) => {
 
         break;
       case 'cancel': case 'withdraw':
-        // if api test result panel is openend yet
-        if (isVisibleApiContainer()) {
-          showApiTestPanel(false);
+        /*
+          Tips:
+            'cancel' may happen here and there, this cancel routine is for 'cancel selected item', 'cancel file upload' ....
+            also it may happen in file up loading
+        */
+        if (preferent.cmd != null && preferent.cmd == "fileselectoropen") {
+          $("#my_form input[name='upfile']").val("");
+          m = chooseMsg("cancel-msg", "", "");
         }
 
-        if (isVisibleApiContainer()) {
-          // cleanup the screen
-          cleanupItems4Switching();
-          cleanupContainers();
-          m = chooseMsg('cancel-msg', "", "");
-        } else {
-          // table list
-          if (deleteSelectedItems()) {
-            showGenelicPanel(false);
+        if (preferent.droptable != null && 0 < preferent.droptable.length) {
+          // if api test result panel is openend yet
+          if (isVisibleApiContainer()) {
+            showApiTestPanel(false);
+          }
+
+          if (isVisibleApiContainer()) {
+            // cleanup the screen
+            cleanupItems4Switching();
+            cleanupContainers();
             m = chooseMsg('cancel-msg', "", "");
           } else {
-            m = chooseMsg('unknown-msg', "", "");
+            // table list
+            if (deleteSelectedItems()) {
+              showGenelicPanel(false);
+              m = chooseMsg('cancel-msg', "", "");
+            } else {
+              m = chooseMsg('unknown-msg', "", "");
+            }
           }
-        }
         /* 
         18th Oct 
           comment outed below, but not sure it was OK or not. 
         */
         preferent.cmd = "";
-        delete preferent.droptable;
-
+        if (preferent.droptable != null) {
+          delete preferent.droptable;
+        }
+      }
         break;
       case 'droptable':
         // if api test result panel is openend yet
@@ -1525,9 +1538,10 @@ $(document).on("keydown", "#genelic_panel input[name='genelic_input']", function
 });
 
 // catch event of selecting upload file, then type a message in the chatbox
-$("#my_form input[name='upfile']").on("change",function(){
+$("#my_form input[name='upfile']").on("change", function () {
   let fullfilename = $(this).val();
   let p = fullfilename.split("\\");
-  let filename = p[p.length-1];
+  let filename = p[p.length - 1];
+  preferent.cmd = "fileselectoropen";
   typingControll(`you select "${filename}". then hit 'upload'.`);
 });

@@ -89,15 +89,23 @@ const checkResult = (o) => {
         $("#something_msg [name='jetelina_message']").removeClass("jetelina_suggestion");
         if (!o.result) {
             let em = "";
-            let errmsg = o["responseJSON"]["errmsg"];
-            let error = o["responseJSON"]["error"];
-            if (errmsg != null) {
+            let errmsg;
+            let error;
+            if(o["responseJSON"] != null){
+                errmsg = o["responseJSON"]["errmsg"];
+                error = o["responseJSON"]["error"];
+            }else{
+                errmsg = o.errmsg;
+                error = o.error;
+            }
+
+            if (0<errmsg.length) {
                 if (msglength < errmsg.length) {
                     errmsg = errmsg.substr(0, msglength);
                 }
 
                 em = errmsg;
-            } else if (error != null) {
+            } else if (0<error.length) {
                 if (msglength < error.length) {
                     error = error.substr(0, msglength);
                 }
@@ -895,66 +903,9 @@ const chatKeyDown = (cmd) => {
                                 $("#something_msg [name='jetelina_message']").text(configMsg);
                                 showSomethingMsgPanel(true);
                             }
-                            
-
                         } else if (inScenarioChk(ut, "get-config-change-history")) {
                             getAjaxData(scenario["function-get-url"][2]);
                         }
-/** 
-                        for (zzz in config) {
-                            
-                                Tips:
-                                    in the case of vague inputing, may have multi candidates.
-                                    but after showing them to user, may the right one inputing.
-                                    the first 'if' is maybe not hit, but secondly inputing may kit it.
-                            
-                            if (ut == zzz) {
-                                
-                                    Tips:
-                                        there is possilbility someting in multiscript[] yet.
-                                        needs to clear it before pushing the right one.
-                                
-                                multiscript = [];
-                                multiscript.push(zzz);
-                                break;
-                            } else {
-                                if (inScenarioChk(ut, zzz, 'config')) {
-                                    let r = countCandidates(ut, zzz, 'config');
-                                    multi += r[0];
-                                    multiscript.push(zzz);
-                                }
-                            }
-                        }
-
-                        // right message should be displayed if there were any candidates.
-                        let configMsg = "";
-                        if (1 < multi) {
-                            // pick candidates up
-                            m = chooseMsg('multi-candidates-msg', "", "");
-                            let multimsg = "there are multi candidates ";
-                            for (i = 0; i < multi; i++) {
-                                multimsg += `'${multiscript[i]}',`;
-                            }
-
-                            configMsg = multimsg;
-                        } else {
-                            // here you are, this,.... and so on
-                            if (m.length == 0) {
-                                m = chooseMsg("starting-6a-msg", "", "");
-                            }
-
-                            if (multiscript[0] != null && multiscript[0] != undefined) {
-                                presentaction.config_name = multiscript[0];
-                                let data = `{"param":"${multiscript[0]}"}`;
-                                postAjaxData(scenario["function-post-url"][2], data);
-                            }
-                        }
-
-                        if (0 < configMsg.length) {
-                            $("#something_msg [name='jetelina_message']").text(configMsg);
-                            showSomethingMsgPanel(true);
-                        }
-**/
                     }
 
                     if (!$("#something_input_field input[name='something_input']").is(":visible")) {
@@ -965,7 +916,6 @@ const chatKeyDown = (cmd) => {
                             m = conditionPanelFunctions(ut);
                         }
                     }
-
 
                     break;
                 default:

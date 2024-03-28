@@ -488,3 +488,19 @@
 │   krbsrvname = postgres
 │   target_session_attrs = any, 0), 0x0000000000007d59)
 └ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-27 15:32:15 PgDBController.dataInsertFromCSV() with /home/onoke/Jetelina/Jetelina/app/resources/repo/ftest.csv error : LibPQ.Errors.UniqueViolation("ERROR:  duplicate key value violates unique constraint \"ftest_jt_id_key\"\nDETAIL:  Key (jt_id)=(1) already exists.\nCONTEXT:  COPY ftest, line 1\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-27 15:35:50 PgDBController.dataInsertFromCSV() with /home/onoke/Jetelina/Jetelina/app/resources/repo/ftest.csv error : LibPQ.Errors.UniqueViolation("ERROR:  duplicate key value violates unique constraint \"ftest_jt_id_key\"\nDETAIL:  Key (jt_id)=(1) already exists.\nCONTEXT:  COPY ftest, line 1\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-27 15:41:49 PgDBController.dataInsertFromCSV() with /home/onoke/Jetelina/Jetelina/app/resources/repo/ftest.csv error : LibPQ.Errors.UniqueViolation("ERROR:  duplicate key value violates unique constraint \"ftest_jt_id_key\"\nDETAIL:  Key (jt_id)=(1) already exists.\nCONTEXT:  COPY ftest, line 1\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-27 16:17:55 PgDBController.dataInsertFromCSV() with /home/onoke/Jetelina/Jetelina/app/resources/repo/ftest.csv error : LibPQ.Errors.UniqueViolation("ERROR:  duplicate key value violates unique constraint \"ftest_jt_id_key\"\nDETAIL:  Key (jt_id)=(1) already exists.\nCONTEXT:  COPY ftest, line 1\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-28 09:45:18 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-28 09:45:20 SQLAnalyzer.main() start with : 48 hr interval
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-28 09:57:33 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-03-28 09:57:35 SQLAnalyzer.main() start with : 48 hr interval
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
