@@ -1,8 +1,8 @@
 <html>
     <head>
         <script type="text/javascript" src="../js/genie/jquery.min.js"></script>
-        <link rel="stylesheet" href="jetelina/css/dashboard.css">
-        <link type="text/css" rel="stylesheet" href="jetelina/css/tablelist.css">
+        <link rel="stylesheet" href="css/dashboard.css">
+        <link type="text/css" rel="stylesheet" href="css/tablelist.css">
     </head>
     <body>
         <button onclick="getAjaxData('s')">js89  is very simple Select</button>
@@ -67,13 +67,14 @@
     }
 
     const sqlPreExecTest = () => {
+        const aa = "aa";
         let pd = {};
         pd["item"] = ["org1000.jt_id","org1000.name"];
         pd["subquery"] = "where 2020<org1000.founded"; 
         pd["mode"] = "pre";
         let dd = JSON.stringify(pd);
         console.log("dd is ", dd);
-        
+        console.log("aa is ", aa);
         $.ajax( {
             url: "/createapi",
             type: "post",

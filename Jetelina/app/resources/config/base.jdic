@@ -5,7 +5,7 @@
 @jdic analyzed-data-collect-url:"/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getsqlaccessdata"
 
 # post urls for function panel 
-@jdic function-post-url:"/updateuserdata","/jetelinawords","/getconfigdata","/changeconfigdata","/createapi","/testapi"
+@jdic function-post-url:"/updateuserdata","/jetelinawords","/getconfigdata","/changeconfigdata","/createapi","/testapi","/chkacount"
 
 # get urls for function panel 
 @jdic function-get-url:"/getapilist","/getalldbtable","/getconfigchangehistory"
@@ -67,12 +67,6 @@
 @jdic config-update-cmd:"change parameter","parameter change","configuration change","change configuration","update configuration","configuration update","update parameter","parameter update","config change","change config","update config","config update"
 @jdic get-config-change-history:"configuration history", "change history","update history"
 
-#open the function panel
-@jdic function_panel-cmd:"function panel", "open func","show me func","function"
-
-#open the condition panel
-@jdic condition_panel-cmd:"condition panel", "open cond","show me cond","condition"
-
 #open table list
 @jdic func-show-table-list-cmd:"open table","show me table","table list","tables","tablelist","tableslist"
 
@@ -97,9 +91,14 @@
 #
 # basic commands in function panel
 #
-@jdic func-list-cmd:"open","close","select","cancel"
+@jdic common-cancel-cmd:"cancel","withdraw","abandon","postpone","give up","stop","quit"
+@jdic common-confirm-msg:"Sure?","Really?","Won't you regret?"
+@jdic common-alert-msg:"Boo","no hit","could not make it"
+@jdic common-ajax-error-msg:"Oh my, something server error happened:"
+#@jdic func-list-cmd:"open","close","select","cancel"
+@jdic func-table-api-open-close-cmd:"open","close","select","find"
 @jdic func-item-select-cmd:"select","choose","pick"
-@jdic func-item-select-all-cmd:"all", "everything", "total"
+@jdic func-item-select-all-cmd:"select all", "select everything", "select all columns","choose all","choose everything","choose all columns","pic all","pic everything","pic all columns"
 @jdic func-selecteditem-cancel-cmd:"cancel","remove","reject","withdraw"
 @jdic func-selecteditem-all-cancel-cmd:"cancel all","remove all","reject all","withdraw all"
 
@@ -108,18 +107,19 @@
 @jdic func-tabledrop-cmd:"drop","drop table","table drop","tabledrop","droptable"
 @jdic func-tabledrop-msg:"Which table do you want to drop?","correct order is \"droptable <table name>\" and so on"
 @jdic func-tabledrop-ng-msg:"Hey open the table list first!","Huum?","Check it first","Watch it"
-@jdic func-tabledrop-confirm-msg:"Sure?","Really?","Won't you regret?"
+#@jdic func-tabledrop-confirm-msg:"Sure?","Really?","Won't you regret?"
 
 @jdic func-apidelete-cmd:"delete","delete api","api delete","apidelete","deleteapi","remove","reject"
 @jdic func-apidelete-msg:"Which api do you want to delete?","correct order is \"delete <api name>\" and so on"
 @jdic func-apidelete-ng-msg:"Hey open the api list first!","Huum?","Check it first","Watch it"
 @jdic func-apidelete-forbidden-msg:"this api cannot be deleted, sorry"
-@jdic func-apidelete-confirm-msg:"Sure?","Really?","Won't you regret?"
+#@jdic func-apidelete-confirm-msg:"Sure?","Really?","Won't you regret?"
 
 @jdic func-fileupload-open-cmd:"file open","open file","open filebox","file box","csv file"
 @jdic func-fileupload-open-msg:"Which file?"
 @jdic func-fileupload-cmd:"upload","fileup","fileupload","up","csv up"
 @jdic func-fileupload-msg:"File?"
+@jdic func-fileupload-upload-msg:"you've selected '{Q}'. then hit 'upload'."
 @jdic func-csv-format-error-msg:"CSV format is not good, see the error message","Unacceptable CSV format, see the error message,"
 @jdic func-postcolumn-where-option-msg:"Wanna set the \"Where\" sentence? This is an option."
 @jdic func-postcolumn-where-indispensable-msg:"Set the \"Where\" sentence. This is an indispensable."
@@ -128,7 +128,6 @@
 @jdic func-subpanel-opened-msg:"Set your sub query in \"Sub Query\" field","Ready to \"Sub Query\" field"
 @jdic func-api-test-msg:"Why do not you try it, type \"sql test\" to execute this SQL","Let's check it with typing \"sql check\""
 @jdic func-api-test-cmd:"sql test","api test","test sql","test api","sql check","api check","check sql","check api"
-@jdic common-cancel-cmd:"cancel","withdraw","abandon","postpone","give up","stop","quit"
 
 #
 # log out 
@@ -146,3 +145,12 @@
 #
 @jdic hide-something-msg-cmd:"hide error","close error","delete error","hide message","close message","delete message"
 @jdic show-something-msg-cmd:"show error","open error", "display error","show message","open message","display message"
+
+#
+# configuration update caution/error message
+#
+@jdic config-update-simple-message:"put someting in there"
+@jdic config-update-plural-message:"which config?"
+@jdic config-update-plural-candidates-message:"there are multi candidates "
+@jdic config-update-alert-message:"Hey hey hey, put a new param in there"
+@jdic config-update-error-message:"Hey, no pointed configuration data"

@@ -8,12 +8,12 @@
 
     Functions list:
       getScenarioFile(l) read scenario.js file from server order by 'l' is language
-      checkResult(o) check the 'return' field in the object
+      checkResult(o) check the 'return' field in the object when post/get ajax failed
       getdata(o, t) resolve the json object into each data
       getAjaxData(url) general purpose ajax get call function 
       postAjaxData(url,data) general purpose ajax post call function 
       typingControll(m) typing character controller
-      authAjax(posturl, chunk, scenarioNumber) Authentication ajax call
+      authAjax(chunk) Authentication ajax call
       chooseMsg(i,m,p) select a message to show in chat box from js/senario.js 
       typing(i,m) show a chat message alike typing style 
       chkUResponse(n, s) check if the user input message is what is expected in scenario[] or config[]
@@ -29,7 +29,6 @@
       countCandidates(s,sc,type) count config/scenario candidates
       checkNewCommer(s) check the login user is a newcommer or not.
       checkBeginner() check the login user is a beginner or not.
-      getRandomNumber(i) create random number. the range is 0 to i.
       isVisibleFunctionPanel() check the function panel is visible or not
       inVisibleConditionPanel() check the condition panel is visible or not
       isVisibleSomethingMsgPanel() checking "#something_msg" is visible or not
@@ -37,7 +36,31 @@
       showSomethingMsgPanel(b) "#something_msg" show or hide
       isVisibleApiTestPanel() checking "#apitest" is visible or not
       showApiTestPanel(b) "#apitest" show or hide
+      inCancelableCmdList(cmd) check the ordered command is in cancelableCmdList or not
+      rejectCancelableCmdList(cmd) reject command from cancelableCmdList
 */
+const JETELINACHATTELL = `${JETELINAPANEL} [name='jetelina_tell']`;
+const SOMETHINGMSGPANEL = "#something_msg";
+const SOMETHINGMSGPANELMSG = `${SOMETHINGMSGPANEL} [name='jetelina_message']`;
+const CONTAINERNEWAPINO = `${CONTAINERPANEL} .newapino`;
+const CHATBOXYOURTELL = `${JETELINAPANEL} [name='your_tell']`;
+const SOMETHINGINPUTFIELD = "#something_input_field";
+const SOMETHINGINPUT = `${SOMETHINGINPUTFIELD} input[name='something_input']`;
+const SOMETHINGTEXT = `${SOMETHINGINPUTFIELD} text[name='something_text']`;
+const TABLECONTAINER = "#table_container";
+const APICONTAINER = "#api_container";
+const GENELICPANEL = "#genelic_panel";
+const CONFIGCHANGE = "config-change";// command in cancelable command list 
+const TABLEAPILISTOPEN = "table-api-open";// command in cancelable command list
+const SELECTITEM = "select-item";// command in cancelable command list
+const TABLEAPIDELETE = "table-api-delete";// command in cancelable command list
+const FILESELECTOROPEN = "files-elector-open"; // command in cancelable command list
+const LOCALPARAM = "login2jetelina"; // local strage parameter
+const USETCOUNTMAX = getRandomNumber(4) + 1; // only use for the first login in checkNewCommer
+
+//let enterNumber = 0;
+let typingTimeoutID;
+
 /**
  * 
  * @function getScenarioFile
@@ -72,13 +95,18 @@ const getScenarioFile = (l) => {
 /**
  *    @function checkResult
  *    @param {object} o mostry json data
- *    @returns {boolean} true/false
+ *    @returns {boolean} true  -> object o is not null and it contains 'return=true'
+ *                       false -> object o is null or it contains 'return=false' 
  * 
- *   check the 'return' field in the object
+ *   check the 'return' field in the object when post/get ajax failed.
+ *   this function is used for getting error messages.
  */
 const checkResult = (o) => {
     let ret = true;
     const msglength = 500; // displayed string length. over 500 is cut out.
+    const response = "responseJSON";// common json response data key name
+    const errMsg = "errmsg"; // this is the protocol in jl file
+    const errorStr = "error";// this is the protocol in jl file
 
     if (o != null) {
         /*
@@ -86,39 +114,45 @@ const checkResult = (o) => {
                 remove 'jetelina_suggestion' class if it is.
                 it does not need to confirm its existence.
         */
-        $("#something_msg [name='jetelina_message']").removeClass("jetelina_suggestion");
+        $(SOMETHINGMSGPANELMSG).removeClass("jetelina_suggestion");
         if (!o.result) {
             let em = "";
             let errmsg;
             let error;
-            if(o["responseJSON"] != null){
-                errmsg = o["responseJSON"]["errmsg"];
-                error = o["responseJSON"]["error"];
-            }else{
+            if (o[response] != null) {
+                errmsg = o[response][errMsg];
+                error = o[response][errorStr];
+            } else {
                 errmsg = o.errmsg;
                 error = o.error;
             }
 
-            if (0<errmsg.length) {
+            if (errmsg != null && 0 < errmsg.length) {
                 if (msglength < errmsg.length) {
                     errmsg = errmsg.substr(0, msglength);
                 }
-
+                /*
+                    Tips:
+                        because "errmsg" is cordinated message
+                */
                 em = errmsg;
-            } else if (0<error.length) {
+            } else if (error != null && 0 < error.length) {
                 if (msglength < error.length) {
                     error = error.substr(0, msglength);
                 }
-
-                em = `Oh my, something server error happened: ${error}`;
+                /*
+                    Tips:
+                        because "error" is raw error message
+                */
+                em = chooseMsg("common-ajax-error-msg", error, "a");
             }
 
-            $("#something_msg [name='jetelina_message']").text(em);
+            $(SOMETHINGMSGPANELMSG).text(em);
             showSomethingMsgPanel(true);
 
             ret = false;
         } else {
-            $("#something_msg [name='jetelina_message']").text("");
+            $(SOMETHINGMSGPANELMSG).text("");
             showSomethingMsgPanel(false);
             /*
                 Tips:
@@ -130,6 +164,8 @@ const checkResult = (o) => {
                 presentaction.config_data = null;
             }
         }
+    } else {
+        ret = false;
     }
 
     return ret;
@@ -150,113 +186,113 @@ const getdata = (o, t) => {
     if (o != null) {
         let configChangeHistoryStr = "";
 
-        checkResult(o);
-        Object.keys(o).forEach(function (key) {
-            /*
-                Tips:
-                    get the table name of this column at first.
-                    it is to be 'undefined' in the case of showing table list(t=0)
-            */
-            let targetTable = o["tablename"];
-
-            /*
-                Tips:
-                    because Jetelina's value is object.  name=>key value=>o[key]
-            */
-            let row = 1, col = 1;
-            if (key == "Jetelina" && o[key].length > 0) {
-                $.each(o[key], function (k, v) {
-                    if (v != null) {
-                        let str = "";
-                        if (t < 2) {
-                            /*
-                                Tips:
-                                    get data then show as the list in below loop as t=0/1(table list and column list) is simply object.
-                           */
-                            $.each(v, function (name, value) {
+        if (checkResult(o)) {// check the result for sure
+            Object.keys(o).forEach(function (key) {
+                /*
+                    Tips:
+                        get the table name of this column at first.
+                        it is to be 'undefined' in the case of showing table list(t=0)
+                */
+                let targetTable = o["tablename"];
+                /*
+                    Tips:
+                        because Jetelina's value is object.  name=>key value=>o[key]
+                */
+                let row = 1, col = 1;
+                if (key == "Jetelina" && o[key].length > 0) {
+                    $.each(o[key], function (k, v) {
+                        if (v != null) {
+                            let str = "";
+                            if (t < 2) {
                                 /*
                                     Tips:
-                                        in the case of value is url. ex. http://aaaa.com/  
-                                            <- this last '/' is be interfered its rendering.
+                                        get data then show as the list in below loop as t=0/1(table list and column list) is simply object.
+                               */
+                                $.each(v, function (name, value) {
+                                    /*
+                                        Tips:
+                                            in the case of value is url. ex. http://aaaa.com/  
+                                                <- this last '/' is be interfered its rendering.
+                                    */
+                                    if ($.type(value) === "string") {
+                                        if (value.endsWith("/")) {
+                                            value = value.slice(0, -1);
+                                        }
+                                    }
+
+                                    if (t == 0) {
+                                        // table list
+                                        str += `<span class="table">${value}</span>`;
+                                    } else if (t == 1) {
+                                        // jetelina_delete_flg should not show in the column list
+                                        if (name != "jetelina_delete_flg") {
+                                            str += `<span class="item" d=${value}><p>${targetTable}.${name}</p></span>`;
+                                        }
+                                    }
+                                });
+                            } else if (t == 2) {
+                                /*
+                                    Tips:
+                                        case t=2: wanna show it in one line
+                                        this is the api list.
                                 */
-                                if ($.type(value) === "string") {
-                                    if (value.endsWith("/")) {
-                                        value = value.slice(0, -1);
-                                    }
+                                str += `<span class="api">${v.apino}</span>`;
+                            } else if (t == 3) {
+                                if (v.date != null) {
+                                    configChangeHistoryStr += `[${v.date}] `;
                                 }
 
-                                if (t == 0) {
-                                    // table list
-                                    str += `<span class="table">${value}</span>`;
-                                } else if (t == 1) {
-                                    // jetelina_delete_flg should not show in the column list
-                                    if (name != "jetelina_delete_flg") {
-                                        str += `<span class="item" d=${value}><p>${targetTable}.${name}</p></span>`;
-                                    }
+                                if (v.previous != null) {
+                                    $.each(v.previous, function (kk, vv) {
+                                        configChangeHistoryStr += `${kk}=${vv} `;
+                                    });
+
+                                    configChangeHistoryStr += " → ";
                                 }
-                            });
-                        } else if (t == 2) {
-                            /*
-                                Tips:
-                                    case t=2: wanna show it in one line
-                                    this is the api list.
-                            */
-                            str += `<span class="api">${v.apino}</span>`;
-                        } else if (t == 3) {
-                            if (v.date != null) {
-                                configChangeHistoryStr += `[${v.date}] `;
+
+                                if (v.latest != null) {
+                                    $.each(v.latest, function (kk, vv) {
+                                        configChangeHistoryStr += `${kk}=${vv} `;
+                                    });
+
+                                    configChangeHistoryStr += "<br>";
+                                }
                             }
 
-                            if (v.previous != null) {
-                                $.each(v.previous, function (kk, vv) {
-                                    configChangeHistoryStr += `${kk}=${vv} `;
-                                });
-
-                                configChangeHistoryStr += " → ";
+                            let tagid = "";
+                            if (t == 0) {
+                                tagid = TABLECONTAINER;
+                            } else if (t == 1) {
+                                tagid = "#columns .item_area";
+                            } else if (t == 2) {
+                                tagid = APICONTAINER;
                             }
 
-                            if (v.latest != null) {
-                                $.each(v.latest, function (kk, vv) {
-                                    configChangeHistoryStr += `${kk}=${vv} `;
-                                });
-
-                                configChangeHistoryStr += "<br>";
-                            }
+                            $(tagid).append(`${str}`);
                         }
+                    });
 
-                        let tagid = "";
-                        if (t == 0) {
-                            tagid = "#table_container";
-                        } else if (t == 1) {
-                            tagid = "#columns .item_area";
-                        } else if (t == 2) {
-                            tagid = "#api_container";
+                    if (t == 4) {
+                        showApiTestPanel(true);
+
+                        let datanumber = o[key].length;
+                        let jetelinamessage = o["message from Jetelina"];
+                        let testmsg = `<span class="jetelina_suggestion"><p>Conguraturation, well done.<br>aquaiable data number is ${datanumber}</p></span>`;
+                        let testdata = JSON.stringify(o[key]);
+                        $("#apitest [name='api-test-msg']").append(testmsg);
+                        $("#apitest [name='api-test-data'").append(`<span class=\"jetelina_suggestion\"><p>${testdata}</p></span>`);
+                        if (0 < jetelinamessage.length) {
+                            $("#apitest [name='api-test-msg']").append(`<span class="jetelina_suggestion"><p>Attention: ${jetelinamessage}</p></span>`);
                         }
-
-                        $(tagid).append(`${str}`);
-                    }
-                });
-
-                if (t == 4) {
-                    showApiTestPanel(true);
-
-                    let datanumber = o[key].length;
-                    let jetelinamessage = o["message from Jetelina"];
-                    let testmsg = `<span class="jetelina_suggestion"><p>Conguraturation, well done.<br>aquaiable data number is ${datanumber}</p></span>`;
-                    let testdata = JSON.stringify(o[key]);
-                    $("#apitest [name='api-test-msg']").append(testmsg);
-                    $("#apitest [name='api-test-data'").append(`<span class=\"jetelina_suggestion\"><p>${testdata}</p></span>`);
-                    if(0<jetelinamessage.length){
-                        $("#apitest [name='api-test-msg']").append(`<span class="jetelina_suggestion"><p>Attention: ${jetelinamessage}</p></span>`);
                     }
                 }
-            }
-        });
+            });
 
-        if (t == 3) {
-            $("#something_msg").addClass("config_history");
-            $("#something_msg [name='jetelina_message']").addClass("config_history_text").append(configChangeHistoryStr);
-            showSomethingMsgPanel(true);
+            if (t == 3) {
+                $(SOMETHINGMSGPANEL).addClass("config_history");
+                $(SOMETHINGMSGPANELMSG).addClass("config_history_text").append(configChangeHistoryStr);
+                showSomethingMsgPanel(true);
+            }
         }
     }
 }
@@ -296,8 +332,8 @@ const getAjaxData = (url) => {
                     // set suggestion existing flag to display my message
                     isSuggestion = true;
                     // set my suggestion
-                    $("#something_msg [name='jetelina_message']").addClass("jetelina_suggestion");
-                    $("#something_msg [name='jetelina_message']").text(`${result.Jetelina.apino}:${result.Jetelina.suggestion}`);
+                    $(SOMETHINGMSGPANELMSG).addClass("jetelina_suggestion");
+                    $(SOMETHINGMSGPANELMSG).text(`${result.Jetelina.apino}:${result.Jetelina.suggestion}`);
                     // relation access & combination
                     getAjaxData(dataurls[0]);
                     // simply sql speed
@@ -332,15 +368,15 @@ const getAjaxData = (url) => {
                     Tips:
                         drow graphic in condition panel.
                         this setGraphDta() function is defined in conditionpanel.js.
-                        acVsCom is defined in dashboard.js as a global variable,this is expected true/false.
                 */
-                acVscom = setGraphData(result, type);
+                let acVscom = setGraphData(result, type);
 
                 if (isSuggestion) {
                     /*
                         Tips:
                             isSuggestion = true, the meaning of the file existing is Jetelina wanna put inform you something 'improving suggestion'.
                             the below message is for it.
+                            but abandon any 'suggestion" in Ver.1
                     */
                     typingControll(chooseMsg("cond-performance-improve-msg", "", ""));
                 } else {
@@ -428,7 +464,7 @@ const postAjaxData = (url, data) => {
                     }
                 });
 
-                $("#something_msg [name='jetelina_message']").text(configMsg);
+                $(SOMETHINGMSGPANELMSG).text(configMsg);
                 showSomethingMsgPanel(true);
             } else if (url == posturls[3]) {
                 // configuration parameter change success then cleanup the "#something_msg"
@@ -464,21 +500,20 @@ const typingControll = (m) => {
     */
     if (typingTimeoutID != null) {
         clearTimeout(typingTimeoutID);
-        $("#jetelina_panel [name='jetelina_tell']").text("");
+        $(JETELINACHATTELL).text("");
     }
 
     typing(0, m);
 }
 /**
  * @function authAjax
- * @param {string} posturl  execute url 
- * @param {string} chunk    post data as json style
- * @param {string} scenarioNumber  showing message after executing
+ * @param {string} un    user account
  * 
  * Authentication ajax call
  */
-const authAjax = (posturl, chunk, scenarioNumber) => {
-    const data = JSON.stringify({ username: `${chunk}` });
+const authAjax = (un) => {
+    const data = JSON.stringify({ username: `${un}` });
+    const posturl = scenario["function-post-url"][6];
 
     $.ajax({
         url: posturl,
@@ -493,7 +528,7 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
             return ret;
         }
     }).done(function (result, textStatus, jqXHR) {
-        scenarioNumber = "starting-4-msg";
+        let scenarioNumber = "starting-4-msg";
         if (result != null) {
             const o = result;
             let m = "";
@@ -503,7 +538,7 @@ const authAjax = (posturl, chunk, scenarioNumber) => {
                     $.each(o[key][0], function (k, v) {
                         if (k == "user_id") {
                             loginuser.user_id = v;
-                            localStorage[localparam] = true;
+                            localStorage[LOCALPARAM] = true;
                         } else if (k == "login") {
                             loginuser.login = v;
                         } else if (k == "firstname") {
@@ -588,7 +623,7 @@ const chooseMsg = (i, m, p) => {
     */
     scenario_name = i;
     let ret = "";
-    if( scenario[i] != null && 0<scenario[i].length){
+    if (scenario[i] != null && 0 < scenario[i].length) {
         const n = getRandomNumber(scenario[i].length);
         let s = scenario[`${i}`][n];
         if (0 < m.length) {
@@ -602,15 +637,12 @@ const chooseMsg = (i, m, p) => {
         }
 
         ret = s;
-    }else{
+    } else {
         console.info(`scenario -> ${i} is null`);
     }
 
     return ret;
 }
-
-let typingTimeoutID;
-
 /**
  * @function typing
  * @param {integer} i  the next character number 
@@ -624,8 +656,8 @@ const typing = (i, m) => {
     let ii = i;
     if (m != null && i < m.length) {
         ii++;
-        let pm = $("#jetelina_panel [name='jetelina_tell']").text();
-        $("#jetelina_panel [name='jetelina_tell']").text(pm + m[i]);
+        let pm = $(JETELINACHATTELL).text();
+        $(JETELINACHATTELL).text(pm + m[i]);
     } else {
         return;
     }
@@ -634,7 +666,7 @@ const typing = (i, m) => {
 }
 /**
  * @function chkUResponse
- * @param {string} n  scenario array index number 
+ * @param {string} n  scenario array index
  * @param {string} s  user input character
  * @returns {boolean}  true -> as expected  false -> unexpected user response
  * 
@@ -657,19 +689,20 @@ const chkUResponse = (n, s) => {
 
     return false;
 }
-
-let enterNumber = 0;
 /**
  * function chatKeyDown
- * @param {string} cmd 
+ * @param {string} cmd  something ordered string. ex. user key input, scenario[] command .... etc 
  * 
  * behavior of hitting enter key in the chat box by user
  */
 const chatKeyDown = (cmd) => {
     /* ut is the input character by user */
     let ut;
+    let m = ""; // chatbox message string by Jetelina.
+
     if (cmd == null) {
-        ut = $("#jetelina_panel [name='chat_input']").val().toLowerCase();
+        ut = $(JETELINACHATBOX).val().toLowerCase();
+        ut = ut.replaceAll(',', ' ').replaceAll(':', ' ').replaceAll(';', ' ');
     } else {
         ut = cmd.toLowerCase();
     }
@@ -680,17 +713,17 @@ const chatKeyDown = (cmd) => {
         ut = $.trim(ut.toLowerCase());
         /*
             Tips:
-                After registring new api, maybe called it as opening.
+                After registring a new api, maybe called it to open.
                 the opening command will be duplicated with table opening one, 
                 therefore some conditions are there for judging them which one is. 
         */
-        if ($("#container .newapino").text() != null && 0 < $("#container .newapino").text().length) {
-            let newapinostr = $("#container .newapino").text();
+        if ($(CONTAINERNEWAPINO).text() != null && 0 < $(CONTAINERNEWAPINO).text().length) {
+            let newapinostr = $(CONTAINERNEWAPINO).text();
             let s = newapinostr.split("js");
             let apino = `js${s[s.length - 1]}`;
-            if(ut.indexOf(apino) != -1){
+            if (ut.indexOf(apino) != -1) {
                 presentaction.orderapino = apino;
-                $("#container .newapino").text("");
+                $(CONTAINERNEWAPINO).text("");
                 /*
                     Tips:
                         ①
@@ -699,15 +732,13 @@ const chatKeyDown = (cmd) => {
                 chatKeyDown(scenario["func-show-api-list-cmd"][0]);
             }
         }
-    
 
-        let m = "";
         /* do it only if there were a input character by user */
         if (0 < ut.length) {
-            enterNumber++;
-            $("#jetelina_panel [name='jetelina_tell']").text("");
-            $("#jetelina_panel [name='chat_input']").val("");
-            $("#jetelina_panel [name='your_tell']").text(ut);
+            //            enterNumber++;
+            $(JETELINACHATTELL).text("");
+            $(JETELINACHATBOX).val("");
+            $(CHATBOXYOURTELL).text(ut);
 
             // logout
             if (logoutChk(ut)) {
@@ -718,7 +749,7 @@ const chatKeyDown = (cmd) => {
 
             /*
                 Tips:
-                    may, 'm' has already been set in logout process.
+                    may, 'm' already has been set in logout process.
             */
             if (m.length == 0) {
                 // check ordered the command list
@@ -726,15 +757,16 @@ const chatKeyDown = (cmd) => {
             }
 
             // check the instraction mode that is teaching 'words' to Jetelina or not
-            instractionMode(ut);
+            // but deprecated in Ver.1
+            //instractionMode(ut);
 
             // check the error message panel hide or not
             if (inScenarioChk(ut, 'hide-something-msg-cmd')) {
                 showSomethingMsgPanel(false);
-                m = 'ignore';
+                //                m = IGNORE;
             } else if (inScenarioChk(ut, 'show-something-msg-cmd')) {
                 showSomethingMsgPanel(true);
-                m = 'ignore';
+                //                m = IGNORE;
             }
 
             /*
@@ -742,8 +774,6 @@ const chatKeyDown = (cmd) => {
                        login:at login
                        login_success: after login
                        lets_do_something: the stage after 'login_success'
-                       func: the stage into function panel
-                       cond: the stage into condition panel
                        default:before login
             */
             switch (stage) {
@@ -759,7 +789,6 @@ const chatKeyDown = (cmd) => {
                     break;
                 case 'login':
                     let chunk = "";
-                    scenarioNumber = "starting-4-msg";
 
                     if (ut.indexOf(" ") != -1) {
                         let p = ut.split(" ");
@@ -768,8 +797,8 @@ const chatKeyDown = (cmd) => {
                         chunk = ut;
                     }
 
-                    authAjax('/chkacount', chunk, scenarioNumber);
-                    m = 'ignore';
+                    authAjax(chunk);
+                    m = IGNORE;
                     break;
                 case 'login_success':
                     /*
@@ -803,51 +832,56 @@ const chatKeyDown = (cmd) => {
 
                     break;
                 case 'lets_do_something':
+                    // chatbox moves to below
                     const panelTop = window.innerHeight - 110;
-                    $("#jetelina_panel").animate({
+                    $(JETELINAPANEL).animate({
                         height: "70px",
                         top: `${panelTop}px`,
                         left: "210px"
-                    }, animateDuration);
-
-
+                    }, ANIMATEDURATION);
                     /*
-                        if 'ut' is a command for driving configuration
-                        localStrage checking is for secure reason
+                        Tips:
+                            if 'ut' is a command for driving configuration
+                            localStrage checking is for secure reason
                     */
-                    if (localStorage[localparam] == "true") {
+                    if (localStorage[LOCALPARAM] == "true") {
                         let multi = 0;
                         let multiscript = [];
                         // configuration parameter updating
-                        if (inScenarioChk(ut, 'common-cancel-cmd')) {
+                        if (inScenarioChk(ut, 'common-cancel-cmd') && inCancelableCmdList("CONFIGCHANGE")) {
                             preferent.cmd = null;
                             presentaction.config_name = null;
                             presentaction.config_data = null;
                             showSomethingInputField(false);
                             m = chooseMsg("cancel-msg", "", "");
-                        } else if (presentaction.cmd != null && presentaction.cmd == "config-change") {
+                        }
+
+                        if (presentaction.cmd != null && presentaction.cmd == "CONFIGCHANGE") {
                             if (presentaction.config_name != null) {
-                                if ($("#something_input_field input[name='something_input']").is(":visible")) {
+                                if ($(SOMETHINGINPUT).is(":visible")) {
                                     if (inScenarioChk(ut, 'common-post-cmd')) {
-                                        let new_param = $("#something_input_field input[name='something_input']").val();
+                                        let new_param = $(SOMETHINGINPUT).val();
                                         if (0 < new_param.length) {
                                             let data = `{"${presentaction.config_name}":"${new_param}"}`;
                                             postAjaxData(scenario["function-post-url"][3], data);
                                         } else {
-                                            m = "Hey hey hey, put a new param in there";
+                                            m = chooseMsg("config-update-alert-message","","");;
                                         }
                                     }
                                 }
                             } else {
-                                m = "Hey, no pointed configuration data";
+                                m = chooseMsg("config-update-error-message","","");
                             }
-                        } else if (inScenarioChk(ut, "config-update-cmd")) {
-                            presentaction.cmd = "config-change";
+                        }
+
+                        if (inScenarioChk(ut, "config-update-cmd")) {
+                            presentaction.cmd = CONFIGCHANGE;
+                            cancelableCmdList.push(presentaction.cmd);
                             if (presentaction.config_name != null && presentaction.config_data != null) {
                                 showSomethingInputField(true);
-                                m = "put someting in there";
+                                m = chooseMsg("config-update-simple-message","","");
                             } else {
-                                m = "which config?";
+                                m = chooseMsg("config-update-plural-message","","");
                             }
 
                             for (zzz in config) {
@@ -874,33 +908,33 @@ const chatKeyDown = (cmd) => {
                                     }
                                 }
                             }
-    
+
                             // right message should be displayed if there were any candidates.
                             let configMsg = "";
                             if (1 < multi) {
                                 // pick candidates up
-                                m = chooseMsg('multi-candidates-msg', "", "");
-                                let multimsg = "there are multi candidates ";
+                                m = chooseMsg('multi-candidates-msg', "", "");// this 'm' is ddisplayed in chatbox
+                                let multimsg = chooseMsg("config-update-plural-candidates-message","","");// this 'multimsg' is displayed in SOMETHINGMSGPANEL
                                 for (i = 0; i < multi; i++) {
                                     multimsg += `'${multiscript[i]}',`;
                                 }
-    
+
                                 configMsg = multimsg;
                             } else {
                                 // here you are, this,.... and so on
                                 if (m.length == 0) {
                                     m = chooseMsg("starting-6a-msg", "", "");
                                 }
-    
+
                                 if (multiscript[0] != null && multiscript[0] != undefined) {
                                     presentaction.config_name = multiscript[0];
                                     let data = `{"param":"${multiscript[0]}"}`;
                                     postAjaxData(scenario["function-post-url"][2], data);
                                 }
                             }
-    
+
                             if (0 < configMsg.length) {
-                                $("#something_msg [name='jetelina_message']").text(configMsg);
+                                $(SOMETHINGMSGPANELMSG).text(configMsg);
                                 showSomethingMsgPanel(true);
                             }
                         } else if (inScenarioChk(ut, "get-config-change-history")) {
@@ -908,10 +942,10 @@ const chatKeyDown = (cmd) => {
                         }
                     }
 
-                    if (!$("#something_input_field input[name='something_input']").is(":visible")) {
+                    if (!$(SOMETHINGINPUT).is(":visible")) {
                         // if 'ut' is a command for driving function
                         m = functionPanelFunctions(ut);
-                        if (m.length == 0 || m == "ignore") {
+                        if (m.length == 0 || m == IGNORE) {
                             // if 'ut' is a command for driving condition
                             m = conditionPanelFunctions(ut);
                         }
@@ -935,15 +969,15 @@ const chatKeyDown = (cmd) => {
 
                     break;
             }
-
-            if (0 < enterNumber) {
-                $("#jetelina_panel [name='jetelina_tell']").val("");
-                enterNumber = 0;
-            }
-
-            if (0 < m.length && m != 'ignore') {
+            /*
+                        if (0 < enterNumber) {
+                            $(JETELINACHATTELL).val("");
+                            enterNumber = 0;
+                        }
+            */
+            if (0 < m.length && m != IGNORE) {
                 typingControll(m);
-            } else if (m == 'ignore' && stage != 'login') {
+            } else if (m == IGNORE && stage != 'login') {
                 typingControll(chooseMsg('waiting-next-msg', "", ""));
             } else if (m == null || m.length == 0) {
                 // cannot understand what the user is typing
@@ -954,14 +988,14 @@ const chatKeyDown = (cmd) => {
             if (logoutflg) {
                 const t = 10000;// switch to the opening screen after 10 sec
                 logouttimerId = setTimeout(function () {
-                    $("#jetelina_panel [name='your_tell']").text("");
+                    $(CHATBOXYOURTELL).text("");
                     openingMessage();
                 }, t);
             }
         }
     } else {
-        $("#jetelina_panel [name='chat_input']").val("");
-        enterNumber = 0;
+        $(JETELINACHATBOX).val("");
+        //        enterNumber = 0;
     }
 
 }
@@ -972,8 +1006,8 @@ const chatKeyDown = (cmd) => {
  */
 const openingMessage = () => {
     const t = 10000;// into idling mode after 10 sec if nothing input into the chat box
-    $("#jetelina_panel [name='jetelina_tell']").text("");
-    $("#jetelina_panel [name='your_tell']").text("");
+    $(JETELINACHATTELL).text("");
+    $(CHATBOXYOURTELL).text("");
     typingControll(chooseMsg("starting-0-msg", "", ""));
 
     setTimeout(function () { burabura() }, t);
@@ -986,8 +1020,8 @@ const openingMessage = () => {
 const burabura = () => {
     const t = 30000;// chage the idling message after 20 sec
     timerId = setInterval(function () {
-        $("#jetelina_panel [name='jetelina_tell']").text("");
-        $("#jetelina_panel [name='your_tell']").text("");
+        $(JETELINACHATTELL).text("");
+        $(CHATBOXYOURTELL).text("");
         typingControll(chooseMsg('bura-msg', "", ""))
     }, t);
 }
@@ -1008,22 +1042,22 @@ const logoutChk = (s) => {
  * logout
  */
 const logout = () => {
-    enterNumber = 0;
+    //    enterNumber = 0;
     stage = 0;
     isSuggestion = false;
-    localStorage[localparam] = false;
+    localStorage[LOCALPARAM] = false;
 
-    $("#jetelina_panel").animate({
+    $(JETELINAPANEL).animate({
         width: "400px",
         height: "100px",
         top: "40%",
         left: "40%"
-    }, animateDuration);
+    }, ANIMATEDURATION);
 
-    $("#function_panel").hide();
-    $("#condition_panel").hide();
-    $("#genelic_panel").hide();
-    $("#plot").hide();
+    $(FUNCTIONPANEL).hide();
+    $(CONDITIONPANEL).hide();
+    $(GENELICPANEL).hide();
+    $(CHARTPANEL).hide();
     $("#api_access").hide();
     $("#performance_real").hide();
     $("#performance_test").hide();
@@ -1082,6 +1116,7 @@ const getPreferentPropertie = (p) => {
  * confirmation in adding a new scenario.
  * 
  * Wanna to be 0nly for Jetelina administrator.
+ * deprecated in Ver.1, but may will revival in future, who knows :P
  */
 const instractionMode = (s) => {
     if (s.indexOf("say:") != -1) {
@@ -1101,7 +1136,7 @@ const instractionMode = (s) => {
  * 
  */
 const showManualCommandList = (s) => {
-    let ret = "ignore";
+    let ret = IGNORE;
     let tagid1 = "";
     let showflg = true;
 
@@ -1119,7 +1154,7 @@ const showManualCommandList = (s) => {
             height: window.innerHeight * 0.8,
             top: "10%",
             left: "10%"
-        }, animateDuration).draggable();
+        }, ANIMATEDURATION).draggable();
 
         ret = chooseMsg("starting-6a-msg", "", "");
     } else {
@@ -1155,6 +1190,7 @@ const inScenarioChk = (s, sc, type) => {
              order[] has multiple sentence as in the array.
              this 'if' sentence compares s(user input sentence) with the scenario array sentences.
              then possible multi candidates because of realizing vague cpmparing.
+             indeed using $.inArray() makes this judge strict, but remains a vagueness. 
         */
         if (s.indexOf(order[key]) != -1) {
             return true;
@@ -1233,7 +1269,7 @@ const checkNewCommer = (s) => {
             postAjaxData(scenario["function-post-url"][0], data);
         } else {
             // set user's info, these are using for authentication.
-            if (usetcount < usetcountmax) {
+            if (usetcount < USETCOUNTMAX) {
                 m = chooseMsg('first-login-ask-info-then-msg', "", "");
                 data = `{"uid":${loginuser.user_id},"key":"lastname","val":"${s}"}`;
             } else {
@@ -1264,16 +1300,6 @@ const checkBeginner = () => {
     }
 }
 /**
- * @function getRandomNumber
- * @param {integer} ordered random range
- * @returns {boolean}  true -> yes a beginner, false -> an expert
- * 
- * create random number. the range is 0 to i.
- */
-const getRandomNumber = (i) => {
-    return Math.floor(Math.random() * i);
-}
-/**
  * @function isVisibleFunctionPanel
  * @returns {boolean}  true -> visible, false -> invisible
  * 
@@ -1281,7 +1307,7 @@ const getRandomNumber = (i) => {
  */
 const isVisibleFunctionPanel = () => {
     let ret = false;
-    if ($("#function_panel").is(":visible")) {
+    if ($(FUNCTIONPANEL).is(":visible")) {
         ret = true;
     }
 
@@ -1295,7 +1321,7 @@ const isVisibleFunctionPanel = () => {
 */
 const inVisibleConditionPanel = () => {
     let ret = false;
-    if ($("#condition_panel").is(":visible")) {
+    if ($(CONDITIONPANEL).is(":visible")) {
         ret = true;
     }
 
@@ -1309,7 +1335,7 @@ const inVisibleConditionPanel = () => {
 */
 const isVisibleSomethingMsgPanel = () => {
     let ret = false;
-    if ($("#something_msg").is(":visible")) {
+    if ($(SOMETHINGMSGPANEL).is(":visible")) {
         ret = true;
     }
 
@@ -1325,17 +1351,17 @@ const isVisibleSomethingMsgPanel = () => {
 const showSomethingInputField = (b) => {
     if (b) {
         if (isVisibleSomethingMsgPanel()) {
-            $("#something_input_field text[name='something_text']").text("Change this to =>");
-            $("#something_input_field input[name='something_input']").attr('placeholder', 'new parameter...');
+            $("SOMETHINGTEXT").text("Change this to =>");
+            $(SOMETHINGINPUT).attr('placeholder', 'new parameter...');
         }
 
-        $("#something_input_field").show();
-        $("#something_input_field input[name='something_input']").focus();
+        $("SOMETHINGINPUTFIELD").show();
+        $(SOMETHINGINPUT).focus();
     } else {
-        $("#something_msg [name='jetelina_message']").text("");
-        $("#something_input_field text[name='something_text']").text("");
-        $("#something_input_field input[name='something_input']").val("");
-        $("#something_input_field").hide();
+        $(SOMETHINGMSGPANELMSG).text("");
+        $("SOMETHINGTEXT").text("");
+        $(SOMETHINGINPUT).val("");
+        $("SOMETHINGINPUTFIELD").hide();
         showSomethingMsgPanel(false);
     }
 }
@@ -1348,14 +1374,14 @@ const showSomethingInputField = (b) => {
  */
 const showSomethingMsgPanel = (b) => {
     if (b) {
-        $("#something_msg").show();
+        $(SOMETHINGMSGPANEL).show();
     } else {
         // these classes are for configuration changing history message
-        $("#something_msg").removeClass("config_history");
-        $("#something_msg [name='jetelina_message']").removeClass("config_history_text");
-        $("#something_msg [name='jetelina_message']").text("");
+        $(SOMETHINGMSGPANEL).removeClass("config_history");
+        $(SOMETHINGMSGPANELMSG).removeClass("config_history_text");
+        $(SOMETHINGMSGPANELMSG).text("");
 
-        $("#something_msg").hide();
+        $(SOMETHINGMSGPANEL).hide();
     }
 }
 
@@ -1391,13 +1417,42 @@ const showApiTestPanel = (b) => {
         $("#apitest").hide();
     }
 }
+/**
+ * @function inCancelableCmdList
+ *
+ * @param {string} command name ex.CONFIGCHANGE..
+ * @preturn {boolean} true -> is in the list  false -> no
+ *  
+ * check the ordered command is in cancelableCmdList or not
+ */
+const inCancelableCmdList = (cmd) =>{
+    let ret = false;
+    if(-1<$.inArray(cmd,cancelableCmdList)){
+        ret = true;
+    }
 
+    return ret;
+}
+/**
+ * @function rejectCancelableCmdList
+ *
+ * @param {string} command name ex.CONFIGCHANGE..
+ *  
+ * reject command from cancelableCmdList
+ */
+const rejectCancelableCmdList = (cmd) =>{
+    cancelableCmdList = cancelableCmdList.filter(function(d){
+        return d != cmd;
+    });
+}
 
-
+$(document).on("mousedown", function (e) {
+//    console.log("focus on :", $(":focus"));
+});
 
 // return to the chat box if 'return key' is typed in something_input_field
-$(document).on("keydown", "#something_input_field input[name='something_input']", function (e) {
+$(document).on("keydown", SOMETHINGINPUT, function (e) {
     if (e.keyCode == 13) {
-        $("#jetelina_panel [name='chat_input']").focus();
+        focusonJetelinaPanel()
     }
 });

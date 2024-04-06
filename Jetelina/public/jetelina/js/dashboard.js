@@ -4,31 +4,38 @@
  * 
  * This is the main js file for Jetelina. These functions handle the initial behavior of Jetelina screen.
  * 
+ *     Functions list:
+ *       getRandomNumber(i) create random number. the range is 0 to i.
  */
+const ANIMATEDURATION = 1500;// animate() duration
+const IGNORE = "ignore"; // when jetelina message is nothing
+const JETELINAPANEL ="#jetelina_panel"; 
+const FUNCTIONPANEL = "#function_panel";
+const CONDITIONPANEL = "#condition_panel";
+const CONTAINERPANEL = "#container";
+const JETELINACHATBOX = `${JETELINAPANEL} [name='chat_input']`;
+const CHARTPANEL = "#plot";
 let stage = 0;// action stage number ex. 1:before login  'login':at login
 let preferent = {};// contains precedence commands. ex. droptable, deliteApi...
 let presentaction = {};// contains the present function, mode etc  ex. functionpanel -> table
-const animateDuration = 1500;// animate() duration
+let cancelableCmdList = [];// candidate list for cancelable commands, cancelable 'presentaction' is listed in here  
 let isSuggestion = false; // set this to 'true' in getAjaxData() if there were Jetelina's suggestion
 let timerId;// interval timer of the idling comment in the opening screen。uses in jetelinalib.js burabura()
 let logouttimerId;// interval timer of transfering logout to opening scree, use in jetelinalib.js chatKeyDown()
-let acVscom;// flg for exisiting the data of 'Access vs Combination'.
 let inprogress=false;// true -> ajax function is in progress , false -> is not i progress. set in $.ajax({xhr:})
 let loginuser = {}; // contains login user info
 let authcount = 0; // authentication count. this is randum number that is set in login function
 let usetcount = 0; // only use for the first login in checkNewCommer function in jetelinalib.js
-const localparam = "login2jetelina"; // local strage parameter
-const usetcountmax = getRandomNumber(4) + 1; // only use for the first login in checkNewCommer function in jetelinalib.js
 
 $(window).load(function () {
   /**
    * @function focusonJetelinaPanel
    * 
    * focust on the input tag of jetelina panel
-   */
+   *
   const focusonJetelinaPanel = () => {
-    $("#jetelina_panel [name='chat_input']").focus();
-  }
+    $(JETELINACHATBOX).focus();
+  }*/
   /**
    * @function activePanel
    * @param {string]} panel tag name
@@ -49,60 +56,57 @@ $(window).load(function () {
     $(p).removeClass("commonpanelborderon");
     $(p).addClass("commonpanelborderoff");
   }
-
-  /* panelをclickしたときに画面中央にpanelを移動させる。
-     panelサイズを考慮した移動にしないといけない。
-     8/29 要るかどうかどうかわからないので一旦コメントアウト。 #83も同じ
-  
-  const moveTotheCenter = () => {
-  }*/
-
   /**
    * manipulate jetelina panel (chat)
    */
-  $("#jetelina_panel").show().draggable();
-  /**
-   *   manipulate condition panel
-   */
-  $("#condition_panel").hide().draggable();
-  $("#plot").mouseover(function () {
-    $("#condition_panel").draggable("disable");
-  }).mouseout(function () {
-    $("#condition_panel").draggable("enable");
-  });
+  $(JETELINAPANEL).show().draggable();
   /**
    *  manipulate function panel
    */
-  $("#function_panel").hide().draggable();
+  $(FUNCTIONPANEL).hide().draggable();
+  /**
+   *   manipulate condition panel
+   */
+  $(CONDITIONPANEL).hide().draggable();
+  $(CHARTPANEL).mouseover(function () {
+    $(CONDITIONPANEL).draggable("disable");
+  }).mouseout(function () {
+    $(CONDITIONPANEL).draggable("enable");
+  });
   /**
    * switch active/inactive panel by focusting
    */
   $(".squarepanel").mouseover(function () {
     let elementid = $(this).attr('id');
-    if (elementid == 'jetelina_panel') focusonJetelinaPanel();
+    if (elementid == 'jetelina_panel'){
+      focusonJetelinaPanel();
+    }
 
     activePanel(this);
   }).mouseout(function () {
     inactivePanel(this);
   }).on('click', function () {
-    /* panelをclickしたときに画面中央にpanelを移動させる。
-       panelサイズを考慮した移動にしないといけない。
-    moveTotheCenter();
-    */
+    // need to do something, maybe... who knows
   });
   /**
-   * set forcus in the input tag of jetelina panel
+   * set forcus in the input tag of jetelina panel and say 'Hi' as the first message
    */
   focusonJetelinaPanel();
-  /**
-   * Show the first message 'Hi'
-   */
-     openingMessage();
+  openingMessage();
 });
+  /**
+   * @function focusonJetelinaPanel
+   * 
+   * focust on the input tag of jetelina panel
+   */
+  const focusonJetelinaPanel = () => {
+    $(JETELINACHATBOX).focus();
+  }
+
 /**
  * chatting with Jetelina
  */
-$(document).on("keydown", "#jetelina_panel [name='chat_input']", function(e){
+$(document).on("keydown", JETELINACHATBOX, function(e){
   if (e.keyCode == 13) {
     if (timerId != null ){
       clearInterval(timerId);
@@ -116,7 +120,6 @@ $(document).on("keydown", "#jetelina_panel [name='chat_input']", function(e){
     }
   }
 });
-
 /**
  * text zoom In/Out
  *    In -> fontsize change to 22px
@@ -140,3 +143,13 @@ $(".yourText,.zoomInOut").on('mouseover',function () {
 }).on('click', function () {
   /* something will be implemented someday */
 });
+/**
+ * @function getRandomNumber
+ * @param {integer} ordered random range
+ * @returns {boolean}  true -> yes a beginner, false -> an expert
+ * 
+ * create random number. the range is 0 to i.
+ */
+const getRandomNumber = (i) => {
+  return Math.floor(Math.random() * i);
+}

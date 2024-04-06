@@ -32,6 +32,12 @@ body {
   color: #c5da0b;
 }
 
+/*.item.deleteItem {
+  background-color: #a50998;
+  color: #eff0e8;
+  opacity: 0.3;
+}*/
+
 .table, .api {
   display: inline-block;
   padding: 5px;
@@ -47,6 +53,15 @@ body {
   overflow: hidden;
   opacity: 0.6;
   text-align: center;
+}
+
+.table.deleteItem, .api.deleteItem {
+  text-decoration: line-through;
+  text-decoration-color: white;
+  text-decoration-style: wavy;
+  background-color: #373f1c;
+  color: #eff0e8;
+  opacity: 0.3;
 }
 
 .table:hover {

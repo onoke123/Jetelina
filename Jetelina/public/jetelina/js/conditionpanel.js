@@ -23,15 +23,15 @@
  */
 const openConditionPanel = () => {
     if( isVisibleFunctionPanel() ){
-        $("#function_panel").hide();
+        $(FUNCTIONPANEL).hide();
     }
     
-    $("#condition_panel").show().animate({
+    $(CONDITIONPANEL).show().animate({
         width: window.innerWidth * 0.8,
         height: window.innerHeight * 0.8,
         top: "10%",
         left: "10%"
-    }, animateDuration);
+    }, ANIMATEDURATION);
 
     const dataurls = scenario['analyzed-data-collect-url'];
     /*
@@ -61,7 +61,7 @@ const isVisibleApiAccessNumbers = () =>{
  */
 const isVisibleAccessCombination = () =>{
     let ret = false;
-    if ($("#plot").is(":visible")){
+    if ($(CHARTPANEL).is(":visible")){
       ret = true;
     }
   
@@ -103,7 +103,7 @@ const isVisiblePerformanceTest = () =>{
  * Exectute some functions ordered by user chat input message
  */
 const conditionPanelFunctions = (ut) => {
-    let m = 'ignore';
+    let m = IGNORE;
 
     if (presentaction == null || presentaction.length == 0) {
         presentaction.push('cond');
@@ -154,7 +154,7 @@ const conditionPanelFunctions = (ut) => {
                 }
 
                 if(isVisibleAccessCombination()){
-                    $("#plot").hide();
+                    $(CHARTPANEL).hide();
                 }
 
                 showSomethingMsgPanel(false);
@@ -162,7 +162,7 @@ const conditionPanelFunctions = (ut) => {
                 $("#api_access_numbers").show().draggable().animate({
                     top: "20%",
                     left: "20%"
-                }, animateDuration).draggable('disable');
+                }, ANIMATEDURATION).draggable('disable');
 
                 m = chooseMsg('cond-graph-show-msg', "", "");
                 break;
@@ -179,15 +179,15 @@ const conditionPanelFunctions = (ut) => {
                         below graphs performance is as same as 'case:graph'.
                 */
                /*
-                $("#plot").show().animate({
+                $(CHARTPANEL).show().animate({
                     top: "5%",
                     left: "-5%"
-                }, animateDuration);
+                }, ANIMATEDURATION);
                 */
                 $("#performance_test").show().draggable().animate({
                     top: "20%", //-50%",
                     left: "20%" //"50%"
-                }, animateDuration).draggable('disable');
+                }, ANIMATEDURATION).draggable('disable');
 
                 showSomethingMsgPanel(true);
                 m = chooseMsg('cond-graph-show-msg', "", "");
