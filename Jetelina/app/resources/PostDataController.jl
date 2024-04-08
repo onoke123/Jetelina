@@ -311,51 +311,20 @@ end
 function deleteApi()
 
 	delete api by ordering from JC["sqllistfile"] file, then refresh the DataFrame.
+
+# Arguments
+- return: ture/false in json form	
 """
 function deleteApi()
-	targetapi::Vector = jsonpayload("apino")
-	#===
-		Tips:
-			targetapi is Array. ex. apino:["js100","js102"]
-			insert(ji*),update(ju*),delete(jd*) api are forbidden to delete.
-			only select(js*) is able to be rejected from api list.
-	===#
-	for a in targetapi
-		if (!startswith(a, "js"))
-			return false
-		end
+	apis::Vector = jsonpayload("apino")
+	jmsg::String = string("compliment me!")
+	retapis::String = join(apis,",") # ["a","b"] -> "a,b" oh ＼(^o^)／
+
+	if( ApiSqlListManager.deleteApiFromList(apis) )
+		ret = json(Dict("result" => true, "apiname" => "$retapis", "message from Jetelina" => jmsg))
+	else
+		ret = json(Dict("result" => false, "apiname" => "$retapis", "errmsg" => "Oh my, plz ref log file"))
 	end
-
-	apiFile = JFiles.getFileNameFromConfigPath(j_config.JC["sqllistfile"])
-	apiFile_tmp = string(apiFile, ".tmp")
-
-	try
-		open(apiFile_tmp, "w") do tio
-			# write header first
-			colstr = string(j_config.JC["file_column_apino"], ",", j_config.JC["file_column_sql"], ",", j_config.JC["file_column_subquery"])
-			println(tio, colstr)
-			open(apiFile, "r") do io
-				for ss in eachline(io, keep = false)
-					p = split(ss, ",")
-					if p[1] ∉ targetapi
-						# remain others in the file
-						println(tio, ss)
-					end
-				end
-			end
-		end
-	catch err
-		JLog.writetoLogfile("PostDataController.deleteApi() error: $err")
-		return false
-	end
-
-	# change the file name.
-	mv(apiFile_tmp, apiFile, force = true)
-
-	# update DataFrame
-	ApiSqlListManager.readSqlList2DataFrame()
-
-	return true
 end
 """
 function configParamUpdate()

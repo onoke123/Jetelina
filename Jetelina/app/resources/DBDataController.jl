@@ -128,7 +128,7 @@ function dropTable(tableName::Vector)
 		ret = PgDBController.dropTable(tableName)
 		if ret[1]
 			# update SQL list
-			ApiSqlListManager.deleteFromlist(tableName)
+			ApiSqlListManager.deleteTableFromlist(tableName)
 		end
 		#==
 			Tips:

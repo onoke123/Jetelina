@@ -509,6 +509,7 @@ function dropTable(tableName::Vector)
 function dropTable(tableName::Vector)
 	ret = ""
 	jmsg::String = string("compliment me!")
+	rettables::String = join(tableName,",") # ["a","b"] -> "a,b" oh ＼(^o^)／
 
 	conn = open_connection()
 	try
@@ -523,11 +524,10 @@ function dropTable(tableName::Vector)
 			execute(conn, delete_data_str)
 		end
 
-		rettables::String = join(tableName,",") # ["a","b"] -> "a,b" oh ＼(^o^)／
 		ret = json(Dict("result" => true, "tablename" => "$rettables", "message from Jetelina" => jmsg))
 	catch err
-		ret = json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err"))
-		JLog.writetoLogfile("PgDBController.dropTable() with $tableName error : $err")
+		ret = json(Dict("result" => false, "tablename" => "$rettables", "errmsg" => "$err"))
+		JLog.writetoLogfile("PgDBController.dropTable() with $rettables error : $err")
 		return false, ret
 	finally
 		close_connection(conn)

@@ -10,17 +10,18 @@ Description:
 functions
 	readSqlList2DataFrame() import registered SQL sentence list in JC["sqllistfile"] to DataFrame.this function set the sql list data in the global variable 'Df_JetelinaSqlList' as DataFrame object.
 	writeTolist(sql::String, tablename_arr::Vector{String}) create api no and write it to JC["sqllistfile"] order by SQL sentence.
-	deleteFromlist(tablename::Vector) delete tables name from JC["sqllistfile"] synchronized with dropping table.
+	deleteTableFromlist(tablename::Vector) delete tables name from JC["sqllistfile"] synchronized with dropping table.
+	deleteApiFromList(apis:Vector) delete api by ordering from JC["sqllistfile"] file, then refresh the DataFrame.
 """
 module ApiSqlListManager
 
 using DataFrames, CSV
-using Jetelina.JFiles, Jetelina.JMessage
+using Jetelina.JFiles, Jetelina.JMessage, Jetelina.JLog
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export readSqlList2DataFrame, writeTolist, deleteFromlist
+export readSqlList2DataFrame, writeTolist, deleteTableFromlist
 
 """
 function __init__()
@@ -123,7 +124,7 @@ function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String
 	return true, string(suffix, seq_no)
 end
 """
-function deleteFromlist(tablename::Vector)
+function deleteTableFromlist(tablename::Vector)
 
 	delete table name from JC["sqllistfile"] synchronized with dropping table.
 
@@ -131,7 +132,7 @@ function deleteFromlist(tablename::Vector)
 - `tablename::Vector`: target tables name
 - return: boolean: true -> all done ,  false -> something failed
 """
-function deleteFromlist(tablename::Vector)
+function deleteTableFromlist(tablename::Vector)
 	sqlFile = JFiles.getFileNameFromConfigPath(j_config.JC["sqllistfile"])
 	tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JC["tableapifile"])
 	sqlTmpFile = string(sqlFile, ".tmp")
@@ -164,7 +165,7 @@ function deleteFromlist(tablename::Vector)
 			end
 		end
 	catch err
-		JLog.writetoLogfile("ApiSqlListManager.deleteFromlist() error: $err")
+		JLog.writetoLogfile("ApiSqlListManager.deleteTableFromlist() error: $err")
 		return false
 	end
 
@@ -184,13 +185,63 @@ function deleteFromlist(tablename::Vector)
 			end
 		end
 	catch err
-		JLog.writetoLogfile("ApiSqlListManager.deleteFromlist() error: $err")
+		JLog.writetoLogfile("ApiSqlListManager.deleteTableFromlist() error: $err")
 		return false
 	end
 
 	# change the file name
 	mv(sqlTmpFile, sqlFile, force = true)
 	mv(tableapiTmpFile, tableapiFile, force = true)
+
+	# update DataFrame
+	readSqlList2DataFrame()
+
+	return true
+end
+"""
+function deleteApiFromList(apis:Vector)
+
+	delete api by ordering from JC["sqllistfile"] file, then refresh the DataFrame.
+	
+# Arguments
+- `tablename::Vector`: target tables name
+- return: boolean: true -> all done ,  false -> something failed
+"""
+function deleteApiFromList(apis::Vector)
+	#===
+		Tips:
+			apis is Array. ex. apino:["js100","js102"]
+			insert(ji*),update(ju*),delete(jd*) api are forbidden to delete.
+			only select(js*) is able to be rejected from api list.
+	===#
+	for a in apis
+		if (!startswith(a, "js"))
+			return false
+		end
+	end
+
+	apiFile = JFiles.getFileNameFromConfigPath(j_config.JC["sqllistfile"])
+	apiFile_tmp = string(apiFile, ".tmp")
+
+	try
+		open(apiFile_tmp, "w") do tio
+			open(apiFile, "r") do io
+				for ss in eachline(io, keep = false)
+					p = split(ss, ",")
+					if p[1] ∉ apis
+						# remain others in the file
+						println(tio, ss)
+					end
+				end
+			end
+		end
+	catch err
+		JLog.writetoLogfile("ApiSqlListManager.deleteApiFromList() error: $err")
+		return false
+	end
+
+	# change the file name.
+	mv(apiFile_tmp, apiFile, force = true)
 
 	# update DataFrame
 	readSqlList2DataFrame()
