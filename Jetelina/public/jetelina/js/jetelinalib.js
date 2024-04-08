@@ -1090,7 +1090,9 @@ const getPreferentPropertie = (p) => {
             if (preferent.cmd != null && 0 < preferent.cmd.length) {
                 c = preferent.cmd;
             }
+            
             break;
+        /*    
         case 'droptable':// table drop target table name
             // take the table name from preferent
             if (preferent.droptable != null && 0 < preferent.droptable.length) {
@@ -1103,6 +1105,7 @@ const getPreferentPropertie = (p) => {
                 c = preferent.deleteapi;
             }
             break;
+        */
         default:
             break;
     }

@@ -16,7 +16,7 @@
 		getJetelinaSequenceNumber(t::Integer) get seaquence number from jetelina_id table
 		insert2JetelinaTableManager(tableName::String, columns::Array) insert columns of 'tableName' into Jetelina_table_manager  
 		dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
-		dropTable(tableName::String) drop the table and delete its related data from jetelina_table_manager table
+		dropTable(tableName::Vector) drop the tables and delete its related data from jetelina_table_manager table
 		getColumns(tableName::String) get columns name of ordereing table.
 		executeApi(json_d::Dict,target_api::DataFrame) execute API order by json data
 		_executeApi(apino::String, sql_str::String) execute API with creating SQL sentence,this is a private function that is called by executeApi()
@@ -498,33 +498,33 @@ function dataInsertFromCSV(fname::String)
 end
 
 """
-function dropTable(tableName::String)
+function dropTable(tableName::Vector)
 
-	drop the table and delete its related data from jetelina_table_manager table
+	drop the tables and delete its related data from jetelina_table_manager table
 
 # Arguments
-- `tableName: String`: ordered table name
+- `tableName: Vector`: ordered tables name
 - return: tuple (boolean: true -> success/false -> get fail, JSON)
 """
-function dropTable(tableName::String)
+function dropTable(tableName::Vector)
 	ret = ""
 	jmsg::String = string("compliment me!")
 
-	# drop the tableName
-	drop_table_str = """
-		drop table $tableName
-	"""
-
-	# delete the related data from jetelina_table_manager
-	delete_data_str = """
-		delete from jetelina_table_manager where table_name = '$tableName'
-	"""
 	conn = open_connection()
-
 	try
-		execute(conn, drop_table_str)
-		execute(conn, delete_data_str)
-		ret = json(Dict("result" => true, "tablename" => "$tableName", "message from Jetelina" => jmsg))
+
+		for i in eachindex(tableName)
+			# drop the tableName
+			drop_table_str = string("drop table ", tableName[i])
+			# delete the related data from jetelina_table_manager
+			delete_data_str = string("delete from jetelina_table_manager where table_name = '", tableName[i], "'")
+
+			execute(conn, drop_table_str)
+			execute(conn, delete_data_str)
+		end
+
+		rettables::String = join(tableName,",") # ["a","b"] -> "a,b" oh ＼(^o^)／
+		ret = json(Dict("result" => true, "tablename" => "$rettables", "message from Jetelina" => jmsg))
 	catch err
 		ret = json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err"))
 		JLog.writetoLogfile("PgDBController.dropTable() with $tableName error : $err")
@@ -699,10 +699,10 @@ function doSelect(sql::String, mode::String)
 		df = DataFrame(columntable(LibPQ.execute(conn, sql)))
 		jmsg::String = ""
 
-		if parse(Int,j_config.JC["selectlimit"]) < nrow(df)
+		if parse(Int, j_config.JC["selectlimit"]) < nrow(df)
 			dfmax::Integer = nrow(df)
-			if !contains(sql,"limit")
-				sql = string(sql," limit 10")		
+			if !contains(sql, "limit")
+				sql = string(sql, " limit 10")
 				df = DataFrame(columntable(LibPQ.execute(conn, sql)))
 				jmsg = "this return is limited in 10 because the true result is $dfmax"
 			end

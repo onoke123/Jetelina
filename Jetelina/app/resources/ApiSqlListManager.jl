@@ -10,7 +10,7 @@ Description:
 functions
 	readSqlList2DataFrame() import registered SQL sentence list in JC["sqllistfile"] to DataFrame.this function set the sql list data in the global variable 'Df_JetelinaSqlList' as DataFrame object.
 	writeTolist(sql::String, tablename_arr::Vector{String}) create api no and write it to JC["sqllistfile"] order by SQL sentence.
-	deleteFromlist(tablename::String) delete table name from JC["sqllistfile"] synchronized with dropping table.
+	deleteFromlist(tablename::Vector) delete tables name from JC["sqllistfile"] synchronized with dropping table.
 """
 module ApiSqlListManager
 
@@ -123,15 +123,15 @@ function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String
 	return true, string(suffix, seq_no)
 end
 """
-function deleteFromlist(tablename::String)
+function deleteFromlist(tablename::Vector)
 
 	delete table name from JC["sqllistfile"] synchronized with dropping table.
 
 # Arguments
-- `tablename::String`: target table name
+- `tablename::Vector`: target tables name
 - return: boolean: true -> all done ,  false -> something failed
 """
-function deleteFromlist(tablename::String)
+function deleteFromlist(tablename::Vector)
 	sqlFile = JFiles.getFileNameFromConfigPath(j_config.JC["sqllistfile"])
 	tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JC["tableapifile"])
 	sqlTmpFile = string(sqlFile, ".tmp")
@@ -151,11 +151,13 @@ function deleteFromlist(tablename::String)
 					if contains(ss, ':')
 						p = split(ss, ":") # api_name:table,table,....
 						tmparr = split(p[2], ',')
-						if tablename ∈ tmparr
-							push!(targetapi, p[1]) # ["js1","ji2,.....]
-						else
-							# remain others in the file
-							println(ttaf, ss)
+						for i in eachindex(tablename)
+							if tablename[i] ∈ tmparr
+								push!(targetapi, p[1]) # ["js1","ji2,.....]
+							else
+								# remain others in the file
+								println(ttaf, ss)
+							end
 						end
 					end
 				end

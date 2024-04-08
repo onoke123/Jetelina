@@ -112,7 +112,7 @@
 @jdic func-apidelete-cmd:"delete","delete api","api delete","apidelete","deleteapi","remove","reject"
 @jdic func-apidelete-msg:"Which api do you want to delete?","correct order is \"delete <api name>\" and so on"
 @jdic func-apidelete-ng-msg:"Hey open the api list first!","Huum?","Check it first","Watch it"
-@jdic func-apidelete-forbidden-msg:"this api cannot be deleted, sorry"
+@jdic func-apidelete-forbidden-msg:"some api cannot be deleted, sorry"
 #@jdic func-apidelete-confirm-msg:"Sure?","Really?","Won't you regret?"
 
 @jdic func-fileupload-open-cmd:"file open","open file","open filebox","file box","csv file"

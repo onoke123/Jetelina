@@ -11,7 +11,7 @@
 		init_Jetelina_table() Execute *.create_jetelina_table() depend on DB type.Execute *.readJetelinatable() depend on DB type.
 		dataInsertFromCSV(csvfname::String) CSV data inserts into DB. It executes in *.dataInsertFromCSV depend on DB type.
 		getTableList(s::String) Get the ordered table list by executing *.getTable() depend on DB type
-		dropTable(tableName::String) Drop the table and delete its related data from jetelina_table_manager table
+		dropTable(tableName::Vector) Drop the tables and delete its related data from jetelina_table_manager table
 		getColumns(tableName::String) Get columns of ordered table name depend on DB type.
 		doSelect(sql::String,mode::String)
 		executeApi(json_d) Execute SQL sentence order by json_d: json raw data.
@@ -115,14 +115,14 @@ function getTableList(s::String)
 	end
 end
 """
-function dropTable(tableName::String)
+function dropTable(tableName::Vector)
 		
-	Drop the table and delete its related data from jetelina_table_manager table
+	Drop the tables and delete its related data from jetelina_table_manager table
 
 # Arguments
-- `tableName: String`: name of the table
+- `tableName: Vector`: name of the tables
 """
-function dropTable(tableName::String)
+function dropTable(tableName::Vector)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
 		ret = PgDBController.dropTable(tableName)

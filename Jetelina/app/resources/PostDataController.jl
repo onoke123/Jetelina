@@ -45,7 +45,7 @@ function getConfigData()
 """
 function getConfigData()
 	d = jsonpayload("param")
-	if !contains(d,"password")
+	if !contains(d, "password")
 		if !isnothing(j_config.JC[d])
 			return json(Dict("result" => true, d => j_config.JC[d]))
 		else
@@ -117,7 +117,7 @@ function deleteTable()
 """
 function deleteTable()
 	ret = ""
-	tableName = jsonpayload("tablename")
+	tableName::Vector = jsonpayload("tablename")
 	if !isnothing(tableName)
 		ret = DBDataController.dropTable(tableName)
 	end
@@ -313,14 +313,17 @@ function deleteApi()
 	delete api by ordering from JC["sqllistfile"] file, then refresh the DataFrame.
 """
 function deleteApi()
-	targetapi = jsonpayload("apino")
+	targetapi::Vector = jsonpayload("apino")
 	#===
 		Tips:
+			targetapi is Array. ex. apino:["js100","js102"]
 			insert(ji*),update(ju*),delete(jd*) api are forbidden to delete.
 			only select(js*) is able to be rejected from api list.
 	===#
-	if (!startswith(targetapi, "js"))
-		return false
+	for a in targetapi
+		if (!startswith(a, "js"))
+			return false
+		end
 	end
 
 	apiFile = JFiles.getFileNameFromConfigPath(j_config.JC["sqllistfile"])
@@ -333,12 +336,10 @@ function deleteApi()
 			println(tio, colstr)
 			open(apiFile, "r") do io
 				for ss in eachline(io, keep = false)
-					if contains(ss, '\"')
-						p = split(ss, "\"")
-						if !contains(p[1], targetapi)
-							# remain others in the file
-							println(tio, ss)
-						end
+					p = split(ss, ",")
+					if p[1] ∉ targetapi
+						# remain others in the file
+						println(tio, ss)
 					end
 				end
 			end
