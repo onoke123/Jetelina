@@ -226,7 +226,13 @@ const getdata = (o, t) => {
                                     } else if (t == 1) {
                                         // jetelina_delete_flg should not show in the column list
                                         if (name != "jetelina_delete_flg") {
-                                            str += `<span class="item" d=${value}><p>${targetTable}.${name}</p></span>`;
+                                            /*
+                                                Tips:
+                                                    may ${name} is be long, because it is combined "<table name>_<column_name>" in uploading csv file.
+                                                    in Ver.1, selected table name has same color, may it has unique color later, then these column has each color and 
+                                                    could be shorten the display name, who knows. :)
+                                            */
+                                            str += `<span class="item" d=${value} colname=${targetTable}.${name}><p>${name}</p></span>`;
                                         }
                                     }
                                 });

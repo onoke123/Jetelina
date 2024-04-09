@@ -187,7 +187,8 @@ const isVisibleColumns = () => {
  */
 const itemSelect = (p) => {
   let cl = p.attr("class");
-  let item = p.text();
+//  let item = p.text();
+  let item = p.attr("colname");
 
   // delete the showing because the api no is displayed in there initially.
   if ($("#container span").hasClass('apisql')) {
@@ -974,7 +975,6 @@ const functionPanelFunctions = (ut) => {
         2.fileupload: csv file upload
         3.TABLEAPILISTOPEN: handle table list and/or api list
         4.SELECTITEM: select columns from opening tables
-
         5.TABLEAPIDELETE: drop table in the table list and/or delete api in the api list
         6.post: post selected columns 
         7.cancel: cancel all selected columns
@@ -1090,7 +1090,7 @@ const functionPanelFunctions = (ut) => {
       if (!findflg) {
         if (inScenarioChk(ut, "func-item-select-all-cmd")) {
           // select all items
-          $("#columns").find("span").each(function (i, v) {
+          $("#columns").find("span").each(function () {
             itemSelect($(this));
           });
         } else {

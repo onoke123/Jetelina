@@ -662,3 +662,57 @@
 └ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
 ┌ Info: 2024-04-08 14:38:05 SQLAnalyzer.main() start with : 48 hr interval
 └ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-09 09:24:30 PgDBController.insert2JetelinaTableManager() error: MethodError(Jetelina.DBDataController.PgDBController.getJetelinaSequenceNumber, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = postgres
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 0), 0x0000000000007d5a)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-09 09:29:22 PgDBController.doSelect() with pre select ftest.jt_id,ftest.name,ftest.sex,ftest.age,ftest.ave,ftest3.jt_id,ftest3.name,ftest3.sex,ftest3.age,ftest3.dumy from ftest as ftest,ftest3 as ftest3 where ftest.age=ftest3.age error : ErrorException("duplicate field name in NamedTuple: \"jt_id\" is not unique")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-09 09:44:13 PgDBController.doSelect() with pre select ftest.jt_id,ftest.name,ftest.sex,ftest.age,ftest.ave,ftest3.name,ftest3.sex,ftest3.age,ftest3.dumy from ftest as ftest,ftest3 as ftest3 where ftest.age=ftest3.age error : ErrorException("duplicate field name in NamedTuple: \"name\" is not unique")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-09 09:46:38 PgDBController.doSelect() with pre select ftest.jt_id,ftest.name,ftest3.age,ftest3.sex,ftest3.name from ftest as ftest,ftest3 as ftest3 where ftest.age=ftest3.age error : ErrorException("duplicate field name in NamedTuple: \"name\" is not unique")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-09 10:01:48 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-09 10:01:50 SQLAnalyzer.main() start with : 48 hr interval
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-09 10:02:42 PgDBController.doSelect() with pre select ftest.jt_id,ftest.name,ftest3.age,ftest3.sex,ftest3.name from ftest as ftest,ftest3 as ftest3 where ftest.age=ftest3.age error : ErrorException("duplicate field name in NamedTuple: \"name\" is not unique")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-09 10:07:27 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-09 10:07:29 SQLAnalyzer.main() start with : 48 hr interval
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-09 10:08:11 PgDBController.doSelect() with pre select ftest.jt_id,ftest.name,ftest3.age,ftest3.sex,ftest3.name from ftest as ftest,ftest3 as ftest3 where ftest.age=ftest3.age error : ArgumentError("`DataFrame` constructor from a `Vector` of vectors requires passing :auto as a second argument to automatically generate column names: `DataFrame(vecs, :auto)`")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-09 10:12:02 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-09 10:12:04 SQLAnalyzer.main() start with : 48 hr interval
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-09 11:09:52 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-09 11:09:54 SQLAnalyzer.main() start with : 48 hr interval
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-09 11:37:14 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-09 11:37:16 SQLAnalyzer.main() start with : 48 hr interval
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-09 11:38:44 PgDBController.dataInsertFromCSV() with /home/onoke/Jetelina/Jetelina/app/resources/repo/ftest2.csv error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"/\"\nLINE 2:    ftest2_/home/onoke/Jetelina/Jetelina/app/resources/repo/f...\n                  ^\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-09 11:41:41 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-09 11:41:43 SQLAnalyzer.main() start with : 48 hr interval
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68

@@ -329,6 +329,7 @@ function dataInsertFromCSV(fname::String)
 
 	df = DataFrame(CSV.File(fname))
 	rename!(lowercase, df)
+
 	# special column 'jetelina_delte_flg' is added to columns 
 	insertcols!(df, :jetelina_delete_flg => 0)
 
@@ -341,10 +342,33 @@ function dataInsertFromCSV(fname::String)
 	insert_data_str = string() # data string
 	update_str = string()
 	tablename_arr::Vector{String} = []
+
+	#===
+		new table name is the csv file name with deleting the suffix  
+			ex. /home/upload/test.csv -> splitdir() -> ("/home/upload","test.csv") -> splitext() -> ("test",".csv")
+	===#
+	tableName = splitext(splitdir(fname)[2])[1]
+	#===
+		Tips:
+			Postgresql does not forgive to use '-' in a table name
+	===#
+	tableName = replace(tableName, "-" => "_")
+
+	colarray = [];
+	for col in names(df)
+		push!(colarray, string(tableName,'_',col))
+	end
+
+	rename!(df,Symbol.(colarray))
+
 	#===
 		make the sentece of sql( "id integer, name varchar(36)...")
 	===#
 	for i ∈ 1:length(column_name)
+		#===
+			Tips:
+				the reason for this connection, see in doSelect()
+		===#
 		cn = column_name[i]
 		column_type_string[i] = PgDataTypeList.getDataType(string(column_type[i]))
 		if contains(cn, keyword2)
@@ -394,17 +418,6 @@ function dataInsertFromCSV(fname::String)
 	if j_config.JC["debug"]
 		@info "PgDBController.dataInsertFromCSV() col str to create table: " column_str
 	end
-
-	#===
-		new table name is the csv file name with deleting the suffix  
-			ex. /home/upload/test.csv -> splitdir() -> ("/home/upload","test.csv") -> splitext() -> ("test",".csv")
-	===#
-	tableName = splitext(splitdir(fname)[2])[1]
-	#===
-		Tips:
-			Postgresql does not forgive to use '-' in a table name
-	===#
-	tableName = replace(tableName, "-" => "_")
 
 	#===
 		check if the same name table already exists.
@@ -696,6 +709,24 @@ function doSelect(sql::String, mode::String)
 
 		end
 
+		#===
+			Caution:
+				DataFrame() spits out error so that it could not resolve the column name if there were same ones.
+				    ex. select ftest.name, ftest3.name ..... -> "name" is duplicated in LibPG.execute() therefore DataFrame() confuses
+
+				to resolve it, '*' are there. ref: https://github.com/iamed2/LibPQ.jl/issues/107
+				but it ':auto' in DataFrame() creates quite new column name.
+				Jetelina wanna return the table column anyhow, cannot take this process.
+				then changed CSV file storing to table to use the "table name" with the column name. see dataInsertFromCSV()
+					ex. old: ftest.csv  has columns 'name','sex'   -> table name: ftest, column name: name, sex
+					    new:                〃                     -> table name:   〃 , column name: ftest_name, ftest_sex
+				
+				but it still has possibility in the case of direct import data to table by user hand. 
+				threfore this is to be written in Jetelina manual as a regulation.4
+		===#
+#*		result = LibPQ.execute(conn, sql)
+#*		vector_data = [convert(Vector,col) for col in Tables.columns(result)]
+#*		df = DataFrame(vector_data,:auto)
 		df = DataFrame(columntable(LibPQ.execute(conn, sql)))
 		jmsg::String = ""
 
@@ -703,6 +734,9 @@ function doSelect(sql::String, mode::String)
 			dfmax::Integer = nrow(df)
 			if !contains(sql, "limit")
 				sql = string(sql, " limit 10")
+#*				result = LibPQ.execute(conn, sql)
+#*				vector_data = [convert(Vector,col) for col in Tables.columns(result)]
+#*				df = DataFrame(vector_data,:auto)
 				df = DataFrame(columntable(LibPQ.execute(conn, sql)))
 				jmsg = "this return is limited in 10 because the true result is $dfmax"
 			end
