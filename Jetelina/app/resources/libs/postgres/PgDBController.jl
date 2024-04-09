@@ -330,6 +330,30 @@ function dataInsertFromCSV(fname::String)
 	df = DataFrame(CSV.File(fname))
 	rename!(lowercase, df)
 
+	#===
+		new table name is the csv file name with deleting the suffix  
+			ex. /home/upload/test.csv -> splitdir() -> ("/home/upload","test.csv") -> splitext() -> ("test",".csv")
+	===#
+	tableName = splitext(splitdir(fname)[2])[1]
+	#===
+		Tips:
+			Postgresql does not forgive to use '-' in a table name
+	===#
+	tableName = replace(tableName, "-" => "_")
+	#===
+		Tips:
+			original column names in the csv file are changed here because of making it unique.
+			keyword2(jt_id) is also changed at the same time.
+			then consequently the 'column_name' are <table name>_<column name>.
+	===#
+	colarray = [];
+	for col in names(df)
+		push!(colarray, string(tableName,'_',col))
+	end
+
+	rename!(df,Symbol.(colarray))
+	keyword2 = string(tableName,'_',keyword2)
+
 	# special column 'jetelina_delte_flg' is added to columns 
 	insertcols!(df, :jetelina_delete_flg => 0)
 
@@ -342,24 +366,6 @@ function dataInsertFromCSV(fname::String)
 	insert_data_str = string() # data string
 	update_str = string()
 	tablename_arr::Vector{String} = []
-
-	#===
-		new table name is the csv file name with deleting the suffix  
-			ex. /home/upload/test.csv -> splitdir() -> ("/home/upload","test.csv") -> splitext() -> ("test",".csv")
-	===#
-	tableName = splitext(splitdir(fname)[2])[1]
-	#===
-		Tips:
-			Postgresql does not forgive to use '-' in a table name
-	===#
-	tableName = replace(tableName, "-" => "_")
-
-	colarray = [];
-	for col in names(df)
-		push!(colarray, string(tableName,'_',col))
-	end
-
-	rename!(df,Symbol.(colarray))
 
 	#===
 		make the sentece of sql( "id integer, name varchar(36)...")

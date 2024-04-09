@@ -175,11 +175,10 @@ function deleteTableFromlist(tablename::Vector)
 			open(sqlFile, "r") do f
 				for ss in eachline(f, keep = false)
 					p = split(ss, "\"") # js1,"select..."
-					if rstrip(p[1], ',') ∈ targetapi # yes, this is＼(^o^)／
-					# skip it because of including in it
-					else
+					if rstrip(p[1], ',') ∉ targetapi
 						# write out sql that does not contain the target table
 						println(tf, ss)
+					else
 					end
 				end
 			end
@@ -221,7 +220,13 @@ function deleteApiFromList(apis::Vector)
 	end
 
 	apiFile = JFiles.getFileNameFromConfigPath(j_config.JC["sqllistfile"])
+	tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JC["tableapifile"])
 	apiFile_tmp = string(apiFile, ".tmp")
+	tableapiTmpFile = string(tableapiFile, ",tmp")
+
+	# take the backup file
+	JFiles.fileBackup(tableapiFile)
+	JFiles.fileBackup(apiFile)
 
 	try
 		open(apiFile_tmp, "w") do tio
@@ -240,8 +245,28 @@ function deleteApiFromList(apis::Vector)
 		return false
 	end
 
+	try
+		open(tableapiTmpFile, "w") do ttaf
+			open(tableapiFile, "r") do taf
+				# Tips: delete line feed by 'keep=false', then do println()
+				for ss in eachline(taf, keep = false)
+					for i in eachindex(apis)
+						if !startswith(ss,apis[i])
+							# leave it in the file
+							println(ttaf, ss)
+						end
+					end
+				end
+			end
+		end
+	catch err
+		JLog.writetoLogfile("ApiSqlListManager.deleteApiFromlist() error: $err")
+		return false
+	end
+
 	# change the file name.
 	mv(apiFile_tmp, apiFile, force = true)
+	mv(tableapiTmpFile, tableapiFile, force = true)
 
 	# update DataFrame
 	readSqlList2DataFrame()
