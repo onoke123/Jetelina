@@ -50,6 +50,7 @@ const SOMETHINGTEXT = `${SOMETHINGINPUTFIELD} text[name='something_text']`;
 const TABLECONTAINER = "#table_container";
 const APICONTAINER = "#api_container";
 const GENELICPANEL = "#genelic_panel";
+const APITESTPANEL = "#apitest";
 const CONFIGCHANGE = "config-change";// command in cancelable command list 
 const TABLEAPILISTOPEN = "table-api-open";// command in cancelable command list
 const SELECTITEM = "select-item";// command in cancelable command list
@@ -279,6 +280,8 @@ const getdata = (o, t) => {
                     });
 
                     if (t == 4) {
+                        // initialize the field before it's desplayed
+                        $(`${APITESTPANEL} span`).remove();
                         showApiTestPanel(true);
 
                         let datanumber = o[key].length;
@@ -1417,13 +1420,13 @@ const isVisibleApiTestPanel = () => {
  */
 const showApiTestPanel = (b) => {
     // initialize the field before it's desplayed
-    $("#apitest span").remove();
+//    $(`${APITESTPANEL} span`).remove();
 
     if (b) {
-        $("#apitest").show().draggable();
+        $(APITESTPANEL).show().draggable();
     } else {
         // delete all test results
-        $("#apitest").hide();
+        $(APITESTPANEL).hide();
     }
 }
 /**

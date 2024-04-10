@@ -699,7 +699,7 @@ const getColumn = (tablename) => {
  */
 const removeColumn = (p) => {
   //  $("#columns .item, #container .item").not(".selectedItem").remove(`:contains(${p}.)`);
-  $("#columns .item, #container .item").remove(`:contains(${p}.)`);
+  $("#columns .item, #container .item").remove(`:contains(${p}_)`);
 }
 /**
  * @function dropThisTable
@@ -895,6 +895,16 @@ const functionPanelFunctions = (ut) => {
     } else {
       cmd = ut;
     }
+  }
+
+  if(inScenarioChk(ut,'func-api-test-panel-show-cmd')){
+    showApiTestPanel(true);
+  }else if(inScenarioChk(ut,'func-api-test-panel-hide-cmd')){
+    showApiTestPanel(false);
+//  }else if(inScenarioChk(ut,'func-subpanel-open-cmd')){
+//    showGenelicPanel(true);
+  }else if(inScenarioChk(ut,'func-subpanel-close-cmd')){
+    showGenelicPanel(false);
   }
   /*
     if (cmd == 'table' || cmd == 'api') {
@@ -1720,7 +1730,7 @@ const showGenelicPanel = (b) => {
       */
       $(GENELICPANELTEXT).text("Sub Query:");
       $(GENELICPANELINPUT).attr('placeholder', 'where .....');
-      $(GENELICPANELINPUT).after("<p class=\"jetelina_subquery_note\">writing the sub query is on your own responsibility. I'll never check it at all.:)</p>");
+//      $(GENELICPANELINPUT).after("<p class=\"jetelina_subquery_note\">writing the sub query is on your own responsibility. I'll never check it at all.:)</p>");
     }
 
     $(GENELICPANEL).show();
