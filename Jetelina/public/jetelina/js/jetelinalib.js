@@ -38,6 +38,7 @@
       showApiTestPanel(b) "#apitest" show or hide
       inCancelableCmdList(cmd) check the ordered command is in cancelableCmdList or not
       rejectCancelableCmdList(cmd) reject command from cancelableCmdList
+      rejectSelectedItemsArr(item) reject selected item from selectedItemsArr
 */
 const JETELINACHATTELL = `${JETELINAPANEL} [name='jetelina_tell']`;
 const SOMETHINGMSGPANEL = "#something_msg";
