@@ -1090,7 +1090,7 @@ const functionPanelFunctions = (ut) => {
               $(this).hasClass("activeItem");
               listClick($(this));
               m = chooseMsg('success-msg', "", "");
-              findlg = true;
+              findflg = true;
             }
           });
         }
@@ -1352,6 +1352,7 @@ const functionPanelFunctions = (ut) => {
             itemSelect($(this));
           });
 
+          selectedItemsArr = [];
           m = chooseMsg('cancel-msg', "", "");
         } else {
           // cancel each item
@@ -1370,6 +1371,7 @@ const functionPanelFunctions = (ut) => {
               itemSelect($(this));
               //                m = chooseMsg('success-msg', "", "");
               //                return false;
+              rejectSelectedItemsArr(v.textContent);
               m = chooseMsg('cancel-msg', "", "");
             }
           });

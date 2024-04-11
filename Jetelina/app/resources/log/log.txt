@@ -848,3 +848,29 @@
 │   krbsrvname = postgres
 │   target_session_attrs = any, 0), 0x0000000000007d5c)
 └ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-11 09:49:52 PgDBController.create_jetelina_id_sequence() error: LibPQ.Errors.DuplicateTable("ERROR:  relation \"jetelina_table_id_sequence\" already exists\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-11 09:49:54 SQLAnalyzer.main() start with : 48 hr interval
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-11 10:12:55 PgDBController.insert2JetelinaTableManager() error: MethodError(Jetelina.DBDataController.PgDBController.getJetelinaSequenceNumber, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = postgres
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 0), 0x0000000000007d5c)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-11 11:12:56 PgDBController.doSelect() with pre select ftest.ftest_name,ftest.ftest_ave,ftest.ftest_age from ftest as ftest where jt_id=1 error : LibPQ.Errors.UndefinedColumn("ERROR:  column \"jt_id\" does not exist\nLINE 1: ....ftest_ave,ftest.ftest_age from ftest as ftest where jt_id=1\n                                                                ^\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-11 11:13:14 PgDBController.doSelect() with pre select ftest.ftest_name,ftest.ftest_ave,ftest.ftest_age from ftest as ftest where ftest_it_id=1 error : LibPQ.Errors.UndefinedColumn("ERROR:  column \"ftest_it_id\" does not exist\nLINE 1: ...est_ave,ftest.ftest_age from ftest as ftest where ftest_it_i...\n                                                             ^\nHINT:  Perhaps you meant to reference the column \"ftest.ftest_jt_id\".\n")
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68

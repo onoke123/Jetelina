@@ -124,7 +124,10 @@
 @jdic func-postcolumn-where-option-msg:"Wanna set the \"Where\" sentence? This is an option."
 @jdic func-postcolumn-where-indispensable-msg:"Set the \"Where\" sentence. This is an indispensable."
 @jdic func-postcolumn-available-msg:"Now you can post them","Do post them","Type \"post\" now"
-@jdic func-subpanel-open-cmd:"open query","show query","open subquery","show subquery","open sub","show sub","sub query"
+#
+# in 'func-subpanel-open-cmd', because 'open' is already taken in 'func-table-api-open-close-cmd'. need to think something alternative words, maybe.
+#@jdic func-subpanel-open-cmd:"open query","show query","open subquery","show subquery","open sub","show sub","sub query"
+@jdic func-subpanel-open-cmd:"show query","show subquery","show sub","sub query","subquery"
 @jdic func-subpanel-close-cmd:"close query","hide query","close subquery","hide subquery","close sub","hide sub"
 @jdic func-subpanel-opened-msg:"Set your sub query in \"Sub Query\" field","Ready to \"Sub Query\" field"
 @jdic func-api-test-msg:"Why do not you try it, type \"sql test\" to execute this SQL","Let's check it with typing \"sql check\""

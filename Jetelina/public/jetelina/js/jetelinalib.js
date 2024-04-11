@@ -1457,6 +1457,20 @@ const rejectCancelableCmdList = (cmd) =>{
         return d != cmd;
     });
 }
+/**
+ * @function rejectSelectedItemsArr
+ *
+ * @param {string} item selectd item name
+ *  
+ * reject selected item from selectedItemsArr
+ */
+const rejectSelectedItemsArr = (item) =>{
+    selectedItemsArr = selectedItemsArr.filter(function(d){
+        if(d.indexOf(item) < 0){
+            return d;
+        }
+    });
+}
 
 $(document).on("mousedown", function (e) {
 //    console.log("focus on :", $(":focus"));
