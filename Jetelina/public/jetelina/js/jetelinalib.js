@@ -47,6 +47,7 @@ const CHATBOXYOURTELL = `${JETELINAPANEL} [name='your_tell']`;
 const SOMETHINGINPUTFIELD = "#something_input_field";
 const SOMETHINGINPUT = `${SOMETHINGINPUTFIELD} input[name='something_input']`;
 const SOMETHINGTEXT = `${SOMETHINGINPUTFIELD} text[name='something_text']`;
+const FILEUP = "#fileup";
 const TABLECONTAINER = "#table_container";
 const APICONTAINER = "#api_container";
 const GENELICPANEL = "#genelic_panel";

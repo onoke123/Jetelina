@@ -54,7 +54,7 @@ $(UPFILE).on("change", function () {
     let p = fullfilename.split("\\");
     let filename = p[p.length - 1];
     $(`${MYFORM} label span`).text(filename);
-    $("#fileup").addClass("genelic_panel"); // blinking panel border but not fire immediately
+    $(FILEUP).addClass("genelic_panel"); // blinking panel border but not fire immediately
     //    preferent.cmd = "FILESELECTOROPEN";
     cancelableCmdList.push(FILESELECTOROPEN);
     typingControll(chooseMsg("func-fileupload-upload-msg", filename, "r"));
@@ -105,7 +105,7 @@ const openFunctionPanel = () => {
   }, ANIMATEDURATION);
 
   if (isVisibleColumns()) {
-    $("#fileup").draggable().animate({
+    $(FILEUP).draggable().animate({
       top: "4%",
       left: "5%"
     }, ANIMATEDURATION);
@@ -348,6 +348,7 @@ const fileupload = () => {
   }).always(function () {
     // release it for allowing to input new command in the chatbox 
     inprogress = false;
+    $(FILEUP).removeClass("genelic_panel");
   });
 }
 
@@ -1340,7 +1341,7 @@ const functionPanelFunctions = (ut) => {
       } else if (inCancelableCmdList(FILESELECTOROPEN)) {
         $(UPFILE).val("");
         $(`${MYFORM} label span`).text("Upload CSV File");
-        $("#fileup").removeClass("genelic_panel");
+        $(FILEUP).removeClass("genelic_panel");
         rejectCancelableCmdList(FILESELECTOROPEN);
         m = chooseMsg("cancel-msg", "", "");
       } else if (inCancelableCmdList(SELECTITEM)) {
