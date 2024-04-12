@@ -272,7 +272,7 @@ const getdata = (o, t) => {
                             if (t == 0) {
                                 tagid = TABLECONTAINER;
                             } else if (t == 1) {
-                                tagid = "#columns .item_area";
+                                tagid = `${COLUMNSPANEL} .item_area`;
                             } else if (t == 2) {
                                 tagid = APICONTAINER;
                             }
@@ -774,10 +774,8 @@ const chatKeyDown = (cmd) => {
             // check the error message panel hide or not
             if (inScenarioChk(ut, 'hide-something-msg-cmd')) {
                 showSomethingMsgPanel(false);
-                //                m = IGNORE;
             } else if (inScenarioChk(ut, 'show-something-msg-cmd')) {
                 showSomethingMsgPanel(true);
-                //                m = IGNORE;
             }
 
             /*
@@ -980,12 +978,7 @@ const chatKeyDown = (cmd) => {
 
                     break;
             }
-            /*
-                        if (0 < enterNumber) {
-                            $(JETELINACHATTELL).val("");
-                            enterNumber = 0;
-                        }
-            */
+
             if (0 < m.length && m != IGNORE) {
                 typingControll(m);
             } else if (m == IGNORE && stage != 'login') {
@@ -1006,7 +999,6 @@ const chatKeyDown = (cmd) => {
         }
     } else {
         $(JETELINACHATBOX).val("");
-        //        enterNumber = 0;
     }
 
 }
@@ -1044,7 +1036,6 @@ const burabura = () => {
  * chech the user's intention is to be logout
  */
 const logoutChk = (s) => {
-    //    return scenario['logout'].includes(s);
     return inScenarioChk(s, "logout-cmd");
 }
 /**
@@ -1103,20 +1094,6 @@ const getPreferentPropertie = (p) => {
             }
             
             break;
-        /*    
-        case 'droptable':// table drop target table name
-            // take the table name from preferent
-            if (preferent.droptable != null && 0 < preferent.droptable.length) {
-                c = preferent.droptable;
-            }
-            break;
-        case 'deleteapi':// delete target api name
-            // take the api name from preferent
-            if (preferent.deleteapi != null && 0 < preferent.deleteapi.length) {
-                c = preferent.deleteapi;
-            }
-            break;
-        */
         default:
             break;
     }
@@ -1187,7 +1164,6 @@ const showManualCommandList = (s) => {
  * @returns {boolean}  true -> in the list, false -> no
  * 
  * check if user input string is in the ordered scenario
- * 
  */
 const inScenarioChk = (s, sc, type) => {
     let order;
@@ -1398,7 +1374,6 @@ const showSomethingMsgPanel = (b) => {
         $(SOMETHINGMSGPANEL).hide();
     }
 }
-
 /**
 * @function isVisibleApiTestPanel
 * @returns {boolean}  true -> visible, false -> invisible
@@ -1421,9 +1396,6 @@ const isVisibleApiTestPanel = () => {
  * "#apitest" show or hide
  */
 const showApiTestPanel = (b) => {
-    // initialize the field before it's desplayed
-//    $(`${APITESTPANEL} span`).remove();
-
     if (b) {
         $(APITESTPANEL).show().draggable();
     } else {
@@ -1473,10 +1445,6 @@ const rejectSelectedItemsArr = (item) =>{
         }
     });
 }
-
-$(document).on("mousedown", function (e) {
-//    console.log("focus on :", $(":focus"));
-});
 
 // return to the chat box if 'return key' is typed in something_input_field
 $(document).on("keydown", SOMETHINGINPUT, function (e) {

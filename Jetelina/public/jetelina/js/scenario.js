@@ -43,7 +43,7 @@ scenario["cond-performance-improve-msg"]=["There is an improving suggestion.","D
 scenario["cond-no-suggestion-msg"]=["I do not have any suggestions so far.","No suggestions","I do not give it to you.","Hey, Nothing at all"];
 scenario["starting-6a-msg"]=["OK, here you are","Hey ho","This"];
 scenario["starting-6b-msg"]=["Command me, if you need"];
-scenario["common-cancel-cmd"]=["cancel","withdraw","abandon","postpone","give up","stop","quit"];
+scenario["common-cancel-cmd"]=["cancel","withdraw","abandon","postpone","give up","stop","quit","remove","reject"];
 scenario["common-confirm-msg"]=["Sure?","Really?","Won't you regret?"];
 scenario["common-alert-msg"]=["Boo","no hit","could not make it"];
 scenario["common-ajax-error-msg"]=["Oh my, something server error happened:"];
@@ -54,10 +54,14 @@ scenario["func-selecteditem-cancel-cmd"]=["cancel","remove","reject","withdraw"]
 scenario["func-selecteditem-all-cancel-cmd"]=["cancel all","remove all","reject all","withdraw all"];
 scenario["common-post-cmd"]=["post","send","push"];
 scenario["func-cleanup-cmd"]=["refresh","cleanup","clean"];
+
+//scenario["func-tableapi-delete-cmd"] 
 scenario["func-tabledrop-cmd"]=["drop","drop table","table drop","tabledrop","droptable"];
+scenario["func-apidelete-cmd"]=["delete","delete api","api delete","apidelete","deleteapi","remove api","reject api","api remove","api reject"];
+
 scenario["func-tabledrop-msg"]=["Which table do you want to drop?","correct order is \"droptable <table name>\" and so on"];
 scenario["func-tabledrop-ng-msg"]=["Hey open the table list first!","Huum?","Check it first","Watch it"];
-scenario["func-apidelete-cmd"]=["delete","delete api","api delete","apidelete","deleteapi","remove","reject"];
+scenario["func-apidelete-cmd"]=["delete","delete api","api delete","apidelete","deleteapi","remove api","reject api","api remove","api reject"];
 scenario["func-apidelete-msg"]=["Which api do you want to delete?","correct order is \"delete <api name>\" and so on"];
 scenario["func-apidelete-ng-msg"]=["Hey open the api list first!","Huum?","Check it first","Watch it"];
 scenario["func-apidelete-forbidden-msg"]=["some api cannot be deleted, sorry"];

@@ -35,7 +35,7 @@ $(function () {
                             });
 
                             // data bind into drag&drop area
-                            $( "#container .item_area" ).append( `${str}` );
+                            $( `${CONTAINERPANEL} .item_area` ).append( `${str}` );
                         }
                     })
                 }

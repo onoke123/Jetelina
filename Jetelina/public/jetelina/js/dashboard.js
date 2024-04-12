@@ -13,6 +13,7 @@ const JETELINAPANEL ="#jetelina_panel";
 const FUNCTIONPANEL = "#function_panel";
 const CONDITIONPANEL = "#condition_panel";
 const CONTAINERPANEL = "#container";
+const COLUMNSPANEL = "#columns";
 const JETELINACHATBOX = `${JETELINAPANEL} [name='chat_input']`;
 const CHARTPANEL = "#plot";
 let stage = 0;// action stage number ex. 1:before login  'login':at login
@@ -28,14 +29,6 @@ let authcount = 0; // authentication count. this is randum number that is set in
 let usetcount = 0; // only use for the first login in checkNewCommer function in jetelinalib.js
 
 $(window).load(function () {
-  /**
-   * @function focusonJetelinaPanel
-   * 
-   * focust on the input tag of jetelina panel
-   *
-  const focusonJetelinaPanel = () => {
-    $(JETELINACHATBOX).focus();
-  }*/
   /**
    * @function activePanel
    * @param {string]} panel tag name

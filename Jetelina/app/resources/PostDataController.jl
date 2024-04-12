@@ -278,7 +278,6 @@ function _addJetelinaWords()
 	arr = jsonpayload("arr")
 
 	# adding scenario
-	#        scenarioFile = string( joinpath( "..","..","public","jetelina","js","scenario.js" ))
 	scenarioFile = JFiles.getJsFileNameFromPublicPath("scenario.js")
 	scenarioTmpFile = JFiles.getJsFileNameFromPublicPath("scenario.tmp")
 	target_scenario = "scenario[\"$arr\"]"

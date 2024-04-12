@@ -448,7 +448,6 @@ function dataInsertFromCSV(fname::String)
 		execute(conn, create_table_str)
 	catch err
 		close_connection(conn)
-		#            println(err)
 		ret = json(Dict("result" => false, "filename" => "$fname", "errmsg" => "$err"))
 		JLog.writetoLogfile("PgDBController.dataInsertFromCSV() with $fname error : $err")
 		return ret
