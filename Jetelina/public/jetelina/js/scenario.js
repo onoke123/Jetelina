@@ -47,6 +47,8 @@ scenario["common-cancel-cmd"]=["cancel","withdraw","abandon","postpone","give up
 scenario["common-confirm-msg"]=["Sure?","Really?","Won't you regret?"];
 scenario["common-alert-msg"]=["Boo","no hit","could not make it"];
 scenario["common-ajax-error-msg"]=["Oh my, something server error happened:"];
+scenario["common-comand-duplicated-msg"]=["which do you point to '{Q}'","Oh oh,'{Q}',which one?","you makes me confuse, which one '{Q}'?"];
+
 scenario["func-table-api-open-close-cmd"]=["open","close","select","find"];
 scenario["func-item-select-cmd"]=["select","choose","pick"];
 scenario["func-item-select-all-cmd"]=["select all", "select everything", "select all columns","choose all","choose everything","choose all columns","pic all","pic everything","pic all columns"];

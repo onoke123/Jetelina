@@ -823,7 +823,7 @@ const postSelectedColumns = (mode) => {
       preferent.cmd = "";
       $(GENELICPANELINPUT).val('');
       $(`${CONTAINERPANEL} .selectedItem`).remove();
-//      cleanUp("items");
+      //      cleanUp("items");
       cleanupItems4Switching();// clear(=close) opened table items. defined in jetelinalib.js
     }
   });
@@ -839,51 +839,86 @@ const functionPanelFunctions = (ut) => {
   // default return chat message
   let m = IGNORE;
   let cmd = "";
+  let cmdCandidates = [];
 
   /*
     Tips:
-      'cancel' and 'cleanup' commands are be prioritized.
-      the next is preferent.cmd
-      then other commands
+      because of scenario[], it has a chance duplicate commands.
+      cmdCandidates is for judging, and the belows 'if' sentences are to find
+      this duplicated commands.
+      it is not good as 'if{}else if{}else....', here shoud be 'if{} if{}...'
   */
   if (inScenarioChk(ut, 'common-cancel-cmd')) {
     cmd = 'cancel';
     preferent.cmd = "";
-  } else if (inScenarioChk(ut, 'func-cleanup-cmd')) {
+    cmdCandidates.push("cancel");
+  }
+
+  if (inScenarioChk(ut, 'func-cleanup-cmd')) {
     cmd = 'cleanup';
-  } else if (inScenarioChk(ut, 'func-fileupload-open-cmd')) {
+    cmdCandidates.push("clean up");
+  }
+
+  if (inScenarioChk(ut, 'func-fileupload-open-cmd')) {
     cmd = FILESELECTOROPEN;
-  } else if (inScenarioChk(ut, 'func-fileupload-cmd')) {
+    cmdCandidates.push("file open");
+  }
+
+  if (inScenarioChk(ut, 'func-fileupload-cmd')) {
     cmd = 'fileupload';
-  } else if (inScenarioChk(ut, 'func-show-table-list-cmd') ||
+    cmdCandidates.push("file upload");
+  }
+
+  if (inScenarioChk(ut, 'func-show-table-list-cmd') ||
     inScenarioChk(ut, 'func-show-api-list-cmd')) {
     cmd = TABLEAPILISTOPEN;
-  } else if (inScenarioChk(ut, 'func-table-api-open-close-cmd') ||
+    cmdCandidates.push("show table/api list");
+  }
+
+  if (inScenarioChk(ut, 'func-table-api-open-close-cmd') ||
     inScenarioChk(ut, 'func-item-select-cmd') ||
     inScenarioChk(ut, "func-item-select-all-cmd")) {
     cmd = SELECTITEM;
-  } else if (inScenarioChk(ut, 'func-tabledrop-cmd') ||
+    cmdCandidates.push("open table/api or select columns");
+  }
+
+  if (inScenarioChk(ut, 'func-tabledrop-cmd') ||
     inScenarioChk(ut, 'func-apidelete-cmd')) {
     cmd = TABLEAPIDELETE;
-  } else if (inScenarioChk(ut, 'common-post-cmd')) {
+    cmdCandidates.push("drop table ro delete api");
+  }
+
+  if (inScenarioChk(ut, 'common-post-cmd')) {
     cmd = 'post';
-  } else if (inScenarioChk(ut, 'func-subpanel-open-cmd')) {
+    cmdCandidates.push("post");
+  }
+
+  if (inScenarioChk(ut, 'func-subpanel-open-cmd')) {
     cmd = "subquery";
-  } else if (inScenarioChk(ut, 'func-api-test-cmd')) {
+    cmdCandidates.push("open sub query panel");
+  }
+
+  if (inScenarioChk(ut, 'func-api-test-cmd')) {
     cmd = "apitest";
-  } else if (inScenarioChk(ut, 'func-api-test-panel-show-cmd')) {
+    cmdCandidates.push("api test");
+  }
+
+  if (cmd.length < 0) {
+    cmd = getPreferentPropertie('cmd');
+    if (cmd.length < 0) {
+      cmd = ut;
+    }
+  }
+
+  // show/hide command, maybe
+  if (inScenarioChk(ut, 'func-api-test-panel-show-cmd')) {
     showApiTestPanel(true);
   } else if (inScenarioChk(ut, 'func-api-test-panel-hide-cmd')) {
     showApiTestPanel(false);
   } else if (inScenarioChk(ut, 'func-subpanel-close-cmd')) {
     showGenelicPanel(false);
-  } else {
-    cmd = getPreferentPropertie('cmd');
   }
 
-  if (cmd.length < 0) {
-    cmd = ut;
-  }
   /*
       this 'swich' commands manipulates 'table' and 'csv file upload'.
       capitalized 'cmd' are defined as 'const' because these are cancelable commands. 
@@ -905,6 +940,16 @@ const functionPanelFunctions = (ut) => {
     openFunctionPanel();
   } else {
     // nothing happens without opening function panel :P
+  }
+
+  if (1 < cmdCandidates.length) {
+    cmd = "";
+    let mm = "";
+    for (let i = 0; i < cmdCandidates.length; i++) {
+      mm += cmdCandidates[i] + ",";
+    }
+
+    m = chooseMsg('common-comand-duplicated-msg',${mm},"");
   }
 
   switch (cmd) {
@@ -933,7 +978,7 @@ const functionPanelFunctions = (ut) => {
       // cleanup the screen first 
       cleanupItems4Switching();
       cleanupContainers();
-//      cleanUp("items");
+      //      cleanUp("items");
 
       if (inScenarioChk(ut, 'func-show-table-list-cmd')) {
         if (isVisibleApiContainer()) {
@@ -1234,7 +1279,7 @@ const functionPanelFunctions = (ut) => {
     case 'cleanup': //clean up the panels
       cleanupItems4Switching();
       deleteSelectedItems();
-//      cleanUp("items");
+      //      cleanUp("items");
       cleanupContainers();
       m = chooseMsg('success-msg', '', '');
       break;
