@@ -18,15 +18,23 @@
 @jdic command_list-cmd:"how can i","command","commands","commandlist","commandslist"
 @jdic waiting-next-msg:"then?","next please"
 
+#
+# note: 'starting-0-*' has been changed to 'greeting-0-*'
+#
 # opening 
-@jdic starting-0-msg:"Hi","Hello"
-@jdic starting-0r-cmd:"hi","hello","hola","good ","sorry","what\"s up","what is up","nice to see you","how are you"
+@jdic greeting-0-msg:"Hi","Hello"
+@jdic greeting-0r-cmd:"hi","hello","hola","good ","sorry","what\"s up","what is up","nice to see you","how are you"
 @jdic bura-msg:"Hi Ho","Fun fun fun","Someone is there?","Waiting for.....","Do you know the meaning of .... love?"
 
+#
+# note: 'starting-1-*' has been changed to 'greeting-1-*'
+#
 # greeting 
-@jdic starting-1-msg:"Nice to see you", "How are you?"
-@jdic starting-1r-cmd:"fine","good","great"
-@jdic starting-1a-msg:"Nice to hear it", "Wow, super","lucky you","envy you"
+@jdic greeting-1-msg:"Nice to see you", "How are you?"
+@jdic greeting-1-cmd:"fine","good","great"
+@jdic greeting-1a-msg:"Nice to hear it", "Wow, super","lucky you","envy you"
+@jdic greeting-2-cmd:"about you","how are you","and you"
+@jdic greeting-2-msg:"I'm fine, thank you for asking","Well, so so","Energetic!","Feel so nice"
 
 # login 
 @jdic starting-2-msg:"Could you give me your name?","Let me know your name, please","May I ask your name?"
@@ -68,7 +76,7 @@
 @jdic get-config-change-history:"configuration history", "change history","update history"
 
 #open table list
-@jdic func-show-table-list-cmd:"open table","show me table","table list","tables","tablelist","tableslist"
+@jdic func-show-table-list-cmd:"open table list","show me table","show table","table list","tables","tablelist","tableslist"
 
 #open api list
 @jdic func-show-api-list-cmd:"open api","show me api","api list","apis list","apis","apilist"
@@ -91,7 +99,7 @@
 #
 # basic commands in function panel
 #
-@jdic common-cancel-cmd:"cancel","withdraw","abandon","postpone","give up","stop","quit"
+@jdic common-cancel-cmd:"cancel","withdraw","abandon","postpone","give up","quit"
 @jdic common-confirm-msg:"Sure?","Really?","Won't you regret?"
 @jdic common-alert-msg:"Boo","no hit","could not make it"
 @jdic common-ajax-error-msg:"Oh my, something server error happened:"
@@ -108,6 +116,7 @@
 @jdic func-tabledrop-msg:"Which table do you want to drop?","correct order is \"droptable <table name>\" and so on"
 @jdic func-tabledrop-ng-msg:"Hey open the table list first!","Huum?","Check it first","Watch it"
 
+@jdic func-apicreate-cmd:"create api","post api","post columns","create sql"
 @jdic func-apidelete-cmd:"delete","delete api","api delete","apidelete","deleteapi","remove api","reject api","api remove","api reject"
 @jdic func-apidelete-msg:"Which api do you want to delete?","correct order is \"delete <api name>\" and so on"
 @jdic func-apidelete-ng-msg:"Hey open the api list first!","Huum?","Check it first","Watch it"

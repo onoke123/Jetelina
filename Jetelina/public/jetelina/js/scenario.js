@@ -6,12 +6,15 @@ scenario["null-msg"]=["",""];
 scenario["guidance-cmd"]=["what can i","can you","start","manual","guide me","guidance","teach me","tell me"];
 scenario["command_list-cmd"]=["how can i","command","commands","commandlist","commandslist"];
 scenario["waiting-next-msg"]=["then?","next please"];
-scenario["starting-0-msg"]=["Hi","Hello"];
-scenario["starting-0r-cmd"]=["hi","hello","hola","good ","sorry","what\"s up","what is up","nice to see you","how are you"];
+scenario["greeting-0-msg"]=["Hi","Hello"];
+scenario["greeting-0r-cmd"]=["hi","hello","hola","good ","sorry","what\"s up","what is up","nice to see you","how are you"];
 scenario["bura-msg"]=["Hi Ho","Fun fun fun","Someone is there?","Waiting for.....","Do you know the meaning of .... love?"];
-scenario["starting-1-msg"]=["Nice to see you", "How are you?"];
-scenario["starting-1r-cmd"]=["fine","good","great"];
-scenario["starting-1a-msg"]=["Nice to hear it", "Wow, super","lucky you","envy you"];
+scenario["greeting-1-msg"]=["Nice to see you", "How are you?"];
+scenario["greeting-1-cmd"]=["fine","good","great"];
+scenario["greeting-1a-msg"]=["Nice to hear it", "Wow, super","lucky you","envy you"];
+scenario["greeting-2-cmd"]=["about you","how are you","and you"];
+scenario["greeting-2-msg"]=["I'm fine, thank you for asking","Well, so so","Energetic!","Feel so nice"];
+
 scenario["starting-2-msg"]=["Could you give me your name?","Let me know your name, please","May I ask your name?"];
 scenario["starting-3-msg"]=["What?","Are you kidding me?","Never mind"];
 scenario["starting-4-msg"]=["I am sorry, but ", "Something wrong, hum, "];
@@ -34,7 +37,7 @@ scenario["confirmation-sentences-cmd"]=["yes","sure","why not","do it","do","i w
 scenario["func-post-err-msg"]=["Hey, no columns","You should select post data","Boo"];
 scenario["config-update-cmd"]=["change parameter","parameter change","configuration change","change configuration","update configuration","configuration update","update parameter","parameter update","config change","change config","update config","config update"];
 scenario["get-config-change-history"]=["configuration history", "change history","update history"];
-scenario["func-show-table-list-cmd"]=["open table","show me table","table list","tables","tablelist","tableslist"];
+scenario["func-show-table-list-cmd"]=["open table list","show me table","show table","table list","tables","tablelist","tableslist"];
 scenario["func-show-api-list-cmd"]=["open api","show me api","api list","apis list","apis","apilist"];
 scenario["cond-graph-show-msg"]=["here you are","tatta laan"];
 scenario["cond-graph-show-cmd"]=["access numbers","access number","analyzed","report","graph"];
@@ -43,24 +46,21 @@ scenario["cond-performance-improve-msg"]=["There is an improving suggestion.","D
 scenario["cond-no-suggestion-msg"]=["I do not have any suggestions so far.","No suggestions","I do not give it to you.","Hey, Nothing at all"];
 scenario["starting-6a-msg"]=["OK, here you are","Hey ho","This"];
 scenario["starting-6b-msg"]=["Command me, if you need"];
-scenario["common-cancel-cmd"]=["cancel","withdraw","abandon","postpone","give up","stop","quit","remove","reject"];
+scenario["common-cancel-cmd"]=["cancel","withdraw","abandon","postpone","give up","quit"];
 scenario["common-confirm-msg"]=["Sure?","Really?","Won't you regret?"];
 scenario["common-alert-msg"]=["Boo","no hit","could not make it"];
 scenario["common-ajax-error-msg"]=["Oh my, something server error happened:"];
 scenario["common-comand-duplicated-msg"]=["which do you point to '{Q}'","Oh oh,'{Q}',which one?","you makes me confuse, which one '{Q}'?"];
-
 scenario["func-table-api-open-close-cmd"]=["open","close","select","find"];
 scenario["func-item-select-cmd"]=["select","choose","pick"];
 scenario["func-item-select-all-cmd"]=["select all", "select everything", "select all columns","choose all","choose everything","choose all columns","pic all","pic everything","pic all columns"];
 scenario["func-selecteditem-cancel-cmd"]=["cancel","remove","reject","withdraw"];
 scenario["func-selecteditem-all-cancel-cmd"]=["cancel all","remove all","reject all","withdraw all"];
 scenario["common-post-cmd"]=["post","send","push"];
+scenario["func-apicreate-cmd"]=["create api","post api","post columns","create sql"];
+
 scenario["func-cleanup-cmd"]=["refresh","cleanup","clean"];
-
-//scenario["func-tableapi-delete-cmd"] 
 scenario["func-tabledrop-cmd"]=["drop","drop table","table drop","tabledrop","droptable"];
-scenario["func-apidelete-cmd"]=["delete","delete api","api delete","apidelete","deleteapi","remove api","reject api","api remove","api reject"];
-
 scenario["func-tabledrop-msg"]=["Which table do you want to drop?","correct order is \"droptable <table name>\" and so on"];
 scenario["func-tabledrop-ng-msg"]=["Hey open the table list first!","Huum?","Check it first","Watch it"];
 scenario["func-apidelete-cmd"]=["delete","delete api","api delete","apidelete","deleteapi","remove api","reject api","api remove","api reject"];

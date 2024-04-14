@@ -33,8 +33,10 @@
       showGenelicPanel(b) genelic panel open or close. 
       checkGenelicInput() check genelic panel input. caution: will imprement this in V2 if necessary
       deleteThisApi() Ajax function for deleting the target api from api list doc.
+      whichCommandsInOrders(s) match with user input in cmdCandidates
 */
 let selectedItemsArr = [];
+let cmdCandidates = [];// ordered commands for checking duplication 
 const MYFORM = "#my_form";
 const UPFILE = `${MYFORM} input[name='upfile']`;
 const leftPanel = "#panel_left";
@@ -202,6 +204,7 @@ const itemSelect = (p) => {
       p.detach().appendTo(CONTAINERPANEL);
     }
 
+    cmdCandidates = [];
     cancelableCmdList.push(SELECTITEM);
     selectedItemsArr.push(item);
   }
@@ -399,6 +402,7 @@ const listClick = (p) => {
   let c = p.attr("class");
 
   removeColumn(t);
+  cmdCandidates = [];
   if (c.indexOf("activeItem") != -1) {
     p.toggleClass("activeItem");
     if (isVisibleApiContainer()) {
@@ -687,7 +691,7 @@ const getColumn = (tablename) => {
  * delete a column from selected item list on the display  
  */
 const removeColumn = (p) => {
-  $(`${COLUMNSPANEL} .item, ${CONTAINERPANEL} .item`).remove(`:contains(${p}_)`);
+  $(`${COLUMNSPANEL} .item, ${CONTAINERPANEL} .item`).not('.selectedItem').remove(`:contains(${p}_)`);
 }
 /**
  * @function dropThisTable
@@ -839,86 +843,129 @@ const functionPanelFunctions = (ut) => {
   // default return chat message
   let m = IGNORE;
   let cmd = "";
-  let cmdCandidates = [];
 
-  /*
-    Tips:
-      because of scenario[], it has a chance duplicate commands.
-      cmdCandidates is for judging, and the belows 'if' sentences are to find
-      this duplicated commands.
-      it is not good as 'if{}else if{}else....', here shoud be 'if{} if{}...'
-  */
-  if (inScenarioChk(ut, 'common-cancel-cmd')) {
-    cmd = 'cancel';
-    preferent.cmd = "";
-    cmdCandidates.push("cancel");
-  }
+  if (1 < cmdCandidates.length) {
+    cmd = whichCommandsInOrders(ut);
+  } else {
+    /*
+      Tips:
+        because of scenario[], it has a chance duplicate commands.
+        cmdCandidates is for judging, and the belows 'if' sentences are to find
+        this duplicated commands.
+        it is not good as 'if{}else if{}else....', here shoud be 'if{} if{}...'
+    */
+    if (inScenarioChk(ut, 'common-cancel-cmd')) {
+      cmd = 'cancel';
+      preferent.cmd = "";
+      cmdCandidates.push("cancel");
+    }
 
-  if (inScenarioChk(ut, 'func-cleanup-cmd')) {
-    cmd = 'cleanup';
-    cmdCandidates.push("clean up");
-  }
+    if (inScenarioChk(ut, 'func-cleanup-cmd')) {
+      cmd = 'cleanup';
+      cmdCandidates.push("clean up");
+    }
 
-  if (inScenarioChk(ut, 'func-fileupload-open-cmd')) {
-    cmd = FILESELECTOROPEN;
-    cmdCandidates.push("file open");
-  }
+    if (inScenarioChk(ut, 'func-fileupload-cmd')) {
+      cmd = 'fileupload';
+      cmdCandidates.push("file upload");
+    }
 
-  if (inScenarioChk(ut, 'func-fileupload-cmd')) {
-    cmd = 'fileupload';
-    cmdCandidates.push("file upload");
-  }
+    if (inScenarioChk(ut, 'func-show-table-list-cmd')) {
+      cmd = TABLEAPILISTOPEN;
+      cmdCandidates.push("show table list");
+    } else if (inScenarioChk(ut, 'func-show-api-list-cmd')) {
+      cmd = TABLEAPILISTOPEN;
+      cmdCandidates.push("show api list");
+    } else if (inScenarioChk(ut, 'func-fileupload-open-cmd')) {
+      cmd = FILESELECTOROPEN;
+      cmdCandidates.push("file open");
+    } else if (inScenarioChk(ut, 'func-table-api-open-close-cmd')) {
+      cmd = SELECTITEM;
+      cmdCandidates.push("open or close table/api");
+    } else if (inScenarioChk(ut, 'func-item-select-cmd')) {
+      cmd = SELECTITEM;
+      cmdCandidates.push("select columns");
+    } else if (inScenarioChk(ut, "func-item-select-all-cmd")) {
+      cmd = SELECTITEM;
+      cmdCandidates.push("select columns all");
+    } else if (inScenarioChk(ut, 'func-subpanel-open-cmd')) {
+      cmd = "subquery";
+      cmdCandidates.push("open sub query panel");
+    }
 
-  if (inScenarioChk(ut, 'func-show-table-list-cmd') ||
-    inScenarioChk(ut, 'func-show-api-list-cmd')) {
-    cmd = TABLEAPILISTOPEN;
-    cmdCandidates.push("show table/api list");
-  }
+    if (inScenarioChk(ut, 'func-tabledrop-cmd')) {
+      cmd = TABLEAPIDELETE;
+      cmdCandidates.push("drop table");
 
-  if (inScenarioChk(ut, 'func-table-api-open-close-cmd') ||
-    inScenarioChk(ut, 'func-item-select-cmd') ||
-    inScenarioChk(ut, "func-item-select-all-cmd")) {
-    cmd = SELECTITEM;
-    cmdCandidates.push("open table/api or select columns");
-  }
+    } else if (inScenarioChk(ut, 'func-apidelete-cmd')) {
+      cmd = TABLEAPIDELETE;
+      cmdCandidates.push("delete api");
+    }
 
-  if (inScenarioChk(ut, 'func-tabledrop-cmd') ||
-    inScenarioChk(ut, 'func-apidelete-cmd')) {
-    cmd = TABLEAPIDELETE;
-    cmdCandidates.push("drop table ro delete api");
-  }
+    if (inScenarioChk(ut, 'common-post-cmd') ||
+      (inScenarioChk(ut, 'func-apicreate-cmd'))) {
+      cmd = 'post';
+      cmdCandidates.push("post");
+    }
 
-  if (inScenarioChk(ut, 'common-post-cmd')) {
-    cmd = 'post';
-    cmdCandidates.push("post");
-  }
+    if (inScenarioChk(ut, 'func-api-test-cmd')) {
+      cmd = "apitest";
+      cmdCandidates.push("api test");
+    }
 
-  if (inScenarioChk(ut, 'func-subpanel-open-cmd')) {
-    cmd = "subquery";
-    cmdCandidates.push("open sub query panel");
-  }
-
-  if (inScenarioChk(ut, 'func-api-test-cmd')) {
-    cmd = "apitest";
-    cmdCandidates.push("api test");
-  }
-
-  if (cmd.length < 0) {
-    cmd = getPreferentPropertie('cmd');
     if (cmd.length < 0) {
-      cmd = ut;
+      cmd = getPreferentPropertie('cmd');
+      if (cmd.length < 0) {
+        cmd = ut;
+      }
+    }
+
+    // show/hide command, maybe
+    if (inScenarioChk(ut, 'func-api-test-panel-show-cmd')) {
+      showApiTestPanel(true);
+    } else if (inScenarioChk(ut, 'func-api-test-panel-hide-cmd')) {
+      showApiTestPanel(false);
+    } else if (inScenarioChk(ut, 'func-subpanel-close-cmd')) {
+      showGenelicPanel(false);
     }
   }
 
-  // show/hide command, maybe
-  if (inScenarioChk(ut, 'func-api-test-panel-show-cmd')) {
-    showApiTestPanel(true);
-  } else if (inScenarioChk(ut, 'func-api-test-panel-hide-cmd')) {
-    showApiTestPanel(false);
-  } else if (inScenarioChk(ut, 'func-subpanel-close-cmd')) {
-    showGenelicPanel(false);
+  if (-1 < $.inArray(cmd, [TABLEAPILISTOPEN, FILESELECTOROPEN])) {
+    openFunctionPanel();
+  } else {
+    // nothing happens without opening function panel :P
   }
+  /*
+    Tips:
+      this is a precautionary logic.
+      in the case of duplicating commands in scenario[], Jetelina asks you which is right.
+      the user request is postponed until the command is be clear with reserving it as preferent.ut.
+      that's why 'cmd' is be unset, then 'switch' goes to 'default', but it does not have any process. 👍
+  */
+  if (1 < cmdCandidates.length) {
+    if(preferent.ut == null || preferent.ut == ""){
+      preferent.ut = ut;
+    }
 
+    cmd = "";
+    let mm = "";
+    for (let i = 0; i < cmdCandidates.length; i++) {
+      mm += cmdCandidates[i] + ",";
+    }
+
+    m = chooseMsg('common-comand-duplicated-msg', mm, "");
+  }
+  /*
+    Tips:
+      clean up some parameters after defining 'cmd'.
+  */
+  if (0 < cmd.length) {
+    cmdCandidates = [];
+    if(preferent.ut != null && 0<preferent.ut.length){
+      ut = preferent.ut;
+      preferent.ut = "";
+    }
+  }
   /*
       this 'swich' commands manipulates 'table' and 'csv file upload'.
       capitalized 'cmd' are defined as 'const' because these are cancelable commands. 
@@ -936,22 +983,6 @@ const functionPanelFunctions = (ut) => {
         10.apitest: api test before registring
         default: non
   */
-  if (-1 < $.inArray(cmd, [TABLEAPILISTOPEN, FILESELECTOROPEN])) {
-    openFunctionPanel();
-  } else {
-    // nothing happens without opening function panel :P
-  }
-
-  if (1 < cmdCandidates.length) {
-    cmd = "";
-    let mm = "";
-    for (let i = 0; i < cmdCandidates.length; i++) {
-      mm += cmdCandidates[i] + ",";
-    }
-
-    m = chooseMsg('common-comand-duplicated-msg',${mm},"");
-  }
-
   switch (cmd) {
     case FILESELECTOROPEN://open file selector
       $(UPFILE).click();
@@ -1055,7 +1086,16 @@ const functionPanelFunctions = (ut) => {
           // ordered item
           for (let n = 0; n < t.length; n++) {
             $(COLUMNSPANEL).find("span").each(function (i, v) {
-              if (v.textContent.indexOf(t[n]) != -1) {
+              let tc = v.textContent;
+              let vtc = "";
+              if(tc.indexOf('_') != -1){
+                let tcarr = tc.split('_');
+                if(tcarr[0] != null && 0<tcarr[0].length){
+                  vtc = tc.slice(tcarr[0].length+1);
+                }
+              } 
+
+              if( vtc.indexOf(t[n]) != -1){
                 itemSelect($(this));
                 m = chooseMsg('success-msg', "", "");
               }
@@ -1430,6 +1470,39 @@ const deleteThisApi = (apis) => {
     // delete from the list
     rejectCancelableCmdList(TABLEAPIDELETE);
   });
+}
+/**
+ * @function whichCommandsInOrders
+ * @param {string} s user typing string
+ * @return {string} command string
+ * 
+ * match with user input in cmdCandidates
+ */
+const whichCommandsInOrders = (s) => {
+  let c = "";
+  for (key in cmdCandidates) {
+    if (s == cmdCandidates[key]) {
+      switch (s) {
+        case 'cancel': c = "cancel"; break;
+        case "clean up": c = "cleanup"; break;
+        case "file upload": c = "fileupload"; break;
+        case "show table list", "show api list": c = TABLEAPILISTOPEN; break;
+        case "file open": c = FILESELECTOROPEN; break;
+        case "open or close table/api":case "select columns": case "select columns all": c = SELECTITEM; break;
+        case "open sub query panel": c = subquery; break;
+        case "drop table": case "delete api": c = TABLEAPIDELETE; break;
+        case "post": c = "post"; break;
+        case "api test": c = "apitest"; break;
+        default:
+          break;
+      }
+
+      cmdCandidates = [];
+      return c;
+    }
+  }
+
+  return c;
 }
 
 // return to the chat box if 'return key' is typed in genelic_panel

@@ -39,6 +39,7 @@
       inCancelableCmdList(cmd) check the ordered command is in cancelableCmdList or not
       rejectCancelableCmdList(cmd) reject command from cancelableCmdList
       rejectSelectedItemsArr(item) reject selected item from selectedItemsArr
+      checkBandA(o,p) check the target sting is effective or not in the array string.
 */
 const JETELINACHATTELL = `${JETELINAPANEL} [name='jetelina_tell']`;
 const SOMETHINGMSGPANEL = "#something_msg";
@@ -682,6 +683,7 @@ const typing = (i, m) => {
  * @returns {boolean}  true -> as expected  false -> unexpected user response
  * 
  * check if the user input message is what is expected in scenario[] or config[]
+ * deprecated
  */
 const chkUResponse = (n, s) => {
     /*
@@ -787,12 +789,27 @@ const chatKeyDown = (cmd) => {
             */
             switch (stage) {
                 case 1:
-                    if (!chkUResponse("starting-1r-cmd", ut)) {
+//                    if (!chkUResponse("greeting-1-cmd", ut)) {
+/*
+                    if(!inScenarioChk(ut,"greeting-1-cmd")){
                         m = chooseMsg("starting-2-msg", "", "");
                         stage = 'login';
                     } else {
+                        / say 'nice' if a user said 'fine' /
+                        m = chooseMsg('greeting-1a-msg', "", "");
+                    }
+*/
+
+                    if(inScenarioChk(ut,'greeting-1-cmd')){
                         /* say 'nice' if a user said 'fine' */
-                        m = chooseMsg('starting-1a-msg', "", "");
+                        m = chooseMsg('greeting-1a-msg', "", "");
+                    }else if(inScenarioChk(ut,'greeting-2-cmd')){
+                        /* reply something your mood if a uer asks you 'how about you' */
+                        m = chooseMsg('greeting-2-msg', "", "");
+                    }else{
+                        /* lead to login with 'can I ask your name?' */
+                        m = chooseMsg("starting-2-msg", "", "");
+                        stage = 'login';
                     }
 
                     break;
@@ -966,9 +983,15 @@ const chatKeyDown = (cmd) => {
                         location.reload();
                     }
 
-                    if (chkUResponse("starting-0r-cmd", ut)) {
+                    if (logouttimerId) {
+                        clearTimeout(logouttimerId);
+                    }
+                
+
+//                    if (chkUResponse("greeting-0r-cmd", ut)) {
+                    if(inScenarioChk(ut,"greeting-0r-cmd")){
                         // greeting
-                        m = chooseMsg("starting-1-msg", "", "");
+                        m = chooseMsg("greeting-1-msg", "", "");
                         stage = 1;/* into the login stage */
                     } else {
                         if (!logoutflg && m.length == 0) {
@@ -1011,7 +1034,7 @@ const openingMessage = () => {
     const t = 10000;// into idling mode after 10 sec if nothing input into the chat box
     $(JETELINACHATTELL).text("");
     $(CHATBOXYOURTELL).text("");
-    typingControll(chooseMsg("starting-0-msg", "", ""));
+    typingControll(chooseMsg("greeting-0-msg", "", ""));
 
     setTimeout(function () { burabura() }, t);
 }
@@ -1036,7 +1059,14 @@ const burabura = () => {
  * chech the user's intention is to be logout
  */
 const logoutChk = (s) => {
-    return inScenarioChk(s, "logout-cmd");
+    let logoutcmds = scenario["logout-cmd"];
+    for(key in logoutcmds){
+        if( logoutcmds[key] == s ){
+            return true;
+        }
+    }
+
+    return false;
 }
 /**
  * @function logout
@@ -1044,11 +1074,6 @@ const logoutChk = (s) => {
  * logout
  */
 const logout = () => {
-    //    enterNumber = 0;
-    stage = 0;
-    isSuggestion = false;
-    localStorage[LOCALPARAM] = false;
-
     $(JETELINAPANEL).animate({
         width: "400px",
         height: "100px",
@@ -1067,6 +1092,8 @@ const logout = () => {
     showSomethingMsgPanel(false);
 
     // global variables initialize
+    isSuggestion = false;
+    localStorage[LOCALPARAM] = false;
     stage = 0;
     preferent = {};
     presentaction = {};
@@ -1173,7 +1200,6 @@ const inScenarioChk = (s, sc, type) => {
         order = config[`${sc}`];
     }
 
-    let ret = false;
     for (key in order) {
         /*
           Tips:
@@ -1182,9 +1208,28 @@ const inScenarioChk = (s, sc, type) => {
              then possible multi candidates because of realizing vague cpmparing.
              indeed using $.inArray() makes this judge strict, but remains a vagueness. 
         */
-        if (s.indexOf(order[key]) != -1) {
+        if( s.indexOf(order[key]) != -1) {
             return true;
         }
+    }
+
+    return false;
+}
+/**
+ * @function checkBandA
+ * @param {string} o target string
+ * @param {string} p found position in an array 
+ * @returns {boolean}  true -> ok, false -> no good
+ * 
+ * check the target sting is effective or not in the array string.
+ *     ex. wanna check 'open' in o->"ftestopen"  p->10 then true is " open","open ","'open",",open","open'","open,"
+ *         i mean 'topen' is NG.
+ */
+const checkBandA = (o,p) =>{
+    let ret = false;
+    let c = [' ',',','\'','\"'];
+    if(( p==0 )||((o[p-1] != null && o[p-1].includes(c)) && (o[p+o.length+1] != null && o[p+o.length+1].includes(c)))){
+        ret = true;
     }
 
     return ret;
