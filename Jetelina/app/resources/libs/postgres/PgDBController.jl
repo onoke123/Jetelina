@@ -348,11 +348,17 @@ function dataInsertFromCSV(fname::String)
 	===#
 	colarray = [];
 	for col in names(df)
-		push!(colarray, string(tableName,'_',col))
+		cnn::String = "";
+		if col != keyword2
+			cnn = string(tableName,'_',col)
+		else
+			cnn = col
+		end
+
+		push!(colarray, cnn)
 	end
 
 	rename!(df,Symbol.(colarray))
-	keyword2 = string(tableName,'_',keyword2)
 
 	# special column 'jetelina_delte_flg' is added to columns 
 	insertcols!(df, :jetelina_delete_flg => 0)
@@ -646,8 +652,9 @@ function _executeApi(apino::String, sql_str::String)
 		if startswith(apino, "js")
 			# select 
 			df = DataFrame(sql_ret)
-			if j_config.JC["paging"] < nrow(df)
-				jmsg = "data number over 100, you should set paging paramter in this SQL, it is not my business"
+			pagingnum = parse(Int,j_config.JC["paging"])
+			if pagingnum < nrow(df)
+				jmsg = string("data number over ", pagingnum, " you should set paging paramter in this SQL, it is not my business")
 			end
 
 			ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))

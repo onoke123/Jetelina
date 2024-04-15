@@ -102,7 +102,7 @@ function writetoSQLLogfile(apino, sql)
 	===#
 	log_str = string(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"), ",", apino, ",\"", sql, "\"")
 	sqllogfile = JFiles.getFileNameFromLogPath(j_config.JC["sqllogfile"])
-	sqlfilemaxsize = parse(Int, sqlfilemaxsize)
+	sqlfilemaxsize = parse(Int, j_config.JC["sqllogfilesize"])
 
 	try
 		if ispath(sqllogfile)

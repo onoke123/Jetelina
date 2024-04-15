@@ -940,7 +940,7 @@ const chatKeyDown = (cmd) => {
                             let configMsg = "";
                             if (1 < multi) {
                                 // pick candidates up
-                                m = chooseMsg('multi-candidates-msg', "", "");// this 'm' is ddisplayed in chatbox
+                                m = chooseMsg('multi-candidates-msg', "", "");// this 'm' is displayed in chatbox
                                 let multimsg = chooseMsg("config-update-plural-candidates-message","","");// this 'multimsg' is displayed in SOMETHINGMSGPANEL
                                 for (i = 0; i < multi; i++) {
                                     multimsg += `'${multiscript[i]}',`;

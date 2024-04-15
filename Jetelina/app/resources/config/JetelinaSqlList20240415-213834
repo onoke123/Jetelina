@@ -1,0 +1,4 @@
+apino,sql,subquery
+ji285,"insert into ftestdelete (ftestdelete_jt_id,ftestdelete_name,ftestdelete_sex,ftestdelete_age,ftestdelete_ave,jetelina_delete_flg) values({ftestdelete_jt_id},'{ftestdelete_name}','{ftestdelete_sex}',{ftestdelete_age},{ftestdelete_ave},{jetelina_delete_flg})",""
+ju286,"update ftestdelete set ftestdelete_name='{ftestdelete_name}',ftestdelete_sex='{ftestdelete_sex}',ftestdelete_age={ftestdelete_age},ftestdelete_ave={ftestdelete_ave}","where jt_id={jt_id}"
+jd287,"update ftestdelete set jetelina_delete_flg=1","where jt_id={jt_id}"

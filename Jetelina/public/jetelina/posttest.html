@@ -5,9 +5,15 @@
         <link type="text/css" rel="stylesheet" href="css/tablelist.css">
     </head>
     <body>
-        <button onclick="getAjaxData('s')">js89  is very simple Select</button>
+        <button onclick="getAjaxData('s')">very simple Select</button>
         <br>
-        <button onclick="getAjaxData('w')">js95 is a complecate Select</button>
+        <button onclick="getAjaxData('w')">complecate Select</button>
+        <br>
+        <button onclick="getAjaxData('i')">data insert</button>
+        <br>
+        <button onclick="getAjaxData('u')">update</button>
+        <br>
+        <button onclick="getAjaxData('d')">delete</button>
         <br>
         <button onclick="changeParam()">Change Configuration Parameter test</button>
         <br>
@@ -100,27 +106,27 @@
     const getAjaxData = (s) => {
         let pd = {};
         if(s=="s"){
-            pd["apino"] = "js89";
+            pd["apino"] = "js310";
         }else if(s=="w"){
-            pd["apino"] = "js95";
-            pd["subquery"] = "[\"sex\":\"Male\",\"num\":100]";
+            pd["apino"] = "js312";
+            pd["subquery"] = "[ave:0.4]";
         }else if(s=="u"){
-            pd["apino"] = "ju465";
-            pd["name"] = "AAA3";
-            pd["sex"] = "f";
-            pd["age"] = 30;
-            pd["ave"] = 0.9;
+            pd["apino"] = "ju308";
+            pd["ftest_name"] = "AAA10";
+            pd["ftest_sex"] = "f";
+            pd["ftest_age"] = 30;
+            pd["ftest_ave"] = 0.9;
             pd["subquery"] = 1;
         }else if(s=="i"){
-            pd["apino"] = "ji464";
-            pd["jt_id"] = 5,
-            pd["name"] = "EEE";
-            pd["sex"] = "m";
-            pd["age"] = 60;
-            pd["ave"] = 0.5;
+            pd["apino"] = "ji307";
+            pd["jt_id"] = 4,
+            pd["ftest_name"] = "EEE";
+            pd["ftest_sex"] = "m";
+            pd["ftest_age"] = 60;
+            pd["ftest_ave"] = 0.5;
         }else if(s=="d"){
-            pd["apino"] = "jd466";
-            pd["subquery"] = 2;
+            pd["apino"] = "jd309";
+            pd["subquery"] = 4;
         }
 
         let dd = JSON.stringify(pd);

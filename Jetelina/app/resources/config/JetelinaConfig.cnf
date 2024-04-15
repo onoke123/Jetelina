@@ -24,7 +24,7 @@
 debug = true
 
 @jdic logfile:"log name","log file name","log-name"
-logfile = log.txt
+logfile = log.log
 
 @jdic logfilesize:"log file size","log size","log-size"
 logfilesize = 10
@@ -33,7 +33,7 @@ logfilesize = 10
 fileuploadpath = repo
 
 @jdic sqllogfile:"sql log file","sql log name","sql-name","sql-log"
-sqllogfile = sql.txt
+sqllogfile = sql.log
 
 @jdic sqllogfilesize:"sql log file size","sqllog file size","sql log size","sql log size","sqllog-size"
 sqllogfilesize = 10
@@ -146,4 +146,4 @@ analyze_interval = 48
 #   the file name changing is banned by using Jetelina chatting, that why no '@jdic'.
 #   the file size is not limited therefore it would not be big, it should be set and also its rotating time if it would be a big file. 
 #
-config_change_history_file = config_history.txt
+config_change_history_file = config_history.log

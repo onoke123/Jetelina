@@ -29,7 +29,7 @@
 module DBDataController
 
 using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json
-using Jetelina.ApiSqlListManager, Jetelina.JMessage
+using Jetelina.ApiSqlListManager, Jetelina.JMessage, Jetelina.JLog
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
@@ -208,12 +208,12 @@ function executeApi(json_d::Dict)
 	===#
 	if ApiSqlListManager.readSqlList2DataFrame()[1]
 		Df_JetelinaSqlList = ApiSqlListManager.readSqlList2DataFrame()[2]
-		target_api = subset(ApiSqlListManager.Df_JetelinaSqlList, :apino => ByRow(==(json_d["apino"])), skipmissing = true)
+		target_api = subset(Df_JetelinaSqlList, :apino => ByRow(==(json_d["apino"])), skipmissing = true)
 		if 0 < nrow(target_api)
 			# Step2:
 			if j_config.JC["dbtype"] == "postgresql"
 				# Case in PostgreSQL
-				PgDBController.executeApi(jsond_d, target_api)
+				ret = PgDBController.executeApi(json_d, target_api)
 			end
 		elseif j_config.JC["dbtype"] == "mariadb"
 		elseif j_config.JC["dbtype"] == "oracle"
@@ -223,7 +223,7 @@ function executeApi(json_d::Dict)
 	end
 
 	# write execution sql to log file
-	JetelinaLog.writetoSQLLogfile(json_d["apino"], sql_str)
+	JLog.writetoSQLLogfile(json_d["apino"], sql_str)
 
 	return ret
 end

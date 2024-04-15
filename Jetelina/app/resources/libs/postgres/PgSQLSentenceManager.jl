@@ -90,7 +90,7 @@ function checkSubQuery(subquery::String)
 - return:  subquery string after processing
 """
 function checkSubQuery(subquery::String)
-	return replace(subquery, ";" => "")
+	return replace.(subquery, ";" => "")
 end
 """
 function createApiInsertSentence(tn::String,cs::String,ds::String)
@@ -326,7 +326,7 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
 
 				Attention: 
 					using 'subquery_str' String type has a benefit rather than using df.subquery[1],
-					because df fiels length are fixed as DataFrame when it was created.
+					because df fields length are fixed as DataFrame when it was created.
 					I mean using straight as df.* may happen over flow in the case of concate strings.
 						ex. df.subquery[1] -> fixed String(10) in DataFrame
 								 df.subquery[1] = string(df.subquery[1], "AAAAAAAA") -> maybe get over flow 
@@ -349,7 +349,7 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
 					if !isnothing(sp)
 						for ii in eachindex(sp)
 							if ii == 1 || ii == length(sp)
-								sp[ii] = replace(sp[ii], "[" => "", "]" => "", "\"" => "", "'" => "")
+								sp[ii] = replace.(sp[ii], "[" => "", "]" => "", "\"" => "", "'" => "")
 							end
 
 							ssp = split(sp[ii], ":")
@@ -359,7 +359,7 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
 
 					for (k, v) in json_subquery_dict
 						kk = string("{", k, "}")
-						subquery_str = replace(subquery_str, kk => v)
+						subquery_str = replace.(subquery_str, kk => v)
 					end
 
 					# this private function __create_j_del_flg() is defined above.
@@ -389,11 +389,10 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
 		===#
 		for (k, v) in json_dict
 			kk = string("{", k, "}")
-			replace!(execution_sql, kk => v)
+			execution_sql = replace.(execution_sql, kk => v)
 		end
 
 		ret = execution_sql
-
 	end
 
 	return ret
