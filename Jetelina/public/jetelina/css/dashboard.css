@@ -220,6 +220,13 @@ input.user-input {
   font-style: italic;
 }
 
+.apitestresult {
+  color: #f1ef46;
+  font-style: italic;
+  font-size: small;
+  text-align: left;
+}
+
 .jetelina_subquery_note {
   color: #72e799;  
   font-style: italic;

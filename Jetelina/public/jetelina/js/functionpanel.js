@@ -811,6 +811,12 @@ const postSelectedColumns = (mode) => {
     } else {
       /* API test mode */
       getdata(result, 4);
+      if(!isVisibleApiTestPanel()){
+        $(`${APITESTPANEL} span`).remove();
+        showApiTestPanel(true);
+        let testmsg = "<span class='jetelina_suggestion'><p>Oh oh, no data. Try again with other params</p></span>";
+        $(`${APITESTPANEL} [name='api-test-msg']`).append(`${testmsg}`);
+      }
     }
 
     typingControll(chooseMsg("success-msg", "", ""));
@@ -854,7 +860,7 @@ const functionPanelFunctions = (ut) => {
         this duplicated commands.
         it is not good as 'if{}else if{}else....', here shoud be 'if{} if{}...'
     */
-    if (inScenarioChk(ut, 'common-cancel-cmd')) {
+    if (inScenarioChk(ut, 'common-cancel-cmd') || inScenarioChk(ut, 'func-selecteditem-cancel-cmd')) {
       cmd = 'cancel';
       preferent.cmd = "";
       cmdCandidates.push("cancel");
@@ -913,9 +919,9 @@ const functionPanelFunctions = (ut) => {
       cmdCandidates.push("api test");
     }
 
-    if (cmd.length < 0) {
+    if (cmd.length == 0) {
       cmd = getPreferentPropertie('cmd');
-      if (cmd.length < 0) {
+      if (cmd.length == 0) {
         cmd = ut;
       }
     }
@@ -950,7 +956,7 @@ const functionPanelFunctions = (ut) => {
     cmd = "";
     let mm = "";
     for (let i = 0; i < cmdCandidates.length; i++) {
-      mm += cmdCandidates[i] + ",";
+      mm += "'" + cmdCandidates[i] + "',";
     }
 
     m = chooseMsg('common-comand-duplicated-msg', mm, "");

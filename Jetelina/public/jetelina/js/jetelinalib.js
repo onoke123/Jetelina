@@ -289,12 +289,13 @@ const getdata = (o, t) => {
 
                         let datanumber = o[key].length;
                         let jetelinamessage = o["message from Jetelina"];
-                        let testmsg = `<span class="jetelina_suggestion"><p>Conguraturation, well done.<br>aquaiable data number is ${datanumber}</p></span>`;
+                        let testmsg = "<span class='jetelina_suggestion'><p>Conguraturation, well done.</p></span>";
+                        let aquisition_nubmer = `<span class='apitestresult'><p>-aquaiable data number is ${datanumber}</p></span>`;
                         let testdata = JSON.stringify(o[key]);
-                        $("#apitest [name='api-test-msg']").append(testmsg);
-                        $("#apitest [name='api-test-data'").append(`<span class=\"jetelina_suggestion\"><p>${testdata}</p></span>`);
+                        $(`${APITESTPANEL} [name='api-test-msg']`).append(`${testmsg}<br>${aquisition_nubmer}`);
+                        $(`${APITESTPANEL} [name='api-test-data'`).append(`<span class='apitestresult'><p>-return JSON data are</p><p>${testdata}</p></span>`);
                         if (0 < jetelinamessage.length) {
-                            $("#apitest [name='api-test-msg']").append(`<span class="jetelina_suggestion"><p>Attention: ${jetelinamessage}</p></span>`);
+                            $("#apitest [name='api-test-msg']").append(`<span class='apitestresult'><p>Attention: ${jetelinamessage}</p></span>`);
                         }
                     }
                 }
@@ -1427,7 +1428,7 @@ const showSomethingMsgPanel = (b) => {
 */
 const isVisibleApiTestPanel = () => {
     let ret = false;
-    if ($("#apitest").is(":visible")) {
+    if ($(APITESTPANEL).is(":visible")) {
         ret = true;
     }
 
@@ -1443,6 +1444,7 @@ const isVisibleApiTestPanel = () => {
 const showApiTestPanel = (b) => {
     if (b) {
         $(APITESTPANEL).show().draggable();
+        $(APITESTPANEL).animate({top:"300px"},ANIMATEDURATION);
     } else {
         // delete all test results
         $(APITESTPANEL).hide();
