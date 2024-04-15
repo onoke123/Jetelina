@@ -1016,3 +1016,21 @@
 └ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
 ┌ Info: 2024-04-15 10:34:33 PgDBController.doSelect() with pre select org1000.org1000_jt_id,org1000.org1000_organizationid,org1000.org1000_name,org1000.org1000_website,org1000.org1000_country,org1000.org1000_description,org1000.org1000_founded,org1000.org1000_industry,org1000.org1000_numberofemployees from org1000 as org1000 where org1000_country alike 'Japan%' error : LibPQ.Errors.SyntaxError("ERROR:  syntax error at or near \"alike\"\nLINE 1: ...ees from org1000 as org1000 where org1000_country alike 'Jap...\n                                                             ^\n")
 └ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68
+┌ Info: 2024-04-15 10:41:15 PgDBController.insert2JetelinaTableManager() error: MethodError(Jetelina.DBDataController.PgDBController.getJetelinaSequenceNumber, (PostgreSQL connection (CONNECTION_OK) with parameters:
+│   user = postgres
+│   password = ********************
+│   channel_binding = prefer
+│   dbname = postgres
+│   host = localhost
+│   port = 5432
+│   client_encoding = UTF8
+│   options = -c DateStyle=ISO,YMD -c IntervalStyle=iso_8601 -c TimeZone=UTC
+│   application_name = LibPQ.jl
+│   sslmode = prefer
+│   sslcompression = 0
+│   sslsni = 1
+│   ssl_min_protocol_version = TLSv1.2
+│   gssencmode = prefer
+│   krbsrvname = postgres
+│   target_session_attrs = any, 0), 0x0000000000007d5c)
+└ @ Jetelina.JLog /home/onoke/Jetelina/Jetelina/app/resources/JLog.jl:68

@@ -16,3 +16,6 @@ ji285,"insert into ftestdelete (ftestdelete_jt_id,ftestdelete_name,ftestdelete_s
 ju286,"update ftestdelete set ftestdelete_name='{ftestdelete_name}',ftestdelete_sex='{ftestdelete_sex}',ftestdelete_age={ftestdelete_age},ftestdelete_ave={ftestdelete_ave}","where jt_id={jt_id}"
 jd287,"update ftestdelete set jetelina_delete_flg=1","where jt_id={jt_id}"
 js288,"select org1000.org1000_jt_id,org1000.org1000_organizationid,org1000.org1000_name,org1000.org1000_website,org1000.org1000_country,org1000.org1000_description,org1000.org1000_founded,org1000.org1000_industry,org1000.org1000_numberofemployees from org1000 as org1000","where org1000_country like {country}"
+ji289,"insert into ftest2 (ftest2_jt_id,ftest2_name,ftest2_sex,ftest2_age,ftest2_ave,jetelina_delete_flg) values({ftest2_jt_id},'{ftest2_name}','{ftest2_sex}',{ftest2_age},{ftest2_ave},{jetelina_delete_flg})",""
+ju290,"update ftest2 set ftest2_name='{ftest2_name}',ftest2_sex='{ftest2_sex}',ftest2_age={ftest2_age},ftest2_ave={ftest2_ave}","where jt_id={jt_id}"
+jd291,"update ftest2 set jetelina_delete_flg=1","where jt_id={jt_id}"
