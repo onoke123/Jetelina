@@ -17,6 +17,29 @@
       viewCombinationGraph(bname, bno, ct, ac)  show the 'combination graph'
 */
 /**
+ *  @function openFunctionPanel
+ * 
+ *  open and visible "#function_panel"
+ */
+const openConditionPanel = () => {
+    if( isVisibleFunctionPanel() ){
+        $(FUNCTIONPANEL).hide();
+    }
+    
+    $(CONDITIONPANEL).show().animate({
+        width: window.innerWidth * 0.8,
+        height: window.innerHeight * 0.8,
+        top: "10%",
+        left: "10%"
+    }, ANIMATEDURATION);
+
+    const dataurls = scenario['analyzed-data-collect-url'];
+    /*
+        check for existing Jetelina's suggestion
+    */
+    getAjaxData(dataurls[3]);
+}
+/**
  * @function isVisibleApiAccessNumbers
  * @returns {boolean}  true -> visible, false -> invisible
  * 
@@ -38,7 +61,7 @@ const isVisibleApiAccessNumbers = () =>{
  */
 const isVisibleAccessCombination = () =>{
     let ret = false;
-    if ($("#plot").is(":visible")){
+    if ($(CHARTPANEL).is(":visible")){
       ret = true;
     }
   
@@ -80,31 +103,31 @@ const isVisiblePerformanceTest = () =>{
  * Exectute some functions ordered by user chat input message
  */
 const conditionPanelFunctions = (ut) => {
-    let m = 'ignore';
+    let m = IGNORE;
 
     if (presentaction == null || presentaction.length == 0) {
         presentaction.push('cond');
     }
 
-    if (inScenarioChk(ut,'function_panel')) {
-        delete preferent;
-        delete presentaction;
-        stage = 'chose_func_or_cond';
-        chatKeyDown(ut);
-    } else {
+//    if (inScenarioChk(ut,'function_panel-cmd')) {
+//        delete preferent;
+//        delete presentaction;
+//        stage = 'lets_do_something';
+//        chatKeyDown(ut);
+//    } else {
         // use the prior command if it were
         let cmd = getPreferentPropertie('cmd');
 
         if (cmd == null || cmd.length <= 0) {
-            if( inScenarioChk(ut,'6cond-graph-show-keywords')){
+            if( inScenarioChk(ut,'cond-graph-show-cmd')){
                 cmd = "graph";
-            }else if( inScenarioChk(ut,'6cond-sql-performance-graph-show-keywords')){
+            }else if( inScenarioChk(ut,'cond-sql-performance-graph-show-cmd')){
                 if(isSuggestion){
                     cmd = "performance";
                 }else{
                     cmd = "no_suggestion";
                 }
-            }else if( inScenarioChk(ut,'confirmation-sentences') && isSuggestion ){
+            }else if( inScenarioChk(ut,'confirmation-sentences-cmd') && isSuggestion ){
                 cmd = "performance";
             }
         }
@@ -116,6 +139,10 @@ const conditionPanelFunctions = (ut) => {
                     'performance: show the result of analyzing sql exection on test db.
                                   this cmd can execute in the case of being a suggestion.
         */
+        if(-1<$.inArray(cmd,['graph','performance'])){
+            openConditionPanel();
+        }
+
         switch (cmd) {
             case 'graph':
                 if(isVisiblePerformanceReal()){
@@ -127,17 +154,17 @@ const conditionPanelFunctions = (ut) => {
                 }
 
                 if(isVisibleAccessCombination()){
-                    $("#plot").hide();
+                    $(CHARTPANEL).hide();
                 }
 
-                $("#something_msg").hide();
+                showSomethingMsgPanel(false);
 
                 $("#api_access_numbers").show().draggable().animate({
                     top: "20%",
                     left: "20%"
-                }, animateDuration).draggable('disable');
+                }, ANIMATEDURATION).draggable('disable');
 
-                m = chooseMsg('6cond-graph-show', "", "");
+                m = chooseMsg('cond-graph-show-msg', "", "");
                 break;
             case 'performance':
                 if(isVisibleApiAccessNumbers()){
@@ -152,26 +179,26 @@ const conditionPanelFunctions = (ut) => {
                         below graphs performance is as same as 'case:graph'.
                 */
                /*
-                $("#plot").show().animate({
+                $(CHARTPANEL).show().animate({
                     top: "5%",
                     left: "-5%"
-                }, animateDuration);
+                }, ANIMATEDURATION);
                 */
                 $("#performance_test").show().draggable().animate({
                     top: "20%", //-50%",
                     left: "20%" //"50%"
-                }, animateDuration).draggable('disable');
+                }, ANIMATEDURATION).draggable('disable');
 
-                $("#something_msg").show();
-                m = chooseMsg('6cond-graph-show', "", "");
+                showSomethingMsgPanel(true);
+                m = chooseMsg('cond-graph-show-msg', "", "");
                 break;
             case 'no_suggestion':
-                m = chooseMsg('6cond-no-suggestion', "", "");
+                m = chooseMsg('cond-no-suggestion-msg', "", "");
                 break;
             default:
                 break;
         }
-    }
+//    }
 
     return m;
 }

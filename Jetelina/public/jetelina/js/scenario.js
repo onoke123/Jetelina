@@ -1,113 +1,112 @@
-let scenario = [], userresponse = [];
-
-/* special configuration parameter */
-/* urls for condition panel */
-scenario["analyzed-data-collect-url"] = ["/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getsqlaccessdata"];
-/* post urls for function panel */
-scenario["function-post-url"] = ["/jetelinawords"];
-/* get urls for function panel */
-scenario["function-get-url"] = ["/getapilist"];
-/* null */
-scenario["null"] = ["",""];
-/* command list order */
-scenario["guidance"] = ["what can i","can you","start","manual","guide me","guidance","teach me","tell me"];
-scenario["command_list"] = ["how can i","command","commands","commandlist","commandslist"];
-scenario["waiting-next"] = ["then?","next please"];
-/* opening */
-scenario[0] = ["Hi","Hello"];
-userresponse[0] = ["hi","hello","hola","good ","sorry","what\"s up","what is up","nice to see you","how are you"];
-scenario["bura"] = ["Hi Ho","Fun fun fun","Someone is there?","Waiting for.....","Do you know the meaning of .... love?"];
-/* greeting */
-scenario[1] = ["Nice to see you", "How are you?"];
-scenario["1a"] = ["Nice to hear it", "Wow, super","lucky you","envy you"];
-userresponse[1] = ["fine","good","great"];
-/* login */
-scenario[2] = ["Could you give me your name?","Let me know your name, please","May I ask your name?"];
-/* etc */
-scenario[3] = ["What?","Are you kidding me?","Never mind"];
-/* miss login */
-scenario[4] = ["I am sorry, but ", "Something wrong, hum, "];
-/* something inprogress */
-scenario["inprogress"] = ["I am doing","happy workin","husle hustle","I AM DOING THIS JUST FOR YOU"];
-/* refuse any command due to progress something */
-scenario["refuse-command"] = ["I am busy now","I cannot do multi task at once","You kill me?","Later..."];
-/* greeting to u after successing login */
-scenario[5] = ["Welcome ", "I missed you, ","Oh my.. incredible, "];
-scenario["5-multi-candidates"] = ["please tell me more detail.","next question.","more..."];
-scenario["5-not-registered"] = ["you are not registered, try again.","you are not here yet.","I do not know you, sorry."];
-/* after login */
-scenario["first-login"] = ["This is your first login to me,{Q}, I would like to ask you something."];
-scenario["first-login-ask-firstname"] = ["Thank you. First of all, may I ask your first name?"];
-scenario["first-login-ask-lastname"] = ["Thank you. Next, could you give me your last name?"];
-scenario["first-login-ask-info"] = ["Thank you so much,{Q}, then what is your favorits?, Whatever."];
-scenario["first-login-ask-info-then"] = ["Sounds nice, and more?","Cool, others?","I love it too, and?","Great, you are lucky, and more?"];
-scenario["first-login-ask-info-end"] = ["Thank you so much,{Q}. Now you can type 'Guide' or 'Manual' to see what can I do for you."];
-
-scenario[6] = ["How can I help you today?", "What do you do now?"];
-scenario["success"] = ["Done","Success","I am so happy","Yes"];
-scenario["fail"] = ["Uge","Noooooooo","Sorry something wrong"];
-scenario["cancel"] = ["It has been canceld","Has been withdrawn","Canceled","Withdrew","Called off"]
-scenario["confirmation-sentences"] = ["yes","sure","why not","do it","do","i want to do it","i wanna do it","kick ass"];
-//scenario["6func_in"] = ["Do you wanna open the function panel?"];
-//scenario["6func"] = ["Let me your command, if you need"];
-scenario["6func-post-err"] = ["Hey, no columns","You should select post data","Boo"];
-//scenario["6cond_in"] = ["Do you wanna open the condition panel?"];
-
-//open the function panel
-scenario["function_panel"] = ["function panel", "open func","show me func","function"];
-//open the condition panel
-scenario["condition_panel"] = ["condition panel", "open cond","show me cond","condition"];
-//open table list
-scenario["6func-show-table-list"] = ["open table","show me table","table list","tables","tablelist","tableslist"];
-//open api list
-scenario["6func-show-api-list"] = ["open api","show me api","api list","apis list","apis","apilist"];
-
-//scenario["6cond"] = ["Let me your command, if you need"];
-scenario["6cond-graph-show"] = ["here you are","tatta laan"];
-// Access vs Combination graph 
-scenario["6cond-graph-show-keywords"] = ["access numbers","access number","analyzed","report","graph"];
-// SQL Exectuon Time graph
-scenario["6cond-sql-performance-graph-show-keywords"] = ["your suggestion","suggest","sql test","improved performance"];
-
-scenario["6cond-performance-improve"] = ["There is an improving suggestion.","Do you wanna know my great idea?","Attention please. I have an idea."];
-scenario["6cond-no-suggestion"] = ["I do not have any suggestions so far.","No suggestions","I do not give it to you.","Hey, Nothing at all"];
-
-scenario["6a"] = ["OK, here you are","Hey ho","This"];
-scenario["6b"] = ["Command me, if you need"];
-
-// basic commands in function panel
-scenario["6func-list-cmd"] = ["open","close","select","cancel"];
-scenario["6func-list-cmd-select-cmd"] = ["select","choose","pick"];
-scenario["6func-selected-column-post-cmd"] = ["post","send","push"];
-scenario["6func-cleanup-cmd"] = ["refresh","cleanup","clean"];
-scenario["6func-tabledrop-cmd"] = ["drop","drop table","table drop","tabledrop","droptable"];
-scenario["6func-tabledrop-msg"] = ["Which table do you want to drop?","correct order is \"droptable <table name>\" and so on"];
-scenario["6func-tabledrop-ng-msg"] = ["Hey open the table list first!","Huum?","Check it first","Watch it"];
-scenario["6func-tabledrop-confirm"] = ["Sure?","Really?","Won\"t you regret?"];
-scenario["6func-tabledrop-cancel-cmd"] = scenario["6func-postcolumn-cancel-cmd"];
-
-scenario["6func-apidelete-cmd"] = ["delete","delete api","api delete","apidelete","deleteapi"];
-scenario["6func-apidelete-msg"] = ["Which api do you want to delete?","correct order is \"delete <api name>\" and so on"];
-scenario["6func-apidelete-ng-msg"] = ["Hey open the api list first!","Huum?","Check it first","Watch it"];
-scenario["6func-apidelete-forbidden-msg"] = ["this api cannot be deleted, sorry"];
-scenario["6func-apidelete-confirm"] = scenario["6func-tabledrop-confirm"];
-
-scenario["6func-fileupload-open-cmd"] = ["file open","open file","open filebox","file box","csv file"];
-scenario["6func-fileupload-open-msg"] = ["Which file?"];
-scenario["6func-fileupload-cmd"] = ["upload","fileup","fileupload","up","csv up"];
-scenario["6func-fileupload-msg"] = ["File?"];
-scenario["6func-csv-format-error"] = ["CSV format is not good, see the error message","Unacceptable CSV format, see the error message,"];
-scenario["6func-postcolumn-where-option-msg"] = ["Wanna set the \"Where\" sentence? This is an option."];
-scenario["6func-postcolumn-where-indispensable-msg"] = ["Set the \"Where\" sentence. This is an indispensable."];
-scenario["6func-postcolumn-available-msg"] = ["Now you can post them","Do post them","Type \"post\" now"];
-scenario["6func-subpanel-open-cmd"] = ["sub please","subquery","sub panel","where panel","sub query"];
-scenario["6func-subpanel-opened"] =["Set your sub query in \"Sub Query\" field","Ready to \"Sub Query\" field"];
-scenario["6func-postcolumn-cancel-cmd"] = ["cancel","withdraw","abandon","postpone","give up","stop","quit"];
-/* log out */
-scenario["logout"] = ["logout","exit","log out","out","return","bye","see you","nice day"];
-scenario["afterlogout"] = ["Bye", "Have a good day","Hope you will back soon","I am looking forward you"];
-/* unknow command */
-scenario["unknown-msg"] = ["Hey hey hey","Ah.... what?","Could not catch yours, what?","Oh oh oh, what?"];
-/* show or hide error message */
-scenario["hide-error-message"] = ["hide error"];
-scenario["show-error-message"] = ["show error"];
+let scenario = []; let config = [];
+scenario["analyzed-data-collect-url"]=["/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getsqlaccessdata"];
+scenario["function-post-url"]=["/updateuserdata","/jetelinawords","/getconfigdata","/changeconfigdata","/createapi","/testapi","/chkacount"];
+scenario["function-get-url"]=["/getapilist","/getalldbtable","/getconfigchangehistory"];
+scenario["null-msg"]=["",""];
+scenario["guidance-cmd"]=["what can i","can you","start","manual","guide me","guidance","teach me","tell me"];
+scenario["command_list-cmd"]=["how can i","command","commands","commandlist","commandslist"];
+scenario["waiting-next-msg"]=["then?","next please"];
+scenario["greeting-0-msg"]=["Hi","Hello"];
+scenario["greeting-0r-cmd"]=["hi","hello","hola","good ","sorry","what\"s up","what is up","nice to see you","how are you"];
+scenario["bura-msg"]=["Hi Ho","Fun fun fun","Someone is there?","Waiting for.....","Do you know the meaning of .... love?"];
+scenario["greeting-1-msg"]=["Nice to see you", "How are you?"];
+scenario["greeting-1-cmd"]=["fine","good","great"];
+scenario["greeting-1a-msg"]=["Nice to hear it", "Wow, super","lucky you","envy you"];
+scenario["greeting-2-cmd"]=["about you","how are you","and you"];
+scenario["greeting-2-msg"]=["I'm fine, thank you for asking","Well, so so","Energetic!","Feel so nice"];
+scenario["starting-2-msg"]=["Could you give me your name?","Let me know your name, please","May I ask your name?"];
+scenario["starting-3-msg"]=["What?","Are you kidding me?","Never mind"];
+scenario["starting-4-msg"]=["I am sorry, but ", "Something wrong, hum, "];
+scenario["inprogress-msg"]=["I am doing","happy workin","husle hustle","I AM DOING THIS JUST FOR YOU"];
+scenario["refuse-command-msg"]=["I am busy now","I cannot do multi task at once","You kill me?","Later..."];
+scenario["starting-5-msg"]=["Welcome ", "I missed you, ","Oh my.. incredible, "];
+scenario["multi-candidates-msg"]=["there are a few candidates as your order","which is your order?","may you should say more detail","please tell me more detail.","next question.","more..."];
+scenario["not-registered-msg"]=["you are not registered, try again.","you are not here yet.","I do not know you, sorry."];
+scenario["first-login-msg"]=["This is your first login to me,{Q}, I would like to ask you something."];
+scenario["first-login-ask-firstname-msg"]=["Thank you. First of all, may I ask your first name?"];
+scenario["first-login-ask-lastname-msg"]=["Thank you. Next, could you give me your last name?"];
+scenario["first-login-ask-info-msg"]=["Thank you so much,{Q}, then what is your favorits?, Whatever."];
+scenario["first-login-ask-info-then-msg"]=["Sounds nice, and more?","Cool, others?","I love it too, and?","Great, you are lucky, and more?"];
+scenario["first-login-ask-info-end-msg"]=["Thank you so much,{Q}. Now you can type 'Guide' or 'Manual' to see what can I do for you."];
+scenario["starting-6-msg"]=["How can I help you today?", "What do you do now?"];
+scenario["success-msg"]=["Done","Success","I am so happy","Yes"];
+scenario["fail-msg"]=["Uge","Noooooooo","Sorry something wrong"];
+scenario["cancel-msg"]=["It has been canceld","Has been withdrawn","Canceled","Withdrew","Called off"];
+scenario["confirmation-sentences-cmd"]=["yes","sure","why not","do it","do","i want to do it","i wanna do it","kick ass"];
+scenario["func-post-err-msg"]=["Hey, no columns","You should select post data","Boo"];
+scenario["config-update-cmd"]=["change parameter","parameter change","configuration change","change configuration","update configuration","configuration update","update parameter","parameter update","config change","change config","update config","config update"];
+scenario["get-config-change-history"]=["configuration history", "change history","update history"];
+scenario["func-show-table-list-cmd"]=["open table list","show me table","show table","table list","tables","tablelist","tableslist"];
+scenario["func-show-api-list-cmd"]=["open api","show me api","api list","apis list","apis","apilist"];
+scenario["cond-graph-show-msg"]=["here you are","tatta laan"];
+scenario["cond-graph-show-cmd"]=["access numbers","access number","analyzed","report","graph"];
+scenario["cond-sql-performance-graph-show-cmd"]=["your suggestion","suggest","improved performance"];
+scenario["cond-performance-improve-msg"]=["There is an improving suggestion.","Do you wanna know my great idea?","Attention please. I have an idea."];
+scenario["cond-no-suggestion-msg"]=["I do not have any suggestions so far.","No suggestions","I do not give it to you.","Hey, Nothing at all"];
+scenario["starting-6a-msg"]=["OK, here you are","Hey ho","This"];
+scenario["starting-6b-msg"]=["Command me, if you need"];
+scenario["common-cancel-cmd"]=["cancel","withdraw","abandon","postpone","give up","quit"];
+scenario["common-confirm-msg"]=["Sure?","Really?","Won't you regret?"];
+scenario["common-alert-msg"]=["Boo","no hit","could not make it"];
+scenario["common-ajax-error-msg"]=["Oh my, something server error happened:"];
+scenario["common-comand-duplicated-msg"]=["which do you point to {Q}","Oh oh,{Q},which one?","you makes me confuse, which one {Q}?"];
+scenario["func-table-api-open-close-cmd"]=["open","close","select","find"];
+scenario["func-item-select-cmd"]=["select","choose","pick"];
+scenario["func-item-select-all-cmd"]=["select all", "select everything", "select all columns","choose all","choose everything","choose all columns","pic all","pic everything","pic all columns"];
+scenario["func-selecteditem-cancel-cmd"]=["cancel","remove","reject","withdraw"];
+scenario["func-selecteditem-all-cancel-cmd"]=["cancel all","remove all","reject all","withdraw all"];
+scenario["common-post-cmd"]=["post","send","push"];
+scenario["func-cleanup-cmd"]=["refresh","cleanup","clean"];
+scenario["func-tabledrop-cmd"]=["drop","drop table","table drop","tabledrop","droptable"];
+scenario["func-tabledrop-msg"]=["Which table do you want to drop?","correct order is \"droptable <table name>\" and so on"];
+scenario["func-tabledrop-ng-msg"]=["Hey open the table list first!","Huum?","Check it first","Watch it"];
+scenario["func-apicreate-cmd"]=["create api","post api","post columns","create sql"];
+scenario["func-apidelete-cmd"]=["delete","delete api","api delete","apidelete","deleteapi","remove api","reject api","api remove","api reject"];
+scenario["func-apidelete-msg"]=["Which api do you want to delete?","correct order is \"delete <api name>\" and so on"];
+scenario["func-apidelete-ng-msg"]=["Hey open the api list first!","Huum?","Check it first","Watch it"];
+scenario["func-apidelete-forbidden-msg"]=["some api cannot be deleted, sorry"];
+scenario["func-fileupload-open-cmd"]=["file open","open file","open filebox","file box","csv file"];
+scenario["func-fileupload-open-msg"]=["Which file?"];
+scenario["func-fileupload-cmd"]=["upload","fileup","fileupload","up","csv up"];
+scenario["func-fileupload-msg"]=["File?"];
+scenario["func-fileupload-upload-msg"]=["you've selected '{Q}'. then hit 'upload'."];
+scenario["func-csv-format-error-msg"]=["CSV format is not good, see the error message","Unacceptable CSV format, see the error message,"];
+scenario["func-postcolumn-where-option-msg"]=["Wanna set the \"Where\" sentence? This is an option."];
+scenario["func-postcolumn-where-indispensable-msg"]=["Set the \"Where\" sentence. This is an indispensable."];
+scenario["func-postcolumn-available-msg"]=["Now you can post them","Do post them","Type \"post\" now"];
+scenario["func-subpanel-open-cmd"]=["show query","show subquery","show sub","sub query","subquery"];
+scenario["func-subpanel-close-cmd"]=["close query","hide query","close subquery","hide subquery","close sub","hide sub"];
+scenario["func-subpanel-opened-msg"]=["Set your sub query in \"Sub Query\" field","Ready to \"Sub Query\" field"];
+scenario["func-api-test-msg"]=["Why do not you try it, type \"sql test\" to execute this SQL","Let's check it with typing \"sql check\""];
+scenario["func-api-test-cmd"]=["do sql test","do api test","test sql","sql check","do api check","check sql","check api","execute sql test","execute api test","execute test","do test"];
+scenario["func-api-test-panel-show-cmd"]=["show api test","open api test","show sql test","open sql test","display api test","display sql test","open test result","show test result"];
+scenario["func-api-test-panel-hide-cmd"]=["hide api test","close api test","hide sql test","close sql test","undisplay api test","undisplay sql test","close test result","hide test result"];
+scenario["logout-cmd"]=["logout","exit","log out","out","return","bye","bye bye","see you","have a nice day","good bye"];
+scenario["afterlogout-msg"]=["Bye", "Have a good day","Hope you will back soon","I am looking forward you"];
+scenario["unknown-msg"]=["Hey hey hey","Ah.... what?","Could not catch yours, what?","Oh oh oh, what?"];
+scenario["hide-something-msg-cmd"]=["hide error","close error","delete error","hide message","close message","delete message"];
+scenario["show-something-msg-cmd"]=["show error","open error", "display error","show message","open message","display message"];
+scenario["config-update-simple-message"]=["put someting in there"];
+scenario["config-update-plural-message"]=["which config?"];
+scenario["config-update-plural-candidates-message"]=["there are multi candidates "];
+scenario["config-update-alert-message"]=["Hey hey hey, put a new param in there"];
+scenario["config-update-error-message"]=["Hey, no pointed configuration data"];
+config["fileuploadpath"]=["upload file path","up load file","file path","repository"];
+config["pg_password"]=["postgres password","database password","password in postgres","password in database"];
+config["pg_port"]=["port"];
+config["sqllogfile"]=["sql log file","sql log name","sql-name","sql-log"];
+config["pg_sslmode"]=["sslmode","ssl mode","ssl"];
+config["pg_testdbname"]=["test database"];
+config["logfilesize"]=["log file size","log size","log-size"];
+config["debug"]=["debug"];
+config["pg_user"]=["user","login"];
+config["dbtype"]=["db","database","data base"];
+config["reading_max_lines"]=["read line numbers for analyzing","analyzing lines","analyzing line numbers","analyzing line number"];
+config["logfile"]=["log name","log file name","log-name"];
+config["sqllogfilesize"]=["sql log file size","sqllog file size","sql log size","sql log size","sqllog-size"];
+config["analyze_interval"]=["analyze interval","analyzing interval"];
+config["selectlimit"]=["limit"];
+config["pg_dbname"]=["database name","db name","dbname"];
+config["pg_host"]=["host"];
+config["logfile_rotation_close"]=["rotation end","rotation close"];
+config["logfile_rotation_open"]=["rotation start","rotation open"];

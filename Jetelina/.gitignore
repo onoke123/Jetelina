@@ -7,6 +7,7 @@ log/*
 sessions/*
 !*.gitkeep
 Manifest.toml
+test/*
 
 # Vagrant
 .vagrant
@@ -23,6 +24,9 @@ Vagrantfile
 *.vi
 *~
 *.sass-cache
+*.log.*
+JetelinaTableApiRelation*
+JetelinaSqlList*
 
 # OS or Editor folders
 .DS_Store

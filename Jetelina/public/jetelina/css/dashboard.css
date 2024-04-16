@@ -49,6 +49,15 @@ body {
   text-align: center;
 }
 
+.table.deleteItem, .api.deleteItem {
+  text-decoration: line-through;
+  text-decoration-color: white;
+  text-decoration-style: wavy;
+  background-color: #373f1c;
+  color: #eff0e8;
+  opacity: 0.3;
+}
+
 .table:hover {
   color: #eeeeee;
   transform: scale(1.1);
@@ -123,7 +132,7 @@ input.user-input {
   outline: none;
   border: none;
   color: #a8ce49;
-  background: rgb(53, 41, 94, 0.1) /*rgb(212, 223, 213)*/;
+  background: rgb(53, 41, 94, 0.1);
   width: 300px;
 }
 
@@ -175,12 +184,50 @@ input.user-input {
   top:50%;
 }
 
+.newapino {
+  width:500px;
+  font-size: 16px;
+  color: #7dc37f;
+  top:50%;
+  left:10%;
+  position: absolute;
+  transform: translate(+10%,-50%);
+}
+
+.something_msg_def {
+  width:600px;
+  height:70px;
+  top:80%;
+  left:20%;
+}
+
+.something_msg_def.config_history {
+  height:200px;
+  top:50%;
+} 
+
 .jetelina_message {
     color: #e32910;  
     font-style: italic;
 }
 
+.jetelina_message.config_history_text {
+  color: #a8ce49;
+}
+
 .jetelina_suggestion {
   color: #7dc37f;
+  font-style: italic;
+}
+
+.apitestresult {
+  color: #f1ef46;
+  font-style: italic;
+  font-size: small;
+  text-align: left;
+}
+
+.jetelina_subquery_note {
+  color: #72e799;  
   font-style: italic;
 }

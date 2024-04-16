@@ -14,12 +14,10 @@ module LogFileRotator
 
 using Dates
 using Jetelina.JMessage, Jetelina.JFiles, Jetelina.JLog 
+import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-include("ReadConfig.jl")
-
-const j_config = ReadConfig
 const interval::Integer = 3600 # 1hr = 60*60
 procflg = Ref(true) # rotation process progressable -> true, stop/error -> false
 
@@ -29,8 +27,8 @@ function main()
 	wrap function for executing _exectuterotating() that is the real file rotating function.
 """
 function main()
-	ft = j_config.JetelinaLogRotationTimeF
-	tt = j_config.JetelinaLogRotationTimeT
+	ft = j_config.JC["logfile_rotation_open"]
+	tt = j_config.JC["logfile_rotation_close"]
 		 
 	task = @async while procflg[]
 		if ft < Dates.format(now(),"HH:MM") < tt
@@ -47,8 +45,8 @@ function _exectuterotating()
 	execute log and sql log files
 """
 function _exectuterotating()
-	logfile = JFiles.getFileNameFromLogPath(j_config.JetelinaLogfile)
-	sqllogfile = JFiles.getFileNameFromLogPath(j_config.JetelinaSQLLogfile)
+	logfile = JFiles.getFileNameFromLogPath(j_config.JC["logfile"])
+	sqllogfile = JFiles.getFileNameFromLogPath(j_config.JC["sqllogfile"])
 	_fileRotation(logfile)
 	_fileRotation(sqllogfile)
 end

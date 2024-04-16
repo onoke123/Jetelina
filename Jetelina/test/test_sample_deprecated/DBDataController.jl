@@ -1,7 +1,7 @@
 module DBDataController
 
     using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json, SQLite
-    using JetelinaLog, JetelinaReadConfig
+    using JetelinaLog, JetelinaConfigManager
     using ExeSql
 
     function getalldbdata()
@@ -12,7 +12,7 @@ module DBDataController
     function readdatafromdb()
         dbfile = JetelinaDBPath
         
-        if debugflg
+        if JC["debug"]
             dbgmsg = "dbfile: $dbfile" 
             writetoLogfile( dbgmsg )
         end

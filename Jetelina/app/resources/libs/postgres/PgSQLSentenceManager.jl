@@ -7,7 +7,7 @@ Description:
 	General DB action controller
 
 functions
-	sqlDuplicationCheck(nsql::String, subq::String)  confirm duplication, if 'nsql' exists in JetelinaSQLListfile.but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
+	sqlDuplicationCheck(nsql::String, subq::String)  confirm duplication, if 'nsql' exists in JC["sqllistfile"].but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
 	checkSubQuery(subquery::String) check posted subquery strings wheather exists any illegal strings in it.
 	createApiInsertSentence(tn::String,cs::String,ds::String) create sql input sentence by queries.
 	createApiUpdateSentence(tn::String,us::Any) create sql update sentence by queries.
@@ -28,7 +28,7 @@ export sqlDuplicationCheck, checkSubQuery, createApiInsertSentence, createApiUpd
 """
 function sqlDuplicationCheck(nsql::String, subq::String)
 
-	confirm duplication, if 'nsql' exists in JetelinaSQLListfile.
+	confirm duplication, if 'nsql' exists in JC["sqllistfile"].
 	but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
 
 # Arguments
@@ -90,7 +90,7 @@ function checkSubQuery(subquery::String)
 - return:  subquery string after processing
 """
 function checkSubQuery(subquery::String)
-	return replace(subquery, ";" => "")
+	return replace.(subquery, ";" => "")
 end
 """
 function createApiInsertSentence(tn::String,cs::String,ds::String)
@@ -119,7 +119,8 @@ function createApiUpdateSentence(tn::String,us::Any)
 - return: Tuple: (sql update sentence, sub query sentence)
 """
 function createApiUpdateSentence(tn::String, us::Any)
-	return """update $tn set $us""", """where jt_id={jt_id}"""
+	jtid = string(tn,"_jt_id")
+	return """update $tn set $us""", """where $jtid={jt_id}"""
 end
 """
 function createApiDeleteSentence(tn::String)
@@ -132,16 +133,17 @@ function createApiDeleteSentence(tn::String)
 - return: Tuple: (sql delete sentence, sub query sentence)
 """
 function createApiDeleteSentence(tn::String)
-	return """update $tn set jetelina_delete_flg=1""", """where jt_id={jt_id}"""
+	jtid = string(tn,"_jt_id")
+	return """update $tn set jetelina_delete_flg=1""", """where $jtid={jt_id}"""
 end
 """
 function createApiSelectSentence(json_d::Dict, seq_no::Integer)
 
-	create API and SQL select sentence from posting data,then append it to JetelinaTableApifile.
+	create API and SQL select sentence from posting data,then append it to JC["tableapifile"].
 
 # Arguments
 - `json_d::Dict`: json data
-- `seq_no::Integer`: number of jetelian_sql_sequence
+- `seq_no::Integer`: number of jetelian_sql_sequence. if sql_no=-1, then pre execution.
 - return: this sql is already existing -> json {"resembled":true}
 		  new sql then success to append it to  -> json {"apino":"<something no>"}
 					   fail to append it to     -> false
@@ -173,7 +175,7 @@ function createApiSelectSentence(json_d, seq_no::Integer)
 	tableName::String = ""
 	#===
 		Tips: 
-			put into array to write it to JetelinaTableApifile. 
+			put into array to write it to JC["tableapifile"]. 
 			This is used in ApiSqlListManager.writeTolist().
 	===#
 	tablename_arr::Vector{String} = []
@@ -205,23 +207,34 @@ function createApiSelectSentence(json_d, seq_no::Integer)
 	end
 
 	selectSql = """select $selectSql from $tableName"""
-	ck = sqlDuplicationCheck(selectSql, subq_d)
-	if ck[1]
-		# already exist it. return it and do nothing.
-		return json(Dict("result" => false, "resembled" => ck[2]))
-	else
-		# yes this is the new
-		ret = ApiSqlListManager.writeTolist(selectSql, subq_d, tablename_arr, seq_no)
-		#===
-			Tips:
-				writeTolist() returns tuple({true/false,apino/null}).
-				return apino in json style if the first in tuple were true.
-		===#
-		if ret[1]
-			return json(Dict("result" => true, "apino" => ret[2]))
+
+	if seq_no != -1
+		ck = sqlDuplicationCheck(selectSql, subq_d)
+		if ck[1]
+			# already exist it. return it and do nothing.
+			return json(Dict("result" => false, "resembled" => ck[2]))
 		else
-			return ret[1]
+			# yes this is the new
+			ret = ApiSqlListManager.writeTolist(selectSql, subq_d, tablename_arr, seq_no)
+			#===
+				Tips:
+					writeTolist() returns tuple({true/false,apino/null}).
+					return apino in json style if the first in tuple were true.
+			===#
+			if ret[1]
+				return json(Dict("result" => true, "apino" => ret[2]))
+			else
+				return ret[1]
+			end
 		end
+	else
+		# pre execution sql sentence
+		keyword::String = "ignore" # protocol
+		if contains(subq_d,keyword)
+			subq_d = ""
+		end
+		
+		return string(selectSql," ",subq_d);
 	end
 end
 """
@@ -234,7 +247,7 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
 	Attention: this select sentence searchs only 'jetelina_delete_flg=0" data.
 
 # Arguments
-- `item_arr::Vector{String}`: posted column data
+- `json_dict::Dict`:  json raw data, uncertain data type        
 - `df::DataFrame`: dataframe of target api data. a part of Df_JetelinaSqlList 
 - return::String SQL sentence
 """
@@ -315,7 +328,7 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
 
 				Attention: 
 					using 'subquery_str' String type has a benefit rather than using df.subquery[1],
-					because df fiels length are fixed as DataFrame when it was created.
+					because df fields length are fixed as DataFrame when it was created.
 					I mean using straight as df.* may happen over flow in the case of concate strings.
 						ex. df.subquery[1] -> fixed String(10) in DataFrame
 								 df.subquery[1] = string(df.subquery[1], "AAAAAAAA") -> maybe get over flow 
@@ -338,17 +351,19 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
 					if !isnothing(sp)
 						for ii in eachindex(sp)
 							if ii == 1 || ii == length(sp)
-								sp[ii] = replace(sp[ii], "[" => "", "]" => "", "\"" => "", "'" => "")
+								sp[ii] = replace.(sp[ii], "[" => "", "]" => "", "\"" => "", "'" => "")
 							end
 
 							ssp = split(sp[ii], ":")
-							json_subquery_dict[ssp[1]] = ssp[2]
+							if !isnothing(ssp) && 1<length(ssp)
+								json_subquery_dict[ssp[1]] = ssp[2]
+							end
 						end
 					end
 
 					for (k, v) in json_subquery_dict
 						kk = string("{", k, "}")
-						subquery_str = replace(subquery_str, kk => v)
+						subquery_str = replace.(subquery_str, kk => v)
 					end
 
 					# this private function __create_j_del_flg() is defined above.
@@ -378,11 +393,10 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
 		===#
 		for (k, v) in json_dict
 			kk = string("{", k, "}")
-			replace!(execution_sql, kk => v)
+			execution_sql = replace.(execution_sql, kk => v)
 		end
 
 		ret = execution_sql
-
 	end
 
 	return ret

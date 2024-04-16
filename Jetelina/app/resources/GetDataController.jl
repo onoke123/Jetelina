@@ -8,22 +8,23 @@ Description:
 
 functions
 	getTableList() calling DBDataController.getTableList() with json mode. the return is json form naturally.
-	getSqlAccessData() get JetelinaSqlAccess data file name. this file  contains access cound data in each sql due to sql.txt log file.
-	getTableCombiVsAccessRelationData()  get JetelinaTableCombiVsAccessRelation data file name. this file is analyzed data for table combination.
-	getPerformanceRealData()  get JetelinaSqlPerformancefile data file name. this file is analyzed data for real sql execution speed.
-	getPerformanceTestData()  get JetelinaSqlPerformancefile data file name but it is '.test' suffix. this file is analyzed data for sql execution speed on test db.
-	checkExistImproveApiFile()  get JetelinaImprApis data file name. this file contains an improving suggestion data of a target api. 
+	getSqlAccessData() get JC["sqlaccesscountfile"] data file name. this file  contains access cound data in each sql due to sql.txt log file.
+	getTableCombiVsAccessRelationData()  get JC["tablecombinationfile"] data file name. this file is analyzed data for table combination.
+	getPerformanceRealData()  get JC["sqlperformancefile"] data file name. this file is analyzed data for real sql execution speed.
+	getPerformanceTestData()  get JC["sqlperformancefile"] data file name but it is '.test' suffix. this file is analyzed data for sql execution speed on test db.
+	checkExistImproveApiFile()  get JC["improvesuggestionfile"] data file name. this file contains an improving suggestion data of a target api. 
 	getApiList()  get registering api list in json style.api list is refered in Df_JetelinaSqlList.
+	getConfigHistory() get configuration change history in json style.
 """
 module GetDataController
 
 using Genie, Genie.Requests, Genie.Renderer.Json
 using Jetelina.JFiles, Jetelina.ApiSqlListManager, Jetelina.DBDataController, Jetelina.JMessage
-import Jetelina.CallReadConfig.ReadConfig as j_config
+import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export getTableList, getTableCombiVsAccessRelationData, getPerformanceRealData, getPerformanceTestData, checkExistImproveApiFile, getApiList
+export getTableList, getTableCombiVsAccessRelationData, getPerformanceRealData, getPerformanceTestData, checkExistImproveApiFile, getApiList, getConfigHistory
 
 """
 function getTableList()
@@ -37,13 +38,13 @@ end
 """
 function getSqlAccessData()
 
-	get JetelinaSqlAccess data file name. this file  contains access numbers data in each sql due to sql.txt log file.
+	get JC["sqlaccesscountfile"] data file name. this file  contains access numbers data in each sql due to sql.txt log file.
 
 # Arguments
-- return: JetelinaSqlAccess file name with its path
+- return: JC["sqlaccesscountfile"] file name with its path
 """
 function getSqlAccessData()
-	f = JFiles.getFileNameFromLogPath(j_config.JetelinaSqlAccess)
+	f = JFiles.getFileNameFromLogPath(j_config.JC["sqlaccesscountfile"])
 	if isfile(f)
 		return readchomp(f)
 	else
@@ -53,13 +54,13 @@ end
 """
 function getTableCombiVsAccessRelationData()
 
-	get JetelinaTableCombiVsAccessRelation data file name. this file is analyzed data for table combination.
+	get JC["tablecombinationfile"] data file name. this file is analyzed data for table combination.
 
 # Arguments
-- return: JetelinaTableCombiVsAccessRelation file name with its path
+- return: JC["tablecombinationfile"] file name with its path
 """
 function getTableCombiVsAccessRelationData()
-	f = JFiles.getFileNameFromLogPath(j_config.JetelinaTableCombiVsAccessRelation)
+	f = JFiles.getFileNameFromLogPath(j_config.JC["tablecombinationfile"])
 	if isfile(f)
 		return readchomp(f)
 	else
@@ -69,13 +70,13 @@ end
 """
 function getPerformanceRealData()
 
-	get JetelinaSqlPerformancefile data file name. this file is analyzed data for real sql execution speed.
+	get JC["sqlperformancefile"] data file name. this file is analyzed data for real sql execution speed.
 
 # Arguments
-- return: JetelinaSqlPerformancefile of json style with its path
+- return: JC["sqlperformancefile"] of json style with its path
 """
 function getPerformanceRealData()
-	f = JFiles.getFileNameFromLogPath(string(j_config.JetelinaSqlPerformancefile, ".json"))
+	f = JFiles.getFileNameFromLogPath(string(j_config.JC["sqlperformancefile"], ".json"))
 	if isfile(f)
 		return readchomp(f)
 	else
@@ -85,13 +86,13 @@ end
 """
 function getPerformanceTestData()
 
-	get JetelinaSqlPerformancefile data file name but it is '.test' suffix. this file is analyzed data for sql execution speed on test db.
+	get JC["sqlperformancefile"] data file name but it is '.test' suffix. this file is analyzed data for sql execution speed on test db.
 
 # Arguments
-- return: JetelinaSqlPerformancefile of json style with its path
+- return: JC["sqlperformancefile"] of json style with its path
 """
 function getPerformanceTestData()
-	f = JFiles.getFileNameFromLogPath(string(j_config.JetelinaSqlPerformancefile, ".test.json"))
+	f = JFiles.getFileNameFromLogPath(string(j_config.JC["sqlperformancefile"], ".test.json"))
 	if isfile(f)
 		return readchomp(f)
 	else
@@ -101,13 +102,13 @@ end
 """
 function checkExistImproveApiFile()
 
-	get JetelinaImprApis data file name. this file contains an improving suggestion data of a target api. 
+	get JC["improvesuggestionfile"] data file name. this file contains an improving suggestion data of a target api. 
 
 # Arguments
-- return: JetelinaImprApis file name with its path    
+- return: JC["improvesuggestionfile"] file name with its path    
 """
 function checkExistImproveApiFile()
-	f = JFiles.getFileNameFromLogPath(j_config.JetelinaImprApis)
+	f = JFiles.getFileNameFromLogPath(j_config.JC["improvesuggestionfile"])
 	if isfile(f)
 		return readchomp(f)
 	else
@@ -129,4 +130,31 @@ function getApiList()
 		return false
 	end
 end
+"""
+function getConfigHistory()
+
+	get configuration change history in json style.
+"""
+function getConfigHistory()
+	f = JFiles.getFileNameFromLogPath(j_config.JC["config_change_history_file"])
+
+	if isfile(f)
+		ret = "{\"Jetelina\":["
+
+		try
+			for line in Iterators.reverse(eachline(f))
+					ret = string(ret,line,",")
+			end
+
+			ret = strip(ret,',')
+			return string(ret,"],\"result\":true}")
+		catch err
+			@error "ConfigManager.getConfigHistory() error: $err"
+			return false
+		end
+	else
+		return false
+	end
+end
+
 end

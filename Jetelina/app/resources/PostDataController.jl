@@ -7,6 +7,7 @@ Description:
 	all controll for poting data from clients
 
 functions
+	getConfigData()	get a configuration parameter data ordered by posting data.
 	handleApipostdata() execute ordered API by posting data.
 	createApi()  create API and SQL select sentence from posting data.
 	getColumns()  get ordered tables's columns with json style.ordered table name is posted as the name 'tablename' in jsonpayload().
@@ -19,18 +20,42 @@ functions
 	updateUserData() update user data
 	updateUserLoginData() update user login data like logincount,logindate,.....
 	deleteUserAccount() delete user account from jetelina_user_table
-	deleteApi()  delete api by ordering from JetelinaSQLListfile file, then refresh the DataFrame.
+	deleteApi()  delete api by ordering from JC["sqllistfile"] file, then refresh the DataFrame.
+	configParamUpdate()	update configuration parameter
 """
 module PostDataController
 
 using Genie, Genie.Requests, Genie.Renderer.Json
 using Jetelina.JFiles, Jetelina.JLog, Jetelina.ApiSqlListManager, Jetelina.DBDataController, Jetelina.JMessage
-import Jetelina.CallReadConfig.ReadConfig as j_config
+import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export handleApipostdata, createApi, getColumns, deleteTable, userRegist, login, getUserInfoKeys, refUserAttribute, updateUserInfo,
-	updateUserData, updateUserLoginData, deleteUserAccount, deleteApi
+export getConfigData, handleApipostdata, createApi, getColumns, deleteTable, userRegist, login, getUserInfoKeys, refUserAttribute, updateUserInfo,
+	updateUserData, updateUserLoginData, deleteUserAccount, deleteApi, configParamUpdate
+
+
+"""
+function getConfigData()
+
+	get a configuration parameter data ordered by posting data.
+
+# Arguments
+- return: json data including ordered a configuration if there were. ex. {"result":true,"logfile":"log.txt"}
+"""
+function getConfigData()
+	d = jsonpayload("param")
+	if !contains(d, "password")
+		if !isnothing(j_config.JC[d])
+			return json(Dict("result" => true, d => j_config.JC[d]))
+		else
+			return json(Dict("result" => false))
+		end
+	else
+		# if "password" is required
+		return json(Dict("result" => true, d => "keep it secret.(^^)v"))
+	end
+end
 
 """
 function handleApipostdata()
@@ -45,7 +70,6 @@ function handleApipostdata()
 function handleApipostdata()
 	return DBDataController.executeApi(jsonpayload())
 end
-
 """
 function createApi()
 
@@ -57,7 +81,18 @@ function createApi()
 					   fail to append it to     -> false
 """
 function createApi()
-	return DBDataController.createApiSelectSentence(jsonpayload())
+	mode = jsonpayload("mode")
+	#===
+		Tips:
+			expect mode is "" or "pre".
+			""->registration
+			"pre"->api test
+	===#
+	if isnothing(mode) || length(mode) == 0
+		mode = "ok"
+	end
+
+	return DBDataController.createApiSelectSentence(jsonpayload(), mode)
 end
 """
 function getColumns()
@@ -82,7 +117,7 @@ function deleteTable()
 """
 function deleteTable()
 	ret = ""
-	tableName = jsonpayload("tablename")
+	tableName::Vector = jsonpayload("tablename")
 	if !isnothing(tableName)
 		ret = DBDataController.dropTable(tableName)
 	end
@@ -243,7 +278,6 @@ function _addJetelinaWords()
 	arr = jsonpayload("arr")
 
 	# adding scenario
-	#        scenarioFile = string( joinpath( "..","..","public","jetelina","js","scenario.js" ))
 	scenarioFile = JFiles.getJsFileNameFromPublicPath("scenario.js")
 	scenarioTmpFile = JFiles.getJsFileNameFromPublicPath("scenario.tmp")
 	target_scenario = "scenario[\"$arr\"]"
@@ -275,50 +309,39 @@ end
 """
 function deleteApi()
 
-	delete api by ordering from JetelinaSQLListfile file, then refresh the DataFrame.
+	delete api by ordering from JC["sqllistfile"] file, then refresh the DataFrame.
+
+# Arguments
+- return: ture/false in json form	
 """
 function deleteApi()
-	targetapi = jsonpayload("apino")
-	#===
-		Tips:
-			insert(ji*),update(ju*),delete(jd*) api are forbidden to delete.
-			only select(js*) is able to be rejected from api list.
-	===#
-	if (!startswith(targetapi, "js"))
-		return false
+	apis::Vector = jsonpayload("apino")
+	jmsg::String = string("compliment me!")
+	retapis::String = join(apis,",") # ["a","b"] -> "a,b" oh ＼(^o^)／
+
+	if( ApiSqlListManager.deleteApiFromList(apis) )
+		ret = json(Dict("result" => true, "apiname" => "$retapis", "message from Jetelina" => jmsg))
+	else
+		ret = json(Dict("result" => false, "apiname" => "$retapis", "errmsg" => "Oh my, plz ref log file"))
 	end
-
-	apiFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaSQLListfile)
-	apiFile_tmp = string(apiFile, ".tmp")
-
-	try
-		open(apiFile_tmp, "w") do tio
-			# write header first
-			colstr = string(j_config.JetelinaFileColumnApino, ",", j_config.JetelinaFileColumnSql, ",", j_config.JetelinaFileColumnSubQuery)
-			println(tio, colstr)
-			open(apiFile, "r") do io
-				for ss in eachline(io, keep = false)
-					if contains(ss, '\"')
-						p = split(ss, "\"")
-						if !contains(p[1], targetapi)
-							# remain others in the file
-							println(tio, ss)
-						end
-					end
-				end
-			end
-		end
-	catch err
-		JLog.writetoLogfile("PostDataController.deleteApi() error: $err")
-		return false
-	end
-
-	# change the file name.
-	mv(apiFile_tmp, apiFile, force = true)
-
-	# update DataFrame
-	ApiSqlListManager.readSqlList2DataFrame()
-
-	return true
 end
+"""
+function configParamUpdate()
+
+	update configuration parameter
+
+# Arguments
+- return: ture/false in json form
+"""
+function configParamUpdate()
+	ret = ""
+	param = jsonpayload()
+
+	if !isnothing(param)
+		ret = j_config.configParamUpdate(param)
+	end
+
+	return ret
+end
+
 end

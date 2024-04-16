@@ -15,7 +15,7 @@ module FileUploadController
 using Genie, Genie.Requests
 using CSV, DataFrames
 using Jetelina.JLog, Jetelina.DBDataController, Jetelina.JMessage
-import Jetelina.CallReadConfig.ReadConfig as j_config
+import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
@@ -28,7 +28,7 @@ function read( csvfname::String )
 
 
 # Arguments
-- `csvfname: String`: csv file name. Expect string data of JetelinaFileUploadPath + <csv file name>.
+- `csvfname: String`: csv file name. Expect string data of JC["fileuploadpath"] + <csv file name>.
 """
 function read(csvfname::String)
 	# read line count number from the head of the csv file
@@ -58,7 +58,7 @@ function fup()
 		csvfilename = ""
 		files = Genie.Requests.filespayload()
 		for f in files
-			csvfilename = joinpath(@__DIR__, j_config.JetelinaFileUploadPath, f[2].name)
+			csvfilename = joinpath(@__DIR__, j_config.JC["fileuploadpath"], f[2].name)
 			write(csvfilename, f[2].data)
 		end
 

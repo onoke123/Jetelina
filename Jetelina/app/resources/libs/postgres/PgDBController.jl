@@ -16,12 +16,12 @@
 		getJetelinaSequenceNumber(t::Integer) get seaquence number from jetelina_id table
 		insert2JetelinaTableManager(tableName::String, columns::Array) insert columns of 'tableName' into Jetelina_table_manager  
 		dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
-		dropTable(tableName::String) drop the table and delete its related data from jetelina_table_manager table
+		dropTable(tableName::Vector) drop the tables and delete its related data from jetelina_table_manager table
 		getColumns(tableName::String) get columns name of ordereing table.
 		executeApi(json_d::Dict,target_api::DataFrame) execute API order by json data
 		_executeApi(apino::String, sql_str::String) execute API with creating SQL sentence,this is a private function that is called by executeApi()
 		doSelect(sql::String,mode::String) execute select data by ordering sql sentence, but get sql execution time of ordered sql if 'mode' is 'measure'.
-		measureSqlPerformance() measure exectution time of all listed sql sentences. then write it out to JetelinaSqlPerformancefile.
+		measureSqlPerformance() measure exectution time of all listed sql sentences. then write it out to JC["sqlperformancefile"].
 		create_jetelina_user_table() create 'jetelina_table_user_table' table.
 		userRegist(username::String) register a new user
 		chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
@@ -37,7 +37,7 @@ module PgDBController
 using Genie, Genie.Renderer, Genie.Renderer.Json
 using CSV, LibPQ, DataFrames, IterTools, Tables
 using Jetelina.JFiles, Jetelina.JLog, Jetelina.ApiSqlListManager, Jetelina.JMessage
-import Jetelina.CallReadConfig.ReadConfig as j_config
+import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
@@ -107,12 +107,12 @@ function open_connection()
 - return: LibPQ.Connection object
 """
 function open_connection()
-	con_str = string("host='", j_config.JetelinaDBhost,
-		"' port='", j_config.JetelinaDBport,
-		"' user='", j_config.JetelinaDBuser,
-		"' password='", j_config.JetelinaDBpassword,
-		"' sslmode='", j_config.JetelinaDBsslmode,
-		"' dbname='", j_config.JetelinaDBname, "'")
+	con_str = string("host='", j_config.JC["pg_host"],
+		"' port='", j_config.JC["pg_port"],
+		"' user='", j_config.JC["pg_user"],
+		"' password='", j_config.JC["pg_password"],
+		"' sslmode='", j_config.JC["pg_sslmode"],
+		"' dbname='", j_config.JC["pg_dbname"], "'")
 
 	return conn = LibPQ.Connection(con_str)
 end
@@ -155,7 +155,7 @@ function readJetelinatable()
 		close_connection(conn)
 	end
 
-	if j_config.debugflg
+	if j_config.JC["debug"]
 		@info "PgDBController.readJetelinatable() Df_JetelinaTableManager: " Df_JetelinaTableManager
 	end
 
@@ -291,7 +291,7 @@ function insert2JetelinaTableManager(tableName::String, columns::Array)
 			c = columns[i]
 			values_str = "'$jetelina_table_id','$tableName','$c'"
 
-			if j_config.debugflg
+			if j_config.JC["debug"]
 				@info "PgDBController.insert2JetelinaTableManager() insert str:" values_str
 			end
 
@@ -329,6 +329,31 @@ function dataInsertFromCSV(fname::String)
 
 	df = DataFrame(CSV.File(fname))
 	rename!(lowercase, df)
+
+	#===
+		new table name is the csv file name with deleting the suffix  
+			ex. /home/upload/test.csv -> splitdir() -> ("/home/upload","test.csv") -> splitext() -> ("test",".csv")
+	===#
+	tableName = splitext(splitdir(fname)[2])[1]
+	#===
+		Tips:
+			Postgresql does not forgive to use '-' in a table name
+	===#
+	tableName = replace(tableName, "-" => "_")
+	#===
+		Tips:
+			original column names in the csv file are changed here because of making it unique.
+			keyword2(jt_id) is also changed at the same time.
+			then consequently the 'column_name' are <table name>_<column name>.
+	===#
+	colarray = [];
+	for col in names(df)
+		push!(colarray, string(tableName,'_',col))
+	end
+
+	rename!(df,Symbol.(colarray))
+	keyword2 = string(tableName,'_',keyword2)
+
 	# special column 'jetelina_delte_flg' is added to columns 
 	insertcols!(df, :jetelina_delete_flg => 0)
 
@@ -341,10 +366,15 @@ function dataInsertFromCSV(fname::String)
 	insert_data_str = string() # data string
 	update_str = string()
 	tablename_arr::Vector{String} = []
+
 	#===
 		make the sentece of sql( "id integer, name varchar(36)...")
 	===#
 	for i ∈ 1:length(column_name)
+		#===
+			Tips:
+				the reason for this connection, see in doSelect()
+		===#
 		cn = column_name[i]
 		column_type_string[i] = PgDataTypeList.getDataType(string(column_type[i]))
 		if contains(cn, keyword2)
@@ -391,20 +421,9 @@ function dataInsertFromCSV(fname::String)
 		update_str = lstrip(update_str, ',')
 	end
 
-	if j_config.debugflg
+	if j_config.JC["debug"]
 		@info "PgDBController.dataInsertFromCSV() col str to create table: " column_str
 	end
-
-	#===
-		new table name is the csv file name with deleting the suffix  
-			ex. /home/upload/test.csv -> splitdir() -> ("/home/upload","test.csv") -> splitext() -> ("test",".csv")
-	===#
-	tableName = splitext(splitdir(fname)[2])[1]
-	#===
-		Tips:
-			Postgresql does not forgive to use '-' in a table name
-	===#
-	tableName = replace(tableName, "-" => "_")
 
 	#===
 		check if the same name table already exists.
@@ -429,7 +448,6 @@ function dataInsertFromCSV(fname::String)
 		execute(conn, create_table_str)
 	catch err
 		close_connection(conn)
-		#            println(err)
 		ret = json(Dict("result" => false, "filename" => "$fname", "errmsg" => "$err"))
 		JLog.writetoLogfile("PgDBController.dataInsertFromCSV() with $fname error : $err")
 		return ret
@@ -498,36 +516,36 @@ function dataInsertFromCSV(fname::String)
 end
 
 """
-function dropTable(tableName::String)
+function dropTable(tableName::Vector)
 
-	drop the table and delete its related data from jetelina_table_manager table
+	drop the tables and delete its related data from jetelina_table_manager table
 
 # Arguments
-- `tableName: String`: ordered table name
+- `tableName: Vector`: ordered tables name
 - return: tuple (boolean: true -> success/false -> get fail, JSON)
 """
-function dropTable(tableName::String)
+function dropTable(tableName::Vector)
 	ret = ""
 	jmsg::String = string("compliment me!")
+	rettables::String = join(tableName,",") # ["a","b"] -> "a,b" oh ＼(^o^)／
 
-	# drop the tableName
-	drop_table_str = """
-		drop table $tableName
-	"""
-
-	# delete the related data from jetelina_table_manager
-	delete_data_str = """
-		delete from jetelina_table_manager where table_name = '$tableName'
-	"""
 	conn = open_connection()
-
 	try
-		execute(conn, drop_table_str)
-		execute(conn, delete_data_str)
-		ret = json(Dict("result" => true, "tablename" => "$tableName", "message from Jetelina" => jmsg))
+
+		for i in eachindex(tableName)
+			# drop the tableName
+			drop_table_str = string("drop table ", tableName[i])
+			# delete the related data from jetelina_table_manager
+			delete_data_str = string("delete from jetelina_table_manager where table_name = '", tableName[i], "'")
+
+			execute(conn, drop_table_str)
+			execute(conn, delete_data_str)
+		end
+
+		ret = json(Dict("result" => true, "tablename" => "$rettables", "message from Jetelina" => jmsg))
 	catch err
-		ret = json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err"))
-		JLog.writetoLogfile("PgDBController.dropTable() with $tableName error : $err")
+		ret = json(Dict("result" => false, "tablename" => "$rettables", "errmsg" => "$err"))
+		JLog.writetoLogfile("PgDBController.dropTable() with $rettables error : $err")
 		return false, ret
 	finally
 		close_connection(conn)
@@ -628,8 +646,9 @@ function _executeApi(apino::String, sql_str::String)
 		if startswith(apino, "js")
 			# select 
 			df = DataFrame(sql_ret)
-			if 100 < nrow(df)
-				jmsg = "data number over 100, you should set paging paramter in this SQL, it is not my business"
+			pagingnum = parse(Int,j_config.JC["paging"])
+			if pagingnum < nrow(df)
+				jmsg = string("data number over ", pagingnum, " you should set paging paramter in this SQL, it is not my business")
 			end
 
 			ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
@@ -666,10 +685,15 @@ function doSelect(sql::String,mode::String)
 	execute select data by ordering sql sentence, but get sql execution time of ordered sql if 'mode' is 'measure'.
 	'mode=mesure' is for the condition panel feture.
 
+	Attention: 2024/3/20
+		mode="run" does not be used indeed, because this doSelect() is called when measuring its performance.
+		true API execution does with executeApi().
+		pre execution mode uses this function therefore its only select sentence in SQL.
+
 # Arguments
 - `sql: String`: execute sql sentense
-- `mode: String`: "run"->running mode  "measure"->measure speed. only called by measureSqlPerformance()
-- return: no 'mesure' mode -> tuple(boolean,string in json). json string is missing when getting fail
+- `mode: String`: "run"->running mode  "measure"->measure speed. only called by measureSqlPerformance() "pre"->test exection before creating API
+- return: not 'mesure' mode -> sql execution result in json form
 		'mesure' mode -> exectution time of tuple(max,min,mean) 
 """
 function doSelect(sql::String, mode::String)
@@ -688,11 +712,43 @@ function doSelect(sql::String, mode::String)
 			end
 
 			return findmax(exetime), findmin(exetime), sum(exetime) / looptime
+
 		end
 
+		#===
+			Caution:
+				DataFrame() spits out error so that it could not resolve the column name if there were same ones.
+				    ex. select ftest.name, ftest3.name ..... -> "name" is duplicated in LibPG.execute() therefore DataFrame() confuses
+
+				to resolve it, '*' are there. ref: https://github.com/iamed2/LibPQ.jl/issues/107
+				but it ':auto' in DataFrame() creates quite new column name.
+				Jetelina wanna return the table column anyhow, cannot take this process.
+				then changed CSV file storing to table to use the "table name" with the column name. see dataInsertFromCSV()
+					ex. old: ftest.csv  has columns 'name','sex'   -> table name: ftest, column name: name, sex
+					    new:                〃                     -> table name:   〃 , column name: ftest_name, ftest_sex
+				
+				but it still has possibility in the case of direct import data to table by user hand. 
+				threfore this is to be written in Jetelina manual as a regulation.4
+		===#
+#*		result = LibPQ.execute(conn, sql)
+#*		vector_data = [convert(Vector,col) for col in Tables.columns(result)]
+#*		df = DataFrame(vector_data,:auto)
 		df = DataFrame(columntable(LibPQ.execute(conn, sql)))
-		ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
-		return true, ret
+		jmsg::String = ""
+
+		if parse(Int, j_config.JC["selectlimit"]) < nrow(df)
+			dfmax::Integer = nrow(df)
+			if !contains(sql, "limit")
+				sql = string(sql, " limit 10")
+#*				result = LibPQ.execute(conn, sql)
+#*				vector_data = [convert(Vector,col) for col in Tables.columns(result)]
+#*				df = DataFrame(vector_data,:auto)
+				df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+				jmsg = "this return is limited in 10 because the true result is $dfmax"
+			end
+		end
+
+		return json(Dict("result" => true, "message from Jetelina" => jmsg, "Jetelina" => copy.(eachrow(df))))
 	catch err
 		JLog.writetoLogfile("PgDBController.doSelect() with $mode $sql error : $err")
 		return false, err
@@ -704,23 +760,23 @@ end
 """
 function measureSqlPerformance()
 
-	measure exectution time of all listed sql sentences. then write it out to JetelinaSqlPerformancefile.
-	Attention: JetelinaExperimentSqlList is created when SQLAnalyzer.main()(indeed createAnalyzedJsonFile()) runs.
-			   JetelinaExperimentSqlList does not created if there were not sql.log file and data in it.
+	measure exectution time of all listed sql sentences. then write it out to JC["sqlperformancefile"].
+	Attention: JC["experimentsqllistfile"] is created when SQLAnalyzer.main()(indeed createAnalyzedJsonFile()) runs.
+			   JC["experimentsqllistfile"] does not created if there were not sql.log file and data in it.
 
 """
 function measureSqlPerformance()
 	#===
 		Tips:
 			I know it can use Df_JetelinaSqlList here, but wanna leave a evidence what sql are executed.
-			That's reason why JetelinaExperimentSqlList file is opend here.
+			That's reason why JC["experimentsqllistfile"] file is opend here.
 	===#
-	sqlFile = getFileNameFromConfigPath(JetelinaExperimentSqlList)
+	sqlFile = getFileNameFromConfigPath(JC["experimentsqllistfile"])
 	if isfile(sqlFile)
-		sqlPerformanceFile = getFileNameFromConfigPath(JetelinaSqlPerformancefile)
+		sqlPerformanceFile = getFileNameFromConfigPath(JC["sqlperformancefile"])
 
 		open(sqlPerformanceFile, "w") do f
-			println(f, string(JetelinaFileColumnApino, ',', JetelinaFileColumnMax, ',', JetelinaFileColumnMin, ',', JetelinaFileColumnMean))
+			println(f, string(JC["file_column_apino"], ',', JC["file_column_max"], ',', JC["file_column_min"], ',', JC["file_column_mean"]))
 			df = CSV.read(sqlFile, DataFrame)
 			for i in 1:size(df, 1)
 				if startswith(df.apino[i], "js")

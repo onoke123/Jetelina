@@ -65,9 +65,12 @@ route( "/apiactions", PostDataController.handleApipostdata, method = POST )
 ===#
 # create api from posting data of db table columns
 route( "/createapi", PostDataController.createApi, method = POST )
+# api test before doing createapi
+#     indeed '/createapi' and 'testapi' are same, but wanna indicate them difference url
+route( "/testapi", PostDataController.createApi, method = POST )
 # returns API(SQL) list in Json
 route( "getapilist", GetDataController.getApiList )
-# delete api from  JetelinaSQLListfile file
+# delete api from  JC["sqllistfile"] file
 route("/deleteapi", PostDataController.deleteApi, method = POST)
 #===
     -Handle CSV file
@@ -91,3 +94,13 @@ route("/getsqlaccessdata",GetDataController.getSqlAccessData)
 route("/getperformancedata_real",GetDataController.getPerformanceRealData)
 route("/getperformancedata_test",GetDataController.getPerformanceTestData)
 route("/chkexistimprapifile",GetDataController.checkExistImproveApiFile)
+
+#===
+
+  ■Configuration features
+    urls for using in updating or something in Configuration parameters. 
+
+===#
+route("/getconfigdata", PostDataController.getConfigData, method = POST)
+route("/changeconfigdata", PostDataController.configParamUpdate, method = POST)
+route("/getconfigchangehistory", GetDataController.getConfigHistory)

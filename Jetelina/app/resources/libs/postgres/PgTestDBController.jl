@@ -17,7 +17,7 @@ module PgTestDBController
 
 using CSV, LibPQ, DataFrames, IterTools, Tables
 using Jetelina.JFiles, Jetelina.JLog, Jetelina.JMessage
-import Jetelina.CallReadConfig.ReadConfig as j_config
+import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
@@ -33,12 +33,12 @@ function open_connection()
 - return: LibPQ.Connection object    
 """
 function open_connection()
-	con_str = string("host='", j_config.JetelinaDBhost,
-		"' port='", j_config.JetelinaDBport,
-		"' user='", j_config.JetelinaDBuser,
-		"' password='", j_config.JetelinaDBpassword,
-		"' sslmode='", j_config.JetelinaDBsslmode,
-		"' dbname='", j_config.JetelinaTestDBname, "'")
+	con_str = string("host='", j_config.JC["host"],
+		"' port='", j_config.JC["pg_port"],
+		"' user='", j_config.JC["pg_user"],
+		"' password='", j_config.JC["pg_password"],
+		"' sslmode='", j_config.JC["pg_sslmode"],
+		"' dbname='", j_config.JC["pg_testdbname"], "'")
 
 	return conn = LibPQ.Connection(con_str)
 end
@@ -81,7 +81,7 @@ function doSelect(sql::String)
 		return findmax(exetime), findmin(exetime), sum(exetime) / looptime
 	catch err
 		println(err)
-		JLog.writetoLogfile("PgTestDBController.doSelect() with $mode $sql error : $err")
+		JLog.writetoLogfile("PgTestDBController.doSelect() with $sql error : $err")
 		return false
 	finally
 		# close the connection
@@ -93,8 +93,8 @@ end
 function measureSqlPerformance()
 
 	execute 'select' sql sentence and write the execution speed into a file
-	Attention: JetelinaExperimentSqlList is created when SQLAnalyzer.main()(indeed createAnalyzedJsonFile()) runs.
-			   JetelinaExperimentSqlList does not created if there were not sql.log file and data in it.
+	Attention: JC["experimentsqllistfile"] is created when SQLAnalyzer.main()(indeed createAnalyzedJsonFile()) runs.
+			   JC["experimentsqllistfile"] does not created if there were not sql.log file and data in it.
 			   yes, this measure..() function is called after creating that file in SQLAnalyzer, but for secure. maybe too much.:p
 
 """
@@ -102,13 +102,13 @@ function measureSqlPerformance()
 	#===
 		Tips:
 			I know it can use Df_JetelinaSqlList here, but wanna leave a evidence what sql are executed.
-			That's reason why JetelinaExperimentSqlList file is opend here.
+			That's reason why JC["experimentsqllistfile"] file is opend here.
 	===#
-	sqlFile = JFiles.getFileNameFromConfigPath(j_config.JetelinaExperimentSqlList)
+	sqlFile = JFiles.getFileNameFromConfigPath(j_config.JC["experimentsqllistfile"])
 	if isfile(sqlFile)
-		sqlPerformanceFile = JFiles.getFileNameFromConfigPath(string(j_config.JetelinaSqlPerformancefile, ".test"))
+		sqlPerformanceFile = JFiles.getFileNameFromConfigPath(string(j_config.JC["sqlperformancefile"], ".test"))
 		open(sqlPerformanceFile, "w") do f
-			println(f, string(j_config.JetelinaFileColumnApino, ',', j_config.JetelinaFileColumnMax, ',', j_config.JetelinaFileColumnMin, ',', j_config.JetelinaFileColumnMean))
+			println(f, string(j_config.JC["file_column_apino"], ',', j_config.JC["file_column_max"], ',', j_config.JC["file_column_min"], ',', j_config.JC["file_column_mean"]))
 			df = CSV.read(sqlFile, DataFrame)
 			for i in 1:size(df, 1)
 				if startswith(df.apino[i], "js")
