@@ -119,7 +119,8 @@ function createApiUpdateSentence(tn::String,us::Any)
 - return: Tuple: (sql update sentence, sub query sentence)
 """
 function createApiUpdateSentence(tn::String, us::Any)
-	return """update $tn set $us""", """where jt_id={jt_id}"""
+	jtid = string(tn,"_jt_id")
+	return """update $tn set $us""", """where $jtid={jt_id}"""
 end
 """
 function createApiDeleteSentence(tn::String)
@@ -132,7 +133,8 @@ function createApiDeleteSentence(tn::String)
 - return: Tuple: (sql delete sentence, sub query sentence)
 """
 function createApiDeleteSentence(tn::String)
-	return """update $tn set jetelina_delete_flg=1""", """where jt_id={jt_id}"""
+	jtid = string(tn,"_jt_id")
+	return """update $tn set jetelina_delete_flg=1""", """where $jtid={jt_id}"""
 end
 """
 function createApiSelectSentence(json_d::Dict, seq_no::Integer)
@@ -245,7 +247,7 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
 	Attention: this select sentence searchs only 'jetelina_delete_flg=0" data.
 
 # Arguments
-- `item_arr::Vector{String}`: posted column data
+- `json_dict::Dict`:  json raw data, uncertain data type        
 - `df::DataFrame`: dataframe of target api data. a part of Df_JetelinaSqlList 
 - return::String SQL sentence
 """
@@ -353,7 +355,9 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
 							end
 
 							ssp = split(sp[ii], ":")
-							json_subquery_dict[ssp[1]] = ssp[2]
+							if !isnothing(ssp) && 1<length(ssp)
+								json_subquery_dict[ssp[1]] = ssp[2]
+							end
 						end
 					end
 

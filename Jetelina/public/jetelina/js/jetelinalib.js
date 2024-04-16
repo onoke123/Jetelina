@@ -236,7 +236,7 @@ const getdata = (o, t) => {
                                                     in Ver.1, selected table name has same color, may it has unique color later, then these column has each color and 
                                                     could be shorten the display name, who knows. :)
                                             */
-                                            str += `<span class="item" d=${value} colname=${targetTable}.${name}><p>${name}</p></span>`;
+                                            str += `<span class="item" d=${value} colname=${targetTable}.${name}><p>${targetTable}.${name}</p></span>`;
                                         }
                                     }
                                 });

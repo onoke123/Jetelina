@@ -348,17 +348,11 @@ function dataInsertFromCSV(fname::String)
 	===#
 	colarray = [];
 	for col in names(df)
-		cnn::String = "";
-		if col != keyword2
-			cnn = string(tableName,'_',col)
-		else
-			cnn = col
-		end
-
-		push!(colarray, cnn)
+		push!(colarray, string(tableName,'_',col))
 	end
 
 	rename!(df,Symbol.(colarray))
+	keyword2 = string(tableName,'_',keyword2)
 
 	# special column 'jetelina_delte_flg' is added to columns 
 	insertcols!(df, :jetelina_delete_flg => 0)

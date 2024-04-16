@@ -37,12 +37,12 @@
             <text>Message From Jetelina</text>
             <text id="mfj"></text>
         </div>
-        <div>
-            <text id="result"></text>
+        <div id="result" class="functionpanel-parts commonpanel squarepanel" style="color: aliceblue;">
         </div>
     </body>
 </html>
 <script type="text/javascript">
+    let insertcountnumber = 5;
 //    const sample = {"date":"2024-03-18 11:28:40","name":"changed user name","previous":{"debug":"true","logfile":"log.txt"},"latest":{"debug":"false","logfile":"log1.txt"}};
     const sample = {"date":"2024-03-18 11:28:40","name":"changed user name","previous":{},"latest":{"debug":"false","logfile":"log1.txt"}};
     console.log(typeof(sample));
@@ -106,27 +106,29 @@
     const getAjaxData = (s) => {
         let pd = {};
         if(s=="s"){
-            pd["apino"] = "js310";
+            pd["apino"] = "js327";
         }else if(s=="w"){
-            pd["apino"] = "js312";
-            pd["subquery"] = "[ave:0.4]";
-        }else if(s=="u"){
-            pd["apino"] = "ju308";
+//            pd["apino"] = "js333";
+//            pd["subquery"] = "['ftest_ave':0.4,'ftest_age':20]";
+            pd["apino"] = "js331";
+            pd["subquery"] = "[]";
+}else if(s=="u"){
+            pd["apino"] = "ju325";
             pd["ftest_name"] = "AAA10";
             pd["ftest_sex"] = "f";
             pd["ftest_age"] = 30;
             pd["ftest_ave"] = 0.9;
             pd["subquery"] = 1;
         }else if(s=="i"){
-            pd["apino"] = "ji307";
-            pd["jt_id"] = 4,
+            pd["apino"] = "ji324";
+            pd["ftest_jt_id"] = insertcountnumber++,
             pd["ftest_name"] = "EEE";
             pd["ftest_sex"] = "m";
             pd["ftest_age"] = 60;
             pd["ftest_ave"] = 0.5;
         }else if(s=="d"){
-            pd["apino"] = "jd309";
-            pd["subquery"] = 4;
+            pd["apino"] = "jd326";
+            pd["subquery"] = insertcountnumber -1;
         }
 
         let dd = JSON.stringify(pd);
@@ -140,22 +142,28 @@
             dataType: "json",
         }).done(function(result, textStatus, jqXHR) {
             $(".re").remove();
-        }).fail( function( result ){
-        }).always(function(result){
-            Object.keys(result).forEach(function (key) {
-                console.log(key,result[key]);
+
+            if( -1<$.inArray(s,['s','w'])){
+                Object.keys(result).forEach(function (key) {
                 if(key=="Jetelina"){
                     $.each(result[key],function (k, v) {
                         console.log(k,":",v);
                         vv = JSON.stringify(v);
-                            $("#result").append(`<div class="re"><text>${vv}</text></div>`);
+                            $("#result").append(`<p class="">${vv}</p>`);
                     });
                 }
-                
+                /*
                 if( key=="message from Jetelina" ){
                     $("#mfj").text(result[key])
-                }
+                }*/
             });
+
+            }else if(-1<$.inArray(s,['i','u','d'])){
+                let msg = result["message from Jetelina"]
+                $("#result").append(`<p class="">${msg}</p>`);
+            }
+        }).fail( function( result ){
+        }).always(function(result){
         });
     }
 </script>

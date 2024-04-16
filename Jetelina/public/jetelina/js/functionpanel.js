@@ -547,7 +547,7 @@ const setApiIF_Sql = (s) => {
 
   let reject_jetelina_delete_flg = "jetelina_delete_flg";
   if (ret.startsWith("insert")) {
-    ret = ret.replaceAll(`,{${reject_jetelina_delete_flg}}`, '').replaceAll(`,${reject_jetelina_delete_flg}`);
+    ret = ret.replaceAll(`,{${reject_jetelina_delete_flg}}`, '').replaceAll(`,${reject_jetelina_delete_flg}`,'');
   }
 
   return ret;
@@ -1092,6 +1092,7 @@ const functionPanelFunctions = (ut) => {
           // ordered item
           for (let n = 0; n < t.length; n++) {
             $(COLUMNSPANEL).find("span").each(function (i, v) {
+/*
               let tc = v.textContent;
               let vtc = "";
               if(tc.indexOf('_') != -1){
@@ -1100,8 +1101,8 @@ const functionPanelFunctions = (ut) => {
                   vtc = tc.slice(tcarr[0].length+1);
                 }
               } 
-
-              if( vtc.indexOf(t[n]) != -1){
+*/
+              if( v.textContent.indexOf(t[n]) != -1){
                 itemSelect($(this));
                 m = chooseMsg('success-msg', "", "");
               }
