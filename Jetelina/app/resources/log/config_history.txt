@@ -1,3 +1,0 @@
-{"date":"2024-03-19 13:13:23","name":"changed user name","previous":{"logfile":"log10.txt"},"latest":{"logfile":"log.txt"}}
-{"date":"2024-03-19 13:17:13","name":"changed user name","previous":{"logfile":"log.txt"},"latest":{"logfile":"log10.txt"}}
-{"date":"2024-03-19 13:18:20","name":"changed user name","previous":{"logfile":"log10.txt"},"latest":{"logfile":"log.txt"}}
