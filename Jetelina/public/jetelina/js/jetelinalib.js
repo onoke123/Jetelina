@@ -824,8 +824,19 @@ const chatKeyDown = (cmd) => {
                         chunk = ut;
                     }
 
-                    authAjax(chunk);
-                    m = IGNORE;
+                    /*
+                        CAUTION:
+                            this setting is just for demo.
+                            it should be reject in the official release.
+                    */
+                    if(chunk != "me"){
+                        authAjax(chunk);
+                        m = IGNORE;
+                    }else{
+                         m = chooseMsg('starting-5-msg', `${chunk},you are a privilege user`, "a");
+                        stage = 'login_success';
+                    }
+//                    m = IGNORE;
                     break;
                 case 'login_success':
                     /*
