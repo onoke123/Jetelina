@@ -111,51 +111,36 @@
 				</tr>
 				<tr>
 					<td>
-						■Function Panel<br>
-						This panel handles relation with DB.
+						■Managing DB and WebAPI<br>
+						I can manage creating Database table from uploading your csv file, then also can manage creating
+						your WebAPI that is related with your created Database table.
 						<br>
-						First, you type 'show me function panel', 'open function panel', even 'function', with 'please'.
-						Then you can type 'show me tables', 'table lists' and so on, if you have already registered some
-						tables in it.
+						To see your listed tables, type 'show me tables', 'table lists' and so on.
 						You can upload your CSV file to me with typing 'file open','open the file box'... etc, then you
-						can post
-						the selected file to there with typing 'file up','upload'...
+						can post the selected file to there with typing 'file up','upload'...
 						The CSV file is going to be imported to DB and created its table automatically, then appeare in
 						the table list.
-
 						You can type 'open &lt;target table name&gt;' among the lists, the columns belongs the table are
-						shown.
-						To select them with typing 'select &lt;column name&gt;'.<br><br>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						■Condition Panel<br>
-						This panel show you the analyzed data of your DB status.
+						shown. To select them with typing 'select &lt;column name&gt;'.
+						<br><br>
+						Ok, next is WebAPI.
+						Select columns from opening table, type each column name or "select all" is for all.
+						Selected columns move to beneath, then this is my strong point,
+						1. you can set your sub query for these columns, type "show sub query" then it is displayed.
+						2. you can try to exeute how your selection is working, type "do api test" then I execute it and return the result to you.
+						3. finally you post these columns to create your WebAPi, but ATTENTION about your sub query string.
+						   I mean your sub query string is may still as trying mode: where "name='Jeff'", you must change it like "name={name}".
+						   Because of this spcification, you can throw your 'name' parameter and I do its sql sentence with your request parameter.  Gott?
+						<br><br>
+						You can see your created WebAPI, type "show me api list". 
+						Each API name has its meaning:
+						'ji': data insert api. I create it automatically by uploading your csv file.
+						'ju': data update api. Same above.
+						'jd': data delete api. Again.
+						'js': data select api. You created.
 
-						First, you type 'show me condition panel', 'open condition panel', even 'condition', with
-						'please'.
-						I wanna try to keep simple DB layout because the simpleness is the best solution for your DB
-						performance.
-						All SQL execution performance are tested automatically and occasionally by me.
-						You can see the result with typing 'show me combination data', 'show analyzed data' or simply
-						'graph'.
-						Then you can see the present DB analyzed data graph.
-
-						I always provide all api access numbers to you by typing 'show me access numbers','display
-						report' or something else.
-						I also keep watching your DB health. Especially I worry about your tables to be chaos.
-						Then I sometimes check you table relation, and give a suggestion if I found a improving point.
-						You also can see 'TEST' performance data graph by typing 'what is your suggestion','show your
-						suggestion',
-						or simply 'sql test', if Jetelina said 'There is an improve sugestion'.
-
-						This is my biggest advantage feature.
-						In ver.1, I do only analyze then.
-						In the future version, I am going to change the table layout automatically, then gives you an
-						after action report.
-						This mean is I manage the server side by myself, you just rely on me. The is the future style.
-						:-)
+						Each API shows 'IN', 'OUT' and true executing sql sentence in bellow.
+						You throw your request according to 'IN' JSON form, then I return 'OUT' JSON form. Gott?
 					</td>
 				</tr>
 			</table>
@@ -191,18 +176,18 @@
 					</tr>
 					<tr>
 						<td>2.</td>
-						<td>Move to Function/Condition panel</td>
+						<td>Show Table list/API list</td>
 						<td></td>
 					</tr>
 					<tr>
 						<td></td>
-						<td>(1)'show me function panel','open function panel'...</td>
-						<td>open to Function panel</td>
+						<td>(1)'show me table list','open table list'...</td>
+						<td>display registered table list</td>
 					</tr>
 					<tr>
 						<td></td>
-						<td>(2)'show me condition panel','open condition panel'...</td>
-						<td>open to Condition panel</td>
+						<td>(2)'show me api list','open api list'...</td>
+						<td>display registered webapi list</td>
 					</tr>
 					<tr>
 						<td>3.</td>
@@ -220,21 +205,23 @@
 						<td><br></td>
 					</tr>
 					<tr>
-						<th colspan="3">■On Function Panel</th>
+						<th colspan="3">■Database and WebApi managing</th>
 					</tr>
 					<tr>
 						<td>1.</td>
-						<td>CSV file upload</td>
+						<td>csv file upload to create database table</td>
 						<td></td>
 					</tr>
 					<tr>
 						<td></td>
 						<td>(1)'file open','open file','csv file'...:</td>
-						<td>open file box</td>
+						<td>open file box, then choose a csv file that you wanna up.<br>
+							this file name is to be its table name.<br>
+						</td>
 					</tr>
 					<tr>
 						<td></td>
-						<td>(2)'file up','upload', 'csv up'...</td>
+						<td>(2)'upload', 'csv up'...</td>
 						<td>csv file upload to me</td>
 					</tr>
 					<tr>
@@ -244,33 +231,50 @@
 					</tr>
 					<tr>
 						<td></td>
-						<td>(1)'show me tables','table list'...</td>
-						<td>show table List</td>
+						<td>(1)'show me tables','open table list'...</td>
+						<td>display table List</td>
 					</tr>
 					<tr>
 						<td></td>
-						<td>(2)'open &lt;table name&gt;'</td>
+						<td>(2)'open &lt;table name&gt;',"select &lt;table name&gt;'" </td>
 						<td>show columns of the specifiled table. ex. open table1</td>
 					</tr>
 					<tr>
 						<td></td>
 						<td>(3)'select &lt;column name&gt;','choose &lt;column name&gt;'...</td>
-						<td>choose column name to create api. ex. select table1.name</td>
+						<td>choose column name to create api. ex. select table1_name
+							but you can order its partial name, like "select table1_name -> "select name"<br>
+							I try to find your ordered name as much as I possible. 
+						</td>
 					</tr>
 					<tr>
 						<td></td>
-						<td>(4)'post','send'...</td>
-						<td>post selected column data to me</td>
+						<td>(4)why do not you try it before creating</td>
+						<td>you should try to execute your new webapi before creating.<br>
+							a. open sub query box(input 'where' sentence) with "open sub qury","show query"...<br>
+							b. set your subquery sentence in there by your own responsibility. I totally do not care about it at ll.<br>
+							c. back to my chat box then type "do api test", "sql check", then I try to do it.<br>
+						</td>
 					</tr>
 					<tr>
 						<td></td>
-						<td>(5)'drop table &lt;table name&gt;','table drop &lt;table name&gt;'...</td>
+						<td>(5)'post','send'...</td>
+						<td>post selected column data to me to create your new WebAPI if everything was fine</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>(6)'drop table &lt;table name&gt;','table drop &lt;table name&gt;'...</td>
 						<td nowrap>
 							drop table from me. ex. drop table table1<br>
 							then I ask you 'Sure?' or like that, you type 'yes','sure' or 'do it'... into me if you
 							wanna really do it.<br>
 							CAUTION: all api related with the drop table are also deleted at the same time.
 						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>(7)'cancel' is always effective</td>
+						<td>you can cancel the csv file upload, the columns selection and drop table, just command me.</td>
 					</tr>
 					<tr>
 						<td>3.</td>
@@ -280,69 +284,38 @@
 					<tr>
 						<td></td>
 						<td>(1)'show me apis','api list'...</td>
-						<td>show api list</td>
+						<td>show your created WebAPI list</td>
 					</tr>
 					<tr>
 						<td></td>
 						<td>(2)'open &lt;api name&gt;'</td>
-						<td>show columns of the specifiled api. ex. open js100</td>
+						<td>display the specification. ex. open js100<br>
+							you can see the I/F of it: 'IN','OUT' JSON and exactly execute SQL sentence.
+						</td>
 					</tr>
 					<tr>
 						<td></td>
 						<td>(3)'api delete &lt;api name&gt;','delete api &lt;api name&gt;'...</td>
-						<td>delete the api. ex. api delete js100</td>
+						<td>delete the api. ex. api delete js100<br>
+							CAUTION: you can delete only 'select' WebAPI, that has 'js' in its prefix.
+						</td>
 					</tr>
 					<tr>
 						<td>4.</td>
-						<td>Error Message</td>
+						<td>Other displayed</td>
 						<td></td>
 					</tr>
 					<tr>
 						<td></td>
-						<td>(1)'hide error'</td>
-						<td>close the error message</td>
-					</tr>
-					<tr>
-						<td></td>
-						<td>(2)'show error'</td>
-						<td>display the error message again</td>
+						<td>hide and show</td>
+						<td>some panels are displayed in order to you action: 'api test' and 'error' on something happened.<br>
+							the panels are controllable by typing "hide api test", "show api test", "hide error message", "show error message". 
+						</td>
 					</tr>
 					<tr>
 						<td></td>
 						<td></td>
 						<td><br></td>
-					</tr>
-					<tr>
-						<th colspan="3">■On Condition Panel</th>
-					</tr>
-					<tr>
-						<td>1.</td>
-						<td>API access numbers graph</td>
-						<td></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td>(1)'show your report','access numbers'...</td>
-						<td>display api access numbers</td>
-					</tr>
-					<tr>
-						<td>2.</td>
-						<td>My suggestion graph</td>
-						<td></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td colspan="2">
-							I will tell you my suggestion, if I have it, when this conditon panel opening.
-							You will never see it even if you hit below commands, if I do not have it.<br>
-							CAUTION: this suggestion is just showing in BBM, the execution is goin' to be
-							implemented next version.<br><br>
-						</td>
-					</tr>
-					<tr>
-						<td></td>
-						<td>(1)'your suggestion please','show me your suggestion'...</td>
-						<td>display graphs that is my suggestion about improving db performance</td>
 					</tr>
 				</tbody>
 			</table>
@@ -360,7 +333,7 @@
 		<div>
 			<text name="your_tell" class="yourText"></text>
 			<br>
-			<input type="text" name="chat_input" class="user-input"></input>
+			<input type="text" name="chat_input" class="user-input" placeholder="always 'guide me' or 'how can i' :) "></input>
 		</div>
 	</div>
 </body>
