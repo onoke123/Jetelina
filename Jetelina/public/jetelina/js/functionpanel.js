@@ -1162,22 +1162,33 @@ const functionPanelFunctions = (ut) => {
             only 'js*' api can be deleted.
         */
         for (let i = 0; i < utarray.length; i++) {
-          $(`${TABLECONTAINER}`).find("span").each(function () {
-            if ($(this).text() == utarray[i]) {
-              $(this).addClass("deleteItem");
-              m = chooseMsg("common-confirm-msg", "", "");
-            }
-          });
-
-          let jijujdexist = false;
-          $(`${APICONTAINER}`).find("span").each(function () {
-            if (utarray[i].startsWith(('js')) && ($(this).text() == utarray[i])) {
-              $(this).addClass("deleteItem");
-              m = chooseMsg("common-confirm-msg", "", "");
-            } else if (utarray[i].startsWith('ji') || utarray[i].startsWith('ju') || utarray[i].startsWith('jd')) {
-              jijujdexist = true;
-            }
-          });
+          /*
+            for only demo
+            do not make drop 'ftest' table in demo
+          */
+          if( utarray[i] != "ftest"){
+            $(`${TABLECONTAINER}`).find("span").each(function () {
+              if ($(this).text() == utarray[i]) {
+                $(this).addClass("deleteItem");
+                m = chooseMsg("common-confirm-msg", "", "");
+              }
+            });
+          }
+            let jijujdexist = false;
+          /*
+            for only demo
+            do not make delete the related API with 'ftest' in demo
+          */  
+          if( $.inArray(utarray[i], ['js327','js331']) < 0 ){
+            $(`${APICONTAINER}`).find("span").each(function () {
+              if (utarray[i].startsWith(('js')) && ($(this).text() == utarray[i])) {
+                $(this).addClass("deleteItem");
+                m = chooseMsg("common-confirm-msg", "", "");
+              } else if (utarray[i].startsWith('ji') || utarray[i].startsWith('ju') || utarray[i].startsWith('jd')) {
+                jijujdexist = true;
+              }
+            });
+          }
 
           if (jijujdexist) {
             m = chooseMsg("func-apidelete-forbidden-msg", "", "");

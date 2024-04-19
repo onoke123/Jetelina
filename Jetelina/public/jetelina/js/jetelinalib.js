@@ -829,11 +829,11 @@ const chatKeyDown = (cmd) => {
                             this setting is just for demo.
                             it should be reject in the official release.
                     */
-                    if(chunk != "me"){
+                    if(chunk.indexOf("me") == -1){
                         authAjax(chunk);
                         m = IGNORE;
                     }else{
-                         m = chooseMsg('starting-5-msg', `${chunk},you are a privilege user`, "a");
+                         m = chooseMsg('starting-5-msg', `my special guest,you are a privilege user`, "a");
                         stage = 'login_success';
                     }
 //                    m = IGNORE;
