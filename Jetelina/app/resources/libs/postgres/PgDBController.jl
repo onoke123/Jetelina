@@ -1167,4 +1167,29 @@ function deleteUserAccount(uid::Integer)
 
 	return ret
 end
+"""
+function ftestDataNumber()
+
+	special function for demo 
+	demo site (posttest.html) need to know how many data are in ftest regardless jetelina_delete_flg
+	
+# Arguments
+- return:  sql execution result in json form
+"""
+function ftestDataNumber()
+	conn = open_connection()
+	ret = ""
+	try
+		sql = "select count(*) from ftest;"
+		df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+		return json(Dict("result" => true, "ftest data number is" => df.count[1]))
+	catch err
+		JLog.writetoLogfile("PgDBController.ftestDataNumber() with  $sql error : $err")
+		return false
+	finally
+		# close the connection finally
+		close_connection(conn)
+	end
+end
+
 end

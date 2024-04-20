@@ -157,4 +157,12 @@ function getConfigHistory()
 	end
 end
 
+#===
+	only for demo
+		get and return ftest table data number
+===#
+function getftest()
+	return DBDataController.ftestnumber()
+end
+
 end

@@ -416,4 +416,12 @@ function createApiSelectSentence(json_d::Dict, mode::String)
 	return ret
 end
 
+#===
+	only for demo 
+		get ftest table data nubmer regardless jetelina_delete_flg
+===#
+function ftestnumber()
+	return PgDBController.ftestDataNumber()
+end
+
 end

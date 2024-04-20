@@ -1,0 +1,125 @@
+<html>
+
+<head>
+    <script type="text/javascript" src="../js/genie/jquery.min.js"></script>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link type="text/css" rel="stylesheet" href="css/tablelist.css">
+</head>
+
+<body>
+    <div>
+        <text id="dn"></text>
+    </div>
+    <button onclick="getAjaxData('s')">js327: simple Select</button>
+    <br>
+    <button onclick="getAjaxData('w')">js331: Select with conditions</button>
+    <input id="w_jt_id" name="w_jt_id" placeholder="input 'ftest_jt_id' what you wanna select">
+    <br>
+    <button onclick="getAjaxData('i')">ji324: data insert</button>
+    <input id="i_jt_name" name="i_jt_name" placeholder="input 'ftest_name' what you wanna register">
+    <br>
+    <button onclick="getAjaxData('u')">ju325: update</button>
+    <input id="u_jt_name" name="u_jt_name" placeholder="input 'ftest_name' what you wanna change">
+    <text style="color:yellow">update 'ftest_jt_id'=1 in 'ftest_name' to your request and other data </text>
+    <br>
+    <button onclick="getAjaxData('d')">jd326: delete</button>
+    <text style="color:yellow">delete your registered data</text>
+    <br>
+    <div id="apitest">
+        <div name="api-test-msg">
+        </div>
+        <div name="api-test-data">
+        </div>
+    </div>
+
+    <div>
+        <text>Message From Jetelina</text>
+        <text id="mfj"></text>
+    </div>
+    <div id="result" class="functionpanel-parts commonpanel squarepanel" style="color: aliceblue;">
+    </div>
+</body>
+
+</html>
+<script type="text/javascript">
+    $(window).load(function () {
+        getftestdatanumber();
+    });
+
+
+    const getftestdatanumber = () =>{
+        $.ajax({
+            url: "/ftestdatanumber",
+            type: "get",
+            contentType: 'application/json',
+            dataType: "json",
+        }).done(function (result, textStatus, jqXHR) {
+            let dn = result["ftest data number is"];
+            $("#dn").text(dn);
+        }).fail(function (result) {
+        }).always(function (result) {
+        });
+    }
+
+    const getAjaxData = (s) => {
+        let insertcountnumber = $("#dn").text();
+
+        let pd = {};
+        if (s == "s") {
+            pd["apino"] = "js327";
+        } else if (s == "w") {
+            pd["apino"] = "js338";
+            let jt_id = $("#w_jt_id").val();
+            pd["subquery"] = `[\"ftest_jt_id\":${jt_id}]`;
+        } else if (s == "u") {
+            pd["apino"] = "ju325";
+            let jt_name = $("#u_jt_name").val();
+            pd["ftest_name"] = jt_name;
+            pd["ftest_sex"] = "f";
+            pd["ftest_age"] = 30;
+            pd["ftest_ave"] = 0.9;
+            pd["subquery"] = 1;
+        } else if (s == "i") {
+            pd["apino"] = "ji324";
+            pd["ftest_jt_id"] = parseInt(insertcountnumber) + 1;
+            let jt_name = $("#i_jt_name").val();
+            pd["ftest_name"] = jt_name;
+            pd["ftest_sex"] = "m";
+            pd["ftest_age"] = 60;
+            pd["ftest_ave"] = 0.5;
+        } else if (s == "d") {
+            pd["apino"] = "jd326";
+            pd["subquery"] = parseInt(insertcountnumber);
+        }
+
+        let dd = JSON.stringify(pd);
+
+        $.ajax({
+            url: "/apiactions",
+            type: "post",
+            data: dd,
+            contentType: 'application/json',
+            dataType: "json",
+        }).done(function (result, textStatus, jqXHR) {
+            $(".re").remove();
+
+            if (-1 < $.inArray(s, ['s', 'w'])) {
+                Object.keys(result).forEach(function (key) {
+                    if (key == "Jetelina") {
+                        $.each(result[key], function (k, v) {
+                            vv = JSON.stringify(v);
+                            $("#result").append(`<p class="">${vv}</p>`);
+                        });
+                    }
+                });
+
+            } else if (-1 < $.inArray(s, ['i', 'u', 'd'])) {
+                let msg = result["message from Jetelina"]
+                $("#result").append(`<p class="">${msg}</p>`);
+            }
+        }).fail(function (result) {
+        }).always(function (result) {
+            getftestdatanumber();
+        });
+    }
+</script>
