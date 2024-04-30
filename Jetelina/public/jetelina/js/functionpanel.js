@@ -1179,7 +1179,7 @@ const functionPanelFunctions = (ut) => {
             for only demo
             do not make delete the related API with 'ftest' in demo
           */  
-          if( $.inArray(utarray[i], ['js327','js331']) < 0 ){
+          if( $.inArray(utarray[i], ['js327','js338']) < 0 ){
             $(`${APICONTAINER}`).find("span").each(function () {
               if (utarray[i].startsWith(('js')) && ($(this).text() == utarray[i])) {
                 $(this).addClass("deleteItem");
