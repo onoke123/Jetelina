@@ -1,4 +1,3 @@
-
 /**
     JS library for Jetelina Condition Panel
     @author Ono Keiji
