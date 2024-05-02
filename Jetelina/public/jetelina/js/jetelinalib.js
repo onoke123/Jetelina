@@ -1,7 +1,7 @@
 /**
     JS library for Jetelina common library
     @author Ono Keiji
-    @version 1.0
+    @version 1.1
 
     This js lib works with dashboard.js, functionpanel.js and conditionpanel.js.
     
@@ -1006,7 +1006,11 @@ const chatKeyDown = (cmd) => {
             if (0 < m.length && m != IGNORE) {
                 typingControll(m);
             } else if (m == IGNORE && stage != 'login') {
-                typingControll(chooseMsg('waiting-next-msg', "", ""));
+                if(inScenarioChk(ut,"general-thanks-cmd")){
+                    typingControll(chooseMsg('general-thanks-msg', loginuser.lastname, "c"));
+                }else{
+                    typingControll(chooseMsg('waiting-next-msg', "", ""));
+                }
             } else if (m == null || m.length == 0) {
                 // cannot understand what the user is typing
                 typingControll(chooseMsg('unknown-msg', "", ""));

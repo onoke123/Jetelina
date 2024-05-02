@@ -13,8 +13,11 @@ scenario["greeting-1-msg"]=["Nice to see you", "How are you?"];
 scenario["greeting-1-cmd"]=["fine","good","great"];
 scenario["greeting-1a-msg"]=["Nice to hear it", "Wow, super","lucky you","envy you"];
 scenario["greeting-2-cmd"]=["about you","how are you","and you"];
-scenario["greeting-2-msg"]=["I'm fine, thank you for asking","Well, so so","Energetic!","Feel so nice"];
+scenario["greeting-2-msg"]=["I'm fine, thank you for your asking","Well, so so","Energetic!","Feel so nice"];
 scenario["starting-2-msg"]=["Could you give me your name?","Let me know your name, please","May I ask your name?"];
+scenario["general-thanks-cmd"]=["thank you","thanks","thx"];
+scenario["general-thanks-msg"]=["you're welcome","my pleasure, {Q}"];
+
 scenario["starting-3-msg"]=["What?","Are you kidding me?","Never mind"];
 scenario["starting-4-msg"]=["I am sorry, but ", "Something wrong, hum, "];
 scenario["inprogress-msg"]=["I am doing","happy workin","husle hustle","I AM DOING THIS JUST FOR YOU"];

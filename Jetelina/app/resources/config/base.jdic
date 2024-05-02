@@ -1,6 +1,6 @@
 #
 # special configuration parameter 
-
+#
 # urls for condition panel 
 @jdic analyzed-data-collect-url:"/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getsqlaccessdata"
 
@@ -34,13 +34,15 @@
 @jdic greeting-1-cmd:"fine","good","great"
 @jdic greeting-1a-msg:"Nice to hear it", "Wow, super","lucky you","envy you"
 @jdic greeting-2-cmd:"about you","how are you","and you"
-@jdic greeting-2-msg:"I'm fine, thank you for asking","Well, so so","Energetic!","Feel so nice"
+@jdic greeting-2-msg:"I'm fine, thank you for your asking","Well, so so","Energetic!","Feel so nice"
 
 # login 
 @jdic starting-2-msg:"Could you give me your name?","Let me know your name, please","May I ask your name?"
 
 # etc 
 @jdic starting-3-msg:"What?","Are you kidding me?","Never mind"
+@jdic general-thanks-cmd:"thank you","thanks","thx"
+@jdic general-thanks-msg:"you're welcome","my pleasure, {Q}"
 
 # miss login 
 @jdic starting-4-msg:"I am sorry, but ", "Something wrong, hum, "
