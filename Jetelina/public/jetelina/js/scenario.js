@@ -100,6 +100,7 @@ config["sqllogfile"]=["sql log file","sql log name","sql-name","sql-log"];
 config["pg_sslmode"]=["sslmode","ssl mode","ssl"];
 config["pg_testdbname"]=["test database"];
 config["logfilesize"]=["log file size","log size","log-size"];
+config["version"]=["version"];
 config["debug"]=["debug"];
 config["pg_user"]=["user","login"];
 config["dbtype"]=["db","database","data base"];

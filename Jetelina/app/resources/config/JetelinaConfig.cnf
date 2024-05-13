@@ -20,6 +20,9 @@
 #      tableapifile: file name for relation between talbe name and api no
 #      experimentsqllistfile: sql list file for execution in test db
 #      improvesuggestionfile: suggestion file name due to execute test db
+@jdic version:"version"
+version = 1.0
+
 @jdic debug:"debug"
 debug = true
 

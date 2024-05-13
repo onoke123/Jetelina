@@ -26,7 +26,7 @@ functions
 module PostDataController
 
 using Genie, Genie.Requests, Genie.Renderer.Json
-using Jetelina.JFiles, Jetelina.JLog, Jetelina.ApiSqlListManager, Jetelina.DBDataController, Jetelina.JMessage
+using Jetelina.JFiles, Jetelina.JLog, Jetelina.ApiSqlListManager, Jetelina.DBDataController, Jetelina.JMessage, Jetelina.JSession
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
@@ -154,7 +154,21 @@ function login()
 		ret = DBDataController.chkUserExistence(userName)
 	end
 
-	return ret
+	
+	# set session data
+	if ret["result"]
+		j = ret["Jetelina"]
+		#===
+			Tips:
+				'j' is vector tuple data. the order is to reference chkUserExistence().
+				j[1][4] -> lastname
+				j[1][1] -> user id        so far
+		===#
+#		@info "PostDataCo... login()" typeof(j[1][4]) typeof(j[1][1])
+		JSession.set(j[1][4],j[1][1])
+	end
+
+	return json(ret)
 end
 """
 function getUserInfoKeys()

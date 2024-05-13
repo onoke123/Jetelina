@@ -7,43 +7,57 @@ Description:
 	manage user session data
 
 functions
-    set()
-    get()
-    clear()
+    set(un,id) set ordered session data
+	get()  get session data
+	clear()  clear session data
 """
 module JSession
-using GenieSession, GenieSessionFileSession
+using Genie, GenieSession, GenieSessionFileSession
 export set, get, clear
 """
 function __init__()
 
 	this is the session initialize
 """
-    function __init__()
-        @info "do init()"
-        GenieSession.__init__()
-    end
+function __init__()
+	@info "do init()"
+	GenieSession.__init__()
+end
+"""
+function set(un,id)
 
-    function set()
-        @info "do set"
-        s = session(params())
-        #    if !haskey(s.data, :number)
-        GenieSession.set!(s, :uname, "Ono Keiji")
-        GenieSession.set!(s, :uid, 111)
-        #    end
-        @info "set " s.data[:uname] s.data[:uid]
-    end
+    set ordered session data
 
-    function get()
-        @info "do get"
-        s = session(params())
-        @info "get " s.data[:uname] s.data[:uid]
-    end
+# Arguments
+-un:String  login user name
+-id:Int login user id
+"""
+function set(un,id)
+#	@info "set session data with " un id
+	s = session(params())
+	GenieSession.set!(s, :uname, un)
+	GenieSession.set!(s, :uid, id)
+end
+"""
+function get()
 
-    function clear()
-        @info "do clear"
-        s = session(params())
-        s.data = Dict()
-        return "cleared"
-    end
+    get session data
+
+# Arguments
+-return: Tuple: (uname::String,uid::Int)
+"""
+function get()
+	s = session(params())
+	return s.data[:uname], s.data[:uid]
+end
+"""
+function clear()
+
+    clear session data
+"""
+function clear()
+	s = session(params())
+	s.data = Dict()
+end
+
 end

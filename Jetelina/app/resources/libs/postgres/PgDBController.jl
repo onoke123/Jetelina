@@ -860,11 +860,12 @@ function chkUserExistence(s::String)
 
 	pre login, check the ordered user in jetelina_user_table or not
 	search only alive user (jetelina_delete_flg=0)
-	resume to refUserAttribute() if existed
+	resume to refUserAttribute() if existed.
+	the return type has cahnged because it is easier to check the parameters in PostDataController than json form. 
 	
 # Arguments
 - `s::String`:  user information. login account or first name or last name.
-- return: success -> user data in json, fail -> ""
+- return: success -> user data in Dict, fail -> ""
 """
 function chkUserExistence(s::String)
 	ret = ""
@@ -893,9 +894,11 @@ function chkUserExistence(s::String)
 	conn = open_connection()
 	try
 		df = DataFrame(columntable(LibPQ.execute(conn, sql)))
-		ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
+#		ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
+		ret = Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg)
 	catch err
-		ret = json(Dict("result" => false, "errmsg" => "$err"))
+#		ret = json(Dict("result" => false, "errmsg" => "$err"))
+		ret = Dict("result" => false, "errmsg" => "$err")
 		JLog.writetoLogfile("PgDBController.chkUserExistence() with $s error : $err")
 	finally
 		close_connection(conn)
