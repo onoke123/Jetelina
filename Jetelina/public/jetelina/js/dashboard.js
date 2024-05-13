@@ -1,6 +1,5 @@
 /**
  * @author Ono Keiji
- * @version 1.0
  * 
  * This is the main js file for Jetelina. These functions handle the initial behavior of Jetelina screen.
  * 

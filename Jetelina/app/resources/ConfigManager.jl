@@ -1,13 +1,16 @@
 """
 module: ConfigManager
 
+Author: Ono keiji
+
+Description:
 	read configuration parameters from Jetelina.cnf file
 	then set them to global variables
 
-	contain functions
-		__init__()
-		createScenario()  create scenario.js file from base.jdic and JetelinaConfig.cnf files. this function is mandatory working to realize Jetelina Chatting.
-		configParamUpdate(d::Dict) update a configuration parameter in the configuration file.
+contain functions
+	__init__()
+	createScenario()  create scenario.js file from base.jdic and JetelinaConfig.cnf files. this function is mandatory working to realize Jetelina Chatting.
+	configParamUpdate(d::Dict) update a configuration parameter in the configuration file.
 """
 
 module ConfigManager

@@ -2,7 +2,7 @@
 module: ApiSqlListManager
 
 Author: Ono keiji
-Version: 1.0
+
 Description:
 	manage JC["sqllistfile"] file.
 	this file determines a corrensponding SQL sentence to API.
@@ -26,7 +26,7 @@ export readSqlList2DataFrame, writeTolist, deleteTableFromlist
 """
 function __init__()
 
-	this is the initialize proces for importing registered SQL sentence list in JC["sqllistfile"] to DataFrame.
+	this is the initialize process for importing registered SQL sentence list in JC["sqllistfile"] to DataFrame.
 """
 function __init__()
 	readSqlList2DataFrame()

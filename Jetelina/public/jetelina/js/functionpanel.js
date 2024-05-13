@@ -1,7 +1,6 @@
 /**
     JS library for Jetelina Function Panel
     @author Ono Keiji
-    @version 1.0
 
     This js lib works with dashboard.js, functionpanel.js and conditionpanel.js for the Function Panel.
     

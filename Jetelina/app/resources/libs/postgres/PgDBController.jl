@@ -1,36 +1,36 @@
 """
-	module: PgDBController
+module: PgDBController
 
-	Author: Ono keiji
-	Version: 1.0
-	Description:
-		DB controller for PostgreSQL
+Author: Ono keiji
 
-	functions
-		create_jetelina_tables() create 'jetelina_table_manager' table.
-		create_jetelina_id_sequence() create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
-		open_connection() open connection to the DB.
-		close_connection(conn::LibPQ.Connection)  close the DB connection
-		readJetelinatable() read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame 
-		getTableList(s::String) get all table name from public 'schemaname'
-		getJetelinaSequenceNumber(t::Integer) get seaquence number from jetelina_id table
-		insert2JetelinaTableManager(tableName::String, columns::Array) insert columns of 'tableName' into Jetelina_table_manager  
-		dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
-		dropTable(tableName::Vector) drop the tables and delete its related data from jetelina_table_manager table
-		getColumns(tableName::String) get columns name of ordereing table.
-		executeApi(json_d::Dict,target_api::DataFrame) execute API order by json data
-		_executeApi(apino::String, sql_str::String) execute API with creating SQL sentence,this is a private function that is called by executeApi()
-		doSelect(sql::String,mode::String) execute select data by ordering sql sentence, but get sql execution time of ordered sql if 'mode' is 'measure'.
-		measureSqlPerformance() measure exectution time of all listed sql sentences. then write it out to JC["sqlperformancefile"].
-		create_jetelina_user_table() create 'jetelina_table_user_table' table.
-		userRegist(username::String) register a new user
-		chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
-		getUserInfoKeys(uid::Integer) get "user_info" column key data.
-		refUserAttribute(uid::Integer,key::String,val) inquiring user_info data 
-		updateUserInfo(uid::Integer,key::String,value) update user data (jetelina_user_table.user_info)
-		updateUserData(uid::Integer,key::String,value) update user data, exept jsonb column
-		updateUserLoginData(uid::Integer) update user login data if it succeeded to login
-		deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
+Description:
+	DB controller for PostgreSQL
+
+functions
+	create_jetelina_tables() create 'jetelina_table_manager' table.
+	create_jetelina_id_sequence() create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
+	open_connection() open connection to the DB.
+	close_connection(conn::LibPQ.Connection)  close the DB connection
+	readJetelinatable() read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame 
+	getTableList(s::String) get all table name from public 'schemaname'
+	getJetelinaSequenceNumber(t::Integer) get seaquence number from jetelina_id table
+	insert2JetelinaTableManager(tableName::String, columns::Array) insert columns of 'tableName' into Jetelina_table_manager  
+	dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
+	dropTable(tableName::Vector) drop the tables and delete its related data from jetelina_table_manager table
+	getColumns(tableName::String) get columns name of ordereing table.
+	executeApi(json_d::Dict,target_api::DataFrame) execute API order by json data
+	_executeApi(apino::String, sql_str::String) execute API with creating SQL sentence,this is a private function that is called by executeApi()
+	doSelect(sql::String,mode::String) execute select data by ordering sql sentence, but get sql execution time of ordered sql if 'mode' is 'measure'.
+	measureSqlPerformance() measure exectution time of all listed sql sentences. then write it out to JC["sqlperformancefile"].
+	create_jetelina_user_table() create 'jetelina_table_user_table' table.
+	userRegist(username::String) register a new user
+	chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
+	getUserInfoKeys(uid::Integer) get "user_info" column key data.
+	refUserAttribute(uid::Integer,key::String,val) inquiring user_info data 
+	updateUserInfo(uid::Integer,key::String,value) update user data (jetelina_user_table.user_info)
+	updateUserData(uid::Integer,key::String,value) update user data, exept jsonb column
+	updateUserLoginData(uid::Integer) update user login data if it succeeded to login
+	deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
 """
 module PgDBController
 

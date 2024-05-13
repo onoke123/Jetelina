@@ -2,7 +2,7 @@
 module: PostDataController
 
 Author: Ono keiji
-Version: 1.0
+
 Description:
 	all controll for poting data from clients
 

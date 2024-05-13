@@ -1,7 +1,6 @@
 /**
     JS library for Jetelina common library
     @author Ono Keiji
-    @version 1.1
 
     This js lib works with dashboard.js, functionpanel.js and conditionpanel.js.
     

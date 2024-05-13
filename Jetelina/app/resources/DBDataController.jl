@@ -2,7 +2,7 @@
 	module: DBDataController
 
 	Author: Ono keiji
-	Version: 1.0
+
 	Description:
 		General DB action controller
 

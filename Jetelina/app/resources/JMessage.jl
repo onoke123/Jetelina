@@ -2,7 +2,7 @@
 module: JMessage
 
 Author: Ono keiji
-Version: 1.0
+
 Description:
 	show some messages order by something.
 

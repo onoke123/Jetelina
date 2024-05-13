@@ -2,7 +2,7 @@
 module: JLog
 
 Author: Ono keiji
-Version: 1.0
+
 Description:
 	read and write to log file
 

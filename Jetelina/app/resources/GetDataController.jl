@@ -2,7 +2,7 @@
 module: GetDataController
 
 Author: Ono keiji
-Version: 1.0
+
 Description:
 	get i/f of ajax
 

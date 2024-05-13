@@ -2,7 +2,7 @@
 module: JFiles
 
 Author: Ono keiji
-Version: 1.0
+
 Description:
 	determaine the path of Jetelina files
 
