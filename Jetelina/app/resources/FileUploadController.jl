@@ -43,7 +43,12 @@ function read(csvfname::String)
 	if ("jt_id" ∉ names(df))
 		return false
 	else
-		return DBDataController.dataInsertFromCSV(csvfname)
+		ret = DBDataController.dataInsertFromCSV(csvfname)
+		
+		# write to operationhistoryfile
+		JLog.writetoOperationHistoryfile(string("create table", ",", csvfname))
+
+		return ret
 	end
 end
 

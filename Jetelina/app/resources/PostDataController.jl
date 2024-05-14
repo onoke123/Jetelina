@@ -164,8 +164,11 @@ function login()
 				j[1][4] -> lastname
 				j[1][1] -> user id        so far
 		===#
-#		@info "PostDataCo... login()" typeof(j[1][4]) typeof(j[1][1])
-		JSession.set(j[1][4],j[1][1])
+		if !isnothing(j) && 0<length(j)
+			if !isnothing(j[1][4]) && !isnothing(j[1][1])
+				JSession.set(j[1][4],j[1][1])
+			end
+		end
 	end
 
 	return json(ret)

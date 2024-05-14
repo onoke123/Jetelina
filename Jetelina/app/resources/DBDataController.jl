@@ -89,7 +89,7 @@ function dataInsertFromCSV(csvfname::String)
 function dataInsertFromCSV(csvfname::String)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
-		PgDBController.dataInsertFromCSV(csvfname)
+		return PgDBController.dataInsertFromCSV(csvfname)
 	elseif j_config.JC["dbtype"] == "mariadb"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end

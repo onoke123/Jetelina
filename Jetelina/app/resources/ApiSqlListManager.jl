@@ -121,6 +121,9 @@ function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String
 	# update DataFrame
 	readSqlList2DataFrame()
 
+	# write to operationhistoryfile
+	JLog.writetoOperationHistoryfile(string("create api",",", suffix, seq_no))
+
 	return true, string(suffix, seq_no)
 end
 """
@@ -194,6 +197,9 @@ function deleteTableFromlist(tablename::Vector)
 
 	# update DataFrame
 	readSqlList2DataFrame()
+
+	# write to operationhistoryfile
+	JLog.writetoOperationHistoryfile(string("drop table",",",tablename))
 
 	return true
 end
@@ -270,6 +276,9 @@ function deleteApiFromList(apis::Vector)
 
 	# update DataFrame
 	readSqlList2DataFrame()
+
+	# write to operationhistoryfile
+	JLog.writetoOperationHistoryfile(string("delete api",",",apis))
 
 	return true
 end

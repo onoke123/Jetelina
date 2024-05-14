@@ -20,6 +20,8 @@
 #      tableapifile: file name for relation between talbe name and api no
 #      experimentsqllistfile: sql list file for execution in test db
 #      improvesuggestionfile: suggestion file name due to execute test db
+#      operationhistoryfile: table/api create/delete history log file
+#      operationhistoryfilesize: MB order ex. 10MB -> 10
 @jdic version:"version"
 version = 1.0
 
@@ -58,6 +60,15 @@ sqlperformancefile = JetelinaSqlPerformance
 tableapifile = JetelinaTableApiRelation
 experimentsqllistfile = JetelinaExperimentSqlList
 improvesuggestionfile = JetelinaSuggestion.json
+
+#
+# operation history log file 
+#
+@jdic operationhistoryfile:"history file","history log","who did"
+operationhistoryfile = JetelinaOperationHistory.log
+
+@jdic operationhistoryfilesize:"history length","hisotry file size","history size"
+operationhistoryfilesize = 10
 
 #
 # column title of sqllogfile/sqllistfile/experimentalsqllistfile

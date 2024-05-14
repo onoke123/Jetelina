@@ -13,7 +13,7 @@ functions
 module JLog
 
 using Logging, Dates
-using Jetelina.JFiles, Jetelina.JMessage
+using Jetelina.JFiles, Jetelina.JMessage, Jetelina.JSession
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
@@ -118,6 +118,43 @@ function writetoSQLLogfile(apino, sql)
 		end
 	catch err
 		writetoLogfile("JLog.writeToSQLLogfile() error: $err")
+		return
+	end
+end
+"""
+function writetoOperationHistoryfile(operationstr::String)
+
+	write operation history to the file. date format is "yyyy-mm-dd HH:MM:SS".
+	in this function, trying to be simple file accessing, not use Logging module
+	this file may will be used with DataFrames, therefore takes csv format so far.
+
+# Arguments
+- `operationstr::String`: operation string ex. create table_aa by keiji
+"""
+function writetoOperationHistoryfile(operationstr::String)
+	#===
+		Tips:
+			JSession.get() returns tuple as (username, userid)
+	===#
+	sessiondata = JSession.get()
+	log_str = string(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"), ",", operationstr, ",", sessiondata[1], ",", sessiondata[2])
+	operationfile = JFiles.getFileNameFromLogPath(j_config.JC["operationhistoryfile"])
+	operationfilemaxsize = parse(Int, j_config.JC["operationhistoryfilesize"])
+
+	try
+		if ispath(operationfile)
+			operationfilemaxsize = operationfilemaxsize*1000000 # transfer to MB
+			if operationfilemaxsize < filesize(operationfile)
+				# file rotation
+				_fileRotation(operationfile)
+			end
+		end
+
+		open(operationfile, "a+") do f
+			println(f, log_str)
+		end
+	catch err
+		writetoLogfile("JLog.writetoOperationHistoryfile() error: $err")
 		return
 	end
 end
