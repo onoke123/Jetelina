@@ -27,7 +27,7 @@ end
     handle user account management
 
 ===#
-route("/chkacount", PostDataController.login, method = POST )
+route("/chkaccount", PostDataController.login, method = POST )
 route("/getuserinfo", PostDataController.getUserInfoKeys, method = POST)
 route("/userregist", PostDataController.userRegist, method = POST)
 route("/refuserattribute", PostDataController.refUserAttribute, method = POST)
