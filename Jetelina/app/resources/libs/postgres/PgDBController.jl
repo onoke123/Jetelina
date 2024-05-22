@@ -926,13 +926,12 @@ function chkUserExistence(s::String)
 	sql = """   
 	SELECT
 		user_id,
-		login,
 		firstname,
 		lastname,
 		nickname,
 		logincount,
 		logindate,
-		logoutdate,
+		logoutdate
 	from jetelina_user_table
 	where (jetelina_delete_flg=0)and((nickname = '$u')or(firstname='$u')or(lastname='$u'));
 	"""
