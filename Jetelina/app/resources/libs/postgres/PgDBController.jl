@@ -82,10 +82,17 @@ end
 function create_jetelina_id_sequence()
 
 	create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
+
+	jetelina_table_id is deprecated
 """
 function create_jetelina_id_sequence()
+	#===
 	jetelina_id_sequence = """
 		create sequence jetelina_table_id_sequence;create sequence jetelina_sql_sequence;create sequence jetelina_user_id_sequence;
+	"""
+	===#
+	jetelina_id_sequence = """
+		create sequence create sequence jetelina_sql_sequence;create sequence jetelina_user_id_sequence;
 	"""
 	conn = open_connection()
 	try
@@ -214,7 +221,7 @@ function getJetelinaSequenceNumber(t::Integer)
 	get seaquence number from jetelina_id table
 
 # Arguments
-- `t: Integer`  : type order  0-> jetelina_id, 1-> jetelian_sql_sequence
+- `t: Integer`  : type order  0-> jetelina_table_id, 1-> jetelian_sql_sequence
 - return: 0< sequence number   -1 fail
 """
 function getJetelinaSequenceNumber(t::Integer)
@@ -237,6 +244,8 @@ function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer)
 	get seaquence number from jetelina_table_id_sequence or jetelina_sql_sequence or jetelina_user_id_sequence, but this is a private function.
 	this function will never get fail, expectedly.:-P
 
+	jetelina_table_id is deprecated
+
 # Arguments
 - `conn: Object`: connection object
 - `t: Integer`  : type order  0-> jetelina_table_id_sequence, 1-> jetelian_sql_sequence 2->jetelina_user_id_sequence
@@ -246,9 +255,11 @@ function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer)
 	sql = ""
 
 	if t == 0
+#===
 		sql = """
-			select nextval('jetelina_id_sequence');
+			select nextval('jetelina_table_id_sequence');
 		"""
+===#
 	elseif t == 1
 		sql = """
 			select nextval('jetelina_sql_sequence');
@@ -308,7 +319,7 @@ function insert2JetelinaTableManager(tableName::String, columns::Array)
 	end
 
 	# update Df_JetelinaTableManager
-	readJetelinatable()
+	#readJetelinatable()
 end
 
 """
@@ -799,6 +810,7 @@ function create_jetelina_user_table()
 
 """
 function create_jetelina_user_table()
+	#===
 	create_jetelina_user_table_str = """
 		create table if not exists jetelina_user_table(
 			user_id integer not null primary key,
@@ -814,6 +826,21 @@ function create_jetelina_user_table()
 			jetelina_delete_flg integer default 0
 		);
 	"""
+	===#
+	create_jetelina_user_table_str = """
+		create table if not exists jetelina_user_table(
+			user_id integer not null primary key,
+			firstname varchar(256),
+			lastname varchar(256),
+			nickname varchar(256),
+			logincount integer not null default 0,
+			logindate timestamp with time zone not null,
+			logoutdate timestamp with time zone,
+			user_info jsonb,
+			jetelina_delete_flg integer default 0
+		);
+	"""
+
 	conn = open_connection()
 	try
 		execute(conn, create_jetelina_user_table_str)

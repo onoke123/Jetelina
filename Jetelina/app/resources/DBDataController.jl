@@ -70,9 +70,13 @@ function init_Jetelina_table()
 function init_Jetelina_table()
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
-		PgDBController.create_jetelina_id_sequence()
-		PgDBController.create_jetelina_table()
-		PgDBController.readJetelinatable()
+#    these two procedures should be moved to "CREATION" method
+#		PgDBController.create_jetelina_id_sequence()
+#		PgDBController.create_jetelina_table()
+
+#  	the process in this function is deprecated
+#		PgDBController.readJetelinatable()
+
 	elseif j_config.JC["dbtype"] == "mariadb"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
