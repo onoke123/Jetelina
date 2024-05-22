@@ -54,6 +54,8 @@ function create_jetelina_table
 
 	create 'jetelina_table_manager' table.
 
+	deprecated
+
 	Attention: jetelina_table_manager is prepared for if table layouts have to be changed in Jetelina prototype.
 			   this table maintain an original relation between table and columns. this table would be updated if
 			   a column moved to other table, for example table_A.age and table_B.sex were united to as table_C, then
@@ -834,7 +836,7 @@ function create_jetelina_user_table()
 			lastname varchar(256),
 			nickname varchar(256),
 			logincount integer not null default 0,
-			logindate timestamp with time zone not null,
+			logindate timestamp with time zone,
 			logoutdate timestamp with time zone,
 			user_info jsonb,
 			jetelina_delete_flg integer default 0
@@ -904,6 +906,7 @@ function chkUserExistence(s::String)
 		u = ss[1]
 	end
 
+	#===
 	sql = """   
 	SELECT
 		user_id,
@@ -918,6 +921,22 @@ function chkUserExistence(s::String)
 	from jetelina_user_table
 	where (jetelina_delete_flg=0)and((login = '$u')or(firstname='$u')or(lastname='$u'));
 	"""
+	===#
+
+	sql = """   
+	SELECT
+		user_id,
+		login,
+		firstname,
+		lastname,
+		nickname,
+		logincount,
+		logindate,
+		logoutdate,
+	from jetelina_user_table
+	where (jetelina_delete_flg=0)and((nickname = '$u')or(firstname='$u')or(lastname='$u'));
+	"""
+
 	conn = open_connection()
 	try
 		df = DataFrame(columntable(LibPQ.execute(conn, sql)))
