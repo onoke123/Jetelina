@@ -420,6 +420,9 @@ const getAjaxData = (url) => {
                 } else if (url == geturl[2]) {
                     // configuration change history
                     getdata(result, 3);
+                } else if (url == geturl[3]) {
+                    // simply logout and the chat message unnecessary
+                    return;
                 }
 
                 typingControll(chooseMsg("success-msg", "", ""));
@@ -1107,6 +1110,9 @@ const logout = () => {
     cleanUp("items");
     cleanUp("tables");
     cleanUp("apis");
+
+    getAjaxData(scenario['function-get-url'][3]);
+
 }
 /**
  * @function getPreferentPropertie

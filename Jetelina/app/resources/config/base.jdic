@@ -8,7 +8,7 @@
 @jdic function-post-url:"/updateuserdata","/jetelinawords","/getconfigdata","/changeconfigdata","/createapi","/testapi","/chkaccount"
 
 # get urls for function panel 
-@jdic function-get-url:"/getapilist","/getalldbtable","/getconfigchangehistory"
+@jdic function-get-url:"/getapilist","/getalldbtable","/getconfigchangehistory","/goodbyenow"
 
 # null 
 @jdic null-msg:"",""

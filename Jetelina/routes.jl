@@ -28,12 +28,13 @@ end
 
 ===#
 route("/chkaccount", PostDataController.login, method = POST )
+route("/goodbyenow", GetDataController.logout )
 route("/getuserinfo", PostDataController.getUserInfoKeys, method = POST)
 route("/userregist", PostDataController.userRegist, method = POST)
 route("/refuserattribute", PostDataController.refUserAttribute, method = POST)
 route("/updateuserinfo", PostDataController.updateUserInfo, method = POST)
 route("/updateuserdata", PostDataController.updateUserData, method = POST)
-route("/updateuserlogindata", PostDataController.updateUserLoginData, method = POST)
+#route("/updateuserlogindata", PostDataController.updateUserLoginData, method = POST)
 route("/deleteuser", PostDataController.deleteUserAccount, method = POST)
 
 #===

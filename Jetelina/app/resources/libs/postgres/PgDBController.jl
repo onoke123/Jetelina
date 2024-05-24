@@ -941,6 +941,15 @@ function chkUserExistence(s::String)
 		df = DataFrame(columntable(LibPQ.execute(conn, sql)))
 #		ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
 		ret = Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg)
+		
+		#==
+			Tips:
+				every expression is fine, but take care the data type
+				@info "user id 1 " df[:, :user_id] typeof(df[:,:user_id])  -> Vector{Union{Missing,Int}}
+				@info "user id 2 " df[:, :user_id][1] typeof(df[:,:user_id][1])  -> Int
+				@info "user id 3 " df.user_id typeof(df.user_id) -> Vector{Union{Missing,Int}}
+		==#
+		updateUserLoginData(df.user_id[1])
 	catch err
 #		ret = json(Dict("result" => false, "errmsg" => "$err"))
 		ret = Dict("result" => false, "errmsg" => "$err")
@@ -1134,36 +1143,31 @@ function updateUserLoginData(uid::Integer)
 - return: success -> true, fail -> error message
 """
 function updateUserLoginData(uid::Integer)
-	ret = ""
-	column_str::String = ""
-	jmsg::String = """He he, you are counted up in me."""
+	ret = true
+#	column_str::String = ""
+#	jmsg::String = """He he, you are counted up in me."""
 	#===
 		Attention:
-			refer to 'logincount' number, then count up 'user_level' if 'logincount' over 11.
+			refer to 'logincount' number.
 			this does not have any important meaning, may use it in future for something, 
-			for example in respect mode, who knows. :P
+			for example in being friend mode, who knows. :P
 	===#
-	lc_sql = """
-	select logincount from jetelina_user_table where user_id=$uid;
-	"""
+#	lc_sql = """
+#	select logincount from jetelina_user_table where user_id=$uid;
+#	"""
 
 	conn = open_connection()
 	try
-		df = DataFrame(columntable(LibPQ.execute(conn, lc_sql)))
+#		df = DataFrame(columntable(LibPQ.execute(conn, lc_sql)))
 		#===
 			Tips:
 				df[:,:logincount] is might be Vector, thus ..[1], because of getting only one column data.
 		===#
-		if df[:, :logincount][1] < 11
+#		if df[:, :logincount][1] < 11
 			column_str = """
 			logincount=logincount+1,logindate=now()  
 			"""
-		else
-			column_str = """
-			logincount=1,user_level=user_level+1,logindate=now()  
-			"""
-			jmsg = """Congrat, your level has been counted up in me."""
-		end
+#		end
 
 		sql = """
 		update jetelina_user_table set
@@ -1173,9 +1177,10 @@ function updateUserLoginData(uid::Integer)
 
 		execute(conn, sql)
 
-		ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
+#		ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
 	catch err
-		ret = json(Dict("result" => false, "errmsg" => "$err"))
+#		ret = json(Dict("result" => false, "errmsg" => "$err"))
+		ret = false
 		JLog.writetoLogfile("PgDBController.updateUserLoginData() with user $uid error : $err")
 	finally
 		close_connection(conn)

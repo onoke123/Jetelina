@@ -338,7 +338,7 @@ function updateUserData(uid::Integer,key::String,value)
 function updateUserData(uid::Integer, key::String, value)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
-		PgDBController.updateUserData(uid, key, val)
+		PgDBController.updateUserData(uid, key, value)
 	elseif j_config.JC["dbtype"] == "mariadb"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end

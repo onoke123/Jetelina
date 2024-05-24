@@ -19,13 +19,29 @@ functions
 module GetDataController
 
 using Genie, Genie.Requests, Genie.Renderer.Json
-using Jetelina.JFiles, Jetelina.ApiSqlListManager, Jetelina.DBDataController, Jetelina.JMessage
+using Jetelina.JFiles, Jetelina.ApiSqlListManager, Jetelina.DBDataController, Jetelina.JMessage, Jetelina.JSession
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export getTableList, getTableCombiVsAccessRelationData, getPerformanceRealData, getPerformanceTestData, checkExistImproveApiFile, getApiList, getConfigHistory
+export logout, getTableList, getTableCombiVsAccessRelationData, getPerformanceRealData, getPerformanceTestData, checkExistImproveApiFile, getApiList, getConfigHistory
 
+"""
+function logout()
+
+	logout procedure. 
+"""
+function logout()
+	uid = JSession.get()[2]
+	key = "logoutdate"
+	value = "now()"
+	@info "logout uid " uid typeof(uid)
+	if !isnothing(uid)
+		ret = DBDataController.updateUserData(uid, key, value)
+	end
+
+	return json(ret)
+end
 """
 function getTableList()
 
