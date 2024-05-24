@@ -7,6 +7,7 @@ Description:
 	get i/f of ajax
 
 functions
+	logout() logout procedure. update jetelina_user_table.logoutdate.
 	getTableList() calling DBDataController.getTableList() with json mode. the return is json form naturally.
 	getSqlAccessData() get JC["sqlaccesscountfile"] data file name. this file  contains access cound data in each sql due to sql.txt log file.
 	getTableCombiVsAccessRelationData()  get JC["tablecombinationfile"] data file name. this file is analyzed data for table combination.
@@ -29,7 +30,7 @@ export logout, getTableList, getTableCombiVsAccessRelationData, getPerformanceRe
 """
 function logout()
 
-	logout procedure. 
+	logout procedure. update jetelina_user_table.logoutdate.
 """
 function logout()
 	uid = JSession.get()[2]
@@ -40,7 +41,10 @@ function logout()
 		ret = DBDataController.updateUserData(uid, key, value)
 	end
 
-	return json(ret)
+	# session data clear
+	JSession.clear()
+
+	return ret
 end
 """
 function getTableList()
