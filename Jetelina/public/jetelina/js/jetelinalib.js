@@ -39,7 +39,11 @@
       rejectCancelableCmdList(cmd) reject command from cancelableCmdList
       rejectSelectedItemsArr(item) reject selected item from selectedItemsArr
       checkBandA(o,p) check the target sting is effective or not in the array string.
-*/
+      showUserRegistrationForm(b) display 'user_registration_form'
+      showUserNickNameForm(b) display 'tr3', because 'tr3' is for existing user's form.
+      setUserName(f,s) inputed data 's' in the chat box is set into the 'user_registration_form' filed that is ordered in 'f'.
+      postUserName(flg) post 'user_registration_form' data with 'flg'
+ */
 const JETELINACHATTELL = `${JETELINAPANEL} [name='jetelina_tell']`;
 const SOMETHINGMSGPANEL = "#something_msg";
 const SOMETHINGMSGPANELMSG = `${SOMETHINGMSGPANEL} [name='jetelina_message']`;
@@ -53,6 +57,11 @@ const TABLECONTAINER = "#table_container";
 const APICONTAINER = "#api_container";
 const GENELICPANEL = "#genelic_panel";
 const APITESTPANEL = "#apitest";
+const USERREGFORM = "#user_registration_form";
+const USERNICKNAMEFORM = `${USERREGFORM} [name='tr3']`;
+const USERFIRSTNAME = "user_first_name"; // the field name in USERREGFORM
+const USERLASTNAME = "user_last_name"; //     〃
+const USERNICKNAME = "user_nick_name"; //　　 〃
 const CONFIGCHANGE = "config-change";// command in cancelable command list 
 const TABLEAPILISTOPEN = "table-api-open";// command in cancelable command list
 const SELECTITEM = "select-item";// command in cancelable command list
@@ -1500,6 +1509,62 @@ const rejectSelectedItemsArr = (item) =>{
             return d;
         }
     });
+}
+/**
+ * @function showUserRegistrationForm
+ * 
+ * @param {boolean}  b true->show, false->hide
+ *  
+ * display 'user_registration_form'
+ * 
+ */
+const showUserRegistrationForm = (b) =>{
+    if(b){
+        $(USERREGFORM).show();
+    }else{
+        $(USERREGFORM).hide();
+    }
+}
+/**
+ * @function showUserNickNameForm
+ *
+ * @param {boolean}  b true->show, false->hide
+ * 
+ * display 'tr3', because 'tr3' is for existing user's form.
+ * it is unnecessary form for a new user registration, therefore it is devided with showUserRegistrationForm().  
+ */
+const showUserNickNameForm = (b) =>{
+    if(b){
+        $(USERNICKNAMEFORM).show();
+    }else{
+        $(USERNICKNAMEFORM).hide();
+    }
+}
+/**
+ * @function setUserName
+ * 
+ * @param {string} f 'user_first_name'/'user_last_name'/'user_nick_name' in 'user_registration_form'.
+ * @param {string} s inputed data into chatbox, expected user names.
+ * 
+ * inputed data 's' in the chat box is set into the 'user_registration_form' filed that is ordered in 'f'.
+ */
+const setUserName = (f,s) =>{
+    if(field != null && 0<field.length()){
+        $(`${USERREGFORM} [name='${field}]`).text(s);
+    }
+}
+/**
+ * @function postUserName
+ * 
+ * @param {string} flg  'register'/'update'/'delete'
+ * 
+ * post 'user_registration_form' data with 'flg'
+ */
+const postUserName = (flg) =>{
+    let f_name = $(`${USERREGFORM} [name='${USERFIRSTNAME}]`).text();
+    let l_name = $(`${USERREGFORM} [name='${USERLASTNAME}]`).text();
+    let n_name = $(`${USERREGFORM} [name='${USERNICKNAME}]`).text();
+    
 }
 
 // return to the chat box if 'return key' is typed in something_input_field
