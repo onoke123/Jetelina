@@ -26,7 +26,7 @@
       showManualCommandList(s) show/hide manual and/or command list panel
       inScenarioChk(s,sc,type) check if user input string is in the ordered scenario
       countCandidates(s,sc,type) count config/scenario candidates
-      checkNewCommer(s) check the login user is a newcommer or not.
+//      checkNewCommer(s) check the login user is a newcommer or not.
       checkBeginner() check the login user is a beginner or not.
       isVisibleFunctionPanel() check the function panel is visible or not
       inVisibleConditionPanel() check the condition panel is visible or not
@@ -68,7 +68,7 @@ const SELECTITEM = "select-item";// command in cancelable command list
 const TABLEAPIDELETE = "table-api-delete";// command in cancelable command list
 const FILESELECTOROPEN = "files-elector-open"; // command in cancelable command list
 const LOCALPARAM = "login2jetelina"; // local strage parameter
-const USETCOUNTMAX = getRandomNumber(4) + 1; // only use for the first login in checkNewCommer
+//const USETCOUNTMAX = getRandomNumber(4) + 1; // only use for the first login in checkNewCommer
 
 //let enterNumber = 0;
 let typingTimeoutID;
@@ -563,8 +563,6 @@ const authAjax = (un) => {
                         if (k == "user_id") {
                             loginuser.user_id = v;
                             localStorage[LOCALPARAM] = true;
-                        } else if (k == "login") {
-                            loginuser.login = v;
                         } else if (k == "firstname") {
                             loginuser.firstname = v;
                         } else if (k == "lastname") {
@@ -575,11 +573,11 @@ const authAjax = (un) => {
                         } else if (k == "logincount") {
                             loginuser.logincount = v;
                         } else if (k == "logindate") {
-                            loginuser.lastlogin = v;
-                        } else if (k == "user_level") {
-                            loginuser.user_level = v;
-                        } else if (k == "familiar_index") {
-                            loginuser.familiar_index = v;
+                            loginuser.logindate = v;
+                        } else if (k == "logoutdate") {
+                            loginuser.logoutdate = v;
+                        } else if (k == "generation") {
+                            loginuser.generation = v;
                         }
                     });
 
@@ -597,10 +595,39 @@ const authAjax = (un) => {
 
                             loginuser and authcount are defined in dashboard.js as global.
                     */
-                    loginuser.c = 0;
-                    authcount = getRandomNumber(3) + 1;
+                    if(0<loginuser.logincount){
+                        scenarioNumber = "starting-5-msg";
+                        /*
+                            Tips:
+                                user roll is defined by its "generation" and "logincount".
+                                generation        logincount vs roll
+                                                create   delete   user register
+                                    0              2        5         8
+                                    1             x2       <-        <-
+                                    2             x3       <-        <-
+                                    3             x4       <-        <-
 
-                    scenarioNumber = "starting-5-msg";
+                                i mean user who is 0 generation and less than 2 logincount can execute only create table/api, 
+                                later over 3 shift to "delete" roll that is able to till delete table/api.
+                                need over 8 logincount to get "user register" roll.
+                                other generation, e.g 1st is 2 times of 0 one.  
+                        */
+                        loginuser.roll = "beginner";
+                        const p_roll = [2,5,8]; // create,delete,user register
+                        if(p_roll[2]*(loginuser.generation+1)<loginuser.logincount){
+                            //user register <- admin
+                            loginuser.roll = "admin";
+                        }else if(p_roll[1]*(loginuser.generation+1)<loginuser.logincount){
+                            //delete <- manager
+                            loginuser.roll = "manager"
+                        }else if(p_roll[0]*(loginuser.generation+1)<loginuser.logincount){
+                            //create <- beginner
+                        }
+                    }else{
+                        scenarioNumber = "first-login-msg";
+                        loginuser.roll = "beginner";
+                    }
+
                     stage = 'login_success';
                 } else if (1 < o[key].length) {
                     // some candidates
@@ -1302,7 +1329,7 @@ const countCandidates = (s, sc, type) => {
  * 
  *  check the login user is a newcommer or not.
  *  ask some attribute if a newcommer.
- */
+ 
 const checkNewCommer = (s) => {
     if (loginuser.logincount == 0) {
         let data;
@@ -1345,6 +1372,7 @@ const checkNewCommer = (s) => {
         authcount++;
     }
 }
+*/
 /**
  * @function checkBeginner
  * @returns {boolean}  true -> yes a beginner, false -> an expert
