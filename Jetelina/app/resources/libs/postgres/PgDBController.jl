@@ -839,6 +839,7 @@ function create_jetelina_user_table()
 			logindate timestamp with time zone,
 			logoutdate timestamp with time zone,
 			user_info jsonb,
+			generation integer not null default 10,
 			jetelina_delete_flg integer default 0
 		);
 	"""
@@ -931,7 +932,8 @@ function chkUserExistence(s::String)
 		nickname,
 		logincount,
 		logindate,
-		logoutdate
+		logoutdate,
+		generation
 	from jetelina_user_table
 	where (jetelina_delete_flg=0)and((nickname = '$u')or(firstname='$u')or(lastname='$u'));
 	"""
@@ -1144,42 +1146,36 @@ function updateUserLoginData(uid::Integer)
 """
 function updateUserLoginData(uid::Integer)
 	ret = true
-#	column_str::String = ""
-#	jmsg::String = """He he, you are counted up in me."""
-	#===
-		Attention:
-			refer to 'logincount' number.
-			this does not have any important meaning, may use it in future for something, 
-			for example in being friend mode, who knows. :P
-	===#
-#	lc_sql = """
-#	select logincount from jetelina_user_table where user_id=$uid;
-#	"""
-
 	conn = open_connection()
 	try
-#		df = DataFrame(columntable(LibPQ.execute(conn, lc_sql)))
 		#===
 			Tips:
-				df[:,:logincount] is might be Vector, thus ..[1], because of getting only one column data.
+				logincount should be counted up only once in a day.
+				complogindate is compare day number between logindate and current date with using cast(), this result retuns day number.
+				then look at df[:,1][1], because df is Vector{Union{Missing, Int32}}.
 		===#
-#		if df[:, :logincount][1] < 11
-			column_str = """
-			logincount=logincount+1,logindate=now()  
-			"""
-#		end
+		complogindate = """
+			select cast(logindate as date) - cast(now() as date) from jetelina_user_table where user_id=$uid;
+		"""
+
+		df = DataFrame(columntable(LibPQ.execute(conn, complogindate)))
+		if df[:,1][1] == 0
+			# update only logindate because multi login at same date
+			column_str = """ logindate=now() """
+		else
+			# count up loginaccount
+			column_str = """ logincount=logincount+1,logindate=now() """
+		end
 
 		sql = """
-		update jetelina_user_table set
-			$column_str
-			where user_id=$uid;
+			update jetelina_user_table set
+				$column_str
+				where user_id=$uid;
 		"""
 
 		execute(conn, sql)
 
-#		ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
 	catch err
-#		ret = json(Dict("result" => false, "errmsg" => "$err"))
 		ret = false
 		JLog.writetoLogfile("PgDBController.updateUserLoginData() with user $uid error : $err")
 	finally

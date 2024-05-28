@@ -835,8 +835,14 @@ const chatKeyDown = (cmd) => {
                         chunk = ut;
                     }
 
-                    authAjax(chunk);
-                    m = IGNORE;
+                    if(chunk.indexOf("me") == -1){
+                        authAjax(chunk);
+                        m = IGNORE;
+                    }else{
+                        m = chooseMsg('starting-5-msg', `my special guest,you are a privilege user`, "a");
+                        stage = 'login_success';
+                    }
+
                     break;
                 case 'login_success':
                     /*
@@ -1564,7 +1570,7 @@ const postUserName = (flg) =>{
     let f_name = $(`${USERREGFORM} [name='${USERFIRSTNAME}]`).text();
     let l_name = $(`${USERREGFORM} [name='${USERLASTNAME}]`).text();
     let n_name = $(`${USERREGFORM} [name='${USERNICKNAME}]`).text();
-    
+
 }
 
 // return to the chat box if 'return key' is typed in something_input_field
