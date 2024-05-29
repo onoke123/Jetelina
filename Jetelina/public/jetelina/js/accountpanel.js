@@ -14,6 +14,15 @@
  * manage user account  
  */
 const accountManager = (s) =>{
+    showUserRegistrationForm(true);
+    const panelTop = window.innerHeight / 2;
+    const panelLeft = window.innerWidth / 2;
+    $(USERREGFORM).draggable().animate({
+        height: "70px",
+        top: `${panelTop}px`,
+        left: `${panelLeft}px`//"210px"
+    }, ANIMATEDURATION);
+
     if(inScenarioChk(s,'user-manage-add')){
         // add new user/account
         console.log("user add");
@@ -23,6 +32,7 @@ const accountManager = (s) =>{
     }else if(inScenarioChk(s,'user-manage-list')){
         // display user/account list
         console.log("user list");
+        showUserRegistrationForm(false);
     }else if(inScenarioChk(s,'user-manage-delete')){
         // delete user/account
         console.log("user delete");
