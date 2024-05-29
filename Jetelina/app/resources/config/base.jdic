@@ -119,7 +119,11 @@
 @jdic func-tabledrop-ng-msg:"Hey open the table list first!","Huum?","Check it first","Watch it"
 
 @jdic func-apicreate-cmd:"create api","post api","post columns","create sql"
-@jdic func-apidelete-cmd:"delete","delete api","api delete","apidelete","deleteapi","remove api","reject api","api remove","api reject"
+#
+#  reject "delete" from this dic, but should be considered it later, because just "delete" was convenient.
+#@jdic func-apidelete-cmd:"delete","delete api","api delete","apidelete","deleteapi","remove api","reject api","api remove","api reject"
+@jdic func-apidelete-cmd:"delete api","api delete","apidelete","deleteapi","remove api","reject api","api remove","api reject"
+
 @jdic func-apidelete-msg:"Which api do you want to delete?","correct order is \"delete <api name>\" and so on"
 @jdic func-apidelete-ng-msg:"Hey open the api list first!","Huum?","Check it first","Watch it"
 @jdic func-apidelete-forbidden-msg:"some api cannot be deleted, sorry"
@@ -142,6 +146,14 @@
 @jdic func-api-test-cmd:"do sql test","do api test","test sql","sql check","do api check","check sql","check api","execute sql test","execute api test","execute test","do test"
 @jdic func-api-test-panel-show-cmd:"show api test","open api test","show sql test","open sql test","display api test","display sql test","open test result","show test result"
 @jdic func-api-test-panel-hide-cmd:"hide api test","close api test","hide sql test","close sql test","undisplay api test","undisplay sql test","close test result","hide test result"
+
+#
+#  account management
+#
+@jdic user-manage-add:"invite new user","add new user","add new account"
+@jdic user-manage-update:"change user data","update user data","change this account","update this account","update me","change me"
+@jdic user-manage-list:"show user list","show account list","display user list","display account list"
+@jdic user-manage-delete":"delete this user","reject this user","remove this user"
 
 #
 # log out 
