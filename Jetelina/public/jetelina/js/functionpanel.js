@@ -2,7 +2,7 @@
     JS library for Jetelina Function Panel
     @author Ono Keiji
 
-    This js lib works with dashboard.js, functionpanel.js and conditionpanel.js for the Function Panel.
+    This js lib works with dashboard.js and jetelinalib.js for the Function Panel.
     
     Functions:
       openFunctionPanel() open and visible "#function_panel"
@@ -1258,7 +1258,7 @@ const functionPanelFunctions = (ut) => {
             in the case of cancel 'itme(column)' is able to be canceled selectively: each 'cancel <column name>'.
       */
       // cancel table drop and/or api delete
-      if (inCancelableCmdList(TABLEAPIDELETE)) {
+      if (inCancelableCmdList([TABLEAPIDELETE])) {
         // if api test result panel is openend yet
         if (isVisibleApiContainer()) {
           showApiTestPanel(false);
@@ -1283,13 +1283,13 @@ const functionPanelFunctions = (ut) => {
 
         $(`${TABLECONTAINER} span`).removeClass('deleteItem');
         $(`${APICONTAINER} span`).removeClass('deleteItem');
-      } else if (inCancelableCmdList(FILESELECTOROPEN)) {
+      } else if (inCancelableCmdList([FILESELECTOROPEN])) {
         $(UPFILE).val("");
         $(`${MYFORM} label span`).text("Upload CSV File");
         $(FILEUP).removeClass("genelic_panel");
         rejectCancelableCmdList(FILESELECTOROPEN);
         m = chooseMsg("cancel-msg", "", "");
-      } else if (inCancelableCmdList(SELECTITEM)) {
+      } else if (inCancelableCmdList([SELECTITEM])) {
         let t = ut.split(' ');
         // cancel selected columns
         if (inScenarioChk(ut, "func-selecteditem-all-cancel-cmd")) {

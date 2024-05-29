@@ -3,7 +3,7 @@
     JS library for Jetelina Condition Panel
     @author Ono Keiji
 
-    This js lib works with dashboard.js, functionpanel.js and conditionpanel.js for the Condition Panel.
+    This js lib works with dashboard.js and jetelinalib.js for the Condition Panel.
     
     Functions:
       isVisibleAccessCombination() checking "#plot" is visible or not

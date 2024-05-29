@@ -35,7 +35,7 @@
       showSomethingMsgPanel(b) "#something_msg" show or hide
       isVisibleApiTestPanel() checking "#apitest" is visible or not
       showApiTestPanel(b) "#apitest" show or hide
-      inCancelableCmdList(cmd) check the ordered command is in cancelableCmdList or not
+      inCancelableCmdList(cmd) check the ordered commands are in cancelableCmdList or not
       rejectCancelableCmdList(cmd) reject command from cancelableCmdList
       rejectSelectedItemsArr(item) reject selected item from selectedItemsArr
       checkBandA(o,p) check the target sting is effective or not in the array string.
@@ -63,10 +63,11 @@ const USERFIRSTNAME = "user_first_name"; // the field name in USERREGFORM
 const USERLASTNAME = "user_last_name"; //     〃
 const USERNICKNAME = "user_nick_name"; //　　 〃
 const CONFIGCHANGE = "config-change";// command in cancelable command list 
-const TABLEAPILISTOPEN = "table-api-open";// command in cancelable command list
-const SELECTITEM = "select-item";// command in cancelable command list
-const TABLEAPIDELETE = "table-api-delete";// command in cancelable command list
-const FILESELECTOROPEN = "files-elector-open"; // command in cancelable command list
+const USERMANAGE = "account-manage"; //       〃
+const TABLEAPILISTOPEN = "table-api-open";//  〃
+const SELECTITEM = "select-item";// 　　　　　〃
+const TABLEAPIDELETE = "table-api-delete";// 〃
+const FILESELECTOROPEN = "files-elector-open"; // 　〃
 const LOCALPARAM = "login2jetelina"; // local strage parameter
 //const USETCOUNTMAX = getRandomNumber(4) + 1; // only use for the first login in checkNewCommer
 
@@ -562,7 +563,6 @@ const authAjax = (un) => {
                     $.each(o[key][0], function (k, v) {
                         if (k == "user_id") {
                             loginuser.user_id = v;
-                            localStorage[LOCALPARAM] = true;
                         } else if (k == "firstname") {
                             loginuser.firstname = v;
                         } else if (k == "lastname") {
@@ -595,7 +595,7 @@ const authAjax = (un) => {
 
                             loginuser and authcount are defined in dashboard.js as global.
                     */
-                    if(0<loginuser.logincount){
+                    if (0 < loginuser.logincount) {
                         scenarioNumber = "starting-5-msg";
                         /*
                             Tips:
@@ -613,17 +613,17 @@ const authAjax = (un) => {
                                 other generation, e.g 1st is 2 times of 0 one.  
                         */
                         loginuser.roll = "beginner";
-                        const p_roll = [2,5,8]; // create,delete,user register
-                        if(p_roll[2]*(loginuser.generation+1)<loginuser.logincount){
+                        const p_roll = [2, 5, 8]; // create,delete,user register
+                        if (p_roll[2] * (loginuser.generation + 1) < loginuser.logincount) {
                             //user register <- admin
                             loginuser.roll = "admin";
-                        }else if(p_roll[1]*(loginuser.generation+1)<loginuser.logincount){
+                        } else if (p_roll[1] * (loginuser.generation + 1) < loginuser.logincount) {
                             //delete <- manager
                             loginuser.roll = "manager"
-                        }else if(p_roll[0]*(loginuser.generation+1)<loginuser.logincount){
+                        } else if (p_roll[0] * (loginuser.generation + 1) < loginuser.logincount) {
                             //create <- beginner
                         }
-                    }else{
+                    } else {
                         scenarioNumber = "first-login-msg";
                         loginuser.roll = "beginner";
                     }
@@ -748,9 +748,8 @@ const chkUResponse = (n, s) => {
  * behavior of hitting enter key in the chat box by user
  */
 const chatKeyDown = (cmd) => {
-    /* ut is the input character by user */
-    let ut;
-    let m = ""; // chatbox message string by Jetelina.
+    let ut = ""; // ut is the input character by user
+    let m = ""; // chatbox message string by Jetelina
 
     if (cmd == null) {
         ut = $(JETELINACHATBOX).val().toLowerCase();
@@ -787,7 +786,6 @@ const chatKeyDown = (cmd) => {
 
         /* do it only if there were a input character by user */
         if (0 < ut.length) {
-            //            enterNumber++;
             $(JETELINACHATTELL).text("");
             $(JETELINACHATBOX).val("");
             $(CHATBOXYOURTELL).text(ut);
@@ -828,24 +826,24 @@ const chatKeyDown = (cmd) => {
             */
             switch (stage) {
                 case 1:
-//                    if (!chkUResponse("greeting-1-cmd", ut)) {
-/*
-                    if(!inScenarioChk(ut,"greeting-1-cmd")){
-                        m = chooseMsg("starting-2-msg", "", "");
-                        stage = 'login';
-                    } else {
-                        / say 'nice' if a user said 'fine' /
-                        m = chooseMsg('greeting-1a-msg', "", "");
-                    }
-*/
+                    //                    if (!chkUResponse("greeting-1-cmd", ut)) {
+                    /*
+                                        if(!inScenarioChk(ut,"greeting-1-cmd")){
+                                            m = chooseMsg("starting-2-msg", "", "");
+                                            stage = 'login';
+                                        } else {
+                                            / say 'nice' if a user said 'fine' /
+                                            m = chooseMsg('greeting-1a-msg', "", "");
+                                        }
+                    */
 
-                    if(inScenarioChk(ut,'greeting-1-cmd')){
+                    if (inScenarioChk(ut, 'greeting-1-cmd')) {
                         /* say 'nice' if a user said 'fine' */
                         m = chooseMsg('greeting-1a-msg', "", "");
-                    }else if(inScenarioChk(ut,'greeting-2-cmd')){
+                    } else if (inScenarioChk(ut, 'greeting-2-cmd')) {
                         /* reply something your mood if a uer asks you 'how about you' */
                         m = chooseMsg('greeting-2-msg', "", "");
-                    }else{
+                    } else {
                         /* lead to login with 'can I ask your name?' */
                         m = chooseMsg("starting-2-msg", "", "");
                         stage = 'login';
@@ -862,10 +860,10 @@ const chatKeyDown = (cmd) => {
                         chunk = ut;
                     }
 
-                    if(chunk.indexOf("me") == -1){
+                    if (chunk.indexOf("me") == -1) {
                         authAjax(chunk);
                         m = IGNORE;
-                    }else{
+                    } else {
                         m = chooseMsg('starting-5-msg', `my special guest,you are a privilege user`, "a");
                         stage = 'login_success';
                     }
@@ -911,23 +909,27 @@ const chatKeyDown = (cmd) => {
                         left: "210px"
                     }, ANIMATEDURATION);
                     /*
-                        Tips:
-                            if 'ut' is a command for driving configuration
-                            localStrage checking is for secure reason
+                        Attention:
+                            only "admin" roll can operate configuration and user account.
+                            do not worry, it is checked in Jetelina by posting data if the roll were hacked. 
                     */
-                    if (localStorage[LOCALPARAM] == "true") {
+                    if (loginuser.roll == "admin") {
                         let multi = 0;
                         let multiscript = [];
                         // configuration parameter updating
-                        if (inScenarioChk(ut, 'common-cancel-cmd') && inCancelableCmdList("CONFIGCHANGE")) {
+                        if (inScenarioChk(ut, 'common-cancel-cmd') && inCancelableCmdList([CONFIGCHANGE, USERMANAGE])) {
                             preferent.cmd = null;
-                            presentaction.config_name = null;
-                            presentaction.config_data = null;
+                            presentaction = {};
+                            //                            presentaction.config_name = null;
+                            //                            presentaction.config_data = null;
+                            rejectCancelableCmdList(CONFIGCHANGE);
+                            rejectCancelableCmdList(USERMANAGE);
                             showSomethingInputField(false);
                             m = chooseMsg("cancel-msg", "", "");
                         }
 
-                        if (presentaction.cmd != null && presentaction.cmd == "CONFIGCHANGE") {
+                        // configuration management
+                        if (presentaction.cmd != null && presentaction.cmd == CONFIGCHANGE) {
                             if (presentaction.config_name != null) {
                                 if ($(SOMETHINGINPUT).is(":visible")) {
                                     if (inScenarioChk(ut, 'common-post-cmd')) {
@@ -936,23 +938,23 @@ const chatKeyDown = (cmd) => {
                                             let data = `{"${presentaction.config_name}":"${new_param}"}`;
                                             postAjaxData(scenario["function-post-url"][3], data);
                                         } else {
-                                            m = chooseMsg("config-update-alert-message","","");;
+                                            m = chooseMsg("config-update-alert-message", "", "");;
                                         }
                                     }
                                 }
                             } else {
-                                m = chooseMsg("config-update-error-message","","");
+                                m = chooseMsg("config-update-error-message", "", "");
                             }
                         }
 
-                        if (inScenarioChk(ut, "config-update-cmd")) {
-                            presentaction.cmd = CONFIGCHANGE;
+                        if (inScenarioChk(ut, 'config-update-cmd')) {
+                            presentaction.cmd = "CONFIGCHANGE";
                             cancelableCmdList.push(presentaction.cmd);
                             if (presentaction.config_name != null && presentaction.config_data != null) {
                                 showSomethingInputField(true);
-                                m = chooseMsg("config-update-simple-message","","");
+                                m = chooseMsg("config-update-simple-message", "", "");
                             } else {
-                                m = chooseMsg("config-update-plural-message","","");
+                                m = chooseMsg("config-update-plural-message", "", "");
                             }
 
                             for (zzz in config) {
@@ -985,7 +987,7 @@ const chatKeyDown = (cmd) => {
                             if (1 < multi) {
                                 // pick candidates up
                                 m = chooseMsg('multi-candidates-msg', "", "");// this 'm' is displayed in chatbox
-                                let multimsg = chooseMsg("config-update-plural-candidates-message","","");// this 'multimsg' is displayed in SOMETHINGMSGPANEL
+                                let multimsg = chooseMsg("config-update-plural-candidates-message", "", "");// this 'multimsg' is displayed in SOMETHINGMSGPANEL
                                 for (i = 0; i < multi; i++) {
                                     multimsg += `'${multiscript[i]}',`;
                                 }
@@ -1008,8 +1010,17 @@ const chatKeyDown = (cmd) => {
                                 $(SOMETHINGMSGPANELMSG).text(configMsg);
                                 showSomethingMsgPanel(true);
                             }
-                        } else if (inScenarioChk(ut, "get-config-change-history")) {
-                            getAjaxData(scenario["function-get-url"][2]);
+                        } else if (inScenarioChk(ut, 'get-config-change-history')) {
+                            getAjaxData(scenario['function-get-url'][2]);
+                        }
+
+                        // user management
+                        if (presentaction.cmd != null && presentaction.cmd == USERMANAGE) {
+                            accountManager(ut);
+                        } else if (inScenarioChk(ut, 'user-manage-add') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-list') || inScenarioChk(ut, 'user-manage-delete')) {
+                            presentaction.cmd = USERMANAGE;
+                            cancelableCmdList.push(presentaction.cmd);
+                            accountManager(ut);
                         }
                     }
 
@@ -1031,10 +1042,10 @@ const chatKeyDown = (cmd) => {
                     if (logouttimerId) {
                         clearTimeout(logouttimerId);
                     }
-                
 
-//                    if (chkUResponse("greeting-0r-cmd", ut)) {
-                    if(inScenarioChk(ut,"greeting-0r-cmd")){
+
+                    //                    if (chkUResponse("greeting-0r-cmd", ut)) {
+                    if (inScenarioChk(ut, "greeting-0r-cmd")) {
                         // greeting
                         m = chooseMsg("greeting-1-msg", "", "");
                         stage = 1;/* into the login stage */
@@ -1050,9 +1061,9 @@ const chatKeyDown = (cmd) => {
             if (0 < m.length && m != IGNORE) {
                 typingControll(m);
             } else if (m == IGNORE && stage != 'login') {
-                if(inScenarioChk(ut,"general-thanks-cmd")){
+                if (inScenarioChk(ut, "general-thanks-cmd")) {
                     typingControll(chooseMsg('general-thanks-msg', loginuser.lastname, "c"));
-                }else{
+                } else {
                     typingControll(chooseMsg('waiting-next-msg', "", ""));
                 }
             } else if (m == null || m.length == 0) {
@@ -1109,8 +1120,8 @@ const burabura = () => {
  */
 const logoutChk = (s) => {
     let logoutcmds = scenario["logout-cmd"];
-    for(key in logoutcmds){
-        if( logoutcmds[key] == s ){
+    for (key in logoutcmds) {
+        if (logoutcmds[key] == s) {
             return true;
         }
     }
@@ -1142,7 +1153,6 @@ const logout = () => {
 
     // global variables initialize
     isSuggestion = false;
-    localStorage[LOCALPARAM] = false;
     stage = 0;
     preferent = {};
     presentaction = {};
@@ -1171,7 +1181,7 @@ const getPreferentPropertie = (p) => {
             if (preferent.cmd != null && 0 < preferent.cmd.length) {
                 c = preferent.cmd;
             }
-            
+
             break;
         default:
             break;
@@ -1260,7 +1270,7 @@ const inScenarioChk = (s, sc, type) => {
              then possible multi candidates because of realizing vague cpmparing.
              indeed using $.inArray() makes this judge strict, but remains a vagueness. 
         */
-        if( s.indexOf(order[key]) != -1) {
+        if (s.indexOf(order[key]) != -1) {
             return true;
         }
     }
@@ -1277,10 +1287,10 @@ const inScenarioChk = (s, sc, type) => {
  *     ex. wanna check 'open' in o->"ftestopen"  p->10 then true is " open","open ","'open",",open","open'","open,"
  *         i mean 'topen' is NG.
  */
-const checkBandA = (o,p) =>{
+const checkBandA = (o, p) => {
     let ret = false;
-    let c = [' ',',','\'','\"'];
-    if(( p==0 )||((o[p-1] != null && o[p-1].includes(c)) && (o[p+o.length+1] != null && o[p+o.length+1].includes(c)))){
+    let c = [' ', ',', '\'', '\"'];
+    if ((p == 0) || ((o[p - 1] != null && o[p - 1].includes(c)) && (o[p + o.length + 1] != null && o[p + o.length + 1].includes(c)))) {
         ret = true;
     }
 
@@ -1496,7 +1506,7 @@ const isVisibleApiTestPanel = () => {
 const showApiTestPanel = (b) => {
     if (b) {
         $(APITESTPANEL).show().draggable();
-        $(APITESTPANEL).animate({top:"300px"},ANIMATEDURATION);
+        $(APITESTPANEL).animate({ top: "300px" }, ANIMATEDURATION);
     } else {
         // delete all test results
         $(APITESTPANEL).hide();
@@ -1505,15 +1515,18 @@ const showApiTestPanel = (b) => {
 /**
  * @function inCancelableCmdList
  *
- * @param {string} command name ex.CONFIGCHANGE..
+ * @param {array} command name array ex.[CONFIGCHANGE,..]
  * @preturn {boolean} true -> is in the list  false -> no
  *  
- * check the ordered command is in cancelableCmdList or not
+ * check the ordered commands are in cancelableCmdList or not
  */
-const inCancelableCmdList = (cmd) =>{
+const inCancelableCmdList = (cmd) => {
     let ret = false;
-    if(-1<$.inArray(cmd,cancelableCmdList)){
-        ret = true;
+
+    for (let i = 0; i < cmd.length; i++) {
+        if (-1 < $.inArray(cmd[i], cancelableCmdList)) {
+            ret = true;
+        }
     }
 
     return ret;
@@ -1525,8 +1538,8 @@ const inCancelableCmdList = (cmd) =>{
  *  
  * reject command from cancelableCmdList
  */
-const rejectCancelableCmdList = (cmd) =>{
-    cancelableCmdList = cancelableCmdList.filter(function(d){
+const rejectCancelableCmdList = (cmd) => {
+    cancelableCmdList = cancelableCmdList.filter(function (d) {
         return d != cmd;
     });
 }
@@ -1537,9 +1550,9 @@ const rejectCancelableCmdList = (cmd) =>{
  *  
  * reject selected item from selectedItemsArr
  */
-const rejectSelectedItemsArr = (item) =>{
-    selectedItemsArr = selectedItemsArr.filter(function(d){
-        if(d.indexOf(item) < 0){
+const rejectSelectedItemsArr = (item) => {
+    selectedItemsArr = selectedItemsArr.filter(function (d) {
+        if (d.indexOf(item) < 0) {
             return d;
         }
     });
@@ -1552,10 +1565,10 @@ const rejectSelectedItemsArr = (item) =>{
  * display 'user_registration_form'
  * 
  */
-const showUserRegistrationForm = (b) =>{
-    if(b){
+const showUserRegistrationForm = (b) => {
+    if (b) {
         $(USERREGFORM).show();
-    }else{
+    } else {
         $(USERREGFORM).hide();
     }
 }
@@ -1567,10 +1580,10 @@ const showUserRegistrationForm = (b) =>{
  * display 'tr3', because 'tr3' is for existing user's form.
  * it is unnecessary form for a new user registration, therefore it is devided with showUserRegistrationForm().  
  */
-const showUserNickNameForm = (b) =>{
-    if(b){
+const showUserNickNameForm = (b) => {
+    if (b) {
         $(USERNICKNAMEFORM).show();
-    }else{
+    } else {
         $(USERNICKNAMEFORM).hide();
     }
 }
@@ -1582,8 +1595,8 @@ const showUserNickNameForm = (b) =>{
  * 
  * inputed data 's' in the chat box is set into the 'user_registration_form' filed that is ordered in 'f'.
  */
-const setUserName = (f,s) =>{
-    if(field != null && 0<field.length()){
+const setUserName = (f, s) => {
+    if (field != null && 0 < field.length()) {
         $(`${USERREGFORM} [name='${field}]`).text(s);
     }
 }
@@ -1594,7 +1607,7 @@ const setUserName = (f,s) =>{
  * 
  * post 'user_registration_form' data with 'flg'
  */
-const postUserName = (flg) =>{
+const postUserName = (flg) => {
     let f_name = $(`${USERREGFORM} [name='${USERFIRSTNAME}]`).text();
     let l_name = $(`${USERREGFORM} [name='${USERLASTNAME}]`).text();
     let n_name = $(`${USERREGFORM} [name='${USERNICKNAME}]`).text();
