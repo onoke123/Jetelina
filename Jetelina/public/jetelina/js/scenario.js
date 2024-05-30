@@ -95,10 +95,13 @@ scenario["config-update-plural-candidates-message"]=["there are multi candidates
 scenario["config-update-alert-message"]=["Hey hey hey, put a new param in there"];
 scenario["config-update-error-message"]=["Hey, no pointed configuration data"];
 
-scenario["user-manage-add"]=["invite new user","add new user","add new account"];
+scenario["user-manage-add"]=["invite new user","add new user","add new account","user add","add user"];
 scenario["user-manage-update"]=["change user data","update user data","change this account","update this account","update me","change me"];
 scenario["user-manage-list"]=["show user list","show account list","display user list","display account list"];
 scenario["user-manage-delete"]=["delete this user","reject this user","remove this user"];
+scenario["user-manage-first-msg"]=["the first name?"];
+scenario["user-manage-last-msg"]=["the last name?"];
+scenario["user-manage-post-msg"]=["type \"register\" if every thing was fine, please"];
 
 config["fileuploadpath"]=["upload file path","up load file","file path","repository"];
 config["pg_password"]=["postgres password","database password","password in postgres","password in database"];

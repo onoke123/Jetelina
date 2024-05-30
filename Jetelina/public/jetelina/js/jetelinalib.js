@@ -73,6 +73,7 @@ const LOCALPARAM = "login2jetelina"; // local strage parameter
 
 //let enterNumber = 0;
 let typingTimeoutID;
+let whatJetelinaTold = ""; // what jetelina was telling in just previous time 
 
 /**
  * 
@@ -525,6 +526,7 @@ const typingControll = (m) => {
     */
     if (typingTimeoutID != null) {
         clearTimeout(typingTimeoutID);
+        whatJetelinaTold = $(JETELINACHATTELL).text(); 
         $(JETELINACHATTELL).text("");
     }
 
@@ -786,6 +788,7 @@ const chatKeyDown = (cmd) => {
 
         /* do it only if there were a input character by user */
         if (0 < ut.length) {
+            whatJetelinaTold = $(JETELINACHATTELL).text();
             $(JETELINACHATTELL).text("");
             $(JETELINACHATBOX).val("");
             $(CHATBOXYOURTELL).text(ut);

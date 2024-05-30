@@ -150,10 +150,13 @@
 #
 #  account management
 #
-@jdic user-manage-add:"invite new user","add new user","add new account"
+@jdic user-manage-add:"invite new user","add new user","add new account","user add","add user"
 @jdic user-manage-update:"change user data","update user data","change this account","update this account","update me","change me"
 @jdic user-manage-list:"show user list","show account list","display user list","display account list"
-@jdic user-manage-delete":"delete this user","reject this user","remove this user"
+@jdic user-manage-delete:"delete this user","reject this user","remove this user"
+@jdic user-manage-first-msg:"the first name?"
+@jdic user-manage-last-msg:"the last name?"
+@jdic user-manage-post-msg:"type \"register\" if every thing was fine, please"
 
 #
 # log out 

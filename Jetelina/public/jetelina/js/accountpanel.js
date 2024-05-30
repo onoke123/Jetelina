@@ -13,19 +13,22 @@
  * 
  * manage user account  
  */
+const FIRSTNAME = "user_first_name";
+const LASTNAME = "user_last_name";
+const NICKNAME = "user_nick_name";
+
 const userRegistrationFormInputChk = () =>{
-    const FRISTNAME = "user_first_name";
-    const LASTNAME = "user_last_name";
-    const NICKNAME = "user_nick_name";
     let s = "";
 
-    if($(`${USERREGFORM} [name=${FRISTNAME}]`).text().length == 0){
-        s = "let me know the first name";
+    if($(`${USERREGFORM} [name=${FIRSTNAME}]`).text().length == 0){
+        s = "user-manage-first-msg";
     }else if($(`${USERREGFORM} [name=${LASTNAME}]`).text().length == 0){
-        s = "let me know the last name";
+        s = "user-manage-last-msg";
+    }else{
+        s = "user-manage-post-msg";
     }
 
-    return s;
+    return scenario[s];
 }
 
 const accountManager = (s) =>{
@@ -39,11 +42,22 @@ const accountManager = (s) =>{
         left: `${panelLeft}px`//"210px"
     }, ANIMATEDURATION);
 
+    /*
+        Tips:
+            'whatJetelinaTold' is contained Jetelina's message.
+            by comparing this and expected scenario message, may could take an correct action. :)
+    */
     if(inScenarioChk(s,'user-manage-add') ||(presentaction.um == 'user-add') ){
         // add new user/account
         console.log("user add");
         if(presentaction.um == null){
             presentaction.um = 'user-add';
+        }
+
+        if(-1<$.inArray(whatJetelinaTold, scenario['user-manage-first-msg'])){
+            $(`${USERREGFORM} [name=${FIRSTNAME}]`).text(s);
+        }else if(-1<$.inArray(whatJetelinaTold, scenario['user-manage-last-msg'])){
+            $(`${USERREGFORM} [name=${LASTNAME}]`).text(s);
         }
 
         return userRegistrationFormInputChk();
