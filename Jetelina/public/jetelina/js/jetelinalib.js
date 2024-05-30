@@ -908,12 +908,22 @@ const chatKeyDown = (cmd) => {
                         top: `${panelTop}px`,
                         left: "210px"
                     }, ANIMATEDURATION);
+
+                    if (!$(SOMETHINGINPUT).is(":visible")) {
+                        // if 'ut' is a command for driving function
+                        m = functionPanelFunctions(ut);
+                        if (m.length == 0 || m == IGNORE) {
+                            // if 'ut' is a command for driving condition
+                            m = conditionPanelFunctions(ut);
+                        }
+                    }
+                    
                     /*
                         Attention:
                             only "admin" roll can operate configuration and user account.
                             do not worry, it is checked in Jetelina by posting data if the roll were hacked. 
                     */
-                    if (loginuser.roll == "admin") {
+                    if ((m.length == 0 || m == IGNORE) && loginuser.roll == "admin") {
                         let multi = 0;
                         let multiscript = [];
                         // configuration parameter updating
@@ -925,6 +935,7 @@ const chatKeyDown = (cmd) => {
                             rejectCancelableCmdList(CONFIGCHANGE);
                             rejectCancelableCmdList(USERMANAGE);
                             showSomethingInputField(false);
+                            showUserRegistrationForm(false);
                             m = chooseMsg("cancel-msg", "", "");
                         }
 
@@ -1016,14 +1027,15 @@ const chatKeyDown = (cmd) => {
 
                         // user management
                         if (presentaction.cmd != null && presentaction.cmd == USERMANAGE) {
-                            accountManager(ut);
+                            m = accountManager(ut);
                         } else if (inScenarioChk(ut, 'user-manage-add') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-list') || inScenarioChk(ut, 'user-manage-delete')) {
                             presentaction.cmd = USERMANAGE;
                             cancelableCmdList.push(presentaction.cmd);
-                            accountManager(ut);
+                            m = accountManager(ut);
                         }
                     }
-
+console.log("1 m ", m);
+/*
                     if (!$(SOMETHINGINPUT).is(":visible")) {
                         // if 'ut' is a command for driving function
                         m = functionPanelFunctions(ut);
@@ -1032,7 +1044,8 @@ const chatKeyDown = (cmd) => {
                             m = conditionPanelFunctions(ut);
                         }
                     }
-
+*/
+ 
                     break;
                 default:
                     if (ut == "reload") {
