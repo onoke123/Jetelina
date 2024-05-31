@@ -869,7 +869,6 @@ function userRegist(firstname::String,lastname::String)
 
 	user_id = getJetelinaSequenceNumber(2)
 	existentuserdata = getUserData(JSession.get()[1])
-	println("exist...", existentuserdata)
 	j = existentuserdata["Jetelina"]
 	parentGeneration = j[1][8]
 	thisuserGeneration = parentGeneration + 1 # to make easy understand
@@ -1185,11 +1184,17 @@ function updateUserLoginData(uid::Integer)
 		"""
 
 		df = DataFrame(columntable(LibPQ.execute(conn, complogindate)))
-		if df[:,1][1] == 0
-			# update only logindate because multi login at same date
-			column_str = """ logindate=now() """
+		if !ismissing(df[:,1][1])
+			if df[:,1][1] == 0
+				# update only logindate because multi login at same date
+				column_str = """ logindate=now() """
+			else
+				# count up loginaccount
+				column_str = """ logincount=logincount+1,logindate=now() """
+			end
 		else
-			# count up loginaccount
+			@info "there"
+			# very first login case
 			column_str = """ logincount=logincount+1,logindate=now() """
 		end
 
@@ -1198,7 +1203,7 @@ function updateUserLoginData(uid::Integer)
 				$column_str
 				where user_id=$uid;
 		"""
-
+@info "updateUserLog.... " sql
 		execute(conn, sql)
 
 	catch err

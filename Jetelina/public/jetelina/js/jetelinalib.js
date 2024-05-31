@@ -478,6 +478,12 @@ const postAjaxData = (url, data) => {
             const posturls = scenario['function-post-url'];
             if (url == posturls[0] || url == posturls[7]) {
                 // userdata update or new user register
+
+                // clean up user register parameters
+                rejectCancelableCmdList(USERMANAGE);
+                presentaction.cmd = null;
+                presentaction.um = null;
+                showUserRegistrationForm(false);
             } else if (url == posturls[1]) {
                 // jetelinawords -> nothing do
             } else if (url == posturls[2]) {
@@ -641,7 +647,11 @@ const authAjax = (un) => {
                     stage = 'login';
                 }
 
-                m = chooseMsg(scenarioNumber, m, "a");
+                if(scenarioNumber != 'first-login-msg'){
+                    m = chooseMsg(scenarioNumber, m, "a");
+                }else{
+                    m = chooseMsg(scenarioNumber, m, "r");
+                }
 
                 typingControll(m);
                 return true;

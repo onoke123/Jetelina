@@ -61,7 +61,7 @@
 #
 # after login 
 #
-@jdic first-login-msg:"This is your first login to me,{Q}, I would like to ask you something."
+@jdic first-login-msg:"This is your first login to me,{Q}, always typing 'guide me' is to display my manual and 'how can i' is for my command list, hope you enjoy me."
 @jdic first-login-ask-firstname-msg:"Thank you. First of all, may I ask your first name?"
 @jdic first-login-ask-lastname-msg:"Thank you. Next, could you give me your last name?"
 @jdic first-login-ask-info-msg:"Thank you so much,{Q}, then what is your favorits?, Whatever."
