@@ -1,6 +1,6 @@
 let scenario = []; let config = [];
 scenario["analyzed-data-collect-url"]=["/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getsqlaccessdata"];
-scenario["function-post-url"]=["/updateuserdata","/jetelinawords","/getconfigdata","/changeconfigdata","/createapi","/testapi","/chkaccount"];
+scenario["function-post-url"]=["/updateuserdata","/jetelinawords","/getconfigdata","/changeconfigdata","/createapi","/testapi","/chkaccount","/userregist"];
 scenario["function-get-url"]=["/getapilist","/getalldbtable","/getconfigchangehistory","/goodbyenow"];
 scenario["null-msg"]=["",""];
 scenario["guidance-cmd"]=["what can i","can you","start","manual","guide me","guidance","teach me","tell me"];
@@ -63,7 +63,6 @@ scenario["func-tabledrop-cmd"]=["drop","drop table","table drop","tabledrop","dr
 scenario["func-tabledrop-msg"]=["Which table do you want to drop?","correct order is \"droptable <table name>\" and so on"];
 scenario["func-tabledrop-ng-msg"]=["Hey open the table list first!","Huum?","Check it first","Watch it"];
 scenario["func-apicreate-cmd"]=["create api","post api","post columns","create sql"];
-//scenario["func-apidelete-cmd"]=["delete","delete api","api delete","apidelete","deleteapi","remove api","reject api","api remove","api reject"];
 scenario["func-apidelete-cmd"]=["delete api","api delete","apidelete","deleteapi","remove api","reject api","api remove","api reject"];
 scenario["func-apidelete-msg"]=["Which api do you want to delete?","correct order is \"delete <api name>\" and so on"];
 scenario["func-apidelete-ng-msg"]=["Hey open the api list first!","Huum?","Check it first","Watch it"];
@@ -84,6 +83,13 @@ scenario["func-api-test-msg"]=["Why do not you try it, type \"sql test\" to exec
 scenario["func-api-test-cmd"]=["do sql test","do api test","test sql","sql check","do api check","check sql","check api","execute sql test","execute api test","execute test","do test"];
 scenario["func-api-test-panel-show-cmd"]=["show api test","open api test","show sql test","open sql test","display api test","display sql test","open test result","show test result"];
 scenario["func-api-test-panel-hide-cmd"]=["hide api test","close api test","hide sql test","close sql test","undisplay api test","undisplay sql test","close test result","hide test result"];
+scenario["user-manage-add"]=["invite new user","add new user","add new account","user add","add user"];
+scenario["user-manage-update"]=["change user data","update user data","change this account","update this account","update me","change me"];
+scenario["user-manage-list"]=["show user list","show account list","display user list","display account list"];
+scenario["user-manage-delete"]=["delete this user","reject this user","remove this user"];
+scenario["user-manage-first-msg"]=["the first name?"];
+scenario["user-manage-last-msg"]=["the last name?"];
+scenario["user-manage-post-msg"]=["type \"register\" if every thing was fine, please"];
 scenario["logout-cmd"]=["logout","exit","log out","out","return","bye","bye bye","see you","have a nice day","good bye"];
 scenario["afterlogout-msg"]=["Bye", "Have a good day","Hope you will back soon","I am looking forward you"];
 scenario["unknown-msg"]=["Hey hey hey","Ah.... what?","Could not catch yours, what?","Oh oh oh, what?"];
@@ -94,15 +100,6 @@ scenario["config-update-plural-message"]=["which config?"];
 scenario["config-update-plural-candidates-message"]=["there are multi candidates "];
 scenario["config-update-alert-message"]=["Hey hey hey, put a new param in there"];
 scenario["config-update-error-message"]=["Hey, no pointed configuration data"];
-
-scenario["user-manage-add"]=["invite new user","add new user","add new account","user add","add user"];
-scenario["user-manage-update"]=["change user data","update user data","change this account","update this account","update me","change me"];
-scenario["user-manage-list"]=["show user list","show account list","display user list","display account list"];
-scenario["user-manage-delete"]=["delete this user","reject this user","remove this user"];
-scenario["user-manage-first-msg"]=["the first name?"];
-scenario["user-manage-last-msg"]=["the last name?"];
-scenario["user-manage-post-msg"]=["type \"register\" if every thing was fine, please"];
-
 config["fileuploadpath"]=["upload file path","up load file","file path","repository"];
 config["pg_password"]=["postgres password","database password","password in postgres","password in database"];
 config["pg_port"]=["port"];

@@ -15,7 +15,7 @@
 		getColumns(tableName::String) Get columns of ordered table name depend on DB type.
 		doSelect(sql::String,mode::String)
 		executeApi(json_d) Execute SQL sentence order by json_d: json raw data.
-		userRegist(username::String) register a new user
+		userRegist(firstname::String,lastname::String) register a new user
 		chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
 		getUserInfoKeys(uid::Integer) get "user_info" column key data.
 		refUserAttribute(uid::Integer,key::String,val) inquiring user_info data 
@@ -237,13 +237,14 @@ function userRegist()
 	register a new user
 
 # Arguments
-- `username::String`:  user name. this data sets in as 'login','firstname' and 'lastname' at once.
+- `firstname::String`:  user name. this data sets in as 'firstname'.
+- `lastname::String`:  user name. this data sets in as 'lastname'.
 - return::boolean: success->true  fail->false
 """
-function userRegist(username::String)
+function userRegist(firstname::String,lastname::String)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
-		PgDBController.userRegist(s)
+		PgDBController.userRegist(firstname,lastname)
 	elseif j_config.JC["dbtype"] == "mariadb"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end

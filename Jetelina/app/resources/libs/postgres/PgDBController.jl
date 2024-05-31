@@ -35,8 +35,8 @@ functions
 module PgDBController
 
 using Genie, Genie.Renderer, Genie.Renderer.Json
-using CSV, LibPQ, DataFrames, IterTools, Tables
-using Jetelina.JFiles, Jetelina.JLog, Jetelina.ApiSqlListManager, Jetelina.JMessage
+using CSV, LibPQ, DataFrames, IterTools, Tables, Dates
+using Jetelina.JFiles, Jetelina.JLog, Jetelina.ApiSqlListManager, Jetelina.JMessage, Jetelina.JSession
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
@@ -863,18 +863,31 @@ function userRegist(username::String)
 - `username::String`:  user name. this data sets in as 'login','firstname' and 'lastname' at once.
 - return::boolean: success->true  fail->false
 """
-function userRegist(username::String)
+function userRegist(firstname::String,lastname::String)
 	ret = ""
 	jmsg::String = string("compliment me!")
 
 	user_id = getJetelinaSequenceNumber(2)
-	insert_st = """
-		insert into jetelina_user_table (user_id,login,firstname,lastname) values($user_id,'$username','$username','$username');
+	existentuserdata = getUserData(JSession.get()[1])
+	println("exist...", existentuserdata)
+	j = existentuserdata["Jetelina"]
+	parentGeneration = j[1][8]
+	thisuserGeneration = parentGeneration + 1 # to make easy understand
+	insert_basic_st = """
+		insert into jetelina_user_table (user_id,firstname,lastname,generation) values($user_id,'$firstname','$lastname','$thisuserGeneration');
+	"""
+
+	inviterId = JSession.get()[2];
+	registerDate = Dates.format(now(), "yyyy-mm-dd HH:MM:SS")
+
+	insert_additional_st = """
+		update jetelina_user_table set user_info = '{"register_date":"$registerDate","inviter":$inviterId}' where user_id=$user_id;
 	"""
 
 	conn = open_connection()
 	try
-		execute(conn, insert_st)
+		execute(conn, insert_basic_st)
+		execute(conn, insert_additional_st)
 		ret = json(Dict("result" => true, "message from Jetelina" => jmsg))
 	catch err
 		ret = json(Dict("result" => false, "username" => "$username", "errmsg" => "$err"))
@@ -884,6 +897,19 @@ function userRegist(username::String)
 	end
 
 	return ret
+end
+"""
+function getUserData(s::String)
+
+	get jetelina user data by ordering 's'.
+	this function is just calling chkUserExisence(), because wanna the function with name 'getUserdata'
+
+# Arguments
+- `s::String`:  user information. login account or first name or last name.
+- return: success -> user data in Dict, fail -> ""		
+"""
+function getUserData(s::String)
+	return chkUserExistence(s)
 end
 """
 function chkUserExistence(s::String)

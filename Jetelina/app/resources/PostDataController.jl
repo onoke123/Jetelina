@@ -134,9 +134,10 @@ function userRegist()
 """
 function userRegist()
 	ret = ""
-	userName = jsonpayload("username")
-	if !isnothing(userName)
-		ret = DBDataController.userRegist(userName)
+	firstName = jsonpayload("firstname")
+	lastName = jsonpayload("lastname")
+	if !isnothing(firstName) && !isnothing(lastName)
+		ret = DBDataController.userRegist(firstName,lastName)
 	end
 
 	return ret
@@ -161,12 +162,19 @@ function login()
 		#===
 			Tips:
 				'j' is vector tuple data. the order is to reference chkUserExistence().
-				j[1][4] -> lastname
-				j[1][1] -> user id        so far
+				j[1][1] -> user id        
+				j[1][2] -> firstname      
+				j[1][3] -> lastname
+				j[1][4] -> nickname
+				j[1][5] -> logincount
+				j[1][6] -> logindate
+				j[1][7] -> logoutdate
+				j[1][8] -> generation
+									        so far
 		===#
 		if !isnothing(j) && 0<length(j)
-			if !isnothing(j[1][4]) && !isnothing(j[1][1])
-				JSession.set(j[1][4],j[1][1])
+			if !isnothing(j[1][3]) && !isnothing(j[1][1])
+				JSession.set(j[1][3],j[1][1])
 			end
 		end
 	end

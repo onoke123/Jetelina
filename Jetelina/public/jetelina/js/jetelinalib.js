@@ -476,8 +476,8 @@ const postAjaxData = (url, data) => {
             }
         }).done(function (result, textStatus, jqXHR) {
             const posturls = scenario['function-post-url'];
-            if (url == posturls[0]) {
-                // userdata update
+            if (url == posturls[0] || url == posturls[7]) {
+                // userdata update or new user register
             } else if (url == posturls[1]) {
                 // jetelinawords -> nothing do
             } else if (url == posturls[2]) {

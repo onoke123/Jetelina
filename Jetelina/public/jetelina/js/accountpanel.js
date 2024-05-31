@@ -20,10 +20,10 @@ const NICKNAME = "user_nick_name";
 const userRegistrationFormInputChk = () =>{
     let s = "";
 
-    if($(`${USERREGFORM} [name=${FIRSTNAME}]`).text().length == 0){
-        s = "user-manage-first-msg";
-    }else if($(`${USERREGFORM} [name=${LASTNAME}]`).text().length == 0){
+    if($(`${USERREGFORM} [name=${LASTNAME}]`).text().length == 0){
         s = "user-manage-last-msg";
+    }else if($(`${USERREGFORM} [name=${FIRSTNAME}]`).text().length == 0){
+        s = "user-manage-first-msg";
     }else{
         s = "user-manage-post-msg";
     }
@@ -58,6 +58,11 @@ const accountManager = (s) =>{
             $(`${USERREGFORM} [name=${FIRSTNAME}]`).text(s);
         }else if(-1<$.inArray(whatJetelinaTold, scenario['user-manage-last-msg'])){
             $(`${USERREGFORM} [name=${LASTNAME}]`).text(s);
+        }else if(-1<$.inArray(whatJetelinaTold, scenario['user-manage-post-msg'])){
+            let firstname = $(`${USERREGFORM} [name=${FIRSTNAME}]`).text();
+            let lastname = $(`${USERREGFORM} [name=${LASTNAME}]`).text();
+            let data = `{"firstname":"${firstname}","lastname":"${lastname}"}`;
+            postAjaxData(scenario["function-post-url"][7],data);
         }
 
         return userRegistrationFormInputChk();
