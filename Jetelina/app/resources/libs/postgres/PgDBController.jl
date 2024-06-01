@@ -24,6 +24,7 @@ functions
 	measureSqlPerformance() measure exectution time of all listed sql sentences. then write it out to JC["sqlperformancefile"].
 	create_jetelina_user_table() create 'jetelina_table_user_table' table.
 	userRegist(username::String) register a new user
+	getUserData(s::String) get jetelina user data by ordering 's'.	
 	chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
 	getUserInfoKeys(uid::Integer) get "user_info" column key data.
 	refUserAttribute(uid::Integer,key::String,val) inquiring user_info data 
@@ -31,6 +32,7 @@ functions
 	updateUserData(uid::Integer,key::String,value) update user data, exept jsonb column
 	updateUserLoginData(uid::Integer) update user login data if it succeeded to login
 	deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
+	checkTheRoll(roll::String) check the ordered user's authority in order to 'roll'.
 """
 module PgDBController
 
@@ -46,8 +48,8 @@ include("PgSQLSentenceManager.jl")
 
 export create_jetelina_table, create_jetelina_id_sequence, open_connection, close_connection, readJetelinatable,
 	getTableList, getJetelinaSequenceNumber, insert2JetelinaTableManager, dataInsertFromCSV, dropTable, getColumns,
-	executeApi, doSelect, measureSqlPerformance, create_jetelina_user_table, userRegist, chkUserExistence, getUserInfoKeys,
-	refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount
+	executeApi, doSelect, measureSqlPerformance, create_jetelina_user_table, userRegist, getUserData, chkUserExistence, getUserInfoKeys,
+	refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount, checkTheRoll
 
 """
 function create_jetelina_table
@@ -257,11 +259,11 @@ function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer)
 	sql = ""
 
 	if t == 0
-#===
-		sql = """
-			select nextval('jetelina_table_id_sequence');
-		"""
-===#
+		#===
+				sql = """
+					select nextval('jetelina_table_id_sequence');
+				"""
+		===#
 	elseif t == 1
 		sql = """
 			select nextval('jetelina_sql_sequence');
@@ -359,13 +361,13 @@ function dataInsertFromCSV(fname::String)
 			keyword2(jt_id) is also changed at the same time.
 			then consequently the 'column_name' are <table name>_<column name>.
 	===#
-	colarray = [];
+	colarray = []
 	for col in names(df)
-		push!(colarray, string(tableName,'_',col))
+		push!(colarray, string(tableName, '_', col))
 	end
 
-	rename!(df,Symbol.(colarray))
-	keyword2 = string(tableName,'_',keyword2)
+	rename!(df, Symbol.(colarray))
+	keyword2 = string(tableName, '_', keyword2)
 
 	# special column 'jetelina_delte_flg' is added to columns 
 	insertcols!(df, :jetelina_delete_flg => 0)
@@ -540,7 +542,7 @@ function dropTable(tableName::Vector)
 function dropTable(tableName::Vector)
 	ret = ""
 	jmsg::String = string("compliment me!")
-	rettables::String = join(tableName,",") # ["a","b"] -> "a,b" oh ＼(^o^)／
+	rettables::String = join(tableName, ",") # ["a","b"] -> "a,b" oh ＼(^o^)／
 
 	conn = open_connection()
 	try
@@ -659,7 +661,7 @@ function _executeApi(apino::String, sql_str::String)
 		if startswith(apino, "js")
 			# select 
 			df = DataFrame(sql_ret)
-			pagingnum = parse(Int,j_config.JC["paging"])
+			pagingnum = parse(Int, j_config.JC["paging"])
 			if pagingnum < nrow(df)
 				jmsg = string("data number over ", pagingnum, " you should set paging paramter in this SQL, it is not my business")
 			end
@@ -731,21 +733,21 @@ function doSelect(sql::String, mode::String)
 		#===
 			Caution:
 				DataFrame() spits out error so that it could not resolve the column name if there were same ones.
-				    ex. select ftest.name, ftest3.name ..... -> "name" is duplicated in LibPG.execute() therefore DataFrame() confuses
+					ex. select ftest.name, ftest3.name ..... -> "name" is duplicated in LibPG.execute() therefore DataFrame() confuses
 
 				to resolve it, '*' are there. ref: https://github.com/iamed2/LibPQ.jl/issues/107
 				but it ':auto' in DataFrame() creates quite new column name.
 				Jetelina wanna return the table column anyhow, cannot take this process.
 				then changed CSV file storing to table to use the "table name" with the column name. see dataInsertFromCSV()
 					ex. old: ftest.csv  has columns 'name','sex'   -> table name: ftest, column name: name, sex
-					    new:                〃                     -> table name:   〃 , column name: ftest_name, ftest_sex
-				
+						new:                〃                     -> table name:   〃 , column name: ftest_name, ftest_sex
+
 				but it still has possibility in the case of direct import data to table by user hand. 
 				threfore this is to be written in Jetelina manual as a regulation.4
 		===#
-#*		result = LibPQ.execute(conn, sql)
-#*		vector_data = [convert(Vector,col) for col in Tables.columns(result)]
-#*		df = DataFrame(vector_data,:auto)
+		#*		result = LibPQ.execute(conn, sql)
+		#*		vector_data = [convert(Vector,col) for col in Tables.columns(result)]
+		#*		df = DataFrame(vector_data,:auto)
 		df = DataFrame(columntable(LibPQ.execute(conn, sql)))
 		jmsg::String = ""
 
@@ -753,9 +755,9 @@ function doSelect(sql::String, mode::String)
 			dfmax::Integer = nrow(df)
 			if !contains(sql, "limit")
 				sql = string(sql, " limit 10")
-#*				result = LibPQ.execute(conn, sql)
-#*				vector_data = [convert(Vector,col) for col in Tables.columns(result)]
-#*				df = DataFrame(vector_data,:auto)
+				#*				result = LibPQ.execute(conn, sql)
+				#*				vector_data = [convert(Vector,col) for col in Tables.columns(result)]
+				#*				df = DataFrame(vector_data,:auto)
 				df = DataFrame(columntable(LibPQ.execute(conn, sql)))
 				jmsg = "this return is limited in 10 because the true result is $dfmax"
 			end
@@ -863,7 +865,11 @@ function userRegist(username::String)
 - `username::String`:  user name. this data sets in as 'login','firstname' and 'lastname' at once.
 - return::boolean: success->true  fail->false
 """
-function userRegist(firstname::String,lastname::String)
+function userRegist(firstname::String, lastname::String)
+	if !checkTheRoll("usermanage")
+		return json(Dict("result" => false, "message from Jetelina" => "you do not have the authority yet, sorry"))
+	end
+
 	ret = ""
 	jmsg::String = string("compliment me!")
 
@@ -876,7 +882,7 @@ function userRegist(firstname::String,lastname::String)
 		insert into jetelina_user_table (user_id,firstname,lastname,generation) values($user_id,'$firstname','$lastname','$thisuserGeneration');
 	"""
 
-	inviterId = JSession.get()[2];
+	inviterId = JSession.get()[2]
 	registerDate = Dates.format(now(), "yyyy-mm-dd HH:MM:SS")
 
 	insert_additional_st = """
@@ -966,9 +972,9 @@ function chkUserExistence(s::String)
 	conn = open_connection()
 	try
 		df = DataFrame(columntable(LibPQ.execute(conn, sql)))
-#		ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
+		#		ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
 		ret = Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg)
-		
+
 		#==
 			Tips:
 				every expression is fine, but take care the data type
@@ -978,7 +984,7 @@ function chkUserExistence(s::String)
 		==#
 		updateUserLoginData(df.user_id[1])
 	catch err
-#		ret = json(Dict("result" => false, "errmsg" => "$err"))
+		#		ret = json(Dict("result" => false, "errmsg" => "$err"))
 		ret = Dict("result" => false, "errmsg" => "$err")
 		JLog.writetoLogfile("PgDBController.chkUserExistence() with $s error : $err")
 	finally
@@ -1184,8 +1190,8 @@ function updateUserLoginData(uid::Integer)
 		"""
 
 		df = DataFrame(columntable(LibPQ.execute(conn, complogindate)))
-		if !ismissing(df[:,1][1])
-			if df[:,1][1] == 0
+		if !ismissing(df[:, 1][1])
+			if df[:, 1][1] == 0
 				# update only logindate because multi login at same date
 				column_str = """ logindate=now() """
 			else
@@ -1193,7 +1199,6 @@ function updateUserLoginData(uid::Integer)
 				column_str = """ logincount=logincount+1,logindate=now() """
 			end
 		else
-			@info "there"
 			# very first login case
 			column_str = """ logincount=logincount+1,logindate=now() """
 		end
@@ -1203,7 +1208,7 @@ function updateUserLoginData(uid::Integer)
 				$column_str
 				where user_id=$uid;
 		"""
-@info "updateUserLog.... " sql
+
 		execute(conn, sql)
 
 	catch err
@@ -1240,6 +1245,73 @@ function deleteUserAccount(uid::Integer)
 		ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
 	catch err
 		ret = json(Dict("result" => false, "errmsg" => "$err"))
+		JLog.writetoLogfile("PgDBController.deleteUserAccount() with user $uid $key->$val error : $err")
+	finally
+		close_connection(conn)
+	end
+
+	return ret
+end
+"""
+function checkTheRoll(roll::String)
+
+	check the ordered user's authority in order to 'roll'.
+  	   e.g. roll = 'delete', this user is required login count more than 5 in case of its generation is 0.
+	
+	generation |           login count
+			   | create |  delete | user management
+		0      |    1   |    1    |      1
+		1      |    1   |    5    |      8
+		2      |    1   |   x3    |     x3
+		3      |    1   |   x4    |     x4
+		
+# Arguments
+- `roll::String`: target authority
+- return: have authority -> true, does not have -> false
+"""
+function checkTheRoll(roll::String)
+	uid = JSession.get()[2]
+	ret::Bool = false
+
+	sql = """
+		select logincount, generation from jetelina_user_table 
+		where (jetelina_delete_flg=0) and (user_id=$uid);
+	"""
+	conn = open_connection()
+	try
+		df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+		if !ismissing(df[:, :generation][1]) && !ismissing(df[:, :logincount][1])
+			generation = df[:, :generation][1]
+			logincount = df[:, :logincount][1]
+
+			delete_base_number = 5 # this number is for basic login count number ref in function description
+			usermanage_base_number = 8 #       〃
+			base_number::Integer = 0
+
+			if roll == "delete"
+				base_number = delete_base_number
+			elseif roll == "usermanage"
+				base_number = usermanage_base_number
+			end
+
+			if generation == 1
+				if base_number <= logincount
+					ret = true
+				end
+			elseif generation == 2
+				if base_number * 3 <= logincount  # ref in function description about '3' number
+					ret = true
+				end
+			elseif generation == 3
+				if base_number * 4 <= logincount # ref in function description about '4' number
+					ret = true
+				end
+			else
+				# case of generation = 0	
+			end
+		end
+		
+	catch err
 		JLog.writetoLogfile("PgDBController.deleteUserAccount() with user $uid $key->$val error : $err")
 	finally
 		close_connection(conn)

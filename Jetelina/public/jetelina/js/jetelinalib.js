@@ -476,6 +476,7 @@ const postAjaxData = (url, data) => {
             }
         }).done(function (result, textStatus, jqXHR) {
             const posturls = scenario['function-post-url'];
+            let specialmsg = "";
             if (url == posturls[0] || url == posturls[7]) {
                 // userdata update or new user register
 
@@ -484,6 +485,10 @@ const postAjaxData = (url, data) => {
                 presentaction.cmd = null;
                 presentaction.um = null;
                 showUserRegistrationForm(false);
+                if(!result.result){
+                    specialmsg = 'special-msg';
+                }
+     
             } else if (url == posturls[1]) {
                 // jetelinawords -> nothing do
             } else if (url == posturls[2]) {
@@ -504,7 +509,11 @@ const postAjaxData = (url, data) => {
                 showSomethingInputField(false);
             }
 
-            typingControll(chooseMsg("success-msg", "", ""));
+            if( specialmsg == "" ){
+                typingControll(chooseMsg("success-msg", "", ""));
+            }else{
+                typingControll(chooseMsg(specialmsg, "", ""));
+            }
         }).fail(function (result) {
             checkResult(result);
             console.error("postAjaxData() fail");
@@ -1176,6 +1185,7 @@ const logout = () => {
     $("#performance_test").hide();
     $("#command_list").hide();
     showSomethingMsgPanel(false);
+    showUserRegistrationForm(false);
 
     // global variables initialize
     isSuggestion = false;
