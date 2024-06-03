@@ -19,6 +19,7 @@
 		chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
 		getUserInfoKeys(uid::Integer) get "user_info" column key data.
 		refUserAttribute(uid::Integer,key::String,val) inquiring user_info data 
+		refUserInfo(uid::Integer,key::String,rettype::Integer) simply inquiring user_info data 
 		updateUserInfo(uid::Integer,key::String,value) update user data (jetelina_user_table.user_info)
 		updateUserData(uid::Integer,key::String,value) update user data, exept jsonb column
 		updateUserLoginData(uid::Integer) update user login data if it succeeded to login
@@ -44,7 +45,7 @@ include("libs/postgres/PgSQLSentenceManager.jl")
 
 export init_Jetelina_table,
 	dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,
-	executeApi, userRegist, chkUserExistence, getUserInfoKeys, refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount,
+	executeApi, userRegist, chkUserExistence, getUserInfoKeys, refUserAttribute, refUserInfo, updateUserInfo, updateUserData, deleteUserAccount,
 	createApiSelectSentence
 
 
@@ -301,6 +302,24 @@ function refUserAttribute(uid::Integer, key::String, val)
 		# Case in PostgreSQL
 		rettype::Integer = 0 # because wanna the return as json type
 		PgDBController.refUserAttribute(uid, key, val, rettype)
+	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "oracle"
+	end
+end
+"""
+function refUserInfo(uid::Integer,key::String,rettype::Integer)
+
+	simply inquiring user_info data 
+	
+# Arguments
+- `uid::Integer`: expect user_id
+- `key::String`: key name in user_info json data
+- return: success -> user data in json or DataFrame, fail -> ""
+"""
+function refUserInfo(uid::Integer, key::String, rettype::Integer)
+	if j_config.JC["dbtype"] == "postgresql"
+		# Case in PostgreSQL
+		PgDBController.refUserInfo(uid, key, rettype)
 	elseif j_config.JC["dbtype"] == "mariadb"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end

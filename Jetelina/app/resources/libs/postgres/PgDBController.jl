@@ -27,8 +27,9 @@ functions
 	getUserData(s::String) get jetelina user data by ordering 's'.	
 	chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
 	getUserInfoKeys(uid::Integer) get "user_info" column key data.
-	refUserAttribute(uid::Integer,key::String,val) inquiring user_info data 
+	refUserAttribute(uid::Integer, key::String, val, rettype::Integer) inquiring user_info data 
 	updateUserInfo(uid::Integer,key::String,value) update user data (jetelina_user_table.user_info)
+	refUserInfo(uid::Integer,key::String,rettype::Integer)	simple inquiring user_info data 
 	updateUserData(uid::Integer,key::String,value) update user data, exept jsonb column
 	updateUserLoginData(uid::Integer) update user login data if it succeeded to login
 	deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
@@ -49,7 +50,7 @@ include("PgSQLSentenceManager.jl")
 export create_jetelina_table, create_jetelina_id_sequence, open_connection, close_connection, readJetelinatable,
 	getTableList, getJetelinaSequenceNumber, insert2JetelinaTableManager, dataInsertFromCSV, dropTable, getColumns,
 	executeApi, doSelect, measureSqlPerformance, create_jetelina_user_table, userRegist, getUserData, chkUserExistence, getUserInfoKeys,
-	refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount, checkTheRoll
+	refUserAttribute, updateUserInfo, refUserInfo, updateUserData, deleteUserAccount, checkTheRoll
 
 """
 function create_jetelina_table
@@ -1029,7 +1030,7 @@ function getUserInfoKeys(uid::Integer)
 	return ret
 end
 """
-function refUserAttribute(uid::Integer,key::String,val)
+function refUserAttribute(uid::Integer, key::String, val, rettype::Integer)
 
 	inquiring user_info data 
 	
@@ -1082,6 +1083,7 @@ end
 function updateUserInfo(uid::Integer,key::String,value)
 
 	update user data (jetelina_user_table.user_info)
+	indeed this function executes insert data to user_info, because user_info columns is only inserted data basically
 
 # Arguments
 - `uid::Integer`: expect user_id
@@ -1092,32 +1094,79 @@ function updateUserInfo(uid::Integer,key::String,value)
 function updateUserInfo(uid::Integer, key::String, value)
 	ret = ""
 
-	# get existing user info data
+	#== get existing user info data
 	df = refUserAttribute(uid, key, value, 1)
 	# append new value data to old one
 	if 0 < nrow(df)
 		value = string(df[:, :2], ',', value)
 	end
-
+	==#
 	#===
 		Tips:
 			in the case of updating JSONB data type, the data is added at the tail if it were not existing.
 			then do not need the hit or swing-miss by using LibPQ.num_affected_rows() alike in executeApi().
-	===#
+	
 	sql = """
 	update jetelina_user_table set
 		user_info = jsonb_set(user_info,'{$key}','"$value"')
 		where user_id=$uid;
 	"""
+	===#
+
+	sql = """
+		update jetelina_user_table set user_info = user_info || '{"$key":"$value"}' where user_id=$uid;
+	"""
 	conn = open_connection()
 	try
 		execute(conn, sql)
 
-		jmsg = """I have memorized your new $key, lucky knowing you more."""
+#		jmsg = """I have memorized your new $key, lucky knowing you more."""
+		jmsg = "complement me."
 		ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
 	catch err
 		ret = json(Dict("result" => false, "errmsg" => "$err"))
 		JLog.writetoLogfile("PgDBController.updateUserInfo() with user $uid $key->$val error : $err")
+	finally
+		close_connection(conn)
+	end
+
+	return ret
+end
+"""
+function refUserInfo(uid::Integer,key::String,rettype::Integer)
+
+	simple inquiring user_info data 
+	
+# Arguments
+- `uid::Integer`: expect user_id
+- `key::String`: key name in user_info json data
+- `rettype::Integer`: return data type. 0->json 1->DataFrame 
+- return: success -> user data in json or DataFrame, fail -> ""
+"""
+function refUserInfo(uid::Integer, key::String, rettype::Integer)
+	ret = ""
+	result = false
+	jmsg::String = "no data, try again."
+
+	sql = """   
+		select user_info->'$key' from jetelina_user_table where user_id=$uid;
+	"""
+	conn = open_connection()
+	try
+		df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+		if 0 < nrow(df)
+			result = true
+			jmsg = "complement me"
+		end
+
+		if rettype == 0
+			ret = json(Dict("result" => result, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
+		else
+			ret = df
+		end
+	catch err
+		ret = json(Dict("result" => false, "errmsg" => "$err"))
+		JLog.writetoLogfile("PgDBController.refUserInfo() with user $uid $key error : $err")
 	finally
 		close_connection(conn)
 	end
@@ -1259,7 +1308,7 @@ function checkTheRoll(roll::String)
   	   e.g. roll = 'delete', this user is required login count more than 5 in case of its generation is 0.
 	
 	generation |           login count
-			   | create |  delete | user management
+			   | create |  delete | user management(register)
 		0      |    1   |    1    |      1
 		1      |    1   |    5    |      8
 		2      |    1   |   x3    |     x3

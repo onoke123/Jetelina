@@ -16,6 +16,7 @@ functions
 	login()  login procedure.user's login account is posted as the name 'username' in jsonpayload().
 	getUserInfoKeys()  get "user_info" column key data.
 	refUserAttribute() refer the user attribute after login().
+	refUserInfo()	refer the user_info
 	updateUserInfo() update user information data
 	updateUserData() update user data
 	updateUserLoginData() update user login data like logincount,logindate,.....
@@ -31,7 +32,7 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export getConfigData, handleApipostdata, createApi, getColumns, deleteTable, userRegist, login, getUserInfoKeys, refUserAttribute, updateUserInfo,
+export getConfigData, handleApipostdata, createApi, getColumns, deleteTable, userRegist, login, getUserInfoKeys, refUserAttribute, refUserInfo, updateUserInfo,
 	updateUserData, updateUserLoginData, deleteUserAccount, deleteApi, configParamUpdate
 
 
@@ -234,6 +235,25 @@ function updateUserInfo()
 	val = jsonpayload("val")
 	if !isnothing(uid) && !isnothing(key) && !isnothing(val)
 		ret = DBDataController.updateUserInfo(uid, key, val)
+	end
+
+	return ret
+end
+"""
+function refUserInfo()
+
+	refer the user_info
+
+# Arguments
+- return: ture/false in json form
+"""
+function refUserInfo()
+	ret = ""
+	uid = jsonpayload("uid")
+	key = jsonpayload("key")
+	if !isnothing(uid) && !isnothing(key)
+		rettype = 0 # expect json type
+		ret = DBDataController.refUserInfo(uid, key, rettype)
 	end
 
 	return ret
