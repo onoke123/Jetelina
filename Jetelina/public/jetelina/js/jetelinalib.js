@@ -39,10 +39,6 @@
       rejectCancelableCmdList(cmd) reject command from cancelableCmdList
       rejectSelectedItemsArr(item) reject selected item from selectedItemsArr
       checkBandA(o,p) check the target sting is effective or not in the array string.
-      showUserRegistrationForm(b) display 'user_registration_form'
-      showUserNickNameForm(b) display 'tr3', because 'tr3' is for existing user's form.
-      setUserName(f,s) inputed data 's' in the chat box is set into the 'user_registration_form' filed that is ordered in 'f'.
-      postUserName(flg) post 'user_registration_form' data with 'flg'
  */
 const JETELINACHATTELL = `${JETELINAPANEL} [name='jetelina_tell']`;
 const SOMETHINGMSGPANEL = "#something_msg";
@@ -57,11 +53,6 @@ const TABLECONTAINER = "#table_container";
 const APICONTAINER = "#api_container";
 const GENELICPANEL = "#genelic_panel";
 const APITESTPANEL = "#apitest";
-const USERREGFORM = "#user_registration_form";
-const USERNICKNAMEFORM = `${USERREGFORM} [name='tr3']`;
-const USERFIRSTNAME = "user_first_name"; // the field name in USERREGFORM
-const USERLASTNAME = "user_last_name"; //     〃
-const USERNICKNAME = "user_nick_name"; //　　 〃
 const CONFIGCHANGE = "config-change";// command in cancelable command list 
 const USERMANAGE = "account-manage"; //       〃
 const TABLEAPILISTOPEN = "table-api-open";//  〃
@@ -484,11 +475,10 @@ const postAjaxData = (url, data) => {
                 rejectCancelableCmdList(USERMANAGE);
                 presentaction.cmd = null;
                 presentaction.um = null;
-                showUserRegistrationForm(false);
-                if(!result.result){
+                if (!result.result) {
                     specialmsg = 'special-msg';
                 }
-     
+
             } else if (url == posturls[1]) {
                 // jetelinawords -> nothing do
             } else if (url == posturls[2]) {
@@ -509,9 +499,9 @@ const postAjaxData = (url, data) => {
                 showSomethingInputField(false);
             }
 
-            if( specialmsg == "" ){
+            if (specialmsg == "") {
                 typingControll(chooseMsg("success-msg", "", ""));
-            }else{
+            } else {
                 typingControll(chooseMsg(specialmsg, "", ""));
             }
         }).fail(function (result) {
@@ -541,7 +531,7 @@ const typingControll = (m) => {
     */
     if (typingTimeoutID != null) {
         clearTimeout(typingTimeoutID);
-        whatJetelinaTold = $(JETELINACHATTELL).text(); 
+        whatJetelinaTold = $(JETELINACHATTELL).text();
         $(JETELINACHATTELL).text("");
     }
 
@@ -580,11 +570,19 @@ const authAjax = (un) => {
                     $.each(o[key][0], function (k, v) {
                         if (k == "user_id") {
                             loginuser.user_id = v;
-                        } else if (k == "firstname") {
-                            loginuser.firstname = v;
-                        } else if (k == "lastname") {
-                            loginuser.lastname = v;
-                            m = v;
+                        } else if (k == "username") {
+                            if ((v != null) && (0 < v.length)) {
+                                let name = v.split(' ');
+                                if ((name != null) && (0 < name.length)) {
+                                    loginuser.firstname = name[1];
+                                    loginuser.lastname = name[0];
+                                    if (0 < loginuser.lastname.length) {
+                                        m = loginuser.lastname;
+                                    } else {
+                                        m = loginuser.firstname;
+                                    }
+                                }
+                            }
                         } else if (k == "nickname") {
                             loginuser.nickname = v;
                         } else if (k == "logincount") {
@@ -614,35 +612,41 @@ const authAjax = (un) => {
                     */
                     if (0 < loginuser.logincount) {
                         scenarioNumber = "starting-5-msg";
-                        /*
-                            Tips:
-                                user roll is defined by its "generation" and "logincount".
-                                generation        logincount vs roll
-                                                create   delete   user register
-                                    0              2        5         8
-                                    1             x2       <-        <-
-                                    2             x3       <-        <-
-                                    3             x4       <-        <-
-
-                                i mean user who is 0 generation and less than 2 logincount can execute only create table/api, 
-                                later over 3 shift to "delete" roll that is able to till delete table/api.
-                                need over 8 logincount to get "user register" roll.
-                                other generation, e.g 1st is 2 times of 0 one.  
-                        */
-                        loginuser.roll = "beginner";
-                        const p_roll = [2, 5, 8]; // create,delete,user register
-                        if (p_roll[2] * (loginuser.generation + 1) < loginuser.logincount) {
-                            //user register <- admin
-                            loginuser.roll = "admin";
-                        } else if (p_roll[1] * (loginuser.generation + 1) < loginuser.logincount) {
-                            //delete <- manager
-                            loginuser.roll = "manager"
-                        } else if (p_roll[0] * (loginuser.generation + 1) < loginuser.logincount) {
-                            //create <- beginner
-                        }
                     } else {
                         scenarioNumber = "first-login-msg";
+                    }
+                    /*
+                        Tips:
+                            user roll is defined by its "generation" and "logincount".
+                            generation        logincount vs roll
+                                            create   delete   user register
+                                0              1        1<=       1<=
+                                1              1        5<=       8<=
+                                2              1       x3<=       <-<=
+                                3              1       x4<=       <-<=
+
+                            i mean user who is 0 generation and less than 2 logincount can execute only create table/api, 
+                            later over 3 shift to "delete" roll that is able to till delete table/api.
+                            need over 8 logincount to get "user register" roll.
+                            other generation, e.g 1st is 2 times of 0 one.  
+                    */
+                    const p_roll = [1, 5, 8]; // <- generation=1 [create,delete,user register] 
+                    if (loginuser.generation == 0) {
+                        loginuser.roll = "admin";
+                    } else {
                         loginuser.roll = "beginner";
+                        let t = 1;
+                        if (loginuser.generation == 2) {
+                            t = 3;
+                        } else if (loginuser.generation == 3) {
+                            t = 4;
+                        }
+
+                        if (p_roll[2] * t <= loginuser.logincount) {
+                            loginuser.roll = "admin";
+                        } else if (p_roll[1] * t <= loginuser.logincount) {
+                            loginuser.roll = "manager";
+                        }
                     }
 
                     stage = 'login_success';
@@ -656,9 +660,9 @@ const authAjax = (un) => {
                     stage = 'login';
                 }
 
-                if(scenarioNumber != 'first-login-msg'){
+                if (scenarioNumber != 'first-login-msg') {
                     m = chooseMsg(scenarioNumber, m, "a");
-                }else{
+                } else {
                     m = chooseMsg(scenarioNumber, m, "r");
                 }
 
@@ -939,7 +943,7 @@ const chatKeyDown = (cmd) => {
                             m = conditionPanelFunctions(ut);
                         }
                     }
-                    
+
                     /*
                         Attention:
                             only "admin" roll can operate configuration and user account.
@@ -957,7 +961,6 @@ const chatKeyDown = (cmd) => {
                             rejectCancelableCmdList(CONFIGCHANGE);
                             rejectCancelableCmdList(USERMANAGE);
                             showSomethingInputField(false);
-                            showUserRegistrationForm(false);
                             m = chooseMsg("cancel-msg", "", "");
                         }
 
@@ -1050,24 +1053,24 @@ const chatKeyDown = (cmd) => {
                         // user management
                         if (presentaction.cmd != null && presentaction.cmd == USERMANAGE) {
                             m = accountManager(ut);
-                        } else if (inScenarioChk(ut, 'user-manage-add') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-list') || inScenarioChk(ut, 'user-manage-delete')) {
+                        } else if (inScenarioChk(ut, 'user-manage-add') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-delete')) {
                             presentaction.cmd = USERMANAGE;
                             cancelableCmdList.push(presentaction.cmd);
                             m = accountManager(ut);
                         }
                     }
-console.log("1 m ", m);
-/*
-                    if (!$(SOMETHINGINPUT).is(":visible")) {
-                        // if 'ut' is a command for driving function
-                        m = functionPanelFunctions(ut);
-                        if (m.length == 0 || m == IGNORE) {
-                            // if 'ut' is a command for driving condition
-                            m = conditionPanelFunctions(ut);
-                        }
-                    }
-*/
- 
+
+                    /*
+                                        if (!$(SOMETHINGINPUT).is(":visible")) {
+                                            // if 'ut' is a command for driving function
+                                            m = functionPanelFunctions(ut);
+                                            if (m.length == 0 || m == IGNORE) {
+                                                // if 'ut' is a command for driving condition
+                                                m = conditionPanelFunctions(ut);
+                                            }
+                                        }
+                    */
+
                     break;
                 default:
                     if (ut == "reload") {
@@ -1185,7 +1188,6 @@ const logout = () => {
     $("#performance_test").hide();
     $("#command_list").hide();
     showSomethingMsgPanel(false);
-    showUserRegistrationForm(false);
 
     // global variables initialize
     isSuggestion = false;
@@ -1592,62 +1594,6 @@ const rejectSelectedItemsArr = (item) => {
             return d;
         }
     });
-}
-/**
- * @function showUserRegistrationForm
- * 
- * @param {boolean}  b true->show, false->hide
- *  
- * display 'user_registration_form'
- * 
- */
-const showUserRegistrationForm = (b) => {
-    if (b) {
-        $(USERREGFORM).show();
-    } else {
-        $(USERREGFORM).hide();
-    }
-}
-/**
- * @function showUserNickNameForm
- *
- * @param {boolean}  b true->show, false->hide
- * 
- * display 'tr3', because 'tr3' is for existing user's form.
- * it is unnecessary form for a new user registration, therefore it is devided with showUserRegistrationForm().  
- */
-const showUserNickNameForm = (b) => {
-    if (b) {
-        $(USERNICKNAMEFORM).show();
-    } else {
-        $(USERNICKNAMEFORM).hide();
-    }
-}
-/**
- * @function setUserName
- * 
- * @param {string} f 'user_first_name'/'user_last_name'/'user_nick_name' in 'user_registration_form'.
- * @param {string} s inputed data into chatbox, expected user names.
- * 
- * inputed data 's' in the chat box is set into the 'user_registration_form' filed that is ordered in 'f'.
- */
-const setUserName = (f, s) => {
-    if (field != null && 0 < field.length()) {
-        $(`${USERREGFORM} [name='${field}]`).text(s);
-    }
-}
-/**
- * @function postUserName
- * 
- * @param {string} flg  'register'/'update'/'delete'
- * 
- * post 'user_registration_form' data with 'flg'
- */
-const postUserName = (flg) => {
-    let f_name = $(`${USERREGFORM} [name='${USERFIRSTNAME}]`).text();
-    let l_name = $(`${USERREGFORM} [name='${USERLASTNAME}]`).text();
-    let n_name = $(`${USERREGFORM} [name='${USERNICKNAME}]`).text();
-
 }
 
 // return to the chat box if 'return key' is typed in something_input_field

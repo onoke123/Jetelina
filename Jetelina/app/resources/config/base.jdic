@@ -63,8 +63,7 @@
 # after login 
 #
 @jdic first-login-msg:"This is your first login to me,{Q}, always typing 'guide me' is to display my manual and 'how can i' is for my command list, hope you enjoy me."
-@jdic first-login-ask-firstname-msg:"Thank you. First of all, may I ask your first name?"
-@jdic first-login-ask-lastname-msg:"Thank you. Next, could you give me your last name?"
+@jdic first-login-ask-username-msg:"Thank you. type the new user's full name. e.g. Jhone Paxton?"
 @jdic first-login-ask-info-msg:"Thank you so much,{Q}, then what is your favorits?, Whatever."
 @jdic first-login-ask-info-then-msg:"Sounds nice, and more?","Cool, others?","I love it too, and?","Great, you are lucky, and more?"
 @jdic first-login-ask-info-end-msg:"Thank you so much,{Q}. Now you can type 'Guide' or 'Manual' to see what can I do for you."
@@ -153,11 +152,8 @@
 #
 @jdic user-manage-add:"invite new user","add new user","add new account","user add","add user"
 @jdic user-manage-update:"change user data","update user data","change this account","update this account","update me","change me"
-@jdic user-manage-list:"show user list","show account list","display user list","display account list"
 @jdic user-manage-delete:"delete this user","reject this user","remove this user"
-@jdic user-manage-first-msg:"the first name?"
-@jdic user-manage-last-msg:"the last name?"
-@jdic user-manage-post-msg:"type \"register\" if every thing was fine, please"
+@jdic user-manage-username-msg:"type the new user's name in full. e.g. Jhon Sandman"
 
 #
 # log out 

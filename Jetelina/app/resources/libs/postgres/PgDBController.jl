@@ -835,8 +835,7 @@ function create_jetelina_user_table()
 	create_jetelina_user_table_str = """
 		create table if not exists jetelina_user_table(
 			user_id integer not null primary key,
-			firstname varchar(256),
-			lastname varchar(256),
+			username varchar(256),
 			nickname varchar(256),
 			logincount integer not null default 0,
 			logindate timestamp with time zone,
@@ -863,10 +862,10 @@ function userRegist(username::String)
 	register a new user
 	
 # Arguments
-- `username::String`:  user name. this data sets in as 'login','firstname' and 'lastname' at once.
+- `username::String`:  user name. this data sets in 'username'.
 - return::boolean: success->true  fail->false
 """
-function userRegist(firstname::String, lastname::String)
+function userRegist(username::String)
 	if !checkTheRoll("usermanage")
 		return json(Dict("result" => false, "message from Jetelina" => "you do not have the authority yet, sorry"))
 	end
@@ -877,10 +876,10 @@ function userRegist(firstname::String, lastname::String)
 	user_id = getJetelinaSequenceNumber(2)
 	existentuserdata = getUserData(JSession.get()[1])
 	j = existentuserdata["Jetelina"]
-	parentGeneration = j[1][8]
+	parentGeneration = j[1][7]
 	thisuserGeneration = parentGeneration + 1 # to make easy understand
 	insert_basic_st = """
-		insert into jetelina_user_table (user_id,firstname,lastname,generation) values($user_id,'$firstname','$lastname','$thisuserGeneration');
+		insert into jetelina_user_table (user_id,username,generation) values($user_id,'$username','$thisuserGeneration');
 	"""
 
 	inviterId = JSession.get()[2]
@@ -939,35 +938,17 @@ function chkUserExistence(s::String)
 		u = ss[1]
 	end
 
-	#===
 	sql = """   
 	SELECT
 		user_id,
-		login,
-		firstname,
-		lastname,
-		nickname,
-		logincount,
-		logindate,
-		user_level,
-		familiar_index
-	from jetelina_user_table
-	where (jetelina_delete_flg=0)and((login = '$u')or(firstname='$u')or(lastname='$u'));
-	"""
-	===#
-
-	sql = """   
-	SELECT
-		user_id,
-		firstname,
-		lastname,
+		username,
 		nickname,
 		logincount,
 		logindate,
 		logoutdate,
 		generation
 	from jetelina_user_table
-	where (jetelina_delete_flg=0)and((nickname = '$u')or(firstname='$u')or(lastname='$u'));
+	where (jetelina_delete_flg=0)and((nickname = '$u')or(username like '%$u%'));
 	"""
 
 	conn = open_connection()
@@ -978,12 +959,18 @@ function chkUserExistence(s::String)
 
 		#==
 			Tips:
-				every expression is fine, but take care the data type
+				every expression is fine, but take care of the data type
 				@info "user id 1 " df[:, :user_id] typeof(df[:,:user_id])  -> Vector{Union{Missing,Int}}
 				@info "user id 2 " df[:, :user_id][1] typeof(df[:,:user_id][1])  -> Int
 				@info "user id 3 " df.user_id typeof(df.user_id) -> Vector{Union{Missing,Int}}
 		==#
-		updateUserLoginData(df.user_id[1])
+		if size(df)[1] == 1
+			ret = Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg)
+			updateUserLoginData(df.user_id[1])
+		else 
+			# cannot defermin this user by this 's', then request the whole user name
+			ret = Dict("result" => true, "Jetelina" => [], "message from Jetelina" => "full name please")
+		end
 	catch err
 		#		ret = json(Dict("result" => false, "errmsg" => "$err"))
 		ret = Dict("result" => false, "errmsg" => "$err")
@@ -1333,30 +1320,29 @@ function checkTheRoll(roll::String)
 			generation = df[:, :generation][1]
 			logincount = df[:, :logincount][1]
 
-			delete_base_number = 5 # this number is for basic login count number ref in function description
-			usermanage_base_number = 8 #       〃
-			base_number::Integer = 0
-
-			if roll == "delete"
-				base_number = delete_base_number
-			elseif roll == "usermanage"
-				base_number = usermanage_base_number
-			end
-
-			if generation == 1
-				if base_number <= logincount
-					ret = true
-				end
-			elseif generation == 2
-				if base_number * 3 <= logincount  # ref in function description about '3' number
-					ret = true
-				end
-			elseif generation == 3
-				if base_number * 4 <= logincount # ref in function description about '4' number
-					ret = true
-				end
+			if generation == 0
+				ret = true
 			else
-				# case of generation = 0	
+				delete_base_number = 5 # this number is for basic login count number ref in function description
+				usermanage_base_number = 8 #       〃
+				base_number::Integer = 1
+				t::Integer = 1  # times: depend on generation
+	
+				if roll == "delete"
+					base_number = delete_base_number
+				elseif roll == "usermanage"
+					base_number = usermanage_base_number
+				end
+
+				if generation == 2
+					t = 3
+				elseif generation == 3
+					t = 4
+				end
+
+				if base_number * t <= logincount
+					ret = true
+				end
 			end
 		end
 		
