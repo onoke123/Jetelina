@@ -1058,6 +1058,13 @@ const chatKeyDown = (cmd) => {
                             cancelableCmdList.push(presentaction.cmd);
                             m = accountManager(ut);
                         }
+                    }else{
+                        // do not have an authority
+                        if (inScenarioChk(ut, 'user-manage-add') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-delete')) {
+                            m = chooseMsg("special-msg", "", "");
+                        }else{
+                            // normal reply e.g "next?"
+                        }
                     }
 
                     /*
