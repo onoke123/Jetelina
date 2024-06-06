@@ -43,7 +43,8 @@
 @jdic starting-3-msg:"What?","Are you kidding me?","Never mind"
 @jdic general-thanks-cmd:"thank you","thanks","thx"
 @jdic general-thanks-msg:"you're welcome","my pleasure, {Q}"
-@jdic special-msg:"you cannot cheat me, you do not have the authority"
+@jdic no-authority-js-msg:"you do not have the authority, yet"
+@jdic no-authority-jl-msg:"you cannot cheat me, you do not have the authority"
 
 # miss login 
 @jdic starting-4-msg:"I am sorry, but ", "Something wrong, hum, "

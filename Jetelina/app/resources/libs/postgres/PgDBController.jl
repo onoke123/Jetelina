@@ -866,12 +866,17 @@ function userRegist(username::String)
 - return::boolean: success->true  fail->false
 """
 function userRegist(username::String)
-	if !checkTheRoll("usermanage")
-		return json(Dict("result" => false, "message from Jetelina" => "you do not have the authority yet, sorry"))
-	end
-
 	ret = ""
 	jmsg::String = string("compliment me!")
+
+	if !checkTheRoll("usermanage")
+		return json(Dict("result" => false, "message from Jetelina" => "you cannot cheat me, you do not have the authority yet, sorry"))
+	else
+		g = getUserData(username)
+		if g["result"]
+			return json(Dict("result" => false, "message from Jetelina" => "already be in here with the same name"))
+		end
+	end
 
 	user_id = getJetelinaSequenceNumber(2)
 	existentuserdata = getUserData(JSession.get()[1])
@@ -933,10 +938,10 @@ function chkUserExistence(s::String)
 	u::String = s
 	jmsg::String = string("compliment me!")
 
-	if contains(s, " ")
-		ss = split(s, " ")
-		u = ss[1]
-	end
+#	if contains(s, " ")
+#		ss = split(s, " ")
+#		u = ss[1]
+#	end
 
 	sql = """   
 	SELECT
@@ -954,9 +959,6 @@ function chkUserExistence(s::String)
 	conn = open_connection()
 	try
 		df = DataFrame(columntable(LibPQ.execute(conn, sql)))
-		#		ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
-		ret = Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg)
-
 		#==
 			Tips:
 				every expression is fine, but take care of the data type
@@ -964,12 +966,16 @@ function chkUserExistence(s::String)
 				@info "user id 2 " df[:, :user_id][1] typeof(df[:,:user_id][1])  -> Int
 				@info "user id 3 " df.user_id typeof(df.user_id) -> Vector{Union{Missing,Int}}
 		==#
+		@info " aaa " u size(df)[1]
 		if size(df)[1] == 1
 			ret = Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg)
 			updateUserLoginData(df.user_id[1])
-		else 
+		elseif 1<size(df)[1] 
 			# cannot defermin this user by this 's', then request the whole user name
 			ret = Dict("result" => true, "Jetelina" => [], "message from Jetelina" => "full name please")
+		else
+			# no in the table
+			ret = Dict("result" => false, "Jetelina" => [], "message from Jetelina" => "you are not here yet")
 		end
 	catch err
 		#		ret = json(Dict("result" => false, "errmsg" => "$err"))

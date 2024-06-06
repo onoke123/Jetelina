@@ -476,7 +476,7 @@ const postAjaxData = (url, data) => {
                 presentaction.cmd = null;
                 presentaction.um = null;
                 if (!result.result) {
-                    specialmsg = 'special-msg';
+                    specialmsg = result["message from Jetelina"];
                 }
 
             } else if (url == posturls[1]) {
@@ -502,7 +502,7 @@ const postAjaxData = (url, data) => {
             if (specialmsg == "") {
                 typingControll(chooseMsg("success-msg", "", ""));
             } else {
-                typingControll(chooseMsg(specialmsg, "", ""));
+                typingControll(specialmsg);
             }
         }).fail(function (result) {
             checkResult(result);
@@ -1061,7 +1061,7 @@ const chatKeyDown = (cmd) => {
                     }else{
                         // do not have an authority
                         if (inScenarioChk(ut, 'user-manage-add') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-delete')) {
-                            m = chooseMsg("special-msg", "", "");
+                            m = chooseMsg("no-authority-js-msg", "", "");
                         }else{
                             // normal reply e.g "next?"
                         }
