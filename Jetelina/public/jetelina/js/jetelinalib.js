@@ -593,6 +593,8 @@ const authAjax = (un) => {
                             loginuser.logoutdate = v;
                         } else if (k == "generation") {
                             loginuser.generation = v;
+                        }else if(k == "available"){
+                            loginuser.available = v;
                         }
                     });
 

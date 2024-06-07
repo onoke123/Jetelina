@@ -880,8 +880,8 @@ function userRegist(username::String)
 
 	user_id = getJetelinaSequenceNumber(2)
 	existentuserdata = getUserData(JSession.get()[1])
-	j = existentuserdata["Jetelina"]
-	parentGeneration = j[1][7]
+	j = existentuserdata["Jetelina"][1]
+	parentGeneration = j[:generation]
 	thisuserGeneration = parentGeneration + 1 # to make easy understand
 	insert_basic_st = """
 		insert into jetelina_user_table (user_id,username,generation) values($user_id,'$username','$thisuserGeneration');
@@ -962,15 +962,23 @@ function chkUserExistence(s::String)
 		#==
 			Tips:
 				every expression is fine, but take care of the data type
-				@info "user id 1 " df[:, :user_id] typeof(df[:,:user_id])  -> Vector{Union{Missing,Int}}
-				@info "user id 2 " df[:, :user_id][1] typeof(df[:,:user_id][1])  -> Int
-				@info "user id 3 " df.user_id typeof(df.user_id) -> Vector{Union{Missing,Int}}
+				    df[:, :user_id]    -> Vector{Union{Missing,Int}}
+				    df[:, :user_id][1] -> Int
+				    df.user_id         -> Vector{Union{Missing,Int}}
 		==#
 		if size(df)[1] == 1
-			ret = Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg)
+			stichwort::Bool = false
+			dfui = refUserInfo(df[:,:user_id][1],"stichwort",1)
+			if size(dfui)[1] == 1
+				if !ismissing(dfui[:,:stichwort][1])
+					stichwort = true
+				end
+			end	
+	
+			ret = Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "available" => stichwort, "message from Jetelina" => jmsg)
 			updateUserLoginData(df.user_id[1])
 		elseif 1<size(df)[1] 
-			# cannot defermin this user by this 's', then request the whole user name
+			# cannot defermine this user by this 's', then request the whole user name
 			ret = Dict("result" => true, "Jetelina" => [], "message from Jetelina" => "full name please")
 		else
 			# no in the table
@@ -1141,7 +1149,7 @@ function refUserInfo(uid::Integer, key::String, rettype::Integer)
 	jmsg::String = "no data, try again."
 
 	sql = """   
-		select user_info->'$key' from jetelina_user_table where user_id=$uid;
+		select user_info->'$key' as $key from jetelina_user_table where user_id=$uid;
 	"""
 	conn = open_connection()
 	try
