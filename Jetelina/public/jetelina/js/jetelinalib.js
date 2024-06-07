@@ -564,6 +564,8 @@ const authAjax = (un) => {
         if (result != null) {
             const o = result;
             let m = "";
+            loginuser.available = result.available;
+            let jetelinamsg = result["message from Jetelina"];
             // found user
             Object.keys(o).some(function (key) {
                 if (key == "Jetelina" && o[key].length == 1) {
@@ -593,8 +595,6 @@ const authAjax = (un) => {
                             loginuser.logoutdate = v;
                         } else if (k == "generation") {
                             loginuser.generation = v;
-                        }else if(k == "available"){
-                            loginuser.available = v;
                         }
                     });
 
@@ -1053,18 +1053,18 @@ const chatKeyDown = (cmd) => {
                         }
 
                         // user management
-                        if ((presentaction.cmd != null && presentaction.cmd == USERMANAGE) || inScenarioChk(ut,'user-manage-show-profile')) {
+                        if ((presentaction.cmd != null && presentaction.cmd == USERMANAGE) || inScenarioChk(ut, 'user-manage-show-profile')) {
                             m = accountManager(ut);
-                        } else if (inScenarioChk(ut, 'user-manage-add') ) {
+                        } else if (inScenarioChk(ut, 'user-manage-add')) {
                             presentaction.cmd = USERMANAGE;
                             cancelableCmdList.push(presentaction.cmd);
                             m = accountManager(ut);
                         }
-                    }else{
+                    } else {
                         // do not have an authority
                         if (inScenarioChk(ut, 'user-manage-add') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-delete')) {
                             m = chooseMsg("no-authority-js-msg", "", "");
-                        }else{
+                        } else {
                             // normal reply e.g "next?"
                         }
                     }
