@@ -50,13 +50,13 @@
 @jdic starting-4-msg:"I am sorry, but ", "Something wrong, hum, "
 
 # something inprogress 
-@jdic inprogress-msg:"I am doing","happy workin","husle hustle","I AM DOING THIS JUST FOR YOU"
+@jdic inprogress-msg:"I am doing","happy workin'","husle hustle","I AM DOING THIS JUST FOR YOU"
 
 # refuse any command due to progress something 
 @jdic refuse-command-msg:"I am busy now","I cannot do multi task at once","You kill me?","Later..."
 
 # greeting to u after successing login 
-@jdic starting-5-msg:"Welcome ", "I missed you, ","Oh my.. incredible, "
+@jdic starting-5-msg:"Welcome back ", "Nice to see you again, ","I missed you, ","Oh my.. incredible, "
 @jdic multi-candidates-msg:"there are a few candidates as your order","which is your order?","may you should say more detail","please tell me more detail.","next question.","more..."
 @jdic not-registered-msg:"you are not registered, try again.","you are not here yet.","I do not know you, sorry."
 
@@ -152,9 +152,10 @@
 #  account management
 #
 @jdic user-manage-add:"invite new user","add new user","add new account","user add","add user"
-@jdic user-manage-update:"change user data","update user data","change this account","update this account","update me","change me"
-@jdic user-manage-delete:"delete this user","reject this user","remove this user"
+@jdic user-manage-show-profile:"profile","who am i"
+@jdic user-manage-profile-msg:"you are {Q}, are't you?"
 @jdic user-manage-username-msg:"type the new user's name in full. e.g. Jhon Sandman"
+@jdic user-manage-swing-missing-msg:"I do not know what do you wanna do"
 
 #
 # log out 

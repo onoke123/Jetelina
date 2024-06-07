@@ -14,6 +14,7 @@
  * manage user account  
  */
 const accountManager = (s) =>{
+    let ret = chooseMsg('user-manage-swing-missing-msg',"","");
     /*
         Tips:
             'whatJetelinaTold' is contained Jetelina's message.
@@ -30,13 +31,16 @@ const accountManager = (s) =>{
                 postAjaxData(scenario["function-post-url"][7],data);
         }
 
-        return scenario['user-manage-username-msg'];
-    }else if(inScenarioChk(s,'user-manage-update')){
-        // update existence user data
-        console.log("user update");
-    }else if(inScenarioChk(s,'user-manage-delete')){
-        // delete user/account
-        console.log("user delete");
+        ret = chooseMsg('user-manage-username-msg',"","");
+    }else if(inScenarioChk(s,'user-manage-show-profile')){
+        let prof = `"${loginuser.lastname} ${loginuser.firstname}"`;
+        if(loginuser.nickname != null && 0<loginuser.nickname.length){
+            prof = prof + `, and sometimes I call you "${loginuser.nickname}"`;
+        }
+        
+        ret = chooseMsg('user-manage-profile-msg',prof,'m');
+    }else{
     }
 
+    return ret;
 }

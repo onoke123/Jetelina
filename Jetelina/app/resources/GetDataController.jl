@@ -36,7 +36,7 @@ function logout()
 	uid = JSession.get()[2]
 	key = "logoutdate"
 	value = "now()"
-	@info "logout uid " uid typeof(uid)
+
 	if !isnothing(uid)
 		ret = DBDataController.updateUserData(uid, key, value)
 	end

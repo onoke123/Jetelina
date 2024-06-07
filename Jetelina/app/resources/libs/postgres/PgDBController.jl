@@ -966,7 +966,6 @@ function chkUserExistence(s::String)
 				@info "user id 2 " df[:, :user_id][1] typeof(df[:,:user_id][1])  -> Int
 				@info "user id 3 " df.user_id typeof(df.user_id) -> Vector{Union{Missing,Int}}
 		==#
-		@info " aaa " u size(df)[1]
 		if size(df)[1] == 1
 			ret = Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg)
 			updateUserLoginData(df.user_id[1])

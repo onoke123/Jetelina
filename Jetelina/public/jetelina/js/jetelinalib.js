@@ -1051,9 +1051,9 @@ const chatKeyDown = (cmd) => {
                         }
 
                         // user management
-                        if (presentaction.cmd != null && presentaction.cmd == USERMANAGE) {
+                        if ((presentaction.cmd != null && presentaction.cmd == USERMANAGE) || inScenarioChk(ut,'user-manage-show-profile')) {
                             m = accountManager(ut);
-                        } else if (inScenarioChk(ut, 'user-manage-add') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-delete')) {
+                        } else if (inScenarioChk(ut, 'user-manage-add') ) {
                             presentaction.cmd = USERMANAGE;
                             cancelableCmdList.push(presentaction.cmd);
                             m = accountManager(ut);
