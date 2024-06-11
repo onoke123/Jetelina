@@ -546,7 +546,7 @@ const setApiIF_Sql = (s) => {
 
   let reject_jetelina_delete_flg = "jetelina_delete_flg";
   if (ret.startsWith("insert")) {
-    ret = ret.replaceAll(`,{${reject_jetelina_delete_flg}}`, '').replaceAll(`,${reject_jetelina_delete_flg}`,'');
+    ret = ret.replaceAll(`,{${reject_jetelina_delete_flg}}`, '').replaceAll(`,${reject_jetelina_delete_flg}`, '');
   }
 
   return ret;
@@ -703,6 +703,13 @@ const dropThisTable = (tables) => {
   let pd = {};
   //    pd["tablename"] = $.trim(tablename);
   pd["tablename"] = tables;
+
+  if (loginuser.sw == null || loginuser.sw == "") {
+    pd["pass"] = $(SOMETHINGINPUT).val();
+  }else{
+    pd["pass"] = loginuser.sw;
+  }
+
   let dd = JSON.stringify(pd);
 
   $.ajax({
@@ -729,6 +736,10 @@ const dropThisTable = (tables) => {
       });
     }
 
+    // 'pass' is authorized by Jetelina
+    loginuser.sw = pd["pass"];
+    showSomethingInputField(false);
+    showSomethingMsgPanel(false);    
     typingControll(chooseMsg('success-msg', "", ""));
   }).fail(function (result) {
     checkResult(result);
@@ -810,7 +821,7 @@ const postSelectedColumns = (mode) => {
     } else {
       /* API test mode */
       getdata(result, 4);
-      if(!isVisibleApiTestPanel()){
+      if (!isVisibleApiTestPanel()) {
         $(`${APITESTPANEL} span`).remove();
         showApiTestPanel(true);
         let testmsg = "<span class='jetelina_suggestion'><p>Oh oh, no data. Try again with other params</p></span>";
@@ -948,7 +959,7 @@ const functionPanelFunctions = (ut) => {
       that's why 'cmd' is be unset, then 'switch' goes to 'default', but it does not have any process. 👍
   */
   if (1 < cmdCandidates.length) {
-    if(preferent.ut == null || preferent.ut == ""){
+    if (preferent.ut == null || preferent.ut == "") {
       preferent.ut = ut;
     }
 
@@ -966,7 +977,7 @@ const functionPanelFunctions = (ut) => {
   */
   if (0 < cmd.length) {
     cmdCandidates = [];
-    if(preferent.ut != null && 0<preferent.ut.length){
+    if (preferent.ut != null && 0 < preferent.ut.length) {
       ut = preferent.ut;
       preferent.ut = "";
     }
@@ -1021,12 +1032,12 @@ const functionPanelFunctions = (ut) => {
           showApiTestPanel(false);
         }
       } else if (inScenarioChk(ut, 'func-show-api-list-cmd')) {
-        if (isVisibleTableContainer()) {
-          hidepanel = TABLECONTAINER;
-          showpanel = APICONTAINER;
-          paneltitle = "API List";
-          $(GENELICPANEL).hide();
-        }
+        //        if (isVisibleTableContainer()) {
+        hidepanel = TABLECONTAINER;
+        showpanel = APICONTAINER;
+        paneltitle = "API List";
+        $(GENELICPANEL).hide();
+        //        }
 
         cleanup = "apis";
         geturl = scenario["function-get-url"][0];
@@ -1091,17 +1102,17 @@ const functionPanelFunctions = (ut) => {
           // ordered item
           for (let n = 0; n < t.length; n++) {
             $(COLUMNSPANEL).find("span").each(function (i, v) {
-/*
-              let tc = v.textContent;
-              let vtc = "";
-              if(tc.indexOf('_') != -1){
-                let tcarr = tc.split('_');
-                if(tcarr[0] != null && 0<tcarr[0].length){
-                  vtc = tc.slice(tcarr[0].length+1);
-                }
-              } 
-*/
-              if( v.textContent.indexOf(t[n]) != -1){
+              /*
+                            let tc = v.textContent;
+                            let vtc = "";
+                            if(tc.indexOf('_') != -1){
+                              let tcarr = tc.split('_');
+                              if(tcarr[0] != null && 0<tcarr[0].length){
+                                vtc = tc.slice(tcarr[0].length+1);
+                              }
+                            } 
+              */
+              if (v.textContent.indexOf(t[n]) != -1) {
                 itemSelect($(this));
                 m = chooseMsg('success-msg', "", "");
               }
@@ -1119,32 +1130,53 @@ const functionPanelFunctions = (ut) => {
       let utarray = ut.split(' ');
 
       if (inScenarioChk(ut, 'confirmation-sentences-cmd')) {
-        // execution drop table and/or delete api
-        if (isVisibleTableContainer) {
-          let droptables = [];
-          $(`${TABLECONTAINER} span`).filter('.deleteItem').each(function () {
-            droptables.push($(this).text());
-          });
-
-          if (0 < droptables.length) {
-            preferent.cmd = "";
-            dropThisTable(droptables);
+        /*
+          Tips:
+            get 'pass phrase' confirmation here.
+            continue the process if ..sw is not null, ask it if it is not in loginuser.sw. 
+            the matching the 'pass phrase' is done in Jetelina.
+        */
+        if ((loginuser.sw == null || loginuser.sw == "") && (!$(SOMETHINGINPUT).is(":visible"))) {
+          showSomethingMsgPanel(true);
+          if (loginuser.available) {
+            showSomethingInputField(true, 2);
+            m = "put your pass phrase";
+          } else {
+            showSomethingInputField(true, 1);
+            m = "register your pass phrase first";
           }
+        } else {
+          /* execute drop table and/or delete api,
+             but 'pass phrase' is must item. 
+          */
+          if (($(SOMETHINGINPUT).is(":visible") && 0<$(SOMETHINGINPUT).val().length) || (loginuser.sw != null && 0<loginuser.sw.length)) {
+            if (isVisibleTableContainer) {
+              let droptables = [];
+              $(`${TABLECONTAINER} span`).filter('.deleteItem').each(function () {
+                droptables.push($(this).text());
+              });
+
+              if (0 < droptables.length) {
+                preferent.cmd = "";
+                dropThisTable(droptables);
+              }
+            }
+
+            if (isVisibleApiContainer) {
+              let deleteapis = [];
+              $(`${APICONTAINER} span`).filter('.deleteItem').each(function () {
+                deleteapis.push($(this).text());
+              });
+
+              if (0 < deleteapis.length) {
+                preferent.cmd = "";
+                deleteThisApi(deleteapis);
+              }
+            }
+          } 
+
+          m = IGNORE;
         }
-
-        if (isVisibleApiContainer) {
-          let deleteapis = [];
-          $(`${APICONTAINER} span`).filter('.deleteItem').each(function () {
-            deleteapis.push($(this).text());
-          });
-
-          if (0 < deleteapis.length) {
-            preferent.cmd = "";
-            deleteThisApi(deleteapis);
-          }
-        }
-
-        m = IGNORE;
       } else {
         preferent.cmd = TABLEAPIDELETE;
         cancelableCmdList.push(TABLEAPIDELETE);
@@ -1439,6 +1471,13 @@ const deleteThisApi = (apis) => {
   let pd = {};
   //   pd["apino"] = $.trim(apino);
   pd["apino"] = apis;
+
+  if (loginuser.sw == null || loginuser.sw == "") {
+    pd["pass"] = $(SOMETHINGINPUT).val();
+  }else{
+    pd["pass"] = loginuser.sw;
+  }
+
   let dd = JSON.stringify(pd);
 
   $.ajax({
@@ -1465,6 +1504,10 @@ const deleteThisApi = (apis) => {
       });
     }
 
+    // 'pass' is authorized by Jetelina
+    loginuser.sw = pd["pass"];
+    showSomethingInputField(false);
+    showSomethingMsgPanel(false);
     typingControll(chooseMsg('success-msg', "", ""));
   }).fail(function (result) {
     checkResult(result);
@@ -1494,7 +1537,7 @@ const whichCommandsInOrders = (s) => {
         case "file upload": c = "fileupload"; break;
         case "show table list", "show api list": c = TABLEAPILISTOPEN; break;
         case "file open": c = FILESELECTOROPEN; break;
-        case "open or close table/api":case "select columns": case "select columns all": c = SELECTITEM; break;
+        case "open or close table/api": case "select columns": case "select columns all": c = SELECTITEM; break;
         case "open sub query panel": c = subquery; break;
         case "drop table": case "delete api": c = TABLEAPIDELETE; break;
         case "post": c = "post"; break;

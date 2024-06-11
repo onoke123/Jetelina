@@ -25,20 +25,21 @@
       instractionMode(s) confirmation in adding a new scenario
       showManualCommandList(s) show/hide manual and/or command list panel
       inScenarioChk(s,sc,type) check if user input string is in the ordered scenario
+      checkBandA(o,p) check the target sting is effective or not in the array string.
       countCandidates(s,sc,type) count config/scenario candidates
 //      checkNewCommer(s) check the login user is a newcommer or not.
       checkBeginner() check the login user is a beginner or not.
       isVisibleFunctionPanel() check the function panel is visible or not
       inVisibleConditionPanel() check the condition panel is visible or not
       isVisibleSomethingMsgPanel() checking "#something_msg" is visible or not
-      showSomethingInputField(b) "#something_input_field" show or hide
+      showSomethingInputField(b,type) "#something_input_field" show or hide
       showSomethingMsgPanel(b) "#something_msg" show or hide
       isVisibleApiTestPanel() checking "#apitest" is visible or not
       showApiTestPanel(b) "#apitest" show or hide
       inCancelableCmdList(cmd) check the ordered commands are in cancelableCmdList or not
       rejectCancelableCmdList(cmd) reject command from cancelableCmdList
       rejectSelectedItemsArr(item) reject selected item from selectedItemsArr
-      checkBandA(o,p) check the target sting is effective or not in the array string.
+      subPanelCheck() confirm sub panels condition when focus moves on Jetelina Chat Box
  */
 const JETELINACHATTELL = `${JETELINAPANEL} [name='jetelina_tell']`;
 const SOMETHINGMSGPANEL = "#something_msg";
@@ -565,7 +566,7 @@ const authAjax = (un) => {
             const o = result;
             let m = "";
             loginuser.available = result.available;
-            let jetelinamsg = result["message from Jetelina"];
+ //           let jetelinamsg = result["message from Jetelina"];
             // found user
             Object.keys(o).some(function (key) {
                 if (key == "Jetelina" && o[key].length == 1) {
@@ -658,8 +659,11 @@ const authAjax = (un) => {
                     stage = 'login';
                 } else {
                     // no user
-                    scenarioNumber = "not-registered-msg";
+//                    scenarioNumber = "not-registered-msg";
+                    m = result["message from Jetelina"];
                     stage = 'login';
+                    typingControll(m);
+                    return true;
                 }
 
                 if (scenarioNumber != 'first-login-msg') {
@@ -879,8 +883,8 @@ const chatKeyDown = (cmd) => {
 
                     break;
                 case 'login':
-                    let chunk = "";
-
+//                    let chunk = "";
+/*
                     if (ut.indexOf(" ") != -1) {
                         let p = ut.split(" ");
                         chunk = p[p.length - 1];
@@ -889,7 +893,10 @@ const chatKeyDown = (cmd) => {
                     }
 
                     if (chunk.indexOf("me") == -1) {
-                        authAjax(chunk);
+*/
+                    if(ut.indexOf("it's me") == -1 || ut.indexOf("it is me") == -1){
+//                        authAjax(chunk);
+                        authAjax(ut);
                         m = IGNORE;
                     } else {
                         m = chooseMsg('starting-5-msg', `my special guest,you are a privilege user`, "a");
@@ -937,14 +944,14 @@ const chatKeyDown = (cmd) => {
                         left: "210px"
                     }, ANIMATEDURATION);
 
-                    if (!$(SOMETHINGINPUT).is(":visible")) {
+//                    if (!$(SOMETHINGINPUT).is(":visible")) {
                         // if 'ut' is a command for driving function
                         m = functionPanelFunctions(ut);
                         if (m.length == 0 || m == IGNORE) {
                             // if 'ut' is a command for driving condition
                             m = conditionPanelFunctions(ut);
                         }
-                    }
+//                    }
 
                     /*
                         Attention:
@@ -989,7 +996,7 @@ const chatKeyDown = (cmd) => {
                             presentaction.cmd = "CONFIGCHANGE";
                             cancelableCmdList.push(presentaction.cmd);
                             if (presentaction.config_name != null && presentaction.config_data != null) {
-                                showSomethingInputField(true);
+                                showSomethingInputField(true,0);
                                 m = chooseMsg("config-update-simple-message", "", "");
                             } else {
                                 m = chooseMsg("config-update-plural-message", "", "");
@@ -1489,24 +1496,39 @@ const isVisibleSomethingMsgPanel = () => {
 /**
  * @function showSomethingInputField
  *
- * @param {boolean} true -> show, false -> hide
- *  
+ * @param {boolean} b true -> show, false -> hide
+ * @param {integer} type 0->config change 1->register pass phrase 2->inquire pass phrase
  * "#something_input_field" show or hide
  */
-const showSomethingInputField = (b) => {
+const showSomethingInputField = (b,type) => {
     if (b) {
         if (isVisibleSomethingMsgPanel()) {
-            $("SOMETHINGTEXT").text("Change this to =>");
-            $(SOMETHINGINPUT).attr('placeholder', 'new parameter...');
+            let t="config";  // 2024/6/11 do not know use or not yet but leave it 
+            if(type == 0){
+                $(SOMETHINGTEXT).text("Change this to =>");
+                $(SOMETHINGINPUT).attr('placeholder', 'new parameter...');
+            }else if(type == 1){
+                t="regPass";
+                $(SOMETHINGTEXT).text("register your pass phrase =>");
+                $(SOMETHINGINPUT).attr('placeholder', 'put something your new pass phrase to continue ...');
+            }else if(type == 2){
+                t="reqPass";
+                $(SOMETHINGTEXT).text("request your pass phrase =>");
+                $(SOMETHINGINPUT).attr('placeholder', 'your registered one ...');
+            }else{
+                t="";
+            }
+
+//            $(SOMETHINGINPUTFIELD).append(`<text name="whatfor" class="box_text">${t}</text>`);
         }
 
-        $("SOMETHINGINPUTFIELD").show();
+        $(SOMETHINGINPUTFIELD).show();
         $(SOMETHINGINPUT).focus();
     } else {
         $(SOMETHINGMSGPANELMSG).text("");
-        $("SOMETHINGTEXT").text("");
+        $(SOMETHINGTEXT).text("");
         $(SOMETHINGINPUT).val("");
-        $("SOMETHINGINPUTFIELD").hide();
+        $(SOMETHINGINPUTFIELD).hide();
         showSomethingMsgPanel(false);
     }
 }
@@ -1603,6 +1625,18 @@ const rejectSelectedItemsArr = (item) => {
             return d;
         }
     });
+}
+/**
+ * @function subPanelCheck
+ * 
+ * confirm sub panels condition when focus moves on Jetelina Chat Box
+ */
+const subPanelCheck = () =>{
+    if(isVisibleSomethingMsgPanel()){
+        if(0<$(SOMETHINGINPUT).val().length){
+            typingControll(chooseMsg('common-confirm-msg', "", ""));
+        }
+    }
 }
 
 // return to the chat box if 'return key' is typed in something_input_field

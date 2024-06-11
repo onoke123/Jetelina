@@ -93,6 +93,7 @@ $(window).load(function () {
    */
   const focusonJetelinaPanel = () => {
     $(JETELINACHATBOX).focus();
+    subPanelCheck();
   }
 
 /**
