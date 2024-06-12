@@ -198,9 +198,6 @@ function deleteTableFromlist(tablename::Vector)
 	# update DataFrame
 	readSqlList2DataFrame()
 
-	# write to operationhistoryfile
-	JLog.writetoOperationHistoryfile(string("drop table",",",tablename))
-
 	return true
 end
 """
@@ -278,7 +275,7 @@ function deleteApiFromList(apis::Vector)
 	readSqlList2DataFrame()
 
 	# write to operationhistoryfile
-	JLog.writetoOperationHistoryfile(string("delete api",",",apis))
+	JLog.writetoOperationHistoryfile(string("delete api",",",join(apis,",")))
 
 	return true
 end

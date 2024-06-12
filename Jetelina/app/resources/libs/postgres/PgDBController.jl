@@ -34,6 +34,7 @@ functions
 	updateUserLoginData(uid::Integer) update user login data if it succeeded to login
 	deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
 	checkTheRoll(roll::String) check the ordered user's authority in order to 'roll'.
+	refStichWort(stichwort::String)	reference and matching with user_info->stichwort
 """
 module PgDBController
 
@@ -50,7 +51,7 @@ include("PgSQLSentenceManager.jl")
 export create_jetelina_table, create_jetelina_id_sequence, open_connection, close_connection, readJetelinatable,
 	getTableList, getJetelinaSequenceNumber, insert2JetelinaTableManager, dataInsertFromCSV, dropTable, getColumns,
 	executeApi, doSelect, measureSqlPerformance, create_jetelina_user_table, userRegist, getUserData, chkUserExistence, getUserInfoKeys,
-	refUserAttribute, updateUserInfo, refUserInfo, updateUserData, deleteUserAccount, checkTheRoll
+	refUserAttribute, updateUserInfo, refUserInfo, updateUserData, deleteUserAccount, checkTheRoll, refStichWort
 
 """
 function create_jetelina_table
@@ -540,25 +541,38 @@ function dropTable(tableName::Vector)
 - `tableName: Vector`: ordered tables name
 - return: tuple (boolean: true -> success/false -> get fail, JSON)
 """
-function dropTable(tableName::Vector)
+function dropTable(tableName::Vector,stichwort::String)
 	ret = ""
 	jmsg::String = string("compliment me!")
 	rettables::String = join(tableName, ",") # ["a","b"] -> "a,b" oh ＼(^o^)／
 
 	conn = open_connection()
 	try
+		#===
+			Tips:
+				check the stichwort in user_info.
+				in the case of nothing, register it into there,
+				in the case of being, take the matching.
+		===#
+		if refStichWort(stichwort) 
+			for i in eachindex(tableName)
+				# drop the tableName
+				drop_table_str = string("drop table ", tableName[i])
+				# delete the related data from jetelina_table_manager
+				delete_data_str = string("delete from jetelina_table_manager where table_name = '", tableName[i], "'")
 
-		for i in eachindex(tableName)
-			# drop the tableName
-			drop_table_str = string("drop table ", tableName[i])
-			# delete the related data from jetelina_table_manager
-			delete_data_str = string("delete from jetelina_table_manager where table_name = '", tableName[i], "'")
+				execute(conn, drop_table_str)
+				execute(conn, delete_data_str)
+			end
 
-			execute(conn, drop_table_str)
-			execute(conn, delete_data_str)
+			ret = json(Dict("result" => true, "tablename" => "$rettables", "message from Jetelina" => jmsg))
+
+			# write to operationhistoryfile
+			JLog.writetoOperationHistoryfile(string("drop ", rettables, " tables"))
+		else
+			jmsg = "wrong pass phrase"
+			ret = json(Dict("result" => false, "message from Jetelina" => jmsg))
 		end
-
-		ret = json(Dict("result" => true, "tablename" => "$rettables", "message from Jetelina" => jmsg))
 	catch err
 		ret = json(Dict("result" => false, "tablename" => "$rettables", "errmsg" => "$err"))
 		JLog.writetoLogfile("PgDBController.dropTable() with $rettables error : $err")
@@ -1363,6 +1377,38 @@ function checkTheRoll(roll::String)
 		JLog.writetoLogfile("PgDBController.deleteUserAccount() with user $uid $key->$val error : $err")
 	finally
 		close_connection(conn)
+	end
+
+	return ret
+end
+"""
+function refStichWort(stichwort::String)
+
+	reference and matching with user_info->stichwort
+		
+# Arguments
+- `stichwort::String`: user input pass phrase
+- return: matching -> true, mismatching -> false
+"""
+function refStichWort(stichwort::String)
+	ret::Bool = false
+	uid::Integer = JSession.get()[2]
+	u = refUserInfo(uid,"stichwort",1) # 1->DataFrame
+	#===
+		Tips:
+			u[:,:stichwort][1] is to be "\"<something>\"".
+			then have to remove '"\', OK?
+	===#
+#	@info "refStichWort " u[:,:stichwort]
+	if !ismissing(u[:,:stichwort][1])
+		intable_stichwort = replace(u[:,:stichwort][1],"\"" => "")
+		if stichwort == intable_stichwort
+			ret = true
+		end
+	else
+		# go to register
+		updateUserInfo(uid,"stichwort",stichwort)
+		ret = true
 	end
 
 	return ret

@@ -25,6 +25,7 @@
 		updateUserLoginData(uid::Integer) update user login data if it succeeded to login
 		deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
 		createApiSelectSentence(json_d::Dict,mode::String) create API and SQL select sentence from posting data.
+		refStichWort(stichwort::String)	reference and matching with user_info->stichwort
 """
 
 module DBDataController
@@ -46,7 +47,7 @@ include("libs/postgres/PgSQLSentenceManager.jl")
 export init_Jetelina_table,
 	dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,
 	executeApi, userRegist, chkUserExistence, getUserInfoKeys, refUserAttribute, refUserInfo, updateUserInfo, updateUserData, deleteUserAccount,
-	createApiSelectSentence
+	createApiSelectSentence, refStichWort
 
 
 """
@@ -127,10 +128,10 @@ function dropTable(tableName::Vector)
 # Arguments
 - `tableName: Vector`: name of the tables
 """
-function dropTable(tableName::Vector)
+function dropTable(tableName::Vector,stichwort::String)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
-		ret = PgDBController.dropTable(tableName)
+		ret = PgDBController.dropTable(tableName,stichwort)
 		if ret[1]
 			# update SQL list
 			ApiSqlListManager.deleteTableFromlist(tableName)
@@ -437,6 +438,23 @@ function createApiSelectSentence(json_d::Dict, mode::String)
 	end
 
 	return ret
+end
+"""
+function refStichWort(stichwort::String)
+
+	reference and matching with user_info->stichwort
+
+# Arguments
+- `stichwort::String`: user input pass phrase
+- return: match -> true, mismatch -> false, fail -> error message
+"""
+function refStichWort(stichwort::String)
+	if j_config.JC["dbtype"] == "postgresql"
+		# Case in PostgreSQL
+		PgDBController.refStichWort(stichwort)
+	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "oracle"
+	end
 end
 
 end

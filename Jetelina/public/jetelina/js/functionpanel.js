@@ -706,7 +706,7 @@ const dropThisTable = (tables) => {
 
   if (loginuser.sw == null || loginuser.sw == "") {
     pd["pass"] = $(SOMETHINGINPUT).val();
-  }else{
+  } else {
     pd["pass"] = loginuser.sw;
   }
 
@@ -739,7 +739,7 @@ const dropThisTable = (tables) => {
     // 'pass' is authorized by Jetelina
     loginuser.sw = pd["pass"];
     showSomethingInputField(false);
-    showSomethingMsgPanel(false);    
+    showSomethingMsgPanel(false);
     typingControll(chooseMsg('success-msg', "", ""));
   }).fail(function (result) {
     checkResult(result);
@@ -1149,7 +1149,7 @@ const functionPanelFunctions = (ut) => {
           /* execute drop table and/or delete api,
              but 'pass phrase' is must item. 
           */
-          if (($(SOMETHINGINPUT).is(":visible") && 0<$(SOMETHINGINPUT).val().length) || (loginuser.sw != null && 0<loginuser.sw.length)) {
+          if (($(SOMETHINGINPUT).is(":visible") && 0 < $(SOMETHINGINPUT).val().length) || (loginuser.sw != null && 0 < loginuser.sw.length)) {
             if (isVisibleTableContainer) {
               let droptables = [];
               $(`${TABLECONTAINER} span`).filter('.deleteItem').each(function () {
@@ -1173,7 +1173,7 @@ const functionPanelFunctions = (ut) => {
                 deleteThisApi(deleteapis);
               }
             }
-          } 
+          }
 
           m = IGNORE;
         }
@@ -1474,7 +1474,7 @@ const deleteThisApi = (apis) => {
 
   if (loginuser.sw == null || loginuser.sw == "") {
     pd["pass"] = $(SOMETHINGINPUT).val();
-  }else{
+  } else {
     pd["pass"] = loginuser.sw;
   }
 
@@ -1493,22 +1493,28 @@ const deleteThisApi = (apis) => {
       return ret;
     }
   }).done(function (result, textStatus, jqXHR) {
-    for (let i = 0; i < apis.length; i++) {
-      $(`${APICONTAINER} span`).filter(function () {
-        if ($(this).text() === apis[i]) {
-          $(this).remove();
-          removeColumn(apis[i]);
-          cleanupContainers();
-          return;
-        }
-      });
+    let m = chooseMsg('success-msg', "", "");
+    if (result.result) {
+      for (let i = 0; i < apis.length; i++) {
+        $(`${APICONTAINER} span`).filter(function () {
+          if ($(this).text() === apis[i]) {
+            $(this).remove();
+            removeColumn(apis[i]);
+            cleanupContainers();
+            return;
+          }
+        });
+      }
+
+      // 'pass' is authorized by Jetelina
+      loginuser.sw = pd["pass"];
+      showSomethingInputField(false);
+      showSomethingMsgPanel(false);
+    }else{
+      m = result["message from Jetelina"];
     }
 
-    // 'pass' is authorized by Jetelina
-    loginuser.sw = pd["pass"];
-    showSomethingInputField(false);
-    showSomethingMsgPanel(false);
-    typingControll(chooseMsg('success-msg', "", ""));
+    typingControll(m);
   }).fail(function (result) {
     checkResult(result);
     console.error("deleteThisApi() faild: ", result);

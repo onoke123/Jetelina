@@ -119,8 +119,9 @@ function deleteTable()
 function deleteTable()
 	ret = ""
 	tableName::Vector = jsonpayload("tablename")
+	stichwort::String = jsonpayload("pass")
 	if !isnothing(tableName)
-		ret = DBDataController.dropTable(tableName)
+		ret = DBDataController.dropTable(tableName,stichwort)
 	end
 
 	return ret
@@ -359,13 +360,18 @@ function deleteApi()
 """
 function deleteApi()
 	apis::Vector = jsonpayload("apino")
+	stichwort = jsonpayload("pass")
 	jmsg::String = string("compliment me!")
 	retapis::String = join(apis,",") # ["a","b"] -> "a,b" oh ＼(^o^)／
 
-	if( ApiSqlListManager.deleteApiFromList(apis) )
-		ret = json(Dict("result" => true, "apiname" => "$retapis", "message from Jetelina" => jmsg))
+	if DBDataController.refStichWort(stichwort)
+		if( ApiSqlListManager.deleteApiFromList(apis) )
+			ret = json(Dict("result" => true, "apiname" => "$retapis", "message from Jetelina" => jmsg))
+		else
+			ret = json(Dict("result" => false, "apiname" => "$retapis", "errmsg" => "Oh my, plz ref log file"))
+		end
 	else
-		ret = json(Dict("result" => false, "apiname" => "$retapis", "errmsg" => "Oh my, plz ref log file"))
+		ret = json(Dict("result" => false, "message from Jetelina" => "wrong pass phrase"))
 	end
 end
 """
