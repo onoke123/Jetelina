@@ -103,7 +103,7 @@
 # basic commands in function panel
 #
 @jdic common-cancel-cmd:"cancel","withdraw","abandon","postpone","give up","quit"
-@jdic common-confirm-msg:"Sure?","Really?","Won't you regret?"
+@jdic common-confirm-msg:"Sure?","Really?","Do it now?"
 @jdic common-alert-msg:"Boo","no hit","could not make it"
 @jdic common-ajax-error-msg:"Oh my, something server error happened:"
 @jdic common-comand-duplicated-msg:"which do you point to {Q}","Oh oh,{Q},which one?","you makes me confuse, which one {Q}?"

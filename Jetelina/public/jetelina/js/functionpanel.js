@@ -315,12 +315,11 @@ const fileupload = () => {
       return ret;
     }
   }).done(function (result, textStatus, jqXHR) {
-    // clean up
-    //    $("input[type=file]").val("");
-    $(UPFILE).val("");
-    $("#upbtn").prop("disabled", false);
-
     if (checkResult(result)) {
+      // clean up
+      //    $("input[type=file]").val("");
+      $(UPFILE).val("");
+      $("#upbtn").prop("disabled", false);
       $(`${MYFORM} label span`).text("Upload CSV File");
 
       //refresh table list 
@@ -334,6 +333,8 @@ const fileupload = () => {
       if (isVisibleApiContainer()) {
         chatKeyDown(scenario["func-show-table-list-cmd"][0]);
       }
+
+      // clean up
     } else {
       // csv file format error
       typingControll(chooseMsg('func-csv-format-error-msg', "", ""));
@@ -347,6 +348,7 @@ const fileupload = () => {
     // release it for allowing to input new command in the chatbox 
     inprogress = false;
     $(FILEUP).removeClass("genelic_panel");
+    rejectCancelableCmdList(FILESELECTOROPEN);
   });
 }
 
@@ -725,22 +727,32 @@ const dropThisTable = (tables) => {
       return ret;
     }
   }).done(function (result, textStatus, jqXHR) {
-    for (let i = 0; i < tables.length; i++) {
-      $(`${TABLECONTAINER} span`).filter(function () {
-        if ($(this).text() === tables[i]) {
-          $(this).remove();
-          removeColumn(tables[i]);
-          cleanupContainers();
-          return;
-        }
-      });
+    let m = chooseMsg('success-msg', "", "");
+    if (result.result) {
+      for (let i = 0; i < tables.length; i++) {
+        $(`${TABLECONTAINER} span`).filter(function () {
+          if ($(this).text() === tables[i]) {
+            $(this).remove();
+            removeColumn(tables[i]);
+            cleanupContainers();
+            return;
+          }
+        });
+      }
+
+      // 'pass' is authorized by Jetelina
+      loginuser.sw = pd["pass"];
+      showSomethingInputField(false);
+      showSomethingMsgPanel(false);
+      rejectCancelableCmdList(TABLEAPIDELETE);
+      preferent.cmd = "";
+    } else {
+      m = result["message from Jetelina"];
+      // try again
+      $(SOMETHINGINPUT).focus();
     }
 
-    // 'pass' is authorized by Jetelina
-    loginuser.sw = pd["pass"];
-    showSomethingInputField(false);
-    showSomethingMsgPanel(false);
-    typingControll(chooseMsg('success-msg', "", ""));
+    typingControll(m);
   }).fail(function (result) {
     checkResult(result);
     console.error("dropThisTable() faild: ", result);
@@ -748,9 +760,6 @@ const dropThisTable = (tables) => {
   }).always(function () {
     // release it for allowing to input new command in the chatbox 
     inprogress = false;
-    // delete from the list
-    rejectCancelableCmdList(TABLEAPIDELETE);
-
   });
 }
 /**
@@ -845,6 +854,7 @@ const postSelectedColumns = (mode) => {
       $(`${CONTAINERPANEL} .selectedItem`).remove();
       //      cleanUp("items");
       cleanupItems4Switching();// clear(=close) opened table items. defined in jetelinalib.js
+      rejectCancelableCmdList(SELECTITEM);
     }
   });
 }
@@ -911,10 +921,11 @@ const functionPanelFunctions = (ut) => {
 
     if (inScenarioChk(ut, 'func-tabledrop-cmd')) {
       cmd = TABLEAPIDELETE;
+      preferent.cmd = cmd;
       cmdCandidates.push("drop table");
-
     } else if (inScenarioChk(ut, 'func-apidelete-cmd')) {
       cmd = TABLEAPIDELETE;
+      preferent.cmd = cmd;
       cmdCandidates.push("delete api");
     }
 
@@ -1150,26 +1161,26 @@ const functionPanelFunctions = (ut) => {
              but 'pass phrase' is must item. 
           */
           if (($(SOMETHINGINPUT).is(":visible") && 0 < $(SOMETHINGINPUT).val().length) || (loginuser.sw != null && 0 < loginuser.sw.length)) {
-            if (isVisibleTableContainer) {
+            if (isVisibleTableContainer()) {
               let droptables = [];
               $(`${TABLECONTAINER} span`).filter('.deleteItem').each(function () {
                 droptables.push($(this).text());
               });
 
               if (0 < droptables.length) {
-                preferent.cmd = "";
+                //                preferent.cmd = "";
                 dropThisTable(droptables);
               }
             }
 
-            if (isVisibleApiContainer) {
+            if (isVisibleApiContainer()) {
               let deleteapis = [];
               $(`${APICONTAINER} span`).filter('.deleteItem').each(function () {
                 deleteapis.push($(this).text());
               });
 
               if (0 < deleteapis.length) {
-                preferent.cmd = "";
+                //                preferent.cmd = "";
                 deleteThisApi(deleteapis);
               }
             }
@@ -1293,13 +1304,17 @@ const functionPanelFunctions = (ut) => {
       if (inCancelableCmdList([TABLEAPIDELETE])) {
         // if api test result panel is openend yet
         if (isVisibleApiContainer()) {
-          showApiTestPanel(false);
+          //          showApiTestPanel(false);
         }
 
         if (isVisibleApiContainer()) {
+          // if api test result panel is openend yet
+          showApiTestPanel(false);
           // cleanup the screen
           cleanupItems4Switching();
           cleanupContainers();
+          showSomethingInputField(false);
+          showSomethingMsgPanel(false);
           rejectCancelableCmdList(TABLEAPIDELETE);
           m = chooseMsg('cancel-msg', "", "");
         } else {
@@ -1510,8 +1525,12 @@ const deleteThisApi = (apis) => {
       loginuser.sw = pd["pass"];
       showSomethingInputField(false);
       showSomethingMsgPanel(false);
-    }else{
+      rejectCancelableCmdList(TABLEAPIDELETE);
+      preferent.cmd = "";
+    } else {
       m = result["message from Jetelina"];
+      // try again
+      $(SOMETHINGINPUT).focus();
     }
 
     typingControll(m);
@@ -1522,8 +1541,6 @@ const deleteThisApi = (apis) => {
   }).always(function () {
     // release it for allowing to input new command in the chatbox 
     inprogress = false;
-    // delete from the list
-    rejectCancelableCmdList(TABLEAPIDELETE);
   });
 }
 /**

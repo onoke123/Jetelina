@@ -970,6 +970,7 @@ const chatKeyDown = (cmd) => {
                             rejectCancelableCmdList(CONFIGCHANGE);
                             rejectCancelableCmdList(USERMANAGE);
                             showSomethingInputField(false);
+                            showSomethingMsgPanel(false);
                             m = chooseMsg("cancel-msg", "", "");
                         }
 
@@ -1211,6 +1212,7 @@ const logout = () => {
     preferent = {};
     presentaction = {};
     loginuser = {};
+    cancelableCmdList = [];
 
     deleteSelectedItems();
     cleanUp("items");
