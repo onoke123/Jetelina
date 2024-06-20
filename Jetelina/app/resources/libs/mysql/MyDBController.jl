@@ -1,10 +1,10 @@
 """
-module: PgDBController
+module: MyDBController
 
 Author: Ono keiji
 
 Description:
-	DB controller for PostgreSQL
+	DB controller for MySQL
 
 functions
 	create_jetelina_tables() create 'jetelina_table_manager' table.
@@ -36,17 +36,17 @@ functions
 	checkTheRoll(roll::String) check the ordered user's authority in order to 'roll'.
 	refStichWort(stichwort::String)	reference and matching with user_info->stichwort
 """
-module PgDBController
+module MyDBController
 
 using Genie, Genie.Renderer, Genie.Renderer.Json
-using CSV, LibPQ, DataFrames, IterTools, Tables, Dates
+using CSV, MySQL, DataFrames, IterTools, Tables, Dates
 using Jetelina.JFiles, Jetelina.JLog, Jetelina.ApiSqlListManager, Jetelina.JMessage, Jetelina.JSession
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-include("PgDataTypeList.jl")
-include("PgSQLSentenceManager.jl")
+include("MyDataTypeList.jl")
+include("MySQLSentenceManager.jl")
 
 export create_jetelina_table, create_jetelina_id_sequence, open_connection, close_connection, readJetelinatable,
 	getTableList, getJetelinaSequenceNumber, insert2JetelinaTableManager, dataInsertFromCSV, dropTable, getColumns,
@@ -65,7 +65,7 @@ function create_jetelina_table
 			   a column moved to other table, for example table_A.age and table_B.sex were united to as table_C, then
 			   *.age and *.sex should be table_C.age and table_C.sex, but maybe needed their origins when they are 
 			   updated and/or insert, I am not sure.
-			   In PostgreSQL, this table has been deprecated because of hiring 'incremental materialized view' system.
+			   In MySQL, this table has been deprecated because of hiring 'incremental materialized view' system.
 			   I would like to leave this function as a reference func when have a chance similar function for other DB systems.
 """
 function create_jetelina_table()
@@ -78,7 +78,7 @@ function create_jetelina_table()
 	try
 		execute(conn, create_jetelina_table_manager_str)
 	catch err
-		JLog.writetoLogfile("PgDBController.create_jetelina_table() error: $err")
+		JLog.writetoLogfile("MyDBController.create_jetelina_table() error: $err")
 	finally
 		close_connection(conn)
 	end
@@ -98,13 +98,13 @@ function create_jetelina_id_sequence()
 	"""
 	===#
 	jetelina_id_sequence = """
-		create sequence jetelina_sql_sequence;create sequence jetelina_user_id_sequence;
+		create sequence create sequence jetelina_sql_sequence;create sequence jetelina_user_id_sequence;
 	"""
 	conn = open_connection()
 	try
 		execute(conn, jetelina_id_sequence)
 	catch err
-		JLog.writetoLogfile("PgDBController.create_jetelina_id_sequence() error: $err")
+		JLog.writetoLogfile("MyDBController.create_jetelina_id_sequence() error: $err")
 	finally
 		close_connection(conn)
 	end
@@ -127,7 +127,19 @@ function open_connection()
 		"' sslmode='", j_config.JC["pg_sslmode"],
 		"' dbname='", j_config.JC["pg_dbname"], "'")
 
-	return conn = LibPQ.Connection(con_str)
+	con_str = string("MySQL.Connection",
+		"host='","localhost",
+		"' user='","root", 
+		"' passwd='","", 
+		"' db='","mysql", 
+		"' port='",3306, 
+		"  unix_socket=API.MYSQL_DEFAULT_SOCKET", 
+		"  client_flag=API.CLIENT_MULTI_STATEMENTS")
+
+		@info "con_str " con_str
+	DBInterface.connect(con_str)
+	
+	#return conn = LibPQ.Connection(con_str)
 end
 
 """
@@ -162,14 +174,14 @@ function readJetelinatable()
 	try
 		global Df_JetelinaTableManager = DataFrame(columntable(LibPQ.execute(conn, sql)))
 	catch err
-		JLog.writetoLogfile("PgDBController.readJetelinatable() error: $err")
+		JLog.writetoLogfile("MyDBController.readJetelinatable() error: $err")
 		return false
 	finally
 		close_connection(conn)
 	end
 
 	if j_config.JC["debug"]
-		@info "PgDBController.readJetelinatable() Df_JetelinaTableManager: " Df_JetelinaTableManager
+		@info "MyDBController.readJetelinatable() Df_JetelinaTableManager: " Df_JetelinaTableManager
 	end
 
 	return true
@@ -213,7 +225,7 @@ function _getTableList()
 		# do not include 'jetelina_table_manager and usertable in the return
 		DataFrames.filter!(row -> row.tablename != "jetelina_table_manager" && row.tablename != "jetelina_user_table", df)
 	catch err
-		JLog.writetoLogfile("PgDBController._getTableList() error: $err")
+		JLog.writetoLogfile("MyDBController._getTableList() error: $err")
 		return DataFrame() # return empty DataFrame if got fail
 	finally
 		close_connection(conn)
@@ -236,7 +248,7 @@ function getJetelinaSequenceNumber(t::Integer)
 	try
 		ret = _getJetelinaSequenceNumber(conn, t)
 	catch err
-		JLog.writetoLogfile("PgDBController.getJetelinaSequenceNumber() error: $err")
+		JLog.writetoLogfile("MyDBController.getJetelinaSequenceNumber() error: $err")
 	finally
 		close_connection(conn)
 	end
@@ -309,7 +321,7 @@ function insert2JetelinaTableManager(tableName::String, columns::Array)
 			values_str = "'$jetelina_table_id','$tableName','$c'"
 
 			if j_config.JC["debug"]
-				@info "PgDBController.insert2JetelinaTableManager() insert str:" values_str
+				@info "MyDBController.insert2JetelinaTableManager() insert str:" values_str
 			end
 
 			insert_str = """
@@ -318,7 +330,7 @@ function insert2JetelinaTableManager(tableName::String, columns::Array)
 			execute(conn, insert_str)
 		end
 	catch err
-		JLog.writetoLogfile("PgDBController.insert2JetelinaTableManager() error: $err")
+		JLog.writetoLogfile("MyDBController.insert2JetelinaTableManager() error: $err")
 		return false
 	finally
 		close_connection(conn)
@@ -439,7 +451,7 @@ function dataInsertFromCSV(fname::String)
 	end
 
 	if j_config.JC["debug"]
-		@info "PgDBController.dataInsertFromCSV() col str to create table: " column_str
+		@info "MyDBController.dataInsertFromCSV() col str to create table: " column_str
 	end
 
 	#===
@@ -466,7 +478,7 @@ function dataInsertFromCSV(fname::String)
 	catch err
 		close_connection(conn)
 		ret = json(Dict("result" => false, "filename" => "$fname", "errmsg" => "$err"))
-		JLog.writetoLogfile("PgDBController.dataInsertFromCSV() with $fname error : $err")
+		JLog.writetoLogfile("MyDBController.dataInsertFromCSV() with $fname error : $err")
 		return ret
 	finally
 		# do not close the connection because of resuming below yet.
@@ -497,7 +509,7 @@ function dataInsertFromCSV(fname::String)
 	catch err
 		#            println(err)
 		ret = json(Dict("result" => false, "filename" => "$fname", "errmsg" => "$err"))
-		JLog.writetoLogfile("PgDBController.dataInsertFromCSV() with $fname error : $err")
+		JLog.writetoLogfile("MyDBController.dataInsertFromCSV() with $fname error : $err")
 		return ret
 	finally
 		# ok. close the connection finally
@@ -575,7 +587,7 @@ function dropTable(tableName::Vector,stichwort::String)
 		end
 	catch err
 		ret = json(Dict("result" => false, "tablename" => "$rettables", "errmsg" => "$err"))
-		JLog.writetoLogfile("PgDBController.dropTable() with $rettables error : $err")
+		JLog.writetoLogfile("MyDBController.dropTable() with $rettables error : $err")
 		return false, ret
 	finally
 		close_connection(conn)
@@ -613,7 +625,7 @@ function getColumns(tableName::String)
 		ret = json(Dict("result" => true, "tablename" => "$tableName", "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
 	catch err
 		ret = json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err"))
-		JLog.writetoLogfile("PgDBController.getColumns() with $tableName error : $err")
+		JLog.writetoLogfile("MyDBController.getColumns() with $tableName error : $err")
 	finally
 		close_connection(conn)
 	end
@@ -700,7 +712,7 @@ function _executeApi(apino::String, sql_str::String)
 			ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
 		end
 	catch err
-		JLog.writetoLogfile("PgDBController.executeApi() with $apino : $sql_str error : $err")
+		JLog.writetoLogfile("MyDBController.executeApi() with $apino : $sql_str error : $err")
 		ret = json(Dict("result" => false, "apino" => "$apino", "errmsg" => "$err"))
 	finally
 		# close the connection finally
@@ -780,7 +792,7 @@ function doSelect(sql::String, mode::String)
 
 		return json(Dict("result" => true, "message from Jetelina" => jmsg, "Jetelina" => copy.(eachrow(df))))
 	catch err
-		JLog.writetoLogfile("PgDBController.doSelect() with $mode $sql error : $err")
+		JLog.writetoLogfile("MyDBController.doSelect() with $mode $sql error : $err")
 		return false, err
 	finally
 		# close the connection finally
@@ -864,7 +876,7 @@ function create_jetelina_user_table()
 	try
 		execute(conn, create_jetelina_user_table_str)
 	catch err
-		JLog.writetoLogfile("PgDBController.create_jetelina_user_table() error: $err")
+		JLog.writetoLogfile("MyDBController.create_jetelina_user_table() error: $err")
 	finally
 		close_connection(conn)
 	end
@@ -915,7 +927,7 @@ function userRegist(username::String)
 		ret = json(Dict("result" => true, "message from Jetelina" => jmsg))
 	catch err
 		ret = json(Dict("result" => false, "username" => "$username", "errmsg" => "$err"))
-		JLog.writetoLogfile("PgDBController.userRegist() with $username error : $err")
+		JLog.writetoLogfile("MyDBController.userRegist() with $username error : $err")
 	finally
 		close_connection(conn)
 	end
@@ -1001,7 +1013,7 @@ function chkUserExistence(s::String)
 	catch err
 		#		ret = json(Dict("result" => false, "errmsg" => "$err"))
 		ret = Dict("result" => false, "errmsg" => "$err")
-		JLog.writetoLogfile("PgDBController.chkUserExistence() with $s error : $err")
+		JLog.writetoLogfile("MyDBController.chkUserExistence() with $s error : $err")
 	finally
 		close_connection(conn)
 	end
@@ -1036,7 +1048,7 @@ function getUserInfoKeys(uid::Integer)
 		ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
 	catch err
 		ret = json(Dict("result" => false, "errmsg" => "$err"))
-		JLog.writetoLogfile("PgDBController.getUserInfoKeys() with $s error : $err")
+		JLog.writetoLogfile("MyDBController.getUserInfoKeys() with $s error : $err")
 	finally
 		close_connection(conn)
 	end
@@ -1086,7 +1098,7 @@ function refUserAttribute(uid::Integer, key::String, val, rettype::Integer)
 		end
 	catch err
 		ret = json(Dict("result" => false, "errmsg" => "$err"))
-		JLog.writetoLogfile("PgDBController.refUserAttribute() with user $uid $key->$val error : $err")
+		JLog.writetoLogfile("MyDBController.refUserAttribute() with user $uid $key->$val error : $err")
 	finally
 		close_connection(conn)
 	end
@@ -1139,7 +1151,7 @@ function updateUserInfo(uid::Integer, key::String, value)
 		ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
 	catch err
 		ret = json(Dict("result" => false, "errmsg" => "$err"))
-		JLog.writetoLogfile("PgDBController.updateUserInfo() with user $uid $key->$val error : $err")
+		JLog.writetoLogfile("MyDBController.updateUserInfo() with user $uid $key->$val error : $err")
 	finally
 		close_connection(conn)
 	end
@@ -1180,7 +1192,7 @@ function refUserInfo(uid::Integer, key::String, rettype::Integer)
 		end
 	catch err
 		ret = json(Dict("result" => false, "errmsg" => "$err"))
-		JLog.writetoLogfile("PgDBController.refUserInfo() with user $uid $key error : $err")
+		JLog.writetoLogfile("MyDBController.refUserInfo() with user $uid $key error : $err")
 	finally
 		close_connection(conn)
 	end
@@ -1222,7 +1234,7 @@ function updateUserData(uid::Integer, key::String, value)
 		ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
 	catch err
 		ret = json(Dict("result" => false, "errmsg" => "$err"))
-		JLog.writetoLogfile("PgDBController.updateUserData() with user $uid $key->$val error : $err")
+		JLog.writetoLogfile("MyDBController.updateUserData() with user $uid $key->$val error : $err")
 	finally
 		close_connection(conn)
 	end
@@ -1276,7 +1288,7 @@ function updateUserLoginData(uid::Integer)
 
 	catch err
 		ret = false
-		JLog.writetoLogfile("PgDBController.updateUserLoginData() with user $uid error : $err")
+		JLog.writetoLogfile("MyDBController.updateUserLoginData() with user $uid error : $err")
 	finally
 		close_connection(conn)
 	end
@@ -1308,7 +1320,7 @@ function deleteUserAccount(uid::Integer)
 		ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
 	catch err
 		ret = json(Dict("result" => false, "errmsg" => "$err"))
-		JLog.writetoLogfile("PgDBController.deleteUserAccount() with user $uid $key->$val error : $err")
+		JLog.writetoLogfile("MyDBController.deleteUserAccount() with user $uid $key->$val error : $err")
 	finally
 		close_connection(conn)
 	end
@@ -1374,7 +1386,7 @@ function checkTheRoll(roll::String)
 		end
 		
 	catch err
-		JLog.writetoLogfile("PgDBController.deleteUserAccount() with user $uid $key->$val error : $err")
+		JLog.writetoLogfile("MyDBController.deleteUserAccount() with user $uid $key->$val error : $err")
 	finally
 		close_connection(conn)
 	end
