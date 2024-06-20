@@ -10,7 +10,7 @@ functions
 	create_jetelina_tables() create 'jetelina_table_manager' table.
 	create_jetelina_id_sequence() create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
 	open_connection() open connection to the DB.
-	close_connection(conn::LibPQ.Connection)  close the DB connection
+	close_connection(conn::DBInterface.Connection)  close the DB connection
 	readJetelinatable() read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame 
 	getTableList(s::String) get all table name from public 'schemaname'
 	getJetelinaSequenceNumber(t::Integer) get seaquence number from jetelina_id table
@@ -76,7 +76,7 @@ function create_jetelina_table()
 	"""
 	conn = open_connection()
 	try
-		execute(conn, create_jetelina_table_manager_str)
+		DBInterface.execute(conn, create_jetelina_table_manager_str)
 	catch err
 		JLog.writetoLogfile("MyDBController.create_jetelina_table() error: $err")
 	finally
@@ -87,22 +87,16 @@ end
 """
 function create_jetelina_id_sequence()
 
-	create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
+	create 'jetelina_sql_sequence' and 'jetelina_user_id_sequence' table as sequence.
 
-	jetelina_table_id is deprecated
 """
 function create_jetelina_id_sequence()
-	#===
 	jetelina_id_sequence = """
-		create sequence jetelina_table_id_sequence;create sequence jetelina_sql_sequence;create sequence jetelina_user_id_sequence;
-	"""
-	===#
-	jetelina_id_sequence = """
-		create sequence create sequence jetelina_sql_sequence;create sequence jetelina_user_id_sequence;
+		create table jetelina_user_id_sequence (id int not null auto_increment primary key) engine=myisam; create table jetelina_sql_sequence (id int not null auto_increment primary key) engine=myisam;
 	"""
 	conn = open_connection()
 	try
-		execute(conn, jetelina_id_sequence)
+		DBInterface.execute(conn, jetelina_id_sequence)
 	catch err
 		JLog.writetoLogfile("MyDBController.create_jetelina_id_sequence() error: $err")
 	finally
@@ -117,7 +111,7 @@ function open_connection()
 	connection parameters are set by global variables.
 
 # Arguments
-- return: LibPQ.Connection object
+- return: DBInterface.Connection object
 """
 function open_connection()
 	con_str = string("host='", j_config.JC["pg_host"],
@@ -127,17 +121,11 @@ function open_connection()
 		"' sslmode='", j_config.JC["pg_sslmode"],
 		"' dbname='", j_config.JC["pg_dbname"], "'")
 
-	con_str = string("MySQL.Connection",
-		"host='","localhost",
-		"' user='","root", 
-		"' passwd='","", 
-		"' db='","mysql", 
-		"' port='",3306, 
-		"  unix_socket=API.MYSQL_DEFAULT_SOCKET", 
-		"  client_flag=API.CLIENT_MULTI_STATEMENTS")
+	con_str = """
+		"localhost","user","userpasswd",db="mysql",port=3306,unix_socket="/var/run/mysqld/mysqld.sock"
+	"""
 
-		@info "con_str " con_str
-	DBInterface.connect(con_str)
+	return DBInterface.connect(MySQL.Connection,"localhost","user","userpasswd",db="mysql",port=3306,unix_socket="/var/run/mysqld/mysqld.sock")
 	
 	#return conn = LibPQ.Connection(con_str)
 end
@@ -150,7 +138,7 @@ function close_connection(conn::LibPQ.Connection)
 # Arguments
 - `conn:LibPQ.Connection`: LibPQ.Connection object
 """
-function close_connection(conn::LibPQ.Connection)
+function close_connection(conn::DBInterface.Connection)
 	close(conn)
 end
 
@@ -172,7 +160,7 @@ function readJetelinatable()
 	"""
 	conn = open_connection()
 	try
-		global Df_JetelinaTableManager = DataFrame(columntable(LibPQ.execute(conn, sql)))
+		global Df_JetelinaTableManager = DataFrame(columntable(DBInterface.execute(conn, sql)))
 	catch err
 		JLog.writetoLogfile("MyDBController.readJetelinatable() error: $err")
 		return false
@@ -221,7 +209,7 @@ function _getTableList()
 	# Fixing as 'public' in schemaname. This is the protocol.
 	table_str = """select tablename from pg_tables where schemaname='public'"""
 	try
-		df = DataFrame(columntable(LibPQ.execute(conn, table_str)))
+		df = DataFrame(columntable(DBInterface.execute(conn, table_str)))
 		# do not include 'jetelina_table_manager and usertable in the return
 		DataFrames.filter!(row -> row.tablename != "jetelina_table_manager" && row.tablename != "jetelina_user_table", df)
 	catch err
@@ -257,7 +245,7 @@ function getJetelinaSequenceNumber(t::Integer)
 end
 
 """
-function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer)
+function _getJetelinaSequenceNumber(conn::DBInterface.Connection, t::Integer)
 
 	get seaquence number from jetelina_table_id_sequence or jetelina_sql_sequence or jetelina_user_id_sequence, but this is a private function.
 	this function will never get fail, expectedly.:-P
@@ -269,7 +257,7 @@ function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer)
 - `t: Integer`  : type order  0-> jetelina_table_id_sequence, 1-> jetelian_sql_sequence 2->jetelina_user_id_sequence
 - return:Integer: sequence number 
 """
-function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer)
+function _getJetelinaSequenceNumber(conn::DBInterface.Connection, t::Integer)
 	sql = ""
 
 	if t == 0
@@ -492,7 +480,7 @@ function dataInsertFromCSV(fname::String)
 			*
 		from $tableName
 		"""
-	df0 = DataFrame(columntable(LibPQ.execute(conn, sql)))
+	df0 = DataFrame(columntable(DBInterface.execute(conn, sql)))
 	rename!(lowercase, df0)
 	cols = map(x -> x, names(df0))
 	select!(df, cols)
@@ -502,7 +490,7 @@ function dataInsertFromCSV(fname::String)
 		join((ismissing(x) ? "null" : x for x in row), ",") * "\n"
 	end
 
-	copyin = LibPQ.CopyIn("COPY $tableName FROM STDIN (FORMAT CSV);", row_strings)
+	copyin = DBInterface.CopyIn("COPY $tableName FROM STDIN (FORMAT CSV);", row_strings)
 	try
 		execute(conn, copyin)
 		ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
@@ -618,7 +606,7 @@ function getColumns(tableName::String)
 		"""
 	conn = open_connection()
 	try
-		df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+		df = DataFrame(columntable(DBInterface.execute(conn, sql)))
 		cols = map(x -> x, names(df))
 		select!(df, cols)
 
@@ -673,7 +661,7 @@ function _executeApi(apino::String, sql_str::String)
 
 	conn = open_connection()
 	try
-		sql_ret = LibPQ.execute(conn, sql_str)
+		sql_ret = DBInterface.execute(conn, sql_str)
 		#===
 			Tips:
 				case in insert/update/delete, we cannot see if it got success or not by .execute().
@@ -682,7 +670,7 @@ function _executeApi(apino::String, sql_str::String)
 					in update/delete -> 0: swing and miss
 									 -> 1: hit the ball
 		===#
-		affected_ret = LibPQ.num_affected_rows(sql_ret)
+		affected_ret = DBInterface.num_affected_rows(sql_ret)
 		jmsg::String = string("compliment me!")
 
 		if startswith(apino, "js")
@@ -749,7 +737,7 @@ function doSelect(sql::String, mode::String)
 			exetime = []
 			looptime = 10
 			for loop in 1:looptime
-				stats = @timed z = LibPQ.execute(conn, sql)
+				stats = @timed z = DBInterface.execute(conn, sql)
 				push!(exetime, stats.time)
 			end
 
@@ -775,7 +763,7 @@ function doSelect(sql::String, mode::String)
 		#*		result = LibPQ.execute(conn, sql)
 		#*		vector_data = [convert(Vector,col) for col in Tables.columns(result)]
 		#*		df = DataFrame(vector_data,:auto)
-		df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+		df = DataFrame(columntable(DBInterface.execute(conn, sql)))
 		jmsg::String = ""
 
 		if parse(Int, j_config.JC["selectlimit"]) < nrow(df)
@@ -785,7 +773,7 @@ function doSelect(sql::String, mode::String)
 				#*				result = LibPQ.execute(conn, sql)
 				#*				vector_data = [convert(Vector,col) for col in Tables.columns(result)]
 				#*				df = DataFrame(vector_data,:auto)
-				df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+				df = DataFrame(columntable(DBInterface.execute(conn, sql)))
 				jmsg = "this return is limited in 10 because the true result is $dfmax"
 			end
 		end
@@ -984,7 +972,7 @@ function chkUserExistence(s::String)
 
 	conn = open_connection()
 	try
-		df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+		df = DataFrame(columntable(DBInterface.execute(conn, sql)))
 		#==
 			Tips:
 				every expression is fine, but take care of the data type
@@ -1044,7 +1032,7 @@ function getUserInfoKeys(uid::Integer)
 	"""
 	conn = open_connection()
 	try
-		df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+		df = DataFrame(columntable(DBInterface.execute(conn, sql)))
 		ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
 	catch err
 		ret = json(Dict("result" => false, "errmsg" => "$err"))
@@ -1085,7 +1073,7 @@ function refUserAttribute(uid::Integer, key::String, val, rettype::Integer)
 	"""
 	conn = open_connection()
 	try
-		df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+		df = DataFrame(columntable(DBInterface.execute(conn, sql)))
 		if 0 < nrow(df)
 			# match the info
 			result = true
@@ -1179,7 +1167,7 @@ function refUserInfo(uid::Integer, key::String, rettype::Integer)
 	"""
 	conn = open_connection()
 	try
-		df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+		df = DataFrame(columntable(DBInterface.execute(conn, sql)))
 		if 0 < nrow(df)
 			result = true
 			jmsg = "complement me"
@@ -1264,7 +1252,7 @@ function updateUserLoginData(uid::Integer)
 			select cast(logindate as date) - cast(now() as date) from jetelina_user_table where user_id=$uid;
 		"""
 
-		df = DataFrame(columntable(LibPQ.execute(conn, complogindate)))
+		df = DataFrame(columntable(DBInterface.execute(conn, complogindate)))
 		if !ismissing(df[:, 1][1])
 			if df[:, 1][1] == 0
 				# update only logindate because multi login at same date
@@ -1354,7 +1342,7 @@ function checkTheRoll(roll::String)
 	"""
 	conn = open_connection()
 	try
-		df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+		df = DataFrame(columntable(DBInterface.execute(conn, sql)))
 		if !ismissing(df[:, :generation][1]) && !ismissing(df[:, :logincount][1])
 			generation = df[:, :generation][1]
 			logincount = df[:, :logincount][1]
