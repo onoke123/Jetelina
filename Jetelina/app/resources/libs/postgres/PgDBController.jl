@@ -98,7 +98,7 @@ function create_jetelina_id_sequence()
 	"""
 	===#
 	jetelina_id_sequence = """
-		create sequence create sequence jetelina_sql_sequence;create sequence jetelina_user_id_sequence;
+		create sequence jetelina_sql_sequence;create sequence jetelina_user_id_sequence;
 	"""
 	conn = open_connection()
 	try
