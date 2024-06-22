@@ -7,13 +7,13 @@ Description:
 	DB controller for MySQL
 
 functions
-	create_jetelina_tables() create 'jetelina_table_manager' table.
-	create_jetelina_id_sequence() create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
-	open_connection() open connection to the DB.
-	close_connection(conn::DBInterface.Connection)  close the DB connection
+	x6/20 create_jetelina_tables() create 'jetelina_table_manager' table.
+	x6/20 create_jetelina_id_sequence() create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
+	x6/20 open_connection() open connection to the DB.
+	x6/20 close_connection(conn::DBInterface.Connection)  close the DB connection
 	readJetelinatable() read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame 
 	getTableList(s::String) get all table name from public 'schemaname'
-	getJetelinaSequenceNumber(t::Integer) get seaquence number from jetelina_id table
+	x6/22 getJetelinaSequenceNumber(t::Integer) get seaquence number from jetelina_id table
 	insert2JetelinaTableManager(tableName::String, columns::Array) insert columns of 'tableName' into Jetelina_table_manager  
 	dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
 	dropTable(tableName::Vector) drop the tables and delete its related data from jetelina_table_manager table
@@ -22,17 +22,17 @@ functions
 	_executeApi(apino::String, sql_str::String) execute API with creating SQL sentence,this is a private function that is called by executeApi()
 	doSelect(sql::String,mode::String) execute select data by ordering sql sentence, but get sql execution time of ordered sql if 'mode' is 'measure'.
 	measureSqlPerformance() measure exectution time of all listed sql sentences. then write it out to JC["sqlperformancefile"].
-	create_jetelina_user_table() create 'jetelina_table_user_table' table.
-	userRegist(username::String) register a new user
-	getUserData(s::String) get jetelina user data by ordering 's'.	
-	chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
+	x6/21 create_jetelina_user_table() create 'jetelina_table_user_table' table.
+	x6/22 userRegist(username::String) register a new user
+	x6/22 getUserData(s::String) get jetelina user data by ordering 's'.	
+	x6/22 chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
 	getUserInfoKeys(uid::Integer) get "user_info" column key data.
 	refUserAttribute(uid::Integer, key::String, val, rettype::Integer) inquiring user_info data 
 	updateUserInfo(uid::Integer,key::String,value) update user data (jetelina_user_table.user_info)
 	refUserInfo(uid::Integer,key::String,rettype::Integer)	simple inquiring user_info data 
 	updateUserData(uid::Integer,key::String,value) update user data, exept jsonb column
 	updateUserLoginData(uid::Integer) update user login data if it succeeded to login
-	deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
+	x6/21 deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
 	checkTheRoll(roll::String) check the ordered user's authority in order to 'roll'.
 	refStichWort(stichwort::String)	reference and matching with user_info->stichwort
 """
@@ -92,7 +92,7 @@ function create_jetelina_id_sequence()
 """
 function create_jetelina_id_sequence()
 	jetelina_id_sequence = """
-		create table jetelina_user_id_sequence (id int not null auto_increment primary key) engine=myisam; create table jetelina_sql_sequence (id int not null auto_increment primary key) engine=myisam;
+		create table jetelina_user_id_sequence (id int not null auto_increment primary key) engine=myisam; create table jetelina_sql_sequence (id int not null auto_increment primary key) engine=myisam;insert into jetelina_user_id_sequence values(0);insert into jetelina_sql_sequence values(0);
 	"""
 	conn = open_connection()
 	try
@@ -267,25 +267,24 @@ function _getJetelinaSequenceNumber(conn::DBInterface.Connection, t::Integer)
 				"""
 		===#
 	elseif t == 1
-		sql = """
-			select nextval('jetelina_sql_sequence');
-		"""
+		DBInterface.execute(conn,"update jetelina_sql_sequence set id=last_insert_id(id+1);")		
+		sql = """select last_insert_id() as id;"""
 	elseif t == 2
-		sql = """
-			select nextval('jetelina_user_id_sequence');
-		"""
+		DBInterface.execute(conn,"update jetelina_user_id_sequence set id=last_insert_id(id+1);")		
+		sql = """select last_insert_id() as id;"""
 	end
 
-	sequence_number = columntable(execute(conn, sql))
-
+	sequence_number = columntable(DBInterface.execute(conn, sql))
 	#===
 		Tips:
 		this sequence_number is a type of Union{Missing,Int64}{51} for example.
 		wanted nextval() is {51}, then 
 			sequence_number[1] -> Union{Int64}[51]
 			sequence_number[1][1] -> 51
+
+		sequence_number is Vector{UInt64}(id = UInt64[0x0000000000000003],)
 	===#
-	return sequence_number[1][1]
+	return signed(sequence_number[1][1])
 end
 
 """
@@ -852,9 +851,9 @@ function create_jetelina_user_table()
 			username varchar(256),
 			nickname varchar(256),
 			logincount integer not null default 0,
-			logindate timestamp with time zone,
-			logoutdate timestamp with time zone,
-			user_info jsonb,
+			logindate timestamp,
+			logoutdate timestamp,
+			user_info json,
 			generation integer not null default 10,
 			jetelina_delete_flg integer default 0
 		);
@@ -862,7 +861,7 @@ function create_jetelina_user_table()
 
 	conn = open_connection()
 	try
-		execute(conn, create_jetelina_user_table_str)
+		DBInterface.execute(conn, create_jetelina_user_table_str)
 	catch err
 		JLog.writetoLogfile("MyDBController.create_jetelina_user_table() error: $err")
 	finally
@@ -897,21 +896,15 @@ function userRegist(username::String)
 	j = existentuserdata["Jetelina"][1]
 	parentGeneration = j[:generation]
 	thisuserGeneration = parentGeneration + 1 # to make easy understand
-	insert_basic_st = """
-		insert into jetelina_user_table (user_id,username,generation) values($user_id,'$username','$thisuserGeneration');
-	"""
-
 	inviterId = JSession.get()[2]
 	registerDate = Dates.format(now(), "yyyy-mm-dd HH:MM:SS")
-
-	insert_additional_st = """
-		update jetelina_user_table set user_info = '{"register_date":"$registerDate","inviter":$inviterId}' where user_id=$user_id;
+	insert_basic_st = """
+		insert into jetelina_user_table (user_id,username,user_info,generation) values($user_id,'$username','{"register_date":"$registerDate","inviter":$inviterId}','$thisuserGeneration');
 	"""
 
 	conn = open_connection()
 	try
-		execute(conn, insert_basic_st)
-		execute(conn, insert_additional_st)
+		DBInterface.execute(conn, insert_basic_st)
 		ret = json(Dict("result" => true, "message from Jetelina" => jmsg))
 	catch err
 		ret = json(Dict("result" => false, "username" => "$username", "errmsg" => "$err"))
@@ -1161,9 +1154,19 @@ function refUserInfo(uid::Integer, key::String, rettype::Integer)
 	ret = ""
 	result = false
 	jmsg::String = "no data, try again."
-
+#===
 	sql = """   
 		select user_info->'$key' as $key from jetelina_user_table where user_id=$uid;
+	"""
+===#
+	#===
+		Tips:
+			"$." expression expect after $ in string.
+			therefore make escape it. 
+			and both json and dataframe treat "stichwort" as "json_extract(....)", that is the reason why "as". 
+	===#
+	sql = """
+		select json_extract(user_info,'\$.$key') as stichwort from jetelina_user_table where user_id=$uid;
 	"""
 	conn = open_connection()
 	try
@@ -1302,7 +1305,7 @@ function deleteUserAccount(uid::Integer)
 	"""
 	conn = open_connection()
 	try
-		execute(conn, sql)
+		DBInterface.execute(conn, sql)
 
 		jmsg = """See you someday"""
 		ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
@@ -1333,8 +1336,9 @@ function checkTheRoll(roll::String)
 - return: have authority -> true, does not have -> false
 """
 function checkTheRoll(roll::String)
-	uid = JSession.get()[2]
-	ret::Bool = false
+#	uid = JSession.get()[2]
+uid = 1
+ret::Bool = false
 
 	sql = """
 		select logincount, generation from jetelina_user_table 
