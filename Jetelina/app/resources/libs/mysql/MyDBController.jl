@@ -26,15 +26,15 @@ functions
 	x6/22 userRegist(username::String) register a new user
 	x6/22 getUserData(s::String) get jetelina user data by ordering 's'.	
 	x6/22 chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
-	getUserInfoKeys(uid::Integer) get "user_info" column key data.
-	refUserAttribute(uid::Integer, key::String, val, rettype::Integer) inquiring user_info data 
-	updateUserInfo(uid::Integer,key::String,value) update user data (jetelina_user_table.user_info)
-	refUserInfo(uid::Integer,key::String,rettype::Integer)	simple inquiring user_info data 
-	updateUserData(uid::Integer,key::String,value) update user data, exept jsonb column
-	updateUserLoginData(uid::Integer) update user login data if it succeeded to login
+	x6/25 getUserInfoKeys(uid::Integer) get "user_info" column key data.
+	x6/25 refUserAttribute(uid::Integer, key::String, val, rettype::Integer) inquiring user_info data 
+	x6/25 updateUserInfo(uid::Integer,key::String,value) update user data (jetelina_user_table.user_info)
+	x6/25 refUserInfo(uid::Integer,key::String,rettype::Integer)	simple inquiring user_info data 
+	x6/25 updateUserData(uid::Integer,key::String,value) update user data, exept json column
+	x6/25 updateUserLoginData(uid::Integer) update user login data if it succeeded to login
 	x6/21 deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
-	checkTheRoll(roll::String) check the ordered user's authority in order to 'roll'.
-	refStichWort(stichwort::String)	reference and matching with user_info->stichwort
+	x6/25 checkTheRoll(roll::String) check the ordered user's authority in order to 'roll'.
+	x6/25 refStichWort(stichwort::String)	reference and matching with user_info->stichwort
 """
 module MyDBController
 
@@ -838,7 +838,7 @@ function create_jetelina_user_table()
 			nickname varchar(256),
 			logincount integer not null default 0,
 			logindate timestamp with time zone,
-			user_info jsonb,
+			user_info json,
 			user_level integer not null default 0,
 			familiar_index integer default 0,
 			jetelina_delete_flg integer default 0
@@ -1017,12 +1017,23 @@ function getUserInfoKeys(uid::Integer)
 	ret = ""
 	jmsg::String = string("compliment me!")
 
-	sql = """   
-	SELECT
-		jsonb_object_keys (user_info) as user_info
-	from jetelina_user_table
-	where user_id=$uid;
+	#===
+		Tips:
+			this sql returns like this 
+			+-----------------+
+			| j_key           |   *'j_key' is orderable e.g. jetelina_user_info_key ....
+			+-----------------+\
+			| "stichwort"     |
+			| "inviter"       |
+			| "register_date" |
+			+-----------------+
+
+			and this collection is for all, not in a specific data, therefore 'uid' does not use in it, but remains for matching with postgres lib.
+	===#
+	sql = """
+		select distinct j_key from jetelina_user_table, json_table(json_keys(user_info),'\$[*]' columns(j_key json path '\$')) t;
 	"""
+	
 	conn = open_connection()
 	try
 		df = DataFrame(columntable(DBInterface.execute(conn, sql)))
@@ -1055,14 +1066,14 @@ function refUserAttribute(uid::Integer, key::String, val, rettype::Integer)
 
 	#===
 		Tips:
-			search jsonb data here, it possibly contains some data in it,
+			search json data here, it possibly contains some data in it,
 			thus using 'like' sentence.
 	===#
 	sql = """   
 	SELECT
-		user_id, user_info -> '$key' as u_info_$key
+		user_id, user_info -> '\$.$key' as u_info_$key
 	from jetelina_user_table
-	where (user_id=$uid)and(user_info->>'$key' like '%$val%')
+	where (user_id=$uid)and(user_info->>'\$.$key' like '%$val%')
 	"""
 	conn = open_connection()
 	try
@@ -1101,31 +1112,13 @@ function updateUserInfo(uid::Integer,key::String,value)
 function updateUserInfo(uid::Integer, key::String, value)
 	ret = ""
 
-	#== get existing user info data
-	df = refUserAttribute(uid, key, value, 1)
-	# append new value data to old one
-	if 0 < nrow(df)
-		value = string(df[:, :2], ',', value)
-	end
-	==#
-	#===
-		Tips:
-			in the case of updating JSONB data type, the data is added at the tail if it were not existing.
-			then do not need the hit or swing-miss by using LibPQ.num_affected_rows() alike in executeApi().
-	
 	sql = """
-	update jetelina_user_table set
-		user_info = jsonb_set(user_info,'{$key}','"$value"')
-		where user_id=$uid;
+		update jetelina_user_table set user_info = json_set(user_info, '\$.$key','$value') where user_id=$uid;
 	"""
-	===#
 
-	sql = """
-		update jetelina_user_table set user_info = user_info || '{"$key":"$value"}' where user_id=$uid;
-	"""
 	conn = open_connection()
 	try
-		execute(conn, sql)
+		DBInterface.execute(conn, sql)
 
 #		jmsg = """I have memorized your new $key, lucky knowing you more."""
 		jmsg = "complement me."
@@ -1193,7 +1186,7 @@ end
 """
 function updateUserData(uid::Integer,key::String,value)
 
-	update user data, exept jsonb column
+	update user data, exept json column
 	this function can use for simple columns.
 
 # Arguments
@@ -1219,7 +1212,7 @@ function updateUserData(uid::Integer, key::String, value)
 	"""
 	conn = open_connection()
 	try
-		execute(conn, sql)
+		DBInterface.execute(conn, sql)
 
 		jmsg = """He he, you are counted up in me."""
 		ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
@@ -1275,7 +1268,7 @@ function updateUserLoginData(uid::Integer)
 				where user_id=$uid;
 		"""
 
-		execute(conn, sql)
+		DBInterface.execute(conn, sql)
 
 	catch err
 		ret = false
@@ -1336,9 +1329,8 @@ function checkTheRoll(roll::String)
 - return: have authority -> true, does not have -> false
 """
 function checkTheRoll(roll::String)
-#	uid = JSession.get()[2]
-uid = 1
-ret::Bool = false
+	uid = JSession.get()[2]
+	ret::Bool = false
 
 	sql = """
 		select logincount, generation from jetelina_user_table 
