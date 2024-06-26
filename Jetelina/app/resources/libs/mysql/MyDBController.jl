@@ -16,8 +16,8 @@ functions
 	x6/22 getJetelinaSequenceNumber(t::Integer) get seaquence number from jetelina_id table
 	insert2JetelinaTableManager(tableName::String, columns::Array) insert columns of 'tableName' into Jetelina_table_manager  
 	dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
-	dropTable(tableName::Vector) drop the tables and delete its related data from jetelina_table_manager table
-	getColumns(tableName::String) get columns name of ordereing table.
+	x6/26 dropTable(tableName::Vector) drop the tables and delete its related data from jetelina_table_manager table
+	x6/26 getColumns(tableName::String) get columns name of ordereing table.
 	executeApi(json_d::Dict,target_api::DataFrame) execute API order by json data
 	_executeApi(apino::String, sql_str::String) execute API with creating SQL sentence,this is a private function that is called by executeApi()
 	doSelect(sql::String,mode::String) execute select data by ordering sql sentence, but get sql execution time of ordered sql if 'mode' is 'measure'.
@@ -392,7 +392,7 @@ function dataInsertFromCSV(fname::String)
 				the reason for this connection, see in doSelect()
 		===#
 		cn = column_name[i]
-		column_type_string[i] = PgDataTypeList.getDataType(string(column_type[i]))
+		column_type_string[i] = MyDataTypeList.getDataType(string(column_type[i]))
 		if contains(cn, keyword2)
 			column_str = string(column_str, " ", cn, " ", column_type_string[i], " ", keyword3)
 		else
@@ -461,7 +461,7 @@ function dataInsertFromCSV(fname::String)
 	"""
 	conn = open_connection()
 	try
-		execute(conn, create_table_str)
+		DBInterface.execute(conn, create_table_str)
 	catch err
 		close_connection(conn)
 		ret = json(Dict("result" => false, "filename" => "$fname", "errmsg" => "$err"))
@@ -473,7 +473,7 @@ function dataInsertFromCSV(fname::String)
 	#===
 		then get column from the created table, because the columns are order by csv file, thus they can get after
 		created the table
-	===#
+
 	sql = """   
 		SELECT
 			*
@@ -488,10 +488,11 @@ function dataInsertFromCSV(fname::String)
 	row_strings = imap(eachrow(df)) do row
 		join((ismissing(x) ? "null" : x for x in row), ",") * "\n"
 	end
-
-	copyin = DBInterface.CopyIn("COPY $tableName FROM STDIN (FORMAT CSV);", row_strings)
+	===#
+#	copyin = DBInterface.CopyIn("COPY $tableName FROM STDIN (FORMAT CSV);", row_strings)
+	copyin = string("LOAD DATA LOCAL INFILE '$fname' INTO TABLE $tableName;")
 	try
-		execute(conn, copyin)
+		DBInterface.execute(conn, copyin)
 		ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
 	catch err
 		#            println(err)
@@ -509,17 +510,17 @@ function dataInsertFromCSV(fname::String)
 		that why do not use cols here. writing select sentence is done in PgSQLSentenceManager.createApiSelectSentence(). 
 	===#
 	push!(tablename_arr, tableName)
-	insert_str = PgSQLSentenceManager.createApiInsertSentence(tableName, insert_column_str, insert_data_str)
+	insert_str = MySQLSentenceManager.createApiInsertSentence(tableName, insert_column_str, insert_data_str)
 	#        PgSQLSentenceManager.writeTolist(insert_str, "", tablename_arr)
 	ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, getJetelinaSequenceNumber(1))
 
 	# update
-	update_str = PgSQLSentenceManager.createApiUpdateSentence(tableName, update_str)
+	update_str = MySQLSentenceManager.createApiUpdateSentence(tableName, update_str)
 	#        PgSQLSentenceManager.writeTolist(update_str[1], update_str[2], tablename_arr)
 	ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, getJetelinaSequenceNumber(1))
 
 	# delete
-	delete_str = PgSQLSentenceManager.createApiDeleteSentence(tableName)
+	delete_str = MySQLSentenceManager.createApiDeleteSentence(tableName)
 	#        PgSQLSentenceManager.writeTolist(delete_str[1], delete_str[2], tablename_arr)
 	ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, getJetelinaSequenceNumber(1))
 
@@ -560,8 +561,8 @@ function dropTable(tableName::Vector,stichwort::String)
 				# delete the related data from jetelina_table_manager
 				delete_data_str = string("delete from jetelina_table_manager where table_name = '", tableName[i], "'")
 
-				execute(conn, drop_table_str)
-				execute(conn, delete_data_str)
+				DBInterface.execute(conn, drop_table_str)
+				DBInterface.execute(conn, delete_data_str)
 			end
 
 			ret = json(Dict("result" => true, "tablename" => "$rettables", "message from Jetelina" => jmsg))
