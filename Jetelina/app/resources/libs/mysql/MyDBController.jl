@@ -445,8 +445,8 @@ function dataInsertFromCSV(fname::String)
 		check if the same name table already exists.
 		this is not for create sql, but for insert2JetelinaTableManager().
 	===#
-	df_tl = _getTableList()
-	DataFrames.filter!(row -> row.tablename == tableName, df_tl)
+#	df_tl = _getTableList()
+#	DataFrames.filter!(row -> row.tablename == tableName, df_tl)
 
 	#===
 		Tips:
@@ -473,7 +473,7 @@ function dataInsertFromCSV(fname::String)
 	#===
 		then get column from the created table, because the columns are order by csv file, thus they can get after
 		created the table
-
+	
 	sql = """   
 		SELECT
 			*
@@ -489,13 +489,20 @@ function dataInsertFromCSV(fname::String)
 		join((ismissing(x) ? "null" : x for x in row), ",") * "\n"
 	end
 	===#
-#	copyin = DBInterface.CopyIn("COPY $tableName FROM STDIN (FORMAT CSV);", row_strings)
-	copyin = string("LOAD DATA LOCAL INFILE '$fname' INTO TABLE $tableName;")
+	#===
+		Tips:
+			there are no way to 'copy' csv file to table in APIS of MySQL.jl ver.1.1.2, so far.
+			then anyway, have to use mysql special command 'load data ....', but to use this command, 
+			the 'local_infile' that is the global variable in MySQL should be 'on'.
+			unfortunately any APIs which can manage this global variable in the lib, therefore this setting
+			is to be a precondition to use MySQL. Take care.
+			and do not forget '..fields TERMINATED by', otherwise any data will not be inerted into there.
+	===#
+	copyin = string("LOAD DATA LOCAL INFILE '$fname' INTO TABLE $tableName FIELDS TERMINATED BY ',';")
 	try
 		DBInterface.execute(conn, copyin)
 		ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
 	catch err
-		#            println(err)
 		ret = json(Dict("result" => false, "filename" => "$fname", "errmsg" => "$err"))
 		JLog.writetoLogfile("MyDBController.dataInsertFromCSV() with $fname error : $err")
 		return ret

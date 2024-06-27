@@ -37,9 +37,9 @@ function getDataType(c_type::String)
 		#==
 			Attention: no limit in a character length by the initial uploaded csv file 
 		==#
-		ret = "varchar"
+		ret = "varchar(1024)"
 	elseif startswith(c_type, "String")
-		ret = "varchar"
+		ret = "text"
 	elseif startswith(c_type, "Dates")
 		ret = "Date"
 	end
