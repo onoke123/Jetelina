@@ -43,6 +43,8 @@ JMessage.showModuleInCompiling(@__MODULE__)
 ===#
 include("libs/postgres/PgDBController.jl")
 include("libs/postgres/PgSQLSentenceManager.jl")
+include("libs/mysql/MyDBController.jl")
+include("libs/mysql/MySQLSentenceManager.jl")
 
 export init_Jetelina_table,
 	dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,
@@ -72,14 +74,15 @@ function init_Jetelina_table()
 function init_Jetelina_table()
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
-#    these two procedures should be moved to "CREATION" method
-#		PgDBController.create_jetelina_id_sequence()
-#		PgDBController.create_jetelina_table()
+		PgDBController.create_jetelina_id_sequence()
 
-#  	the process in this function is deprecated
+#  	these processes in this function are deprecated
+#		PgDBController.create_jetelina_table()
 #		PgDBController.readJetelinatable()
 
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
+		MyDBController.create_jetelina_database()
+		MyDBController.create_jetelina_id_sequence()
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 
@@ -96,7 +99,7 @@ function dataInsertFromCSV(csvfname::String)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
 		return PgDBController.dataInsertFromCSV(csvfname)
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -116,7 +119,7 @@ function getTableList(s::String)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
 		PgDBController.getTableList(s)
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -145,7 +148,7 @@ function dropTable(tableName::Vector,stichwort::String)
 						json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err"))
 		==#
 		return ret[2]
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -161,7 +164,7 @@ function getColumns(tableName::String)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
 		PgDBController.getColumns(tableName)
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -183,7 +186,7 @@ function doSelect(sql::String, mode::String)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
 		PgDBController.doSelect(sql,mode)
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -221,7 +224,7 @@ function executeApi(json_d::Dict)
 				# Case in PostgreSQL
 				ret = PgDBController.executeApi(json_d, target_api)
 			end
-		elseif j_config.JC["dbtype"] == "mariadb"
+		elseif j_config.JC["dbtype"] == "mysql"
 		elseif j_config.JC["dbtype"] == "oracle"
 		end
 	else
@@ -246,7 +249,7 @@ function userRegist(username::String)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
 		PgDBController.userRegist(username)
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -265,7 +268,7 @@ function chkUserExistence(s::String)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
 		PgDBController.chkUserExistence(s)
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -282,7 +285,7 @@ function getUserInfoKeys(uid::Integer)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
 		PgDBController.getUserInfoKeys(uid)
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -302,7 +305,7 @@ function refUserAttribute(uid::Integer, key::String, val)
 		# Case in PostgreSQL
 		rettype::Integer = 0 # because wanna the return as json type
 		PgDBController.refUserAttribute(uid, key, val, rettype)
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -320,7 +323,7 @@ function refUserInfo(uid::Integer, key::String, rettype::Integer)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
 		PgDBController.refUserInfo(uid, key, rettype)
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -339,7 +342,7 @@ function updateUserInfo(uid::Integer, key::String, value)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
 		PgDBController.updateUserInfo(uid, key, value)
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -359,7 +362,7 @@ function updateUserData(uid::Integer, key::String, value)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
 		PgDBController.updateUserData(uid, key, value)
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -376,7 +379,7 @@ function updateUserLoginData(uid::Integer)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
 		PgDBController.updateUserLoginData(uid)
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -393,7 +396,7 @@ function deleteUserAccount(uid::Integer)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
 		PgDBController.deleteUserAccount(uid)
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -433,7 +436,7 @@ function createApiSelectSentence(json_d::Dict, mode::String)
 		else
 			ret = "fail: Illegal Sequence Number"
 		end
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 
@@ -452,7 +455,7 @@ function refStichWort(stichwort::String)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
 		PgDBController.refStichWort(stichwort)
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end

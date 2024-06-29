@@ -7,7 +7,8 @@ Description:
 	DB controller for MySQL
 
 functions
-	x6/20 create_jetelina_tables() create 'jetelina_table_manager' table.
+	x6/20 create_jetelina_tables() create 'jetelina_table_manager' table.    <- deprecated
+	x6/39 create_jetelina_database() create 'jetelina' database because of mysql special.
 	x6/20 create_jetelina_id_sequence() create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
 	x6/20 open_connection() open connection to the DB.
 	x6/20 close_connection(conn::DBInterface.Connection)  close the DB connection
@@ -48,7 +49,7 @@ JMessage.showModuleInCompiling(@__MODULE__)
 include("MyDataTypeList.jl")
 include("MySQLSentenceManager.jl")
 
-export create_jetelina_table, create_jetelina_id_sequence, open_connection, close_connection, readJetelinatable,
+export create_jetelina_database, create_jetelina_table, create_jetelina_id_sequence, open_connection, close_connection, readJetelinatable,
 	getTableList, getJetelinaSequenceNumber, insert2JetelinaTableManager, dataInsertFromCSV, dropTable, getColumns,
 	executeApi, doSelect, measureSqlPerformance, create_jetelina_user_table, userRegist, getUserData, chkUserExistence, getUserInfoKeys,
 	refUserAttribute, updateUserInfo, refUserInfo, updateUserData, deleteUserAccount, checkTheRoll, refStichWort
@@ -85,6 +86,29 @@ function create_jetelina_table()
 end
 
 """
+function create_jetelina_database()
+
+	create 'jetelina' database because of mysql special.
+	indeed in getTableList() cannot get effective list from the default database, i mean there are many unuseful tables following,
+	therefore creating this table for working jetelina speciality.
+	the database name 'jetelina' is unchangeable, so far. it will may be changeable but i do not know its necessity. :D
+	
+"""
+function create_jetelina_database()
+	jetelina_database = """
+		create database if not exists jetelina;
+	"""
+	conn = open_connection()
+	try
+		DBInterface.execute(conn, jetelina_database)
+	catch err
+		JLog.writetoLogfile("MyDBController.create_jetelina_database() error: $err")
+	finally
+		close_connection(conn)
+	end
+end
+
+"""
 function create_jetelina_id_sequence()
 
 	create 'jetelina_sql_sequence' and 'jetelina_user_id_sequence' table as sequence.
@@ -92,7 +116,7 @@ function create_jetelina_id_sequence()
 """
 function create_jetelina_id_sequence()
 	jetelina_id_sequence = """
-		create table jetelina_user_id_sequence (id int not null auto_increment primary key) engine=myisam; create table jetelina_sql_sequence (id int not null auto_increment primary key) engine=myisam;insert into jetelina_user_id_sequence values(0);insert into jetelina_sql_sequence values(0);
+		use jetelina; create table if not exists jetelina_user_id_sequence (id int not null auto_increment primary key) engine=myisam; create table if not exists jetelina_sql_sequence (id int not null auto_increment primary key) engine=myisam;insert into jetelina_user_id_sequence values(0);insert into jetelina_sql_sequence values(0);
 	"""
 	conn = open_connection()
 	try

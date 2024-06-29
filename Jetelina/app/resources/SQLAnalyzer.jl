@@ -36,7 +36,7 @@ function __init__()
 		include("libs/postgres/PgDBController.jl")
 		include("libs/postgres/PgTestDBController.jl")
 		include("libs/postgres/PgDataTypeList.jl")
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -668,7 +668,7 @@ function creatTestDB()
 			PgDBController.close_connection(conn)
 		end
 
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
