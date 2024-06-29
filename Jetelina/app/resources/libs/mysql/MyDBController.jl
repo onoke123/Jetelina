@@ -13,7 +13,7 @@ functions
 	x6/20 open_connection() open connection to the DB.
 	x6/20 close_connection(conn::DBInterface.Connection)  close the DB connection
 	readJetelinatable() read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame 
-	getTableList(s::String) get all table name from public 'schemaname'
+	x6/29 getTableList(s::String) get all table name from 'jetelina' database
 	x6/22 getJetelinaSequenceNumber(t::Integer) get seaquence number from jetelina_id table
 	insert2JetelinaTableManager(tableName::String, columns::Array) insert columns of 'tableName' into Jetelina_table_manager  
 	dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
@@ -202,7 +202,7 @@ end
 """
 function getTableList(s::String)
 
-	get all table name from public 'schemaname'
+	get all table name from 'jetelina' database
 
 # Arguments
 - `s:String`: 'json' -> required JSON form to return
@@ -222,7 +222,7 @@ end
 function _getTableList()
 
 	get table list then put it into DataFrame object. this is a private function, but can access from others
-	fixing as 'public' in schemaname. this is the protocol.
+	fixing as 'jetelina' database. this is the protocol.
 
 # Arguments
 - return: DataFrame object. empty if got fail.
@@ -231,11 +231,11 @@ function _getTableList()
 	df = DataFrame()
 	conn = open_connection()
 	# Fixing as 'public' in schemaname. This is the protocol.
-	table_str = """select tablename from pg_tables where schemaname='public'"""
+	table_str = """select table_name from information_schema.tables where table_schema='jetelina';"""
 	try
 		df = DataFrame(columntable(DBInterface.execute(conn, table_str)))
 		# do not include 'jetelina_table_manager and usertable in the return
-		DataFrames.filter!(row -> row.tablename != "jetelina_table_manager" && row.tablename != "jetelina_user_table", df)
+		DataFrames.filter!(row -> row.TABLE_NAME != "jetelina_table_manager" && row.TABLE_NAME != "jetelina_user_table" && row.TABLE_NAME != "jetelina_sql_sequence" && row.TABLE_NAME != "jetelina_user_id_sequence", df)
 	catch err
 		JLog.writetoLogfile("MyDBController._getTableList() error: $err")
 		return DataFrame() # return empty DataFrame if got fail
