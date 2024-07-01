@@ -7,20 +7,19 @@ Description:
 	DB controller for MySQL
 
 functions
-	x6/20 create_jetelina_tables() create 'jetelina_table_manager' table.    <- deprecated
+	* deprecated create_jetelina_tables() create 'jetelina_table_manager' table.
 	x6/39 create_jetelina_database() create 'jetelina' database because of mysql special.
 	x6/20 create_jetelina_id_sequence() create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
 	x6/20 open_connection() open connection to the DB.
 	x6/20 close_connection(conn::DBInterface.Connection)  close the DB connection
-	readJetelinatable() read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame 
+	* deprecated readJetelinatable() read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame 
 	x6/29 getTableList(s::String) get all table name from 'jetelina' database
 	x6/22 getJetelinaSequenceNumber(t::Integer) get seaquence number from jetelina_id table
-	insert2JetelinaTableManager(tableName::String, columns::Array) insert columns of 'tableName' into Jetelina_table_manager  
-	dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
+	* deprecated insert2JetelinaTableManager(tableName::String, columns::Array) insert columns of 'tableName' into Jetelina_table_manager  
+	x7/1 dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
 	x6/26 dropTable(tableName::Vector) drop the tables and delete its related data from jetelina_table_manager table
 	x6/26 getColumns(tableName::String) get columns name of ordereing table.
 	executeApi(json_d::Dict,target_api::DataFrame) execute API order by json data
-	_executeApi(apino::String, sql_str::String) execute API with creating SQL sentence,this is a private function that is called by executeApi()
 	doSelect(sql::String,mode::String) execute select data by ordering sql sentence, but get sql execution time of ordered sql if 'mode' is 'measure'.
 	measureSqlPerformance() measure exectution time of all listed sql sentences. then write it out to JC["sqlperformancefile"].
 	x6/21 create_jetelina_user_table() create 'jetelina_table_user_table' table.
@@ -116,10 +115,11 @@ function create_jetelina_id_sequence()
 """
 function create_jetelina_id_sequence()
 	jetelina_id_sequence = """
-		use jetelina; create table if not exists jetelina_user_id_sequence (id int not null auto_increment primary key) engine=myisam; create table if not exists jetelina_sql_sequence (id int not null auto_increment primary key) engine=myisam;insert into jetelina_user_id_sequence values(0);insert into jetelina_sql_sequence values(0);
+		create table if not exists jetelina_user_id_sequence (id int not null auto_increment primary key) engine=myisam; create table if not exists jetelina_sql_sequence (id int not null auto_increment primary key) engine=myisam;insert into jetelina_user_id_sequence values(0);insert into jetelina_sql_sequence values(0);
 	"""
 	conn = open_connection()
 	try
+		DBInterface.execute(conn, "use jetelina")
 		DBInterface.execute(conn, jetelina_id_sequence)
 	catch err
 		JLog.writetoLogfile("MyDBController.create_jetelina_id_sequence() error: $err")
@@ -138,20 +138,15 @@ function open_connection()
 - return: DBInterface.Connection object
 """
 function open_connection()
-	con_str = string("host='", j_config.JC["pg_host"],
-		"' port='", j_config.JC["pg_port"],
-		"' user='", j_config.JC["pg_user"],
-		"' password='", j_config.JC["pg_password"],
-		"' sslmode='", j_config.JC["pg_sslmode"],
-		"' dbname='", j_config.JC["pg_dbname"], "'")
+	host = j_config.JC["my_host"]
+	user = j_config.JC["my_user"]
+	pwd  = j_config.JC["my_password"]
+	db   = j_config.JC["my_dbname"]
+	nport= parse(Int,j_config.JC["my_port"])
+	sock = j_config.JC["my_unix_socket"]	
 
-	con_str = """
-		"localhost","user","userpasswd",db="mysql",port=3306,unix_socket="/var/run/mysqld/mysqld.sock"
-	"""
-
-	return DBInterface.connect(MySQL.Connection,"localhost","user","userpasswd",db="mysql",port=3306,unix_socket="/var/run/mysqld/mysqld.sock")
-	
-	#return conn = LibPQ.Connection(con_str)
+#	return DBInterface.connect(MySQL.Connection,"localhost","user","userpasswd",db="mysql",port=3306,unix_socket="/var/run/mysqld/mysqld.sock")
+	return DBInterface.connect(MySQL.Connection,"$host","$user","$pwd",db="$db",port=nport,unix_socket="$sock")	
 end
 
 """
@@ -283,6 +278,8 @@ function _getJetelinaSequenceNumber(conn::DBInterface.Connection, t::Integer)
 """
 function _getJetelinaSequenceNumber(conn::DBInterface.Connection, t::Integer)
 	sql = ""
+
+	DBInterface.execute(conn, "use jetelina")
 
 	if t == 0
 		#===
@@ -485,6 +482,7 @@ function dataInsertFromCSV(fname::String)
 	"""
 	conn = open_connection()
 	try
+		DBInterface.execute(conn,"use jetelina")
 		DBInterface.execute(conn, create_table_str)
 	catch err
 		close_connection(conn)
@@ -524,6 +522,7 @@ function dataInsertFromCSV(fname::String)
 	===#
 	copyin = string("LOAD DATA LOCAL INFILE '$fname' INTO TABLE $tableName FIELDS TERMINATED BY ',';")
 	try
+		DBInterface.execute(conn,"use jetelina")
 		DBInterface.execute(conn, copyin)
 		ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
 	catch err
@@ -557,7 +556,7 @@ function dataInsertFromCSV(fname::String)
 
 	if isempty(df_tl)
 		# manage to jetelina_table_manager
-		insert2JetelinaTableManager(tableName, names(df0))
+		#insert2JetelinaTableManager(tableName, names(df0))
 	end
 
 	return ret

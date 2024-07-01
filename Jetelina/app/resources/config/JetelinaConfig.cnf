@@ -114,11 +114,11 @@ pg_testdbname = testdb
 
 # MySQL setting
 my_host = localhost
-my_port = 
-my_user = 
-my_password = 
-my_sslmode = prefer
-my_dbname = 
+my_port = 3306
+my_user = user
+my_password = userpasswd
+my_dbname = mysql
+my_unix_socket = /var/run/mysqld/mysqld.sock
 my_testdbname = testdb
 
 # Oracle setting

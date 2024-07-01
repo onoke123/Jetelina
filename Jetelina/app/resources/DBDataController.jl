@@ -39,7 +39,7 @@ JMessage.showModuleInCompiling(@__MODULE__)
 #===
 	Note: 
 		wanna these include() in init(), but not alll DBData.. is been included(), thus sometimes 'not found method ..' happen.
-	    guess should have a procedure alike JTimer.jl, I mean should include these in a dummy file to kick init(). :P  2024/2/10
+		guess should have a procedure alike JTimer.jl, I mean should include these in a dummy file to kick init(). :P  2024/2/10
 ===#
 include("libs/postgres/PgDBController.jl")
 include("libs/postgres/PgSQLSentenceManager.jl")
@@ -76,11 +76,12 @@ function init_Jetelina_table()
 		# Case in PostgreSQL
 		PgDBController.create_jetelina_id_sequence()
 
-#  	these processes in this function are deprecated
-#		PgDBController.create_jetelina_table()
-#		PgDBController.readJetelinatable()
+		#  	these processes in this function are deprecated
+		#		PgDBController.create_jetelina_table()
+		#		PgDBController.readJetelinatable()
 
 	elseif j_config.JC["dbtype"] == "mysql"
+		# Case in MySQL
 		MyDBController.create_jetelina_database()
 		MyDBController.create_jetelina_id_sequence()
 	elseif j_config.JC["dbtype"] == "oracle"
@@ -100,6 +101,8 @@ function dataInsertFromCSV(csvfname::String)
 		# Case in PostgreSQL
 		return PgDBController.dataInsertFromCSV(csvfname)
 	elseif j_config.JC["dbtype"] == "mysql"
+		# Case in MySQL
+		return MyDBController.dataInsertFromCSV(csvfname)
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -120,6 +123,8 @@ function getTableList(s::String)
 		# Case in PostgreSQL
 		PgDBController.getTableList(s)
 	elseif j_config.JC["dbtype"] == "mysql"
+		# Case in MySQL
+		MyDBController.getTableList(s)
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -131,26 +136,29 @@ function dropTable(tableName::Vector)
 # Arguments
 - `tableName: Vector`: name of the tables
 """
-function dropTable(tableName::Vector,stichwort::String)
+function dropTable(tableName::Vector, stichwort::String)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
-		ret = PgDBController.dropTable(tableName,stichwort)
-		if ret[1]
-			# update SQL list
-			ApiSqlListManager.deleteTableFromlist(tableName)
-		end
-		#==
-			Tips:
-				ret[2] is expected
-					delete succeeded
-						json(Dict("result" => true, "tablename" => "$tableName", "message from Jetelina" => jmsg))
-					something error happened
-						json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err"))
-		==#
-		return ret[2]
+		ret = PgDBController.dropTable(tableName, stichwort)
 	elseif j_config.JC["dbtype"] == "mysql"
+		# Case in MySQL
+		ret = MyDBController.dropTable(tableName, stichwort)
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
+
+	if ret[1]
+		# update SQL list
+		ApiSqlListManager.deleteTableFromlist(tableName)
+	end
+	#==
+		Tips:
+			ret[2] is expected
+				delete succeeded
+					json(Dict("result" => true, "tablename" => "$tableName", "message from Jetelina" => jmsg))
+				something error happened
+					json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err"))
+	==#
+	return ret[2]
 end
 """
 function getColumns(tableName::String)
@@ -165,6 +173,8 @@ function getColumns(tableName::String)
 		# Case in PostgreSQL
 		PgDBController.getColumns(tableName)
 	elseif j_config.JC["dbtype"] == "mysql"
+		# Case in MySQL
+		MyDBController.getColumns(tableName)
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -185,8 +195,10 @@ function doSelect(sql::String,mode::String)
 function doSelect(sql::String, mode::String)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
-		PgDBController.doSelect(sql,mode)
+		PgDBController.doSelect(sql, mode)
 	elseif j_config.JC["dbtype"] == "mysql"
+		# Case in MySQL
+		MyDBController.doSelect(sql, mode)
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -223,9 +235,11 @@ function executeApi(json_d::Dict)
 			if j_config.JC["dbtype"] == "postgresql"
 				# Case in PostgreSQL
 				ret = PgDBController.executeApi(json_d, target_api)
+			elseif j_config.JC["dbtype"] == "mysql"
+				# Case in MySQL
+				ret = MyDBController.executeApi(json_d, target_api)
+			elseif j_config.JC["dbtype"] == "oracle"
 			end
-		elseif j_config.JC["dbtype"] == "mysql"
-		elseif j_config.JC["dbtype"] == "oracle"
 		end
 	else
 		# not found SQL list 
@@ -250,6 +264,8 @@ function userRegist(username::String)
 		# Case in PostgreSQL
 		PgDBController.userRegist(username)
 	elseif j_config.JC["dbtype"] == "mysql"
+		# Case in MySQL
+		MyDBController.userRegist(username)
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -269,6 +285,8 @@ function chkUserExistence(s::String)
 		# Case in PostgreSQL
 		PgDBController.chkUserExistence(s)
 	elseif j_config.JC["dbtype"] == "mysql"
+		# Case in MySQL
+		MyDBController.chkUserExistence(s)
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -286,6 +304,8 @@ function getUserInfoKeys(uid::Integer)
 		# Case in PostgreSQL
 		PgDBController.getUserInfoKeys(uid)
 	elseif j_config.JC["dbtype"] == "mysql"
+		# Case in MySQL
+		MyDBController.getUserInfoKeys(uid)
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -301,11 +321,14 @@ function refUserAttribute(uid::Integer,key::String,val)
 - return: success -> user data in json or DataFrame, fail -> ""
 """
 function refUserAttribute(uid::Integer, key::String, val)
+	rettype::Integer = 0 # because wanna the return as json type
+
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
-		rettype::Integer = 0 # because wanna the return as json type
 		PgDBController.refUserAttribute(uid, key, val, rettype)
 	elseif j_config.JC["dbtype"] == "mysql"
+		# Case in MySQL
+		MyDBController.refUserAttribute(uid, key, val, rettype)
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -324,6 +347,8 @@ function refUserInfo(uid::Integer, key::String, rettype::Integer)
 		# Case in PostgreSQL
 		PgDBController.refUserInfo(uid, key, rettype)
 	elseif j_config.JC["dbtype"] == "mysql"
+		# Case in MySQL
+		MyDBController.refUserInfo(uid, key, rettype)
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -343,6 +368,8 @@ function updateUserInfo(uid::Integer, key::String, value)
 		# Case in PostgreSQL
 		PgDBController.updateUserInfo(uid, key, value)
 	elseif j_config.JC["dbtype"] == "mysql"
+		# Case in MySQL
+		MyDBController.updateUserInfo(uid, key, value)
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -363,6 +390,8 @@ function updateUserData(uid::Integer, key::String, value)
 		# Case in PostgreSQL
 		PgDBController.updateUserData(uid, key, value)
 	elseif j_config.JC["dbtype"] == "mysql"
+		# Case in MySQL
+		MyDBController.updateUserData(uid, key, value)
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -380,6 +409,8 @@ function updateUserLoginData(uid::Integer)
 		# Case in PostgreSQL
 		PgDBController.updateUserLoginData(uid)
 	elseif j_config.JC["dbtype"] == "mysql"
+		# Case in MySQL
+		MyDBController.updateUserLoginData(uid)
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -397,6 +428,8 @@ function deleteUserAccount(uid::Integer)
 		# Case in PostgreSQL
 		PgDBController.deleteUserAccount(uid)
 	elseif j_config.JC["dbtype"] == "mysql"
+		# Case in MySQL
+		MyDBController.deleteUserAccount(uid)
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -415,29 +448,46 @@ function createApiSelectSentence(json_d::Dict,mode::String)
 function createApiSelectSentence(json_d::Dict, mode::String)
 	ret = ""
 
-	if j_config.JC["dbtype"] == "postgresql"
-		# Case in PostgreSQL
-		if mode == "ok"
+	if mode == "ok"
+		if j_config.JC["dbtype"] == "postgresql"
+			# Case in PostgreSQL
 			sqn = PgDBController.getJetelinaSequenceNumber(1) # attr '1' means 'jetelian_sql_sequence'. see its function.
-		elseif mode == "pre"
-			sqn = -1
+		elseif j_config.JC["dbtype"] == "mysql"
+			# Case in MySQL
+			sqn = MyDBController.getJetelinaSequenceNumber(1) # attr '1' means 'jetelian_sql_sequence'. see its function.
+		elseif j_config.JC["dbtype"] == "oracle"
+		end
+	elseif mode == "pre"
+		sqn = -1
+	end
+
+	if sqn isa Integer
+		if j_config.JC["dbtype"] == "postgresql"
+			# Case in PostgreSQL
+			ret = PgSQLSentenceManager.createApiSelectSentence(json_d, sqn)
+		elseif j_config.JC["dbtype"] == "mysql"
+			# Case in MySQL
+			ret = MySQLSentenceManager.createApiSelectSentence(json_d, sqn)
+		elseif j_config.JC["dbtype"] == "oracle"
 		end
 
-		if sqn isa Integer
-			ret = PgSQLSentenceManager.createApiSelectSentence(json_d, sqn)
-			if mode == "pre"
-				#===
-					Tips:
-						in the case of mode="pre", PgSQLSente...createApiSelect...() returns SQL sentence for pre executing.
-						it could not execute in PgSQLSentenceManager because of the relation in 'using'. :P 
-				===#
-				ret = PgDBController.doSelect(ret,"pre")
+		if mode == "pre"
+			#===
+				Tips:
+					in the case of mode="pre", PgSQLSente...createApiSelect...() returns SQL sentence for pre executing.
+					it could not execute in PgSQLSentenceManager because of the relation in 'using'. :P 
+			===#
+			if j_config.JC["dbtype"] == "postgresql"
+				# Case in PostgreSQL
+				ret = PgDBController.doSelect(ret, "pre")
+			elseif j_config.JC["dbtype"] == "mysql"
+				# Case in MySQL
+				ret = MyDBController.doSelect(ret, "pre")
+			elseif j_config.JC["dbtype"] == "oracle"
 			end
-		else
-			ret = "fail: Illegal Sequence Number"
 		end
-	elseif j_config.JC["dbtype"] == "mysql"
-	elseif j_config.JC["dbtype"] == "oracle"
+	else
+		ret = "fail: Illegal Sequence Number"
 	end
 
 	return ret
@@ -456,6 +506,8 @@ function refStichWort(stichwort::String)
 		# Case in PostgreSQL
 		PgDBController.refStichWort(stichwort)
 	elseif j_config.JC["dbtype"] == "mysql"
+		# Case in MySQL
+		MyDBController.refStichWort(stichwort)
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end

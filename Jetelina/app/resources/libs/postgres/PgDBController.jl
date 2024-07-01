@@ -7,14 +7,14 @@ Description:
 	DB controller for PostgreSQL
 
 functions
-	create_jetelina_tables() create 'jetelina_table_manager' table.
+	* deprecated create_jetelina_tables() create 'jetelina_table_manager' table.
 	create_jetelina_id_sequence() create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
 	open_connection() open connection to the DB.
 	close_connection(conn::LibPQ.Connection)  close the DB connection
-	readJetelinatable() read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame 
+	* deprecated readJetelinatable() read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame 
 	getTableList(s::String) get all table name from public 'schemaname'
 	getJetelinaSequenceNumber(t::Integer) get seaquence number from jetelina_id table
-	insert2JetelinaTableManager(tableName::String, columns::Array) insert columns of 'tableName' into Jetelina_table_manager  
+	* deprecated insert2JetelinaTableManager(tableName::String, columns::Array) insert columns of 'tableName' into Jetelina_table_manager  
 	dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
 	dropTable(tableName::Vector) drop the tables and delete its related data from jetelina_table_manager table
 	getColumns(tableName::String) get columns name of ordereing table.
