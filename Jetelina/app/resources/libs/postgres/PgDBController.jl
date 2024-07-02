@@ -1139,7 +1139,7 @@ function updateUserInfo(uid::Integer, key::String, value)
 		ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
 	catch err
 		ret = json(Dict("result" => false, "errmsg" => "$err"))
-		JLog.writetoLogfile("PgDBController.updateUserInfo() with user $uid $key->$val error : $err")
+		JLog.writetoLogfile("PgDBController.updateUserInfo() with user $uid $key->$value error : $err")
 	finally
 		close_connection(conn)
 	end

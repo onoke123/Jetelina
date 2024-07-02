@@ -556,11 +556,12 @@ function dataInsertFromCSV(fname::String)
 	#        PgSQLSentenceManager.writeTolist(delete_str[1], delete_str[2], tablename_arr)
 	ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, getJetelinaSequenceNumber(1))
 
+#==
 	if isempty(df_tl)
 		# manage to jetelina_table_manager
 		#insert2JetelinaTableManager(tableName, names(df0))
 	end
-
+==#
 	return ret
 end
 
@@ -591,11 +592,11 @@ function dropTable(tableName::Vector,stichwort::String)
 				# drop the tableName
 				drop_table_str = string("drop table ", tableName[i])
 				# delete the related data from jetelina_table_manager
-				delete_data_str = string("delete from jetelina_table_manager where table_name = '", tableName[i], "'")
+#				delete_data_str = string("delete from jetelina_table_manager where table_name = '", tableName[i], "'")
 
 				DBInterface.execute(conn,"use jetelina")
 				DBInterface.execute(conn, drop_table_str)
-				DBInterface.execute(conn, delete_data_str)
+#				DBInterface.execute(conn, delete_data_str)
 			end
 
 			ret = json(Dict("result" => true, "tablename" => "$rettables", "message from Jetelina" => jmsg))
@@ -1256,6 +1257,7 @@ function updateUserData(uid::Integer, key::String, value)
 		$set_str
 		where user_id=$uid;
 	"""
+
 	conn = open_connection()
 	try
 		DBInterface.execute(conn,"use jetelina")
@@ -1265,7 +1267,7 @@ function updateUserData(uid::Integer, key::String, value)
 		ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
 	catch err
 		ret = json(Dict("result" => false, "errmsg" => "$err"))
-		JLog.writetoLogfile("MyDBController.updateUserData() with user $uid $key->$val error : $err")
+		JLog.writetoLogfile("MyDBController.updateUserData() with user $uid $key->$value error : $err")
 	finally
 		close_connection(conn)
 	end
