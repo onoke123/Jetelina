@@ -84,6 +84,7 @@ function init_Jetelina_table()
 		# Case in MySQL
 		MyDBController.create_jetelina_database()
 		MyDBController.create_jetelina_id_sequence()
+		MyDBController.create_jetelina_user_table()
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 

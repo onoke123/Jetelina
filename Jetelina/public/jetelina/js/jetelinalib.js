@@ -894,7 +894,7 @@ const chatKeyDown = (cmd) => {
 
                     if (chunk.indexOf("me") == -1) {
 */
-                    if(ut.indexOf("it's me") == -1 || ut.indexOf("it is me") == -1){
+                    if(ut.indexOf("it's me") == -1 && ut.indexOf("it is me") == -1){
 //                        authAjax(chunk);
                         authAjax(ut);
                         m = IGNORE;
