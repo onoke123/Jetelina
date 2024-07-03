@@ -75,8 +75,7 @@ function create_jetelina_table()
 		);
 	"""
 	conn = open_connection()
-	try
-		DBInterface.execute(conn,"use jetelina")
+	try		
 		DBInterface.execute(conn, create_jetelina_table_manager_str)
 	catch err
 		JLog.writetoLogfile("MyDBController.create_jetelina_table() error: $err")
@@ -95,15 +94,35 @@ function create_jetelina_database()
 	
 """
 function create_jetelina_database()
-	jetelina_database = """
-		create database if not exists jetelina;
-	"""
+	jetelinadb = "jetelina"
+
 	conn = open_connection()
+	#===
+		Tips:
+			jetelina works in 'jetelina' database in MySql, because of getTable().
+			and this function is called in DBControllerinit_Jetelina_table() as initializing process.
+			at the first, try to find existing 'jetelina' data base, then creat it if there were not.
+			after that, change j_config.JS["my_dbname"]. this "my_dbname" is defined in configuration file. 
+	===#
 	try
-		DBInterface.execute(conn, jetelina_database)
+		sql = "show databases"
+		df = DataFrame(DBInterface.execute(conn, sql))
+		if size(filter(x -> x.Database == jetelinadb, df))[1] == 0
+			@info "cannot find jetelina data base, ok try to create it, wow"
+			jetelina_database = """
+				create database if not exists jetelina;
+			"""
+
+			DBInterface.execute(conn, jetelina_database)
+		else
+			@info "hey jetelina database is healthy, nice"
+		end
+
+		j_config.JC["my_dbname"] = jetelinadb
 	catch err
 		JLog.writetoLogfile("MyDBController.create_jetelina_database() error: $err")
 	finally
+		# close the connection finally
 		close_connection(conn)
 	end
 end
@@ -119,8 +138,7 @@ function create_jetelina_id_sequence()
 		create table if not exists jetelina_user_id_sequence (id int not null auto_increment primary key) engine=myisam; create table if not exists jetelina_sql_sequence (id int not null auto_increment primary key) engine=myisam;insert into jetelina_user_id_sequence values(0);insert into jetelina_sql_sequence values(0);
 	"""
 	conn = open_connection()
-	try
-		DBInterface.execute(conn, "use jetelina")
+	try	
 		DBInterface.execute(conn, jetelina_id_sequence)
 	catch err
 		JLog.writetoLogfile("MyDBController.create_jetelina_id_sequence() error: $err")
@@ -139,15 +157,15 @@ function open_connection()
 - return: DBInterface.Connection object
 """
 function open_connection()
-	host = j_config.JC["my_host"]
-	user = j_config.JC["my_user"]
-	pwd  = j_config.JC["my_password"]
-	db   = j_config.JC["my_dbname"]
-	nport= parse(Int,j_config.JC["my_port"])
-	sock = j_config.JC["my_unix_socket"]	
+	host  = j_config.JC["my_host"]
+	user  = j_config.JC["my_user"]
+	pwd   = j_config.JC["my_password"]
+	db    = j_config.JC["my_dbname"]
+	nport = parse(Int, j_config.JC["my_port"])
+	sock  = j_config.JC["my_unix_socket"]
 
-#	return DBInterface.connect(MySQL.Connection,"localhost","user","userpasswd",db="mysql",port=3306,unix_socket="/var/run/mysqld/mysqld.sock")
-	return DBInterface.connect(MySQL.Connection,"$host","$user","$pwd",db="$db",port=nport,unix_socket="$sock")	
+	#	return DBInterface.connect(MySQL.Connection,"localhost","user","userpasswd",db="mysql",port=3306,unix_socket="/var/run/mysqld/mysqld.sock")
+	return DBInterface.connect(MySQL.Connection, "$host", "$user", "$pwd", db = "$db", port = nport, unix_socket = "$sock")
 end
 
 """
@@ -180,7 +198,6 @@ function readJetelinatable()
 	"""
 	conn = open_connection()
 	try
-		DBInterface.execute(conn,"use jetelina")
 		global Df_JetelinaTableManager = DataFrame(columntable(DBInterface.execute(conn, sql)))
 	catch err
 		JLog.writetoLogfile("MyDBController.readJetelinatable() error: $err")
@@ -281,8 +298,6 @@ function _getJetelinaSequenceNumber(conn::DBInterface.Connection, t::Integer)
 function _getJetelinaSequenceNumber(conn::DBInterface.Connection, t::Integer)
 	sql = ""
 
-	DBInterface.execute(conn, "use jetelina")
-
 	if t == 0
 		#===
 				sql = """
@@ -290,10 +305,10 @@ function _getJetelinaSequenceNumber(conn::DBInterface.Connection, t::Integer)
 				"""
 		===#
 	elseif t == 1
-		DBInterface.execute(conn,"update jetelina_sql_sequence set id=last_insert_id(id+1);")		
+		DBInterface.execute(conn, "update jetelina_sql_sequence set id=last_insert_id(id+1);")
 		sql = """select last_insert_id() as id;"""
 	elseif t == 2
-		DBInterface.execute(conn,"update jetelina_user_id_sequence set id=last_insert_id(id+1);")		
+		DBInterface.execute(conn, "update jetelina_user_id_sequence set id=last_insert_id(id+1);")
 		sql = """select last_insert_id() as id;"""
 	end
 
@@ -468,8 +483,8 @@ function dataInsertFromCSV(fname::String)
 		check if the same name table already exists.
 		this is not for create sql, but for insert2JetelinaTableManager().
 	===#
-#	df_tl = _getTableList()
-#	DataFrames.filter!(row -> row.tablename == tableName, df_tl)
+	#	df_tl = _getTableList()
+	#	DataFrames.filter!(row -> row.tablename == tableName, df_tl)
 
 	#===
 		Tips:
@@ -484,7 +499,6 @@ function dataInsertFromCSV(fname::String)
 	"""
 	conn = open_connection()
 	try
-		DBInterface.execute(conn,"use jetelina")
 		DBInterface.execute(conn, create_table_str)
 	catch err
 		close_connection(conn)
@@ -497,7 +511,7 @@ function dataInsertFromCSV(fname::String)
 	#===
 		then get column from the created table, because the columns are order by csv file, thus they can get after
 		created the table
-	
+
 	sql = """   
 		SELECT
 			*
@@ -524,7 +538,6 @@ function dataInsertFromCSV(fname::String)
 	===#
 	copyin = string("LOAD DATA LOCAL INFILE '$fname' INTO TABLE $tableName FIELDS TERMINATED BY ',';")
 	try
-		DBInterface.execute(conn,"use jetelina")
 		DBInterface.execute(conn, copyin)
 		ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
 	catch err
@@ -556,12 +569,12 @@ function dataInsertFromCSV(fname::String)
 	#        PgSQLSentenceManager.writeTolist(delete_str[1], delete_str[2], tablename_arr)
 	ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, getJetelinaSequenceNumber(1))
 
-#==
-	if isempty(df_tl)
-		# manage to jetelina_table_manager
-		#insert2JetelinaTableManager(tableName, names(df0))
-	end
-==#
+	#==
+		if isempty(df_tl)
+			# manage to jetelina_table_manager
+			#insert2JetelinaTableManager(tableName, names(df0))
+		end
+	==#
 	return ret
 end
 
@@ -574,7 +587,7 @@ function dropTable(tableName::Vector)
 - `tableName: Vector`: ordered tables name
 - return: tuple (boolean: true -> success/false -> get fail, JSON)
 """
-function dropTable(tableName::Vector,stichwort::String)
+function dropTable(tableName::Vector, stichwort::String)
 	ret = ""
 	jmsg::String = string("compliment me!")
 	rettables::String = join(tableName, ",") # ["a","b"] -> "a,b" oh ＼(^o^)／
@@ -587,16 +600,15 @@ function dropTable(tableName::Vector,stichwort::String)
 				in the case of nothing, register it into there,
 				in the case of being, take the matching.
 		===#
-		if refStichWort(stichwort) 
+		if refStichWort(stichwort)
 			for i in eachindex(tableName)
 				# drop the tableName
 				drop_table_str = string("drop table ", tableName[i])
 				# delete the related data from jetelina_table_manager
-#				delete_data_str = string("delete from jetelina_table_manager where table_name = '", tableName[i], "'")
-
-				DBInterface.execute(conn,"use jetelina")
+				#				delete_data_str = string("delete from jetelina_table_manager where table_name = '", tableName[i], "'")
+				
 				DBInterface.execute(conn, drop_table_str)
-#				DBInterface.execute(conn, delete_data_str)
+				#				DBInterface.execute(conn, delete_data_str)
 			end
 
 			ret = json(Dict("result" => true, "tablename" => "$rettables", "message from Jetelina" => jmsg))
@@ -639,8 +651,7 @@ function getColumns(tableName::String)
 		LIMIT 1
 		"""
 	conn = open_connection()
-	try
-		DBInterface.execute(conn,"use jetelina")
+	try		
 		df = DataFrame(columntable(DBInterface.execute(conn, sql)))
 		cols = map(x -> x, names(df))
 		select!(df, cols)
@@ -696,7 +707,6 @@ function _executeApi(apino::String, sql_str::String)
 
 	conn = open_connection()
 	try
-		DBInterface.execute(conn,"use jetelina")
 		sql_ret = DBInterface.execute(conn, sql_str)
 		#===
 			Tips:
@@ -707,9 +717,9 @@ function _executeApi(apino::String, sql_str::String)
 									 -> 1: hit the ball
 
 				attention: above story is only in PostgreSQL, MySQL.jl does not have this function yet,
-				           therefore they are commented out, so far.
+						   therefore they are commented out, so far.
 		===#
-#		affected_ret = DBInterface.num_affected_rows(sql_ret)
+		#		affected_ret = DBInterface.num_affected_rows(sql_ret)
 		jmsg::String = string("compliment me!")
 
 		if startswith(apino, "js")
@@ -723,19 +733,19 @@ function _executeApi(apino::String, sql_str::String)
 			ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
 		elseif startswith(apino, "ji")
 			# insert
-#==			if affected_ret == 0
-				# this may will not happen
-				jmsg = "looks happen something, it is not my fault."
-			end
-==#
+			#==			if affected_ret == 0
+							# this may will not happen
+							jmsg = "looks happen something, it is not my fault."
+						end
+			==#
 			ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
 		else
 			# update & delete
-#==			if affected_ret == 0
-				# the target data was not in there, guess wrong 'jt_id'
-				jmsg = "there was not it, jt_id is correct?. no matter what it is not my business."
-			end
-==#
+			#==			if affected_ret == 0
+							# the target data was not in there, guess wrong 'jt_id'
+							jmsg = "there was not it, jt_id is correct?. no matter what it is not my business."
+						end
+			==#
 			ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
 		end
 	catch err
@@ -900,8 +910,7 @@ function create_jetelina_user_table()
 	"""
 
 	conn = open_connection()
-	try
-		DBInterface.execute(conn,"use jetelina")
+	try		
 		DBInterface.execute(conn, create_jetelina_user_table_str)
 	catch err
 		JLog.writetoLogfile("MyDBController.create_jetelina_user_table() error: $err")
@@ -945,7 +954,6 @@ function userRegist(username::String)
 
 	conn = open_connection()
 	try
-		DBInterface.execute(conn,"use jetelina")
 		DBInterface.execute(conn, insert_basic_st)
 		ret = json(Dict("result" => true, "message from Jetelina" => jmsg))
 	catch err
@@ -987,10 +995,10 @@ function chkUserExistence(s::String)
 	u::String = s
 	jmsg::String = string("compliment me!")
 
-#	if contains(s, " ")
-#		ss = split(s, " ")
-#		u = ss[1]
-#	end
+	#	if contains(s, " ")
+	#		ss = split(s, " ")
+	#		u = ss[1]
+	#	end
 
 	sql = """   
 	SELECT
@@ -1007,27 +1015,26 @@ function chkUserExistence(s::String)
 
 	conn = open_connection()
 	try
-		DBInterface.execute(conn,"use jetelina")
 		df = DataFrame(columntable(DBInterface.execute(conn, sql)))
 		#==
 			Tips:
 				every expression is fine, but take care of the data type
-				    df[:, :user_id]    -> Vector{Union{Missing,Int}}
-				    df[:, :user_id][1] -> Int
-				    df.user_id         -> Vector{Union{Missing,Int}}
+					df[:, :user_id]    -> Vector{Union{Missing,Int}}
+					df[:, :user_id][1] -> Int
+					df.user_id         -> Vector{Union{Missing,Int}}
 		==#
 		if size(df)[1] == 1
 			stichwort::Bool = false
-			dfui = refUserInfo(df[:,:user_id][1],"stichwort",1)
+			dfui = refUserInfo(df[:, :user_id][1], "stichwort", 1)
 			if size(dfui)[1] == 1
-				if !ismissing(dfui[:,:stichwort][1])
+				if !ismissing(dfui[:, :stichwort][1])
 					stichwort = true
 				end
-			end	
-	
+			end
+
 			ret = Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "available" => stichwort, "message from Jetelina" => jmsg)
 			updateUserLoginData(df.user_id[1])
-		elseif 1<size(df)[1] 
+		elseif 1 < size(df)[1]
 			# cannot defermine this user by this 's', then request the whole user name
 			ret = Dict("result" => true, "Jetelina" => [], "message from Jetelina" => "full name please")
 		else
@@ -1076,10 +1083,9 @@ function getUserInfoKeys(uid::Integer)
 	sql = """
 		select distinct j_key from jetelina_user_table, json_table(json_keys(user_info),'\$[*]' columns(j_key json path '\$')) t;
 	"""
-	
+
 	conn = open_connection()
-	try
-		DBInterface.execute(conn,"use jetelina")
+	try	
 		df = DataFrame(columntable(DBInterface.execute(conn, sql)))
 		ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
 	catch err
@@ -1121,7 +1127,6 @@ function refUserAttribute(uid::Integer, key::String, val, rettype::Integer)
 	"""
 	conn = open_connection()
 	try
-		DBInterface.execute(conn,"use jetelina")
 		df = DataFrame(columntable(DBInterface.execute(conn, sql)))
 		if 0 < nrow(df)
 			# match the info
@@ -1163,10 +1168,9 @@ function updateUserInfo(uid::Integer, key::String, value)
 
 	conn = open_connection()
 	try
-		DBInterface.execute(conn,"use jetelina")
 		DBInterface.execute(conn, sql)
 
-#		jmsg = """I have memorized your new $key, lucky knowing you more."""
+		#		jmsg = """I have memorized your new $key, lucky knowing you more."""
 		jmsg = "complement me."
 		ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
 	catch err
@@ -1193,11 +1197,11 @@ function refUserInfo(uid::Integer, key::String, rettype::Integer)
 	ret = ""
 	result = false
 	jmsg::String = "no data, try again."
-#===
-	sql = """   
-		select user_info->'$key' as $key from jetelina_user_table where user_id=$uid;
-	"""
-===#
+	#===
+		sql = """   
+			select user_info->'$key' as $key from jetelina_user_table where user_id=$uid;
+		"""
+	===#
 	#===
 		Tips:
 			"$." expression expect after $ in string.
@@ -1208,8 +1212,7 @@ function refUserInfo(uid::Integer, key::String, rettype::Integer)
 		select json_extract(user_info,'\$.$key') as stichwort from jetelina_user_table where user_id=$uid;
 	"""
 	conn = open_connection()
-	try
-		DBInterface.execute(conn,"use jetelina")
+	try	
 		df = DataFrame(columntable(DBInterface.execute(conn, sql)))
 		if 0 < nrow(df)
 			result = true
@@ -1259,8 +1262,7 @@ function updateUserData(uid::Integer, key::String, value)
 	"""
 
 	conn = open_connection()
-	try
-		DBInterface.execute(conn,"use jetelina")
+	try		
 		DBInterface.execute(conn, sql)
 
 		jmsg = """He he, you are counted up in me."""
@@ -1296,8 +1298,7 @@ function updateUserLoginData(uid::Integer)
 		complogindate = """
 			select cast(logindate as date) - cast(now() as date) from jetelina_user_table where user_id=$uid;
 		"""
-
-		DBInterface.execute(conn,"use jetelina")
+		
 		df = DataFrame(columntable(DBInterface.execute(conn, complogindate)))
 		if !ismissing(df[:, 1][1])
 			if df[:, 1][1] == 0
@@ -1317,8 +1318,7 @@ function updateUserLoginData(uid::Integer)
 				$column_str
 				where user_id=$uid;
 		"""
-
-		DBInterface.execute(conn,"use jetelina")
+	
 		DBInterface.execute(conn, sql)
 
 	catch err
@@ -1348,8 +1348,7 @@ function deleteUserAccount(uid::Integer)
 		where user_id=$uid;
 	"""
 	conn = open_connection()
-	try
-		DBInterface.execute(conn,"use jetelina")
+	try		
 		DBInterface.execute(conn, sql)
 
 		jmsg = """See you someday"""
@@ -1389,8 +1388,7 @@ function checkTheRoll(roll::String)
 		where (jetelina_delete_flg=0) and (user_id=$uid);
 	"""
 	conn = open_connection()
-	try
-		DBInterface.execute(conn,"use jetelina")
+	try	
 		df = DataFrame(columntable(DBInterface.execute(conn, sql)))
 		if !ismissing(df[:, :generation][1]) && !ismissing(df[:, :logincount][1])
 			generation = df[:, :generation][1]
@@ -1403,7 +1401,7 @@ function checkTheRoll(roll::String)
 				usermanage_base_number = 8 #       〃
 				base_number::Integer = 1
 				t::Integer = 1  # times: depend on generation
-	
+
 				if roll == "delete"
 					base_number = delete_base_number
 				elseif roll == "usermanage"
@@ -1421,7 +1419,7 @@ function checkTheRoll(roll::String)
 				end
 			end
 		end
-		
+
 	catch err
 		JLog.writetoLogfile("MyDBController.deleteUserAccount() with user $uid $key->$val error : $err")
 	finally
@@ -1442,21 +1440,21 @@ function refStichWort(stichwort::String)
 function refStichWort(stichwort::String)
 	ret::Bool = false
 	uid::Integer = JSession.get()[2]
-	u = refUserInfo(uid,"stichwort",1) # 1->DataFrame
+	u = refUserInfo(uid, "stichwort", 1) # 1->DataFrame
 	#===
 		Tips:
 			u[:,:stichwort][1] is to be "\"<something>\"".
 			then have to remove '"\', OK?
 	===#
-#	@info "refStichWort " u[:,:stichwort]
-	if !ismissing(u[:,:stichwort][1])
-		intable_stichwort = replace(u[:,:stichwort][1],"\"" => "")
+	#	@info "refStichWort " u[:,:stichwort]
+	if !ismissing(u[:, :stichwort][1])
+		intable_stichwort = replace(u[:, :stichwort][1], "\"" => "")
 		if stichwort == intable_stichwort
 			ret = true
 		end
 	else
 		# go to register
-		updateUserInfo(uid,"stichwort",stichwort)
+		updateUserInfo(uid, "stichwort", stichwort)
 		ret = true
 	end
 
@@ -1469,12 +1467,16 @@ end
 function _mycheck()
 	conn = open_connection()
 	try
-		DBInterface.execute(conn,"use jetelina")
 		#sql = "select * from ftest10"    #-> some data selected
 		#sql = "update ftest10 set ftest10_age=33 where ftest10_jt_id=3;"  #-> 0size return in success/faile because of no data
 		#sql = "delete from ftest10 where ftest10_jt_id=3;"   #->0size return in success/faile because of no data
-		sql = "insert into ftest10 values(3,'xx','m',20,1,0);" #->0size return in success
-		@info DataFrame(DBInterface.execute(conn,sql))
+		#sql = "insert into ftest10 values(3,'xx','m',20,1,0);" #->0size return in success
+		sql = "show databases"
+		df = DataFrame(DBInterface.execute(conn, sql))
+		@info "df " df[:, :Database]
+		if size(filter(x -> x.Database == "jetelina", df))[1] != 0
+			@info "find jetelina"
+		end
 	catch err
 		println(err)
 	finally
