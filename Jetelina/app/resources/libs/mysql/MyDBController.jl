@@ -169,12 +169,12 @@ function open_connection()
 end
 
 """
-function close_connection(conn::LibPQ.Connection)
+function close_connection(conn::DBInterface.Connection)
 
 	close the DB connection
 
 # Arguments
-- `conn:LibPQ.Connection`: LibPQ.Connection object
+- `conn:DBInterface.Connection`: DBInterface.Connection object
 """
 function close_connection(conn::DBInterface.Connection)
 	close(conn)
@@ -537,6 +537,9 @@ function dataInsertFromCSV(fname::String)
 			and do not forget '..fields TERMINATED by', otherwise any data will not be inerted into there.
 	===#
 	copyin = string("LOAD DATA LOCAL INFILE '$fname' INTO TABLE $tableName FIELDS TERMINATED BY ',';")
+
+	# change 'local_infile' setting to 'on' .  very important.
+	_infile_on(conn)
 	try
 		DBInterface.execute(conn, copyin)
 		ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
@@ -545,6 +548,8 @@ function dataInsertFromCSV(fname::String)
 		JLog.writetoLogfile("MyDBController.dataInsertFromCSV() with $fname error : $err")
 		return ret
 	finally
+		# change 'local_infile' setting to 'off'
+		_infile_off(conn)
 		# ok. close the connection finally
 		close_connection(conn)
 	end
@@ -1460,6 +1465,59 @@ function refStichWort(stichwort::String)
 
 	return ret
 end
+"""
+function _infile_on(conn::DBInterface.Connection)
+
+	set mysql global variable 'local_infile' to 'on'
+
+# Arguments
+- `conn:DBInterface.Connection`: DBInterface.Connection object
+"""
+function _infile_on(conn::DBInterface.Connection)
+#	conn = open_connection()
+	try
+		sql = "show global variables like 'local_infile'"
+		df = DataFrame(DBInterface.execute(conn, sql))
+		k = filter(x->x.Variable_name == "local_infile", df)
+		if lowercase(k[:,:Value][1]) == "off" 
+			sql = "set global local_infile = on"
+			DBInterface.execute(conn, sql)
+		end
+	catch err
+		println(err)
+	finally
+		# close the connection finally
+#		close_connection(conn)
+	end
+end
+"""
+function _infile_off(conn::DBInterface.Connection)
+
+	set mysql global variable 'local_infile' to 'off'
+	
+# Arguments
+- `conn:DBInterface.Connection`: DBInterface.Connection object
+"""
+function _infile_off(conn::DBInterface.Connection)
+#	conn = open_connection()
+	try
+		sql = "show global variables like 'local_infile'"
+		df = DataFrame(DBInterface.execute(conn, sql))
+		k = filter(x->x.Variable_name == "local_infile", df)
+		if lowercase(k[:,:Value][1]) == "on" 
+			sql = "set global local_infile = off"
+			DBInterface.execute(conn, sql)
+		end
+	catch err
+		println(err)
+	finally
+		# close the connection finally
+#		close_connection(conn)
+	end
+end
+
+end
+
 
 #===
 	don't care, this is just for check or test in mysql something.
@@ -1471,18 +1529,29 @@ function _mycheck()
 		#sql = "update ftest10 set ftest10_age=33 where ftest10_jt_id=3;"  #-> 0size return in success/faile because of no data
 		#sql = "delete from ftest10 where ftest10_jt_id=3;"   #->0size return in success/faile because of no data
 		#sql = "insert into ftest10 values(3,'xx','m',20,1,0);" #->0size return in success
-		sql = "show databases"
+		#sql = "show databases"
+		sql = "show global variables like 'local_infile'"
 		df = DataFrame(DBInterface.execute(conn, sql))
+		println(df)
+		k = filter(x->x.Variable_name == "local_infile", df)
+		println(k)
+		@info "value? " k[:,:Value]
+		if lowercase(k[:,:Value][1]) == "on" 
+			@info "ok"
+			sql = "set global local_infile = off"
+			df = DataFrame(DBInterface.execute(conn, sql))
+			println(df)
+			end
+		#===
 		@info "df " df[:, :Database]
 		if size(filter(x -> x.Database == "jetelina", df))[1] != 0
 			@info "find jetelina"
 		end
+		===#
 	catch err
 		println(err)
 	finally
 		# close the connection finally
 		close_connection(conn)
 	end
-end
-
 end
