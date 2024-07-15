@@ -411,6 +411,24 @@ const listClick = (p) => {
       cleanUp("items");
     }
   } else {
+    $(RELATEDTABLESAPIS).show().draggable().animate({
+      top: "10%",
+      left: "88%"
+    }, ANIMATEDURATION);
+
+    /*
+      Tips:
+        $('#a,#b')... can do at once, but $(A,B).. does not work
+        therefore $(A)... $(B)...  ・ω・
+    */
+    $(COLUMNSPANEL).animate({
+      left: "25%"
+    }, ANIMATEDURATION);
+
+    $(CONTAINERPANEL).animate({
+      left: "25%"
+    }, ANIMATEDURATION);
+
     if (c.indexOf("table") != -1) {
       //get&show table columns
       getColumn(t);

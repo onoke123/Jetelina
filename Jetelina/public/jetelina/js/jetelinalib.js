@@ -849,6 +849,15 @@ const chatKeyDown = (cmd) => {
                 showSomethingMsgPanel(true);
             }
 
+            /* from here is special function but temporary, may will be deleted */
+            // simple ask about using database type
+            if(inScenarioChk(ut,'what-db-use-now',"config")){
+                console.log("data base type is");
+                let data = '{"param":"dbtype"}';
+                postAjaxData(scenario['function-post-url'][2], data);
+            }
+            /* till here */
+            
             /*
                 switch 1:between 'before login' and 'at login'
                        login:at login
@@ -1107,6 +1116,8 @@ const chatKeyDown = (cmd) => {
                     } else {
                         if (!logoutflg && m.length == 0) {
                             m = chooseMsg("starting-3-msg", "", "");
+                        }else{
+                            m = chooseMsg('greeting-ask-msg','','');
                         }
                     }
 
