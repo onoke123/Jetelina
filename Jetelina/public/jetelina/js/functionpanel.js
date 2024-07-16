@@ -94,29 +94,35 @@ const openFunctionPanel = () => {
   }
 
   $(FUNCTIONPANEL).show().animate({
-    width: window.innerWidth * 0.8,
-    height: window.innerHeight * 0.8,
-    top: "10%",
-    left: "10%"
+    width: window.innerWidth * 0.92,
+    height: window.innerHeight * 0.92,
+    top: "2%",
+    left: "2%"
   }, ANIMATEDURATION);
 
   if (isVisibleColumns()) {
     $(FILEUP).draggable().animate({
       top: "4%",
-      left: "5%"
+      left: "1%" //"5%"
     }, ANIMATEDURATION);
     $("#left_panel").draggable().animate({
       top: "10%",
-      left: "5%"
+      left: "1%" //"5%"
     }, ANIMATEDURATION);
     $(COLUMNSPANEL).draggable().animate({
       top: "10%",
-      left: "30%"
+      left: "19%" //"30%"
     }, ANIMATEDURATION);
     $(CONTAINERPANEL).draggable().animate({
-      bottom: "5%",
-      left: "30%"
+      bottom: "6%",
+      left: "19%" //"30%"
     }, ANIMATEDURATION);
+
+    $(RELATEDTABLESAPIS).draggable().animate({
+      top: "10%",
+      left: "86%"
+    }, ANIMATEDURATION);
+
   }
 }
 /**
@@ -411,25 +417,8 @@ const listClick = (p) => {
       cleanUp("items");
     }
   } else {
-    $(RELATEDTABLESAPIS).show().draggable().animate({
-      top: "10%",
-      left: "88%"
-    }, ANIMATEDURATION);
-
-    /*
-      Tips:
-        $('#a,#b')... can do at once, but $(A,B).. does not work
-        therefore $(A)... $(B)...  ・ω・
-    */
-    $(COLUMNSPANEL).animate({
-      left: "25%"
-    }, ANIMATEDURATION);
-
-    $(CONTAINERPANEL).animate({
-      left: "25%"
-    }, ANIMATEDURATION);
-
     if (c.indexOf("table") != -1) {
+      $("#related_list_title").text(`APIs of ${t}`);
       //get&show table columns
       getColumn(t);
     } else {
@@ -441,6 +430,7 @@ const listClick = (p) => {
       if (preferent.apilist != null && preferent.apilist.length != 0) {
         let s = getdataFromJson(preferent.apilist, t);
         if (0 < s.sql.length) {
+          $("#related_list_title").text(`TABLEs of ${s.apino}`);
           // api in/out json
           $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiin"><bold>IN:</bold>${setApiIF_In(t, s)}</span>`);
           $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiout"><bold>OUT:</bold>${setApiIF_Out(t, s)}</span>`);

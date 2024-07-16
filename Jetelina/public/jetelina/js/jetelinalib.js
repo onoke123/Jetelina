@@ -857,7 +857,7 @@ const chatKeyDown = (cmd) => {
                 postAjaxData(scenario['function-post-url'][2], data);
             }
             /* till here */
-            
+
             /*
                 switch 1:between 'before login' and 'at login'
                        login:at login
@@ -949,8 +949,9 @@ const chatKeyDown = (cmd) => {
                     const panelTop = window.innerHeight - 110;
                     $(JETELINAPANEL).animate({
                         height: "70px",
-                        top: `${panelTop}px`,
-                        left: "210px"
+                        //bottom: "4%",
+                        top: "85%", //`${panelTop}px`,
+                        left: "5%" //"210px"
                     }, ANIMATEDURATION);
 
 //                    if (!$(SOMETHINGINPUT).is(":visible")) {

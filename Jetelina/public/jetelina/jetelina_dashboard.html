@@ -40,7 +40,7 @@
 			function panel
 	-->
 	<div id="function_panel" class="functionpanel-parts commonpanel squarepanel" hidden>
-		<div id="fileup" style="width:200px;height:2%;" class="functionpanel-parts commonpanel squarepanel">
+		<div id="fileup" style="width:15%;height:2%;" class="functionpanel-parts commonpanel squarepanel">
 			<form id="my_form">
 				<!-- caution:
                     should change the parameter of 'name' in FileUploadController.jl
@@ -53,18 +53,20 @@
 			</form>
 		</div>
 
-		<div id="left_panel" style="width:200px;height:80%" class="functionpanel-parts commonpanel squarepanel">
+		<div id="left_panel" style="width:15%;height:80%" class="functionpanel-parts commonpanel squarepanel">
 			<label id="panel_left">Table List</label>
 			<br><br>
 			<div id="table_container"></div>
 			<div id="api_container" hidden></div>
 		</div>
 
-		<div id="related_tables_apis" style="width:100px;height:80%" class="functionpanel-parts commonpanel squarepanel itempanel" hidden>
-
+		<div id="related_tables_apis" style="width:10%;height:80%" class="functionpanel-parts commonpanel squarepanel itempanel">
+			<label id="related_list_title"></label>
+			<br><br>
+			<div id="related_list"></div>
 		</div>
 
-		<div id="columns" style="width:700px;height:60%" class="functionpanel-parts commonpanel squarepanel itempanel">
+		<div id="columns" style="width:64%;height:60%" class="functionpanel-parts commonpanel squarepanel itempanel">
 			<div class="item_area"></div>
 		</div>
 
@@ -73,7 +75,7 @@
 			<text></text>
 		</div>
 		<!-- selected columns list area -->
-		<div id="container" style="width:700px;height:15%"
+		<div id="container" style="width:64%;height:16%"
 			class="functionpanel-parts commonpanel squarepanel itempanel">
 			<div id="genelic_panel" hidden>
 				<text name="genelic_text" class="box_text"></text>
@@ -82,7 +84,7 @@
 			</div>
 		</div>
 		<!-- desplya the API test result area-->
-		<div id="apitest" style="width:700px;height:15%;top:80%;left:20%;" class="functionpanel-parts commonpanel squarepanel" hidden>
+		<div id="apitest" style="width:60%;height:15%;top:80%;left:20%;" class="functionpanel-parts commonpanel squarepanel" hidden>
 			<div name="api-test-msg">
 			</div>
 			<div name="api-test-data">
@@ -328,7 +330,7 @@
 	<!--
         Jetelina chat panel
     -->
-	<div id="jetelina_panel" class="commonpanel squarepanel" style="width:400px;height:100px;top:40%;left:40%">
+	<div id="jetelina_panel" class="commonpanel squarepanel" style="width:30%;height:7%;top:40%;left:40%">
 		<text name="jetelina_tell" class="box_text"></text>
 		<div>
 			&nbsp;
