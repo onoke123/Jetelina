@@ -23,6 +23,7 @@ functions
 	deleteUserAccount() delete user account from jetelina_user_table
 	deleteApi()  delete api by ordering from JC["sqllistfile"] file, then refresh the DataFrame.
 	configParamUpdate()	update configuration parameter
+	getRelatedTableApi() get the list of relational with 'table' or 'api'
 """
 module PostDataController
 
@@ -391,6 +392,36 @@ function configParamUpdate()
 	end
 
 	return ret
+end
+"""
+function getRelatedTableApi()
+
+	get the list of relational with 'table' or 'api'
+
+# Arguments
+- return: json: contains the list data
+"""
+function getRelatedTableApi()
+	jmsg::String = string("compliment me!")
+	searchKey::String = ""
+	target::String = ""
+	tablelist::Vector = jsonpayload("table")
+	api::String = jsonpayload("api")
+
+	if !nothing(tablelist)
+		target = join(tablelist,",") # ["a","b"] -> "a,b" oh ＼(^o^)／
+		searchKey = "table"
+	else if !nothing(api)
+		searchKey = "api"
+		target = api
+	end
+
+	ret = ApiSqlListManager.getRelatedList(searchKey,target)
+	if( 0<length(ret) )
+		ret = json(Dict("result" => true, "list" => "$ret", "message from Jetelina" => jmsg))
+	else
+		ret = json(Dict("result" => false, "list" => 0, "errmsg" => "Oh my, plz ref log file"))
+	end
 end
 
 end

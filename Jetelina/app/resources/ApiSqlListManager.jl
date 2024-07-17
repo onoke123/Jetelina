@@ -12,6 +12,7 @@ functions
 	writeTolist(sql::String, tablename_arr::Vector{String}) create api no and write it to JC["sqllistfile"] order by SQL sentence.
 	deleteTableFromlist(tablename::Vector) delete tables name from JC["sqllistfile"] synchronized with dropping table.
 	deleteApiFromList(apis:Vector) delete api by ordering from JC["sqllistfile"] file, then refresh the DataFrame.
+	getRelatedList(searchKey::String,target::String) earch in JetelinaTableApiRelation file to find 'target' due to 'searchKey'
 """
 module ApiSqlListManager
 
@@ -122,7 +123,7 @@ function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String
 	readSqlList2DataFrame()
 
 	# write to operationhistoryfile
-	JLog.writetoOperationHistoryfile(string("create api",",", suffix, seq_no))
+	JLog.writetoOperationHistoryfile(string("create api", ",", suffix, seq_no))
 
 	return true, string(suffix, seq_no)
 end
@@ -254,7 +255,7 @@ function deleteApiFromList(apis::Vector)
 				# Tips: delete line feed by 'keep=false', then do println()
 				for ss in eachline(taf, keep = false)
 					for i in eachindex(apis)
-						if !startswith(ss,apis[i])
+						if !startswith(ss, apis[i])
 							# leave it in the file
 							println(ttaf, ss)
 						end
@@ -275,9 +276,53 @@ function deleteApiFromList(apis::Vector)
 	readSqlList2DataFrame()
 
 	# write to operationhistoryfile
-	JLog.writetoOperationHistoryfile(string("delete api",",",join(apis,",")))
+	JLog.writetoOperationHistoryfile(string("delete api", ",", join(apis, ",")))
 
 	return true
+end
+"""
+function getRelatedList(searchKey::String, target::String)
+
+	search in JetelinaTableApiRelation file to find 'target' due to 'searchKey'
+	
+# Arguments
+- `searchKey::String`: 'table' or 'api'
+- `target::String`: searching target string, e.g. 'js100' or 'testtable', sometimes array possible in case 'table' e.g 'testtable1,testtable2..' 
+- return: Vector: the result of finding, in case 'api' is single data, in case 'talbe' has possibility multi data
+"""
+function getRelatedList(searchKey::String, target::String)
+	tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JC["tableapifile"])
+	ret = []
+
+	try
+		open(tableapiFile, "r") do taf			
+			for ss in eachline(taf, keep = false)
+				key::String = ""
+				p = split(ss,':')
+				if searchKey == "table"
+					c = split(p[2],',')  
+					keys = split(target,',')
+					for i in eachindex(keys)
+						for ii in eachindex(c)
+							if keys[i] == c[ii]
+								push!(ret,p[1])
+							end 
+						end
+					end
+				else
+					c = p[1]
+					if target == p[1]
+						push!(ret,p[2])
+					end
+				end
+			end
+		end
+	catch err
+		JLog.writetoLogfile("ApiSqlListManager.getRelatedList() error: $err")
+		return false
+	end
+
+	return ret
 end
 
 end

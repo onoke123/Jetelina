@@ -74,6 +74,8 @@ route( "/testapi", PostDataController.createApi, method = POST )
 route( "getapilist", GetDataController.getApiList )
 # delete api from  JC["sqllistfile"] file
 route("/deleteapi", PostDataController.deleteApi, method = POST)
+# get the relational list
+route("/getrelatedlist", PostDataController.getRelatedTableApi, method = POST)
 #===
     -Handle CSV file
 ===#

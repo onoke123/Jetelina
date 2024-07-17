@@ -112,7 +112,6 @@ config["operationhistoryfilesize"]=["history length","hisotry file size","histor
 config["version"]=["version"];
 config["debug"]=["debug"];
 config["pg_user"]=["user","login"];
-config["what-db-use-now"]=["what database","which database","what data base","which data base"];
 config["dbtype"]=["db","database","data base"];
 config["reading_max_lines"]=["read line numbers for analyzing","analyzing lines","analyzing line numbers","analyzing line number"];
 config["logfile"]=["log name","log file name","log-name"];
