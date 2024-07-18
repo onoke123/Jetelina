@@ -33,6 +33,7 @@
       checkGenelicInput() check genelic panel input. caution: will imprement this in V2 if necessary
       deleteThisApi() Ajax function for deleting the target api from api list doc.
       whichCommandsInOrders(s) match with user input in cmdCandidates
+      cleanupRelatedList() clear screen in related_list panel
 */
 let selectedItemsArr = [];
 let cmdCandidates = [];// ordered commands for checking duplication 
@@ -1591,6 +1592,14 @@ const whichCommandsInOrders = (s) => {
   }
 
   return c;
+}
+/**
+ * @function cleanupRelatedList
+ * 
+ * clear screen in related_list panel
+ */
+const cleanupRelatedList = () =>{
+  $("#related_list span").remove();
 }
 
 // return to the chat box if 'return key' is typed in genelic_panel

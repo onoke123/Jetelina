@@ -418,9 +418,9 @@ function getRelatedTableApi()
 
 	ret = ApiSqlListManager.getRelatedList(searchKey,target)
 	if( 0<length(ret) )
-		ret = json(Dict("result" => true, "list" => "$ret", "message from Jetelina" => jmsg))
+		json(Dict("result" => true, "list" => ret, "message from Jetelina" => jmsg))
 	else
-		ret = json(Dict("result" => false, "list" => 0, "errmsg" => "Oh my, plz ref log file"))
+		json(Dict("result" => false, "list" => 0, "errmsg" => "Oh my, plz ref log file"))
 	end
 end
 

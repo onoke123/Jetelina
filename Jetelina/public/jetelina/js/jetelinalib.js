@@ -280,7 +280,7 @@ const getdata = (o, t) => {
                                 tagid = APICONTAINER;
                             }
 
-                            $(tagid).append(`${str}`);
+                            $(tagid).append(str);
                         }
                     });
 
@@ -499,7 +499,29 @@ const postAjaxData = (url, data) => {
                 presentaction.cmd = null;
                 showSomethingInputField(false);
             }else if(url == posturls[8]){
-                console.log("related result: ", result);
+                let str = "";
+                if(result.list != 0){
+                    let c = "table";
+                    if(!$("#related_list_title").text().startsWith("TABLEs") ){
+                        c = "api";
+                    }else{
+                        // every time clean up in case showing related table
+                        cleanupRelatedList();
+                    }
+                    
+                    for( let i in result.list ){
+                        if(result.list[i].indexOf(',') != -1){
+                            let p = result.list[i].split(',');
+                            for( let ii in p ){
+                                str += `<span class="${c}">${p[ii]}</span>`;
+                            }
+                        }else{
+                            str += `<span class="${c}">${result.list[i]}</span>`;
+                        }
+                    }
+
+                    $("#related_list").append(str);
+                }
             }
 
             if (specialmsg == "") {
