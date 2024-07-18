@@ -322,7 +322,7 @@ function getRelatedList(searchKey::String, target::String)
 		return false
 	end
 
-	return ret
+	return convert(Vector{String},ret)
 end
 
 end

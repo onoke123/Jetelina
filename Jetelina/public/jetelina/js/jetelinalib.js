@@ -498,6 +498,8 @@ const postAjaxData = (url, data) => {
                 // configuration parameter change success then cleanup the "#something_msg"
                 presentaction.cmd = null;
                 showSomethingInputField(false);
+            }else if(url == posturls[8]){
+                console.log("related result: ", result);
             }
 
             if (specialmsg == "") {

@@ -402,16 +402,16 @@ function getRelatedTableApi()
 - return: json: contains the list data
 """
 function getRelatedTableApi()
-	jmsg::String = string("compliment me!")
 	searchKey::String = ""
 	target::String = ""
-	tablelist::Vector = jsonpayload("table")
+	table::String = jsonpayload("table")
 	api::String = jsonpayload("api")
+	jmsg::String = string("compliment me!")
 
-	if !nothing(tablelist)
-		target = join(tablelist,",") # ["a","b"] -> "a,b" oh ＼(^o^)／
+	if 0<length(table)
 		searchKey = "table"
-	else if !nothing(api)
+		target = table
+	elseif 0<length(api)
 		searchKey = "api"
 		target = api
 	end

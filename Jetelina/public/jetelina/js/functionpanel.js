@@ -417,7 +417,11 @@ const listClick = (p) => {
       cleanUp("items");
     }
   } else {
+    let related_table = "";
+    let related_api = "";
+
     if (c.indexOf("table") != -1) {
+      related_table = t;
       $("#related_list_title").text(`APIs of ${t}`);
       //get&show table columns
       getColumn(t);
@@ -430,6 +434,7 @@ const listClick = (p) => {
       if (preferent.apilist != null && preferent.apilist.length != 0) {
         let s = getdataFromJson(preferent.apilist, t);
         if (0 < s.sql.length) {
+          related_api = s.apino;
           $("#related_list_title").text(`TABLEs of ${s.apino}`);
           // api in/out json
           $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiin"><bold>IN:</bold>${setApiIF_In(t, s)}</span>`);
@@ -439,6 +444,9 @@ const listClick = (p) => {
         }
       }
     }
+
+    let data = `{"table":"${related_table}","api":"${related_api}"}`;
+    postAjaxData(scenario["function-post-url"][8],data);
 
     p.toggleClass("activeItem");
   }
