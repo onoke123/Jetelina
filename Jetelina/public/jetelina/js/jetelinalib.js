@@ -519,18 +519,28 @@ const postAjaxData = (url, data) => {
                         // every time clean up in case showing related table
                         cleanupRelatedList(false);
                     }
-                    
-                    for( let i in result.list ){
-                        if(result.list[i].indexOf(',') != -1){
-                            let p = result.list[i].split(',');
-                            for( let ii in p ){
-                                str += `<span class="${c}">${p[ii]}</span>`;
-                            }
-                        }else{
+
+                    // collect items on the relational list are already
+                    let existList = [];
+                    $("#related_list span").each(function(){
+                        existList.push($(this).text());
+                    });
+
+                    // collect the difference items between getting list(result.list) and on the relational list
+                    let newaddlist = result.list.filter(x=>!existList.includes(x));
+                    if(0<newaddlist.length){
+                        // add only diffrences to the list
+                        for(let i in newaddlist){
+                            str += `<span class="${c}">${newaddlist[i]}</span>`;
+                        }
+                    }else{
+                        // list the result, because there is no items on the list yet
+                        for(let i in result.list){
                             str += `<span class="${c}">${result.list[i]}</span>`;
                         }
-                    }
+                    }   
 
+                    // append it ＼(^o^)／
                     $("#related_list").append(str);
                 }
             }
