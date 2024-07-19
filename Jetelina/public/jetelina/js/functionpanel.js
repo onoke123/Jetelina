@@ -33,7 +33,7 @@
       checkGenelicInput() check genelic panel input. caution: will imprement this in V2 if necessary
       deleteThisApi() Ajax function for deleting the target api from api list doc.
       whichCommandsInOrders(s) match with user input in cmdCandidates
-      cleanupRelatedList() clear screen in related_list panel
+      cleanupRelatedList(b) clear screen in related_list panel and/or relatedDataList object
 */
 let selectedItemsArr = [];
 let cmdCandidates = [];// ordered commands for checking duplication 
@@ -332,6 +332,7 @@ const fileupload = () => {
       //refresh table list 
       if (isVisibleTableContainer()) {
         cleanUp("tables");
+        cleanupRelatedList(true);
         getAjaxData(scenario["function-get-url"][1]);
       } else {
         typingControll(chooseMsg('success-msg', "", ""));
@@ -411,13 +412,66 @@ const listClick = (p) => {
 
   removeColumn(t);
   cmdCandidates = [];
+  let relatedPanel = TABLECONTAINER;
   if (c.indexOf("activeItem") != -1) {
-    p.toggleClass("activeItem");
+    /*
+      in case to turn p to 'INACTIVE'
+    */
     if (isVisibleApiContainer()) {
       cleanupContainers();
       cleanUp("items");
+      relatedPanel = APICONTAINER;
     }
+
+    /* 
+      Tips:
+        clean up 'table' in the relation data list.
+        a little bit complex.
+        only unique api in target talbe removes from the related list.
+        i mean
+          relatedDataList["table1"] = ["ju1","jd2","ji3","js4","js5"]
+          relatedDataList["table2"] = ["ju11","jd12","ji13","js14","js5"]
+
+          "ju1","jd2","ji3","js4" should be removed when "table1" has been inactive.
+          "js5" should be remained in the list, because it is duplicated with "table2".
+    */
+    if (relatedDataList[t] != null) {
+      let activeArr = [];
+      $(`${relatedPanel} span`).filter('.activeItem').each(function () {
+        activeArr.push($(this).text());
+      });
+
+      if (0 < activeArr.length) {
+        let ar1 = relatedDataList[t];
+        let diff = [];
+        for (let i in activeArr) {
+          let ar2 = relatedDataList[activeArr[i]];
+          diff[i] = ar1.filter(x => !ar2.includes(x));
+          console.log("diff ", i, " -> ", diff[i]);
+        }
+
+        if (0 < diff.length) {
+          for (let i in diff) {
+            for (let ii in diff[i]) {
+              $("#related_list span").each(function () {
+                if ($(this).text() == diff[i][ii]) {
+                  $(this).remove();
+                }
+              });
+            }
+          }
+        }
+
+      }
+
+      delete relatedDataList[t];
+    }
+
+    p.toggleClass("activeItem");
   } else {
+    /*
+      in case to turn p to 'ACTIVE'
+    */
     let related_table = "";
     let related_api = "";
 
@@ -447,7 +501,7 @@ const listClick = (p) => {
     }
 
     let data = `{"table":"${related_table}","api":"${related_api}"}`;
-    postAjaxData(scenario["function-post-url"][8],data);
+    postAjaxData(scenario["function-post-url"][8], data);
 
     p.toggleClass("activeItem");
   }
@@ -1074,10 +1128,10 @@ const functionPanelFunctions = (ut) => {
       }
 
       cleanUp(cleanup);
+      cleanupRelatedList(false);
       $(hidepanel).hide();
       $(leftPanel).text(paneltitle);
       $(showpanel).show();
-
       if ((showpanel == TABLECONTAINER) && !$(`${TABLECONTAINER} span`).hasClass('table')) {
         getAjaxData(geturl);
       } else if ((showpanel == APICONTAINER) && !$(`${APICONTAINER} span`).hasClass('api')) {
@@ -1596,10 +1650,17 @@ const whichCommandsInOrders = (s) => {
 /**
  * @function cleanupRelatedList
  * 
- * clear screen in related_list panel
+ * clear screen in related_list panel and/or relatedDataList object
+ *
+ * @param {boolean} b  false -> clear the list, true-> delete relatedDataList as well
  */
-const cleanupRelatedList = () =>{
+const cleanupRelatedList = (b) => {
   $("#related_list span").remove();
+  if (b) {
+    for (let i in relatedDataList) {
+      delete relatedDataList[i];
+    }
+  }
 }
 
 // return to the chat box if 'return key' is typed in genelic_panel

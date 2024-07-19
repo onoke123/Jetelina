@@ -66,7 +66,7 @@ const LOCALPARAM = "login2jetelina"; // local strage parameter
 //let enterNumber = 0;
 let typingTimeoutID;
 let whatJetelinaTold = ""; // what jetelina was telling in just previous time 
-
+let relatedDataList = {}; // relation data to table/api has been contained here as temporary
 /**
  * 
  * @function getScenarioFile
@@ -398,6 +398,15 @@ const getAjaxData = (url) => {
                     typingControll(chooseMsg("success-msg", "", ""));
                 }
             } else {
+                /*
+                    Attention:
+                        reset "related_list_title" here.
+                        indeed it needs in case of switching table/api list <- geturl[0]:api list, and geturl[1]:table list
+                        but there is not reason to set it in each, so far, therefore do it at here.
+                        change this position if it would have an issue. :P
+                */
+                $("#related_list_title").text('');
+
                 const geturl = scenario['function-get-url'];
                 if (url == geturl[0]) {
                     //rendering api list
@@ -501,12 +510,14 @@ const postAjaxData = (url, data) => {
             }else if(url == posturls[8]){
                 let str = "";
                 if(result.list != 0){
+                    relatedDataList[result.target] = result.list;
+
                     let c = "table";
                     if(!$("#related_list_title").text().startsWith("TABLEs") ){
                         c = "api";
                     }else{
                         // every time clean up in case showing related table
-                        cleanupRelatedList();
+                        cleanupRelatedList(false);
                     }
                     
                     for( let i in result.list ){

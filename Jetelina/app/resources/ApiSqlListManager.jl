@@ -312,7 +312,14 @@ function getRelatedList(searchKey::String, target::String)
 				else
 					c = p[1]
 					if target == p[1]
-						push!(ret,p[2])
+						#===
+							Tips:
+								p[2] has possibility multi data. e.g table1,table2
+						===#
+						c = split(p[2],',')
+						for i in eachindex(c)
+							push!(ret,c[i])
+						end
 					end
 				end
 			end
