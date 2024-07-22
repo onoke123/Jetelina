@@ -1155,7 +1155,8 @@ const functionPanelFunctions = (ut) => {
       if (isVisibleTableContainer()) {
         $(`${CONTAINERNEWAPINO}`).remove();
         for (let n = 0; n < t.length; n++) {
-          $(`${TABLECONTAINER} span`).each(function (i, v) {
+          $("#table_container span, #related_list span").each(function (i, v) {
+//            $(`${TABLECONTAINER} span, #related_list span`).each(function (i, v) {
             if (v.textContent == t[n]) {
               $(this).hasClass("activeItem");
               listClick($(this));
@@ -1163,6 +1164,18 @@ const functionPanelFunctions = (ut) => {
               findflg = true;
             }
           });
+/*
+          if(!findflg){
+            $("#related_list span").each(function(i,v){
+              if(v.textContent == t[n] ){
+                $(this).hasClass("activeItem");
+                listClick($(this));
+                m = chooseMsg('success-msg', '','');
+                findflg = true;
+              }
+            });
+          }
+*/
         }
       }
 
