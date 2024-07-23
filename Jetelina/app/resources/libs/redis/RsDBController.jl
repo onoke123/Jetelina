@@ -39,7 +39,7 @@ functions
 module RsDBController
 
 using Genie, Genie.Renderer, Genie.Renderer.Json
-using CSV, Redis, DataFrames, IterTools, Tables, Dates
+using CSV, Redis, DataFrames, IterTools, Tables, Dates, LibPQ
 using Jetelina.JFiles, Jetelina.JLog, Jetelina.ApiSqlListManager, Jetelina.JMessage, Jetelina.JSession
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
@@ -127,7 +127,7 @@ function open_connection()
 		"' sslmode='", j_config.JC["pg_sslmode"],
 		"' dbname='", j_config.JC["pg_dbname"], "'")
 
-	return conn = LibPQ.Connection(con_str)
+	return conn = Redis.RedisConnection()
 end
 
 """
@@ -138,10 +138,115 @@ function close_connection(conn::LibPQ.Connection)
 # Arguments
 - `conn:LibPQ.Connection`: LibPQ.Connection object
 """
-function close_connection(conn::LibPQ.Connection)
-	close(conn)
+function close_connection(conn::Redis.RedisConnection)
+	Redis.disconnect(conn)
 end
+"""
+function set(k,v)
 
+	set 'k'='v' in name=value style in redis
+
+# Arguments
+- `k:String`: name
+- `v:Any`: value
+- return: boolean:  true -> success, faluse -> error
+"""
+function set(k,v)
+	conn = open_connection()
+	try
+		Redis.set(conn,k,v)
+		return true	
+	catch err
+		JLog.writetoLogfile("RsDBController.set() error: $err")
+		return false
+	finally
+		close_connection(conn)
+	end
+end
+"""
+function get(k)
+
+	get value data in redis in order to match name 'k'
+
+# Arguments
+- `k:String`: target matching name
+- return: String:  value in redis in matching key name
+"""
+function get(k)
+	conn = open_connection()
+	try
+		v = Redis.get(conn,k)
+		return v	
+	catch err
+		@info err
+		JLog.writetoLogfile("RsDBController.get() error: $err")
+		return false
+	finally
+		close_connection(conn)
+	end
+end
+#==
+function spop(k)
+	conn = open_connection()
+	try
+		v = Redis.spop(conn,k)
+		return v	
+	catch err
+		@info err
+		JLog.writetoLogfile("RsDBController.spop() error: $err")
+		return false
+	finally
+		close_connection(conn)
+	end
+
+end
+==#
+"""
+function scan1(i,k)
+
+	scan, indeed searching, data to find matching from 'i' cursor position with 'k' string
+
+# Arguments
+- `i:Int`: cursor position number, default 0
+- `k:String`: target scan string
+- return: Tuple(number,AbstractString Vector):  matching key name array in redis
+"""
+function scan1(i,k)
+	conn = open_connection()
+	try
+		v = Redis.scan(conn,i,"match",string(k,'*'))
+		return v	
+	catch err
+		@info err
+		JLog.writetoLogfile("RsDBController.scan1() error: $err")
+		return false
+	finally
+		close_connection(conn)
+	end
+end
+"""
+function scan2(i,n)
+
+	scan, indeed searching, data from 'i' cursor position order by 'n' counts.
+
+# Arguments
+- `i:Int`: cursor position number, default 0
+- `n:Int`: scanning number at once
+- return: Tuple(number,AbstractString Vector):  key name array in redis
+"""
+function scan2(i,n)
+	conn = open_connection()
+	try
+		v = Redis.scan(conn,i,:count,n)
+		return v	
+	catch err
+		@info err
+		JLog.writetoLogfile("RsDBController.scan2() error: $err")
+		return false
+	finally
+		close_connection(conn)
+	end
+end
 """
 function readJetelinatable()
 

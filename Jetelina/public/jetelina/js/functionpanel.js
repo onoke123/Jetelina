@@ -453,7 +453,6 @@ const listClick = (p) => {
         for (let i in activeArr) {
           let ar2 = relatedDataList[activeArr[i]];// 'activeItem' relation data list 
           diff[i] = ar1.filter(x => !ar2.includes(x)); // pick the difference(nor) between the clicked item and 'activeItem' item
-          console.log("diff ", i, " -> ", diff[i]);
         }
 
         if (0 < diff.length) {
