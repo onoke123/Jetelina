@@ -275,6 +275,7 @@ const cleanUp = (s) => {
 const cleanupItems4Switching = () => {
   cleanUp("items");
   if (isVisibleTableContainer()) {
+    $("#columns_title").text("");
     $(`${TABLECONTAINER} span`).removeClass("activeItem");
   } else if (isVisibleApiContainer()) {
     $(`${APICONTAINER} span`).removeClass("activeItem");
@@ -510,6 +511,20 @@ const listClick = (p) => {
     postAjaxData(scenario["function-post-url"][8], data);
 
     p.toggleClass("activeItem");
+  }
+
+  if(isVisibleTableContainer()){
+    let label2columns = "";
+    $(`${TABLECONTAINER} span`).filter('.activeItem').each(function(){
+      let tn = $(this).text();
+      if(label2columns.length == 0){
+        label2columns = tn; 
+      }else{
+        label2columns += " & " + tn;
+      }
+    });
+
+    $("#columns_title").text(`Registered columns in ${label2columns}`);
   }
 }
 /**
