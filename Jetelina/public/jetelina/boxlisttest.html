@@ -1,0 +1,73 @@
+<html>
+
+<head>
+    <script type="text/javascript" src="../js/genie/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("ul.update-scroll li").click(function () {
+
+                $("ul.update-scroll li").each(function () {
+
+                    // 既に選択済の場合、選択を解除
+                    if ($(this).hasClass("selected")) {
+                        //alert( $(this).text() );
+                        $(this).toggleClass("selected");
+                    }
+                });
+
+                // 選択済に変更
+                $(this).toggleClass("selected");
+
+
+
+                // 選択済の位置がリストの先頭に来るようにスクロール
+                //var i = $(this).index();
+                var p = $(this).offset().top;
+                //alert(p);
+                $("ul.update-scroll").animate({ scrollTop: p }, "fast");
+            });
+        });
+    </script>
+
+    <title>CSS</title>
+    <style type="text/css">
+        ul.update-scroll {
+            list-style-type: none;
+            width: 400px;
+            height: 100px;
+            overflow-y: scroll;
+            border: 2px solid #bbb;
+            padding-left: 1.5em;
+        }
+
+        ul.update-scroll li {
+            margin-top: 0.3em;
+        }
+
+        ul.update-scroll li.selected {
+            background: red;
+        }
+
+        ul.update-scroll a {
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body bgcolor="rgba(255,0,0,0.15)">
+
+    <ul class="update-scroll">
+        <li>[2010/01/03]： <a href="javascript:void(0);">項目10</a></li>
+        <li>[2010/01/03]： <a href="javascript:void(0);">項目9</a></li>
+        <li>[2010/01/03]： <a href="javascript:void(0);">項目8</a></li>
+        <li>[2010/01/03]： <a href="javascript:void(0);">項目7</a></li>
+        <li>[2010/01/03]： <a href="javascript:void(0);">項目6</a></li>
+        <li>[2010/01/03]： <a href="javascript:void(0);">項目5</a></li>
+        <li>[2010/01/03]： <a href="javascript:void(0);">項目4</a></li>
+        <li>[2010/01/03]： <a href="javascript:void(0);">項目3</a></li>
+        <li>[2010/01/02]： <a href="javascript:void(0);">項目2</a></li>
+        <li>[2010/01/01]： <a href="javascript:void(0);">項目1</a></li>
+    </ul>
+</body>
+
+</html>
