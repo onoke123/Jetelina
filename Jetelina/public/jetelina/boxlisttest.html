@@ -1,8 +1,10 @@
 <html>
 
 <head>
+    <meta charset="utf-8" />
     <script type="text/javascript" src="../js/genie/jquery.min.js"></script>
     <script type="text/javascript">
+        /*
         $(function () {
             $("ul.update-scroll li").click(function () {
 
@@ -27,19 +29,43 @@
                 $("ul.update-scroll").animate({ scrollTop: p }, "fast");
             });
         });
+        */
+        $(function () {
+            var ul = $("ul.update-scroll");
+
+            ul.animate({scrollTop:$("#last").offset().top},3000); console.log("bottom ", $("#last").offset().top);
+/*
+            $("li", ul).click(function () {
+                ul.animate({
+                    scrollTop: ul.scrollTop() + $(this).offset().top - ul.offset().top
+                }, "fast");
+            });*/
+        });
     </script>
 
     <title>CSS</title>
     <style type="text/css">
         ul.update-scroll {
+            /*
             list-style-type: none;
             width: 400px;
             height: 100px;
             overflow-y: scroll;
             border: 2px solid #bbb;
             padding-left: 1.5em;
+            */
+            margin: 0 auto;
+            width: 200px;
+            height: 180px;
+            overflow-y: scroll;
+            background-color: #f8e9f2;
+            border: solid 4px #DE94BF;
+            border-radius: 5px;
+            scrollbar-color: #FAF8D8 #DE94BF;
+            scrollbar-width: thin;
         }
 
+        /*
         ul.update-scroll li {
             margin-top: 0.3em;
         }
@@ -50,7 +76,7 @@
 
         ul.update-scroll a {
             text-decoration: none;
-        }
+        }*/
     </style>
 </head>
 
@@ -66,7 +92,7 @@
         <li>[2010/01/03]： <a href="javascript:void(0);">項目4</a></li>
         <li>[2010/01/03]： <a href="javascript:void(0);">項目3</a></li>
         <li>[2010/01/02]： <a href="javascript:void(0);">項目2</a></li>
-        <li>[2010/01/01]： <a href="javascript:void(0);">項目1</a></li>
+        <li id="last">[2010/01/01]： <a href="javascript:void(0);">項目1</a></li>
     </ul>
 </body>
 
