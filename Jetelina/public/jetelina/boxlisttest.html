@@ -65,6 +65,30 @@
 
     <title>CSS</title>
     <style type="text/css">
+#aa {
+  position: relative;
+  display: inline-block;
+  margin: 1rem 0 1rem -10px;
+  padding: 1rem 3rem;
+  color: #fff;
+  border-radius: 0 100vh 100vh 0;
+  background: #0075a9;
+  -webkit-box-shadow: 3px 3px 5px rgba(0, 0, 0, .2);
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, .2);
+}
+
+#aa:before {
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 0;
+  height: 0;
+  content: '';
+  border-top: 10px solid #005276;
+  border-left: 10px solid transparent;
+}
+
+
         ul.update-scroll {
             /*
             list-style-type: none;
@@ -101,8 +125,10 @@
 </head>
 
 <body bgcolor="rgba(255,0,0,0.15)">
+    <text id="aa">リボン風の見出し</text>
 
     <ul class="update-scroll">
+        <text id="aa">リボン風の見出し</text>
         <li>[2010/01/03]： <a href="javascript:void(0);">項目10</a></li>
         <li>[2010/01/03]： <a href="javascript:void(0);">項目9</a></li>
         <li>[2010/01/03]： <a href="javascript:void(0);">項目8</a></li>

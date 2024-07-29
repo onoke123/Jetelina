@@ -66,14 +66,14 @@ $(UPFILE).on("change", function () {
 */
 $(document).on({
   mouseenter: function (e) {
-    let moveLeft = -150/*20*/;
-    let moveDown = -90/*10*/;
+    let moveLeft = -10/*-150/*20*/;
+    let moveDown = -10 /*-90/*10*/;
 
     $("#pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
 
     let d = $(this).attr("d");
 
-    $('div#pop-up').text(d).show();
+    $('div#pop-up').text(`e.g. ${d}`).show();
   },
   mouseleave: function () {
     $('div#pop-up').hide();
