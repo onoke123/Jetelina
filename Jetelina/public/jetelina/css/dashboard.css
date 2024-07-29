@@ -231,3 +231,13 @@ input.user-input {
   color: #72e799;  
   font-style: italic;
 }
+
+.msg_scroll {
+  margin: 0 auto;
+  overflow-y: scroll;
+  background-color: rgb(53, 41, 94, 0.1)/* #f8e9f2*/;
+  border: solid 1px rgb(0,255,255,0.75)/*#DE94BF*/;
+  border-radius: 5px;
+  scrollbar-color: rgba(49, 177, 117, 0.1)  rgba(41, 94, 59, 0.1)/* #FAF8D8 #DE94BF*/;
+  scrollbar-width: thin;
+}

@@ -31,15 +31,35 @@
         });
         */
         $(function () {
+            let si;
             var ul = $("ul.update-scroll");
 
-            ul.animate({scrollTop:$("#last").offset().top},3000); console.log("bottom ", $("#last").offset().top);
+//            ul.animate({scrollTop:$("#last").offset().top},3000); console.log("bottom ", $("#last").offset().top);
 /*
             $("li", ul).click(function () {
                 ul.animate({
                     scrollTop: ul.scrollTop() + $(this).offset().top - ul.offset().top
                 }, "fast");
             });*/
+
+//            ul.animate({ scrollTop: ul.height() }, 4000);
+//            const startscroll = () =>{
+                si = setInterval(function(){console.log("scrollTop and height() ", ul.scrollTop(), " ", ul.height());
+                    ul.animate({ scrollTop: (ul.scrollTop()==0 ? ul.height() : 0) }, 4000);
+                },2000);
+//            }
+
+            ul.on('click',function(){ console.log("si: ", si);
+                if(si != null){
+                    return clearInterval(si);
+                }else{
+                    console.log("start");
+//                    return startscroll();
+                }
+            });
+
+//            startscroll();
+
         });
     </script>
 
@@ -92,7 +112,7 @@
         <li>[2010/01/03]： <a href="javascript:void(0);">項目4</a></li>
         <li>[2010/01/03]： <a href="javascript:void(0);">項目3</a></li>
         <li>[2010/01/02]： <a href="javascript:void(0);">項目2</a></li>
-        <li id="last">[2010/01/01]： <a href="javascript:void(0);">項目1</a></li>
+        <li>[2010/01/01]： <a href="javascript:void(0);">項目1</a></li>
     </ul>
 </body>
 

@@ -67,6 +67,8 @@ const LOCALPARAM = "login2jetelina"; // local strage parameter
 let typingTimeoutID;
 let whatJetelinaTold = ""; // what jetelina was telling in just previous time 
 let relatedDataList = {}; // relation data to table/api has been contained here as temporary
+let messageScrollTimerID; // '#someting_msg' auto scroll timer interval 
+let apitestScrollTimerID; // '#apitest' auto scroll timer interval
 /**
  * 
  * @function getScenarioFile
@@ -297,7 +299,7 @@ const getdata = (o, t) => {
                         $(`${APITESTPANEL} [name='api-test-msg']`).append(`${testmsg}<br>${aquisition_nubmer}`);
                         $(`${APITESTPANEL} [name='api-test-data'`).append(`<span class='apitestresult'><p>-return JSON data are</p><p>${testdata}</p></span>`);
                         if (0 < jetelinamessage.length) {
-                            $("#apitest [name='api-test-msg']").append(`<span class='apitestresult'><p>Attention: ${jetelinamessage}</p></span>`);
+                            $(`${APITESTPANEL} [name='api-test-msg']`).append(`<span class='apitestresult'><p>Attention: ${jetelinamessage}</p></span>`);
                         }
                     }
                 }
@@ -1599,15 +1601,20 @@ const showSomethingInputField = (b,type) => {
  * "#something_msg" show or hide
  */
 const showSomethingMsgPanel = (b) => {
+    let sm = $(SOMETHINGMSGPANEL);
     if (b) {
-        $(SOMETHINGMSGPANEL).show();
+        sm.show();
+        messageScrollTimerID = setInterval(function(){
+            sm.animate({ scrollTop: (sm.scrollTop()==0 ? sm.height() : 0) }, 4000);
+        },2000);
     } else {
         // these classes are for configuration changing history message
-        $(SOMETHINGMSGPANEL).removeClass("config_history");
+        sm.removeClass("config_history");
         $(SOMETHINGMSGPANELMSG).removeClass("config_history_text");
         $(SOMETHINGMSGPANELMSG).text("");
 
-        $(SOMETHINGMSGPANEL).hide();
+        clearInterval(messageScrollTimerID);
+        sm.hide();
     }
 }
 /**
@@ -1635,7 +1642,13 @@ const showApiTestPanel = (b) => {
     if (b) {
         $(APITESTPANEL).show().draggable();
         $(APITESTPANEL).animate({ top: "300px" }, ANIMATEDURATION);
+        let ap = $(`${APITESTPANEL} [name='api-test-data']`);
+        apitestScrollTimerID = setInterval(function(){
+            ap.animate({ scrollTop: (ap.scrollTop()==0 ? ap.height() : 0) }, 4000);
+        },2000);
+
     } else {
+        clearInterval(apitestScrollTimerID);
         // delete all test results
         $(APITESTPANEL).hide();
     }
