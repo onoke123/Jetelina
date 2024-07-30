@@ -144,6 +144,7 @@ function deleteTableFromlist(tablename::Vector)
 	tableapiTmpFile = string(tableapiFile, ",tmp")
 
 	targetapi = []
+	untargetapi = []
 
 	# take the backup file
 	JFiles.fileBackup(tableapiFile)
@@ -160,13 +161,30 @@ function deleteTableFromlist(tablename::Vector)
 						for i in eachindex(tablename)
 							if tablename[i] ∈ tmparr
 								push!(targetapi, p[1]) # ["js1","ji2,.....]
+								setdiff!(untargetapi,[p[1]])
 							else
 								# remain others in the file
-								println(ttaf, ss)
+								push!(untargetapi, p[1]) # ["js1","ji2,.....]
 							end
 						end
 					end
 				end
+			end
+			#===
+				Tips:
+					indeed wanted to return to the head position of tableapiFile,
+					but could not find how to do it, therefore close the file and open
+					it again. not cool. ・ω・
+			===#
+			open(tableapiFile, "r") do taf
+				for ss in eachline(taf, keep = false)
+					if contains(ss, ':')
+						p = split(ss, ":") # api_name:table,table,....
+						if p[1] ∉ targetapi
+							println(ttaf, ss)
+						end
+					end
+				end 
 			end
 		end
 	catch err
