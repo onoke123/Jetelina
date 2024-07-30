@@ -615,18 +615,15 @@ function dataInsertFromCSV(fname::String)
 	===#
 	push!(tablename_arr, tableName)
 	insert_str = RsSQLSentenceManager.createApiInsertSentence(tableName, insert_column_str, insert_data_str)
-	#        RsSQLSentenceManager.writeTolist(insert_str, "", tablename_arr)
-	ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, getJetelinaSequenceNumber(1))
+	ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, getJetelinaSequenceNumber(1), "redis")
 
 	# update
 	update_str = RsSQLSentenceManager.createApiUpdateSentence(tableName, update_str)
-	#        RsSQLSentenceManager.writeTolist(update_str[1], update_str[2], tablename_arr)
-	ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, getJetelinaSequenceNumber(1))
+	ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, getJetelinaSequenceNumber(1), "redis")
 
 	# delete
 	delete_str = RsSQLSentenceManager.createApiDeleteSentence(tableName)
-	#        RsSQLSentenceManager.writeTolist(delete_str[1], delete_str[2], tablename_arr)
-	ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, getJetelinaSequenceNumber(1))
+	ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, getJetelinaSequenceNumber(1), "redis")
 
 	if isempty(df_tl)
 		# manage to jetelina_table_manager

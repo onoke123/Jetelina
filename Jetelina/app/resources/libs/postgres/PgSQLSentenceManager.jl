@@ -215,7 +215,7 @@ function createApiSelectSentence(json_d, seq_no::Integer)
 			return json(Dict("result" => false, "resembled" => ck[2]))
 		else
 			# yes this is the new
-			ret = ApiSqlListManager.writeTolist(selectSql, subq_d, tablename_arr, seq_no)
+			ret = ApiSqlListManager.writeTolist(selectSql, subq_d, tablename_arr, seq_no, "postgresql")
 			#===
 				Tips:
 					writeTolist() returns tuple({true/false,apino/null}).

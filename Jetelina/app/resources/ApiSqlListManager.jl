@@ -9,7 +9,7 @@ Description:
 
 functions
 	readSqlList2DataFrame() import registered SQL sentence list in JC["sqllistfile"] to DataFrame.this function set the sql list data in the global variable 'Df_JetelinaSqlList' as DataFrame object.
-	writeTolist(sql::String, tablename_arr::Vector{String}) create api no and write it to JC["sqllistfile"] order by SQL sentence.
+	writeTolist(sql::String, tablename_arr::Vector{String}, seq_no::Integer, db::String) create api no and write it to JC["sqllistfile"] order by SQL sentence.
 	deleteTableFromlist(tablename::Vector) delete tables name from JC["sqllistfile"] synchronized with dropping table.
 	deleteApiFromList(apis:Vector) delete api by ordering from JC["sqllistfile"] file, then refresh the DataFrame.
 	getRelatedList(searchKey::String,target::String) earch in JetelinaTableApiRelation file to find 'target' due to 'searchKey'
@@ -57,7 +57,7 @@ function readSqlList2DataFrame()
 	return false, nothing
 end
 """
-function writeTolist(sql::String, tablename_arr::Vector{String}, seq_no::Integer)
+function writeTolist(sql::String, tablename_arr::Vector{String}, seq_no::Integer, db::String)
 
 	create api no and write it to JC["sqllistfile"] order by SQL sentence.
 	
@@ -66,10 +66,11 @@ function writeTolist(sql::String, tablename_arr::Vector{String}, seq_no::Integer
 - `subquery::String`: sub query sentence
 - `tablename_arr::Vector{String}`: table name list that are used in 'sql'
 - `seq_no::Integer`: number of jetelian_sql_sequence
+- `db::String`: data base name  e.g. postgresql,mysql,redis
 - return: Tuple: suceeded (true::Boolean, api number name::String)
 				 failed   (false::Boolean, nothing)
 """
-function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String}, seq_no::Integer)
+function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String}, seq_no::Integer, db::String)
 	sqlFile = JFiles.getFileNameFromConfigPath(j_config.JC["sqllistfile"])
 	tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JC["tableapifile"])
 
@@ -88,7 +89,7 @@ function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String
 	end
 
 	sql = strip(sql)
-	sqlsentence = """$suffix$seq_no,\"$sql\",\"$subquery\""""
+	sqlsentence = """$suffix$seq_no,\"$sql\",\"$subquery\",\"$db\"""
 
 	# write the sql to the file
 	thefirstflg = true
@@ -99,7 +100,7 @@ function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String
 	try
 		open(sqlFile, "a") do f
 			if !thefirstflg
-				println(f, string(j_config.JC["file_column_apino"], ',', j_config.JC["file_column_sql"], ',', j_config.JC["file_column_subquery"]))
+				println(f, string(j_config.JC["file_column_apino"], ',', j_config.JC["file_column_sql"], ',', j_config.JC["file_column_subquery"]), ',', j_config.JC["file_column_db"])
 			end
 
 			println(f, sqlsentence)

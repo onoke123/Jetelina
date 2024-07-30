@@ -561,18 +561,15 @@ function dataInsertFromCSV(fname::String)
 	===#
 	push!(tablename_arr, tableName)
 	insert_str = MySQLSentenceManager.createApiInsertSentence(tableName, insert_column_str, insert_data_str)
-	#        PgSQLSentenceManager.writeTolist(insert_str, "", tablename_arr)
-	ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, getJetelinaSequenceNumber(1))
+	ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, getJetelinaSequenceNumber(1), "mysql")
 
 	# update
 	update_str = MySQLSentenceManager.createApiUpdateSentence(tableName, update_str)
-	#        PgSQLSentenceManager.writeTolist(update_str[1], update_str[2], tablename_arr)
-	ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, getJetelinaSequenceNumber(1))
+	ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, getJetelinaSequenceNumber(1), "mysql")
 
 	# delete
 	delete_str = MySQLSentenceManager.createApiDeleteSentence(tableName)
-	#        PgSQLSentenceManager.writeTolist(delete_str[1], delete_str[2], tablename_arr)
-	ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, getJetelinaSequenceNumber(1))
+	ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, getJetelinaSequenceNumber(1), "mysql")
 
 	#==
 		if isempty(df_tl)
