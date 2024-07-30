@@ -1032,12 +1032,14 @@ const chatKeyDown = (cmd) => {
                         }
 
                         // configuration management
+                        // 下でCONFIGCHANGEが設定されてからここにくる
                         if (presentaction.cmd != null && presentaction.cmd == CONFIGCHANGE) {
                             if (presentaction.config_name != null) {
                                 if ($(SOMETHINGINPUT).is(":visible")) {
                                     if (inScenarioChk(ut, 'common-post-cmd')) {
                                         let new_param = $(SOMETHINGINPUT).val();
                                         if (0 < new_param.length) {
+                                            // ここでパラメタ変更する
                                             let data = `{"${presentaction.config_name}":"${new_param}"}`;
                                             postAjaxData(scenario["function-post-url"][3], data);
                                         } else {
@@ -1050,8 +1052,9 @@ const chatKeyDown = (cmd) => {
                             }
                         }
 
+                            /* 一発目はここにくる */
                         if (inScenarioChk(ut, 'config-update-cmd')) {
-                            presentaction.cmd = "CONFIGCHANGE";
+                            presentaction.cmd = CONFIGCHANGE;
                             cancelableCmdList.push(presentaction.cmd);
                             if (presentaction.config_name != null && presentaction.config_data != null) {
                                 showSomethingInputField(true,0);
