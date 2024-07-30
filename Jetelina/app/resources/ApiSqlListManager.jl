@@ -153,7 +153,10 @@ function deleteTableFromlist(tablename::Vector)
 	try
 		open(tableapiTmpFile, "w") do ttaf
 			open(tableapiFile, "r") do taf
-				# Tips: delete line feed by 'keep=false', then do println()
+				#===
+					Tips: 
+						'keep=false' omits the line-feed in each line, then do println()
+				===#
 				for ss in eachline(taf, keep = false)
 					if contains(ss, ':')
 						p = split(ss, ":") # api_name:table,table,....
@@ -169,14 +172,19 @@ function deleteTableFromlist(tablename::Vector)
 						end
 					end
 				end
-			end
-			#===
-				Tips:
-					indeed wanted to return to the head position of tableapiFile,
-					but could not find how to do it, therefore close the file and open
-					it again. not cool. ・ω・
-			===#
-			open(tableapiFile, "r") do taf
+
+				#===
+					Tips:
+						return to the file top ＼(^o^)／
+						indeed, there are 3 funcs in julia
+						   - seek(taf,0) move 'taf' to the position '0'
+						   - seekstart(taf) same above
+						   - seekend(taf) move 'taf' to the position tail
+						
+						seek(taf,0) can apply here, but use seekstart(taf) because the position is obvioous
+				===#
+				seekstart(taf)
+
 				for ss in eachline(taf, keep = false)
 					if contains(ss, ':')
 						p = split(ss, ":") # api_name:table,table,....
