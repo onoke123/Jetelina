@@ -89,7 +89,7 @@ function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String
 	end
 
 	sql = strip(sql)
-	sqlsentence = """$suffix$seq_no,\"$sql\",\"$subquery\",\"$db\"""
+	sqlsentence = """$suffix$seq_no,\"$sql\",\"$subquery\",\"$db\""""
 
 	# write the sql to the file
 	thefirstflg = true
