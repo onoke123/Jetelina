@@ -93,19 +93,19 @@ dbtype = postgresql
 #dbtype = mysql
 
 # PostgreSQL setting
-@jdic pg_host:"host"
+@jdic pg_host:"postgresql host"
 pg_host = localhost
-@jdic pg_port:"port"
+@jdic pg_port:"postgresql port"
 pg_port = 5432
-@jdic pg_user:"user","login"
+@jdic pg_user:"postgresql user","postgresql login"
 pg_user = postgres
-@jdic pg_password:"postgres password","database password","password in postgres","password in database"
+@jdic pg_password:"postgresql password","password in postgresql"
 pg_password = postgres
-@jdic pg_sslmode:"sslmode","ssl mode","ssl"
+@jdic pg_sslmode:"postgresql sslmode","postgresql ssl mode","postgresql ssl"
 pg_sslmode = prefer
-@jdic pg_dbname:"database name","db name","dbname"
+@jdic pg_dbname:"postgresql database name","postgresql db name","postgresql dbname"
 pg_dbname = postgres
-@jdic pg_testdbname:"test database"
+@jdic pg_testdbname:"postgresql test database"
 pg_testdbname = testdb
 
 #
@@ -113,13 +113,30 @@ pg_testdbname = testdb
 #
 
 # MySQL setting
+@jdic my_host:"mysql host"
 my_host = localhost
+@jdic my_port:"mysql port"
 my_port = 3306
+@jdic my_user:"mysql user","mysql login"
 my_user = user
+@jdic my_password:"mysql password","password in mysql"
 my_password = userpasswd
+@jdic my_dbname:"mysql database name","mysql db name","mysql dbname"
 my_dbname = mysql
+@jdic mys_unix_socket:"mysql unix socket","mysql socket"
 my_unix_socket = /var/run/mysqld/mysqld.sock
+@jdic my_testdbname:"mysql test database"
 my_testdbname = testdb
+
+# Redis setting
+@jdic redis_host:"redis host"
+redis_host = 127.0.0.1
+@jdic redis_port:"redis port"
+redis_port = 6379
+@jdic redis_dbname:"redis database name","redis db name","redis dbname"
+redis_db = 0
+@jdic redis_password:"redis password","password in redis"
+redis_password =
 
 # Oracle setting
 or_host = localhost

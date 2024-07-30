@@ -120,14 +120,13 @@ function open_connection()
 - return: LibPQ.Connection object
 """
 function open_connection()
-	con_str = string("host='", j_config.JC["pg_host"],
-		"' port='", j_config.JC["pg_port"],
-		"' user='", j_config.JC["pg_user"],
-		"' password='", j_config.JC["pg_password"],
-		"' sslmode='", j_config.JC["pg_sslmode"],
-		"' dbname='", j_config.JC["pg_dbname"], "'")
+	rhost = string(j_config.JC["redis_host"])
+	rport = parse(Int, j_config.JC["redis_port"])
+	rdb   = parse(Int,j_config.JC["redis_db"])
+	rpassword = string(j_config.JC["redis_password"])
 
-	return conn = Redis.RedisConnection()
+	return conn = Redis.RedisConnection(host="$rhost", port=rport, password="$rpassword", db=rdb)
+	#return conn = Redis.RedisConnection()
 end
 
 """
