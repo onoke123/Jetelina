@@ -443,7 +443,7 @@ const listClick = (p) => {
       let activeArr = [];
       $(`${relatedPanel} span`).filter('.activeItem').each(function () {
         let n = $(this).text();
-        if(n != t){
+        if (n != t) {
           activeArr.push(n);
         }
       });
@@ -467,7 +467,7 @@ const listClick = (p) => {
             }
           }
         }
-      }else{
+      } else {
         cleanupRelatedList(true);
       }
 
@@ -513,13 +513,13 @@ const listClick = (p) => {
     p.toggleClass("activeItem");
   }
 
-  if(isVisibleTableContainer()){
+  if (isVisibleTableContainer()) {
     let label2columns = "";
-    $(`${TABLECONTAINER} span`).filter('.activeItem').each(function(){
+    $(`${TABLECONTAINER} span`).filter('.activeItem').each(function () {
       let tn = $(this).text();
-      if(label2columns.length == 0){
-        label2columns = tn; 
-      }else{
+      if (label2columns.length == 0) {
+        label2columns = tn;
+      } else {
         label2columns += " & " + tn;
       }
     });
@@ -1170,7 +1170,7 @@ const functionPanelFunctions = (ut) => {
         $(`${CONTAINERNEWAPINO}`).remove();
         for (let n = 0; n < t.length; n++) {
           $("#table_container span, #related_list span").each(function (i, v) {
-//            $(`${TABLECONTAINER} span, #related_list span`).each(function (i, v) {
+            //            $(`${TABLECONTAINER} span, #related_list span`).each(function (i, v) {
             if (v.textContent == t[n]) {
               $(this).hasClass("activeItem");
               listClick($(this));
@@ -1178,18 +1178,18 @@ const functionPanelFunctions = (ut) => {
               findflg = true;
             }
           });
-/*
-          if(!findflg){
-            $("#related_list span").each(function(i,v){
-              if(v.textContent == t[n] ){
-                $(this).hasClass("activeItem");
-                listClick($(this));
-                m = chooseMsg('success-msg', '','');
-                findflg = true;
-              }
-            });
-          }
-*/
+          /*
+                    if(!findflg){
+                      $("#related_list span").each(function(i,v){
+                        if(v.textContent == t[n] ){
+                          $(this).hasClass("activeItem");
+                          listClick($(this));
+                          m = chooseMsg('success-msg', '','');
+                          findflg = true;
+                        }
+                      });
+                    }
+          */
         }
       }
 
@@ -1494,7 +1494,12 @@ const functionPanelFunctions = (ut) => {
       if (0 < selectedItemsArr.length) {
         // API test mode before registering
         // before hitting this command, should desplay 'func-api-test-msg' in anywhere.
-        postSelectedColumns("pre");
+//        let subquerysentence = $(GENELICPANELINPUT).val();
+        if (checkGenelicInput($(GENELICPANELINPUT).val())) {
+          postSelectedColumns("pre");
+        }else{
+          m = "subquery error";
+        }
       }
       break;
     default:
@@ -1576,6 +1581,32 @@ const checkGenelicInput = (s) => {
         well, there are a lot of tasks in here, therefore wanna set them beside now,
         writing the sub query is on your own responsibility. :)
     */
+    let arr = [];
+    let errflg = false;
+    $(`${CONTAINERPANEL} span`).filter(".selectedItem").each(function () {
+      arr.push($(this).text());
+    });
+
+    // 1st: "" -> '' because sql does not accept ""
+    let sq = s.replaceAll("\"","'");
+    // 2nd: items in the subquery sentence are in the selected items list
+    for (i in arr) {
+      let p = sq.indexOf(arr[i]);
+      if (0 < p) {
+        sq = sq.substring(0, p) + sq.substring(p + arr[i].length, sq.length);
+      }
+    }
+
+    console.log("after check: ",sq);
+    if( sq.indexOf('.') != -1 ){
+      errflg = true;
+      console.log("error ", sq);
+    }
+
+    if(errflg){
+      $(GENELICPANELINPUT).focus();
+      ret = false;
+    }
   }
 
   return ret;
