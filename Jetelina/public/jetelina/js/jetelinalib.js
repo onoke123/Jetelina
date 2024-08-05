@@ -407,7 +407,7 @@ const getAjaxData = (url) => {
                         but there is not reason to set it in each, so far, therefore do it at here.
                         change this position if it would have an issue. :P
                 */
-                $("RightPanelTitle").text('');
+                $(RightPanelTitle).text('');
 
                 const geturl = scenario['function-get-url'];
                 if (url == geturl[0]) {
@@ -512,10 +512,15 @@ const postAjaxData = (url, data) => {
             }else if(url == posturls[8]){
                 let str = "";
                 if(result.list != 0){
+                    /*
+                        Tips:
+                            result.target -> "table name e.g. ftest1" or "api name e.g. js112"
+                            therefore, relatedDataList[result.target] is the related talbes/apis list with 'result.target'
+                    */
                     relatedDataList[result.target] = result.list;
 
                     let c = "table";
-                    if(!$("RightPanelTitle").text().startsWith("TABLEs") ){
+                    if(!$(RightPanelTitle).text().startsWith("TABLEs") ){
                         c = "api";
                     }else{
                         // every time clean up in case showing related table
@@ -524,7 +529,20 @@ const postAjaxData = (url, data) => {
 
                     // collect items on the relational list are already
                     let existList = [];
-                    $("#api_container span").each(function(){
+                    /*
+                        Tips:
+                            add the list into APICONTAINER when relatedDataList.type = "table", because a 'table' was clicked
+                            opposit in case of 'api'
+                    */
+                    let targetcontainer = TABLECONTAINER;
+                    if(relatedDataList.type == "api"){
+                        targetcontainer = APICONTAINER;
+                        cleanUp("apis");
+                    }else{
+                        cleanUp("tables");
+                    }
+
+                    $(`${targetcontainer} span`).each(function(){
                         existList.push($(this).text());
                     });
 
@@ -535,15 +553,15 @@ const postAjaxData = (url, data) => {
                         for(let i in newaddlist){
                             str += `<span class="${c}">${newaddlist[i]}</span>`;
                         }
-                    }else{
+/*                    }else{
                         // list the result, because there is no items on the list yet
                         for(let i in result.list){
                             str += `<span class="${c}">${result.list[i]}</span>`;
-                        }
+                        } */
                     }   
 
                     // append it ＼(^o^)／
-                    $("#api_container").append(str);
+                    $(targetcontainer).append(str);
                 }
             }
 
