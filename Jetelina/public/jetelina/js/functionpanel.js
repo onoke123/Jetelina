@@ -33,13 +33,14 @@
       checkGenelicInput() check genelic panel input. caution: will imprement this in V2 if necessary
       deleteThisApi() Ajax function for deleting the target api from api list doc.
       whichCommandsInOrders(s) match with user input in cmdCandidates
-      cleanupRelatedList(b) clear screen in related_list panel and/or relatedDataList object
+      cleanupRelatedList(b) clear screen in api_container panel and/or relatedDataList object
 */
 let selectedItemsArr = [];
 let cmdCandidates = [];// ordered commands for checking duplication 
 const MYFORM = "#my_form";
 const UPFILE = `${MYFORM} input[name='upfile']`;
-const leftPanel = "#panel_left";
+const LeftPanelTitle = "#table_list_title";
+const RightPanelTitle = "#api_list_title";
 const GENELICPANELINPUT = `${GENELICPANEL} input[name='genelic_input']`;
 const GENELICPANELTEXT = `${GENELICPANEL} text[name='genelic_text']`;
 
@@ -261,10 +262,10 @@ const cleanUp = (s) => {
     $(".item_area .item,.apisql").remove();
   } else if (s == "tables") {
     // clean up tables
-    $(`${TABLECONTAINER} .table`).remove();
+//    $(`${TABLECONTAINER} .table`).remove();
   } else if (s == "apis") {
     // clean up API list
-    $(`${APICONTAINER} .api`).remove();
+//    $(`${APICONTAINER} .api`).remove();
   }
 }
 /**
@@ -459,7 +460,7 @@ const listClick = (p) => {
         if (0 < diff.length) {
           for (let i in diff) {
             for (let ii in diff[i]) {
-              $("#related_list span").each(function () {
+              $("#api_container span").each(function () {
                 if ($(this).text() == diff[i][ii]) {
                   $(this).remove();
                 }
@@ -484,7 +485,7 @@ const listClick = (p) => {
 
     if (c.indexOf("table") != -1) {
       related_table = t;
-      $("#related_list_title").text(`APIs of ${t}`);
+      $("RightPanelTitle").text(`APIs of ${t}`);
       //get&show table columns
       getColumn(t);
     } else {
@@ -497,7 +498,7 @@ const listClick = (p) => {
         let s = getdataFromJson(preferent.apilist, t);
         if (0 < s.sql.length) {
           related_api = s.apino;
-          $("#related_list_title").text(`TABLEs of ${s.apino}`);
+          $("RightPanelTitle").text(`TABLEs of ${s.apino}`);
           // api in/out json
           $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiin"><bold>IN:</bold>${setApiIF_In(t, s)}</span>`);
           $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiout"><bold>OUT:</bold>${setApiIF_Out(t, s)}</span>`);
@@ -1131,9 +1132,9 @@ const functionPanelFunctions = (ut) => {
       //      cleanUp("items");
 
       if (inScenarioChk(ut, 'func-show-table-list-cmd')) {
-        if (isVisibleApiContainer()) {
+//        if (isVisibleApiContainer()) {
           showApiTestPanel(false);
-        }
+//        }
       } else if (inScenarioChk(ut, 'func-show-api-list-cmd')) {
         //        if (isVisibleTableContainer()) {
         hidepanel = TABLECONTAINER;
@@ -1150,14 +1151,20 @@ const functionPanelFunctions = (ut) => {
 
       cleanUp(cleanup);
       cleanupRelatedList(false);
-      $(hidepanel).hide();
-      $(leftPanel).text(paneltitle);
-      $(showpanel).show();
+//      $(hidepanel).hide();
+//      $(LeftPanelTitle).text(paneltitle);
+//      $(showpanel).show();
+/*
       if ((showpanel == TABLECONTAINER) && !$(`${TABLECONTAINER} span`).hasClass('table')) {
         getAjaxData(geturl);
       } else if ((showpanel == APICONTAINER) && !$(`${APICONTAINER} span`).hasClass('api')) {
         getAjaxData(geturl);
       }
+*/
+      $(LeftPanelTitle).text("Table List");
+      $(RightPanelTitle).text("Api List");
+      getAjaxData(scenario["function-get-url"][0])
+      getAjaxData(scenario["function-get-url"][1])
 
       m = IGNORE;
       break;
@@ -1169,8 +1176,8 @@ const functionPanelFunctions = (ut) => {
       if (isVisibleTableContainer()) {
         $(`${CONTAINERNEWAPINO}`).remove();
         for (let n = 0; n < t.length; n++) {
-          $("#table_container span, #related_list span").each(function (i, v) {
-            //            $(`${TABLECONTAINER} span, #related_list span`).each(function (i, v) {
+          $("#table_container span, #api_container span").each(function (i, v) {
+            //            $(`${TABLECONTAINER} span, #api_container span`).each(function (i, v) {
             if (v.textContent == t[n]) {
               $(this).hasClass("activeItem");
               listClick($(this));
@@ -1180,7 +1187,7 @@ const functionPanelFunctions = (ut) => {
           });
           /*
                     if(!findflg){
-                      $("#related_list span").each(function(i,v){
+                      $("#api_container span").each(function(i,v){
                         if(v.textContent == t[n] ){
                           $(this).hasClass("activeItem");
                           listClick($(this));
@@ -1715,12 +1722,12 @@ const whichCommandsInOrders = (s) => {
 /**
  * @function cleanupRelatedList
  * 
- * clear screen in related_list panel and/or relatedDataList object
+ * clear screen in api_container panel and/or relatedDataList object
  *
  * @param {boolean} b  false -> clear the list, true-> delete relatedDataList as well
  */
 const cleanupRelatedList = (b) => {
-  $("#related_list span").remove();
+//  $("#api_container span").remove();
   if (b) {
     for (let i in relatedDataList) {
       delete relatedDataList[i];

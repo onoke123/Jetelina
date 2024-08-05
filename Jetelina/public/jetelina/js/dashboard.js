@@ -12,7 +12,7 @@ const JETELINAPANEL ="#jetelina_panel";
 const FUNCTIONPANEL = "#function_panel";
 const CONDITIONPANEL = "#condition_panel";
 const CONTAINERPANEL = "#container";
-const RELATEDTABLESAPIS = "#related_tables_apis";
+const RELATEDTABLESAPIS = "#right_panel";
 const COLUMNSPANEL = "#columns";
 const JETELINACHATBOX = `${JETELINAPANEL} [name='chat_input']`;
 const CHARTPANEL = "#plot";

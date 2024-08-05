@@ -402,12 +402,12 @@ const getAjaxData = (url) => {
             } else {
                 /*
                     Attention:
-                        reset "related_list_title" here.
+                        reset "api_list_title" here.
                         indeed it needs in case of switching table/api list <- geturl[0]:api list, and geturl[1]:table list
                         but there is not reason to set it in each, so far, therefore do it at here.
                         change this position if it would have an issue. :P
                 */
-                $("#related_list_title").text('');
+                $("RightPanelTitle").text('');
 
                 const geturl = scenario['function-get-url'];
                 if (url == geturl[0]) {
@@ -515,7 +515,7 @@ const postAjaxData = (url, data) => {
                     relatedDataList[result.target] = result.list;
 
                     let c = "table";
-                    if(!$("#related_list_title").text().startsWith("TABLEs") ){
+                    if(!$("RightPanelTitle").text().startsWith("TABLEs") ){
                         c = "api";
                     }else{
                         // every time clean up in case showing related table
@@ -524,7 +524,7 @@ const postAjaxData = (url, data) => {
 
                     // collect items on the relational list are already
                     let existList = [];
-                    $("#related_list span").each(function(){
+                    $("#api_container span").each(function(){
                         existList.push($(this).text());
                     });
 
@@ -543,7 +543,7 @@ const postAjaxData = (url, data) => {
                     }   
 
                     // append it ＼(^o^)／
-                    $("#related_list").append(str);
+                    $("#api_container").append(str);
                 }
             }
 
