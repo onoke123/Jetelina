@@ -67,6 +67,15 @@ body {
   background-color: lightcoral;
 }
 
+.relatedItem {
+  animation: blinkItem 1s infinite alternate;
+}
+
+@keyframes blinkItem{
+  0% { background-color: #7dc37f}
+  100% { background-color: lightcoral}
+}
+
 /* columns sample data pop up */
 .tooltip {
   display: none;

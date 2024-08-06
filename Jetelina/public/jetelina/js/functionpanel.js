@@ -122,7 +122,7 @@ const openFunctionPanel = () => {
 
     $(RELATEDTABLESAPIS).draggable().animate({
       top: "10%",
-      left: "86%"
+      left: "82%"
     }, ANIMATEDURATION);
 
   }
@@ -433,10 +433,10 @@ const listClick = (p) => {
     if (c.indexOf("api") != -1) {
       cleanupContainers();
       cleanUp("items");
-      cleanUp("tables");
+//      cleanUp("tables");
       relatedPanel = APICONTAINER;
     } else {
-      cleanUp("apis");
+//      cleanUp("apis");
     }
 
     /* 
@@ -499,7 +499,7 @@ const listClick = (p) => {
 
     if (c.indexOf("table") != -1) {
       related_table = t;
-      $(RightPanelTitle).text(`APIs of ${t}`);
+//      $(RightPanelTitle).text(`APIs of ${t}`);
       //get&show table columns
       getColumn(t);
     } else {
@@ -512,7 +512,7 @@ const listClick = (p) => {
         let s = getdataFromJson(preferent.apilist, t);
         if (0 < s.sql.length) {
           related_api = s.apino;
-          $(LeftPanelTitle).text(`TABLEs of ${s.apino}`);
+//          $(LeftPanelTitle).text(`TABLEs of ${s.apino}`);
           // api in/out json
           $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiin"><bold>IN:</bold>${setApiIF_In(t, s)}</span>`);
           $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiout"><bold>OUT:</bold>${setApiIF_Out(t, s)}</span>`);
@@ -1136,7 +1136,7 @@ const functionPanelFunctions = (ut) => {
       // these defaults are for table list
       let hidepanel = APICONTAINER;
       let showpanel = TABLECONTAINER;
-      let paneltitle = "Table List";
+//      let paneltitle = "Table List";
       let cleanup = "tables";
       let geturl = scenario["function-get-url"][1];
 
@@ -1153,7 +1153,7 @@ const functionPanelFunctions = (ut) => {
         //        if (isVisibleTableContainer()) {
         hidepanel = TABLECONTAINER;
         showpanel = APICONTAINER;
-        paneltitle = "API List";
+//        paneltitle = "API List";
         $(GENELICPANEL).hide();
         //        }
 
@@ -1175,8 +1175,8 @@ const functionPanelFunctions = (ut) => {
               getAjaxData(geturl);
             }
       */
-      $(LeftPanelTitle).text("Table List");
-      $(RightPanelTitle).text("Api List");
+//      $(LeftPanelTitle).text("Table List");
+//      $(RightPanelTitle).text("Api List");
       getAjaxData(scenario["function-get-url"][0])
       getAjaxData(scenario["function-get-url"][1])
 

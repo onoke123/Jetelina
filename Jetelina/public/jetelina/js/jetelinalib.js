@@ -407,7 +407,7 @@ const getAjaxData = (url) => {
                         but there is not reason to set it in each, so far, therefore do it at here.
                         change this position if it would have an issue. :P
                 */
-                $(RightPanelTitle).text('');
+//                $(RightPanelTitle).text('');
 
                 const geturl = scenario['function-get-url'];
                 if (url == geturl[0]) {
@@ -518,15 +518,15 @@ const postAjaxData = (url, data) => {
                             therefore, relatedDataList[result.target] is the related talbes/apis list with 'result.target'
                     */
                     relatedDataList[result.target] = result.list;
-
-                    let c = "table";
+/*
+                    let c = "api";
                     if(!$(RightPanelTitle).text().startsWith("TABLEs") ){
-                        c = "api";
+                        c = "table";
                     }else{
                         // every time clean up in case showing related table
                         cleanupRelatedList(false);
                     }
-
+*/
                     // collect items on the relational list are already
                     let existList = [];
                     /*
@@ -537,22 +537,38 @@ const postAjaxData = (url, data) => {
                     let targetcontainer = TABLECONTAINER;
                     if(relatedDataList.type == "api"){
                         targetcontainer = APICONTAINER;
-                        cleanUp("apis");
-                    }else{
-                        cleanUp("tables");
                     }
 
                     $(`${targetcontainer} span`).each(function(){
                         existList.push($(this).text());
                     });
+/*
+                    if(relatedDataList.type == "api"){
+                        cleanUp("apis");
+                    }else{
+                        cleanUp("tables");
+                    }
+*/
 
                     // collect the difference items between getting list(result.list) and on the relational list
-                    let newaddlist = result.list.filter(x=>!existList.includes(x));
+//                    let newaddlist = result.list.filter(x=>!existList.includes(x));
+                    let newaddlist = result.list.filter(x=>existList.includes(x));
+                    console.log("list ", result.list);
+                    console.log("existList ", existList);
+                    console.log("newaddlist ", newaddlist);
                     if(0<newaddlist.length){
+                        $(`${targetcontainer} span`).each(function(){
+                            for(let i in newaddlist){
+                                if($(this).text() == newaddlist[i]){
+                                    $(this).addClass("relatedItem");
+                                }
+                            }
+                        });
+    
                         // add only diffrences to the list
-                        for(let i in newaddlist){
-                            str += `<span class="${c}">${newaddlist[i]}</span>`;
-                        }
+/*                        for(let i in newaddlist){
+                            str += `<span class="${relatedDataList.type}">${newaddlist[i]}</span>`;
+                        }*/
 /*                    }else{
                         // list the result, because there is no items on the list yet
                         for(let i in result.list){
