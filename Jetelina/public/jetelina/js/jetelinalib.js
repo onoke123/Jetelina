@@ -553,9 +553,6 @@ const postAjaxData = (url, data) => {
                     // collect the difference items between getting list(result.list) and on the relational list
 //                    let newaddlist = result.list.filter(x=>!existList.includes(x));
                     let newaddlist = result.list.filter(x=>existList.includes(x));
-                    console.log("list ", result.list);
-                    console.log("existList ", existList);
-                    console.log("newaddlist ", newaddlist);
                     if(0<newaddlist.length){
                         $(`${targetcontainer} span`).each(function(){
                             for(let i in newaddlist){

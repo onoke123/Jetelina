@@ -424,7 +424,13 @@ const listClick = (p) => {
     relatedDataList.type = "table";
   }
 
-  let relatedPanel = TABLECONTAINER;
+  let sourcePanel = TABLECONTAINER; // the 'p' is in here
+  let relatedPanel = APICONTAINER;// the related items are in there
+  if (relatedDataList.type == "table") {
+    sourcePanel = APICONTAINER;
+    relatedPanel = TABLECONTAINER;
+  }
+
   if (c.indexOf("activeItem") != -1) {
     /*
       in case to turn p to 'INACTIVE'
@@ -433,32 +439,30 @@ const listClick = (p) => {
     if (c.indexOf("api") != -1) {
       cleanupContainers();
       cleanUp("items");
-//      cleanUp("tables");
-      relatedPanel = APICONTAINER;
+      //      cleanUp("tables");
     } else {
-//      cleanUp("apis");
+      //      cleanUp("apis");
     }
-
     /* 
-      Tips:
-        clean up 'table' in the relation data list.
-        a little bit complex.
-        only unique api in target talbe removes from the related list.
-        i mean
-          relatedDataList["table1"] = ["ju1","jd2","ji3","js4","js5"]
-          relatedDataList["table2"] = ["ju11","jd12","ji13","js14","js5"]
-
-          "ju1","jd2","ji3","js4" should be removed when "table1" has been inactive.
-          "js5" should be remained in the list, because it is duplicated with "table2".
-    */
+        Tips:
+          clean up 'table' in the relation data list.
+          a little bit complex.
+          only unique api in target talbe removes from the related list.
+          i mean
+            relatedDataList["table1"] = ["ju1","jd2","ji3","js4","js5"]
+            relatedDataList["table2"] = ["ju11","jd12","ji13","js14","js5"]
+  
+            "ju1","jd2","ji3","js4" should be removed when "table1" has been inactive.
+            "js5" should be remained in the list, because it is duplicated with "table2".
+      */
     if (relatedDataList[t] != null) {
       /*
         gather 'activeItem' items in the list
       */
       let activeArr = [];
-      $(`${relatedPanel} span`).filter('.activeItem').each(function () {
+      $(`${sourcePanel} span`).filter('.activeItem').each(function () {
         let n = $(this).text();
-        if (n != t) {
+        if (n == t) {
           activeArr.push(n);
         }
       });
@@ -468,15 +472,15 @@ const listClick = (p) => {
         let diff = [];
         for (let i in activeArr) {
           let ar2 = relatedDataList[activeArr[i]];// 'activeItem' relation data list 
-          diff[i] = ar1.filter(x => !ar2.includes(x)); // pick the difference(nor) between the clicked item and 'activeItem' item
+          diff[i] = ar1.filter(x => ar2.includes(x)); // pick the difference(nor) between the clicked item and 'activeItem' item
         }
 
         if (0 < diff.length) {
           for (let i in diff) {
             for (let ii in diff[i]) {
-              $(`${APICONTAINER} span`).each(function () {
+              $(`${relatedPanel} span`).each(function () {
                 if ($(this).text() == diff[i][ii]) {
-                  $(this).remove();
+                  $(this).removeClass("relatedItem");
                 }
               });
             }
@@ -499,10 +503,17 @@ const listClick = (p) => {
 
     if (c.indexOf("table") != -1) {
       related_table = t;
-//      $(RightPanelTitle).text(`APIs of ${t}`);
+      //      $(RightPanelTitle).text(`APIs of ${t}`);
       //get&show table columns
       getColumn(t);
     } else {
+      $(`${APICONTAINER} span`).filter(".activeItem").each(function () {
+        if (t != $(this).text()) {
+          $(this).removeClass("activeItem");
+          $(`${TABLECONTAINER} span`).removeClass("relatedItem");
+        }
+      });
+
       // reset all activeItem class and sql
       cleanupItems4Switching();
       cleanupContainers();
@@ -512,7 +523,7 @@ const listClick = (p) => {
         let s = getdataFromJson(preferent.apilist, t);
         if (0 < s.sql.length) {
           related_api = s.apino;
-//          $(LeftPanelTitle).text(`TABLEs of ${s.apino}`);
+          //          $(LeftPanelTitle).text(`TABLEs of ${s.apino}`);
           // api in/out json
           $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiin"><bold>IN:</bold>${setApiIF_In(t, s)}</span>`);
           $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiout"><bold>OUT:</bold>${setApiIF_Out(t, s)}</span>`);
@@ -528,19 +539,27 @@ const listClick = (p) => {
     p.toggleClass("activeItem");
   }
 
-  if (isVisibleTableContainer()) {
-    let label2columns = "";
-    $(`${TABLECONTAINER} span`).filter('.activeItem').each(function () {
-      let tn = $(this).text();
-      if (label2columns.length == 0) {
-        label2columns = tn;
-      } else {
-        label2columns += " & " + tn;
-      }
-    });
+  //  if (isVisibleTableContainer()) {
+  let label2columns = "";
+  $(`${sourcePanel} span`).filter('.activeItem').each(function () {
+    let tn = $(this).text();
+    if (label2columns.length == 0) {
+      label2columns = tn;
+    } else {
+      label2columns += " & " + tn;
+    }
+  });
 
-    $("#columns_title").text(`Registered columns in ${label2columns}`);
+  if(0<label2columns.length){
+    if (sourcePanel == TABLECONTAINER) {
+      label2columns = `Registered columns in ${label2columns}`;
+    } else {
+      label2columns = `IN/OUT interface of ${label2columns}`;
+    }
   }
+
+  $("#columns_title").text(label2columns);
+  //  }
 }
 /**
  * @function setApiIF_In
@@ -1136,7 +1155,7 @@ const functionPanelFunctions = (ut) => {
       // these defaults are for table list
       let hidepanel = APICONTAINER;
       let showpanel = TABLECONTAINER;
-//      let paneltitle = "Table List";
+      //      let paneltitle = "Table List";
       let cleanup = "tables";
       let geturl = scenario["function-get-url"][1];
 
@@ -1153,7 +1172,7 @@ const functionPanelFunctions = (ut) => {
         //        if (isVisibleTableContainer()) {
         hidepanel = TABLECONTAINER;
         showpanel = APICONTAINER;
-//        paneltitle = "API List";
+        //        paneltitle = "API List";
         $(GENELICPANEL).hide();
         //        }
 
@@ -1175,8 +1194,8 @@ const functionPanelFunctions = (ut) => {
               getAjaxData(geturl);
             }
       */
-//      $(LeftPanelTitle).text("Table List");
-//      $(RightPanelTitle).text("Api List");
+      //      $(LeftPanelTitle).text("Table List");
+      //      $(RightPanelTitle).text("Api List");
       getAjaxData(scenario["function-get-url"][0])
       getAjaxData(scenario["function-get-url"][1])
 
@@ -1187,33 +1206,54 @@ const functionPanelFunctions = (ut) => {
       let t = ut.split(' ');
 
       // for opening table 
-      if (isVisibleTableContainer()) {
-        //        $(`${CONTAINERNEWAPINO}`).remove();
-        $(CONTAINERNEWAPINO).remove();
-        for (let n = 0; n < t.length; n++) {
-          $("#table_container span, #api_container span").each(function (i, v) {
-            //            $(`${TABLECONTAINER} span, #api_container span`).each(function (i, v) {
-            if (v.textContent == t[n]) {
-              $(this).hasClass("activeItem");
-              listClick($(this));
-              m = chooseMsg('success-msg', "", "");
-              findflg = true;
-            }
-          });
-          /*
-                    if(!findflg){
-                      $("#api_container span").each(function(i,v){
-                        if(v.textContent == t[n] ){
-                          $(this).hasClass("activeItem");
-                          listClick($(this));
-                          m = chooseMsg('success-msg', '','');
-                          findflg = true;
-                        }
-                      });
-                    }
-          */
-        }
+      //      if (isVisibleTableContainer()) {
+      //        $(`${CONTAINERNEWAPINO}`).remove();
+      $(CONTAINERNEWAPINO).remove();
+
+      if( $.inArray('all', t) != -1){
+        $("#table_container span, #api_container span").filter(".relatedItem, .activeItem").each(function(){
+          if($(this).hasClass("relatedItem")){
+            $(this).removeClass("relatedItem");
+          }
+          if($(this).hasClass("activeItem")){
+            $(this).removeClass("activeItem");
+          }
+
+          let n = $(this).text();
+          if( relatedDataList[n] != null ){
+            delete relatedDataList[n];
+          }
+        });
+
+        cleanUp("items")
+        cleanupContainers();
+        $("#columns_title").text("");
       }
+
+      for (let n = 0; n < t.length; n++) {
+        $("#table_container span, #api_container span").each(function (i, v) {
+          //            $(`${TABLECONTAINER} span, #api_container span`).each(function (i, v) {
+          if (v.textContent == t[n]) {
+            $(this).hasClass("activeItem");
+            listClick($(this));
+            m = chooseMsg('success-msg', "", "");
+            findflg = true;
+          }
+        });
+        /*
+                  if(!findflg){
+                    $("#api_container span").each(function(i,v){
+                      if(v.textContent == t[n] ){
+                        $(this).hasClass("activeItem");
+                        listClick($(this));
+                        m = chooseMsg('success-msg', '','');
+                        findflg = true;
+                      }
+                    });
+                  }
+        */
+      }
+      //      }
 
       /* for openging api, because possible opening both table/api list
       if (!findflg && isVisibleApiContainer()) {
