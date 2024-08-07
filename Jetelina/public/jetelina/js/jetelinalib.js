@@ -230,7 +230,14 @@ const getdata = (o, t) => {
 
                                     if (t == 0) {
                                         // table list
-                                        str += `<span class="table">${value}</span>`;
+                                        let existList = [];
+                                        $(`${TABLECONTAINER} span`).each(function(){
+                                            existList.push($(this).text());
+                                        });
+
+                                        if($.inArray(value,existList) == -1){
+                                            str += `<span class="table">${value}</span>`;
+                                        }
                                     } else if (t == 1) {
                                         // jetelina_delete_flg should not show in the column list
                                         if (name != "jetelina_delete_flg") {
@@ -557,7 +564,12 @@ const postAjaxData = (url, data) => {
                         $(`${targetcontainer} span`).each(function(){
                             for(let i in newaddlist){
                                 if($(this).text() == newaddlist[i]){
-                                    $(this).addClass("relatedItem");
+                                    if(!$(this).hasClass("activeItem")){
+                                        //$(this).removeClass("activeItem");
+                                        $(this).addClass("relatedItem");
+                                    }
+
+                                    //$(this).addClass("relatedItem");
                                 }
                             }
                         });

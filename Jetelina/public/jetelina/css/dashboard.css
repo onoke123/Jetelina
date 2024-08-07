@@ -73,7 +73,7 @@ body {
 
 @keyframes blinkItem{
   0% { background-color: #7dc37f}
-  100% { background-color: lightcoral}
+  100% { background-color: rgb(228, 218, 130)}
 }
 
 /* columns sample data pop up */

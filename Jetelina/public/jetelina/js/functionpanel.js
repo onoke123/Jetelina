@@ -507,6 +507,10 @@ const listClick = (p) => {
       //get&show table columns
       getColumn(t);
     } else {
+      /*
+        Tips:
+          only one can be selected in API list
+      */
       $(`${APICONTAINER} span`).filter(".activeItem").each(function () {
         if (t != $(this).text()) {
           $(this).removeClass("activeItem");
@@ -515,13 +519,14 @@ const listClick = (p) => {
       });
 
       // reset all activeItem class and sql
-      cleanupItems4Switching();
+//      cleanupItems4Switching();
       cleanupContainers();
 
       // showing ordered sql from preferent.apilist that is gotten by getAjaxData("/getapilist",...)
       if (preferent.apilist != null && preferent.apilist.length != 0) {
         let s = getdataFromJson(preferent.apilist, t);
         if (0 < s.sql.length) {
+          $(`${COLUMNSPANEL} span`).filter(".apisql").remove();
           related_api = s.apino;
           //          $(LeftPanelTitle).text(`TABLEs of ${s.apino}`);
           // api in/out json
@@ -536,29 +541,36 @@ const listClick = (p) => {
     let data = `{"table":"${related_table}","api":"${related_api}"}`;
     postAjaxData(scenario["function-post-url"][8], data);
 
-    p.toggleClass("activeItem");
+    if(!p.hasClass("relatedItem")){
+      //p.removeClass("relatedItem");
+      p.toggleClass("activeItem");
+    }else{
+//      p.toggleClass("activeItem");
+    }
   }
 
   //  if (isVisibleTableContainer()) {
-  let label2columns = "";
-  $(`${sourcePanel} span`).filter('.activeItem').each(function () {
-    let tn = $(this).text();
-    if (label2columns.length == 0) {
-      label2columns = tn;
-    } else {
-      label2columns += " & " + tn;
-    }
-  });
+  if(!p.hasClass("relatedItem")){
+    let label2columns = "";
+    $("#table_container span, #api_container span").filter('.activeItem').each(function () {
+      let tn = $(this).text();
+      if (label2columns.length == 0) {
+        label2columns = tn;
+      } else {
+        label2columns += " & " + tn;
+      }
+    });
 
-  if(0<label2columns.length){
-    if (sourcePanel == TABLECONTAINER) {
-      label2columns = `Registered columns in ${label2columns}`;
-    } else {
-      label2columns = `IN/OUT interface of ${label2columns}`;
+    if(0<label2columns.length){
+      if (sourcePanel == TABLECONTAINER) {
+        label2columns = `Registered columns in ${label2columns}`;
+      } else {
+        label2columns = `IN/OUT interface of ${label2columns}`;
+      }
     }
+
+    $("#columns_title").text(label2columns);
   }
-
-  $("#columns_title").text(label2columns);
   //  }
 }
 /**
