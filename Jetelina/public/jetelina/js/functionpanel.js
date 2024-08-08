@@ -1222,7 +1222,7 @@ const functionPanelFunctions = (ut) => {
       //        $(`${CONTAINERNEWAPINO}`).remove();
       $(CONTAINERNEWAPINO).remove();
 
-      if( $.inArray('all', t) != -1){
+      if( ($.inArray('all', t) != -1)&&(($.inArray('cancel', t) != -1)||($.inArray('cancel', t) != -1)||($.inArray('close',t) !=-1))){
         $("#table_container span, #api_container span").filter(".relatedItem, .activeItem").each(function(){
           if($(this).hasClass("relatedItem")){
             $(this).removeClass("relatedItem");
@@ -1656,30 +1656,36 @@ const checkGenelicInput = (s) => {
         writing the sub query is on your own responsibility. :)
     */
     let arr = [];
-    let errflg = false;
-    $(`${CONTAINERPANEL} span`).filter(".selectedItem").each(function () {
+//    $(`${CONTAINERPANEL} span`).filter(".selectedItem").each(function () {
+    $("#columns span, #container span").filter('.item').each(function(){
       arr.push($(this).text());
     });
 
     // 1st: "" -> '' because sql does not accept ""
     let sq = s.replaceAll("\"", "'");
-    // 2nd: items in the subquery sentence are in the selected items list
+    // 2nd: reject unexpected words
+    let unexpectedwords = ["delete","drop",";"];
+    for(i in unexpectedwords){
+      sq = sq.replaceAll(unexpectedwords[i],"");
+    }
+    // 3nd: items in the subquery sentence are in the open items list
+    let pp = "";
     for (i in arr) {
       let p = sq.indexOf(arr[i]);
       if (0 < p) {
-        sq = sq.substring(0, p) + sq.substring(p + arr[i].length, sq.length);
+        pp += sq.substring(0, p) + sq.substring(p + arr[i].length, sq.length);
       }
     }
-
-    console.log("after check: ", sq);
-    if (sq.indexOf('.') != -1) {
-      errflg = true;
-      console.log("error ", sq);
+    console.log("pp is ", pp);
+    if(0<pp.length){
+      if (pp.indexOf('.') != -1) {
+        $(GENELICPANELINPUT).focus();
+        ret = false;
+      }
     }
-
-    if (errflg) {
-      $(GENELICPANELINPUT).focus();
-      ret = false;
+    console.log("sq is ", sq);
+    if(ret){
+      $(GENELICPANELINPUT).val(sq);
     }
   }
 
