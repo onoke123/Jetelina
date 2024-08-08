@@ -1572,7 +1572,7 @@ const functionPanelFunctions = (ut) => {
         if (checkGenelicInput($(GENELICPANELINPUT).val())) {
           postSelectedColumns("pre");
         } else {
-          m = "subquery error";
+          m = "subquery error. I don't know what you wanna do. look carefully.";
         }
       }
       break;
@@ -1669,19 +1669,30 @@ const checkGenelicInput = (s) => {
       sq = sq.replaceAll(unexpectedwords[i],"");
     }
     // 3nd: items in the subquery sentence are in the open items list
-    let pp = "";
+    /*
+      Tips:
+        open items are rejected from 'sq', then the remains will be a string except items.
+        i mean
+            where ftest.ftest_name='AAA' -> where ='AAA'
+            where ftest.ftest_name=ftest2.ftest2_name  -> where =
+            where ftest.ftest_ave<0.2  -> where <0.2
+    */
+    let pp = sq;
     for (i in arr) {
-      let p = sq.indexOf(arr[i]);
+      let p = pp.indexOf(arr[i]);
       if (0 < p) {
-        pp += sq.substring(0, p) + sq.substring(p + arr[i].length, sq.length);
+        pp = pp.substring(0, p) + pp.substring(p + arr[i].length, pp.length);
       }
     }
     console.log("pp is ", pp);
     if(0<pp.length){
+      // ここが問題。最後のチェックで関係ないtableがまだsubqueryにないかどうかを見たいが"."だけだと小数点数字もアリなので困る
       if (pp.indexOf('.') != -1) {
         $(GENELICPANELINPUT).focus();
         ret = false;
       }
+    }else{
+      ret = false;
     }
     console.log("sq is ", sq);
     if(ret){
