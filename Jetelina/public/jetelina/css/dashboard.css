@@ -250,3 +250,10 @@ input.user-input {
   scrollbar-color: rgba(49, 177, 117, 0.1)  rgba(41, 94, 59, 0.1)/* #FAF8D8 #DE94BF*/;
   scrollbar-width: thin;
 }
+
+.right_left_panel_scroll {
+  margin: 0 auto;
+  overflow-y: auto;
+  scrollbar-color: rgba(49, 177, 117, 0.1)  rgba(87, 211, 190, 0.1)/* #FAF8D8 #DE94BF*/;
+  scrollbar-width: thin;
+}
