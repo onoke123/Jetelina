@@ -20,7 +20,7 @@ functions
 module GetDataController
 
 using Genie, Genie.Requests, Genie.Renderer.Json
-using Jetelina.JFiles, Jetelina.ApiSqlListManager, Jetelina.DBDataController, Jetelina.JMessage, Jetelina.JSession
+using Jetelina.JFiles, Jetelina.InitApiSqlListManager.ApiSqlListManager, Jetelina.DBDataController, Jetelina.JMessage, Jetelina.JSession
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)

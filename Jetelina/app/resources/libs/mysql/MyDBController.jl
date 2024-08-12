@@ -40,7 +40,7 @@ module MyDBController
 
 using Genie, Genie.Renderer, Genie.Renderer.Json
 using CSV, MySQL, DataFrames, IterTools, Tables, Dates
-using Jetelina.JFiles, Jetelina.JLog, Jetelina.ApiSqlListManager, Jetelina.JMessage, Jetelina.JSession
+using Jetelina.JFiles, Jetelina.JLog, Jetelina.InitApiSqlListManager.ApiSqlListManager, Jetelina.JMessage, Jetelina.JSession
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)

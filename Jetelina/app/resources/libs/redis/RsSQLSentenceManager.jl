@@ -19,7 +19,7 @@ module RsSQLSentenceManager
 
 using DataFrames, StatsBase
 using Genie, Genie.Requests, Genie.Renderer.Json
-using Jetelina.ApiSqlListManager, Jetelina.JMessage
+using Jetelina.InitApiSqlListManager.ApiSqlListManager, Jetelina.JMessage
 
 JMessage.showModuleInCompiling(@__MODULE__)
 

@@ -31,7 +31,7 @@
 module DBDataController
 
 using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json
-using Jetelina.ApiSqlListManager, Jetelina.JMessage, Jetelina.JLog
+using Jetelina.InitApiSqlListManager.ApiSqlListManager, Jetelina.JMessage, Jetelina.JLog
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
