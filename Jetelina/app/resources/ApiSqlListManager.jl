@@ -22,7 +22,7 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export readSqlList2DataFrame, writeTolist, deleteTableFromlist
+export readSqlList2DataFrame, writeTolist, deleteTableFromlist, apisequencenumber
 
 """
 function __init__()
@@ -31,7 +31,33 @@ function __init__()
 """
 function __init__()
 	@info "=======ApiSqlListManager init=========="
-	readSqlList2DataFrame()
+	_setApiSequenceNumber()
+end
+"""
+function _setApiSequenceNumber
+	create api sequence number dataframe from the existing api numbers.
+	this is the private function.
+	this function set the sequence number 
+		e.g.
+			next api no will be 114 from
+				ji111 .....
+				js112 .....
+				jd113 .....
+
+	how to refer apisequencenumber  ..ApiSqlListManager.apisequencenumber.apino[1]
+	how to update apisequencenumber ..ApiSqlListManager.apisequencenumber.apino[1] += 1
+"""
+function _setApiSequenceNumber()
+	if readSqlList2DataFrame()[1]
+		df = readSqlList2DataFrame()[2]
+		existapino::Array = chop.(df.apino, head=2,tail=0)
+		nextapino = maximum(parse.(Int,existapino)) + 1
+		global apisequencenumber = DataFrame(apino=nextapino)
+
+		if j_config.JC["debug"]
+			@info apisequencenumber
+		end
+	end
 end
 """
 function readSqlList2DataFrame()
