@@ -142,6 +142,11 @@ function getApiList()
 	api list is refered in Df_JetelinaSqlList.
 """
 function getApiList()
+	#===
+		Tips:
+			ApiSql...readSql...()[1] contains true/false.
+			ApiSql...readSql...()[2] contains dataframe list if [] is true, in the case of false is nothing.
+	===#			
 	if ApiSqlListManager.readSqlList2DataFrame()[1]
 		Df_JetelinaSqlList = ApiSqlListManager.readSqlList2DataFrame()[2]
 		return json(Dict("result" => true, "Jetelina" => copy.(eachrow(Df_JetelinaSqlList))))

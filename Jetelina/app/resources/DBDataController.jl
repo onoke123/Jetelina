@@ -225,6 +225,9 @@ function executeApi(json_d::Dict)
 	# Step1
 	#===
 		Tips:
+			ApiSql...readSql...()[1] contains true/false.
+			ApiSql...readSql...()[2] contains dataframe list if [] is true, in the case of false is nothing.
+			
 			use subset() here, because Df_JetelinaSqlList may have missing data.
 			subset() supports 'skipmissing', but filter() does not.
 	===#

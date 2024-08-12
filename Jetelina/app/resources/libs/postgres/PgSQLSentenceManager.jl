@@ -39,6 +39,11 @@ function sqlDuplicationCheck(nsql::String, subq::String)
 		   not exist -> false
 """
 function sqlDuplicationCheck(nsql::String, subq::String)
+	#===
+		Tips:
+			ApiSql...readSql...()[1] contains true/false.
+			ApiSql...readSql...()[2] contains dataframe list if [] is true, in the case of false is nothing.
+	===#			
 	if ApiSqlListManager.readSqlList2DataFrame()[1]
 		Df_JetelinaSqlList = ApiSqlListManager.readSqlList2DataFrame()[2]
 		# already exist?
