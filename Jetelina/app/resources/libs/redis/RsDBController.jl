@@ -355,6 +355,9 @@ function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer)
 	this function will never get fail, expectedly.:-P
 
 	jetelina_table_id is deprecated
+	
+	Attention: 
+		Jetelina user table is not maintained in Redis, therefore 't' does not have meanings.
 
 # Arguments
 - `conn: Object`: connection object
@@ -365,31 +368,11 @@ function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer)
 	sql = ""
 
 	if t == 0
-		#===
-				sql = """
-					select nextval('jetelina_table_id_sequence');
-				"""
-		===#
 	elseif t == 1
-		sql = """
-			select nextval('jetelina_sql_sequence');
-		"""
 	elseif t == 2
-		sql = """
-			select nextval('jetelina_user_id_sequence');
-		"""
 	end
-
-	sequence_number = columntable(execute(conn, sql))
-
-	#===
-		Tips:
-		this sequence_number is a type of Union{Missing,Int64}{51} for example.
-		wanted nextval() is {51}, then 
-			sequence_number[1] -> Union{Int64}[51]
-			sequence_number[1][1] -> 51
-	===#
-	return sequence_number[1][1]
+	
+	return ApiSqlListManager.getApiSequenceNumber()
 end
 
 """

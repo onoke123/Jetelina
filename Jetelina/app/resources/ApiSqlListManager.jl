@@ -8,6 +8,7 @@ Description:
 	this file determines a corrensponding SQL sentence to API.
 
 functions
+	getApiSequenceNumber()  get api sequence number from apisequencenumber in dataframe then update it +1
 	readSqlList2DataFrame() import registered SQL sentence list in JC["sqllistfile"] to DataFrame.this function set the sql list data in the global variable 'Df_JetelinaSqlList' as DataFrame object.
 	writeTolist(sql::String, tablename_arr::Vector{String}, seq_no::Integer, db::String) create api no and write it to JC["sqllistfile"] order by SQL sentence.
 	deleteTableFromlist(tablename::Vector) delete tables name from JC["sqllistfile"] synchronized with dropping table.
@@ -58,6 +59,18 @@ function _setApiSequenceNumber()
 			@info apisequencenumber
 		end
 	end
+end
+"""
+function getApiSequenceNumber()
+	get api sequence number from apisequencenumber in dataframe then update it +1
+
+# Arguments
+- return: Integer: api sequence number 	
+"""
+function getApiSequenceNumber()
+	ret::Int = apisequencenumber.apino[1]
+	apisequencenumber.apino[1] += 1
+	return ret
 end
 """
 function readSqlList2DataFrame()
