@@ -10,6 +10,8 @@ functions
     set(un,id) set ordered session data
 	get()  get session data
 	clear()  clear session data
+	setDBtype(d) set using data base type: postgresql/mysql/redis....
+	getDBType()	get current data base type is using by a login user
 """
 module JSession
 using Genie, GenieSession, GenieSessionFileSession
@@ -20,7 +22,7 @@ function __init__()
 	this is the session initialize
 """
 function __init__()
-	@info "do init()"
+	@info "==========JSession init================"
 	GenieSession.__init__()
 end
 """
@@ -33,7 +35,6 @@ function set(un,id)
 -id:Int login user id
 """
 function set(un,id)
-#	@info "set session data with " un id
 	s = session(params())
 	GenieSession.set!(s, :uname, un)
 	GenieSession.set!(s, :uid, id)
@@ -58,6 +59,31 @@ function clear()
 function clear()
 	s = session(params())
 	s.data = Dict()
+end
+"""
+function setDBtype(d::String)
+
+	set using data base type: postgresql/mysql/redis....
+	this session is set with configuration paramete 'dbtype', but will switch order by user managing
+
+# Arguments
+-d:String: data base type postgresql/mysql/redis....
+"""
+function setDBType(d)
+	s = session(params())
+	GenieSession.set!(s, :dbtype, d)
+end
+"""
+function getDBType()
+
+	get current data base type is using by a login user
+
+# Arguments
+-return: String: data base type: postgresq/mysql/redis... 
+"""
+function getDBType()
+	s = session(params())
+	return s.data[:dbtype]
 end
 
 end

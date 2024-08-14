@@ -157,7 +157,6 @@ function login()
 		ret = DBDataController.chkUserExistence(userName)
 	end
 
-	
 	# set session data
 	if ret["result"]
 		j = ret["Jetelina"]
@@ -176,6 +175,18 @@ function login()
 		if !isnothing(j) && 0<length(j)
 			if !isnothing(j[1][2]) && !isnothing(j[1][1])
 				JSession.set(j[1][2],j[1][1])
+				#===
+					Tips:
+						set data base type that is used at the last login
+						register default dbtype in the config, if there were no data in user_info
+				===#
+				u = DBDataController.refUserInfo(j[1][1], "last_dbtype", 1)
+				if !ismissing(u[:, :last_dbtype][1])
+					JSession.setDBType(u[:, :last_dbtype][1])
+				else
+					# go to register
+					DBDataController.updateUserInfo(j[1][1], "last_dbtype", j_config.JC["dbtype"])
+				end
 			end
 		end
 	end

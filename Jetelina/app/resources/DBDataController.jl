@@ -235,14 +235,17 @@ function executeApi(json_d::Dict)
 		Df_JetelinaSqlList = ApiSqlListManager.readSqlList2DataFrame()[2]
 		target_api = subset(Df_JetelinaSqlList, :apino => ByRow(==(json_d["apino"])), skipmissing = true)
 		if 0 < nrow(target_api)
+			dbtype = target_api[!,:db][1]
 			# Step2:
-			if j_config.JC["dbtype"] == "postgresql"
+			if dbtype == "postgresql"
 				# Case in PostgreSQL
 				ret = PgDBController.executeApi(json_d, target_api)
-			elseif j_config.JC["dbtype"] == "mysql"
+			elseif dbtype == "mysql"
 				# Case in MySQL
 				ret = MyDBController.executeApi(json_d, target_api)
-			elseif j_config.JC["dbtype"] == "oracle"
+			elseif dbtype == "redis"
+
+			elseif dbtype == "oracle"
 			end
 		end
 	else
@@ -344,6 +347,7 @@ function refUserInfo(uid::Integer,key::String,rettype::Integer)
 # Arguments
 - `uid::Integer`: expect user_id
 - `key::String`: key name in user_info json data
+- `rettype::Integer`: return data type. 0->json 1->DataFrame 
 - return: success -> user data in json or DataFrame, fail -> ""
 """
 function refUserInfo(uid::Integer, key::String, rettype::Integer)
