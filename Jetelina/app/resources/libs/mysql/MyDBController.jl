@@ -165,7 +165,22 @@ function open_connection()
     sock = j_config.JC["my_unix_socket"]
 
     #	return DBInterface.connect(MySQL.Connection,"localhost","user","userpasswd",db="mysql",port=3306,unix_socket="/var/run/mysqld/mysqld.sock")
-    return DBInterface.connect(MySQL.Connection, "$host", "$user", "$pwd", db="$db", port=nport, unix_socket="$sock")
+    conn = DBInterface.connect(MySQL.Connection, "$host", "$user", "$pwd", db="$db", port=nport, unix_socket="$sock")
+    #===
+        Tips:
+            because of mysql would not return its required table list in the case of default data base, Jetelina have to work in own data base named 'jetelina',
+            and all functions require this definition 'use jetelina' before running eachs, therefore this definition has done together with creating the connection
+            at here.
+            wow, it works fine.＼(^o^)／ 
+    ===#
+    try
+        DBInterface.execute(conn,"use jetelina")
+    catch
+        JLog.writetoLogfile("MyDBController.open_connection() error: $err")
+        return false
+    finally
+        return conn
+    end
 end
 
 """
@@ -506,6 +521,7 @@ function dataInsertFromCSV(fname::String)
     """
     conn = open_connection()
     try
+#        DBInterface.execute(conn,"use jetelina")
         DBInterface.execute(conn, create_table_str)
     catch err
         close_connection(conn)

@@ -90,8 +90,8 @@ file_column_mean = mean
 #                MySQL      -> mysql
 #                Oracle     -> oracle
 @jdic dbtype:"db","database","data base"
-dbtype = postgresql
-#dbtype = mysql
+#dbtype = postgresql
+dbtype = mysql
 
 # PostgreSQL setting
 @jdic pg_host:"postgresql host"
