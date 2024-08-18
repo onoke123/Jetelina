@@ -118,7 +118,10 @@ function create_jetelina_database()
             @info "hey jetelina database is healthy, nice"
         end
 
+        # change present environment parameter
         j_config.JC["my_dbname"] = jetelinadb
+        # update persistent environment paramter for next time
+        j_config.configParamUpdate(Dict("my_dbname"=>jetelinadb))
     catch err
         JLog.writetoLogfile("MyDBController.create_jetelina_database() error: $err")
     finally

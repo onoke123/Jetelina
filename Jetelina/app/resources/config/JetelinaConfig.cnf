@@ -83,6 +83,14 @@ file_column_min = min
 file_column_mean = mean
 
 #
+# jetelina user table database
+#   this parameter is defined at installing
+#   defined database should be RDB, therefore postgresql org mysql so far
+#
+@jdic jetelnadb:"default db","default database","original db","original database","user db","user database"
+jetelinadb = postgresql
+
+#
 #  default database
 #      this parameter is used in calling api if db type were not specified
 #      dbtype: type of database   

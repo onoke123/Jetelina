@@ -7,6 +7,7 @@ Description:
 	DB controller for PostgreSQL
 
 functions
+    create_jetelina_database()	create 'jetelina' database.
 	* deprecated create_jetelina_tables() create 'jetelina_table_manager' table.
 	create_jetelina_id_sequence() create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
 	open_connection() open connection to the DB.
@@ -48,10 +49,47 @@ JMessage.showModuleInCompiling(@__MODULE__)
 include("PgDataTypeList.jl")
 include("PgSQLSentenceManager.jl")
 
-export create_jetelina_table, create_jetelina_id_sequence, open_connection, close_connection, readJetelinatable,
+export create_jetelina_database, create_jetelina_table, create_jetelina_id_sequence, open_connection, close_connection, readJetelinatable,
     getTableList, getJetelinaSequenceNumber, insert2JetelinaTableManager, dataInsertFromCSV, dropTable, getColumns,
     executeApi, doSelect, measureSqlPerformance, create_jetelina_user_table, userRegist, getUserData, chkUserExistence, getUserInfoKeys,
     refUserAttribute, updateUserInfo, refUserInfo, updateUserData, deleteUserAccount, checkTheRoll, refStichWort
+
+"""
+function create_jetelina_database()
+
+	create 'jetelina' database.
+    BUT, look like LibPQ does not support this substitution string so far, therefore abandon to create 'jetelinadb' now and 
+    keep working in default 'pg_dbname'.
+    will be real someday, hopefully  ・ω・
+	
+"""
+function create_jetelina_database()
+    #===
+    	Tips:
+            PostpgreSQL does not have "if not exist" in creating database.
+            this idea is picked up from
+                https://commandprompt.com/education/postgresql-create-database-if-not-exists/
+                https://docs.julialang.org/en/v1/base/strings/
+            
+    jetelinadb = "jetelina"
+
+    conn = open_connection()
+
+    jetelina_database = SubstitutionString("select 'create database jetelina' where not exists (select from pg_database where datname='jetelina')\\gexec")
+    try
+        execute(conn, jetelina_database)
+
+        # change present environment parameter
+        j_config.JC["pg_dbname"] = jetelinadb
+        # update persistent environment paramter for next time
+        j_config.configParamUpdate(Dict("pg_dbname" => jetelinadb))
+    catch err
+        JLog.writetoLogfile("PgDBController.create_jetelina_database() error: $err")
+    finally
+        close_connection(conn)
+    end
+    ===#
+end
 
 """
 function create_jetelina_table
