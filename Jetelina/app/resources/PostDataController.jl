@@ -398,6 +398,21 @@ function configParamUpdate()
 	ret = ""
 	param = jsonpayload()
 
+	#===
+		Tips:
+			as you know, 'jetelina' database should be created in mysql, not in postgresql, the reasons are ref each lib programs.
+			there is no chance to create 'jetelina' database until here if postgresql were initial.
+			thus, have to check the database existence and create it if there were no yet.
+			you may think it should be executed in other placce, e.g. ConfigManager, but could not do it because of some dificult 
+			technical reasons.(T_T)
+			someday, when Genie compiler will not need .autoload sequence.
+	===#
+	for (k,v) in param
+		if k == "dbtype" && v == "mysql"
+			DBDataController.createJetelinaDatabaseinMysql()
+		end
+	end
+
 	if !isnothing(param)
 		ret = j_config.configParamUpdate(param)
 	end

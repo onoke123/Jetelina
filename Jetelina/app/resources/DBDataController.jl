@@ -7,7 +7,8 @@
 		General DB action controller
 
 	functions
-		__init__() Initial action. Execute init_Jetelina_table()
+		init() Initial action. Execute init_Jetelina_table()
+		createJetelinaDatabaseinMysql()	special function for creating 'jetelina' database in Mysql.
 		init_Jetelina_table() Execute *.create_jetelina_table() depend on DB type.Execute *.readJetelinatable() depend on DB type.
 		dataInsertFromCSV(csvfname::String) CSV data inserts into DB. It executes in *.dataInsertFromCSV depend on DB type.
 		getTableList(s::String) Get the ordered table list by executing *.getTable() depend on DB type
@@ -46,14 +47,14 @@ include("libs/postgres/PgSQLSentenceManager.jl")
 include("libs/mysql/MyDBController.jl")
 include("libs/mysql/MySQLSentenceManager.jl")
 
-export init_Jetelina_table,
+export init_Jetelina_table, createJetelinaDatabaseinMysql,
 	dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,
 	executeApi, userRegist, chkUserExistence, getUserInfoKeys, refUserAttribute, refUserInfo, updateUserInfo, updateUserData, deleteUserAccount,
 	createApiSelectSentence, refStichWort
 
 
 """
-function __init__()
+function init()
 	Initial action. Execute init_Jetelina_table()
 """
 function init()
@@ -79,12 +80,23 @@ function init_Jetelina_table()
 		PgDBController.create_jetelina_user_table()
 	elseif j_config.JC["jetelinadb"] == "mysql"
 		# Case in MySQL
-		MyDBController.create_jetelina_database()
+#		MyDBController.create_jetelina_database()
+		createJetelinaDatabaseinMysql()
 		MyDBController.create_jetelina_id_sequence()
 		MyDBController.create_jetelina_user_table()
 	elseif j_config.JC["jetelinadb"] == "oracle"
 	end
 
+end
+"""
+function createJetelinaDatabaseinMysql()
+
+	special function for creating 'jetelina' database in Mysql.
+	the reaosn is refer to ConfigManager.configParamUpdate(), please, do not wanna talk a lot anymore.・ω・
+
+"""
+function createJetelinaDatabaseinMysql()
+	MyDBController.create_jetelina_database()
 end
 """
 function dataInsertFromCSV(csvfname::String)

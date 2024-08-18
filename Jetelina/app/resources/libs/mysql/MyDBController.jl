@@ -7,8 +7,8 @@ Description:
 	DB controller for MySQL
 
 functions
-	* deprecated create_jetelina_tables() create 'jetelina_table_manager' table.
 	x6/39 create_jetelina_database() create 'jetelina' database because of mysql special.
+	* deprecated create_jetelina_tables() create 'jetelina_table_manager' table.
 	x6/20 create_jetelina_id_sequence() create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
 	x6/20 open_connection() open connection to the DB.
 	x6/20 close_connection(conn::DBInterface.Connection)  close the DB connection
@@ -53,6 +53,51 @@ export create_jetelina_database, create_jetelina_table, create_jetelina_id_seque
     executeApi, doSelect, measureSqlPerformance, create_jetelina_user_table, userRegist, getUserData, chkUserExistence, getUserInfoKeys,
     refUserAttribute, updateUserInfo, refUserInfo, updateUserData, deleteUserAccount, checkTheRoll, refStichWort
 
+
+"""
+function create_jetelina_database()
+
+    create 'jetelina' database because of mysql special.
+    indeed in getTableList() cannot get effective list from the default database, i mean there are many unuseful tables following,
+    therefore creating this table for working jetelina speciality.
+    the database name 'jetelina' is unchangeable, so far. it will may be changeable but i do not know its necessity. :D
+    
+"""
+function create_jetelina_database()
+    jetelinadb = "jetelina"
+
+    conn = open_connection()
+    #===
+            Tips:
+                jetelina works in 'jetelina' database in MySql, because of getTable().
+                and this function is called in DBControllerinit_Jetelina_table() as initializing process.
+                at the first, try to find existing 'jetelina' data base, then creat it if there were not.
+                after that, change j_config.JS["my_dbname"]. this "my_dbname" is defined in configuration file. 
+        ===#
+    try
+        sql = "show databases"
+        df = DataFrame(DBInterface.execute(conn, sql))
+        if size(filter(x -> x.Database == jetelinadb, df))[1] == 0
+            @info "cannot find jetelina data base, ok try to create it, wow"
+            jetelina_database = """
+                create database if not exists jetelina;
+            """
+
+            DBInterface.execute(conn, jetelina_database)
+        else
+            @info "hey jetelina database is healthy, nice"
+        end
+
+        # update memory&persistent environment paramter for next time
+        j_config.configParamUpdate(Dict("my_dbname" => jetelinadb))
+    catch err
+        JLog.writetoLogfile("MyDBController.create_jetelina_database() error: $err")
+    finally
+        # close the connection finally
+        close_connection(conn)
+    end
+end
+
 """
 function create_jetelina_table
 
@@ -80,52 +125,6 @@ function create_jetelina_table()
     catch err
         JLog.writetoLogfile("MyDBController.create_jetelina_table() error: $err")
     finally
-        close_connection(conn)
-    end
-end
-
-"""
-function create_jetelina_database()
-
-	create 'jetelina' database because of mysql special.
-	indeed in getTableList() cannot get effective list from the default database, i mean there are many unuseful tables following,
-	therefore creating this table for working jetelina speciality.
-	the database name 'jetelina' is unchangeable, so far. it will may be changeable but i do not know its necessity. :D
-	
-"""
-function create_jetelina_database()
-    jetelinadb = "jetelina"
-
-    conn = open_connection()
-    #===
-    		Tips:
-    			jetelina works in 'jetelina' database in MySql, because of getTable().
-    			and this function is called in DBControllerinit_Jetelina_table() as initializing process.
-    			at the first, try to find existing 'jetelina' data base, then creat it if there were not.
-    			after that, change j_config.JS["my_dbname"]. this "my_dbname" is defined in configuration file. 
-    	===#
-    try
-        sql = "show databases"
-        df = DataFrame(DBInterface.execute(conn, sql))
-        if size(filter(x -> x.Database == jetelinadb, df))[1] == 0
-            @info "cannot find jetelina data base, ok try to create it, wow"
-            jetelina_database = """
-            	create database if not exists jetelina;
-            """
-
-            DBInterface.execute(conn, jetelina_database)
-        else
-            @info "hey jetelina database is healthy, nice"
-        end
-
-        # change present environment parameter
-        j_config.JC["my_dbname"] = jetelinadb
-        # update persistent environment paramter for next time
-        j_config.configParamUpdate(Dict("my_dbname"=>jetelinadb))
-    catch err
-        JLog.writetoLogfile("MyDBController.create_jetelina_database() error: $err")
-    finally
-        # close the connection finally
         close_connection(conn)
     end
 end
@@ -177,7 +176,7 @@ function open_connection()
             wow, it works fine.＼(^o^)／ 
     ===#
     try
-        DBInterface.execute(conn,"use jetelina")
+        DBInterface.execute(conn, "use jetelina")
     catch
         JLog.writetoLogfile("MyDBController.open_connection() error: $err")
         return false
@@ -524,7 +523,7 @@ function dataInsertFromCSV(fname::String)
     """
     conn = open_connection()
     try
-#        DBInterface.execute(conn,"use jetelina")
+        #        DBInterface.execute(conn,"use jetelina")
         DBInterface.execute(conn, create_table_str)
     catch err
         close_connection(conn)

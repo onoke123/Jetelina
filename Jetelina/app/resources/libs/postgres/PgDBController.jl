@@ -79,9 +79,7 @@ function create_jetelina_database()
     try
         execute(conn, jetelina_database)
 
-        # change present environment parameter
-        j_config.JC["pg_dbname"] = jetelinadb
-        # update persistent environment paramter for next time
+        # update memory&persistent environment paramter for next time
         j_config.configParamUpdate(Dict("pg_dbname" => jetelinadb))
     catch err
         JLog.writetoLogfile("PgDBController.create_jetelina_database() error: $err")

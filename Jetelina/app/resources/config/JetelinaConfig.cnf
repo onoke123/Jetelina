@@ -98,8 +98,7 @@ jetelinadb = postgresql
 #                MySQL      -> mysql
 #                Oracle     -> oracle
 @jdic dbtype:"db","database","data base"
-#dbtype = postgresql
-dbtype = mysql
+dbtype = postgresql
 
 # PostgreSQL setting
 @jdic pg_host:"postgresql host"

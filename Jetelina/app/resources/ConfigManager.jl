@@ -10,6 +10,8 @@ Description:
 contain functions
 	__init__()
 	createScenario()  create scenario.js file from base.jdic and JetelinaConfig.cnf files. this function is mandatory working to realize Jetelina Chatting.
+	initialJetelinaDB() define the initial database, postgresql or mysql by admin user.
+	switchDbType() update 'dbtype' parameter every switching data base. 
 	configParamUpdate(d::Dict) update a configuration parameter in the configuration file.
 """
 
@@ -19,7 +21,7 @@ using Jetelina.JFiles, Jetelina.JMessage
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export JC, createScenario, configParamUpdate
+export JC, createScenario, configParamUpdate, initialJetelinaDB, switchDbType
 
 # configration file name
 const defaultConfigFile = "JetelinaConfig.cnf"
@@ -177,6 +179,28 @@ function createScenario()
 	catch err
 		@error "ConfigManager._fileupdate() error $param changes with $prev -> $var: $err"
 	end
+end
+"""
+function initialJetelinaDB() 
+	
+	define the initial database, postgresql or mysql by admin user.
+
+#Arguments
+- `db::String`: database to use
+"""
+function initialJetelinaDB(db)
+	configParamUpdate(Dict("jetelinadb"=>db))
+end
+"""
+function switchDbType() 
+	
+	update 'dbtype' parameter every switching data base. 
+
+#Arguments
+- `db::String`: database to use
+"""
+function switchDbType(db)
+	configParamUpdate(Dict("dbtype"=>db))
 end
 """
 function configParamUpdate(d::Dict)
