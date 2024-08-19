@@ -1068,11 +1068,11 @@ function chkUserExistence(s::String)
                     dbtype = dfudb[:, :last_dbtype][1]
                 else
                     dbtype = j_config.JC["dbtype"]
-                    Jsession.setDBType(dbtype)
+                    JSession.setDBType(dbtype)
                 end
             end
-            
-            ret = Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "last_dbtype" => "$dbtype", "available" => stichwort, "message from Jetelina" => jmsg)
+
+            ret = Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "last_dbtype" => dbtype, "available" => stichwort, "message from Jetelina" => jmsg)
             updateUserLoginData(df.user_id[1])
         elseif 1 < size(df)[1]
             # cannot defermine this user by this 's', then request the whole user name

@@ -257,7 +257,7 @@ const getdata = (o, t) => {
                                         case t=2: wanna show it in one line
                                         this is the api list.
                                 */
-                                if (loginuser.last_dbtype == v.db) {
+                                if (loginuser.dbtype.indexOf(v.db) != -1) {
                                     str += `<span class="api">${v.apino}</span>`;
                                 }
                             } else if (t == 3) {
@@ -516,7 +516,7 @@ const postAjaxData = (url, data) => {
                 showSomethingMsgPanel(true);
             } else if (url == posturls[3]) {
                 // configuration parameter change success then cleanup the "#something_msg"
-                loginuser.last_dbtype = presentaction.dbtype;
+                loginuser.dbtype = presentaction.dbtype;
                 presentaction = {};
                 showSomethingInputField(false);
             } else if (url == posturls[8]) {
@@ -1151,7 +1151,7 @@ const chatKeyDown = (cmd) => {
                                                 Tips:
                                                     loginuser attribute must be changed if the config param were 'dbtype'.
                                                     presentaction.dbtype is a kind of temporary object data to be set into
-                                                    loginuser.last_dbtype that is switched in postAjaxData().
+                                                    loginuser.dbtype that is switched in postAjaxData().
                                             */
                                             if (presentaction.config_name == "dbtype") {
                                                 presentaction.dbtype = new_param;
