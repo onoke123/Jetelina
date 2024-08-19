@@ -17,7 +17,7 @@ contain functions
 
 module ConfigManager
 using Dates
-using Jetelina.JFiles, Jetelina.JMessage
+using Jetelina.JFiles, Jetelina.JMessage, Jetelina.JSession
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
@@ -239,6 +239,11 @@ function configParamUpdate(d::Dict)
 				JC[param] = parse(Bool, var)
 			else
 				JC[param] = var
+
+				# also rewrite the session data
+				if(param == "dbtype")
+					JSession.setDBType(var)
+				end
 			end
 			#
 			#  Tips:

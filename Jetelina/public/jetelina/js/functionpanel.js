@@ -1168,7 +1168,7 @@ const functionPanelFunctions = (ut) => {
       let hidepanel = APICONTAINER;
       let showpanel = TABLECONTAINER;
       //      let paneltitle = "Table List";
-      let cleanup = "tables";
+//      let cleanup = "tables";
       let geturl = scenario["function-get-url"][1];
 
       // cleanup the screen first 
@@ -1179,6 +1179,7 @@ const functionPanelFunctions = (ut) => {
       if (inScenarioChk(ut, 'func-show-table-list-cmd')) {
         //        if (isVisibleApiContainer()) {
         showApiTestPanel(false);
+        cleanUp('tables');
         //        }
       } else if (inScenarioChk(ut, 'func-show-api-list-cmd')) {
         //        if (isVisibleTableContainer()) {
@@ -1188,13 +1189,13 @@ const functionPanelFunctions = (ut) => {
         $(GENELICPANEL).hide();
         //        }
 
-        cleanup = "apis";
+//        cleanup = "apis";
         geturl = scenario["function-get-url"][0];
         // cleanup once because getting apilist and contain to preferent.aplist by calling getAjaxData()
         delete preferent.apilist;
       }
 
-      cleanUp(cleanup);
+      cleanUp('apis');
       cleanupRelatedList(false);
       //      $(hidepanel).hide();
       //      $(LeftPanelTitle).text(paneltitle);

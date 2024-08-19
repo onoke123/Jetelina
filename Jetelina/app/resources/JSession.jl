@@ -10,7 +10,7 @@ functions
     set(un,id) set ordered session data
 	get()  get session data
 	clear()  clear session data
-	setDBtype(d) set using data base type: postgresql/mysql/redis....
+	setDBType(d) set using data base type: postgresql/mysql/redis....
 	getDBType()	get current data base type is using by a login user
 """
 module JSession
@@ -61,7 +61,7 @@ function clear()
 	s.data = Dict()
 end
 """
-function setDBtype(d::String)
+function setDBType(d::String)
 
 	set using data base type: postgresql/mysql/redis....
 	this session is set with configuration paramete 'dbtype', but will switch order by user managing

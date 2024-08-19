@@ -34,11 +34,13 @@ function logout()
 """
 function logout()
 	uid = JSession.get()[2]
-	key = "logoutdate"
+	key1 = "logoutdate"
+	key2 = "last_dbtype"
 	value = "now()"
 
 	if !isnothing(uid)
-		ret = DBDataController.updateUserData(uid, key, value)
+		DBDataController.updateUserInfo(uid, key2, JSession.getDBType())
+		ret = DBDataController.updateUserData(uid, key1, value)
 	end
 
 	# session data clear

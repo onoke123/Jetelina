@@ -231,11 +231,11 @@ const getdata = (o, t) => {
                                     if (t == 0) {
                                         // table list
                                         let existList = [];
-                                        $(`${TABLECONTAINER} span`).each(function(){
+                                        $(`${TABLECONTAINER} span`).each(function () {
                                             existList.push($(this).text());
                                         });
 
-                                        if($.inArray(value,existList) == -1){
+                                        if ($.inArray(value, existList) == -1) {
                                             str += `<span class="table">${value}</span>`;
                                         }
                                     } else if (t == 1) {
@@ -257,7 +257,9 @@ const getdata = (o, t) => {
                                         case t=2: wanna show it in one line
                                         this is the api list.
                                 */
-                                str += `<span class="api">${v.apino}</span>`;
+                                if (loginuser.last_dbtype == v.db) {
+                                    str += `<span class="api">${v.apino}</span>`;
+                                }
                             } else if (t == 3) {
                                 if (v.date != null) {
                                     configChangeHistoryStr += `[${v.date}] `;
@@ -414,7 +416,7 @@ const getAjaxData = (url) => {
                         but there is not reason to set it in each, so far, therefore do it at here.
                         change this position if it would have an issue. :P
                 */
-//                $(RightPanelTitle).text('');
+                //                $(RightPanelTitle).text('');
 
                 const geturl = scenario['function-get-url'];
                 if (url == geturl[0]) {
@@ -514,26 +516,27 @@ const postAjaxData = (url, data) => {
                 showSomethingMsgPanel(true);
             } else if (url == posturls[3]) {
                 // configuration parameter change success then cleanup the "#something_msg"
-                presentaction = {};                                
+                loginuser.last_dbtype = presentaction.dbtype;
+                presentaction = {};
                 showSomethingInputField(false);
-            }else if(url == posturls[8]){
+            } else if (url == posturls[8]) {
                 let str = "";
-                if(result.list != 0){
+                if (result.list != 0) {
                     /*
                         Tips:
                             result.target -> "table name e.g. ftest1" or "api name e.g. js112"
                             therefore, relatedDataList[result.target] is the related talbes/apis list with 'result.target'
                     */
                     relatedDataList[result.target] = result.list;
-/*
-                    let c = "api";
-                    if(!$(RightPanelTitle).text().startsWith("TABLEs") ){
-                        c = "table";
-                    }else{
-                        // every time clean up in case showing related table
-                        cleanupRelatedList(false);
-                    }
-*/
+                    /*
+                                        let c = "api";
+                                        if(!$(RightPanelTitle).text().startsWith("TABLEs") ){
+                                            c = "table";
+                                        }else{
+                                            // every time clean up in case showing related table
+                                            cleanupRelatedList(false);
+                                        }
+                    */
                     // collect items on the relational list are already
                     let existList = [];
                     /*
@@ -542,29 +545,29 @@ const postAjaxData = (url, data) => {
                             opposit in case of 'api'
                     */
                     let targetcontainer = TABLECONTAINER;
-                    if(relatedDataList.type == "api"){
+                    if (relatedDataList.type == "api") {
                         targetcontainer = APICONTAINER;
                     }
 
-                    $(`${targetcontainer} span`).each(function(){
+                    $(`${targetcontainer} span`).each(function () {
                         existList.push($(this).text());
                     });
-/*
-                    if(relatedDataList.type == "api"){
-                        cleanUp("apis");
-                    }else{
-                        cleanUp("tables");
-                    }
-*/
+                    /*
+                                        if(relatedDataList.type == "api"){
+                                            cleanUp("apis");
+                                        }else{
+                                            cleanUp("tables");
+                                        }
+                    */
 
                     // collect the difference items between getting list(result.list) and on the relational list
-//                    let newaddlist = result.list.filter(x=>!existList.includes(x));
-                    let newaddlist = result.list.filter(x=>existList.includes(x));
-                    if(0<newaddlist.length){
-                        $(`${targetcontainer} span`).each(function(){
-                            for(let i in newaddlist){
-                                if($(this).text() == newaddlist[i]){
-                                    if(!$(this).hasClass("activeItem")){
+                    //                    let newaddlist = result.list.filter(x=>!existList.includes(x));
+                    let newaddlist = result.list.filter(x => existList.includes(x));
+                    if (0 < newaddlist.length) {
+                        $(`${targetcontainer} span`).each(function () {
+                            for (let i in newaddlist) {
+                                if ($(this).text() == newaddlist[i]) {
+                                    if (!$(this).hasClass("activeItem")) {
                                         //$(this).removeClass("activeItem");
                                         $(this).addClass("relatedItem");
                                     }
@@ -573,17 +576,17 @@ const postAjaxData = (url, data) => {
                                 }
                             }
                         });
-    
+
                         // add only diffrences to the list
-/*                        for(let i in newaddlist){
-                            str += `<span class="${relatedDataList.type}">${newaddlist[i]}</span>`;
-                        }*/
-/*                    }else{
-                        // list the result, because there is no items on the list yet
-                        for(let i in result.list){
-                            str += `<span class="${c}">${result.list[i]}</span>`;
-                        } */
-                    }   
+                        /*                        for(let i in newaddlist){
+                                                    str += `<span class="${relatedDataList.type}">${newaddlist[i]}</span>`;
+                                                }*/
+                        /*                    }else{
+                                                // list the result, because there is no items on the list yet
+                                                for(let i in result.list){
+                                                    str += `<span class="${c}">${result.list[i]}</span>`;
+                                                } */
+                    }
 
                     // append it ＼(^o^)／
                     $(targetcontainer).append(str);
@@ -656,7 +659,10 @@ const authAjax = (un) => {
             const o = result;
             let m = "";
             loginuser.available = result.available;
- //           let jetelinamsg = result["message from Jetelina"];
+            if(result.last_dbtype != null && 0<result.last_dbtype.length ){
+                loginuser.dbtype = result.last_dbtype;
+            }
+            //           let jetelinamsg = result["message from Jetelina"];
             // found user
             Object.keys(o).some(function (key) {
                 if (key == "Jetelina" && o[key].length == 1) {
@@ -749,7 +755,7 @@ const authAjax = (un) => {
                     stage = 'login';
                 } else {
                     // no user
-//                    scenarioNumber = "not-registered-msg";
+                    //                    scenarioNumber = "not-registered-msg";
                     m = result["message from Jetelina"];
                     stage = 'login';
                     typingControll(m);
@@ -941,7 +947,7 @@ const chatKeyDown = (cmd) => {
 
             /* from here is special function but temporary, may will be deleted */
             // simple ask about using database type
-            if(inScenarioChk(ut,'what-db-use-now',"config")){
+            if (inScenarioChk(ut, 'what-db-use-now', "config")) {
                 console.log("data base type is");
                 let data = '{"param":"dbtype"}';
                 postAjaxData(scenario['function-post-url'][2], data);
@@ -982,19 +988,19 @@ const chatKeyDown = (cmd) => {
 
                     break;
                 case 'login':
-//                    let chunk = "";
-/*
-                    if (ut.indexOf(" ") != -1) {
-                        let p = ut.split(" ");
-                        chunk = p[p.length - 1];
-                    } else {
-                        chunk = ut;
-                    }
-
-                    if (chunk.indexOf("me") == -1) {
-*/
-                    if(ut.indexOf("it's me") == -1 && ut.indexOf("it is me") == -1){
-//                        authAjax(chunk);
+                    //                    let chunk = "";
+                    /*
+                                        if (ut.indexOf(" ") != -1) {
+                                            let p = ut.split(" ");
+                                            chunk = p[p.length - 1];
+                                        } else {
+                                            chunk = ut;
+                                        }
+                    
+                                        if (chunk.indexOf("me") == -1) {
+                    */
+                    if (ut.indexOf("it's me") == -1 && ut.indexOf("it is me") == -1) {
+                        //                        authAjax(chunk);
                         authAjax(ut);
                         m = IGNORE;
                     } else {
@@ -1045,8 +1051,8 @@ const chatKeyDown = (cmd) => {
                         left: "5%" //"210px"
                     }, ANIMATEDURATION);
 
-//                    if (!$(SOMETHINGINPUT).is(":visible")) {
-                    if(!inScenarioChk(ut,'config-update-cmd') && (presentaction.cmd != CONFIGCHANGE)){
+                    //                    if (!$(SOMETHINGINPUT).is(":visible")) {
+                    if (!inScenarioChk(ut, 'config-update-cmd') && (presentaction.cmd != CONFIGCHANGE)) {
                         // if 'ut' is a command for driving function
                         m = functionPanelFunctions(ut);
                         if (m.length == 0 || m == IGNORE) {
@@ -1141,7 +1147,16 @@ const chatKeyDown = (cmd) => {
                                     if (inScenarioChk(ut, 'common-post-cmd')) {
                                         let new_param = $(SOMETHINGINPUT).val();
                                         if (0 < new_param.length) {
-                                            // ここでパラメタ変更する
+                                            /*
+                                                Tips:
+                                                    loginuser attribute must be changed if the config param were 'dbtype'.
+                                                    presentaction.dbtype is a kind of temporary object data to be set into
+                                                    loginuser.last_dbtype that is switched in postAjaxData().
+                                            */
+                                            if (presentaction.config_name == "dbtype") {
+                                                presentaction.dbtype = new_param;
+                                            }
+
                                             let data = `{"${presentaction.config_name}":"${new_param}"}`;
                                             postAjaxData(scenario["function-post-url"][3], data);
                                         } else {
@@ -1154,17 +1169,17 @@ const chatKeyDown = (cmd) => {
                             }
                         }
 
-                            /* 一発目はここにくる */
+                        /* 一発目はここにくる */
                         if (inScenarioChk(ut, 'config-update-cmd')) {
                             presentaction.cmd = CONFIGCHANGE;
                             cancelableCmdList.push(presentaction.cmd);
                             if (presentaction.config_name != null && presentaction.config_data != null) {
-                                showSomethingInputField(true,0);
+                                showSomethingInputField(true, 0);
                                 m = chooseMsg("config-update-simple-message", "", "");
                             } else {
                                 m = chooseMsg("config-update-plural-message", "", "");
                             }
-/* here */
+                            /* here */
                         } else if (inScenarioChk(ut, 'get-config-change-history')) {
                             getAjaxData(scenario['function-get-url'][2]);
                         }
@@ -1216,8 +1231,8 @@ const chatKeyDown = (cmd) => {
                     } else {
                         if (!logoutflg && m.length == 0) {
                             m = chooseMsg("starting-3-msg", "", "");
-                        }else{
-                            m = chooseMsg('greeting-ask-msg','','');
+                        } else {
+                            m = chooseMsg('greeting-ask-msg', '', '');
                         }
                     }
 
@@ -1613,26 +1628,26 @@ const isVisibleSomethingMsgPanel = () => {
  * @param {integer} type 0->config change 1->register pass phrase 2->inquire pass phrase
  * "#something_input_field" show or hide
  */
-const showSomethingInputField = (b,type) => {
+const showSomethingInputField = (b, type) => {
     if (b) {
         if (isVisibleSomethingMsgPanel()) {
-            let t="config";  // 2024/6/11 do not know use or not yet but leave it 
-            if(type == 0){
+            let t = "config";  // 2024/6/11 do not know use or not yet but leave it 
+            if (type == 0) {
                 $(SOMETHINGTEXT).text("Change this to =>");
                 $(SOMETHINGINPUT).attr('placeholder', 'new parameter...');
-            }else if(type == 1){
-                t="regPass";
+            } else if (type == 1) {
+                t = "regPass";
                 $(SOMETHINGTEXT).text("register your pass phrase =>");
                 $(SOMETHINGINPUT).attr('placeholder', 'put something your new pass phrase to continue ...');
-            }else if(type == 2){
-                t="reqPass";
+            } else if (type == 2) {
+                t = "reqPass";
                 $(SOMETHINGTEXT).text("request your pass phrase =>");
                 $(SOMETHINGINPUT).attr('placeholder', 'your registered one ...');
-            }else{
-                t="";
+            } else {
+                t = "";
             }
 
-//            $(SOMETHINGINPUTFIELD).append(`<text name="whatfor" class="box_text">${t}</text>`);
+            //            $(SOMETHINGINPUTFIELD).append(`<text name="whatfor" class="box_text">${t}</text>`);
         }
 
         $(SOMETHINGINPUTFIELD).show();
@@ -1656,9 +1671,9 @@ const showSomethingMsgPanel = (b) => {
     let sm = $(SOMETHINGMSGPANEL);
     if (b) {
         sm.show();
-        messageScrollTimerID = setInterval(function(){
-            sm.animate({ scrollTop: (sm.scrollTop()==0 ? sm.height() : 0) }, 4000);
-        },2000);
+        messageScrollTimerID = setInterval(function () {
+            sm.animate({ scrollTop: (sm.scrollTop() == 0 ? sm.height() : 0) }, 4000);
+        }, 2000);
     } else {
         // these classes are for configuration changing history message
         sm.removeClass("config_history");
@@ -1695,9 +1710,9 @@ const showApiTestPanel = (b) => {
         $(APITESTPANEL).show().draggable();
         $(APITESTPANEL).animate({ top: "300px" }, ANIMATEDURATION);
         let ap = $(`${APITESTPANEL} [name='api-test-data']`);
-        apitestScrollTimerID = setInterval(function(){
-            ap.animate({ scrollTop: (ap.scrollTop()==0 ? ap.height() : 0) }, 4000);
-        },2000);
+        apitestScrollTimerID = setInterval(function () {
+            ap.animate({ scrollTop: (ap.scrollTop() == 0 ? ap.height() : 0) }, 4000);
+        }, 2000);
 
     } else {
         clearInterval(apitestScrollTimerID);
@@ -1755,9 +1770,9 @@ const rejectSelectedItemsArr = (item) => {
  * 
  * confirm sub panels condition when focus moves on Jetelina Chat Box
  */
-const subPanelCheck = () =>{
-    if(isVisibleSomethingMsgPanel()){
-        if(0<$(SOMETHINGINPUT).val().length){
+const subPanelCheck = () => {
+    if (isVisibleSomethingMsgPanel()) {
+        if (0 < $(SOMETHINGINPUT).val().length) {
             typingControll(chooseMsg('common-confirm-msg', "", ""));
         }
     }
