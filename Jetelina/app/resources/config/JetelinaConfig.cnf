@@ -130,7 +130,7 @@ my_user = user
 @jdic my_password:"mysql password","password in mysql"
 my_password = userpasswd
 @jdic my_dbname:"mysql database name","mysql db name","mysql dbname"
-my_dbname = mysql
+my_dbname = jetelina
 @jdic mys_unix_socket:"mysql unix socket","mysql socket"
 my_unix_socket = /var/run/mysqld/mysqld.sock
 @jdic my_testdbname:"mysql test database"

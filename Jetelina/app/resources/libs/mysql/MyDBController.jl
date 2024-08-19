@@ -9,7 +9,7 @@ Description:
 functions
 	x6/39 create_jetelina_database() create 'jetelina' database because of mysql special.
 	* deprecated create_jetelina_tables() create 'jetelina_table_manager' table.
-	x6/20 create_jetelina_id_sequence() create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
+	* deprecated x6/20 create_jetelina_id_sequence() create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
 	x6/20 open_connection() open connection to the DB.
 	x6/20 close_connection(conn::DBInterface.Connection)  close the DB connection
 	* deprecated readJetelinatable() read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame 
@@ -133,6 +133,8 @@ end
 function create_jetelina_id_sequence()
 
 	create 'jetelina_sql_sequence' and 'jetelina_user_id_sequence' table as sequence.
+
+    deprecated
 
 """
 function create_jetelina_id_sequence()

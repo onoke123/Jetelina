@@ -514,7 +514,7 @@ const postAjaxData = (url, data) => {
                 showSomethingMsgPanel(true);
             } else if (url == posturls[3]) {
                 // configuration parameter change success then cleanup the "#something_msg"
-                presentaction.cmd = null;
+                presentaction = {};                                
                 showSomethingInputField(false);
             }else if(url == posturls[8]){
                 let str = "";
@@ -1035,6 +1035,7 @@ const chatKeyDown = (cmd) => {
 
                     break;
                 case 'lets_do_something':
+                    m = "";
                     // chatbox moves to below
                     const panelTop = window.innerHeight - 110;
                     $(JETELINAPANEL).animate({
@@ -1045,13 +1046,14 @@ const chatKeyDown = (cmd) => {
                     }, ANIMATEDURATION);
 
 //                    if (!$(SOMETHINGINPUT).is(":visible")) {
+                    if(!inScenarioChk(ut,'config-update-cmd') && (presentaction.cmd != CONFIGCHANGE)){
                         // if 'ut' is a command for driving function
                         m = functionPanelFunctions(ut);
                         if (m.length == 0 || m == IGNORE) {
                             // if 'ut' is a command for driving condition
                             m = conditionPanelFunctions(ut);
                         }
-//                    }
+                    }
 
                     /*
                         Attention:
@@ -1077,34 +1079,6 @@ const chatKeyDown = (cmd) => {
                         // configuration management
                         // 下でCONFIGCHANGEが設定されてからここにくる
                         if (presentaction.cmd != null && presentaction.cmd == CONFIGCHANGE) {
-                            if (presentaction.config_name != null) {
-                                if ($(SOMETHINGINPUT).is(":visible")) {
-                                    if (inScenarioChk(ut, 'common-post-cmd')) {
-                                        let new_param = $(SOMETHINGINPUT).val();
-                                        if (0 < new_param.length) {
-                                            // ここでパラメタ変更する
-                                            let data = `{"${presentaction.config_name}":"${new_param}"}`;
-                                            postAjaxData(scenario["function-post-url"][3], data);
-                                        } else {
-                                            m = chooseMsg("config-update-alert-message", "", "");;
-                                        }
-                                    }
-                                }
-                            } else {
-                                m = chooseMsg("config-update-error-message", "", "");
-                            }
-                        }
-
-                            /* 一発目はここにくる */
-                        if (inScenarioChk(ut, 'config-update-cmd')) {
-                            presentaction.cmd = CONFIGCHANGE;
-                            cancelableCmdList.push(presentaction.cmd);
-                            if (presentaction.config_name != null && presentaction.config_data != null) {
-                                showSomethingInputField(true,0);
-                                m = chooseMsg("config-update-simple-message", "", "");
-                            } else {
-                                m = chooseMsg("config-update-plural-message", "", "");
-                            }
 
                             for (zzz in config) {
                                 /*
@@ -1159,6 +1133,38 @@ const chatKeyDown = (cmd) => {
                                 $(SOMETHINGMSGPANELMSG).text(configMsg);
                                 showSomethingMsgPanel(true);
                             }
+
+
+
+                            if (presentaction.config_name != null) {
+                                if ($(SOMETHINGINPUT).is(":visible")) {
+                                    if (inScenarioChk(ut, 'common-post-cmd')) {
+                                        let new_param = $(SOMETHINGINPUT).val();
+                                        if (0 < new_param.length) {
+                                            // ここでパラメタ変更する
+                                            let data = `{"${presentaction.config_name}":"${new_param}"}`;
+                                            postAjaxData(scenario["function-post-url"][3], data);
+                                        } else {
+                                            m = chooseMsg("config-update-alert-message", "", "");;
+                                        }
+                                    }
+                                }
+                            } else {
+                                m = chooseMsg("config-update-error-message", "", "");
+                            }
+                        }
+
+                            /* 一発目はここにくる */
+                        if (inScenarioChk(ut, 'config-update-cmd')) {
+                            presentaction.cmd = CONFIGCHANGE;
+                            cancelableCmdList.push(presentaction.cmd);
+                            if (presentaction.config_name != null && presentaction.config_data != null) {
+                                showSomethingInputField(true,0);
+                                m = chooseMsg("config-update-simple-message", "", "");
+                            } else {
+                                m = chooseMsg("config-update-plural-message", "", "");
+                            }
+/* here */
                         } else if (inScenarioChk(ut, 'get-config-change-history')) {
                             getAjaxData(scenario['function-get-url'][2]);
                         }

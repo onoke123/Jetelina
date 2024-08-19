@@ -126,6 +126,7 @@ function create_jetelina_id_sequence()
 	create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
 
 	jetelina_table_id is deprecated
+    jetelina_sql_sequnce is deprecated
 """
 function create_jetelina_id_sequence()
     #===
@@ -134,7 +135,7 @@ function create_jetelina_id_sequence()
     """
     ===#
     jetelina_id_sequence = """
-    	create sequence if not exists jetelina_sql_sequence;create sequence if not exists jetelina_user_id_sequence;
+    	create sequence if not exists jetelina_user_id_sequence;
     """
     conn = open_connection()
     try
