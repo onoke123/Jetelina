@@ -449,5 +449,23 @@ function getRelatedTableApi()
 		json(Dict("result" => false, "target" => target, "list" => 0, "errmsg" => "Oh my, plz ref log file"))
 	end
 end
+"""
+function switchDB()
+
+	switching user handle database
+
+# Arguments
+"""
+function switchDB()
+	db::String = jsonpayload("param")
+	jmsg::String = string("compliment me!")
+
+	if(!isnothing(db) && db != "")
+		JSession.setDBType(db)
+		j_config.JC["dbtype"] = db;
+	end
+
+	return json(Dict("result" => true, "message from Jetelina" => jmsg))
+end
 
 end

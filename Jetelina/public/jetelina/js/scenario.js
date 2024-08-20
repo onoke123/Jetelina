@@ -1,6 +1,6 @@
 let scenario = []; let config = [];
 scenario["analyzed-data-collect-url"]=["/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getsqlaccessdata"];
-scenario["function-post-url"]=["/updateuserdata","/jetelinawords","/getconfigdata","/changeconfigdata","/createapi","/testapi","/chkaccount","/userregist","/getrelatedlist"];
+scenario["function-post-url"]=["/updateuserdata","/jetelinawords","/getconfigdata","/changeconfigdata","/createapi","/testapi","/chkaccount","/userregist","/getrelatedlist","/switchdb"];
 scenario["function-get-url"]=["/getapilist","/getalldbtable","/getconfigchangehistory","/goodbyenow"];
 scenario["null-msg"]=["",""];
 scenario["guidance-cmd"]=["what can i","can you","start","manual","guide me","guidance","teach me","tell me"];
@@ -22,7 +22,7 @@ scenario["general-thanks-msg"]=["you're welcome","my pleasure, {Q}"];
 scenario["no-authority-js-msg"]=["you do not have the authority, yet"];
 scenario["no-authority-jl-msg"]=["you cannot cheat me, you do not have the authority"];
 scenario["starting-4-msg"]=["I am sorry, but ", "Something wrong, hum, "];
-scenario["inprogress-msg"]=["I am doing","happy workin'","husle hustle","I AM DOING THIS JUST FOR YOU"];
+scenario["inprogress-msg"]=["I AM DOING","HAPPY WORKIN'","HUSTLE HUSTLE","I AM DOING THIS JUST FOR YOU"];
 scenario["refuse-command-msg"]=["I am busy now","I cannot do multi task at once","You kill me?","Later..."];
 scenario["starting-5-msg"]=["Welcome back ", "Nice to see you again, ","I missed you, ","Oh my.. incredible, "];
 scenario["multi-candidates-msg"]=["there are a few candidates as your order","which is your order?","may you should say more detail","please tell me more detail.","next question.","more..."];

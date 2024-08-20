@@ -591,6 +591,9 @@ const postAjaxData = (url, data) => {
                     // append it ＼(^o^)／
                     $(targetcontainer).append(str);
                 }
+            } else if (url == posturls[9]) {
+                // switching database
+                // do not expect any returns
             }
 
             if (specialmsg == "") {

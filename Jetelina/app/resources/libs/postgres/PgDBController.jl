@@ -1035,8 +1035,10 @@ function chkUserExistence(s::String)
                     dbtype = dfudb[:, :last_dbtype][1]
                 else
                     dbtype = j_config.JC["dbtype"]
-                    JSession.setDBType(dbtype)
                 end
+
+                JSession.setDBType(dbtype)
+                j_config.JC["dbtype"] = dbtype
             end
 
             ret = Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "last_dbtype" => dbtype, "available" => stichwort, "message from Jetelina" => jmsg)

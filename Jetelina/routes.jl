@@ -62,6 +62,9 @@ route( "/deletetable", PostDataController.deleteTable, method = POST )
 route( "getcolumns", PostDataController.getColumns, method = POST )
 # handle json data for db action of insert/update/delete/select
 route( "/apiactions", PostDataController.handleApipostdata, method = POST )
+# switching user handle database
+route( "/switchdb", PostDataController.switchDB, method = POST )
+
 #===
     -Handle APIs
 ===#

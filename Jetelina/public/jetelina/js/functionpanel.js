@@ -34,6 +34,7 @@
       deleteThisApi() Ajax function for deleting the target api from api list doc.
       whichCommandsInOrders(s) match with user input in cmdCandidates
       cleanupRelatedList(b) clear screen in api_container panel and/or relatedDataList object
+      tidyupcmdCandidates(targetcmd) reject 'targetcmd' from cmdCandidates
 */
 let selectedItemsArr = [];
 let cmdCandidates = [];// ordered commands for checking duplication 
@@ -1081,6 +1082,8 @@ const functionPanelFunctions = (ut) => {
     }else if(cmd == "" && inScenarioChk(ut, 'func-use-redis')){
       cmd = "switchdb";
       usedb = "redis";
+    }else if(cmd == "" && $.inArray("switchdb",cmdCandidates) != -1){
+      cmd = "switchdb";
     }
 
     if (cmd == "" && inScenarioChk(ut, 'common-post-cmd') ||
@@ -1595,14 +1598,26 @@ const functionPanelFunctions = (ut) => {
       }
       break;
     case 'switchdb':
-      cmdCandidates.push(cmd);
-      if(usedb != ""){
-        // switch to usedb
-        m = chooseMsg('func-determine-db', usedb,'a');
+      if(inScenarioChk(ut,'confirmation-sentences-cmd') && preferent.db != null && preferent.db != ""){
+        //post
+        loginuser.dbtype = preferent.db;
+        tidyupcmdCandidates(cmd);
+
+        let data = `{"param":"${preferent.db}"}`;
+        postAjaxData(scenario['function-post-url'][9], data);
       }else{
-        // display a message for changing database
-        m = chooseMsg('func-select-db','','');
+        if(usedb != ""){
+          // switch to usedb
+          preferent.db = usedb;
+          m = chooseMsg('func-determine-db', usedb,'a');
+        }else{
+          // display a message for changing database
+          m = chooseMsg('func-select-db','','');
+        }
+
+        cmdCandidates.push(cmd);
       }
+
       break;
     default:
       break;
@@ -1820,6 +1835,7 @@ const whichCommandsInOrders = (s) => {
         case "drop table": case "delete api": c = TABLEAPIDELETE; break;
         case "post": c = "post"; break;
         case "api test": c = "apitest"; break;
+        case "switchdb": c = "switchdb"; break;
         default:
           break;
       }
@@ -1845,6 +1861,18 @@ const cleanupRelatedList = (b) => {
       delete relatedDataList[i];
     }
   }
+}
+/**
+ * @function tidyupcmdCandidates
+ * 
+ * reject 'targetcmd' from cmdCandidates
+ * 
+ * @param {string} targetcmd command string
+ */
+const tidyupcmdCandidates = (targetcmd) =>{
+  return cmdCandidates = cmdCandidates.filter(function(v){
+    return v != targetcmd;
+  });
 }
 
 // return to the chat box if 'return key' is typed in genelic_panel
