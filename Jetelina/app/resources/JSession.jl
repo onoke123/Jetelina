@@ -70,7 +70,7 @@ function setDBType(d::String)
 -d:String: data base type postgresql/mysql/redis....
 """
 function setDBType(d)
-	replace(d,"\""=>"")
+	d = replace(d,"\""=>"")
 	s = session(params())
 	GenieSession.set!(s, :dbtype, d)
 end

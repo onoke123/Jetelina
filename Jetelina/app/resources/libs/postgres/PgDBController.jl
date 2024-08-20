@@ -1177,9 +1177,14 @@ function updateUserInfo(uid::Integer, key::String, value)
     	"""
     	===#
 
+    if(contains(value,"\""))
+        value = replace(value,"\""=>"")
+    end
+
     sql = """
     	update jetelina_user_table set user_info = user_info || '{"$key":"$value"}' where user_id=$uid;
     """
+
     conn = open_connection()
     try
         execute(conn, sql)

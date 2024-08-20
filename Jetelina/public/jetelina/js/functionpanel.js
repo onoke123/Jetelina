@@ -1007,6 +1007,7 @@ const functionPanelFunctions = (ut) => {
   // default return chat message
   let m = IGNORE;
   let cmd = "";
+  let usedb = "";// database name for switching
 
   if (1 < cmdCandidates.length) {
     cmd = whichCommandsInOrders(ut);
@@ -1024,56 +1025,71 @@ const functionPanelFunctions = (ut) => {
       cmdCandidates.push("cancel");
     }
 
-    if (inScenarioChk(ut, 'func-cleanup-cmd')) {
+    if (cmd == "" && inScenarioChk(ut, 'func-cleanup-cmd')) {
       cmd = 'cleanup';
       cmdCandidates.push("clean up");
     }
 
-    if (inScenarioChk(ut, 'func-fileupload-cmd')) {
+    if (cmd == "" && inScenarioChk(ut, 'func-fileupload-cmd')) {
       cmd = 'fileupload';
       cmdCandidates.push("file upload");
     }
 
-    if (inScenarioChk(ut, 'func-show-table-list-cmd')) {
+    if (cmd == "" && inScenarioChk(ut, 'func-show-table-list-cmd')) {
       cmd = TABLEAPILISTOPEN;
       cmdCandidates.push("show table list");
-    } else if (inScenarioChk(ut, 'func-show-api-list-cmd')) {
+    } else if (cmd == "" && inScenarioChk(ut, 'func-show-api-list-cmd')) {
       cmd = TABLEAPILISTOPEN;
       cmdCandidates.push("show api list");
-    } else if (inScenarioChk(ut, 'func-fileupload-open-cmd')) {
+    } else if (cmd == "" && inScenarioChk(ut, 'func-fileupload-open-cmd')) {
       cmd = FILESELECTOROPEN;
       cmdCandidates.push("file open");
-    } else if (inScenarioChk(ut, 'func-table-api-open-close-cmd')) {
+    } else if (cmd == "" && inScenarioChk(ut, 'func-table-api-open-close-cmd')) {
       cmd = SELECTITEM;
       cmdCandidates.push("open or close table/api");
-    } else if (inScenarioChk(ut, 'func-item-select-cmd')) {
+    } else if (cmd == "" && inScenarioChk(ut, 'func-item-select-cmd')) {
       cmd = SELECTITEM;
       cmdCandidates.push("select columns");
-    } else if (inScenarioChk(ut, "func-item-select-all-cmd")) {
+    } else if (cmd == "" && inScenarioChk(ut, "func-item-select-all-cmd")) {
       cmd = SELECTITEM;
       cmdCandidates.push("select columns all");
-    } else if (inScenarioChk(ut, 'func-subpanel-open-cmd')) {
+    } else if (cmd == "" && inScenarioChk(ut, 'func-subpanel-open-cmd')) {
       cmd = "subquery";
       cmdCandidates.push("open sub query panel");
     }
 
-    if (inScenarioChk(ut, 'func-tabledrop-cmd')) {
+    if (cmd == "" && inScenarioChk(ut, 'func-tabledrop-cmd')) {
       cmd = TABLEAPIDELETE;
       preferent.cmd = cmd;
       cmdCandidates.push("drop table");
-    } else if (inScenarioChk(ut, 'func-apidelete-cmd')) {
+    } else if (cmd == "" && inScenarioChk(ut, 'func-apidelete-cmd')) {
       cmd = TABLEAPIDELETE;
       preferent.cmd = cmd;
       cmdCandidates.push("delete api");
     }
 
-    if (inScenarioChk(ut, 'common-post-cmd') ||
-      (inScenarioChk(ut, 'func-apicreate-cmd'))) {
+    // db switching
+    if(cmd == "" && inScenarioChk(ut, 'func-db-switch')){
+      cmd = "switchdb";
+      usedb = "";
+    }else if(cmd == "" && inScenarioChk(ut, 'func-use-postgresql')){
+      cmd = "switchdb";
+      usedb = "postgresql";
+    }else if(cmd == "" && inScenarioChk(ut, 'func-use-mysql')){
+      cmd = "switchdb";
+      usedb = "mysql";
+    }else if(cmd == "" && inScenarioChk(ut, 'func-use-redis')){
+      cmd = "switchdb";
+      usedb = "redis";
+    }
+
+    if (cmd == "" && inScenarioChk(ut, 'common-post-cmd') ||
+      (cmd == "" && inScenarioChk(ut, 'func-apicreate-cmd'))) {
       cmd = 'post';
       cmdCandidates.push("post");
     }
 
-    if (inScenarioChk(ut, 'func-api-test-cmd')) {
+    if (cmd == "" && inScenarioChk(ut, 'func-api-test-cmd')) {
       cmd = "apitest";
       cmdCandidates.push("api test");
     }
@@ -1086,11 +1102,11 @@ const functionPanelFunctions = (ut) => {
     }
 
     // show/hide command, maybe
-    if (inScenarioChk(ut, 'func-api-test-panel-show-cmd')) {
+    if (cmd == "" && inScenarioChk(ut, 'func-api-test-panel-show-cmd')) {
       showApiTestPanel(true);
-    } else if (inScenarioChk(ut, 'func-api-test-panel-hide-cmd')) {
+    } else if (cmd == "" && inScenarioChk(ut, 'func-api-test-panel-hide-cmd')) {
       showApiTestPanel(false);
-    } else if (inScenarioChk(ut, 'func-subpanel-close-cmd')) {
+    } else if (cmd == "" && inScenarioChk(ut, 'func-subpanel-close-cmd')) {
       showGenelicPanel(false);
     }
   }
@@ -1146,6 +1162,7 @@ const functionPanelFunctions = (ut) => {
         8.creanup: cleanup column/selecteditem field
         9.subquery: open subquery panel
         10.apitest: api test before registring
+        11.switchdb: switchng using database
         default: non
   */
   switch (cmd) {
@@ -1575,6 +1592,16 @@ const functionPanelFunctions = (ut) => {
         } else {
           m = "subquery error. I don't know what you wanna do. look carefully.";
         }
+      }
+      break;
+    case 'switchdb':
+      cmdCandidates.push(cmd);
+      if(usedb != ""){
+        // switch to usedb
+        m = chooseMsg('func-determine-db', usedb,'a');
+      }else{
+        // display a message for changing database
+        m = chooseMsg('func-select-db','','');
       }
       break;
     default:

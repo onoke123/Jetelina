@@ -1202,6 +1202,10 @@ function updateUserInfo(uid::Integer,key::String,value)
 function updateUserInfo(uid::Integer, key::String, value)
     ret = ""
 
+    if(contains(value,"\""))
+        value = replace(value,"\""=>"")
+    end
+
     sql = """
     	update jetelina_user_table set user_info = json_set(user_info, '\$.$key','$value') where user_id=$uid;
     """
