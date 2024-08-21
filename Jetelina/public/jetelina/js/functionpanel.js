@@ -34,6 +34,9 @@
       deleteThisApi() Ajax function for deleting the target api from api list doc.
       whichCommandsInOrders(s) match with user input in cmdCandidates
       cleanupRelatedList(b) clear screen in api_container panel and/or relatedDataList object
+      displayTablesAndApis() display table list and api list
+      refreshApiList() refresh displaying of api list
+      refreshTableList() refresh displaying of table list
       tidyupcmdCandidates(targetcmd) reject 'targetcmd' from cmdCandidates
 */
 let selectedItemsArr = [];
@@ -886,6 +889,8 @@ const dropThisTable = (tables) => {
       showSomethingMsgPanel(false);
       rejectCancelableCmdList(TABLEAPIDELETE);
       preferent.cmd = "";
+      // new api list 
+      refreshApiList();
     } else {
       m = result["message from Jetelina"];
       // try again
@@ -1866,21 +1871,36 @@ const cleanupRelatedList = (b) => {
     }
   }
 }
-
 /**
  * @function displayTablesAndApis
  * 
- * displya table list and api list
+ * display table list and api list
  * 
  */
 const displayTablesAndApis = () => {
-  cleanUp("tables")
+  refreshApiList();
+  refreshTableList();
+}
+/**
+ * @function refreshApiList
+ * 
+ * refresh displaying of api list
+ */
+const refreshApiList = () => {
   cleanUp("apis");
   if(preferent.apilist != null ){
     delete preferent.apilist
   }
 
   getAjaxData(scenario["function-get-url"][0]);
+}
+/**
+ * @function refreshTableList
+ * 
+ * refresh displaying of table list
+ */
+const refreshTableList = () => {
+  cleanUp("tables");
   getAjaxData(scenario["function-get-url"][1]);
 }
 /**
