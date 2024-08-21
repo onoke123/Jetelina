@@ -334,9 +334,10 @@ const fileupload = () => {
 
       //refresh table list 
       if (isVisibleTableContainer()) {
-        cleanUp("tables");
+//        cleanUp("tables");
         cleanupRelatedList(true);
-        getAjaxData(scenario["function-get-url"][1]);
+//        getAjaxData(scenario["function-get-url"][1]);
+//        displayTablesAndApis()
       } else {
         typingControll(chooseMsg('success-msg', "", ""));
       }
@@ -1176,6 +1177,7 @@ const functionPanelFunctions = (ut) => {
     case 'fileupload'://csv file upload
       const f = $(UPFILE).prop("files");
       if (f != null && 0 < f.length) {
+        delete preferent.apilist;
         m = IGNORE;
         fileupload();
       } else {
@@ -1212,10 +1214,11 @@ const functionPanelFunctions = (ut) => {
 //        cleanup = "apis";
         geturl = scenario["function-get-url"][0];
         // cleanup once because getting apilist and contain to preferent.aplist by calling getAjaxData()
-        delete preferent.apilist;
+//        delete preferent.apilist;
       }
+      delete preferent.apilist;
 
-      cleanUp('apis');
+//      cleanUp('apis');
       cleanupRelatedList(false);
       //      $(hidepanel).hide();
       //      $(LeftPanelTitle).text(paneltitle);
@@ -1229,8 +1232,9 @@ const functionPanelFunctions = (ut) => {
       */
       //      $(LeftPanelTitle).text("Table List");
       //      $(RightPanelTitle).text("Api List");
-      getAjaxData(scenario["function-get-url"][0])
-      getAjaxData(scenario["function-get-url"][1])
+  //    getAjaxData(scenario["function-get-url"][0])
+  //    getAjaxData(scenario["function-get-url"][1])
+      displayTablesAndApis();
 
       m = IGNORE;
       break;
@@ -1861,6 +1865,23 @@ const cleanupRelatedList = (b) => {
       delete relatedDataList[i];
     }
   }
+}
+
+/**
+ * @function displayTablesAndApis
+ * 
+ * displya table list and api list
+ * 
+ */
+const displayTablesAndApis = () => {
+  cleanUp("tables")
+  cleanUp("apis");
+  if(preferent.apilist != null ){
+    delete preferent.apilist
+  }
+
+  getAjaxData(scenario["function-get-url"][0]);
+  getAjaxData(scenario["function-get-url"][1]);
 }
 /**
  * @function tidyupcmdCandidates

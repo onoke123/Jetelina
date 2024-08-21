@@ -1037,6 +1037,13 @@ function chkUserExistence(s::String)
                     dbtype = j_config.JC["dbtype"]
                 end
 
+                #===
+                    Tips:
+                        necessary replace(), because it would be, e.g. "\"mysql\"" if not.
+                        look like this is an uniqueness in session.
+                ===#
+                dbtype = replace(dbtype, "\"" => "")
+
                 JSession.setDBType(dbtype)
                 j_config.JC["dbtype"] = dbtype
             end
