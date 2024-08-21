@@ -593,7 +593,8 @@ const postAjaxData = (url, data) => {
                 }
             } else if (url == posturls[9]) {
                 // switching database
-                // do not expect any returns
+                // do not expect any returns, but refresh table and api list
+                displayTablesAndApis();
             }
 
             if (specialmsg == "") {

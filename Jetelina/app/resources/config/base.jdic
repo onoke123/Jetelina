@@ -152,7 +152,7 @@
 # database switching
 @jdic func-db-switch:"change database","change data base","change db","switch database","switch data base","switch db"
 @jdic func-select-db:"which database?","what database?","postgresql, mysql or redis?"
-@jdic func-determine-db:"do you wanna ","switch to "
+@jdic func-determine-db:"do you wanna '{Q}' ?","switch to '{Q}' ?"
 @jdic func-use-postgresql:"postgresql","postgres","postgre"
 @jdic func-use-mysql:"mysql"
 @jdic func-use-redis:"redis"

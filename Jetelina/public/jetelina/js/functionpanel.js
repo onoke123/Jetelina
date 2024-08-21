@@ -1618,7 +1618,7 @@ const functionPanelFunctions = (ut) => {
         if(usedb != ""){
           // switch to usedb
           preferent.db = usedb;
-          m = chooseMsg('func-determine-db', usedb,'a');
+          m = chooseMsg('func-determine-db', usedb,'r');
         }else{
           // display a message for changing database
           m = chooseMsg('func-select-db','','');
