@@ -139,24 +139,46 @@ function getTableList(s::String)
 	end
 end
 """
-function dropTable(tableName::Vector)
+function dropTable(tableName::Vector, stichwort::String)
 		
 	Drop the tables and delete its related data from jetelina_table_manager table
 
 # Arguments
 - `tableName: Vector`: name of the tables
+- `stichwort: String`: a kind of pass phrase for executing
 """
 function dropTable(tableName::Vector, stichwort::String)
-	if j_config.JC["dbtype"] == "postgresql"
-		# Case in PostgreSQL
-		ret = PgDBController.dropTable(tableName, stichwort)
-	elseif j_config.JC["dbtype"] == "mysql"
-		# Case in MySQL
-		ret = MyDBController.dropTable(tableName, stichwort)
-	elseif j_config.JC["dbtype"] == "oracle"
+	stichret::Bool = false
+	ret::Any = ""
+
+	#===
+        Tips:
+        	check the stichwort in user_info.
+        	in the case of nothing, register it into there,
+        	in the case of being, take the matching.
+    ===#
+	if j_config.JC["jetelinadb"] == "postgresql"
+		stichret = PgDBController.refStichWort(stichwort)
+	elseif	j_config.JC["jetelinadb"] == "mysql"
+		stichret = MyDBController.refStichWort(stichwort)
+	elseif j_config.JC["jetelinadb"] == "oracle"
 	end
 
-	if ret[1]
+	if(stichret)
+		if j_config.JC["dbtype"] == "postgresql"
+			# Case in PostgreSQL
+			ret = PgDBController.dropTable(tableName)
+		elseif j_config.JC["dbtype"] == "mysql"
+			# Case in MySQL
+			ret = MyDBController.dropTable(tableName)
+		elseif j_config.JC["dbtype"] == "oracle"
+		elseif j_config.JC["dbtype"] == "redis"
+			# Case in Redis
+			#ret = RsDBController.dropTable(tableName)
+		end
+	end
+
+	if stichret && ret[1]
 		# update SQL list
 		ApiSqlListManager.deleteTableFromlist(tableName)
 	end

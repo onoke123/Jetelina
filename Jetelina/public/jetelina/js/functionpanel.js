@@ -1076,16 +1076,16 @@ const functionPanelFunctions = (ut) => {
     }
 
     // db switching
-    if(cmd == "" && inScenarioChk(ut, 'func-db-switch')){
+    if(cmd == "" && inScenarioChk(ut, 'func-db-switch-cmd')){
       cmd = "switchdb";
       usedb = "";
-    }else if(cmd == "" && inScenarioChk(ut, 'func-use-postgresql')){
+    }else if(cmd == "" && inScenarioChk(ut, 'func-use-postgresql-cmd')){
       cmd = "switchdb";
       usedb = "postgresql";
-    }else if(cmd == "" && inScenarioChk(ut, 'func-use-mysql')){
+    }else if(cmd == "" && inScenarioChk(ut, 'func-use-mysql-cmd')){
       cmd = "switchdb";
       usedb = "mysql";
-    }else if(cmd == "" && inScenarioChk(ut, 'func-use-redis')){
+    }else if(cmd == "" && inScenarioChk(ut, 'func-use-redis-cmd')){
       cmd = "switchdb";
       usedb = "redis";
     }else if(cmd == "" && $.inArray("switchdb",cmdCandidates) != -1){
@@ -1618,10 +1618,10 @@ const functionPanelFunctions = (ut) => {
         if(usedb != ""){
           // switch to usedb
           preferent.db = usedb;
-          m = chooseMsg('func-determine-db', usedb,'r');
+          m = chooseMsg('func-determine-db-msg', usedb,'r');
         }else{
           // display a message for changing database
-          m = chooseMsg('func-select-db','','');
+          m = chooseMsg('func-select-db-msg','','');
         }
 
         cmdCandidates.push(cmd);
@@ -1892,6 +1892,7 @@ const refreshApiList = () => {
     delete preferent.apilist
   }
 
+  $("#right_panel").addClass("genelic_panel");
   getAjaxData(scenario["function-get-url"][0]);
 }
 /**
@@ -1901,6 +1902,7 @@ const refreshApiList = () => {
  */
 const refreshTableList = () => {
   cleanUp("tables");
+  $("#left_panel").addClass("genelic_panel");
   getAjaxData(scenario["function-get-url"][1]);
 }
 /**

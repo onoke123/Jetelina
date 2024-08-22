@@ -616,38 +616,27 @@ function dropTable(tableName::Vector)
 - `tableName: Vector`: ordered tables name
 - return: tuple (boolean: true -> success/false -> get fail, JSON)
 """
-function dropTable(tableName::Vector, stichwort::String)
+function dropTable(tableName::Vector)
     ret = ""
     jmsg::String = string("compliment me!")
     rettables::String = join(tableName, ",") # ["a","b"] -> "a,b" oh ＼(^o^)／
 
     conn = open_connection()
     try
-        #===
-        			Tips:
-        				check the stichwort in user_info.
-        				in the case of nothing, register it into there,
-        				in the case of being, take the matching.
-        		===#
-        if refStichWort(stichwort)
-            for i in eachindex(tableName)
-                # drop the tableName
-                drop_table_str = string("drop table ", tableName[i])
-                # delete the related data from jetelina_table_manager
-                #				delete_data_str = string("delete from jetelina_table_manager where table_name = '", tableName[i], "'")
+        for i in eachindex(tableName)
+            # drop the tableName
+            drop_table_str = string("drop table ", tableName[i])
+            # delete the related data from jetelina_table_manager
+            #				delete_data_str = string("delete from jetelina_table_manager where table_name = '", tableName[i], "'")
 
-                DBInterface.execute(conn, drop_table_str)
-                #				DBInterface.execute(conn, delete_data_str)
-            end
-
-            ret = json(Dict("result" => true, "tablename" => "$rettables", "message from Jetelina" => jmsg))
-
-            # write to operationhistoryfile
-            JLog.writetoOperationHistoryfile(string("drop ", rettables, " tables"))
-        else
-            jmsg = "wrong pass phrase"
-            ret = json(Dict("result" => false, "message from Jetelina" => jmsg))
+            DBInterface.execute(conn, drop_table_str)
+            #				DBInterface.execute(conn, delete_data_str)
         end
+
+        ret = json(Dict("result" => true, "tablename" => "$rettables", "message from Jetelina" => jmsg))
+
+        # write to operationhistoryfile
+        JLog.writetoOperationHistoryfile(string("drop ", rettables, " tables"))
     catch err
         ret = json(Dict("result" => false, "tablename" => "$rettables", "errmsg" => "$err"))
         JLog.writetoLogfile("MyDBController.dropTable() with $rettables error : $err")
@@ -1204,8 +1193,8 @@ function updateUserInfo(uid::Integer,key::String,value)
 function updateUserInfo(uid::Integer, key::String, value)
     ret = ""
 
-    if(contains(value,"\""))
-        value = replace(value,"\""=>"")
+    if (contains(value, "\""))
+        value = replace(value, "\"" => "")
     end
 
     sql = """

@@ -11,7 +11,7 @@ functions
 	handleApipostdata() execute ordered API by posting data.
 	createApi()  create API and SQL select sentence from posting data.
 	getColumns()  get ordered tables's columns with json style.ordered table name is posted as the name 'tablename' in jsonpayload().
-	deleteTable()  delete table by ordering. this function calls DBDataController.dropTable(tableName), so 'delete' meaning is really 'drop'.ordered table name is posted as the name 'tablename' in jsonpayload().
+	deleteTable()  delete table by ordering. this function calls DBDataController.dropTable(tableName,stichwort), so 'delete' meaning is really 'drop'.ordered table name is posted as the name 'tablename' in jsonpayload().
 	userRegist() register a new user
 	login()  login procedure.user's login account is posted as the name 'username' in jsonpayload().
 	getUserInfoKeys()  get "user_info" column key data.
@@ -114,7 +114,7 @@ end
 """
 function deleteTable()
 
-	delete table by ordering. this function calls DBDataController.dropTable(tableName), so 'delete' meaning is really 'drop'.
+	delete table by ordering. this function calls DBDataController.dropTable(tableName,stichwort), so 'delete' meaning is really 'drop'.
 	ordered table name is posted as the name 'tablename' in jsonpayload().
 """
 function deleteTable()

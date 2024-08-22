@@ -882,6 +882,19 @@ const chatKeyDown = (cmd) => {
     let ut = ""; // ut is the input character by user
     let m = ""; // chatbox message string by Jetelina
 
+    /*
+        Tips:
+            #left_panel or #right_panel, or both are maybe blinking in refreshApiList() and refreshTableList().
+            stop it here.
+    */
+    if($("#left_panel").hasClass("genelic_panel")){
+        $("#left_panel").removeClass("genelic_panel")
+    }
+
+    if($("#right_panel").hasClass("genelic_panel")){
+        $("#right_panel").removeClass("genelic_panel")
+    }
+
     if (cmd == null) {
         ut = $(JETELINACHATBOX).val().toLowerCase();
         ut = ut.replaceAll(',', ' ').replaceAll(':', ' ').replaceAll(';', ' ');
@@ -949,15 +962,6 @@ const chatKeyDown = (cmd) => {
                 showSomethingMsgPanel(true);
             }
 
-            /* from here is special function but temporary, may will be deleted */
-            // simple ask about using database type
-            if (inScenarioChk(ut, 'what-db-use-now', "config")) {
-                console.log("data base type is");
-                let data = '{"param":"dbtype"}';
-                postAjaxData(scenario['function-post-url'][2], data);
-            }
-            /* till here */
-
             /*
                 switch 1:between 'before login' and 'at login'
                        login:at login
@@ -967,17 +971,6 @@ const chatKeyDown = (cmd) => {
             */
             switch (stage) {
                 case 1:
-                    //                    if (!chkUResponse("greeting-1-cmd", ut)) {
-                    /*
-                                        if(!inScenarioChk(ut,"greeting-1-cmd")){
-                                            m = chooseMsg("starting-2-msg", "", "");
-                                            stage = 'login';
-                                        } else {
-                                            / say 'nice' if a user said 'fine' /
-                                            m = chooseMsg('greeting-1a-msg', "", "");
-                                        }
-                    */
-
                     if (inScenarioChk(ut, 'greeting-1-cmd')) {
                         /* say 'nice' if a user said 'fine' */
                         m = chooseMsg('greeting-1a-msg', "", "");
@@ -992,19 +985,7 @@ const chatKeyDown = (cmd) => {
 
                     break;
                 case 'login':
-                    //                    let chunk = "";
-                    /*
-                                        if (ut.indexOf(" ") != -1) {
-                                            let p = ut.split(" ");
-                                            chunk = p[p.length - 1];
-                                        } else {
-                                            chunk = ut;
-                                        }
-                    
-                                        if (chunk.indexOf("me") == -1) {
-                    */
                     if (ut.indexOf("it's me") == -1 && ut.indexOf("it is me") == -1) {
-                        //                        authAjax(chunk);
                         authAjax(ut);
                         m = IGNORE;
                     } else {
@@ -1026,22 +1007,8 @@ const chatKeyDown = (cmd) => {
 
                             anyhow give greeting order to "lastlogin".
                     */
-                    /* the authentication process has been postphoned in BBM.  2023/11/24
-                    let cnc = checkNewCommer(ut)
-                    if (cnc[0]){
-                        // set user's firstname,lastname and info
-                        m = cnc[1];
-                    }else if (checkBeginner()){
-                        // count up user level
-                    }else{
-                        // true authentication process
-                        loginuser.c++;
-                    }
-                    */
-                    //                    if(authcount<loginuser.c){
                     m = chooseMsg("starting-6-msg", "", "");
                     stage = 'lets_do_something';
-                    //                    }
 
                     break;
                 case 'lets_do_something':
@@ -1050,12 +1017,10 @@ const chatKeyDown = (cmd) => {
                     const panelTop = window.innerHeight - 110;
                     $(JETELINAPANEL).animate({
                         height: "70px",
-                        //bottom: "4%",
                         top: "85%", //`${panelTop}px`,
                         left: "5%" //"210px"
                     }, ANIMATEDURATION);
 
-                    //                    if (!$(SOMETHINGINPUT).is(":visible")) {
                     if (!inScenarioChk(ut, 'config-update-cmd') && (presentaction.cmd != CONFIGCHANGE)) {
                         // if 'ut' is a command for driving function
                         m = functionPanelFunctions(ut);
@@ -1077,8 +1042,6 @@ const chatKeyDown = (cmd) => {
                         if (inScenarioChk(ut, 'common-cancel-cmd') && inCancelableCmdList([CONFIGCHANGE, USERMANAGE])) {
                             preferent.cmd = null;
                             presentaction = {};
-                            //                            presentaction.config_name = null;
-                            //                            presentaction.config_data = null;
                             rejectCancelableCmdList(CONFIGCHANGE);
                             rejectCancelableCmdList(USERMANAGE);
                             showSomethingInputField(false);
@@ -1089,7 +1052,6 @@ const chatKeyDown = (cmd) => {
                         // configuration management
                         // 下でCONFIGCHANGEが設定されてからここにくる
                         if (presentaction.cmd != null && presentaction.cmd == CONFIGCHANGE) {
-
                             for (zzz in config) {
                                 /*
                                     Tips:
@@ -1144,8 +1106,6 @@ const chatKeyDown = (cmd) => {
                                 showSomethingMsgPanel(true);
                             }
 
-
-
                             if (presentaction.config_name != null) {
                                 if ($(SOMETHINGINPUT).is(":visible")) {
                                     if (inScenarioChk(ut, 'common-post-cmd')) {
@@ -1173,7 +1133,7 @@ const chatKeyDown = (cmd) => {
                             }
                         }
 
-                        /* 一発目はここにくる */
+                        /* come here first, anyhow */
                         if (inScenarioChk(ut, 'config-update-cmd')) {
                             presentaction.cmd = CONFIGCHANGE;
                             cancelableCmdList.push(presentaction.cmd);
@@ -1183,7 +1143,6 @@ const chatKeyDown = (cmd) => {
                             } else {
                                 m = chooseMsg("config-update-plural-message", "", "");
                             }
-                            /* here */
                         } else if (inScenarioChk(ut, 'get-config-change-history')) {
                             getAjaxData(scenario['function-get-url'][2]);
                         }
@@ -1205,17 +1164,6 @@ const chatKeyDown = (cmd) => {
                         }
                     }
 
-                    /*
-                                        if (!$(SOMETHINGINPUT).is(":visible")) {
-                                            // if 'ut' is a command for driving function
-                                            m = functionPanelFunctions(ut);
-                                            if (m.length == 0 || m == IGNORE) {
-                                                // if 'ut' is a command for driving condition
-                                                m = conditionPanelFunctions(ut);
-                                            }
-                                        }
-                    */
-
                     break;
                 default:
                     if (ut == "reload") {
@@ -1226,8 +1174,6 @@ const chatKeyDown = (cmd) => {
                         clearTimeout(logouttimerId);
                     }
 
-
-                    //                    if (chkUResponse("greeting-0r-cmd", ut)) {
                     if (inScenarioChk(ut, "greeting-0r-cmd")) {
                         // greeting
                         m = chooseMsg("greeting-1-msg", "", "");
@@ -1243,6 +1189,15 @@ const chatKeyDown = (cmd) => {
                     break;
             }
 
+                        // simple ask about using database type
+                        if (inScenarioChk(ut, 'what-db-use-now-cmd')) {
+                            if(loginuser.dbtype != null){
+                                m= loginuser.dbtype;
+                            }else{
+                                m = "not determind it yet, login first, please";
+                            }
+                        }
+            
             if (0 < m.length && m != IGNORE) {
                 typingControll(m);
             } else if (m == IGNORE && stage != 'login') {
