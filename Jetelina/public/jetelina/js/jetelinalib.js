@@ -41,6 +41,7 @@
       rejectSelectedItemsArr(item) reject selected item from selectedItemsArr
       subPanelCheck() confirm sub panels condition when focus moves on Jetelina Chat Box
       setDBFocus(s) set blinking to the current db
+      isVisibleFavicon(b) show/hide the favicon message
  */
 const JETELINACHATTELL = `${JETELINAPANEL} [name='jetelina_tell']`;
 const SOMETHINGMSGPANEL = "#something_msg";
@@ -1015,6 +1016,8 @@ const chatKeyDown = (cmd) => {
 
                     break;
                 case 'lets_do_something':
+                    // hidden thanks for favicon
+                    isVisibleFavicon(false); 
                     m = "";
                     // chatbox moves to below
                     const panelTop = window.innerHeight - 110;
@@ -1308,7 +1311,8 @@ const logout = () => {
     cleanUp("items");
     cleanUp("tables");
     cleanUp("apis");
-    
+    isVisibleFavicon(true);
+
     getAjaxData(scenario['function-get-url'][3]);
 }
 /**
@@ -1769,7 +1773,20 @@ const setDBFocus = (s) => {
 
     currentdb.toggleClass(c);
 }
-
+/**
+ * @function isVisibleFavicon
+ * 
+ * @param {boolean} b true -> show , false -> hide
+ * 
+ * show/hide the favicon message
+ */
+const isVisibleFavicon = (b) => {
+    if(b){
+        $("#thxfavicon").show();
+    }else{
+        $("#thxfavicon").hide();
+    }
+}
 // return to the chat box if 'return key' is typed in something_input_field
 $(document).on("keydown", SOMETHINGINPUT, function (e) {
     if (e.keyCode == 13) {
