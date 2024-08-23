@@ -1294,6 +1294,7 @@ const logout = () => {
     $("#command_list").hide();
     showSomethingMsgPanel(false);
     setDBFocus("");
+    isVisibleDatabaseList(false);
 
     // global variables initialize
     isSuggestion = false;
@@ -1740,6 +1741,17 @@ const subPanelCheck = () => {
     }
 }
 /**
+ * 
+ */
+const isVisibleDatabaseList = (b) => {
+    if(b){
+        $("#databaselist").show();
+
+    }else{
+        $("#databaselist").hide();
+    }
+}
+/**
  * @function setDBFocus
  *  
  * @param {string} new database name
@@ -1747,8 +1759,8 @@ const subPanelCheck = () => {
  * set blinking to the current db
  */
 const setDBFocus = (s) => {
-    let currentdb = $(`#dblist [name='${loginuser.dbtype}']`);
-    let newdb = $(`#dblist [name='${s}']`);
+    let currentdb = $(`#databaselist [name='${loginuser.dbtype}']`);
+    let newdb = $(`#databaselist [name='${s}']`);
     let c = "dbfocus";
 
     if( s != "" ){
@@ -1763,4 +1775,8 @@ $(document).on("keydown", SOMETHINGINPUT, function (e) {
     if (e.keyCode == 13) {
         focusonJetelinaPanel()
     }
+});
+// database switching by clickin'
+$("#databaselist").on("click",".databasename", function(){
+    chatKeyDown($(this).attr("name"));
 });

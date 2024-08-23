@@ -1191,6 +1191,8 @@ const functionPanelFunctions = (ut) => {
 
       break;
     case TABLEAPILISTOPEN:
+      // show database list
+      isVisibleDatabaseList(true);
       // these defaults are for table list
       let hidepanel = APICONTAINER;
       let showpanel = TABLECONTAINER;
