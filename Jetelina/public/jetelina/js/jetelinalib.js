@@ -40,6 +40,7 @@
       rejectCancelableCmdList(cmd) reject command from cancelableCmdList
       rejectSelectedItemsArr(item) reject selected item from selectedItemsArr
       subPanelCheck() confirm sub panels condition when focus moves on Jetelina Chat Box
+      setDBFocus(s) set blinking to the current db
  */
 const JETELINACHATTELL = `${JETELINAPANEL} [name='jetelina_tell']`;
 const SOMETHINGMSGPANEL = "#something_msg";
@@ -516,6 +517,7 @@ const postAjaxData = (url, data) => {
                 showSomethingMsgPanel(true);
             } else if (url == posturls[3]) {
                 // configuration parameter change success then cleanup the "#something_msg"
+                setDBFocus(presentaction.dbtype);
                 loginuser.dbtype = presentaction.dbtype;
                 presentaction = {};
                 showSomethingInputField(false);
@@ -664,6 +666,7 @@ const authAjax = (un) => {
             let m = "";
             loginuser.available = result.available;
             if(result.last_dbtype != null && 0<result.last_dbtype.length ){
+                setDBFocus(result.last_dbtype);
                 loginuser.dbtype = result.last_dbtype;
             }
             //           let jetelinamsg = result["message from Jetelina"];
@@ -1290,6 +1293,7 @@ const logout = () => {
     $("#performance_test").hide();
     $("#command_list").hide();
     showSomethingMsgPanel(false);
+    setDBFocus("");
 
     // global variables initialize
     isSuggestion = false;
@@ -1303,9 +1307,8 @@ const logout = () => {
     cleanUp("items");
     cleanUp("tables");
     cleanUp("apis");
-
+    
     getAjaxData(scenario['function-get-url'][3]);
-
 }
 /**
  * @function getPreferentPropertie
@@ -1735,6 +1738,24 @@ const subPanelCheck = () => {
             typingControll(chooseMsg('common-confirm-msg', "", ""));
         }
     }
+}
+/**
+ * @function setDBFocus
+ *  
+ * @param {string} new database name
+ * 
+ * set blinking to the current db
+ */
+const setDBFocus = (s) => {
+    let currentdb = $(`#dblist [name='${loginuser.dbtype}']`);
+    let newdb = $(`#dblist [name='${s}']`);
+    let c = "dbfocus";
+
+    if( s != "" ){
+        newdb.toggleClass(c);
+    }
+
+    currentdb.toggleClass(c);
 }
 
 // return to the chat box if 'return key' is typed in something_input_field

@@ -1609,6 +1609,7 @@ const functionPanelFunctions = (ut) => {
     case 'switchdb':
       if(inScenarioChk(ut,'confirmation-sentences-cmd') && preferent.db != null && preferent.db != ""){
         //post
+        setDBFocus(preferent.db);
         loginuser.dbtype = preferent.db;
         tidyupcmdCandidates(cmd);
 

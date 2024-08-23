@@ -8,33 +8,33 @@ Description:
 
 functions
 	* deprecated create_jetelina_tables() create 'jetelina_table_manager' table.
-	create_jetelina_id_sequence() create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
+	* 8/22 N/A create_jetelina_id_sequence() create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
 	open_connection() open connection to the DB.
 	close_connection(conn::LibPQ.Connection)  close the DB connection
 	* deprecated readJetelinatable() read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame 
 	getTableList(s::String) get all table name from public 'schemaname'
-	getJetelinaSequenceNumber(t::Integer) get seaquence number from jetelina_id table
+	* 8/22 N/A getJetelinaSequenceNumber(t::Integer) get seaquence number from jetelina_id table
 	* deprecated insert2JetelinaTableManager(tableName::String, columns::Array) insert columns of 'tableName' into Jetelina_table_manager  
 	dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
-	dropTable(tableName::Vector) drop the tables and delete its related data from jetelina_table_manager table
+	* 8/22 N/A dropTable(tableName::Vector) drop the tables and delete its related data from jetelina_table_manager table
 	getColumns(tableName::String) get columns name of ordereing table.
 	executeApi(json_d::Dict,target_api::DataFrame) execute API order by json data
 	_executeApi(apino::String, sql_str::String) execute API with creating SQL sentence,this is a private function that is called by executeApi()
 	doSelect(sql::String,mode::String) execute select data by ordering sql sentence, but get sql execution time of ordered sql if 'mode' is 'measure'.
 	measureSqlPerformance() measure exectution time of all listed sql sentences. then write it out to JC["sqlperformancefile"].
-	create_jetelina_user_table() create 'jetelina_table_user_table' table.
-	userRegist(username::String) register a new user
-	getUserData(s::String) get jetelina user data by ordering 's'.	
-	chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
-	getUserInfoKeys(uid::Integer) get "user_info" column key data.
-	refUserAttribute(uid::Integer, key::String, val, rettype::Integer) inquiring user_info data 
-	updateUserInfo(uid::Integer,key::String,value) update user data (jetelina_user_table.user_info)
-	refUserInfo(uid::Integer,key::String,rettype::Integer)	simple inquiring user_info data 
-	updateUserData(uid::Integer,key::String,value) update user data, exept jsonb column
-	updateUserLoginData(uid::Integer) update user login data if it succeeded to login
-	deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
-	checkTheRoll(roll::String) check the ordered user's authority in order to 'roll'.
-	refStichWort(stichwort::String)	reference and matching with user_info->stichwort
+	* 8/22 N/A create_jetelina_user_table() create 'jetelina_table_user_table' table.
+	* 8/22 N/A userRegist(username::String) register a new user
+	* 8/22 N/A getUserData(s::String) get jetelina user data by ordering 's'.	
+	* 8/22 N/A chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
+	* 8/22 N/A getUserInfoKeys(uid::Integer) get "user_info" column key data.
+	* 8/22 N/A refUserAttribute(uid::Integer, key::String, val, rettype::Integer) inquiring user_info data 
+	* 8/22 N/A updateUserInfo(uid::Integer,key::String,value) update user data (jetelina_user_table.user_info)
+	* 8/22 N/A refUserInfo(uid::Integer,key::String,rettype::Integer)	simple inquiring user_info data 
+	* 8/22 N/A updateUserData(uid::Integer,key::String,value) update user data, exept jsonb column
+	* 8/22 N/A updateUserLoginData(uid::Integer) update user login data if it succeeded to login
+	* 8/22 N/A deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
+	* 8/22 N/A checkTheRoll(roll::String) check the ordered user's authority in order to 'roll'.
+	* 8/22 N/A refStichWort(stichwort::String)	reference and matching with user_info->stichwort
 """
 module RsDBController
 
