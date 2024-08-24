@@ -4,10 +4,11 @@ module: RsDataTypeList
 Author: Ono keiji
 
 Description:
-	determaine data type of PostgreSQL
+	determaine data type of Redis
+	but not use this yet.
 
 functions
-	getDataType(c_type::String)   determaine 'c_type' to PostgreSQL data. ex. c_type=='Int' -> 'Integer'
+	getDataType(c_type::String)   determaine 'c_type' to Redis data.
 """
 module RsDataTypeList
 
@@ -20,7 +21,7 @@ export getDataType
 """
 function getDataType(c_type::String)
 
-	determaine 'c_type' to PostgreSQL data. ex. c_type=='Int' -> 'Integer'.
+	determaine 'c_type' to Redis data.
 
 # Arguments
 - `c_type::String`:  data type string. ex 'Int'
