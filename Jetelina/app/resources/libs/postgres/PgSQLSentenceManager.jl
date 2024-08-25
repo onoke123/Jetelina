@@ -46,6 +46,8 @@ function sqlDuplicationCheck(nsql::String, subq::String)
 	===#			
 	if ApiSqlListManager.readSqlList2DataFrame()[1]
 		Df_JetelinaSqlList = ApiSqlListManager.readSqlList2DataFrame()[2]
+#		Df_JetelinaSqlList = df4postgresql[df4postgresql.db .== "postgresql", :]
+		filter!(:db => p -> p=="postgresql", Df_JetelinaSqlList)
 		# already exist?
 		for i ∈ 1:nrow(Df_JetelinaSqlList)
 			#===
@@ -239,7 +241,7 @@ function createApiSelectSentence(json_d, seq_no::Integer)
 			subq_d = ""
 		end
 		
-		return string(selectSql," ",subq_d);
+		return string(selectSql," ",subq_d)
 	end
 end
 """

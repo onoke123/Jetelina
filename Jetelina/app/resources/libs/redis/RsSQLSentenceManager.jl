@@ -4,15 +4,12 @@ module: RsSQLSentenceManager
 Author: Ono keiji
 
 Description:
-	General DB action controller
+	DB controller for Redis
 
 functions
-	sqlDuplicationCheck(nsql::String, subq::String)  confirm duplication, if 'nsql' exists in JC["sqllistfile"].but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
-	checkSubQuery(subquery::String) check posted subquery strings wheather exists any illegal strings in it.
-	createApiInsertSentence(tn::String,cs::String,ds::String) create sql input sentence by queries.
-	createApiUpdateSentence(tn::String,us::Any) create sql update sentence by queries.
-	createApiDeleteSentence(tn::String) create sql delete sentence by query.
-	createApiSelectSentence(json_d::Dict, seq_no::Integer) create select sentence of SQL from posting data,
+	keyDuplicationCheck(nsql::String, subq::String)  confirm duplication, if 'nsql' exists in JC["sqllistfile"].but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
+	createApiInsertSentence(key::String,value::String)	create redis set sentence.
+	createApiSelectSentence(key::String) create redis get sentence.
 	createExecutionSqlSentence(json_dict::Dict, df::DataFrame) create real execution SQL sentence.
 """
 module RsSQLSentenceManager
@@ -23,22 +20,21 @@ using Jetelina.InitApiSqlListManager.ApiSqlListManager, Jetelina.JMessage
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export sqlDuplicationCheck, checkSubQuery, createApiInsertSentence, createApiUpdateSentence, createApiDeleteSentence, createApiSelectSentence, createExecutionSqlSentence
+export keyDuplicationCheck, createApiInsertSentence, createApiSelectSentence, createExecutionSqlSentence
 
 """
-function sqlDuplicationCheck(nsql::String, subq::String)
+function keyDuplicationCheck(nsql::String)
 
-	confirm duplication, if 'nsql' exists in JC["sqllistfile"].
+	confirm duplication, if 'key' exists in JC["sqllistfile"].
 	but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
 
 # Arguments
-- `nsql::String`: sql sentence
-- `subq::String`: sub query string for 'nsql'
-- return:  tuple style
-		   exist     -> ture, api no(ex.js100)
-		   not exist -> false
+- `key::String`: sql sentence
+- return::Bool : exist -> ture
+				 not exist -> false
 """
-function sqlDuplicationCheck(nsql::String, subq::String)
+function keyDuplicationCheck(str::String)
+	ret::Bool = false
 	#===
 		Tips:
 			ApiSql...readSql...()[1] contains true/false.
@@ -46,201 +42,50 @@ function sqlDuplicationCheck(nsql::String, subq::String)
 	===#			
 	if ApiSqlListManager.readSqlList2DataFrame()[1]
 		Df_JetelinaSqlList = ApiSqlListManager.readSqlList2DataFrame()[2]
-		# already exist?
-		for i ∈ 1:nrow(Df_JetelinaSqlList)
-			#===
-				Tips:
-					the result in process4 will be
-						exist -> length(process4)=1
-						not exist -> length(process4)=2
-					because coutmap() do group together.
-			===#
-			# duplication check for SQL
-			strs = [nsql, Df_JetelinaSqlList[!, :sql][i]]
-			process1 = split.(strs, r"\W", keepempty = false)
-			process2 = map(x -> lowercase.(x), process1)
-			process3 = sort.(process2)
-			process4 = countmap(process3)
-			# duplication check for Sub query
-			sq = Df_JetelinaSqlList[!, :subquery][i]
-			if !ismissing(sq)
-				s_strs = [subq, sq]
-				s_process1 = split.(s_strs, r"\W", keepempty = false)
-				s_process2 = map(y -> lowercase.(y), s_process1)
-				s_process3 = sort.(s_process2)
-				s_process4 = countmap(s_process3)
-			else
-				# in the case of all were 'missing',be length(s_prrocess4)=1, anyhow :p
-				s_process4 = ["dummy"]
-			end
-
-			if length(process4) == 1 && length(s_process4) == 1
-				return true, Df_JetelinaSqlList[!, :apino][i]
-			end
-
+		ex = filter(:sql => s -> s == str, Df_JetelinaSqlList)
+		if(0<nrow(ex))
+			ret = true
 		end
 	end
 
-	# consequently, not exist.
-	return false
+	return ret
 end
 """
-function checkSubQuery(subquery::String)
+function createApiInsertSentence(key::String,value::String)
 
-	check posted subquery strings wheather exists any illegal strings in it.
-	because subquery is free format posting data by user. 
-
-# Arguments
-- `subquery::String`: posted subquery
-- return:  subquery string after processing
-"""
-function checkSubQuery(subquery::String)
-	return replace.(subquery, ";" => "")
-end
-"""
-function createApiInsertSentence(tn::String,cs::String,ds::String)
-
-	create sql input sentence by queries.
-	this function executs when csv file uploaded.
+	create redis set sentence.
 
 # Arguments
-- `tn::String`: table name
-- `cs::String`: column name strings
-- `ds::String`: data strings
-- return: String: sql insert sentence
+- `key::String`: key name
+- `value::String`: value data
+- return: String: 
 """
-function createApiInsertSentence(tn::String, cs::String, ds::String)
-	return """insert into $tn ($cs) values($ds)"""
-end
-"""
-function createApiUpdateSentence(tn::String,us::Any)
-
-	create sql update sentence by queries.
-	this function executs when csv file uploaded.
-
-# Arguments
-- `tn::String`: table name
-- `us::Any`: update strings
-- return: Tuple: (sql update sentence, sub query sentence)
-"""
-function createApiUpdateSentence(tn::String, us::Any)
-	jtid = string(tn,"_jt_id")
-	return """update $tn set $us""", """where $jtid={jt_id}"""
-end
-"""
-function createApiDeleteSentence(tn::String)
-
-	create sql delete sentence by query.
-	this function executs when csv file uploaded.
-
-# Arguments
-- `tn::String`: table name
-- return: Tuple: (sql delete sentence, sub query sentence)
-"""
-function createApiDeleteSentence(tn::String)
-	jtid = string(tn,"_jt_id")
-	return """update $tn set jetelina_delete_flg=1""", """where $jtid={jt_id}"""
-end
-"""
-function createApiSelectSentence(json_d::Dict, seq_no::Integer)
-
-	create API and SQL select sentence from posting data,then append it to JC["tableapifile"].
-
-# Arguments
-- `json_d::Dict`: json data
-- `seq_no::Integer`: number of jetelian_sql_sequence. if sql_no=-1, then pre execution.
-- return: this sql is already existing -> json {"resembled":true}
-		  new sql then success to append it to  -> json {"apino":"<something no>"}
-					   fail to append it to     -> false
-"""
-function createApiSelectSentence(json_d, seq_no::Integer)
-	item_d = json_d["item"]
-	subq_d = json_d["subquery"]
-
-	#==
-		Tips:
-			item_d:column post data from dashboard.html is expected below json style
-				{ 'item'.'["<table name>.<column name>","<table name>.<column name>",...]' }
-			then parcing it by jsonpayload("item") 
-				item_d -> ["<table name>.<column name1>","<table name>.<column name2>",...]
-
-			then handle it as an array data
-				[1] -> <table name>.<column name1>
-			furthermore deviding it to <table name> and <column name> by '.' 
-				table name  -> <table name>
-				column name -> <column name1>
-
-			use these to create sql sentence.
-	==#
-	if (subq_d != "")
-		subq_d = checkSubQuery(subq_d)
+function createApiInsertSentence(key::String, value::String)
+	ret::String = ""
+	str =  """set:$key:$value"""
+	if(!keyDuplicationCheck(str))
+		ret = str
 	end
 
-	selectSql::String = ""
-	tableName::String = ""
-	#===
-		Tips: 
-			put into array to write it to JC["tableapifile"]. 
-			This is used in ApiSqlListManager.writeTolist().
-	===#
-	tablename_arr::Vector{String} = []
+	return ret
+end
+"""
+function createApiSelectSentence(key::String)
 
-	for i ∈ 1:length(item_d)
-		t = split(item_d[i], ".")
-		t1 = strip(t[1])
-		t2 = strip(t[2])
-		if 0 < length(selectSql)
-			#===
-				Tips: 
-					should be justfified this columns line for analyzing in SQLAnalyzer.
-						ex. select ftest.id,ftest.name from.....
-			===#
-			selectSql = """$selectSql,$t1.$t2"""
-		else
-			selectSql = """$t1.$t2"""
-		end
+	create redis get sentence.
 
-		if (0 < length(tableName))
-			if (!contains(tableName, t1))
-				tableName = """$tableName,$t1 as $t1"""
-				push!(tablename_arr, t1)
-			end
-		else
-			tableName = """$t1 as $t1"""
-			push!(tablename_arr, t1)
-		end
+# Arguments
+- `key::String`: key name
+- return: String
+"""
+function createApiSelectSentence(key::String)
+	ret::String = ""
+	str =  """get:$key"""
+	if(!keyDuplicationCheck(str))
+		ret = str
 	end
 
-	selectSql = """select $selectSql from $tableName"""
-
-	if seq_no != -1
-		ck = sqlDuplicationCheck(selectSql, subq_d)
-		if ck[1]
-			# already exist it. return it and do nothing.
-			return json(Dict("result" => false, "resembled" => ck[2]))
-		else
-			# yes this is the new
-			ret = ApiSqlListManager.writeTolist(selectSql, subq_d, tablename_arr, seq_no, "redis")
-			#===
-				Tips:
-					writeTolist() returns tuple({true/false,apino/null}).
-					return apino in json style if the first in tuple were true.
-			===#
-			if ret[1]
-				return json(Dict("result" => true, "apino" => ret[2]))
-			else
-				return ret[1]
-			end
-		end
-	else
-		# pre execution sql sentence
-		keyword::String = "ignore" # protocol
-		if contains(subq_d,keyword)
-			subq_d = ""
-		end
-		
-		return string(selectSql," ",subq_d);
-	end
+	return ret
 end
 """
 function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)

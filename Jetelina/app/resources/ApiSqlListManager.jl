@@ -116,16 +116,19 @@ function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String
 
 	suffix = string()
 
-	if startswith(sql, "insert")
+	#===
+		Tips:
+			insert/update/select are for RDBMS
+			set/get are for Redis
+	===#
+	if startswith(sql, "insert") || startswith(sql, "set")
 		suffix = "ji"
 	elseif startswith(sql, "update") && contains(sql, "jetelina_delete_flg=1")
 		suffix = "jd"
 	elseif startswith(sql, "update")
 		suffix = "ju"
-	elseif startswith(sql, "select")
+	elseif startswith(sql, "select") || startswith(sql, "get")
 		suffix = "js"
-		#        elseif startswith(sql, "delete")
-		#            suffix = "jd"
 	end
 
 	sql = strip(sql)
