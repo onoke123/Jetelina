@@ -157,6 +157,10 @@ function dataInsertFromCSV(fname::String)
                 ApiSqlListManager.writeTolist(select_str,"", tablename_arr, apino, "redis")
             end
         end
+
+        ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
+    else
+        ret = json(Dict("result" => false, "filename" => "$fname", "message from Jetelina" => "no way"))
     end
 #===
     if isempty(df_tl)

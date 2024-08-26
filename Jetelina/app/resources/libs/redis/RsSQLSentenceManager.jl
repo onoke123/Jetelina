@@ -50,7 +50,7 @@ function keyDuplicationCheck(str::String)
 	return ret
 end
 """
-function createApiInsertSentence(key::String,value::String)
+function createApiInsertSentence(key,value)
 
 	create redis set sentence.
 
@@ -59,7 +59,7 @@ function createApiInsertSentence(key::String,value::String)
 - `value::String`: value data
 - return: String: 
 """
-function createApiInsertSentence(key::String, value::String)
+function createApiInsertSentence(key, value)
 	ret::String = ""
 	str =  """set:$key:$value"""
 	if(!keyDuplicationCheck(str))
@@ -77,7 +77,7 @@ function createApiSelectSentence(key::String)
 - `key::String`: key name
 - return: String
 """
-function createApiSelectSentence(key::String)
+function createApiSelectSentence(key)
 	ret::String = ""
 	str =  """get:$key"""
 	if(!keyDuplicationCheck(str))

@@ -358,7 +358,7 @@ const fileupload = () => {
     checkResult(result);
     // something error happened
     console.error("fileupload(): unexpected error");
-    typingControll(chooseMsg(fail - msg, "", ""));
+    typingControll(chooseMsg("fail-msg", "", ""));
   }).always(function () {
     // release it for allowing to input new command in the chatbox 
     inprogress = false;
