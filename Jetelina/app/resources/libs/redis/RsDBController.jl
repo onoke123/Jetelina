@@ -11,7 +11,7 @@ functions
 	close_connection(conn::Redis.Connection)  close the DB connection
 	getTableList(s::String) get all table name from public 'schemaname'
 	dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
-	getColumns(tableName::String) get columns name of ordereing table.
+	getColumns(dbname::String) get keys name in resistering.
 	executeApi(json_d::Dict,target_api::DataFrame) execute API order by json data
 	_executeApi(apino::String, sql_str::String) execute API with creating SQL sentence,this is a private function that is called by executeApi()
     set(k,v) set 'k'='v' in name=value style in redis
@@ -106,7 +106,7 @@ function _getTableList()
     df = DataFrame()
 #    conn = open_connection()
     try
-        df = DataFrames(tablename="default")
+        df = DataFrame(tablename="default")
 #        df = DataFrame(columntable(Redis.execute(conn, table_str)))
         # do not include 'jetelina_table_manager and usertable in the return
 #        DataFrames.filter!(row -> row.tablename != "jetelina_table_manager" && row.tablename != "jetelina_user_table", df)
@@ -166,7 +166,29 @@ function dataInsertFromCSV(fname::String)
 ===#
     return ret
 end
+"""
+function getColumns(dbname::String) 
+    
+    get keys name in resistering.
+"""
+function getColumns(dbname::String)
+    i::Int = 0
+    n::Int = 10000
+    keysArr::Array = []
+    valueArr::Array = []
+    jmsg::String = string("compliment me!")
 
+    keys = simpleScan(i, n)
+    if(keys[1] == 0)
+        for i ∈ 1:length(keys[2])
+            push!(keysArr,keys[2][i])
+            push!(valueArr,"")
+        end
+
+        df = DataFrame(Dict(zip(keysArr,valueArr)))
+        ret = json(Dict("result" => true, "tablename" => "$dbname", "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
+    end 
+end
 """
 function executeApi(json_d::Dict,target_api::DataFrame)
 
@@ -182,11 +204,11 @@ function executeApi(json_d::Dict,target_api::DataFrame)
 		error                -> false
 """
 function executeApi(json_d::Dict, target_api::DataFrame)
-    ret = ""
-    sql_str = RsSQLSentenceManager.createExecutionSqlSentence(json_d, target_api)
-    if 0 < length(sql_str)
-        ret = _executeApi(json_d["apino"], sql_str)
-    end
+#    ret = ""
+#    sql_str = RsSQLSentenceManager.createExecutionSqlSentence(json_d, target_api)
+#    if 0 < length(sql_str)
+        ret = _executeApi(json_d["apino"], target_api)
+#    end
 
     return ret
 end
@@ -198,61 +220,31 @@ function _executeApi(apino::String,sql_str::String)
 
 # Arguments
 - `apino::String`:  apino
-- `sql_str::String`: execution SQL string        
+- `dfRedis::DataFrame`: target redis api dataframe        
 - return: insert/update/delete -> true/false
 		select               -> json format data
 		error                -> false
 """
-function _executeApi(apino::String, sql_str::String)
+function _executeApi(apino::String, dfRedis::DataFrame)
     ret = ""
-
-    conn = open_connection()
-    try
-        sql_ret = Redis.execute(conn, sql_str)
-        #===
-        			Tips:
-        				case in insert/update/delete, we cannot see if it got success or not by .execute().
-        				using .num_affected_rows() to see the worth.
-        					in insert -> 0: normal end, the fault is caught in 'catch'
-        					in update/delete -> 0: swing and miss
-        									 -> 1: hit the ball
-        		===#
-        affected_ret = Redis.num_affected_rows(sql_ret)
-        jmsg::String = string("compliment me!")
+    jmsg::String = string("compliment me!")
 
         if startswith(apino, "js")
-            # select 
-            df = DataFrame(sql_ret)
-            pagingnum = parse(Int, j_config.JC["paging"])
-            if pagingnum < nrow(df)
-                jmsg = string("data number over ", pagingnum, " you should set paging paramter in this SQL, it is not my business")
-            end
-
+            # get 
+            p = split(redisSql[:,:sql][1], ':') # redisSql[:,:sql][1] -> get:<key>
+            v = get(p[2])
+            df = DataFrame(key=p[2],value=v)
             ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
         elseif startswith(apino, "ji")
-            # insert
-            if affected_ret == 0
-                # this may will not happen
-                jmsg = "looks happen something, it is not my fault."
+            # set
+            p = split(redisSql[:,:sql][1], ':') # redisSql[:,:sql][1] -> set:<key>:<value>
+            r = set(p[2],p[3])
+            if(r)
+                ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
+            else
+                ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => value))
             end
-
-            ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
-        else
-            # update & delete
-            if affected_ret == 0
-                # the target data was not in there, guess wrong 'jt_id'
-                jmsg = "there was not it, jt_id is correct?. no matter what it is not my business."
-            end
-
-            ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
         end
-    catch err
-        JLog.writetoLogfile("RsDBController.executeApi() with $apino : $sql_str error : $err")
-        ret = json(Dict("result" => false, "apino" => "$apino", "errmsg" => "$err"))
-    finally
-        # close the connection finally
-        close_connection(conn)
-    end
 
     return ret
 end
@@ -264,7 +256,7 @@ function set(k,v)
 # Arguments
 - `k:String`: name
 - `v:Any`: value
-- return: boolean:  true -> success, faluse -> error
+- return: boolean:  success -> true::boolean, fail -> err::String
 """
 function set(k, v)
     conn = open_connection()
@@ -273,7 +265,7 @@ function set(k, v)
         return true
     catch err
         JLog.writetoLogfile("RsDBController.set() error: $err")
-        return false
+        return err
     finally
         close_connection(conn)
     end

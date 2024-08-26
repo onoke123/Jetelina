@@ -8,3 +8,6 @@ ju616,"update ftest set ftest_name='{ftest_name}',ftest_sex='{ftest_sex}',ftest_
 jd617,"update ftest set jetelina_delete_flg=1","where ftest_jt_id={jt_id}","postgresql"
 js618,"select ftest.ftest_name,ftest.ftest_age from ftest as ftest","ignore","postgresql"
 js621,"select ftest.ftest_name,ftest.ftest_age from ftest as ftest","where ftest.ftest_jt_id = {jt_id}","mysql"
+ji622,"insert into ftest2 (ftest2_jt_id,ftest2_name,ftest2_sex,ftest2_age,ftest2_ave,jetelina_delete_flg) values({ftest2_jt_id},'{ftest2_name}','{ftest2_sex}',{ftest2_age},{ftest2_ave},{jetelina_delete_flg})","","postgresql"
+ju623,"update ftest2 set ftest2_name='{ftest2_name}',ftest2_sex='{ftest2_sex}',ftest2_age={ftest2_age},ftest2_ave={ftest2_ave}","where ftest2_jt_id={jt_id}","postgresql"
+jd624,"update ftest2 set jetelina_delete_flg=1","where ftest2_jt_id={jt_id}","postgresql"

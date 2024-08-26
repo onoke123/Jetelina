@@ -46,6 +46,8 @@ include("libs/postgres/PgDBController.jl")
 include("libs/postgres/PgSQLSentenceManager.jl")
 include("libs/mysql/MyDBController.jl")
 include("libs/mysql/MySQLSentenceManager.jl")
+include("libs/redis/RsDBController.jl")
+include("libs/redis/RsSQLSentenceManager.jl")
 
 export init_Jetelina_table, createJetelinaDatabaseinMysql,
 	dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,
@@ -114,6 +116,9 @@ function dataInsertFromCSV(csvfname::String)
 		# Case in MySQL
 		return MyDBController.dataInsertFromCSV(csvfname)
 	elseif j_config.JC["dbtype"] == "oracle"
+	elseif j_config.JC["dbtype"] == "redis"
+		# Case in MySQL
+		return RsDBController.dataInsertFromCSV(csvfname)
 	end
 end
 """
@@ -136,6 +141,9 @@ function getTableList(s::String)
 		# Case in MySQL
 		MyDBController.getTableList(s)
 	elseif j_config.JC["dbtype"] == "oracle"
+	elseif j_config.JC["dbtype"] == "redis"
+		# Case in Redis
+		RsDBController.getTableList(s)
 	end
 end
 """
@@ -172,9 +180,6 @@ function dropTable(tableName::Vector, stichwort::String)
 			# Case in MySQL
 			ret = MyDBController.dropTable(tableName)
 		elseif j_config.JC["dbtype"] == "oracle"
-		elseif j_config.JC["dbtype"] == "redis"
-			# Case in Redis
-			#ret = RsDBController.dropTable(tableName)
 		end
 	end
 
@@ -208,6 +213,9 @@ function getColumns(tableName::String)
 		# Case in MySQL
 		MyDBController.getColumns(tableName)
 	elseif j_config.JC["dbtype"] == "oracle"
+	elseif j_config.JC["dbtype"] == "redis"
+		# Case in MySQL
+		RsDBController.getColumns(tableName)
 	end
 end
 """
