@@ -324,11 +324,14 @@ function deleteApiFromList(apis::Vector)
 			open(tableapiFile, "r") do taf
 				# Tips: delete line feed by 'keep=false', then do println()
 				for ss in eachline(taf, keep = false)
-					for i in eachindex(apis)
-						if !startswith(ss, apis[i])
+					p = split(ss, ":")
+					if p[1] ∉ apis
+
+#					for i in eachindex(apis)
+#						if !startswith(ss, apis[i])
 							# leave it in the file
 							println(ttaf, ss)
-						end
+#						end
 					end
 				end
 			end
