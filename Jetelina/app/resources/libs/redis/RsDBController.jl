@@ -75,6 +75,7 @@ function dataInsertFromCSV(fname::String)
 - return: boolean: true -> success, false -> get fail
 """
 function dataInsertFromCSV(fname::String)
+    @info "fname " fname
     ret = ""
 #	redisdbname = "default" # this is temporary dummy name, indeed it's ok what a name
     jmsg::String = string("compliment me!")
@@ -85,19 +86,31 @@ function dataInsertFromCSV(fname::String)
 #    push!(tablename_arr, redisdbname)
 
     if(0<nrow(df))
-        #===
+    #===
             Tips:
                 to make matching with ApiSql..writeToList(), the secound parameter is to be 'key_arr' and
                 it is contained the key name instead of table name in RDBMS.
         ===#
 		for i ∈ 1:nrow(df)
-            key_arr = []
-            push!(key_arr,df.key[i])
+            key_arr::Vector{String} = []
             apino = ApiSqlListManager.getApiSequenceNumber()
-            # insert (set)
-            insert_str = RsSQLSentenceManager.createApiInsertSentence(df.key[i], df.value[i])
+            #===
+                Caution:
+                    in fact, insert_str is enough only one, but in the loop because of 
+                    using 'apino'
+            ===#
+            insert_str = RsSQLSentenceManager.createApiInsertSentence()
             if(insert_str != "")
                 ApiSqlListManager.writeTolist(insert_str, "", key_arr, apino, "redis")
+            end
+
+            push!(key_arr,df.key[i])
+            # update (set)
+            update_str = RsSQLSentenceManager.createApiUpdateSentence(df.key[i])
+            if(update_str != "")
+                if(set(df.key[i],df.value[i]))
+                    ApiSqlListManager.writeTolist(update_str, "", key_arr, apino, "redis")
+                end
             end
 
             # select (get)
@@ -111,12 +124,7 @@ function dataInsertFromCSV(fname::String)
     else
         ret = json(Dict("result" => false, "filename" => "$fname", "message from Jetelina" => "no way"))
     end
-#===
-    if isempty(df_tl)
-        # manage to jetelina_table_manager
-        insert2JetelinaTableManager(tableName, names(df0))
-    end
-===#
+
     return ret
 end
 """

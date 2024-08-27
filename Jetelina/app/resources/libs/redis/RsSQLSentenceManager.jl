@@ -8,8 +8,9 @@ Description:
 
 functions
 	keyDuplicationCheck(nsql::String, subq::String)  confirm duplication, if 'nsql' exists in JC["sqllistfile"].but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
-	createApiInsertSentence(key::String,value::String)	create redis set sentence.
-	createApiSelectSentence(key::String) create redis get sentence.
+	createApiInsertSentence() create redis general set sentence.
+	createApiUpdateSentence(key) create redis set sentence.this sentence is for updating an existence data.
+	createApiSelectSentence(key) create redis get sentence.
 """
 module RsSQLSentenceManager
 
@@ -50,18 +51,16 @@ function keyDuplicationCheck(str::String)
 	return ret
 end
 """
-function createApiInsertSentence(key,value)
+function createApiInsertSentence()
 
-	create redis set sentence.
+	create redis general set sentence.
 
 # Arguments
-- `key::String`: key name
-- `value::String`: value data
 - return: String: 
 """
-function createApiInsertSentence(key, value)
+function createApiInsertSentence()
 	ret::String = ""
-	str =  """set:$key:$value"""
+	str =  """set::"""
 	if(!keyDuplicationCheck(str))
 		ret = str
 	end
@@ -69,7 +68,26 @@ function createApiInsertSentence(key, value)
 	return ret
 end
 """
-function createApiSelectSentence(key::String)
+function createApiUpdateSentence(key)
+
+	create redis set sentence.
+	this sentence is for updating an existence data
+
+# Arguments
+- `key::String`: key name
+- return: String: 
+"""
+function createApiUpdateSentence(key)
+	ret::String = ""
+	str =  """set:$key:{value}"""
+	if(!keyDuplicationCheck(str))
+		ret = str
+	end
+
+	return ret
+end
+"""
+function createApiSelectSentence(key)
 
 	create redis get sentence.
 
