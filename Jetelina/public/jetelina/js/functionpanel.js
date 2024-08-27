@@ -440,13 +440,10 @@ const listClick = (p) => {
     /*
       in case to turn p to 'INACTIVE'
     */
-    //    if (isVisibleApiContainer()) {
     if (c.indexOf("api") != -1) {
       cleanupContainers();
       cleanUp("items");
-      //      cleanUp("tables");
     } else {
-      //      cleanUp("apis");
     }
     /* 
         Tips:
@@ -508,8 +505,7 @@ const listClick = (p) => {
 
     if (c.indexOf("table") != -1) {
       related_table = t;
-      //      $(RightPanelTitle).text(`APIs of ${t}`);
-      //get&show table columns
+      // get&show table columns
       getColumn(t);
     } else {
       /*
@@ -524,7 +520,6 @@ const listClick = (p) => {
       });
 
       // reset all activeItem class and sql
-//      cleanupItems4Switching();
       cleanupContainers();
 
       // showing ordered sql from preferent.apilist that is gotten by getAjaxData("/getapilist",...)
@@ -533,7 +528,6 @@ const listClick = (p) => {
         if (0 < s.sql.length) {
           $(`${COLUMNSPANEL} span`).filter(".apisql").remove();
           related_api = s.apino;
-          //          $(LeftPanelTitle).text(`TABLEs of ${s.apino}`);
           // api in/out json
           $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiin"><bold>IN:</bold>${setApiIF_In(t, s)}</span>`);
           $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiout"><bold>OUT:</bold>${setApiIF_Out(t, s)}</span>`);
@@ -547,10 +541,7 @@ const listClick = (p) => {
     postAjaxData(scenario["function-post-url"][8], data);
 
     if(!p.hasClass("relatedItem")){
-      //p.removeClass("relatedItem");
       p.toggleClass("activeItem");
-    }else{
-//      p.toggleClass("activeItem");
     }
   }
 
@@ -1192,55 +1183,30 @@ const functionPanelFunctions = (ut) => {
       break;
     case TABLEAPILISTOPEN:
       // show database list
+      setLeftPanelTitle();
       isVisibleDatabaseList(true);
       // these defaults are for table list
       let hidepanel = APICONTAINER;
       let showpanel = TABLECONTAINER;
-      //      let paneltitle = "Table List";
-//      let cleanup = "tables";
       let geturl = scenario["function-get-url"][1];
 
       // cleanup the screen first 
       cleanupItems4Switching();
       cleanupContainers();
-      //      cleanUp("items");
 
       if (inScenarioChk(ut, 'func-show-table-list-cmd')) {
-        //        if (isVisibleApiContainer()) {
         showApiTestPanel(false);
         cleanUp('tables');
-        //        }
       } else if (inScenarioChk(ut, 'func-show-api-list-cmd')) {
-        //        if (isVisibleTableContainer()) {
         hidepanel = TABLECONTAINER;
         showpanel = APICONTAINER;
-        //        paneltitle = "API List";
         $(GENELICPANEL).hide();
-        //        }
-
-//        cleanup = "apis";
         geturl = scenario["function-get-url"][0];
-        // cleanup once because getting apilist and contain to preferent.aplist by calling getAjaxData()
-//        delete preferent.apilist;
       }
+
       delete preferent.apilist;
 
-//      cleanUp('apis');
       cleanupRelatedList(false);
-      //      $(hidepanel).hide();
-      //      $(LeftPanelTitle).text(paneltitle);
-      //      $(showpanel).show();
-      /*
-            if ((showpanel == TABLECONTAINER) && !$(`${TABLECONTAINER} span`).hasClass('table')) {
-              getAjaxData(geturl);
-            } else if ((showpanel == APICONTAINER) && !$(`${APICONTAINER} span`).hasClass('api')) {
-              getAjaxData(geturl);
-            }
-      */
-      //      $(LeftPanelTitle).text("Table List");
-      //      $(RightPanelTitle).text("Api List");
-  //    getAjaxData(scenario["function-get-url"][0])
-  //    getAjaxData(scenario["function-get-url"][1])
       displayTablesAndApis();
 
       m = IGNORE;
@@ -1250,8 +1216,6 @@ const functionPanelFunctions = (ut) => {
       let t = ut.split(' ');
 
       // for opening table 
-      //      if (isVisibleTableContainer()) {
-      //        $(`${CONTAINERNEWAPINO}`).remove();
       $(CONTAINERNEWAPINO).remove();
 
       if( ($.inArray('all', t) != -1)&&(($.inArray('cancel', t) != -1)||($.inArray('cancel', t) != -1)||($.inArray('close',t) !=-1))){
@@ -1276,7 +1240,6 @@ const functionPanelFunctions = (ut) => {
 
       for (let n = 0; n < t.length; n++) {
         $("#table_container span, #api_container span").each(function (i, v) {
-          //            $(`${TABLECONTAINER} span, #api_container span`).each(function (i, v) {
           if (v.textContent == t[n]) {
             $(this).hasClass("activeItem");
             listClick($(this));
@@ -1284,34 +1247,7 @@ const functionPanelFunctions = (ut) => {
             findflg = true;
           }
         });
-        /*
-                  if(!findflg){
-                    $("#api_container span").each(function(i,v){
-                      if(v.textContent == t[n] ){
-                        $(this).hasClass("activeItem");
-                        listClick($(this));
-                        m = chooseMsg('success-msg', '','');
-                        findflg = true;
-                      }
-                    });
-                  }
-        */
       }
-      //      }
-
-      /* for openging api, because possible opening both table/api list
-      if (!findflg && isVisibleApiContainer()) {
-        for (let n = 0; n < t.length; n++) {
-          $(`${APICONTAINER} span`).each(function (i, v) {
-            if (v.textContent == t[n]) {
-              $(this).hasClass("activeItem");
-              listClick($(this));
-              m = chooseMsg('success-msg', "", "");
-              findflg = true;
-            }
-          });
-        }
-      }*/
 
       // !findlg meaning is not for openging table or api, this time is for selecting columns in opening tables
       if (!findflg) {
@@ -1324,16 +1260,6 @@ const functionPanelFunctions = (ut) => {
           // ordered item
           for (let n = 0; n < t.length; n++) {
             $(COLUMNSPANEL).find("span").each(function (i, v) {
-              /*
-                            let tc = v.textContent;
-                            let vtc = "";
-                            if(tc.indexOf('_') != -1){
-                              let tcarr = tc.split('_');
-                              if(tcarr[0] != null && 0<tcarr[0].length){
-                                vtc = tc.slice(tcarr[0].length+1);
-                              }
-                            } 
-              */
               if (v.textContent.indexOf(t[n]) != -1) {
                 itemSelect($(this));
                 m = chooseMsg('success-msg', "", "");
@@ -1583,7 +1509,6 @@ const functionPanelFunctions = (ut) => {
     case 'cleanup': //clean up the panels
       cleanupItems4Switching();
       deleteSelectedItems();
-      //      cleanUp("items");
       cleanupContainers();
       m = chooseMsg('success-msg', '', '');
       break;
@@ -1613,8 +1538,12 @@ const functionPanelFunctions = (ut) => {
         //post
         setDBFocus(preferent.db);
         loginuser.dbtype = preferent.db;
+        setLeftPanelTitle();
         tidyupcmdCandidates(cmd);
-
+        cleanupItems4Switching();
+        deleteSelectedItems();
+        cleanupContainers();
+  
         let data = `{"param":"${preferent.db}"}`;
         postAjaxData(scenario['function-post-url'][9], data);
       }else{
@@ -1921,6 +1850,14 @@ const tidyupcmdCandidates = (targetcmd) =>{
   });
 }
 
+const setLeftPanelTitle = () => {
+  title = "Table List";
+  if(loginuser.dbtype == "redis"){
+    title = "Keys List";
+  }
+
+  $(LeftPanelTitle).text(title);
+}
 // return to the chat box if 'return key' is typed in genelic_panel
 $(document).on("keydown", GENELICPANELINPUT, function (e) {
   if (e.keyCode == 13) {

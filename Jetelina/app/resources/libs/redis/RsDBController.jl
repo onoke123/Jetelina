@@ -9,9 +9,8 @@ Description:
 functions
 	open_connection() open connection to the DB.
 	close_connection(conn::Redis.Connection)  close the DB connection
-	getTableList(s::String) get all table name from public 'schemaname'
 	dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
-	getColumns(dbname::String) get keys name in resistering.
+	getKeyList(s::String) get all key name
 	executeApi(json_d::Dict,target_api::DataFrame) execute API order by json data
 	_executeApi(apino::String, sql_str::String) execute API with creating SQL sentence,this is a private function that is called by executeApi()
     set(k,v) set 'k'='v' in name=value style in redis
@@ -31,8 +30,7 @@ JMessage.showModuleInCompiling(@__MODULE__)
 include("RsDataTypeList.jl")
 include("RsSQLSentenceManager.jl")
 
-export open_connection, close_connection, getTableList, dataInsertFromCSV, getColumns,
-    executeApi
+export open_connection, close_connection, dataInsertFromCSV, getKeyList, executeApi
 
 """
 function open_connection()
@@ -65,62 +63,6 @@ function close_connection(conn::Redis.RedisConnection)
     Redis.disconnect(conn)
 end
 """
-function getTableList(s::String)
-
-    Caution:
-        here 'table' meaning is indeed 'db' in redis.
-        to create a sense of unity with RDMS funcs, 'db' calls 'table' here.
-
-	get all table name
-
-# Arguments
-- `s:String`: 'json' -> required JSON form to return
-			'dataframe' -> required DataFrames form to return
-- return: table list in json or DataFrame
-
-"""
-function getTableList(s::String)
-    df = _getTableList()
-    if s == "json"
-        return json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
-    elseif s == "dataframe"
-        return df
-    end
-end
-"""
-function _getTableList()
-
-    Caution:
-        here 'table' meaning is indeed 'db' in redis.
-        to create a sense of unity with RDMS funcs, 'db' calls 'table' here.
-
-        and Redis is an experimental imprementation in jetleina ver.2, thus 'db' is only one that is called and
-        defined as 'defalut".:D
-
-	get table list then put it into DataFrame object. this is a private function, but can access from others
-
-# Arguments
-- return: DataFrame object. empty if got fail.
-"""
-function _getTableList()
-    df = DataFrame()
-#    conn = open_connection()
-    try
-        df = DataFrame(tablename="default")
-#        df = DataFrame(columntable(Redis.execute(conn, table_str)))
-        # do not include 'jetelina_table_manager and usertable in the return
-#        DataFrames.filter!(row -> row.tablename != "jetelina_table_manager" && row.tablename != "jetelina_user_table", df)
-    catch err
-        JLog.writetoLogfile("RsDBController._getTableList() error: $err")
-        return DataFrame() # return empty DataFrame if got fail
-    finally
-#        close_connection(conn)
-    end
-
-    return df
-end
-
-"""
 function dataInsertFromCSV(fname::String)
 
 	insert csv file data ordered by 'fname' into table. the table name is the csv file name.
@@ -134,27 +76,34 @@ function dataInsertFromCSV(fname::String)
 """
 function dataInsertFromCSV(fname::String)
     ret = ""
-	redisdbname = "default" # this is temporary dummy name, indeed it's ok what a name
+#	redisdbname = "default" # this is temporary dummy name, indeed it's ok what a name
     jmsg::String = string("compliment me!")
-    tablename_arr::Vector{String} = []
+#    tablename_arr::Vector{String} = []
 
     df = DataFrame(CSV.File(fname))
     rename!(lowercase, df)
-    push!(tablename_arr, redisdbname)
+#    push!(tablename_arr, redisdbname)
 
     if(0<nrow(df))
+        #===
+            Tips:
+                to make matching with ApiSql..writeToList(), the secound parameter is to be 'key_arr' and
+                it is contained the key name instead of table name in RDBMS.
+        ===#
 		for i ∈ 1:nrow(df)
+            key_arr = []
+            push!(key_arr,df.key[i])
             apino = ApiSqlListManager.getApiSequenceNumber()
             # insert (set)
             insert_str = RsSQLSentenceManager.createApiInsertSentence(df.key[i], df.value[i])
             if(insert_str != "")
-                ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, apino, "redis")
+                ApiSqlListManager.writeTolist(insert_str, "", key_arr, apino, "redis")
             end
 
             # select (get)
             select_str = RsSQLSentenceManager.createApiSelectSentence(df.key[i])
             if(select_str != "")
-                ApiSqlListManager.writeTolist(select_str,"", tablename_arr, apino, "redis")
+                ApiSqlListManager.writeTolist(select_str,"", key_arr, apino, "redis")
             end
         end
 
@@ -171,11 +120,20 @@ function dataInsertFromCSV(fname::String)
     return ret
 end
 """
-function getColumns(dbname::String) 
-    
-    get keys name in resistering.
+function getKeyList(s::String)
+
+    Caution:
+        return json using 'tablename' instead of 'keys' because of matching I/F in js function.
+
+	get all keys name
+
+# Arguments
+- `s:String`: 'json' -> required JSON form to return
+			'dataframe' -> required DataFrames form to return
+- return: table list in json or DataFrame
+
 """
-function getColumns(dbname::String)
+function getKeyList(s::String)
     i::Int = 0
     n::Int = 10000
     keysArr::Array = []
@@ -185,12 +143,16 @@ function getColumns(dbname::String)
     keys = simpleScan(i, n)
     if(keys[1] == 0)
         for i ∈ 1:length(keys[2])
-            push!(keysArr,keys[2][i])
-            push!(valueArr,"")
+            push!(keysArr,"tablename")
+            push!(valueArr,keys[2][i])
         end
 
-        df = DataFrame(Dict(zip(keysArr,valueArr)))
-        ret = json(Dict("result" => true, "tablename" => "$dbname", "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
+        df = DataFrame(keysArr=valueArr)
+        if s == "json"
+            return json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
+        elseif s == "dataframe"
+            return df
+        end
     end 
 end
 """

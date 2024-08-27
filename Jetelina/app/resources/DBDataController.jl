@@ -143,7 +143,11 @@ function getTableList(s::String)
 	elseif j_config.JC["dbtype"] == "oracle"
 	elseif j_config.JC["dbtype"] == "redis"
 		# Case in Redis
-		RsDBController.getTableList(s)
+		#===
+			Caution:
+				getKeyList() returns the registered keys in redis.
+		===#
+		RsDBController.getKeyList(s)
 	end
 end
 """
@@ -214,8 +218,12 @@ function getColumns(tableName::String)
 		MyDBController.getColumns(tableName)
 	elseif j_config.JC["dbtype"] == "oracle"
 	elseif j_config.JC["dbtype"] == "redis"
-		# Case in MySQL
-		RsDBController.getColumns(tableName)
+		# Case in Redis
+		#===
+			Caution: 
+				redis does not have columns.
+				the keys are getting in getTableList().
+		===#
 	end
 end
 """
