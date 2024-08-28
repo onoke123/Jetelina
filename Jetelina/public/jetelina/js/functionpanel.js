@@ -610,26 +610,36 @@ const setApiIF_In = (t, s) => {
       ret = `{"apino":\"${t}\"}`;
     }
   } else if (ta.startsWith("ji")) {
-    /*
-      insert
-        a,b,... in insert into table values(a,b,...) 
-    */
-    let i_sql = s.sql.split("values(");
-    i_sql[1] = i_sql[1].slice(0, i_sql[1].length - 1).replaceAll('\'', '').replaceAll('{', '').replaceAll('}', '');
-    ret = buildJetelinaJsonForm(ta, i_sql[1]);
+    if(loginuser.dbtype != "redis"){
+      /*
+        insert
+          a,b,... in insert into table values(a,b,...) 
+      */
+      let i_sql = s.sql.split("values(");
+      i_sql[1] = i_sql[1].slice(0, i_sql[1].length - 1).replaceAll('\'', '').replaceAll('{', '').replaceAll('}', '');
+      ret = buildJetelinaJsonForm(ta, i_sql[1]);
+    }else{
+      let i_sql = s.sql.split(":");
+      ret = `{"apino":\"${t}\","{your key data}":"{your value data}"}`;
+    }
   } else if (ta.startsWith("ju") || ta.startsWith("jd")) {
-    /*
-      update and delete(the true color is update)
-        a=d_a,b=d_b... in update table set a=d_a,b=d_b..... 
-    */
-    let u_sql = s.sql.split("set");
-    ret = buildJetelinaJsonForm(ta, u_sql[1]);
-    /*
-      special for 'ju and 'jd'
-         because the subquery in update/delete is executed with jt_id in 'where' sentence.
-         this is the protocol so far.
-    */
-    ret = ret.slice(0, ret.length - 1) + `,\"subquery\":\"{jt_id}\"` + ret.slice(ret.length - 1, ret.length);
+    if(loginuser.dbtype != "redis"){
+      /*
+        update and delete(the true color is update)
+          a=d_a,b=d_b... in update table set a=d_a,b=d_b..... 
+      */
+      let u_sql = s.sql.split("set");
+      ret = buildJetelinaJsonForm(ta, u_sql[1]);
+      /*
+        special for 'ju and 'jd'
+          because the subquery in update/delete is executed with jt_id in 'where' sentence.
+          this is the protocol so far.
+      */
+      ret = ret.slice(0, ret.length - 1) + `,\"subquery\":\"{jt_id}\"` + ret.slice(ret.length - 1, ret.length);
+    }else{
+      let u_sql = s.sql.split(":");
+      ret = `{"apino":\"${t}\","key":"{your value data}"}`;
+    }
   } else {
     // who knows
   }
@@ -650,15 +660,22 @@ const setApiIF_Out = (t, s) => {
   let ta = t.toLowerCase();
 
   if (ta.startsWith("js")) {
-    let pb = s.sql.split("select");
-    let pf = pb[1].split("from");
-    // there is the items in pf[0]
-    if (pf[0] != null && 0 < pf[0].length) {
-      ret = buildJetelinaOutJsonForm(ta, pf[0]);
+    if(loginuser.dbtype != "redis"){
+      let pb = s.sql.split("select");
+      let pf = pb[1].split("from");
+      // there is the items in pf[0]
+      if (pf[0] != null && 0 < pf[0].length) {
+        ret = buildJetelinaOutJsonForm(ta, pf[0]);
+      }
+    }else{
+      let pb = s.sql.split(":");
+      if(pb[1] != null && 0<pb[1].length){
+        ret = `{"result":true or false,"Jetelina":"[{\"${pb[1]}\":\"{${pb[1]}}\"}]","message from Jetelina":"\".....\""}`;
+      }
     }
   } else {
     // insert, update, delete
-    ret = '{"result":true or false,"Jetelina":"[{\"message from Jetelina\":\".....\"}]"}';
+    ret = '{"result":true or false,"Jetelina":"[{}]","message from Jetelina":"\".....\""}';
   }
 
   return ret;
@@ -673,16 +690,27 @@ const setApiIF_Out = (t, s) => {
 const setApiIF_Sql = (s) => {
   let ret = "";
 
-  // possibly s.subquery is null. 'ignore' -> no sub query
-  if (s.subquery != null && s.subquery != IGNORE) {
-    ret = `${s.sql} ${s.subquery};`;
-  } else {
-    ret = `${s.sql};`;
-  }
+  if(loginuser.dbtype != "redis"){
+    // possibly s.subquery is null. 'ignore' -> no sub query
+    if (s.subquery != null && s.subquery != IGNORE) {
+      ret = `${s.sql} ${s.subquery};`;
+    } else {
+      ret = `${s.sql};`;
+    }
 
-  let reject_jetelina_delete_flg = "jetelina_delete_flg";
-  if (ret.startsWith("insert")) {
-    ret = ret.replaceAll(`,{${reject_jetelina_delete_flg}}`, '').replaceAll(`,${reject_jetelina_delete_flg}`, '');
+    let reject_jetelina_delete_flg = "jetelina_delete_flg";
+    if (ret.startsWith("insert")) {
+      ret = ret.replaceAll(`,{${reject_jetelina_delete_flg}}`, '').replaceAll(`,${reject_jetelina_delete_flg}`, '');
+    }
+  }else{
+    let d = s.sql.split(":");
+    if(s.apino.startsWith("ji")){
+      ret = `${d[0]} {your key data} {your value data}`;
+    }else if(s.apino.startsWith("ju")){
+      ret = `${d[0]} ${d[1]} {your value data}`;
+    }else if(s.apino.startsWith("js")){
+      ret = `${d[0]} ${d[1]}`;
+    }
   }
 
   return ret;
@@ -774,7 +802,7 @@ const buildJetelinaOutJsonForm = (t, s) => {
 
   if (0 < ret.length) {
     ret = ret.slice(0, ret.length - 1);// reject ',' from the tail
-    ret = `${ret}]"}`; // caution: the last '}' is necessary
+    ret = `${ret}]","message from Jetelina":"\".....\""}`; // caution: the last '}' is necessary
   }
 
   return ret;
