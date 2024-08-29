@@ -14,7 +14,8 @@ functions
 	close_connection(conn::LibPQ.Connection)  close the DB connection
 	* deprecated readJetelinatable() read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame 
 	getTableList(s::String) get all table name from public 'schemaname'
-	getJetelinaSequenceNumber(t::Integer) get seaquence number from jetelina_id table
+    setJetelinaSequenceNumber(tablename::String,n::Integer)	set seaquence number in the ordered sequence table
+	getJetelinaSequenceNumber(t::Integer, tablename) get seaquence number from jetelina_id table
 	* deprecated insert2JetelinaTableManager(tableName::String, columns::Array) insert columns of 'tableName' into Jetelina_table_manager  
 	dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
 	dropTable(tableName::Vector) drop the tables and delete its related data from jetelina_table_manager table
@@ -259,19 +260,57 @@ function _getTableList()
     return df
 end
 """
-function getJetelinaSequenceNumber(t::Integer)
+function setJetelinaSequenceNumber(tablename::String,n::Integer)
+
+	set seaquence number in the ordered sequence table
+
+# Arguments
+- `tablename: String`: expect the target sequence table name if 't'=3
+- `n: Integer` : the set number to 'tablename' sequence table
+- return: 0< sequence number   -1 fail
+"""
+function setJetelinaSequenceNumber(tablename::String,n::Integer)
+    conn = open_connection()
+    ret = -1
+
+    seqtable = string(tablename,"_id_sequence")
+    sql = """
+        select setval('$seqtable','$n');
+    """
+
+    try
+        sequence_number = columntable(execute(conn, sql))
+        #===
+            Tips:
+            this sequence_number is a type of Union{Missing,Int64}{51} for example.
+            wanted nextval() is {51}, then 
+                sequence_number[1] -> Union{Int64}[51]
+                sequence_number[1][1] -> 51
+        ===#
+        ret = sequence_number[1][1]
+    catch err
+        JLog.writetoLogfile("PgDBController.getJetelinaSequenceNumber() error: $err")
+    finally
+        close_connection(conn)
+    end
+
+    return ret
+end
+"""
+function getJetelinaSequenceNumber(t::Integer,tablename)
 
 	get seaquence number from jetelina_id table
 
 # Arguments
 - `t: Integer`  : type order  0-> jetelina_table_id, 1-> jetelian_sql_sequence
+- `tablename: any but string`: expect the target sequence table name if 't'=3
 - return: 0< sequence number   -1 fail
 """
-function getJetelinaSequenceNumber(t::Integer)
+function getJetelinaSequenceNumber(t::Integer,tablename)
     conn = open_connection()
     ret = -1
     try
-        ret = _getJetelinaSequenceNumber(conn, t)
+        ret = _getJetelinaSequenceNumber(conn, t, tablename)
     catch err
         JLog.writetoLogfile("PgDBController.getJetelinaSequenceNumber() error: $err")
     finally
@@ -282,7 +321,7 @@ function getJetelinaSequenceNumber(t::Integer)
 end
 
 """
-function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer)
+function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer, tablename)
 
 	get seaquence number from jetelina_table_id_sequence or jetelina_sql_sequence or jetelina_user_id_sequence, but this is a private function.
 	this function will never get fail, expectedly.:-P
@@ -292,9 +331,10 @@ function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer)
 # Arguments
 - `conn: Object`: connection object
 - `t: Integer`  : type order  0-> jetelina_table_id_sequence, 1-> jetelian_sql_sequence 2->jetelina_user_id_sequence
+- `tablename: any but string`: expect the target sequence table name if 't'=3
 - return:Integer: sequence number 
 """
-function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer)
+function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer, tablename)
     sql = ""
 
     if t == 0
@@ -310,10 +350,18 @@ function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer)
         """
         ===#
         sqn = ApiSqlListManager.getApiSequenceNumber()
-    elseif t == 2
-        sql = """
-        	select nextval('jetelina_user_id_sequence');
-        """
+    elseif t == 2 || t == 3
+        if tablename == ""
+            sql = """
+                select nextval('jetelina_user_id_sequence');
+            """
+        else
+            seqtable = string(tablename,"_id_sequence")
+            sql = """
+            	select nextval('$seqtable');
+            """
+        end
+
         sequence_number = columntable(execute(conn, sql))
         #===
         		Tips:
@@ -325,8 +373,6 @@ function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer)
         sqn = sequence_number[1][1]
     end
 
-    #	sequence_number = columntable(execute(conn, sql))
-    #	return sequence_number[1][1]
     return sqn
 end
 
@@ -334,6 +380,8 @@ end
 function insert2JetelinaTableManager(tableName::String, columns::Array )
 
 	insert columns of 'tableName' into Jetelina_table_manager  
+
+    deprecated
 
 # Arguments
 - `tableName: String`: table name of insertion
@@ -344,7 +392,7 @@ function insert2JetelinaTableManager(tableName::String, columns::Array)
     conn = open_connection()
 
     try
-        jetelina_table_id = getJetelinaSequenceNumber(conn, 0)
+        jetelina_table_id = getJetelinaSequenceNumber(0,"")
 
         for i ∈ 1:length(columns)
             c = columns[i]
@@ -390,21 +438,21 @@ function dataInsertFromCSV(fname::String)
     rename!(lowercase, df)
 
     #===
-    		new table name is the csv file name with deleting the suffix  
-    			ex. /home/upload/test.csv -> splitdir() -> ("/home/upload","test.csv") -> splitext() -> ("test",".csv")
-    	===#
+    	new table name is the csv file name with deleting the suffix  
+    		ex. /home/upload/test.csv -> splitdir() -> ("/home/upload","test.csv") -> splitext() -> ("test",".csv")
+    ===#
     tableName = splitext(splitdir(fname)[2])[1]
     #===
-    		Tips:
-    			Postgresql does not forgive to use '-' in a table name
-    	===#
+    	Tips:
+    		Postgresql does not forgive to use '-' in a table name
+    ===#
     tableName = replace(tableName, "-" => "_")
     #===
-    		Tips:
-    			original column names in the csv file are changed here because of making it unique.
-    			keyword2(jt_id) is also changed at the same time.
-    			then consequently the 'column_name' are <table name>_<column name>.
-    	===#
+    	Tips:
+    		original column names in the csv file are changed here because of making it unique.
+    		keyword2(jt_id) is also changed at the same time.
+    		then consequently the 'column_name' are <table name>_<column name>.
+    ===#
     colarray = []
     for col in names(df)
         push!(colarray, string(tableName, '_', col))
@@ -414,26 +462,37 @@ function dataInsertFromCSV(fname::String)
     keyword2 = string(tableName, '_', keyword2)
 
     # special column 'jetelina_delte_flg' is added to columns 
+    #===
+        Tips:
+            the secound param in insertcols!() points to the insert position.
+            if there is no param in there, default is at adding to the tail
+            e.g
+                insertcols!(df,:jetelina_de......)
+                row|table.name table.sex..... jetelina_delete_flg
+                 1 |  bob        m                  0
+                 2 |  henry      m                  0
+                 . |   .         .                  .
+    ===#
     insertcols!(df, :jetelina_delete_flg => 0)
 
     column_name = names(df)
 
     column_type = eltype.(eachcol(df))
     column_type_string = Array{Union{Nothing,String}}(nothing, length(column_name)) # using for creating table
-    column_str = string() # using for creating table
+    column_str = string(keyword2, " integer primary key,") # using for creating table
     insert_column_str = string() # columns definition string
     insert_data_str = string() # data string
     update_str = string()
     tablename_arr::Vector{String} = []
 
     #===
-    		make the sentece of sql( "id integer, name varchar(36)...")
-    	===#
+    	make the sentece of sql( "id integer, name varchar(36)...")
+    ===#
     for i ∈ 1:length(column_name)
         #===
-        			Tips:
-        				the reason for this connection, see in doSelect()
-        		===#
+        	Tips:
+        		the reason for this connection, see in doSelect()
+        ===#
         cn = column_name[i]
         column_type_string[i] = PgDataTypeList.getDataType(string(column_type[i]))
         if contains(cn, keyword2)
@@ -460,9 +519,9 @@ function dataInsertFromCSV(fname::String)
             insert_column_str = string(insert_column_str, ",")
             insert_data_str = string(insert_data_str, ",")
             #==
-            				Tips:
-            					because 'jetelina_delete_flg' always comes into the tail
-            			==#
+            	Tips:
+            		because 'jetelina_delete_flg' always comes into the tail
+            ==#
             if i < length(column_name) - 1
                 update_str = string(update_str, ",")
             end
@@ -470,12 +529,12 @@ function dataInsertFromCSV(fname::String)
     end
 
     #===
-    		Tips:
-    			There is a reason.....
-    			in the above, 'update_str' has ',' at its head because of rejecting 'jt_id' column.
-    			'jt_id' is always head of the columns, and it puzzled to build 'update_str' if rejected it.
-    			that's why using lstrip(). dum it. :p
-    	===#
+    	Tips:
+    		There is a reason.....
+    		in the above, 'update_str' has ',' at its head because of rejecting 'jt_id' column.
+    		'jt_id' is always head of the columns, and it puzzled to build 'update_str' if rejected it.
+    		that's why using lstrip(). dum it. :p
+    ===#
     if startswith(update_str, ",")
         update_str = lstrip(update_str, ',')
     end
@@ -485,22 +544,23 @@ function dataInsertFromCSV(fname::String)
     end
 
     #===
-    		check if the same name table already exists.
-    		this is not for create sql, but for insert2JetelinaTableManager().
-    	===#
+    	check if the same name table already exists.
+    	this is not for create sql, but for insert2JetelinaTableManager().
+    ===#
     df_tl = _getTableList()
     DataFrames.filter!(row -> row.tablename == tableName, df_tl)
 
     #===
-    		Tips:
-    		create table with 'not exists'.
-    		then insert csv data to there. this is because of forgiving adding data to the same table.
-    		put isempty(df_tl) in there as same as insert2JetelinaTableManager if it does not forgive it.
-    	===#
+    	Tips:
+    	    create table with 'not exists'.
+    	    then insert csv data to there. this is because of forgiving adding data to the same table.
+    	    put isempty(df_tl) in there as same as insert2JetelinaTableManager if it does not forgive it.
+    ===#
+    seqT = string(tableName, "_id_sequence")
     create_table_str = """
     	create table if not exists $tableName(
     		$column_str   
-    	);
+    	);create sequence if not exists $seqT;
     """
     conn = open_connection()
     try
@@ -514,18 +574,36 @@ function dataInsertFromCSV(fname::String)
         # do not close the connection because of resuming below yet.
     end
     #===
-    		then get column from the created table, because the columns are order by csv file, thus they can get after
-    		created the table
-    	===#
-    sql = """   
-     SELECT
-     	*
-     from $tableName
-     """
+    	then get column from the created table, because the columns are order by csv file, thus they can get after
+    	created the table
+    ===#
+    sql = """select * from $tableName"""
     df0 = DataFrame(columntable(LibPQ.execute(conn, sql)))
+    @info "exist... " sql nrow(df0)
     rename!(lowercase, df0)
     cols = map(x -> x, names(df0))
+    
+    # primary key jt_id is added to columns
+    #===
+        Tips:
+            the secound param in insertcols!() points to the insert position.
+            e.g
+                insertcols!(df,1,keywors2=>......)
+                table.jt_id is inserted in the head because of '1'
+                row|table.jt_id  table.name table.sex.....
+                 1 |   1           bob        m
+                 2 |   2           henry      m
+                 . |   .            .         .
+    ===#
+    insertStartid::Integer = getJetelinaSequenceNumber(3,tableName)
+    # append data into the exists table, and take care '+1' and '-1'
+    insertEndid::Integer = insertStartid + nrow(df) -1
+
+    @info "insertStart.. End.. " insertStartid insertEndid
+    insertcols!(df,1,keyword2=>insertStartid:insertEndid)
+
     select!(df, cols)
+
 
     # create rows
     row_strings = imap(eachrow(df)) do row
@@ -553,20 +631,18 @@ function dataInsertFromCSV(fname::String)
     	===#
     push!(tablename_arr, tableName)
     insert_str = PgSQLSentenceManager.createApiInsertSentence(tableName, insert_column_str, insert_data_str)
-    ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, getJetelinaSequenceNumber(1), "postgresql")
+    ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, getJetelinaSequenceNumber(1,""), "postgresql")
 
     # update
     update_str = PgSQLSentenceManager.createApiUpdateSentence(tableName, update_str)
-    ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, getJetelinaSequenceNumber(1), "postgresql")
+    ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, getJetelinaSequenceNumber(1,""), "postgresql")
 
     # delete
     delete_str = PgSQLSentenceManager.createApiDeleteSentence(tableName)
-    ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, getJetelinaSequenceNumber(1), "postgresql")
+    ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, getJetelinaSequenceNumber(1,""), "postgresql")
 
-    if isempty(df_tl)
-        # manage to jetelina_table_manager
-        insert2JetelinaTableManager(tableName, names(df0))
-    end
+    # update sequence number with the end of row number
+    setJetelinaSequenceNumber(tableName, insertEndid)
 
     return ret
 end
@@ -589,12 +665,12 @@ function dropTable(tableName::Vector)
     try
         for i in eachindex(tableName)
             # drop the tableName
-            drop_table_str = string("drop table ", tableName[i])
+            drop_table_str = string("drop table ", tableName[i],";drop sequence ", tableName[i], "_id_sequence")
             # delete the related data from jetelina_table_manager
-            delete_data_str = string("delete from jetelina_table_manager where table_name = '", tableName[i], "'")
+            #delete_data_str = string("delete from jetelina_table_manager where table_name = '", tableName[i], "'")
 
             execute(conn, drop_table_str)
-            execute(conn, delete_data_str)
+            #execute(conn, delete_data_str)
         end
 
         ret = json(Dict("result" => true, "tablename" => "$rettables", "message from Jetelina" => jmsg))
@@ -920,7 +996,7 @@ function userRegist(username::String)
         end
     end
 
-    user_id = getJetelinaSequenceNumber(2)
+    user_id = getJetelinaSequenceNumber(2,"")
     existentuserdata = getUserData(JSession.get()[1])
     j = existentuserdata["Jetelina"][1]
     parentGeneration = j[:generation]

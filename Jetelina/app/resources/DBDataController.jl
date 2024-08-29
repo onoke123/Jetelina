@@ -505,16 +505,6 @@ function createApiSelectSentence(json_d::Dict, mode::String)
 
 	if mode == "ok"
 		sqn = ApiSqlListManager.getApiSequenceNumber()
-		#===
-		if j_config.JC["dbtype"] == "postgresql"
-			# Case in PostgreSQL
-			sqn = PgDBController.getJetelinaSequenceNumber(1) # attr '1' means 'jetelian_sql_sequence'. see its function.
-		elseif j_config.JC["dbtype"] == "mysql"
-			# Case in MySQL
-			sqn = MyDBController.getJetelinaSequenceNumber(1) # attr '1' means 'jetelian_sql_sequence'. see its function.
-		elseif j_config.JC["dbtype"] == "oracle"
-		end
-		===#
 	elseif mode == "pre"
 		sqn = -1
 	end
