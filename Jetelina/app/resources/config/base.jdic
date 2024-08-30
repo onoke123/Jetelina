@@ -50,8 +50,11 @@
 # miss login 
 @jdic starting-4-msg:"I am sorry, but ", "Something wrong, hum, "
 
+# ask using db but not login yet
+@jdic db-not-determind-yet-msg:"not determind it yet, login first, please"
+
 # something inprogress 
-@jdic inprogress-msg:"I AM DOING","HAPPY WORKIN'","HUSTLE HUSTLE","I AM DOING THIS JUST FOR YOU"
+@jdic inprogress-msg:"I AM DOING","HAPPY WORKIN'","HUSTLE HUSTLE","I AM DOING THIS JUST FOR YOU","WAIT A MOMENT.."
 
 # refuse any command due to progress something 
 @jdic refuse-command-msg:"I am busy now","I cannot do multi task at once","You kill me?","Later..."
@@ -70,7 +73,8 @@
 @jdic first-login-ask-info-then-msg:"Sounds nice, and more?","Cool, others?","I love it too, and?","Great, you are lucky, and more?"
 @jdic first-login-ask-info-end-msg:"Thank you so much,{Q}. Now you can type 'Guide' or 'Manual' to see what can I do for you."
 
-@jdic starting-6-msg:"How can I help you today?", "What do you do now?"
+#@jdic starting-6-msg:"How can I help you today?","What do you do now?"
+@jdic starting-6-msg:"HERE WE GO","LET'S FUN TOGETHER","YEEEEAH","FOLLOW ME"
 @jdic success-msg:"Done","Success","I am so happy","Yes"
 @jdic fail-msg:"Uge","Noooooooo","Sorry something wrong"
 @jdic cancel-msg:"It has been canceld","Has been withdrawn","Canceled","Withdrew","Called off"
@@ -120,6 +124,10 @@
 @jdic func-tabledrop-msg:"Which table do you want to drop?","correct order is \"droptable <table name>\" and so on"
 @jdic func-tabledrop-ng-msg:"Hey open the table list first!","Huum?","Check it first","Watch it"
 
+# register or ask stichwort message
+@jdic func-register-stichwort-msg:"register your pass phrase first"
+@jdic func-require-stichwort-msg:"put your pass phrase"
+
 @jdic func-apicreate-cmd:"create api","post api","post columns","create sql"
 #
 #  reject "delete" from this dic, but should be considered it later, because just "delete" was convenient.
@@ -148,6 +156,7 @@
 @jdic func-api-test-cmd:"do sql test","do api test","test sql","test api","sql check","do api check","check sql","check api","execute sql test","execute api test","execute test","do test"
 @jdic func-api-test-panel-show-cmd:"show api test","open api test","show sql test","open sql test","display api test","display sql test","open test result","show test result"
 @jdic func-api-test-panel-hide-cmd:"hide api test","close api test","hide sql test","close sql test","undisplay api test","undisplay sql test","close test result","hide test result"
+@jdic func-api-test-subquery-chk-error-msg:"subquery error. I don't know what you wanna do. look carefully."
 
 # database switching
 @jdic what-db-use-now-cmd:"database now", "current database","current db","current data base"

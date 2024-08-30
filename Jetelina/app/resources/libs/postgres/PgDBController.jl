@@ -267,11 +267,11 @@ function setJetelinaSequenceNumber(tablename::String,n::Integer)
 # Arguments
 - `tablename: String`: expect the target sequence table name if 't'=3
 - `n: Integer` : the set number to 'tablename' sequence table
-- return: 0< sequence number   -1 fail
+- return:boolean: true -> success false -> fail
 """
 function setJetelinaSequenceNumber(tablename::String,n::Integer)
     conn = open_connection()
-    ret = -1
+    ret = true
 
     seqtable = string(tablename,"_id_sequence")
     sql = """
@@ -279,17 +279,10 @@ function setJetelinaSequenceNumber(tablename::String,n::Integer)
     """
 
     try
-        sequence_number = columntable(execute(conn, sql))
-        #===
-            Tips:
-            this sequence_number is a type of Union{Missing,Int64}{51} for example.
-            wanted nextval() is {51}, then 
-                sequence_number[1] -> Union{Int64}[51]
-                sequence_number[1][1] -> 51
-        ===#
-        ret = sequence_number[1][1]
+        columntable(execute(conn, sql))
     catch err
-        JLog.writetoLogfile("PgDBController.getJetelinaSequenceNumber() error: $err")
+        ret = false
+        JLog.writetoLogfile("PgDBController.setJetelinaSequenceNumber() error: $err")
     finally
         close_connection(conn)
     end
@@ -552,7 +545,7 @@ function dataInsertFromCSV(fname::String)
 
     #===
     	Tips:
-    	    create table with 'not exists'.
+    	    create table and sequence with 'not exists'.
     	    then insert csv data to there. this is because of forgiving adding data to the same table.
     	    put isempty(df_tl) in there as same as insert2JetelinaTableManager if it does not forgive it.
     ===#
@@ -579,7 +572,6 @@ function dataInsertFromCSV(fname::String)
     ===#
     sql = """select * from $tableName"""
     df0 = DataFrame(columntable(LibPQ.execute(conn, sql)))
-    @info "exist... " sql nrow(df0)
     rename!(lowercase, df0)
     cols = map(x -> x, names(df0))
     
@@ -598,8 +590,6 @@ function dataInsertFromCSV(fname::String)
     insertStartid::Integer = getJetelinaSequenceNumber(3,tableName)
     # append data into the exists table, and take care '+1' and '-1'
     insertEndid::Integer = insertStartid + nrow(df) -1
-
-    @info "insertStart.. End.. " insertStartid insertEndid
     insertcols!(df,1,keyword2=>insertStartid:insertEndid)
 
     select!(df, cols)
@@ -624,7 +614,7 @@ function dataInsertFromCSV(fname::String)
         close_connection(conn)
     end
     #===
-    		Tips:
+    	Tips:
     		cols(see above) is ["id", "name", "sex", "age", "ave", "jetelina_delete_flg"], so can use it when
     		wanna use column name, but need to judge the data type both the case of 'insert' and 'update', 
     		that why do not use cols here. writing select sentence is done in PgSQLSentenceManager.createApiSelectSentence(). 
@@ -1524,11 +1514,10 @@ function refStichWort(stichwort::String)
     uid::Integer = JSession.get()[2]
     u = refUserInfo(uid, "stichwort", 1) # 1->DataFrame
     #===
-    		Tips:
-    			u[:,:stichwort][1] is to be "\"<something>\"".
-    			then have to remove '"\', OK?
-    	===#
-    #	@info "refStichWort " u[:,:stichwort]
+    	Tips:
+    		u[:,:stichwort][1] is to be "\"<something>\"".
+    		then have to remove '"\', OK?
+    ===#
     if !ismissing(u[:, :stichwort][1])
         intable_stichwort = replace(u[:, :stichwort][1], "\"" => "")
         if stichwort == intable_stichwort

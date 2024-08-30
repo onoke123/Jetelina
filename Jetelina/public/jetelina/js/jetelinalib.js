@@ -666,7 +666,7 @@ const authAjax = (un) => {
             const o = result;
             let m = "";
             loginuser.available = result.available;
-            if(result.last_dbtype != null && 0<result.last_dbtype.length ){
+            if (result.last_dbtype != null && 0 < result.last_dbtype.length) {
                 setDBFocus(result.last_dbtype);
                 loginuser.dbtype = result.last_dbtype;
             }
@@ -891,11 +891,11 @@ const chatKeyDown = (cmd) => {
             #left_panel or #right_panel, or both are maybe blinking in refreshApiList() and refreshTableList().
             stop it here.
     */
-    if($("#left_panel").hasClass("genelic_panel")){
+    if ($("#left_panel").hasClass("genelic_panel")) {
         $("#left_panel").removeClass("genelic_panel")
     }
 
-    if($("#right_panel").hasClass("genelic_panel")){
+    if ($("#right_panel").hasClass("genelic_panel")) {
         $("#right_panel").removeClass("genelic_panel")
     }
 
@@ -989,6 +989,12 @@ const chatKeyDown = (cmd) => {
 
                     break;
                 case 'login':
+                    /*
+                        Tips:
+                            in the case of the first login for setting Jetelina env.
+                            "it's me" or "it is me" are effective.
+                            but it will be diseffect after executing the setting.
+                    */
                     if (ut.indexOf("it's me") == -1 && ut.indexOf("it is me") == -1) {
                         authAjax(ut);
                         m = IGNORE;
@@ -1000,24 +1006,23 @@ const chatKeyDown = (cmd) => {
                     break;
                 case 'login_success':
                     /*
-                        Tips:
-                            login user's info has been contained in loginuser object. see authAjax().
-                            then take action in order to the user level.
-
-                            ask "firstname", "lastname" if these are as same as "login", because this person is a newcommer.
-                            show a guidance if "logincount" is less than 3, because this person is a beginner.
-                            count up "user_level" if "logincount" is over 10, these attribute should send to server to update user's attribute.
-                            and ask "nickname" if "familiar_level" is being 2. Jetelina can speak slang to a user who is "familiar_level" 3, in future.
-
-                            anyhow give greeting order to "lastlogin".
+                        Attention:
+                            in previous version, this case had a meaning, however it has be lost 
+                            in this version.
+                            but wanna say something to the login user before starting the working.
+                            switch to the function panel with chatKeyDown("show tables"), indeed this string
+                            is determind in the scenario 'func-show-table-list-cmd', then redirect to
+                            'lets_do_somthing', meanwhile 'starting-6-msg' is displayed.
                     */
-                    m = chooseMsg("starting-6-msg", "", "");
                     stage = 'lets_do_something';
+
+                    chatKeyDown("show tables");
+                    m = chooseMsg("starting-6-msg", "", "");
 
                     break;
                 case 'lets_do_something':
                     // hidden thanks for favicon
-                    isVisibleFavicon(false); 
+                    isVisibleFavicon(false);
                     m = "";
                     // chatbox moves to below
                     const panelTop = window.innerHeight - 110;
@@ -1195,15 +1200,15 @@ const chatKeyDown = (cmd) => {
                     break;
             }
 
-                        // simple ask about using database type
-                        if (inScenarioChk(ut, 'what-db-use-now-cmd')) {
-                            if(loginuser.dbtype != null){
-                                m= loginuser.dbtype;
-                            }else{
-                                m = "not determind it yet, login first, please";
-                            }
-                        }
-            
+            // simple ask about using database type
+            if (inScenarioChk(ut, 'what-db-use-now-cmd')) {
+                if (loginuser.dbtype != null) {
+                    m = loginuser.dbtype;
+                } else {
+                    m = chooseMsg('db-not-determind-yet-msg','','');
+                }
+            }
+
             if (0 < m.length && m != IGNORE) {
                 typingControll(m);
             } else if (m == IGNORE && stage != 'login') {
@@ -1748,10 +1753,10 @@ const subPanelCheck = () => {
  * 
  */
 const isVisibleDatabaseList = (b) => {
-    if(b){
+    if (b) {
         $("#databaselist").show();
 
-    }else{
+    } else {
         $("#databaselist").hide();
     }
 }
@@ -1767,7 +1772,7 @@ const setDBFocus = (s) => {
     let newdb = $(`#databaselist [name='${s}']`);
     let c = "dbfocus";
 
-    if( s != "" ){
+    if (s != "") {
         newdb.toggleClass(c);
     }
 
@@ -1781,9 +1786,9 @@ const setDBFocus = (s) => {
  * show/hide the favicon message
  */
 const isVisibleFavicon = (b) => {
-    if(b){
+    if (b) {
         $("#thxfavicon").show();
-    }else{
+    } else {
         $("#thxfavicon").hide();
     }
 }
@@ -1794,6 +1799,6 @@ $(document).on("keydown", SOMETHINGINPUT, function (e) {
     }
 });
 // database switching by clickin'
-$("#databaselist").on("click",".databasename", function(){
+$("#databaselist").on("click", ".databasename", function () {
     chatKeyDown($(this).attr("name"));
 });

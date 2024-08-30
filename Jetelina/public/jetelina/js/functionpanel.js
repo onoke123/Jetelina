@@ -330,26 +330,15 @@ const fileupload = () => {
   }).done(function (result, textStatus, jqXHR) {
     if (checkResult(result)) {
       // clean up
-      //    $("input[type=file]").val("");
       $(UPFILE).val("");
       $("#upbtn").prop("disabled", false);
       $(`${MYFORM} label span`).text("Upload CSV File");
 
       //refresh table list 
-      if (isVisibleTableContainer()) {
-//        cleanUp("tables");
         cleanupRelatedList(true);
-//        getAjaxData(scenario["function-get-url"][1]);
-//        displayTablesAndApis()
-      } else {
-        typingControll(chooseMsg('success-msg', "", ""));
-      }
+        typingControll("refreshing....");
 
-      if (isVisibleApiContainer()) {
         chatKeyDown(scenario["func-show-table-list-cmd"][0]);
-      }
-
-      // clean up
     } else {
       // csv file format error
       typingControll(chooseMsg('func-csv-format-error-msg', "", ""));
@@ -364,6 +353,7 @@ const fileupload = () => {
     inprogress = false;
     $(FILEUP).removeClass("genelic_panel");
     rejectCancelableCmdList(FILESELECTOROPEN);
+    return true;
   });
 }
 
@@ -1202,8 +1192,8 @@ const functionPanelFunctions = (ut) => {
       const f = $(UPFILE).prop("files");
       if (f != null && 0 < f.length) {
         delete preferent.apilist;
-        m = IGNORE;
         fileupload();
+        m = chooseMsg('inprogress-msg','','');
       } else {
         m = chooseMsg('func-fileupload-msg', "", "");
       }
@@ -1316,10 +1306,10 @@ const functionPanelFunctions = (ut) => {
           showSomethingMsgPanel(true);
           if (loginuser.available) {
             showSomethingInputField(true, 2);
-            m = "put your pass phrase";
+            m = chooseMsg('func-require-stichwort-msg','','');
           } else {
             showSomethingInputField(true, 1);
-            m = "register your pass phrase first";
+            m = chooseMsg('func-register-stichwort-msg','','');
           }
         } else {
           /* execute drop table and/or delete api,
@@ -1557,7 +1547,7 @@ const functionPanelFunctions = (ut) => {
         if (checkGenelicInput($(GENELICPANELINPUT).val())) {
           postSelectedColumns("pre");
         } else {
-          m = "subquery error. I don't know what you wanna do. look carefully.";
+          m = chooseMsg('func-api-test-subquery-chk-error-msg','','');
         }
       }
       break;
