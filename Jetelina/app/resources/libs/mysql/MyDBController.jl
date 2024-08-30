@@ -270,8 +270,9 @@ function _getTableList()
     table_str = """select table_name from information_schema.tables where table_schema='jetelina';"""
     try
         df = DataFrame(columntable(DBInterface.execute(conn, table_str)))
-        # do not include 'jetelina_table_manager and usertable in the return
-        DataFrames.filter!(row -> row.TABLE_NAME != "jetelina_table_manager" && row.TABLE_NAME != "jetelina_user_table" && row.TABLE_NAME != "jetelina_sql_sequence" && row.TABLE_NAME != "jetelina_user_id_sequence", df)
+        # do not include usertable and any mimic sequence tables in the return
+#        DataFrames.filter!(row -> row.TABLE_NAME != "jetelina_table_manager" && row.TABLE_NAME != "jetelina_user_table" && row.TABLE_NAME != "jetelina_sql_sequence" && row.TABLE_NAME != "jetelina_user_id_sequence", df)
+        DataFrames.filter!(row -> row.TABLE_NAME != "jetelina_user_table" && !contains(row.TABLE_NAME,"_id_sequence"), df)
     catch err
         JLog.writetoLogfile("MyDBController._getTableList() error: $err")
         return DataFrame() # return empty DataFrame if got fail
@@ -322,15 +323,13 @@ function getJetelinaSequenceNumber(t::Integer, tablename)
 - `tablename: any but string`: expect the target sequence table name if 't'=3
 - return: 0< sequence number   -1 fail
 """
-function getJetelinaSequenceNumber(t::Integer, tablename)
-    conn = open_connection()
+function getJetelinaSequenceNumber(conn::DBInterface.Connection,t::Integer, tablename)
     ret = -1
     try
         ret = _getJetelinaSequenceNumber(conn, t, tablename)
     catch err
         JLog.writetoLogfile("MyDBController.getJetelinaSequenceNumber() error: $err")
     finally
-        close_connection(conn)
     end
 
     return ret
@@ -495,7 +494,8 @@ function dataInsertFromCSV(fname::String)
 
     column_type = eltype.(eachcol(df))
     column_type_string = Array{Union{Nothing,String}}(nothing, length(column_name)) # using for creating table
-    column_str = string(keyword2, " integer primary key,") # using for creating table
+#    column_str = string(keyword2, " integer primary key,") # using for creating table
+    column_str = string(keyword2, " integer,") # using for creating table
     insert_column_str = string() # columns definition string
     insert_data_str = string() # data string
     update_str = string()
@@ -583,14 +583,16 @@ function dataInsertFromCSV(fname::String)
     try
         DBInterface.execute(conn, create_table_str)
     catch err
-        close_connection(conn)
+#        close_connection(conn)
         ret = json(Dict("result" => false, "filename" => "$fname", "errmsg" => "$err"))
         JLog.writetoLogfile("MyDBController.dataInsertFromCSV() with $fname error : $err")
         return ret
     finally
         # do not close the connection because of resuming below yet.
+        close_connection(conn)
     end
-    
+ 
+    conn = open_connection()
     # ここまででまだdfは有効
         # primary key jt_id is added to columns
     #===
@@ -604,18 +606,14 @@ function dataInsertFromCSV(fname::String)
                  2 |   2           henry      m
                  . |   .            .         .
     ===#
-    insertStartid::Integer = getJetelinaSequenceNumber(3,tableName)
+    insertStartid::Integer = getJetelinaSequenceNumber(conn,3,tableName)
     # append data into the exists table, and take care '+1' and '-1'
     insertEndid::Integer = insertStartid + nrow(df) -1
 
     @info "insertStart.. End.. " insertStartid insertEndid
     insertcols!(df,1,keyword2=>insertStartid:insertEndid)
     tmpf = string(fname,".tmp")
-    CSV.write(tmpf,df)
-#    mv(tmpf,fname,force=true)
-    # dfにjt_idをぶっ込んでfname.tmpとしてファイルに書き込む
-    # fname.tmp -> fnameに変換
-    # これでcopyinができる。
+#    CSV.write(tmpf,df, force=true)
     #===
     	Tips:
     		there are no way to 'copy' csv file to table in APIS of MySQL.jl ver.1.1.2, so far.
@@ -642,7 +640,7 @@ function dataInsertFromCSV(fname::String)
         # ok. close the connection finally
         close_connection(conn)
         # never use any more
-        rm(tmpf)
+#        rm(tmpf)
     end
     #===
     		Tips:
@@ -652,15 +650,15 @@ function dataInsertFromCSV(fname::String)
     	===#
     push!(tablename_arr, tableName)
     insert_str = MySQLSentenceManager.createApiInsertSentence(tableName, insert_column_str, insert_data_str)
-    ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, getJetelinaSequenceNumber(1,""), "mysql")
+    ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, getJetelinaSequenceNumber(conn,1,""), "mysql")
 
     # update
     update_str = MySQLSentenceManager.createApiUpdateSentence(tableName, update_str)
-    ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, getJetelinaSequenceNumber(1,""), "mysql")
+    ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, getJetelinaSequenceNumber(conn,1,""), "mysql")
 
     # delete
     delete_str = MySQLSentenceManager.createApiDeleteSentence(tableName)
-    ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, getJetelinaSequenceNumber(1,""), "mysql")
+    ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, getJetelinaSequenceNumber(conn,1,""), "mysql")
 
     # update sequence number with the end of row number
     setJetelinaSequenceNumber(tableName, insertEndid)
@@ -1021,7 +1019,9 @@ function userRegist(username::String)
         end
     end
 
-    user_id = getJetelinaSequenceNumber(2,"")
+    conn = open_connection()
+
+    user_id = getJetelinaSequenceNumber(conn,2,"")
     existentuserdata = getUserData(JSession.get()[1])
     j = existentuserdata["Jetelina"][1]
     parentGeneration = j[:generation]
@@ -1032,7 +1032,6 @@ function userRegist(username::String)
     	insert into jetelina_user_table (user_id,username,user_info,generation) values($user_id,'$username','{"register_date":"$registerDate","inviter":$inviterId}','$thisuserGeneration');
     """
 
-    conn = open_connection()
     try
         DBInterface.execute(conn, insert_basic_st)
         ret = json(Dict("result" => true, "message from Jetelina" => jmsg))
