@@ -14,8 +14,7 @@ functions
 	x6/20 close_connection(conn::DBInterface.Connection)  close the DB connection
 	* deprecated readJetelinatable() read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame 
 	x6/29 getTableList(s::String) get all table name from 'jetelina' database
-	x6/22 getJetelinaSequenceNumber(t::Integer, tablename) get seaquence number from jetelina_id table
-	* deprecated insert2JetelinaTableManager(tableName::String, columns::Array) insert columns of 'tableName' into Jetelina_table_manager  
+	x6/22 getJetelinaSequenceNumber(t::Integer, tablename) 	get seaquence number from jetelina_sql_sequence, jetelina_user_id_sequence or <table>_id_sequence
 	x7/1 dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
 	x6/26 dropTable(tableName::Vector) drop the tables and delete its related data from jetelina_table_manager table
 	x6/26 getColumns(tableName::String) get columns name of ordereing table.
@@ -49,7 +48,7 @@ include("MyDataTypeList.jl")
 include("MySQLSentenceManager.jl")
 
 export create_jetelina_database, create_jetelina_table, create_jetelina_id_sequence, open_connection, close_connection, readJetelinatable,
-    getTableList, getJetelinaSequenceNumber, insert2JetelinaTableManager, dataInsertFromCSV, dropTable, getColumns,
+    getTableList, getJetelinaSequenceNumber, dataInsertFromCSV, dropTable, getColumns,
     executeApi, doSelect, measureSqlPerformance, create_jetelina_user_table, userRegist, getUserData, chkUserExistence, getUserInfoKeys,
     refUserAttribute, updateUserInfo, refUserInfo, updateUserData, deleteUserAccount, checkTheRoll, refStichWort
 
@@ -283,156 +282,16 @@ function _getTableList()
     return df
 end
 """
-function setJetelinaSequenceNumber(tablename::String,n::Integer)
+function getJetelinaSequenceNumber()
 
-	set seaquence number in the ordered sequence table
-
-# Arguments
-- `tablename: String`: expect the target sequence table name if 't'=3
-- `n: Integer` : the set number to 'tablename' sequence table
-- return:boolean: true -> success false -> fail
-"""
-function setJetelinaSequenceNumber(tablename::String,n::Integer)
-    conn = open_connection()
-    ret = true
-
-    seqtable = string(tablename,"_id_sequence")
-    sql = """
-        select setval('$seqtable','$n');
-    """
-
-    try
-        DBInterface.execute(conn, "update $seqtable set id=last_insert_id(id+1);")
-#        sequence_number = columntable(execute(conn, sql))
-    catch err
-        ret = false
-        JLog.writetoLogfile("MyDBController.setJetelinaSequenceNumber() error: $err")
-    finally
-        close_connection(conn)
-    end
-
-    return ret
-end
-"""
-function getJetelinaSequenceNumber(t::Integer, tablename)
-
-	get seaquence number from jetelina_id table
+	get seaquence number for id of sql
 
 # Arguments
-- `t: Integer`  : type order  0-> jetelina_table_id, 1-> jetelian_sql_sequence
-- `tablename: any but string`: expect the target sequence table name if 't'=3
-- return: 0< sequence number   -1 fail
-"""
-function getJetelinaSequenceNumber(conn::DBInterface.Connection,t::Integer, tablename)
-    ret = -1
-    try
-        ret = _getJetelinaSequenceNumber(conn, t, tablename)
-    catch err
-        JLog.writetoLogfile("MyDBController.getJetelinaSequenceNumber() error: $err")
-    finally
-    end
-
-    return ret
-end
-
-"""
-function _getJetelinaSequenceNumber(conn::DBInterface.Connection, t::Integer, tablename)
-
-	get seaquence number from jetelina_table_id_sequence or jetelina_sql_sequence or jetelina_user_id_sequence, but this is a private function.
-	this function will never get fail, expectedly.:-P
-
-	jetelina_table_id is deprecated
-
-# Arguments
-- `conn: Object`: connection object
-- `t: Integer`  : type order  0-> jetelina_table_id_sequence, 1-> jetelian_sql_sequence 2->jetelina_user_id_sequence
-- `tablename: any but string`: expect the target sequence table name if 't'=3
 - return:Integer: sequence number 
 """
-function _getJetelinaSequenceNumber(conn::DBInterface.Connection, t::Integer, tablename)
-    sql = ""
-    sqn::Integer = -1
-
-    if t == 0
-        #===
-        				sql = """
-        					select nextval('jetelina_table_id_sequence');
-        				"""
-        		===#
-    elseif t == 1
-        #===
-        DBInterface.execute(conn, "update jetelina_sql_sequence set id=last_insert_id(id+1);")
-        sql = """select last_insert_id() as id;"""
-        ===#
-        sqn = ApiSqlListManager.getApiSequenceNumber()
-    elseif t == 2 || t == 3
-        if tablename == ""
-            DBInterface.execute(conn, "update jetelina_user_id_sequence set id=last_insert_id(id+1);")
-            sql = """select last_insert_id() as id;"""
-        else
-            seqtable = string(tablename,"_id_sequence")
-            DBInterface.execute(conn, "update $seqtable set id=last_insert_id(id+1);")
-            sql = """select last_insert_id() as id;"""
-        end
-
-        sequence_number = columntable(DBInterface.execute(conn, sql))
-        #===
-        		Tips:
-        		this sequence_number is a type of Union{Missing,Int64}{51} for example.
-        		wanted nextval() is {51}, then 
-        			sequence_number[1] -> Union{Int64}[51]
-        			sequence_number[1][1] -> 51
-
-        		sequence_number is Vector{UInt64}(id = UInt64[0x0000000000000003],)
-        	===#
-        sqn = signed(sequence_number[1][1])
-    end
-
-    return sqn
+function getJetelinaSequenceNumber()
+    return ApiSqlListManager.getApiSequenceNumber()
 end
-
-"""
-function insert2JetelinaTableManager(tableName::String, columns::Array )
-
-	insert columns of 'tableName' into Jetelina_table_manager  
-
-    deprecated
-
-# Arguments
-- `tableName: String`: table name of insertion
-- `columns: Array`: vector arrya for insert column data
-- return: boolean: fail if got error. nothing return in the caes of success
-"""
-function insert2JetelinaTableManager(tableName::String, columns::Array)
-    conn = open_connection()
-
-    try
-        jetelina_table_id = getJetelinaSequenceNumber(conn, 0,)
-
-        for i ∈ 1:length(columns)
-            c = columns[i]
-            values_str = "'$jetelina_table_id','$tableName','$c'"
-
-            if j_config.JC["debug"]
-                @info "MyDBController.insert2JetelinaTableManager() insert str:" values_str
-            end
-
-            insert_str = """
-            	insert into Jetelina_table_manager values($values_str);
-            """
-            execute(conn, insert_str)
-        end
-    catch err
-        JLog.writetoLogfile("MyDBController.insert2JetelinaTableManager() error: $err")
-        return false
-    finally
-        close_connection(conn)
-    end
-
-    # update Df_JetelinaTableManager
-    #readJetelinatable()
-end
-
 """
 function dataInsertFromCSV(fname::String)
 
@@ -494,8 +353,14 @@ function dataInsertFromCSV(fname::String)
 
     column_type = eltype.(eachcol(df))
     column_type_string = Array{Union{Nothing,String}}(nothing, length(column_name)) # using for creating table
-#    column_str = string(keyword2, " integer primary key,") # using for creating table
-    column_str = string(keyword2, " integer,") # using for creating table
+    #==
+        Tips:
+            apply 'auto_increment' to 'jt_id' column.
+            this parameter is the special for MySQL.
+            'jt_id' is to be a sequence number because of this setting. 
+    ==#
+    column_str = string(keyword2, " integer not null auto_increment primary key,") # using for creating table
+
     insert_column_str = string() # columns definition string
     insert_data_str = string() # data string
     update_str = string()
@@ -558,62 +423,36 @@ function dataInsertFromCSV(fname::String)
     if j_config.JC["debug"]
         @info "MyDBController.dataInsertFromCSV() col str to create table: " column_str
     end
-
-    #===
-    	check if the same name table already exists.
-    	this is not for create sql, but for insert2JetelinaTableManager().
-    ===#
-    #	df_tl = _getTableList()
-    #	DataFrames.filter!(row -> row.tablename == tableName, df_tl)
-
     #===
     	Tips:
     	    create table and sequence with 'not exists'.
     	    then insert csv data to there. this is because of forgiving adding data to the same table.
     		put isempty(df_tl) in there as same as insert2JetelinaTableManager if it does not forgive it.
     ===#
-    seqT = string(tableName, "_id_sequence")
-    create_table_str = """
-    	create table if not exists $tableName(
-    		$column_str   
-    	);create table if not exists $seqT (id int not null auto_increment primary key) engine=myisam;insert into $seqT values(0);
+    create_table_str = """create table if not exists $tableName($column_str);"""
 
-    """
     conn = open_connection()
     try
         DBInterface.execute(conn, create_table_str)
     catch err
-#        close_connection(conn)
         ret = json(Dict("result" => false, "filename" => "$fname", "errmsg" => "$err"))
         JLog.writetoLogfile("MyDBController.dataInsertFromCSV() with $fname error : $err")
         return ret
     finally
-        # do not close the connection because of resuming below yet.
         close_connection(conn)
     end
- 
-    conn = open_connection()
-    # ここまででまだdfは有効
-        # primary key jt_id is added to columns
     #===
         Tips:
-            the secound param in insertcols!() points to the insert position.
-            e.g
-                insertcols!(df,1,keywors2=>......)
-                table.jt_id is inserted in the head because of '1'
-                row|table.jt_id  table.name table.sex.....
-                 1 |   1           bob        m
-                 2 |   2           henry      m
-                 . |   .            .         .
+            added column 'jt_id' is to be wanna auto increment primary key.
+            but it does not get sutisfied result if the target file were not modifiled.
+            because of getting mismatching in the column number between the file and the table.
+            to make fit them, a dummy data is inserted in to the file here.
+            this is tricky but worth. ＼(^o^)／
     ===#
-    insertStartid::Integer = getJetelinaSequenceNumber(conn,3,tableName)
-    # append data into the exists table, and take care '+1' and '-1'
-    insertEndid::Integer = insertStartid + nrow(df) -1
-
-    @info "insertStart.. End.. " insertStartid insertEndid
-    insertcols!(df,1,keyword2=>insertStartid:insertEndid)
+    dum = "dum"
+    insertcols!(df,1,dum=>" ")
     tmpf = string(fname,".tmp")
-#    CSV.write(tmpf,df, force=true)
+    CSV.write(tmpf,df, force=true,writeheader=false)
     #===
     	Tips:
     		there are no way to 'copy' csv file to table in APIS of MySQL.jl ver.1.1.2, so far.
@@ -624,7 +463,12 @@ function dataInsertFromCSV(fname::String)
     		and do not forget '..fields TERMINATED by', otherwise any data will not be inerted into there.
     ===#
     copyin = string("LOAD DATA LOCAL INFILE '$tmpf' INTO TABLE $tableName FIELDS TERMINATED BY ',';")
-
+    #===
+        Tips:
+            look like Mysql or lib is not able to manage multi transaction at one connection.
+            therefore above and below are separated by each connection.
+    ===#
+    conn = open_connection()
     # change 'local_infile' setting to 'on' .  very important.
     _infile_on(conn)
     try
@@ -640,7 +484,7 @@ function dataInsertFromCSV(fname::String)
         # ok. close the connection finally
         close_connection(conn)
         # never use any more
-#        rm(tmpf)
+        rm(tmpf)
     end
     #===
     		Tips:
@@ -650,18 +494,15 @@ function dataInsertFromCSV(fname::String)
     	===#
     push!(tablename_arr, tableName)
     insert_str = MySQLSentenceManager.createApiInsertSentence(tableName, insert_column_str, insert_data_str)
-    ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, getJetelinaSequenceNumber(conn,1,""), "mysql")
+    ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, getJetelinaSequenceNumber(), "mysql")
 
     # update
     update_str = MySQLSentenceManager.createApiUpdateSentence(tableName, update_str)
-    ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, getJetelinaSequenceNumber(conn,1,""), "mysql")
+    ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, getJetelinaSequenceNumber(), "mysql")
 
     # delete
     delete_str = MySQLSentenceManager.createApiDeleteSentence(tableName)
-    ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, getJetelinaSequenceNumber(conn,1,""), "mysql")
-
-    # update sequence number with the end of row number
-    setJetelinaSequenceNumber(tableName, insertEndid)
+    ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, getJetelinaSequenceNumber(), "mysql")
 
     return ret
 end
@@ -1021,7 +862,7 @@ function userRegist(username::String)
 
     conn = open_connection()
 
-    user_id = getJetelinaSequenceNumber(conn,2,"")
+    user_id = getJetelinaSequenceNumber()
     existentuserdata = getUserData(JSession.get()[1])
     j = existentuserdata["Jetelina"][1]
     parentGeneration = j[:generation]
@@ -1569,9 +1410,7 @@ function _infile_on(conn::DBInterface.Connection)
     try
         sql = "show global variables like 'local_infile'"
         df = DataFrame(DBInterface.execute(conn, sql))
-@info "df is " println(df)
         k = filter(x -> x.Variable_name == "local_infile", df)
-        @info k[:, :Value][1]
         if lowercase(k[:, :Value][1]) == "off"
             sql = "set global local_infile = on"
             DBInterface.execute(conn, sql)
@@ -1610,7 +1449,6 @@ function _infile_off(conn::DBInterface.Connection)
 end
 
 end
-
 
 #===
 	don't care, this is just for check or test in mysql something.
