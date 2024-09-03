@@ -100,8 +100,7 @@ function dataInsertFromCSV(fname::String)
             ===#
             insert_str = RsSQLSentenceManager.createApiInsertSentence()
             if(insert_str != "")
-                apino = ApiSqlListManager.getApiSequenceNumber()
-                ApiSqlListManager.writeTolist(insert_str, "", key_arr, apino, "redis")
+                ApiSqlListManager.writeTolist(insert_str, "", key_arr, "redis")
             end
 
             push!(key_arr,df.key[i])
@@ -109,16 +108,14 @@ function dataInsertFromCSV(fname::String)
             update_str = RsSQLSentenceManager.createApiUpdateSentence(df.key[i])
             if(update_str != "")
                 if(set(df.key[i],df.value[i]))
-                    apino = ApiSqlListManager.getApiSequenceNumber()
-                    ApiSqlListManager.writeTolist(update_str, "", key_arr, apino, "redis")
+                    ApiSqlListManager.writeTolist(update_str, "", key_arr, "redis")
                 end
             end
 
             # select (get)
             select_str = RsSQLSentenceManager.createApiSelectSentence(df.key[i])
             if(select_str != "")
-                apino = ApiSqlListManager.getApiSequenceNumber()
-                ApiSqlListManager.writeTolist(select_str,"", key_arr, apino, "redis")
+                ApiSqlListManager.writeTolist(select_str,"", key_arr, "redis")
             end
         end
 

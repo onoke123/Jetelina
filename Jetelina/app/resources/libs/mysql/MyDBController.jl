@@ -8,11 +8,8 @@ Description:
 
 functions
 	x6/39 create_jetelina_database() create 'jetelina' database because of mysql special.
-	* deprecated create_jetelina_tables() create 'jetelina_table_manager' table.
-	* deprecated x6/20 create_jetelina_id_sequence() create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
 	x6/20 open_connection() open connection to the DB.
 	x6/20 close_connection(conn::DBInterface.Connection)  close the DB connection
-	* deprecated readJetelinatable() read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame 
 	x6/29 getTableList(s::String) get all table name from 'jetelina' database
 	x6/22 getJetelinaSequenceNumber(t::Integer, tablename) 	get seaquence number from jetelina_sql_sequence, jetelina_user_id_sequence or <table>_id_sequence
 	x7/1 dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
@@ -47,7 +44,7 @@ JMessage.showModuleInCompiling(@__MODULE__)
 include("MyDataTypeList.jl")
 include("MySQLSentenceManager.jl")
 
-export create_jetelina_database, create_jetelina_table, create_jetelina_id_sequence, open_connection, close_connection, readJetelinatable,
+export create_jetelina_database, create_jetelina_table, open_connection, close_connection,
     getTableList, getJetelinaSequenceNumber, dataInsertFromCSV, dropTable, getColumns,
     executeApi, doSelect, measureSqlPerformance, create_jetelina_user_table, userRegist, getUserData, chkUserExistence, getUserInfoKeys,
     refUserAttribute, updateUserInfo, refUserInfo, updateUserData, deleteUserAccount, checkTheRoll, refStichWort
@@ -127,32 +124,6 @@ function create_jetelina_table()
         close_connection(conn)
     end
 end
-
-"""
-function create_jetelina_id_sequence()
-
-	create 'jetelina_sql_sequence' and 'jetelina_user_id_sequence' table as sequence.
-
-    deprecated
-
-"""
-function create_jetelina_id_sequence()
-#    jetelina_id_sequence = """
-#   	create table if not exists jetelina_user_id_sequence (id int not null auto_increment primary key) engine=myisam; create table if not exists jetelina_sql_sequence (id int not null auto_increment primary key) engine=myisam;insert into jetelina_user_id_sequence values(0);insert into jetelina_sql_sequence values(0);
-#    """
-    jetelina_id_sequence = """
-    	create table if not exists jetelina_user_id_sequence (id int not null auto_increment primary key) engine=myisam;insert into jetelina_user_id_sequence values(0);
-    """
-    conn = open_connection()
-    try
-        DBInterface.execute(conn, jetelina_id_sequence)
-    catch err
-        JLog.writetoLogfile("MyDBController.create_jetelina_id_sequence() error: $err")
-    finally
-        close_connection(conn)
-    end
-end
-
 """
 function open_connection()
 
@@ -200,40 +171,6 @@ function close_connection(conn::DBInterface.Connection)
 function close_connection(conn::DBInterface.Connection)
     close(conn)
 end
-
-"""
-function readJetelinatable()
-
-	read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame
-
-	Attention: this function is deprecated in ver.1, but will be revived someday, who knows. :P
-
-# Arguments
-- return: boolean:  true->success, false->fail
-"""
-function readJetelinatable()
-    sql = """   
-    	select
-    		*
-    	from jetelina_table_manager
-    """
-    conn = open_connection()
-    try
-        global Df_JetelinaTableManager = DataFrame(columntable(DBInterface.execute(conn, sql)))
-    catch err
-        JLog.writetoLogfile("MyDBController.readJetelinatable() error: $err")
-        return false
-    finally
-        close_connection(conn)
-    end
-
-    if j_config.JC["debug"]
-        @info "MyDBController.readJetelinatable() Df_JetelinaTableManager: " Df_JetelinaTableManager
-    end
-
-    return true
-end
-
 """
 function getTableList(s::String)
 
@@ -269,9 +206,8 @@ function _getTableList()
     table_str = """select table_name from information_schema.tables where table_schema='jetelina';"""
     try
         df = DataFrame(columntable(DBInterface.execute(conn, table_str)))
-        # do not include usertable and any mimic sequence tables in the return
-#        DataFrames.filter!(row -> row.TABLE_NAME != "jetelina_table_manager" && row.TABLE_NAME != "jetelina_user_table" && row.TABLE_NAME != "jetelina_sql_sequence" && row.TABLE_NAME != "jetelina_user_id_sequence", df)
-        DataFrames.filter!(row -> row.TABLE_NAME != "jetelina_user_table" && !contains(row.TABLE_NAME,"_id_sequence"), df)
+        # do not include usertable
+        DataFrames.filter!(row -> row.TABLE_NAME != "jetelina_user_table", df)
     catch err
         JLog.writetoLogfile("MyDBController._getTableList() error: $err")
         return DataFrame() # return empty DataFrame if got fail
@@ -286,11 +222,14 @@ function getJetelinaSequenceNumber()
 
 	get seaquence number for id of sql
 
+    Attention:
+        MySql tables use 'auto_increment' in 'jt_id', therefore do not use any sequence table alike Postgres
+
 # Arguments
 - return:Integer: sequence number 
 """
 function getJetelinaSequenceNumber()
-    return ApiSqlListManager.getApiSequenceNumber()
+#    return ApiSqlListManager.getApiSequenceNumber()
 end
 """
 function dataInsertFromCSV(fname::String)
@@ -439,7 +378,7 @@ function dataInsertFromCSV(fname::String)
         JLog.writetoLogfile("MyDBController.dataInsertFromCSV() with $fname error : $err")
         return ret
     finally
-        close_connection(conn)
+        # do not close the connection yet
     end
     #===
         Tips:
@@ -463,12 +402,7 @@ function dataInsertFromCSV(fname::String)
     		and do not forget '..fields TERMINATED by', otherwise any data will not be inerted into there.
     ===#
     copyin = string("LOAD DATA LOCAL INFILE '$tmpf' INTO TABLE $tableName FIELDS TERMINATED BY ',';")
-    #===
-        Tips:
-            look like Mysql or lib is not able to manage multi transaction at one connection.
-            therefore above and below are separated by each connection.
-    ===#
-    conn = open_connection()
+
     # change 'local_infile' setting to 'on' .  very important.
     _infile_on(conn)
     try
@@ -494,15 +428,15 @@ function dataInsertFromCSV(fname::String)
     	===#
     push!(tablename_arr, tableName)
     insert_str = MySQLSentenceManager.createApiInsertSentence(tableName, insert_column_str, insert_data_str)
-    ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, getJetelinaSequenceNumber(), "mysql")
+    ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, "mysql")
 
     # update
     update_str = MySQLSentenceManager.createApiUpdateSentence(tableName, update_str)
-    ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, getJetelinaSequenceNumber(), "mysql")
+    ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, "mysql")
 
     # delete
     delete_str = MySQLSentenceManager.createApiDeleteSentence(tableName)
-    ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, getJetelinaSequenceNumber(), "mysql")
+    ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, "mysql")
 
     return ret
 end
@@ -816,7 +750,7 @@ function create_jetelina_user_table()
     ===#
     create_jetelina_user_table_str = """
     	create table if not exists jetelina_user_table(
-    		user_id integer not null primary key,
+    		user_id integer not null auto_increment primary key,
     		username varchar(256),
     		nickname varchar(256),
     		logincount integer not null default 0,
@@ -862,7 +796,7 @@ function userRegist(username::String)
 
     conn = open_connection()
 
-    user_id = getJetelinaSequenceNumber()
+#    user_id = getJetelinaSequenceNumber()
     existentuserdata = getUserData(JSession.get()[1])
     j = existentuserdata["Jetelina"][1]
     parentGeneration = j[:generation]
@@ -870,8 +804,11 @@ function userRegist(username::String)
     inviterId = JSession.get()[2]
     registerDate = Dates.format(now(), "yyyy-mm-dd HH:MM:SS")
     insert_basic_st = """
-    	insert into jetelina_user_table (user_id,username,user_info,generation) values($user_id,'$username','{"register_date":"$registerDate","inviter":$inviterId}','$thisuserGeneration');
+    	insert into jetelina_user_table (username,user_info,generation) values('$username','{"register_date":"$registerDate","inviter":$inviterId}','$thisuserGeneration');
     """
+#    insert_basic_st = """
+#    	insert into jetelina_user_table (user_id,username,user_info,generation) values($user_id,'$username','{"register_date":"$registerDate","inviter":$inviterId}','$thisuserGeneration');
+#    """
 
     try
         DBInterface.execute(conn, insert_basic_st)

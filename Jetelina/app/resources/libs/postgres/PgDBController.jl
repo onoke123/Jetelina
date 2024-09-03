@@ -8,15 +8,12 @@ Description:
 
 functions
     create_jetelina_database()	create 'jetelina' database.
-	* deprecated create_jetelina_tables() create 'jetelina_table_manager' table.
 	create_jetelina_id_sequence() create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
 	open_connection() open connection to the DB.
 	close_connection(conn::LibPQ.Connection)  close the DB connection
-	* deprecated readJetelinatable() read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame 
 	getTableList(s::String) get all table name from public 'schemaname'
     setJetelinaSequenceNumber(tablename::String,n::Integer)	set seaquence number in the ordered sequence table
 	getJetelinaSequenceNumber(t::Integer, tablename) get seaquence number from jetelina_id table
-	* deprecated insert2JetelinaTableManager(tableName::String, columns::Array) insert columns of 'tableName' into Jetelina_table_manager  
 	dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
 	dropTable(tableName::Vector) drop the tables and delete its related data from jetelina_table_manager table
 	getColumns(tableName::String) get columns name of ordereing table.
@@ -50,8 +47,8 @@ JMessage.showModuleInCompiling(@__MODULE__)
 include("PgDataTypeList.jl")
 include("PgSQLSentenceManager.jl")
 
-export create_jetelina_database, create_jetelina_table, create_jetelina_id_sequence, open_connection, close_connection, readJetelinatable,
-    getTableList, getJetelinaSequenceNumber, insert2JetelinaTableManager, dataInsertFromCSV, dropTable, getColumns,
+export create_jetelina_database, create_jetelina_table, create_jetelina_id_sequence, open_connection, close_connection,
+    getTableList, getJetelinaSequenceNumber, dataInsertFromCSV, dropTable, getColumns,
     executeApi, doSelect, measureSqlPerformance, create_jetelina_user_table, userRegist, getUserData, chkUserExistence, getUserInfoKeys,
     refUserAttribute, updateUserInfo, refUserInfo, updateUserData, deleteUserAccount, checkTheRoll, refStichWort
 
@@ -179,40 +176,6 @@ function close_connection(conn::LibPQ.Connection)
 function close_connection(conn::LibPQ.Connection)
     close(conn)
 end
-
-"""
-function readJetelinatable()
-
-	read all data from jetelina_table_manager then put it into Df_JetelinaTableManager DataFrame
-
-	Attention: this function is deprecated in ver.1, but will be revived someday, who knows. :P
-
-# Arguments
-- return: boolean:  true->success, false->fail
-"""
-function readJetelinatable()
-    sql = """   
-    	select
-    		*
-    	from jetelina_table_manager
-    """
-    conn = open_connection()
-    try
-        global Df_JetelinaTableManager = DataFrame(columntable(LibPQ.execute(conn, sql)))
-    catch err
-        JLog.writetoLogfile("PgDBController.readJetelinatable() error: $err")
-        return false
-    finally
-        close_connection(conn)
-    end
-
-    if j_config.JC["debug"]
-        @info "PgDBController.readJetelinatable() Df_JetelinaTableManager: " Df_JetelinaTableManager
-    end
-
-    return true
-end
-
 """
 function getTableList(s::String)
 
@@ -342,7 +305,7 @@ function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer, tablenam
         	select nextval('jetelina_sql_sequence');
         """
         ===#
-        sqn = ApiSqlListManager.getApiSequenceNumber()
+#        sqn = ApiSqlListManager.getApiSequenceNumber()
     elseif t == 2 || t == 3
         if tablename == ""
             sql = """
@@ -368,49 +331,6 @@ function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer, tablenam
 
     return sqn
 end
-
-"""
-function insert2JetelinaTableManager(tableName::String, columns::Array )
-
-	insert columns of 'tableName' into Jetelina_table_manager  
-
-    deprecated
-
-# Arguments
-- `tableName: String`: table name of insertion
-- `columns: Array`: vector arrya for insert column data
-- return: boolean: fail if got error. nothing return in the caes of success
-"""
-function insert2JetelinaTableManager(tableName::String, columns::Array)
-    conn = open_connection()
-
-    try
-        jetelina_table_id = getJetelinaSequenceNumber(0,"")
-
-        for i ∈ 1:length(columns)
-            c = columns[i]
-            values_str = "'$jetelina_table_id','$tableName','$c'"
-
-            if j_config.JC["debug"]
-                @info "PgDBController.insert2JetelinaTableManager() insert str:" values_str
-            end
-
-            insert_str = """
-            	insert into Jetelina_table_manager values($values_str);
-            """
-            execute(conn, insert_str)
-        end
-    catch err
-        JLog.writetoLogfile("PgDBController.insert2JetelinaTableManager() error: $err")
-        return false
-    finally
-        close_connection(conn)
-    end
-
-    # update Df_JetelinaTableManager
-    #readJetelinatable()
-end
-
 """
 function dataInsertFromCSV(fname::String)
 
@@ -538,7 +458,6 @@ function dataInsertFromCSV(fname::String)
 
     #===
     	check if the same name table already exists.
-    	this is not for create sql, but for insert2JetelinaTableManager().
     ===#
     df_tl = _getTableList()
     DataFrames.filter!(row -> row.tablename == tableName, df_tl)
@@ -547,7 +466,6 @@ function dataInsertFromCSV(fname::String)
     	Tips:
     	    create table and sequence with 'not exists'.
     	    then insert csv data to there. this is because of forgiving adding data to the same table.
-    	    put isempty(df_tl) in there as same as insert2JetelinaTableManager if it does not forgive it.
     ===#
     seqT = string(tableName, "_id_sequence")
     create_table_str = """
@@ -621,15 +539,15 @@ function dataInsertFromCSV(fname::String)
     	===#
     push!(tablename_arr, tableName)
     insert_str = PgSQLSentenceManager.createApiInsertSentence(tableName, insert_column_str, insert_data_str)
-    ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, getJetelinaSequenceNumber(1,""), "postgresql")
+    ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, "postgresql")
 
     # update
     update_str = PgSQLSentenceManager.createApiUpdateSentence(tableName, update_str)
-    ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, getJetelinaSequenceNumber(1,""), "postgresql")
+    ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, "postgresql")
 
     # delete
     delete_str = PgSQLSentenceManager.createApiDeleteSentence(tableName)
-    ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, getJetelinaSequenceNumber(1,""), "postgresql")
+    ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, "postgresql")
 
     # update sequence number with the end of row number
     setJetelinaSequenceNumber(tableName, insertEndid)
