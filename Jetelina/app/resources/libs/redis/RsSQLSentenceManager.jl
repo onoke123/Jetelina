@@ -40,9 +40,9 @@ function keyDuplicationCheck(str::String)
 			ApiSql...readSql...()[1] contains true/false.
 			ApiSql...readSql...()[2] contains dataframe list if [] is true, in the case of false is nothing.
 	===#			
-	if ApiSqlListManager.readSqlList2DataFrame()[1]
-		Df_JetelinaSqlList = ApiSqlListManager.readSqlList2DataFrame()[2]
-		ex = filter(:sql => s -> s == str, Df_JetelinaSqlList)
+	if 0 < nrow(ApiSqlListManager.Df_JetelinaSqlList)
+		df = ApiSqlListManager.Df_JetelinaSqlList
+		ex = filter(:sql => s -> s == str, df)
 		if(0<nrow(ex))
 			ret = true
 		end

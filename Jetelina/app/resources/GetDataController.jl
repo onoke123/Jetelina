@@ -19,7 +19,7 @@ functions
 """
 module GetDataController
 
-using Genie, Genie.Requests, Genie.Renderer.Json
+using Genie, Genie.Requests, Genie.Renderer.Json, DataFrames
 using Jetelina.JFiles, Jetelina.InitApiSqlListManager.ApiSqlListManager, Jetelina.DBDataController, Jetelina.JMessage, Jetelina.JSession
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
@@ -148,13 +148,12 @@ function getApiList()
 		Tips:
 			ApiSql...readSql...()[1] contains true/false.
 			ApiSql...readSql...()[2] contains dataframe list if [] is true, in the case of false is nothing.
-	===#			
-	if ApiSqlListManager.readSqlList2DataFrame()[1]
-		Df_JetelinaSqlList = ApiSqlListManager.readSqlList2DataFrame()[2]
-		return json(Dict("result" => true, "Jetelina" => copy.(eachrow(Df_JetelinaSqlList))))
+	===#
+	if 0 < nrow(ApiSqlListManager.Df_JetelinaSqlList)
+		return json(Dict("result" => true, "Jetelina" => copy.(eachrow(ApiSqlListManager.Df_JetelinaSqlList))))
 	else
 		# not found SQL list
-		return false
+		return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "Oops! there is no api list data"))
 	end
 end
 """

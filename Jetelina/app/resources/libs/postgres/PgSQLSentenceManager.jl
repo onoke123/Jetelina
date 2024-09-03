@@ -44,12 +44,11 @@ function sqlDuplicationCheck(nsql::String, subq::String)
 			ApiSql...readSql...()[1] contains true/false.
 			ApiSql...readSql...()[2] contains dataframe list if [] is true, in the case of false is nothing.
 	===#			
-	if ApiSqlListManager.readSqlList2DataFrame()[1]
-		Df_JetelinaSqlList = ApiSqlListManager.readSqlList2DataFrame()[2]
-#		Df_JetelinaSqlList = df4postgresql[df4postgresql.db .== "postgresql", :]
-		filter!(:db => p -> p=="postgresql", Df_JetelinaSqlList)
+	if 0 < nrow(ApiSqlListManager.Df_JetelinaSqlList)
+		df = ApiSqlListManager.Df_JetelinaSqlList
+		filter!(:db => p -> p=="postgresql", df)
 		# already exist?
-		for i ∈ 1:nrow(Df_JetelinaSqlList)
+		for i ∈ 1:nrow(df)
 			#===
 				Tips:
 					the result in process4 will be
@@ -58,13 +57,15 @@ function sqlDuplicationCheck(nsql::String, subq::String)
 					because coutmap() do group together.
 			===#
 			# duplication check for SQL
-			strs = [nsql, Df_JetelinaSqlList[!, :sql][i]]
+			strs = [nsql, df[!, :sql][i]]
 			process1 = split.(strs, r"\W", keepempty = false)
 			process2 = map(x -> lowercase.(x), process1)
 			process3 = sort.(process2)
 			process4 = countmap(process3)
+			
 			# duplication check for Sub query
-			sq = Df_JetelinaSqlList[!, :subquery][i]
+			s_process4::Any = ""
+			sq = df[!, :subquery][i]
 			if !ismissing(sq)
 				s_strs = [subq, sq]
 				s_process1 = split.(s_strs, r"\W", keepempty = false)

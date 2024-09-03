@@ -23,7 +23,7 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export readSqlList2DataFrame, writeTolist, deleteTableFromlist, apisequencenumber
+export Df_JetelinaSqlList, readSqlList2DataFrame, writeTolist, deleteTableFromlist
 
 """
 function __init__()
@@ -49,8 +49,17 @@ function _setApiSequenceNumber
 	how to update apisequencenumber ..ApiSqlListManager.apisequencenumber.apino[1] += 1
 """
 function _setApiSequenceNumber()
+	global Df_JetelinaSqlList = DataFrame()
+
 	if readSqlList2DataFrame()[1]
 		df = readSqlList2DataFrame()[2]
+		#===
+			Tips:
+				Df_JetelinaSqlList is a global data.
+				this data has a possibility be accessed by other program, 
+				therefore it is listed in the export list 
+		===#
+		Df_JetelinaSqlList = df
 		existapino::Array = chop.(df.apino, head=2,tail=0)
 		nextapino = maximum(parse.(Int,existapino)) + 1
 		global apisequencenumber = DataFrame(apino=nextapino)
@@ -90,6 +99,12 @@ function readSqlList2DataFrame()
 		if j_config.JC["debug"]
 			@info "ApiSqlListManager.readSqlList2DataFrame() sql list in DataFrame: ", df
 		end
+
+		#===
+			Tips:
+				to refresh Df_Jete....., 'global' keyword is mandatory. 😯
+		===#
+		global Df_JetelinaSqlList = df
 
 		return true, df
 	end

@@ -278,9 +278,8 @@ function executeApi(json_d::Dict)
 			use subset() here, because Df_JetelinaSqlList may have missing data.
 			subset() supports 'skipmissing', but filter() does not.
 	===#
-	if ApiSqlListManager.readSqlList2DataFrame()[1]
-		Df_JetelinaSqlList = ApiSqlListManager.readSqlList2DataFrame()[2]
-		target_api = subset(Df_JetelinaSqlList, :apino => ByRow(==(json_d["apino"])), skipmissing = true)
+	if 0 < nrow(ApiSqlListManager.Df_JetelinaSqlList)
+		target_api = subset(ApiSqlListManager.Df_JetelinaSqlList, :apino => ByRow(==(json_d["apino"])), skipmissing = true)
 		if 0 < nrow(target_api)
 			dbtype = target_api[!,:db][1]
 			# Step2:
