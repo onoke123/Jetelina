@@ -739,13 +739,14 @@ function doSelect(sql::String,mode::String)
 		'mesure' mode -> exectution time of tuple(max,min,mean) 
 """
 function doSelect(sql::String, mode::String)
+    @info "PgD... doSelect: " mode sql
     conn = open_connection()
     ret = ""
     try
         if mode == "measure"
             #===
-            				aquire data types are max,best and mean
-            			===#
+            	aquire data types are max,best and mean
+            ===#
             exetime = []
             looptime = 10
             for loop in 1:looptime
@@ -758,20 +759,20 @@ function doSelect(sql::String, mode::String)
         end
 
         #===
-        			Caution:
-        				DataFrame() spits out error so that it could not resolve the column name if there were same ones.
-        					ex. select ftest.name, ftest3.name ..... -> "name" is duplicated in LibPG.execute() therefore DataFrame() confuses
+        	Caution:
+        		DataFrame() spits out error so that it could not resolve the column name if there were same ones.
+        			ex. select ftest.name, ftest3.name ..... -> "name" is duplicated in LibPG.execute() therefore DataFrame() confuses
 
-        				to resolve it, '*' are there. ref: https://github.com/iamed2/LibPQ.jl/issues/107
-        				but it ':auto' in DataFrame() creates quite new column name.
-        				Jetelina wanna return the table column anyhow, cannot take this process.
-        				then changed CSV file storing to table to use the "table name" with the column name. see dataInsertFromCSV()
-        					ex. old: ftest.csv  has columns 'name','sex'   -> table name: ftest, column name: name, sex
-        						new:                〃                     -> table name:   〃 , column name: ftest_name, ftest_sex
+        		to resolve it, '*' are there. ref: https://github.com/iamed2/LibPQ.jl/issues/107
+        		but it ':auto' in DataFrame() creates quite new column name.
+        		Jetelina wanna return the table column anyhow, cannot take this process.
+        		then changed CSV file storing to table to use the "table name" with the column name. see dataInsertFromCSV()
+        			ex. old: ftest.csv  has columns 'name','sex'   -> table name: ftest, column name: name, sex
+        				new:                〃                     -> table name:   〃 , column name: ftest_name, ftest_sex
 
-        				but it still has possibility in the case of direct import data to table by user hand. 
-        				threfore this is to be written in Jetelina manual as a regulation.4
-        		===#
+        		but it still has possibility in the case of direct import data to table by user hand. 
+        		threfore this is to be written in Jetelina manual as a regulation.4
+    	===#
         #*		result = LibPQ.execute(conn, sql)
         #*		vector_data = [convert(Vector,col) for col in Tables.columns(result)]
         #*		df = DataFrame(vector_data,:auto)

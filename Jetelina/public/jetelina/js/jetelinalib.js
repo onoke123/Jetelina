@@ -1295,6 +1295,7 @@ const logout = () => {
     $(FUNCTIONPANEL).hide();
     $(CONDITIONPANEL).hide();
     $(GENELICPANEL).hide();
+    $(GENELICPANELINPUT).val('');
     $(CHARTPANEL).hide();
     $("#api_access").hide();
     $("#performance_real").hide();

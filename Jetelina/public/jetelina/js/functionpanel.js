@@ -298,6 +298,10 @@ const cleanupContainers = () => {
   if (isVisibleApiContainer()) {
     showApiTestPanel(false);
   }
+
+  if (isVisibleGenelicPanel()) {
+    showGenelicPanel(false);
+  }
 }
 /**
  * @function fileupload
@@ -519,7 +523,7 @@ const listClick = (p) => {
           $(`${COLUMNSPANEL} span`).filter(".apisql").remove();
           related_api = s.apino;
           // api in/out json
-          $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiin"><bold>IN:</bold>${setApiIF_In(t, s)}</span>`);
+          $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiin"><bold>IN:</bold><d name="apiin">${setApiIF_In(t, s)}</d></span>`);
           $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiout"><bold>OUT:</bold>${setApiIF_Out(t, s)}</span>`);
           // sample execution sql
           $(CONTAINERPANEL).append(`<span class="apisql"><p>${setApiIF_Sql(s)}</p></span>`);
@@ -570,6 +574,13 @@ const listClick = (p) => {
 const setApiIF_In = (t, s) => {
   let ta = t.toLowerCase();
   let ret = "";
+
+  /*
+    Tips:
+      for api test, each json parameter's name are contained in this array.
+      pushing is executed in buildJetelinaJsonForm() mostly, except somes e.g. case in redis
+  */
+  preferent.apitestparams = [];
 
   if (ta.startsWith("js")) {
     //select. 'ignore' -> no sub query
@@ -625,6 +636,7 @@ const setApiIF_In = (t, s) => {
           because the subquery in update/delete is executed with jt_id in 'where' sentence.
           this is the protocol so far.
       */
+      preferent.apitestparams.push("jt_id");
       ret = ret.slice(0, ret.length - 1) + `,\"subquery\":\"{jt_id}\"` + ret.slice(ret.length - 1, ret.length);
     }else{
       let u_sql = s.sql.split(":");
@@ -737,6 +749,8 @@ const buildJetelinaJsonForm = (t, s) => {
         ss = c[i];
       }
     }
+
+    preferent.apitestparams.push(ss);
 
     if (ss.indexOf("jetelina_delete_flg") < 0) {
       ret = `${ret}\"${$.trim(ss)}\":\"{${$.trim(ss)}}\",`;
@@ -1120,11 +1134,14 @@ const functionPanelFunctions = (ut) => {
     }
 
     // show/hide command, maybe
-    if (cmd == "" && inScenarioChk(ut, 'func-api-test-panel-show-cmd')) {
-      showApiTestPanel(true);
-    } else if (cmd == "" && inScenarioChk(ut, 'func-api-test-panel-hide-cmd')) {
+    if ( inScenarioChk(ut, 'func-api-test-panel-show-cmd')) {
+//      if (cmd == "" && inScenarioChk(ut, 'func-api-test-panel-show-cmd')) {
+        showApiTestPanel(true);
+    } else if ( inScenarioChk(ut, 'func-api-test-panel-hide-cmd')) {
+//    } else if (cmd == "" && inScenarioChk(ut, 'func-api-test-panel-hide-cmd')) {
       showApiTestPanel(false);
-    } else if (cmd == "" && inScenarioChk(ut, 'func-subpanel-close-cmd')) {
+    } else if ( inScenarioChk(ut, 'func-subpanel-close-cmd')) {
+//    } else if (cmd == "" && inScenarioChk(ut, 'func-subpanel-close-cmd')) {
       showGenelicPanel(false);
     }
   }
@@ -1558,9 +1575,10 @@ const functionPanelFunctions = (ut) => {
         loginuser.dbtype = preferent.db;
         setLeftPanelTitle();
         tidyupcmdCandidates(cmd);
-        cleanupItems4Switching();
         deleteSelectedItems();
+        cleanupItems4Switching();
         cleanupContainers();
+        cancelableCmdList = [];
   
         let data = `{"param":"${preferent.db}"}`;
         postAjaxData(scenario['function-post-url'][9], data);

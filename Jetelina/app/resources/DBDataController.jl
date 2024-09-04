@@ -499,16 +499,17 @@ function createApiSelectSentence(json_d::Dict,mode::String)
 function createApiSelectSentence(json_d::Dict, mode::String)
     ret = ""
 
-    if mode == "ok"
+#    if mode == "ok"
         if j_config.JC["dbtype"] == "postgresql"
             # Case in PostgreSQL
-            ret = PgSQLSentenceManager.createApiSelectSentence(json_d)
+            ret = PgSQLSentenceManager.createApiSelectSentence(json_d,mode)
         elseif j_config.JC["dbtype"] == "mysql"
             # Case in MySQL
-            ret = MySQLSentenceManager.createApiSelectSentence(json_d)
+            ret = MySQLSentenceManager.createApiSelectSentence(json_d,mode)
         elseif j_config.JC["dbtype"] == "oracle"
         end
-    elseif mode == "pre"
+#    elseif mode == "pre"
+    if mode == "pre"
         #===
         	Tips:
         		in the case of mode="pre", PgSQLSente...createApiSelect...() returns SQL sentence for pre executing.

@@ -12,7 +12,7 @@ functions
 	createApiInsertSentence(tn::String,cs::String,ds::String) create sql input sentence by queries.
 	createApiUpdateSentence(tn::String,us::Any) create sql update sentence by queries.
 	createApiDeleteSentence(tn::String) create sql delete sentence by query.
-	createApiSelectSentence(json_d::Dict) create select sentence of SQL from posting data,
+	createApiSelectSentence(json_d::Dict,mode::String) create select sentence of SQL from posting data,
 	createExecutionSqlSentence(json_dict::Dict, df::DataFrame) create real execution SQL sentence.
 """
 module MySQLSentenceManager
@@ -145,17 +145,18 @@ function createApiDeleteSentence(tn::String)
     return """update $tn set jetelina_delete_flg=1""", """where $jtid={jt_id}"""
 end
 """
-function createApiSelectSentence(json_d::Dict)
+function createApiSelectSentence(json_d::Dict,mode::String)
 
 	create API and SQL select sentence from posting data,then append it to JC["tableapifile"].
 
 # Arguments
 - `json_d::Dict`: json data
+- `mode::String`: 'ok'->real  'pre'->test
 - return: this sql is already existing -> json {"resembled":true}
 		  new sql then success to append it to  -> json {"apino":"<something no>"}
 					   fail to append it to     -> false
 """
-function createApiSelectSentence(json_d)
+function createApiSelectSentence(json_d, mode::String)
     item_d = json_d["item"]
     subq_d = json_d["subquery"]
 
@@ -215,23 +216,33 @@ function createApiSelectSentence(json_d)
 
     selectSql = """select $selectSql from $tableName"""
 
-    ck = sqlDuplicationCheck(selectSql, subq_d)
-    if ck[1]
-        # already exist it. return it and do nothing.
-        return json(Dict("result" => false, "resembled" => ck[2]))
-    else
-        # yes this is the new
-        ret = ApiSqlListManager.writeTolist(selectSql, subq_d, tablename_arr, "mysql")
-        #===
-        				Tips:
-        					writeTolist() returns tuple({true/false,apino/null}).
-        					return apino in json style if the first in tuple were true.
-        			===#
-        if ret[1]
-            return json(Dict("result" => true, "apino" => ret[2]))
+    if mode != "pre"
+        ck = sqlDuplicationCheck(selectSql, subq_d)
+        if ck[1]
+            # already exist it. return it and do nothing.
+            return json(Dict("result" => false, "resembled" => ck[2]))
         else
-            return ret[1]
+            # yes this is the new
+            ret = ApiSqlListManager.writeTolist(selectSql, subq_d, tablename_arr, "mysql")
+            #===
+                            Tips:
+                                writeTolist() returns tuple({true/false,apino/null}).
+                                return apino in json style if the first in tuple were true.
+                        ===#
+            if ret[1]
+                return json(Dict("result" => true, "apino" => ret[2]))
+            else
+                return ret[1]
+            end
         end
+    else
+        # pre execution sql sentence
+        keyword::String = "ignore" # protocol
+        if contains(subq_d,keyword)
+            subq_d = ""
+        end
+
+        return string(selectSql," ",subq_d);
     end
 end
 """
