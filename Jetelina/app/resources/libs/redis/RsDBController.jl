@@ -213,6 +213,16 @@ function _executeApi(apino::String, dfRedis::DataFrame)
             p = split(redisSql[:,:sql][1], ':') # redisSql[:,:sql][1] -> set:<key>:<value>
             r = set(p[2],p[3])
             if(r)
+                #===
+                    Attention:
+                        'ji***' is for registring a new key/value data.
+                        therefore need to create a new api at here.
+                ===#
+                update_str = RsSQLSentenceManager.createApiUpdateSentence(p[2])
+                if(update_str != "")
+                    ApiSqlListManager.writeTolist(update_str, "", key_arr, "redis")
+                end
+
                 ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
             else
                 ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => value))
