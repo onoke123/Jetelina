@@ -13,6 +13,7 @@
             <span class="api relatedItem" style="color:red">ji673</span>
             <span class="api">jd674</span>
         </div>
+        <div  contenteditable="true">ここは</div>
         <button id="sort">click</button>
     </body>
 </html>
@@ -42,9 +43,12 @@
     $("#sort").on("click",function(){
         console.log("sort button clicked");
 
-        $("#api_container span").eq(1).animate({
-            top: "100px",
-            left:"531px"
+        let arr = $("#api_container span").sort(function(a,b){
+            return ($(a).text() > $(b).text() ?1:-1);
         });
-    })
+
+        arr.each(function(){
+            console.log(($(this).text()));
+        });
+    });
 </script>

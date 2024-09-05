@@ -56,6 +56,9 @@
 # something inprogress 
 @jdic inprogress-msg:"I AM DOING","HAPPY WORKIN'","HUSTLE HUSTLE","I AM DOING THIS JUST FOR YOU","WAIT A MOMENT.."
 
+# refreshing display message
+@jdi refreshing-msg:"REFRESHING...","REFRECTING..."
+
 # refuse any command due to progress something 
 @jdic refuse-command-msg:"I am busy now","I cannot do multi task at once","You kill me?","Later..."
 
@@ -138,7 +141,7 @@
 @jdic func-apidelete-ng-msg:"Hey open the api list first!","Huum?","Check it first","Watch it"
 @jdic func-apidelete-forbidden-msg:"some api cannot be deleted, sorry"
 
-@jdic func-fileupload-open-cmd:"file open","open file","open filebox","file box","csv file"
+@jdic func-fileupload-open-cmd:"file open","open file","open filebox","file box","csv file","upload file","file upload"
 @jdic func-fileupload-open-msg:"Which file?"
 @jdic func-fileupload-cmd:"upload","fileup","fileupload","up","csv up"
 @jdic func-fileupload-msg:"File?"

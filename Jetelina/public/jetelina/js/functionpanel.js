@@ -340,7 +340,7 @@ const fileupload = () => {
 
       //refresh table list 
         cleanupRelatedList(true);
-        typingControll("refreshing....");
+        typingControll(chooseMsg('refreshing-msg','',''));
 
         chatKeyDown(scenario["func-show-table-list-cmd"][0]);
     } else {
@@ -523,8 +523,8 @@ const listClick = (p) => {
           $(`${COLUMNSPANEL} span`).filter(".apisql").remove();
           related_api = s.apino;
           // api in/out json
-          $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiin"><bold>IN:</bold><d name="apiin">${setApiIF_In(t, s)}</d></span>`);
-          $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiout"><bold>OUT:</bold>${setApiIF_Out(t, s)}</span>`);
+          $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiin"><bold>IN:</bold><div name="apiin" >${setApiIF_In(t, s)}</div></span>`);
+          $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiout"><bold>OUT:</bold><div>${setApiIF_Out(t, s)}</div></span>`);
           // sample execution sql
           $(CONTAINERPANEL).append(`<span class="apisql"><p>${setApiIF_Sql(s)}</p></span>`);
         }
@@ -893,7 +893,7 @@ const dropThisTable = (tables) => {
       return ret;
     }
   }).done(function (result, textStatus, jqXHR) {
-    let m = chooseMsg('success-msg', "", "");
+    let m = "";
     if (result.result) {
       for (let i = 0; i < tables.length; i++) {
         $(`${TABLECONTAINER} span`).filter(function () {
@@ -914,6 +914,7 @@ const dropThisTable = (tables) => {
       preferent.cmd = "";
       // new api list 
       refreshApiList();
+      m = chooseMsg('refreshing-msg','','');
     } else {
       m = result["message from Jetelina"];
       // try again
@@ -1060,7 +1061,7 @@ const functionPanelFunctions = (ut) => {
       cmdCandidates.push("clean up");
     }
 
-    if (cmd == "" && inScenarioChk(ut, 'func-fileupload-cmd')) {
+    if (cmd == "" && $(UPFILE).val() != "" && inScenarioChk(ut, 'func-fileupload-cmd')) {
       cmd = 'fileupload';
       cmdCandidates.push("file upload");
     }
@@ -1121,8 +1122,13 @@ const functionPanelFunctions = (ut) => {
       cmdCandidates.push("post");
     }
 
-    if (cmd == "" && inScenarioChk(ut, 'func-api-test-cmd')) {
+    if (cmd == "" && !isSelectedItem() && inScenarioChk(ut, 'func-api-test-cmd')) {
       cmd = "apitest";
+      cmdCandidates.push("api test");
+    }
+
+    if (cmd == "" && isSelectedItem() && inScenarioChk(ut, 'func-api-test-cmd')) {
+      cmd = "preapitest";
       cmdCandidates.push("api test");
     }
 
@@ -1196,8 +1202,9 @@ const functionPanelFunctions = (ut) => {
         7.cancel: cancel all selected columns
         8.creanup: cleanup column/selecteditem field
         9.subquery: open subquery panel
-        10.apitest: api test before registring
-        11.switchdb: switchng using database
+        10.preapitest: api test before registring
+        11.apitest: exist api test mode
+        12.switchdb: switchng using database
         default: non
   */
   switch (cmd) {
@@ -1556,7 +1563,7 @@ const functionPanelFunctions = (ut) => {
       showGenelicPanel(true);
       m = chooseMsg('func-subpanel-opened-msg', '', '');
       break;
-    case 'apitest':
+    case 'preapitest':
       if (0 < selectedItemsArr.length) {
         // API test mode before registering
         // before hitting this command, should desplay 'func-api-test-msg' in anywhere.
@@ -1566,6 +1573,16 @@ const functionPanelFunctions = (ut) => {
         } else {
           m = chooseMsg('func-api-test-subquery-chk-error-msg','','');
         }
+      }
+      break;
+    case 'apitest':
+      let instr = $(`${COLUMNSPANEL} [name='apiin']`).text();
+      let splitstr = instr.split(',');
+      if(0<splitstr.length){
+        let apinofield = splitstr[0];
+        let paramsfield = instr.slice(apinofield.length);
+        let replacedparamsfiled = paramsfield.replace(/{(.+?)}/g,"<input type='text'>");
+        $(`${COLUMNSPANEL} [name='apiin']`).text(apinofield+replacedparamsfiled);
       }
       break;
     case 'switchdb':
@@ -1704,7 +1721,7 @@ const checkGenelicInput = (s) => {
         pp = pp.substring(0, p) + pp.substring(p + arr[i].length, pp.length);
       }
     }
-    console.log("pp is ", pp);
+
     if(0<pp.length){
       // ここが問題。最後のチェックで関係ないtableがまだsubqueryにないかどうかを見たいが"."だけだと小数点数字もアリなので困る
       if (pp.indexOf('.') != -1) {
@@ -1714,7 +1731,7 @@ const checkGenelicInput = (s) => {
     }else{
       ret = false;
     }
-    console.log("sq is ", sq);
+
     if(ret){
       $(GENELICPANELINPUT).val(sq);
     }
@@ -1894,6 +1911,17 @@ const setLeftPanelTitle = () => {
 
   $(LeftPanelTitle).text(title);
 }
+
+const isSelectedItem = () => {
+  let ret = false;
+  let selecteditems = $(`${CONTAINERPANEL} span`).filter(".selectedItem").text();
+  if(0<selecteditems.length){
+    ret = true;
+  }
+
+  return ret;
+}
+
 // return to the chat box if 'return key' is typed in genelic_panel
 $(document).on("keydown", GENELICPANELINPUT, function (e) {
   if (e.keyCode == 13) {
