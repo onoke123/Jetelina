@@ -750,7 +750,9 @@ const buildJetelinaJsonForm = (t, s) => {
       }
     }
 
-    preferent.apitestparams.push(ss);
+    if( ss != "jetelina_delete_flg"){
+      preferent.apitestparams.push(ss);
+    }
 
     if (ss.indexOf("jetelina_delete_flg") < 0) {
       ret = `${ret}\"${$.trim(ss)}\":\"{${$.trim(ss)}}\",`;
@@ -1040,8 +1042,16 @@ const functionPanelFunctions = (ut) => {
   let cmd = "";
   let usedb = "";// database name for switching
 
+  if(inCancelableCmdList(["apitest"])){
+    let p = `{${preferent.apitestparams[preferent.apiparams_count]}}`;
+    let inp = $(`${COLUMNSPANEL} [name='apiin']`).text();
+    let reps = inp.replace(p, ut);
+    $(`${COLUMNSPANEL} [name='apiin']`).text(reps);
+    cmd = "apitest";
+  }
+
   if (1 < cmdCandidates.length) {
-    cmd = whichCommandsInOrders(ut);
+      cmd = whichCommandsInOrders(ut);
   } else {
     /*
       Tips:
@@ -1119,17 +1129,18 @@ const functionPanelFunctions = (ut) => {
     if (cmd == "" && inScenarioChk(ut, 'common-post-cmd') ||
       (cmd == "" && inScenarioChk(ut, 'func-apicreate-cmd'))) {
       cmd = 'post';
-      cmdCandidates.push("post");
+      //cmdCandidates.push("post");
+        cancelableCmdList.push("post");
     }
 
     if (cmd == "" && !isSelectedItem() && inScenarioChk(ut, 'func-api-test-cmd')) {
       cmd = "apitest";
-      cmdCandidates.push("api test");
+      cancelableCmdList.push("apitest");
     }
 
     if (cmd == "" && isSelectedItem() && inScenarioChk(ut, 'func-api-test-cmd')) {
       cmd = "preapitest";
-      cmdCandidates.push("api test");
+      cancelableCmdList.push("preapitest");
     }
 
     if (cmd.length == 0) {
@@ -1473,7 +1484,7 @@ const functionPanelFunctions = (ut) => {
       /*
         Tips:
           'cancel' may happen here and there, this cancel routine is for 'cancel selected item', 'cancel file upload' ....
-          also it may happen in file up loading
+          also it may happen in file up loading, oh my.. in apitest as well.
   
           Attention:
             in the case of cancel 'drop table' and 'delete api' are be canceld every selected tables and apis.
@@ -1545,6 +1556,11 @@ const functionPanelFunctions = (ut) => {
           rejectCancelableCmdList(SELECTITEM);
         }
 
+      }else if (inCancelableCmdList(["apitest","preapitest"])){
+        rejectCancelableCmdList("apitest");
+        rejectCancelableCmdList("preapitest");
+        preferent = {};
+        m = chooseMsg('cancel-msg', '', '');
       }
 
       break;
@@ -1576,14 +1592,21 @@ const functionPanelFunctions = (ut) => {
       }
       break;
     case 'apitest':
-      let instr = $(`${COLUMNSPANEL} [name='apiin']`).text();
-      let splitstr = instr.split(',');
-      if(0<splitstr.length){
-        let apinofield = splitstr[0];
-        let paramsfield = instr.slice(apinofield.length);
-        let replacedparamsfiled = paramsfield.replace(/{(.+?)}/g,"<input type='text'>");
-        $(`${COLUMNSPANEL} [name='apiin']`).text(apinofield+replacedparamsfiled);
+      /*
+        Tips:
+          API 'IN' parameters are already collected in buildJetelinaJsonForm() as preferent.apitestparams.
+          ust this for setting each ones in chatting.
+      */
+      if( preferent.apitestparams != null && 0 < preferent.apitestparams.length ){
+        if( preferent.apiparams_count == null ){
+          preferent.apiparams_count = 0;
+        }else{
+          preferent.apiparams_count += 1;
+        }
+
+        m = `set '${preferent.apitestparams[preferent.apiparams_count]}'`;
       }
+
       break;
     case 'switchdb':
       if(inScenarioChk(ut,'confirmation-sentences-cmd') && preferent.db != null && preferent.db != ""){
@@ -1828,7 +1851,8 @@ const whichCommandsInOrders = (s) => {
         case "open sub query panel": c = subquery; break;
         case "drop table": case "delete api": c = TABLEAPIDELETE; break;
         case "post": c = "post"; break;
-        case "api test": c = "apitest"; break;
+        case "preapitest": c = "preapitest"; break;
+        case "apitest": c = "apitest"; break;
         case "switchdb": c = "switchdb"; break;
         default:
           break;
