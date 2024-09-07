@@ -1207,7 +1207,7 @@ const chatKeyDown = (cmd) => {
                 if (loginuser.dbtype != null) {
                     m = loginuser.dbtype;
                 } else {
-                    m = chooseMsg('db-not-determind-yet-msg','','');
+                    m = chooseMsg('db-not-determind-yet-msg', '', '');
                 }
             }
 
@@ -1805,3 +1805,40 @@ $(document).on("keydown", SOMETHINGINPUT, function (e) {
 $("#databaselist").on("click", ".databasename", function () {
     chatKeyDown($(this).attr("name"));
 });
+/**
+ * @function apiTestAjax
+ * @param {string} url execute url
+ * @param {object} data json style object 
+ * 
+ * general purpose ajax post call function. Execute the ordered url with the object.
+ */
+const apiTestAjax = () => {
+    let url = scenario["function-apitest-usr"][0];
+    let data = $(`${COLUMNSPANEL} [name='apiin']`).text();
+
+    $.ajax({
+        url: url,
+        type: "post",
+        contentType: 'application/json',
+        data: data,
+        dataType: "json",
+        xhr: function () {
+            ret = $.ajaxSettings.xhr();
+            inprogress = true;// in progress. for priventing accept a new command.
+            typingControll(chooseMsg('inprogress-msg', "", ""));
+            return ret;
+        }
+    }).done(function (result, textStatus, jqXHR) {
+        let ret = JSON.stringify(result);
+        console.log("result: ", JSON.stringify(result));
+        $(`${COLUMNSPANEL} [name='apiout']`).text(ret);
+        typingControll("api test done");
+    }).fail(function (result) {
+        checkResult(result);
+        console.error("apiTestAjax() fail");
+        typingControll(chooseMsg("fail-msg", "", ""));
+    }).always(function () {
+        // release it for allowing to input new command in the chatbox 
+        inprogress = false;
+    });
+}

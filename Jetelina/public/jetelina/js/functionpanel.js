@@ -524,7 +524,7 @@ const listClick = (p) => {
           related_api = s.apino;
           // api in/out json
           $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiin"><bold>IN:</bold><div name="apiin" >${setApiIF_In(t, s)}</div></span>`);
-          $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiout"><bold>OUT:</bold><div>${setApiIF_Out(t, s)}</div></span>`);
+          $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiout"><bold>OUT:</bold><div name="apiout">${setApiIF_Out(t, s)}</div></span>`);
           // sample execution sql
           $(CONTAINERPANEL).append(`<span class="apisql"><p>${setApiIF_Sql(s)}</p></span>`);
         }
@@ -1558,8 +1558,8 @@ const functionPanelFunctions = (ut) => {
       }else if (inCancelableCmdList(["apitest","preapitest"])){
         rejectCancelableCmdList("apitest");
         rejectCancelableCmdList("preapitest");
-        $(`${COLUMNSPANEL} [name='apiin']`).text("");
-        $(`${COLUMNSPANEL} [name='apiin']`).text(preferent.original_api_str);
+        $(`${COLUMNSPANEL} [name='apiin']`).text(preferent.original_apiin_str);
+        $(`${COLUMNSPANEL} [name='apiout']`).text(preferent.original_apiout_str);
         m = chooseMsg('cancel-msg', '', '');
         preferent.apiparams_count = null;
       }
@@ -1601,13 +1601,16 @@ const functionPanelFunctions = (ut) => {
       if( preferent.apitestparams != null && 0 < preferent.apitestparams.length ){
         if( preferent.apiparams_count == null ){
           preferent.apiparams_count = 0;
-          preferent.original_api_str = $(`${COLUMNSPANEL} [name='apiin']`).text();
+          preferent.original_apiin_str = $(`${COLUMNSPANEL} [name='apiin']`).text();
+          preferent.original_apiout_str = $(`${COLUMNSPANEL} [name='apiout']`).text();
         }else{
           preferent.apiparams_count += 1;
         }
 
         if( preferent.apiparams_count < preferent.apitestparams.length){
           m = `set '${preferent.apitestparams[preferent.apiparams_count]}'`;
+        }else if(inScenarioChk(ut,'common-post-cmd')){
+          apiTestAjax();
         }else{
           m = "all params set. type 'post'.";
         }
