@@ -750,12 +750,11 @@ const buildJetelinaJsonForm = (t, s) => {
       }
     }
 
-    if( ss != "jetelina_delete_flg"){
-      preferent.apitestparams.push(ss);
-    }
-
     if (ss.indexOf("jetelina_delete_flg") < 0) {
-      ret = `${ret}\"${$.trim(ss)}\":\"{${$.trim(ss)}}\",`;
+      ss = $.trim(ss);
+      preferent.apitestparams.push(ss);
+      ret = `${ret}\"${ss}\":\"{${ss}}\",`;
+//      ret = `${ret}\"${$.trim(ss)}\":\"{${$.trim(ss)}}\",`;
     }
   }
 
@@ -1045,7 +1044,7 @@ const functionPanelFunctions = (ut) => {
   if(inCancelableCmdList(["apitest"])){
     let p = `{${preferent.apitestparams[preferent.apiparams_count]}}`;
     let inp = $(`${COLUMNSPANEL} [name='apiin']`).text();
-    let reps = inp.replace(p, ut);
+    let reps = inp.replace(p, original_chatbox_input_text);
     $(`${COLUMNSPANEL} [name='apiin']`).text(reps);
     cmd = "apitest";
   }
@@ -1211,7 +1210,7 @@ const functionPanelFunctions = (ut) => {
         5.TABLEAPIDELETE: drop table in the table list and/or delete api in the api list
         6.post: post selected columns 
         7.cancel: cancel all selected columns
-        8.creanup: cleanup column/selecteditem field
+        8.cleanup: cleanup column/selecteditem field
         9.subquery: open subquery panel
         10.preapitest: api test before registring
         11.apitest: exist api test mode
@@ -1559,8 +1558,10 @@ const functionPanelFunctions = (ut) => {
       }else if (inCancelableCmdList(["apitest","preapitest"])){
         rejectCancelableCmdList("apitest");
         rejectCancelableCmdList("preapitest");
-        preferent = {};
+        $(`${COLUMNSPANEL} [name='apiin']`).text("");
+        $(`${COLUMNSPANEL} [name='apiin']`).text(preferent.original_api_str);
         m = chooseMsg('cancel-msg', '', '');
+        preferent.apiparams_count = null;
       }
 
       break;
@@ -1600,11 +1601,16 @@ const functionPanelFunctions = (ut) => {
       if( preferent.apitestparams != null && 0 < preferent.apitestparams.length ){
         if( preferent.apiparams_count == null ){
           preferent.apiparams_count = 0;
+          preferent.original_api_str = $(`${COLUMNSPANEL} [name='apiin']`).text();
         }else{
           preferent.apiparams_count += 1;
         }
 
-        m = `set '${preferent.apitestparams[preferent.apiparams_count]}'`;
+        if( preferent.apiparams_count < preferent.apitestparams.length){
+          m = `set '${preferent.apitestparams[preferent.apiparams_count]}'`;
+        }else{
+          m = "all params set. type 'post'.";
+        }
       }
 
       break;

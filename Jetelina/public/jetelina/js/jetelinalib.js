@@ -71,6 +71,7 @@ let whatJetelinaTold = ""; // what jetelina was telling in just previous time
 let relatedDataList = {}; // relation data to table/api has been contained here as temporary
 let messageScrollTimerID; // '#someting_msg' auto scroll timer interval 
 let apitestScrollTimerID; // '#apitest' auto scroll timer interval
+let original_chatbox_input_text = ""; // original text in Jetelina chatbox.
 /**
  * 
  * @function getScenarioFile
@@ -900,7 +901,8 @@ const chatKeyDown = (cmd) => {
     }
 
     if (cmd == null) {
-        ut = $(JETELINACHATBOX).val().toLowerCase();
+        original_chatbox_input_text = $(JETELINACHATBOX).val();
+        ut = original_chatbox_input_text.toLowerCase();
         ut = ut.replaceAll(',', ' ').replaceAll(':', ' ').replaceAll(';', ' ');
     } else {
         ut = cmd.toLowerCase();
