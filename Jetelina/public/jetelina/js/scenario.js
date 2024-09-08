@@ -25,7 +25,6 @@ scenario["no-authority-jl-msg"]=["you cannot cheat me, you do not have the autho
 scenario["starting-4-msg"]=["I am sorry, but ", "Something wrong, hum, "];
 scenario["db-not-determind-yet-msg"]=["not determind it yet, login first, please"];
 scenario["inprogress-msg"]=["I AM DOING","HAPPY WORKIN'","HUSTLE HUSTLE","I AM DOING THIS JUST FOR YOU","WAIT A MOMENT.."];
-scenario["refreshing-msg"]=["REFRESHING...","REFRECTING..."];
 scenario["refuse-command-msg"]=["I am busy now","I cannot do multi task at once","You kill me?","Later..."];
 scenario["starting-5-msg"]=["Welcome back ", "Nice to see you again, ","I missed you, ","Oh my.. incredible, "];
 scenario["multi-candidates-msg"]=["there are a few candidates as your order","which is your order?","may you should say more detail","please tell me more detail.","next question.","more..."];

@@ -1831,7 +1831,7 @@ const apiTestAjax = () => {
     }).done(function (result, textStatus, jqXHR) {
         let ret = JSON.stringify(result);
         console.log("result: ", JSON.stringify(result));
-        $(`${COLUMNSPANEL} [name='apiout']`).text(ret);
+        $(`${COLUMNSPANEL} [name='apiout']`).addClass("attentionapiinout").text(ret);
         typingControll("api test done");
     }).fail(function (result) {
         checkResult(result);

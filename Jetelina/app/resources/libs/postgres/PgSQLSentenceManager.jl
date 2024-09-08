@@ -269,15 +269,15 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
     execution_sql::String = ""
 
     #===
-    		Tips:
-    			this is a private function.
-    			this function manages building 'jetelina_delete_flg' subquery.
-    			in order to handle multi table, this 'jetelina_delete_flg' is also set as multi.
-    			i mean
-    				table1.jetelina_delete_flg=0 and table2.jetelina_delete_flg=0 and....
+   		Tips:
+   			this is a private function.
+   			this function manages building 'jetelina_delete_flg' subquery.
+   			in order to handle multi table, this 'jetelina_delete_flg' is also set as multi.
+   			i mean
+   				table1.jetelina_delete_flg=0 and table2.jetelina_delete_flg=0 and....
 
-    			Caution: any local variables are not be duplicated with global ones. 
-    	===#
+   			Caution: any local variables are not be duplicated with global ones. 
+   	===#
     function __create_j_del_flg(sql::String)
         del_flg::String = "jetelina_delete_flg=0" # absolute select condition
 
@@ -307,15 +307,15 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
     end
 
     #===
-    		Tips:
-    			this is a private function.
-    			this function manages building subquery string.
-    			because of 'limit' or something like this additions, 'jetelina_delete_flg' position has to be arranged.
-    			i think it is good as setting it at the head, like
-    				select .... where jetelina_delete_flg=0 and table1.something='aaa' limit 10 
+    	Tips:
+    		this is a private function.
+    		this function manages building subquery string.
+    		because of 'limit' or something like this additions, 'jetelina_delete_flg' position has to be arranged.
+    		i think it is good as setting it at the head, like
+    			select .... where jetelina_delete_flg=0 and table1.something='aaa' limit 10 
 
-    			Caution: any local variables are not be duplicated with global ones. 
-    	===#
+    		Caution: any local variables are not be duplicated with global ones. 
+    ===#
     function __create_subquery_str(sub_str::String, del_str::String)
         sub_ret::String = sub_str
 
@@ -331,16 +331,16 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
 
     if 0 < length(json_dict)
         #===
-        			Tips:
-        				case in 'insert' has a chance of 'missing' in df.subquery[1].
+        	Tips:
+        		case in 'insert' has a chance of 'missing' in df.subquery[1].
 
-        				Attention: 
-        					using 'subquery_str' String type has a benefit rather than using df.subquery[1],
-        					because df fields length are fixed as DataFrame when it was created.
-        					I mean using straight as df.* may happen over flow in the case of concate strings.
-        						ex. df.subquery[1] -> fixed String(10) in DataFrame
-        								 df.subquery[1] = string(df.subquery[1], "AAAAAAAA") -> maybe get over flow 
-        		===#
+        		Attention: 
+        			using 'subquery_str' String type has a benefit rather than using df.subquery[1],
+        			because df fields length are fixed as DataFrame when it was created.
+        			I mean using straight as df.* may happen over flow in the case of concate strings.
+        				ex. df.subquery[1] -> fixed String(10) in DataFrame
+        						 df.subquery[1] = string(df.subquery[1], "AAAAAAAA") -> maybe get over flow 
+        ===#
         if !ismissing(df.subquery[1])
             subquery_str = df.subquery[1]
         end
@@ -349,11 +349,11 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
             # select
             if !isnothing(subquery_str) && !contains(subquery_str, keyword1) && !ismissing(subquery_str)
                 #===
-                					Tips:
-                						set subquery data in json to df.subquery.
-                						because it combines later with df.sql.
-                						managing df.subquery is very advantageous process at here.
-                				===#
+                	Tips:
+                		set subquery data in json to df.subquery.
+                		because it combines later with df.sql.
+                		managing df.subquery is very advantageous process at here.
+                ===#
                 if haskey(json_dict, keyword2)
                     sp = split(json_dict[keyword2], ",")
                     if !isnothing(sp)
@@ -364,7 +364,7 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
 
                             ssp = split(sp[ii], ":")
                             if !isnothing(ssp) && 1 < length(ssp)
-                                json_subquery_dict[ssp[1]] = ssp[2]
+                                json_subquery_dict[strip(ssp[1])] = strip(ssp[2])
                             end
                         end
                     end
@@ -395,10 +395,10 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
         execution_sql = string(df.sql[1], " ", subquery_str)
 
         #==
-        			Tips:
-        				json data bind to the sql sentence.
-        				Dict() is used alike associative array.
-        		===#
+        	Tips:
+        		json data bind to the sql sentence.
+        		Dict() is used alike associative array.
+    	===#
         for (k, v) in json_dict
             kk = string("{", k, "}")
             execution_sql = replace.(execution_sql, kk => v)

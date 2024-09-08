@@ -597,15 +597,16 @@ const setApiIF_In = (t, s) => {
           if (s_subquery[sp - 1] == "\'") {
             subquery_str += `'{${cd}}', `;
           } else {
-            subquery_str += `{ ${cd}}, `;
+            subquery_str += `{${cd}}`;
           }
 
+          preferent.apitestparams.push(cd);
           s_subquery = s_subquery.substring(ep + 1, s_subquery.length);
         }
         isCurry = s_subquery.indexOf('{');
       }
 
-      subquery_str = subquery_str.slice(0, -1);
+//      subquery_str = subquery_str.slice(0, -1);
       ret = `{"apino": \"${t}\","subquery":\"[${subquery_str}]\"}`;
     } else {
       ret = `{"apino":\"${t}\"}`;
@@ -1020,10 +1021,9 @@ const postSelectedColumns = (mode) => {
     if (mode != "pre") {
       // initializing
       preferent.cmd = "";
-      $(GENELICPANELINPUT).val('');
-      $(`${CONTAINERPANEL} .selectedItem`).remove();
-      //      cleanUp("items");
-      cleanupItems4Switching();// clear(=close) opened table items. defined in jetelinalib.js
+//      $(GENELICPANELINPUT).val('');
+//      $(`${CONTAINERPANEL} .selectedItem`).remove();
+//      cleanupItems4Switching();// clear(=close) opened table items. defined in jetelinalib.js
       rejectCancelableCmdList(SELECTITEM);
     }
   });
@@ -1045,7 +1045,7 @@ const functionPanelFunctions = (ut) => {
     let p = `{${preferent.apitestparams[preferent.apiparams_count]}}`;
     let inp = $(`${COLUMNSPANEL} [name='apiin']`).text();
     let reps = inp.replace(p, original_chatbox_input_text);
-    $(`${COLUMNSPANEL} [name='apiin']`).text(reps);
+    $(`${COLUMNSPANEL} [name='apiin']`).addClass("attentionapiinout").text(reps);
     cmd = "apitest";
   }
 
@@ -1558,8 +1558,8 @@ const functionPanelFunctions = (ut) => {
       }else if (inCancelableCmdList(["apitest","preapitest"])){
         rejectCancelableCmdList("apitest");
         rejectCancelableCmdList("preapitest");
-        $(`${COLUMNSPANEL} [name='apiin']`).text(preferent.original_apiin_str);
-        $(`${COLUMNSPANEL} [name='apiout']`).text(preferent.original_apiout_str);
+        $(`${COLUMNSPANEL} [name='apiin']`).removeClass("attentionapiinout").text(preferent.original_apiin_str);
+        $(`${COLUMNSPANEL} [name='apiout']`).removeClass("attentionapiinout").text(preferent.original_apiout_str);
         m = chooseMsg('cancel-msg', '', '');
         preferent.apiparams_count = null;
       }
