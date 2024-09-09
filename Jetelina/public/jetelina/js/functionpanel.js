@@ -420,7 +420,6 @@ const listClick = (p) => {
   */
   relatedDataList.type = "api";
   if (p.hasClass("api")) {
-//    if (c.indexOf("api") != -1) {
       relatedDataList.type = "table";
   }
 
@@ -432,12 +431,10 @@ const listClick = (p) => {
   }
 
   if (p.hasClass("activeItem")) {
-//    if (c.indexOf("activeItem") != -1) {
-      /*
+    /*
       in case to turn p to 'INACTIVE'
     */
     if (p.hasClass("api")) {
-//      if (c.indexOf("api") != -1) {
         cleanupContainers();
       cleanUp("items");
     } else {
@@ -453,7 +450,7 @@ const listClick = (p) => {
   
             "ju1","jd2","ji3","js4" should be removed when "table1" has been inactive.
             "js5" should be remained in the list, because it is duplicated with "table2".
-      */
+    */
     if (relatedDataList[t] != null) {
       /*
         gather 'activeItem' items in the list
@@ -609,7 +606,6 @@ const setApiIF_In = (t, s) => {
         isCurry = s_subquery.indexOf('{');
       }
 
-//      subquery_str = subquery_str.slice(0, -1);
       ret = `{"apino": \"${t}\","subquery":\"[${subquery_str}]\"}`;
     } else {
       ret = `{"apino":\"${t}\"}`;
@@ -1277,8 +1273,6 @@ const functionPanelFunctions = (ut) => {
 
       // for opening table 
       $(CONTAINERNEWAPINO).remove();
-//      if( ($.inArray('cancel', t) != -1)||($.inArray('close',t) !=-1)){
-
         if( ($.inArray('all', t) != -1)&&(($.inArray('cancel', t) != -1)||($.inArray('cancel', t) != -1)||($.inArray('close',t) !=-1))){
           $("#table_container span, #api_container span").filter(".relatedItem, .activeItem").each(function(){
           if($(this).hasClass("relatedItem")){
@@ -1293,11 +1287,6 @@ const functionPanelFunctions = (ut) => {
             delete relatedDataList[n];
           }
         });
-
-//        deleteSelectedItems();
-//        cleanUp("items")
-//        cleanupContainers();
-//        $("#columns_title").text("");
       }
 
       for (let n = 0; n < t.length; n++) {
@@ -1608,11 +1597,12 @@ const functionPanelFunctions = (ut) => {
           API 'IN' parameters are already collected in buildJetelinaJsonForm() as preferent.apitestparams.
           ust this for setting each ones in chatting.
       */
+      preferent.original_apiin_str = $(`${COLUMNSPANEL} [name='apiin']`).text();
+      preferent.original_apiout_str = $(`${COLUMNSPANEL} [name='apiout']`).text();
+
       if( preferent.apitestparams != null && 0 < preferent.apitestparams.length ){
         if( preferent.apiparams_count == null ){
           preferent.apiparams_count = 0;
-          preferent.original_apiin_str = $(`${COLUMNSPANEL} [name='apiin']`).text();
-          preferent.original_apiout_str = $(`${COLUMNSPANEL} [name='apiout']`).text();
         }else{
           preferent.apiparams_count += 1;
         }
@@ -1623,6 +1613,12 @@ const functionPanelFunctions = (ut) => {
           apiTestAjax();
         }else{
           m = "all params set. type 'post'.";
+        }
+      }else{
+        if(inScenarioChk(ut,'common-post-cmd')){
+          apiTestAjax();
+        }else{
+          m = "no params. type 'post'.";
         }
       }
 
@@ -1638,7 +1634,13 @@ const functionPanelFunctions = (ut) => {
         cleanupItems4Switching();
         cleanupContainers();
         cancelableCmdList = [];
-  
+
+        // clean up the parameters for api test
+        preferent.apitestparams = [];
+        preferent.apiparams_count = null;
+        preferent.original_apiin_str = "";
+        preferent.original_apiout_str = "";
+
         let data = `{"param":"${preferent.db}"}`;
         postAjaxData(scenario['function-post-url'][9], data);
       }else{
