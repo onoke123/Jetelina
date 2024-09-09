@@ -419,8 +419,9 @@ const listClick = (p) => {
         opposit in case of 'api'
   */
   relatedDataList.type = "api";
-  if (c.indexOf("api") != -1) {
-    relatedDataList.type = "table";
+  if (p.hasClass("api")) {
+//    if (c.indexOf("api") != -1) {
+      relatedDataList.type = "table";
   }
 
   let sourcePanel = TABLECONTAINER; // the 'p' is in here
@@ -430,12 +431,14 @@ const listClick = (p) => {
     relatedPanel = TABLECONTAINER;
   }
 
-  if (c.indexOf("activeItem") != -1) {
-    /*
+  if (p.hasClass("activeItem")) {
+//    if (c.indexOf("activeItem") != -1) {
+      /*
       in case to turn p to 'INACTIVE'
     */
-    if (c.indexOf("api") != -1) {
-      cleanupContainers();
+    if (p.hasClass("api")) {
+//      if (c.indexOf("api") != -1) {
+        cleanupContainers();
       cleanUp("items");
     } else {
     }
@@ -623,6 +626,8 @@ const setApiIF_In = (t, s) => {
     }else{
       let i_sql = s.sql.split(":");
       ret = `{"apino":\"${t}\","{your key data}":"{your value data}"}`;
+      preferent.apitestparams.push("your key data");
+      preferent.apitestparams.push("your value data");
     }
   } else if (ta.startsWith("ju") || ta.startsWith("jd")) {
     if(loginuser.dbtype != "redis"){
@@ -642,6 +647,7 @@ const setApiIF_In = (t, s) => {
     }else{
       let u_sql = s.sql.split(":");
       ret = `{"apino":\"${t}\","key":"{your value data}"}`;
+      preferent.apitestparams.push("your value data");
     }
   } else {
     // who knows
@@ -1084,8 +1090,10 @@ const functionPanelFunctions = (ut) => {
     } else if (cmd == "" && inScenarioChk(ut, 'func-fileupload-open-cmd')) {
       cmd = FILESELECTOROPEN;
       cmdCandidates.push("file open");
-    } else if (cmd == "" && inScenarioChk(ut, 'func-table-api-open-close-cmd')) {
-      cmd = SELECTITEM;
+//    } else if (cmd == "" && inScenarioChk(ut, 'func-table-api-open-close-cmd')) {
+    } else if (inScenarioChk(ut, 'func-table-api-open-close-cmd')) {
+      rejectCancelableCmdList(cmd);
+      cmd = SELECTITEM;      
       cmdCandidates.push("open or close table/api");
     } else if (cmd == "" && inScenarioChk(ut, 'func-item-select-cmd')) {
       cmd = SELECTITEM;
@@ -1269,9 +1277,10 @@ const functionPanelFunctions = (ut) => {
 
       // for opening table 
       $(CONTAINERNEWAPINO).remove();
+//      if( ($.inArray('cancel', t) != -1)||($.inArray('close',t) !=-1)){
 
-      if( ($.inArray('all', t) != -1)&&(($.inArray('cancel', t) != -1)||($.inArray('cancel', t) != -1)||($.inArray('close',t) !=-1))){
-        $("#table_container span, #api_container span").filter(".relatedItem, .activeItem").each(function(){
+        if( ($.inArray('all', t) != -1)&&(($.inArray('cancel', t) != -1)||($.inArray('cancel', t) != -1)||($.inArray('close',t) !=-1))){
+          $("#table_container span, #api_container span").filter(".relatedItem, .activeItem").each(function(){
           if($(this).hasClass("relatedItem")){
             $(this).removeClass("relatedItem");
           }
@@ -1285,9 +1294,10 @@ const functionPanelFunctions = (ut) => {
           }
         });
 
-        cleanUp("items")
-        cleanupContainers();
-        $("#columns_title").text("");
+//        deleteSelectedItems();
+//        cleanUp("items")
+//        cleanupContainers();
+//        $("#columns_title").text("");
       }
 
       for (let n = 0; n < t.length; n++) {
