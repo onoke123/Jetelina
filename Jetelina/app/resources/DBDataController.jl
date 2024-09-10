@@ -62,11 +62,11 @@ function init()
 function init()
 	@info "==========DBDataController init================"
 	#===
-			Note: 
-				if got error as "LoadError: MethodError: Method too new to be called from this world context.", this function maybe need to use invokelatest().
-					ex. invokelatest(init_Jete....) or @invokelatest init_Jete....
-				ref. https://stackoverflow.com/questions/69492334/loaderror-methoderror-method-too-new-to-be-called-from-this-world-context-i
-		===#
+		Note: 
+			if got error as "LoadError: MethodError: Method too new to be called from this world context.", this function maybe need to use invokelatest().
+				ex. invokelatest(init_Jete....) or @invokelatest init_Jete....
+			ref. https://stackoverflow.com/questions/69492334/loaderror-methoderror-method-too-new-to-be-called-from-this-world-context-i
+	===#
 	init_Jetelina_table()
 end
 """
@@ -114,7 +114,7 @@ function dataInsertFromCSV(csvfname::String)
 		return MyDBController.dataInsertFromCSV(csvfname)
 	elseif j_config.JC["dbtype"] == "oracle"
 	elseif j_config.JC["dbtype"] == "redis"
-		# Case in MySQL
+		# Case in Redis
 		return RsDBController.dataInsertFromCSV(csvfname)
 	end
 end
@@ -141,9 +141,9 @@ function getTableList(s::String)
 	elseif j_config.JC["dbtype"] == "redis"
 		# Case in Redis
 		#===
-					Caution:
-						getKeyList() returns the registered keys in redis.
-				===#
+			Caution:
+				getKeyList() returns the registered keys in redis.
+		===#
 		RsDBController.getKeyList(s)
 	end
 end
@@ -161,11 +161,11 @@ function dropTable(tableName::Vector, stichwort::String)
 	ret::Any = ""
 
 	#===
-			Tips:
-				check the stichwort in user_info.
-				in the case of nothing, register it into there,
-				in the case of being, take the matching.
-		===#
+		Tips:
+			check the stichwort in user_info.
+			in the case of nothing, register it into there,
+			in the case of being, take the matching.
+	===#
 	if j_config.JC["jetelinadb"] == "postgresql"
 		stichret = PgDBController.refStichWort(stichwort)
 	elseif j_config.JC["jetelinadb"] == "mysql"
@@ -189,13 +189,13 @@ function dropTable(tableName::Vector, stichwort::String)
 		ApiSqlListManager.deleteTableFromlist(tableName)
 	end
 	#==
-			Tips:
-				ret[2] is expected
-					delete succeeded
-						json(Dict("result" => true, "tablename" => "$tableName", "message from Jetelina" => jmsg))
-					something error happened
-						json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err"))
-		==#
+		Tips:
+			ret[2] is expected
+			delete succeeded
+				json(Dict("result" => true, "tablename" => "$tableName", "message from Jetelina" => jmsg))
+			something error happened
+				json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err"))
+	==#
 	return ret[2]
 end
 """
@@ -217,10 +217,10 @@ function getColumns(tableName::String)
 	elseif j_config.JC["dbtype"] == "redis"
 		# Case in Redis
 		#===
-					Caution: 
-						redis does not have columns.
-						the keys are getting in getTableList().
-				===#
+			Caution: 
+				redis does not have columns.
+				the keys are getting in getTableList().
+		===#
 	end
 end
 """
@@ -259,22 +259,22 @@ function executeApi(json_d::Dict)
 	ret = ""
 	sql_str = ""
 	#===
-			Tips:
-				Steps
-					1.search sql in Df_JetelinaSqlList with d["apino"]
-					ex. ji1 -> update <table> set name='{name}', age={age} where jt_id={jt_id}
-					2.json data bind to the sql sentence
-					3.execute the binded sql sentence
-		===#
+		Tips:
+			Steps
+				1.search sql in Df_JetelinaSqlList with d["apino"]
+				ex. ji1 -> update <table> set name='{name}', age={age} where jt_id={jt_id}
+				2.json data bind to the sql sentence
+				3.execute the binded sql sentence
+	===#
 	# Step1
 	#===
-			Tips:
-				ApiSql...readSql...()[1] contains true/false.
-				ApiSql...readSql...()[2] contains dataframe list if [] is true, in the case of false is nothing.
+		Tips:
+			ApiSql...readSql...()[1] contains true/false.
+			ApiSql...readSql...()[2] contains dataframe list if [] is true, in the case of false is nothing.
 
-				use subset() here, because Df_JetelinaSqlList may have missing data.
-				subset() supports 'skipmissing', but filter() does not.
-		===#
+			use subset() here, because Df_JetelinaSqlList may have missing data.
+			subset() supports 'skipmissing', but filter() does not.
+	===#
 	if 0 < nrow(ApiSqlListManager.Df_JetelinaSqlList)
 		target_api = subset(ApiSqlListManager.Df_JetelinaSqlList, :apino => ByRow(==(json_d["apino"])), skipmissing = true)
 		if 0 < nrow(target_api)
@@ -287,7 +287,8 @@ function executeApi(json_d::Dict)
 				# Case in MySQL
 				ret = MyDBController.executeApi(json_d, target_api)
 			elseif dbtype == "redis"
-
+				# Case in Redis
+				ret = RsDBController.executeApi(json_d, target_api)
 			elseif dbtype == "oracle"
 			end
 		end

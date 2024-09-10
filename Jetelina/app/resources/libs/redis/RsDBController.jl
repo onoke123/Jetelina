@@ -150,8 +150,13 @@ function getKeyList(s::String)
     keys = simpleScan(i, n)
     if(keys[1] == 0)
         for i ∈ 1:length(keys[2])
-            push!(keysArr,"tablename")
-            push!(valueArr,keys[2][i])
+            #===
+                Tips:
+                    they said keys[2][i] is string type.
+            ===#
+            if keys[2][i] != ""
+                push!(valueArr,keys[2][i])
+            end
         end
 
         df = DataFrame(keysArr=valueArr)
@@ -177,16 +182,10 @@ function executeApi(json_d::Dict,target_api::DataFrame)
 		error                -> false
 """
 function executeApi(json_d::Dict, target_api::DataFrame)
-#    ret = ""
-#    sql_str = RsSQLSentenceManager.createExecutionSqlSentence(json_d, target_api)
-#    if 0 < length(sql_str)
-        ret = _executeApi(json_d["apino"], target_api)
-#    end
-
-    return ret
+    return _executeApi(json_d, target_api)
 end
 """
-function _executeApi(apino::String,sql_str::String)
+function _executeApi(apino::String, dfRedis::DataFrame)
 
 	execute API with creating SQL sentence
 	this is a private function that is called by executeApi()
@@ -198,34 +197,68 @@ function _executeApi(apino::String,sql_str::String)
 		select               -> json format data
 		error                -> false
 """
-function _executeApi(apino::String, dfRedis::DataFrame)
+function _executeApi(json_d::Dict, dfRedis::DataFrame)
+    apino = json_d["apino"]
+    @info "redis exe " apino 
+    println(dfRedis)
     ret = ""
     jmsg::String = string("compliment me!")
 
         if startswith(apino, "js")
             # get 
-            p = split(redisSql[:,:sql][1], ':') # redisSql[:,:sql][1] -> get:<key>
+            p = split(dfRedis[:,:sql][1], ':') # dfRedis[:,:sql][1] -> get:<key>
             v = get(p[2])
             df = DataFrame(key=p[2],value=v)
             ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
+        elseif startswith(apino, "ju")
+            v = json_d["key"]
+            if !isnothing(v)
+                p = split(dfRedis[:,:sql][1], ':') # dfRedis[:,:sql][1] -> get:<key>
+                r = set(p[2],v)
+                @info "redis set " p[2] v r
+                if(r)
+                    ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
+                else
+                    k = p[2]
+                    ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "failed set $v in $k, sorry"))
+                end
+            else
+                ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "failed set in $k because no value, look carefully more."))
+            end
         elseif startswith(apino, "ji")
+            k = json_d["key1"]
+            v = json_d["key2"]
             # set
-            p = split(redisSql[:,:sql][1], ':') # redisSql[:,:sql][1] -> set:<key>:<value>
-            r = set(p[2],p[3])
+            r = set(k,v)
             if(r)
                 #===
                     Attention:
                         'ji***' is for registring a new key/value data.
-                        therefore need to create a new api at here.
+                        therefore need to create a new api 'ju***' and 'js***' at here.
                 ===#
-                update_str = RsSQLSentenceManager.createApiUpdateSentence(p[2])
+                update_str = RsSQLSentenceManager.createApiUpdateSentence(k)
                 if(update_str != "")
+                    key_arr::Vector{String} = []
+                    push!(key_arr,k)    
                     ApiSqlListManager.writeTolist(update_str, "", key_arr, "redis")
+
+                    select_str = RsSQLSentenceManager.createApiSelectSentence(k)
+                    if(select_str != "")
+                        ApiSqlListManager.writeTolist(select_str,"", key_arr, "redis")
+                    end
                 end
 
+                #===
+                    Caution:
+                        i was wondering it was ok without looking at the result of writeTolist().
+                        but maybe they would be succeed.
+                        it was not a lottery, but confidence. :)
+                ===#
                 ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
             else
-                ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => value))
+                k = p[1]
+                v = p[2]
+                ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "failed set $v in $k sorry"))
             end
         end
 

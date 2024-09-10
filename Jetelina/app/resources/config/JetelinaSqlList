@@ -28,3 +28,7 @@ jd680,"update ftest3 set jetelina_delete_flg=1","where ftest3_jt_id={jt_id}","my
 js681,"select ftest3.ftest3_jt_id,ftest3.ftest3_name,ftest3.ftest3_sex,ftest3.ftest3_age,ftest3.ftest3_dumy from ftest3 as ftest3","where ftest3.ftest3_jt_id < {jt_id}","mysql"
 js684,"select ftest3.ftest3_jt_id,ftest3.ftest3_name,ftest3.ftest3_sex,ftest3.ftest3_age from ftest3 as ftest3","where ftest3.ftest3_sex = '{sex}' and ftest3.ftest3_age < {age}","mysql"
 js685,"select ftest2.ftest2_jt_id,ftest2.ftest2_name,ftest2.ftest2_sex,ftest2.ftest2_age from ftest2 as ftest2","where ftest2.ftest2_sex = '{sex}' and ftest2.ftest2_age < {age}","postgresql"
+ju686,"set:sep10:{value}","","redis"
+ju687,"set:sep9:{value}","","redis"
+ju688,"set:sep8:{value}","","redis"
+js689,"get:sep8","","redis"

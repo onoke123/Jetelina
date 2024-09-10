@@ -621,7 +621,7 @@ const setApiIF_In = (t, s) => {
       ret = buildJetelinaJsonForm(ta, i_sql[1]);
     }else{
       let i_sql = s.sql.split(":");
-      ret = `{"apino":\"${t}\","{your key data}":"{your value data}"}`;
+      ret = `{"apino":\"${t}\","key1":"{your key data}","key2":"{your value data}"}`;
       preferent.apitestparams.push("your key data");
       preferent.apitestparams.push("your value data");
     }
