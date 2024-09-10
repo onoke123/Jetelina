@@ -79,6 +79,8 @@ route( "getapilist", GetDataController.getApiList )
 route("/deleteapi", PostDataController.deleteApi, method = POST)
 # get the relational list
 route("/getrelatedlist", PostDataController.getRelatedTableApi, method = POST)
+# search error log
+route("searcherror", PostDataController.searchErrorLog, method = POST)
 #===
     -Handle CSV file
 ===#

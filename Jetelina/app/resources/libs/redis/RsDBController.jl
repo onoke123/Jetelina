@@ -301,7 +301,6 @@ function get(k)
         v = Redis.get(conn, k)
         return v
     catch err
-        @info err
         JLog.writetoLogfile("RsDBController.get() error: $err")
         return false
     finally
@@ -324,7 +323,6 @@ function matchingScan(i, k)
         v = Redis.scan(conn, i, "match", string(k, '*'))
         return v
     catch err
-        @info err
         JLog.writetoLogfile("RsDBController.matchingScan() error: $err")
         return false
     finally
@@ -347,7 +345,6 @@ function simpleScan(i, n)
         v = Redis.scan(conn, i, :count, n)
         return v
     catch err
-        @info err
         JLog.writetoLogfile("RsDBController.simpleScan() error: $err")
         return false
     finally

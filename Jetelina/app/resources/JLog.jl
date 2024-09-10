@@ -11,6 +11,7 @@ functions
 	writetoSQLLogfile(apino::String, sql::String)  write executed sql with its apino to SQL log file. date format is "yyyy-mm-dd HH:MM:SS".
 	writetoOperationHistoryfile(operationstr::String) write operation history to the file.
 	getLogHash() return a hash number for identifying log data.
+	searchinLogfile(errnum::String)	searching orderd log as 'errnum' in log file
 """
 module JLog
 
@@ -20,7 +21,7 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export writetoLogfile, writetoSQLLogfile, writetoOperationHistoryfile, getLogHash
+export writetoLogfile, writetoSQLLogfile, writetoOperationHistoryfile, getLogHash, searchinLogfile
 
 """
 function _logfileOpen()
@@ -198,6 +199,30 @@ function _createHash()
 	===#
 	p = string(Dates.format(now(), "yymmddMMSS"),rand(1:1000))
 	return hash(p)
+end
+"""
+function searchinLogfile(errnum::String)
+
+	searching orderd log as 'errnum' in log file
+
+# Arguments
+- `errnum::String`: target 'errnum'
+- return::String: log line within 'errnum'
+
+"""
+function searchinLogfile(errnum::String)
+	logfile = JFiles.getFileNameFromLogPath(j_config.JC["logfile"])
+	open(logfile, "r") do fl
+		#===
+			Tips:
+				read log lines from the latest one with using 'Iterators.reverse()'
+		===#
+		for ss in Iterators.reverse(eachline(fl, keep = false))
+			if contains(ss,errnum)
+				return ss
+			end
+		end
+	end
 end
 
 end

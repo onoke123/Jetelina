@@ -374,8 +374,9 @@ function dataInsertFromCSV(fname::String)
     try
         DBInterface.execute(conn, create_table_str)
     catch err
-        ret = json(Dict("result" => false, "filename" => "$fname", "errmsg" => "$err"))
-        JLog.writetoLogfile("MyDBController.dataInsertFromCSV() with $fname error : $err")
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "filename" => "$fname", "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.dataInsertFromCSV() with $fname error : $err")
         return ret
     finally
         # do not close the connection yet
@@ -409,8 +410,9 @@ function dataInsertFromCSV(fname::String)
         DBInterface.execute(conn, copyin)
         ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
     catch err
-        ret = json(Dict("result" => false, "filename" => "$fname", "errmsg" => "$err"))
-        JLog.writetoLogfile("MyDBController.dataInsertFromCSV() with $fname error : $err")
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "filename" => "$fname", "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.dataInsertFromCSV() with $fname error : $err")
         return ret
     finally
         # change 'local_infile' setting to 'off'
@@ -473,8 +475,9 @@ function dropTable(tableName::Vector)
         # write to operationhistoryfile
         JLog.writetoOperationHistoryfile(string("drop ", rettables, " tables"))
     catch err
-        ret = json(Dict("result" => false, "tablename" => "$rettables", "errmsg" => "$err"))
-        JLog.writetoLogfile("MyDBController.dropTable() with $rettables error : $err")
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "tablename" => "$rettables", "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.dropTable() with $rettables error : $err")
         return false, ret
     finally
         close_connection(conn)
@@ -511,8 +514,9 @@ function getColumns(tableName::String)
 
         ret = json(Dict("result" => true, "tablename" => "$tableName", "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
     catch err
-        ret = json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err"))
-        JLog.writetoLogfile("MyDBController.getColumns() with $tableName error : $err")
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.getColumns() with $tableName error : $err")
     finally
         close_connection(conn)
     end
@@ -602,8 +606,9 @@ function _executeApi(apino::String, sql_str::String)
             ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
         end
     catch err
-        JLog.writetoLogfile("MyDBController.executeApi() with $apino : $sql_str error : $err")
-        ret = json(Dict("result" => false, "apino" => "$apino", "errmsg" => "$err"))
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "apino" => "$apino", "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.executeApi() with $apino : $sql_str error : $err")
     finally
         # close the connection finally
         close_connection(conn)
@@ -814,8 +819,9 @@ function userRegist(username::String)
         DBInterface.execute(conn, insert_basic_st)
         ret = json(Dict("result" => true, "message from Jetelina" => jmsg))
     catch err
-        ret = json(Dict("result" => false, "username" => "$username", "errmsg" => "$err"))
-        JLog.writetoLogfile("MyDBController.userRegist() with $username error : $err")
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "username" => "$username", "errmsg" => "$err","errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.userRegist() with $username error : $err")
     finally
         close_connection(conn)
     end
@@ -912,9 +918,9 @@ function chkUserExistence(s::String)
             ret = Dict("result" => false, "Jetelina" => [], "message from Jetelina" => "you are not here yet")
         end
     catch err
-        #		ret = json(Dict("result" => false, "errmsg" => "$err"))
-        ret = Dict("result" => false, "errmsg" => "$err")
-        JLog.writetoLogfile("MyDBController.chkUserExistence() with $s error : $err")
+        errnum = JLog.getLogHash()
+        ret = Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum")
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.chkUserExistence() with $s error : $err")
     finally
         close_connection(conn)
     end
@@ -959,8 +965,9 @@ function getUserInfoKeys(uid::Integer)
         df = DataFrame(columntable(DBInterface.execute(conn, sql)))
         ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
     catch err
-        ret = json(Dict("result" => false, "errmsg" => "$err"))
-        JLog.writetoLogfile("MyDBController.getUserInfoKeys() with $s error : $err")
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.getUserInfoKeys() with $s error : $err")
     finally
         close_connection(conn)
     end
@@ -1009,8 +1016,9 @@ function refUserAttribute(uid::Integer, key::String, val, rettype::Integer)
             ret = df
         end
     catch err
-        ret = json(Dict("result" => false, "errmsg" => "$err"))
-        JLog.writetoLogfile("MyDBController.refUserAttribute() with user $uid $key->$val error : $err")
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.refUserAttribute() with user $uid $key->$val error : $err")
     finally
         close_connection(conn)
     end
@@ -1048,8 +1056,9 @@ function updateUserInfo(uid::Integer, key::String, value)
         jmsg = "complement me."
         ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
     catch err
-        ret = json(Dict("result" => false, "errmsg" => "$err"))
-        JLog.writetoLogfile("MyDBController.updateUserInfo() with user $uid $key->$val error : $err")
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.updateUserInfo() with user $uid $key->$val error : $err")
     finally
         close_connection(conn)
     end
@@ -1099,7 +1108,8 @@ function refUserInfo(uid::Integer, key::String, rettype::Integer)
             ret = df
         end
     catch err
-        ret = json(Dict("result" => false, "errmsg" => "$err"))
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
         JLog.writetoLogfile("MyDBController.refUserInfo() with user $uid $key error : $err")
     finally
         close_connection(conn)
@@ -1142,8 +1152,9 @@ function updateUserData(uid::Integer, key::String, value)
         jmsg = """He he, you are counted up in me."""
         ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
     catch err
-        ret = json(Dict("result" => false, "errmsg" => "$err"))
-        JLog.writetoLogfile("MyDBController.updateUserData() with user $uid $key->$value error : $err")
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.updateUserData() with user $uid $key->$value error : $err")
     finally
         close_connection(conn)
     end
@@ -1228,7 +1239,8 @@ function deleteUserAccount(uid::Integer)
         jmsg = """See you someday"""
         ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
     catch err
-        ret = json(Dict("result" => false, "errmsg" => "$err"))
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
         JLog.writetoLogfile("MyDBController.deleteUserAccount() with user $uid $key->$val error : $err")
     finally
         close_connection(conn)

@@ -24,6 +24,7 @@ functions
 	deleteApi()  delete api by ordering from JC["sqllistfile"] file, then refresh the DataFrame.
 	configParamUpdate()	update configuration parameter
 	getRelatedTableApi() get the list of relational with 'table' or 'api'
+	searchErrorLog() searching orderd log as 'errnum' in log file
 """
 module PostDataController
 
@@ -34,7 +35,7 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 JMessage.showModuleInCompiling(@__MODULE__)
 
 export getConfigData, handleApipostdata, createApi, getColumns, deleteTable, userRegist, login, getUserInfoKeys, refUserAttribute, refUserInfo, updateUserInfo,
-	updateUserData, updateUserLoginData, deleteUserAccount, deleteApi, configParamUpdate
+	updateUserData, updateUserLoginData, deleteUserAccount, deleteApi, configParamUpdate, searchErrorLog
 
 
 """
@@ -466,6 +467,19 @@ function switchDB()
 	end
 
 	return json(Dict("result" => true, "message from Jetelina" => jmsg))
+end
+"""
+function searchErrorLog()
+
+	searching orderd log as 'errnum' in log file
+
+# Arguments
+- return::String  string in log file has 'errnum'
+"""
+function searchErrorLog()
+	errnum = jsonpayload("errnum")
+	err = JLog.searchinLogfile(errnum)
+	return json(Dict("result" => true, "errlog" => "$err"))
 end
 
 end

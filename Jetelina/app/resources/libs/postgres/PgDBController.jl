@@ -478,8 +478,9 @@ function dataInsertFromCSV(fname::String)
         execute(conn, create_table_str)
     catch err
         close_connection(conn)
-        ret = json(Dict("result" => false, "filename" => "$fname", "errmsg" => "$err"))
-        JLog.writetoLogfile("PgDBController.dataInsertFromCSV() with $fname error : $err")
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "filename" => "$fname", "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] PgDBController.dataInsertFromCSV() with $fname error : $err")
         return ret
     finally
         # do not close the connection because of resuming below yet.
@@ -523,9 +524,9 @@ function dataInsertFromCSV(fname::String)
         execute(conn, copyin)
         ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
     catch err
-        #            println(err)
-        ret = json(Dict("result" => false, "filename" => "$fname", "errmsg" => "$err"))
-        JLog.writetoLogfile("PgDBController.dataInsertFromCSV() with $fname error : $err")
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "filename" => "$fname", "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] PgDBController.dataInsertFromCSV() with $fname error : $err")
         return ret
     finally
         # ok. close the connection finally
@@ -586,8 +587,9 @@ function dropTable(tableName::Vector)
         # write to operationhistoryfile
         JLog.writetoOperationHistoryfile(string("drop ", rettables, " tables"))
     catch err
-        ret = json(Dict("result" => false, "tablename" => "$rettables", "errmsg" => "$err"))
-        JLog.writetoLogfile("PgDBController.dropTable() with $rettables error : $err")
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "tablename" => "$rettables", "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] PgDBController.dropTable() with $rettables error : $err")
         return false, ret
     finally
         close_connection(conn)
@@ -624,8 +626,9 @@ function getColumns(tableName::String)
 
         ret = json(Dict("result" => true, "tablename" => "$tableName", "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
     catch err
-        ret = json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err"))
-        JLog.writetoLogfile("PgDBController.getColumns() with $tableName error : $err")
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] PgDBController.getColumns() with $tableName error : $err")
     finally
         close_connection(conn)
     end
@@ -712,8 +715,9 @@ function _executeApi(apino::String, sql_str::String)
             ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
         end
     catch err
-        JLog.writetoLogfile("PgDBController.executeApi() with $apino : $sql_str error : $err")
-        ret = json(Dict("result" => false, "apino" => "$apino", "errmsg" => "$err"))
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "apino" => "$apino", "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] PgDBController.executeApi() with $apino : $sql_str error : $err")
     finally
         # close the connection finally
         close_connection(conn)
@@ -927,8 +931,9 @@ function userRegist(username::String)
         execute(conn, insert_additional_st)
         ret = json(Dict("result" => true, "message from Jetelina" => jmsg))
     catch err
-        ret = json(Dict("result" => false, "username" => "$username", "errmsg" => "$err"))
-        JLog.writetoLogfile("PgDBController.userRegist() with $username error : $err")
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "username" => "$username", "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] PgDBController.userRegist() with $username error : $err")
     finally
         close_connection(conn)
     end
@@ -1032,9 +1037,9 @@ function chkUserExistence(s::String)
             ret = Dict("result" => false, "Jetelina" => [], "message from Jetelina" => "you are not here yet")
         end
     catch err
-        #		ret = json(Dict("result" => false, "errmsg" => "$err"))
-        ret = Dict("result" => false, "errmsg" => "$err")
-        JLog.writetoLogfile("PgDBController.chkUserExistence() with $s error : $err")
+        errnum = JLog.getLogHash()
+        ret = Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum")
+        JLog.writetoLogfile("[errnum:$errnum] PgDBController.chkUserExistence() with $s error : $err")
     finally
         close_connection(conn)
     end
@@ -1068,8 +1073,9 @@ function getUserInfoKeys(uid::Integer)
         df = DataFrame(columntable(LibPQ.execute(conn, sql)))
         ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
     catch err
-        ret = json(Dict("result" => false, "errmsg" => "$err"))
-        JLog.writetoLogfile("PgDBController.getUserInfoKeys() with $s error : $err")
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] PgDBController.getUserInfoKeys() with $s error : $err")
     finally
         close_connection(conn)
     end
@@ -1118,8 +1124,9 @@ function refUserAttribute(uid::Integer, key::String, val, rettype::Integer)
             ret = df
         end
     catch err
-        ret = json(Dict("result" => false, "errmsg" => "$err"))
-        JLog.writetoLogfile("PgDBController.refUserAttribute() with user $uid $key->$val error : $err")
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] PgDBController.refUserAttribute() with user $uid $key->$val error : $err")
     finally
         close_connection(conn)
     end
@@ -1176,8 +1183,9 @@ function updateUserInfo(uid::Integer, key::String, value)
         jmsg = "complement me."
         ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
     catch err
-        ret = json(Dict("result" => false, "errmsg" => "$err"))
-        JLog.writetoLogfile("PgDBController.updateUserInfo() with user $uid $key->$value error : $err")
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] PgDBController.updateUserInfo() with user $uid $key->$value error : $err")
     finally
         close_connection(conn)
     end
@@ -1217,8 +1225,9 @@ function refUserInfo(uid::Integer, key::String, rettype::Integer)
             ret = df
         end
     catch err
-        ret = json(Dict("result" => false, "errmsg" => "$err"))
-        JLog.writetoLogfile("PgDBController.refUserInfo() with user $uid $key error : $err")
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] PgDBController.refUserInfo() with user $uid $key error : $err")
     finally
         close_connection(conn)
     end
@@ -1259,8 +1268,9 @@ function updateUserData(uid::Integer, key::String, value)
         jmsg = """He he, you are counted up in me."""
         ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
     catch err
-        ret = json(Dict("result" => false, "errmsg" => "$err"))
-        JLog.writetoLogfile("PgDBController.updateUserData() with user $uid $key->$val error : $err")
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] PgDBController.updateUserData() with user $uid $key->$val error : $err")
     finally
         close_connection(conn)
     end
@@ -1345,8 +1355,9 @@ function deleteUserAccount(uid::Integer)
         jmsg = """See you someday"""
         ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
     catch err
-        ret = json(Dict("result" => false, "errmsg" => "$err"))
-        JLog.writetoLogfile("PgDBController.deleteUserAccount() with user $uid $key->$val error : $err")
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] PgDBController.deleteUserAccount() with user $uid $key->$val error : $err")
     finally
         close_connection(conn)
     end
