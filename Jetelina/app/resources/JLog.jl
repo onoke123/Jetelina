@@ -9,6 +9,8 @@ Description:
 functions
 	writetoLogfile(s)  write 's' to log file. date format is "yyyy-mm-dd HH:MM:SS".'s' is available whatever type.
 	writetoSQLLogfile(apino::String, sql::String)  write executed sql with its apino to SQL log file. date format is "yyyy-mm-dd HH:MM:SS".
+	writetoOperationHistoryfile(operationstr::String) write operation history to the file.
+	getLogHash() return a hash number for identifying log data.
 """
 module JLog
 
@@ -18,7 +20,7 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export writetoLogfile, writetoSQLLogfile
+export writetoLogfile, writetoSQLLogfile, writetoOperationHistoryfile, getLogHash
 
 """
 function _logfileOpen()
@@ -170,4 +172,32 @@ function _fileRotation(f::String)
 	b = string(f,".",Dates.format(now(), "yyyy-mm-dd-HH:MM"))
 	mv(f,b)
 end
+"""
+function getLogHash()
+
+	return a hash number for identifying log data
+
+# Arguments
+- return::hash number  e.g. 0x2b97846807e6a54a
+"""
+function getLogHash()
+	return _createHash()
+end
+"""
+function _createHash()
+
+	create hash code from date
+
+# Arguments
+- return::hash code  e.g. 0x2b97846807e6a54a
+"""
+function _createHash()
+	#===
+		Tips:
+			p is a number whatever, as long as a uniquness
+	===#
+	p = string(Dates.format(now(), "yymmddMMSS"),rand(1:1000))
+	return hash(p)
+end
+
 end
