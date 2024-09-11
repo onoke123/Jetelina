@@ -42,6 +42,8 @@
       subPanelCheck() confirm sub panels condition when focus moves on Jetelina Chat Box
       setDBFocus(s) set blinking to the current db
       isVisibleFavicon(b) show/hide the favicon message
+      apiTestAjax() ajax function for executing API test.
+      searchLogAjax() ajax function for searching 'errnum' in the log file
  */
 const JETELINACHATTELL = `${JETELINAPANEL} [name='jetelina_tell']`;
 const SOMETHINGMSGPANEL = "#something_msg";
@@ -454,6 +456,10 @@ const getAjaxData = (url) => {
                 typingControll(chooseMsg("success-msg", "", ""));
             }
         }).fail(function (result) {
+            if (result.errnum != null) {
+                preferent.errnum = result.errnum;
+            }
+
             checkResult(result);
             console.error("getAjaxData() fail");
             typingControll(chooseMsg("fail-msg", "", ""));
@@ -607,6 +613,10 @@ const postAjaxData = (url, data) => {
                 typingControll(specialmsg);
             }
         }).fail(function (result) {
+            if (result.errnum != null) {
+                preferent.errnum = result.errnum;
+            }
+
             checkResult(result);
             console.error("postAjaxData() fail");
             typingControll(chooseMsg("fail-msg", "", ""));
@@ -782,6 +792,10 @@ const authAjax = (un) => {
             });
         }
     }).fail(function (result) {
+        if (result.errnum != null) {
+            preferent.errnum = result.errnum;
+        }
+
         checkResult(result);
         // something error happened
         console.error("authAjax(): unexpected error");
@@ -911,7 +925,8 @@ const chatKeyDown = (cmd) => {
     let logoutflg = false;
 
     if (ut != null && 0 < ut.length) {
-        ut = $.trim(ut.toLowerCase());
+        ut = $.trim(ut);
+//        ut = $.trim(ut.toLowerCase());
         /*
             Tips:
                 After registring a new api, maybe called it to open.
@@ -966,6 +981,10 @@ const chatKeyDown = (cmd) => {
                 showSomethingMsgPanel(false);
             } else if (inScenarioChk(ut, 'show-something-msg-cmd')) {
                 showSomethingMsgPanel(true);
+            }
+
+            if(inScenarioChk(ut,'searching-errnum-cmd') && preferent.errnum != null){
+                searchLogAjax();   
             }
 
             /*
@@ -1810,7 +1829,7 @@ $("#databaselist").on("click", ".databasename", function () {
  * @param {string} url execute url
  * @param {object} data json style object 
  * 
- * general purpose ajax post call function. Execute the ordered url with the object.
+ * ajax function for executing API test.
  */
 const apiTestAjax = () => {
     let url = scenario["function-apitest-usr"][0];
@@ -1829,12 +1848,72 @@ const apiTestAjax = () => {
             return ret;
         }
     }).done(function (result, textStatus, jqXHR) {
-        let ret = JSON.stringify(result);
-        $(`${COLUMNSPANEL} [name='apiout']`).addClass("attentionapiinout").text(ret);
-        typingControll("api test done");
+        let m = 'func-api-test-done-msg';
+        if(result.result){
+            let ret = JSON.stringify(result);
+            $(`${COLUMNSPANEL} [name='apiout']`).addClass("attentionapiinout").text(ret);
+        }else{
+            m = "fail-msg";
+            if(result.errnum != null){
+                preferent.errnum = result.errnum;
+            }
+        }
+
+        typingControll(chooseMsg(m, '', ''));
     }).fail(function (result) {
         checkResult(result);
         console.error("apiTestAjax() fail");
+        if (result.errnum != null) {
+            preferent.errnum = result.errnum;
+        }
+
+        typingControll(chooseMsg("fail-msg", "", ""));
+    }).always(function () {
+        // release it for allowing to input new command in the chatbox 
+        inprogress = false;
+    });
+}
+/**
+ * @function searchLogAjax
+ * @param {string} url execute url
+ * @param {object} data json style object 
+ * 
+ * ajax function for searching 'errnum' in the log file
+ */
+const searchLogAjax = () => {
+    let url = scenario["function-search-log-errnum"][0];
+    let data = `{"errnum":"${preferent.errnum}"}`;
+
+    $.ajax({
+        url: url,
+        type: "post",
+        contentType: 'application/json',
+        data: data,
+        dataType: "json",
+        xhr: function () {
+            ret = $.ajaxSettings.xhr();
+            inprogress = true;// in progress. for priventing accept a new command.
+            typingControll(chooseMsg('inprogress-msg', "", ""));
+            return ret;
+        }
+    }).done(function (result, textStatus, jqXHR) {
+        let ret = JSON.stringify(result);
+        let m = 'func-api-error-searching-msg';
+        if(result.result){
+            $(SOMETHINGMSGPANELMSG).text(result.errlog);
+            showSomethingMsgPanel(true);
+        }else{
+            m = "fail-msg";
+        }
+
+        typingControll(chooseMsg(m, '', ''));
+    }).fail(function (result) {
+        checkResult(result);
+        console.error("searchLogAjax() fail");
+        if (result.errnum != null) {
+            preferent.errnum = result.errnum;
+        }
+
         typingControll(chooseMsg("fail-msg", "", ""));
     }).always(function () {
         // release it for allowing to input new command in the chatbox 

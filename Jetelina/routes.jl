@@ -59,7 +59,7 @@ route( "/getalldbtable", GetDataController.getTableList )
 # drops table by ordering
 route( "/deletetable", PostDataController.deleteTable, method = POST )
 # returns column list ordered by table in Json
-route( "getcolumns", PostDataController.getColumns, method = POST )
+route( "/getcolumns", PostDataController.getColumns, method = POST )
 # handle json data for db action of insert/update/delete/select
 route( "/apiactions", PostDataController.handleApipostdata, method = POST )
 # switching user handle database
@@ -74,13 +74,13 @@ route( "/createapi", PostDataController.createApi, method = POST )
 #     indeed '/createapi' and 'testapi' are same, but wanna indicate them difference url
 route( "/testapi", PostDataController.createApi, method = POST )
 # returns API(SQL) list in Json
-route( "getapilist", GetDataController.getApiList )
+route( "/getapilist", GetDataController.getApiList )
 # delete api from  JC["sqllistfile"] file
 route("/deleteapi", PostDataController.deleteApi, method = POST)
 # get the relational list
 route("/getrelatedlist", PostDataController.getRelatedTableApi, method = POST)
 # search error log
-route("searcherror", PostDataController.searchErrorLog, method = POST)
+route("/searcherror", PostDataController.searchErrorLog, method = POST)
 #===
     -Handle CSV file
 ===#

@@ -339,10 +339,10 @@ const fileupload = () => {
       $(`${MYFORM} label span`).text("Upload CSV File");
 
       //refresh table list 
-        cleanupRelatedList(true);
-        typingControll(chooseMsg('refreshing-msg','',''));
+      cleanupRelatedList(true);
+      typingControll(chooseMsg('refreshing-msg', '', ''));
 
-        chatKeyDown(scenario["func-show-table-list-cmd"][0]);
+      chatKeyDown(scenario["func-show-table-list-cmd"][0]);
     } else {
       // csv file format error
       typingControll(chooseMsg('func-csv-format-error-msg', "", ""));
@@ -351,6 +351,10 @@ const fileupload = () => {
     checkResult(result);
     // something error happened
     console.error("fileupload(): unexpected error");
+    if (result.errnum != null) {
+      preferent.errnum = result.errnum;
+    }
+
     typingControll(chooseMsg("fail-msg", "", ""));
   }).always(function () {
     // release it for allowing to input new command in the chatbox 
@@ -420,7 +424,7 @@ const listClick = (p) => {
   */
   relatedDataList.type = "api";
   if (p.hasClass("api")) {
-      relatedDataList.type = "table";
+    relatedDataList.type = "table";
   }
 
   let sourcePanel = TABLECONTAINER; // the 'p' is in here
@@ -435,7 +439,7 @@ const listClick = (p) => {
       in case to turn p to 'INACTIVE'
     */
     if (p.hasClass("api")) {
-        cleanupContainers();
+      cleanupContainers();
       cleanUp("items");
     } else {
     }
@@ -534,13 +538,13 @@ const listClick = (p) => {
     let data = `{"table":"${related_table}","api":"${related_api}"}`;
     postAjaxData(scenario["function-post-url"][8], data);
 
-    if(!p.hasClass("relatedItem")){
+    if (!p.hasClass("relatedItem")) {
       p.toggleClass("activeItem");
     }
   }
 
   //  if (isVisibleTableContainer()) {
-  if(!p.hasClass("relatedItem")){
+  if (!p.hasClass("relatedItem")) {
     let label2columns = "";
     $("#table_container span, #api_container span").filter('.activeItem').each(function () {
       let tn = $(this).text();
@@ -551,7 +555,7 @@ const listClick = (p) => {
       }
     });
 
-    if(0<label2columns.length){
+    if (0 < label2columns.length) {
       if (sourcePanel == TABLECONTAINER) {
         label2columns = `Registered columns in ${label2columns}`;
       } else {
@@ -611,7 +615,7 @@ const setApiIF_In = (t, s) => {
       ret = `{"apino":\"${t}\"}`;
     }
   } else if (ta.startsWith("ji")) {
-    if(loginuser.dbtype != "redis"){
+    if (loginuser.dbtype != "redis") {
       /*
         insert
           a,b,... in insert into table values(a,b,...) 
@@ -619,14 +623,14 @@ const setApiIF_In = (t, s) => {
       let i_sql = s.sql.split("values(");
       i_sql[1] = i_sql[1].slice(0, i_sql[1].length - 1).replaceAll('\'', '').replaceAll('{', '').replaceAll('}', '');
       ret = buildJetelinaJsonForm(ta, i_sql[1]);
-    }else{
+    } else {
       let i_sql = s.sql.split(":");
       ret = `{"apino":\"${t}\","key1":"{your key data}","key2":"{your value data}"}`;
       preferent.apitestparams.push("your key data");
       preferent.apitestparams.push("your value data");
     }
   } else if (ta.startsWith("ju") || ta.startsWith("jd")) {
-    if(loginuser.dbtype != "redis"){
+    if (loginuser.dbtype != "redis") {
       /*
         update and delete(the true color is update)
           a=d_a,b=d_b... in update table set a=d_a,b=d_b..... 
@@ -640,7 +644,7 @@ const setApiIF_In = (t, s) => {
       */
       preferent.apitestparams.push("jt_id");
       ret = ret.slice(0, ret.length - 1) + `,\"subquery\":\"{jt_id}\"` + ret.slice(ret.length - 1, ret.length);
-    }else{
+    } else {
       let u_sql = s.sql.split(":");
       ret = `{"apino":\"${t}\","key":"{your value data}"}`;
       preferent.apitestparams.push("your value data");
@@ -665,16 +669,16 @@ const setApiIF_Out = (t, s) => {
   let ta = t.toLowerCase();
 
   if (ta.startsWith("js")) {
-    if(loginuser.dbtype != "redis"){
+    if (loginuser.dbtype != "redis") {
       let pb = s.sql.split("select");
       let pf = pb[1].split("from");
       // there is the items in pf[0]
       if (pf[0] != null && 0 < pf[0].length) {
         ret = buildJetelinaOutJsonForm(ta, pf[0]);
       }
-    }else{
+    } else {
       let pb = s.sql.split(":");
-      if(pb[1] != null && 0<pb[1].length){
+      if (pb[1] != null && 0 < pb[1].length) {
         ret = `{"result":true or false,"Jetelina":"[{\"${pb[1]}\":\"{${pb[1]}}\"}]","message from Jetelina":"\".....\""}`;
       }
     }
@@ -695,7 +699,7 @@ const setApiIF_Out = (t, s) => {
 const setApiIF_Sql = (s) => {
   let ret = "";
 
-  if(loginuser.dbtype != "redis"){
+  if (loginuser.dbtype != "redis") {
     // possibly s.subquery is null. 'ignore' -> no sub query
     if (s.subquery != null && s.subquery != IGNORE) {
       ret = `${s.sql} ${s.subquery};`;
@@ -707,13 +711,13 @@ const setApiIF_Sql = (s) => {
     if (ret.startsWith("insert")) {
       ret = ret.replaceAll(`,{${reject_jetelina_delete_flg}}`, '').replaceAll(`,${reject_jetelina_delete_flg}`, '');
     }
-  }else{
+  } else {
     let d = s.sql.split(":");
-    if(s.apino.startsWith("ji")){
+    if (s.apino.startsWith("ji")) {
       ret = `${d[0]} {your key data} {your value data}`;
-    }else if(s.apino.startsWith("ju")){
+    } else if (s.apino.startsWith("ju")) {
       ret = `${d[0]} ${d[1]} {your value data}`;
-    }else if(s.apino.startsWith("js")){
+    } else if (s.apino.startsWith("js")) {
       ret = `${d[0]} ${d[1]}`;
     }
   }
@@ -757,7 +761,7 @@ const buildJetelinaJsonForm = (t, s) => {
       ss = $.trim(ss);
       preferent.apitestparams.push(ss);
       ret = `${ret}\"${ss}\":\"{${ss}}\",`;
-//      ret = `${ret}\"${$.trim(ss)}\":\"{${$.trim(ss)}}\",`;
+      //      ret = `${ret}\"${$.trim(ss)}\":\"{${$.trim(ss)}}\",`;
     }
   }
 
@@ -846,6 +850,10 @@ const getColumn = (tablename) => {
       return getdata(result, 1);
     }).fail(function (result) {
       checkResult(result);
+      if (result.errnum != null) {
+        preferent.errnum = result.errnum;
+      }
+
       typingControll(chooseMsg('fail-msg', "", ""));
     }).always(function () {
       // release it for allowing to input new command in the chatbox 
@@ -918,7 +926,7 @@ const dropThisTable = (tables) => {
       preferent.cmd = "";
       // new api list 
       refreshApiList();
-      m = chooseMsg('refreshing-msg','','');
+      m = chooseMsg('refreshing-msg', '', '');
     } else {
       m = result["message from Jetelina"];
       // try again
@@ -929,6 +937,10 @@ const dropThisTable = (tables) => {
   }).fail(function (result) {
     checkResult(result);
     console.error("dropThisTable() faild: ", result);
+    if (result.errnum != null) {
+      preferent.errnum = result.errnum;
+    }
+
     typingControll(chooseMsg('fail-msg', "", ""));
   }).always(function () {
     // release it for allowing to input new command in the chatbox 
@@ -1015,6 +1027,10 @@ const postSelectedColumns = (mode) => {
   }).fail(function (result) {
     checkResult(result);
     console.error("postSelectedColumns() fail");
+    if (result.errnum != null) {
+      preferent.errnum = result.errnum;
+    }
+
     typingControll(chooseMsg('fail-msg', "", ""));
   }).always(function () {
     // release it for allowing to input new command in the chatbox 
@@ -1023,9 +1039,9 @@ const postSelectedColumns = (mode) => {
     if (mode != "pre") {
       // initializing
       preferent.cmd = "";
-//      $(GENELICPANELINPUT).val('');
-//      $(`${CONTAINERPANEL} .selectedItem`).remove();
-//      cleanupItems4Switching();// clear(=close) opened table items. defined in jetelinalib.js
+      //      $(GENELICPANELINPUT).val('');
+      //      $(`${CONTAINERPANEL} .selectedItem`).remove();
+      //      cleanupItems4Switching();// clear(=close) opened table items. defined in jetelinalib.js
       rejectCancelableCmdList(SELECTITEM);
     }
   });
@@ -1043,7 +1059,7 @@ const functionPanelFunctions = (ut) => {
   let cmd = "";
   let usedb = "";// database name for switching
 
-  if(inCancelableCmdList(["apitest"])){
+  if (inCancelableCmdList(["apitest"])) {
     let p = `{${preferent.apitestparams[preferent.apiparams_count]}}`;
     let inp = $(`${COLUMNSPANEL} [name='apiin']`).text();
     let reps = inp.replace(p, original_chatbox_input_text);
@@ -1052,7 +1068,7 @@ const functionPanelFunctions = (ut) => {
   }
 
   if (1 < cmdCandidates.length) {
-      cmd = whichCommandsInOrders(ut);
+    cmd = whichCommandsInOrders(ut);
   } else {
     /*
       Tips:
@@ -1086,10 +1102,10 @@ const functionPanelFunctions = (ut) => {
     } else if (cmd == "" && inScenarioChk(ut, 'func-fileupload-open-cmd')) {
       cmd = FILESELECTOROPEN;
       cmdCandidates.push("file open");
-//    } else if (cmd == "" && inScenarioChk(ut, 'func-table-api-open-close-cmd')) {
+      //    } else if (cmd == "" && inScenarioChk(ut, 'func-table-api-open-close-cmd')) {
     } else if (inScenarioChk(ut, 'func-table-api-open-close-cmd')) {
       rejectCancelableCmdList(cmd);
-      cmd = SELECTITEM;      
+      cmd = SELECTITEM;
       cmdCandidates.push("open or close table/api");
     } else if (cmd == "" && inScenarioChk(ut, 'func-item-select-cmd')) {
       cmd = SELECTITEM;
@@ -1113,19 +1129,19 @@ const functionPanelFunctions = (ut) => {
     }
 
     // db switching
-    if(cmd == "" && inScenarioChk(ut, 'func-db-switch-cmd')){
+    if (cmd == "" && inScenarioChk(ut, 'func-db-switch-cmd')) {
       cmd = "switchdb";
       usedb = "";
-    }else if(cmd == "" && inScenarioChk(ut, 'func-use-postgresql-cmd')){
+    } else if (cmd == "" && inScenarioChk(ut, 'func-use-postgresql-cmd')) {
       cmd = "switchdb";
       usedb = "postgresql";
-    }else if(cmd == "" && inScenarioChk(ut, 'func-use-mysql-cmd')){
+    } else if (cmd == "" && inScenarioChk(ut, 'func-use-mysql-cmd')) {
       cmd = "switchdb";
       usedb = "mysql";
-    }else if(cmd == "" && inScenarioChk(ut, 'func-use-redis-cmd')){
+    } else if (cmd == "" && inScenarioChk(ut, 'func-use-redis-cmd')) {
       cmd = "switchdb";
       usedb = "redis";
-    }else if(cmd == "" && $.inArray("switchdb",cmdCandidates) != -1){
+    } else if (cmd == "" && $.inArray("switchdb", cmdCandidates) != -1) {
       cmd = "switchdb";
     }
 
@@ -1133,7 +1149,7 @@ const functionPanelFunctions = (ut) => {
       (cmd == "" && inScenarioChk(ut, 'func-apicreate-cmd'))) {
       cmd = 'post';
       //cmdCandidates.push("post");
-        cancelableCmdList.push("post");
+      cancelableCmdList.push("post");
     }
 
     if (cmd == "" && !isSelectedItem() && inScenarioChk(ut, 'func-api-test-cmd')) {
@@ -1154,14 +1170,14 @@ const functionPanelFunctions = (ut) => {
     }
 
     // show/hide command, maybe
-    if ( inScenarioChk(ut, 'func-api-test-panel-show-cmd')) {
-//      if (cmd == "" && inScenarioChk(ut, 'func-api-test-panel-show-cmd')) {
-        showApiTestPanel(true);
-    } else if ( inScenarioChk(ut, 'func-api-test-panel-hide-cmd')) {
-//    } else if (cmd == "" && inScenarioChk(ut, 'func-api-test-panel-hide-cmd')) {
+    if (inScenarioChk(ut, 'func-api-test-panel-show-cmd')) {
+      //      if (cmd == "" && inScenarioChk(ut, 'func-api-test-panel-show-cmd')) {
+      showApiTestPanel(true);
+    } else if (inScenarioChk(ut, 'func-api-test-panel-hide-cmd')) {
+      //    } else if (cmd == "" && inScenarioChk(ut, 'func-api-test-panel-hide-cmd')) {
       showApiTestPanel(false);
-    } else if ( inScenarioChk(ut, 'func-subpanel-close-cmd')) {
-//    } else if (cmd == "" && inScenarioChk(ut, 'func-subpanel-close-cmd')) {
+    } else if (inScenarioChk(ut, 'func-subpanel-close-cmd')) {
+      //    } else if (cmd == "" && inScenarioChk(ut, 'func-subpanel-close-cmd')) {
       showGenelicPanel(false);
     }
   }
@@ -1231,7 +1247,7 @@ const functionPanelFunctions = (ut) => {
       if (f != null && 0 < f.length) {
         delete preferent.apilist;
         fileupload();
-        m = chooseMsg('inprogress-msg','','');
+        m = chooseMsg('inprogress-msg', '', '');
       } else {
         m = chooseMsg('func-fileupload-msg', "", "");
       }
@@ -1273,17 +1289,17 @@ const functionPanelFunctions = (ut) => {
 
       // for opening table 
       $(CONTAINERNEWAPINO).remove();
-        if( ($.inArray('all', t) != -1)&&(($.inArray('cancel', t) != -1)||($.inArray('cancel', t) != -1)||($.inArray('close',t) !=-1))){
-          $("#table_container span, #api_container span").filter(".relatedItem, .activeItem").each(function(){
-          if($(this).hasClass("relatedItem")){
+      if (($.inArray('all', t) != -1) && (($.inArray('cancel', t) != -1) || ($.inArray('cancel', t) != -1) || ($.inArray('close', t) != -1))) {
+        $("#table_container span, #api_container span").filter(".relatedItem, .activeItem").each(function () {
+          if ($(this).hasClass("relatedItem")) {
             $(this).removeClass("relatedItem");
           }
-          if($(this).hasClass("activeItem")){
+          if ($(this).hasClass("activeItem")) {
             $(this).removeClass("activeItem");
           }
 
           let n = $(this).text();
-          if( relatedDataList[n] != null ){
+          if (relatedDataList[n] != null) {
             delete relatedDataList[n];
           }
         });
@@ -1339,10 +1355,10 @@ const functionPanelFunctions = (ut) => {
           showSomethingMsgPanel(true);
           if (loginuser.available) {
             showSomethingInputField(true, 2);
-            m = chooseMsg('func-require-stichwort-msg','','');
+            m = chooseMsg('func-require-stichwort-msg', '', '');
           } else {
             showSomethingInputField(true, 1);
-            m = chooseMsg('func-register-stichwort-msg','','');
+            m = chooseMsg('func-register-stichwort-msg', '', '');
           }
         } else {
           /* execute drop table and/or delete api,
@@ -1554,7 +1570,7 @@ const functionPanelFunctions = (ut) => {
           rejectCancelableCmdList(SELECTITEM);
         }
 
-      }else if (inCancelableCmdList(["apitest","preapitest"])){
+      } else if (inCancelableCmdList(["apitest", "preapitest"])) {
         rejectCancelableCmdList("apitest");
         rejectCancelableCmdList("preapitest");
         $(`${COLUMNSPANEL} [name='apiin']`).removeClass("attentionapiinout").text(preferent.original_apiin_str);
@@ -1587,7 +1603,7 @@ const functionPanelFunctions = (ut) => {
         if (checkGenelicInput($(GENELICPANELINPUT).val())) {
           postSelectedColumns("pre");
         } else {
-          m = chooseMsg('func-api-test-subquery-chk-error-msg','','');
+          m = chooseMsg('func-api-test-subquery-chk-error-msg', '', '');
         }
       }
       break;
@@ -1600,31 +1616,31 @@ const functionPanelFunctions = (ut) => {
       preferent.original_apiin_str = $(`${COLUMNSPANEL} [name='apiin']`).text();
       preferent.original_apiout_str = $(`${COLUMNSPANEL} [name='apiout']`).text();
 
-      if( preferent.apitestparams != null && 0 < preferent.apitestparams.length ){
-        if( preferent.apiparams_count == null ){
+      if (preferent.apitestparams != null && 0 < preferent.apitestparams.length) {
+        if (preferent.apiparams_count == null) {
           preferent.apiparams_count = 0;
-        }else{
+        } else {
           preferent.apiparams_count += 1;
         }
 
-        if( preferent.apiparams_count < preferent.apitestparams.length){
+        if (preferent.apiparams_count < preferent.apitestparams.length) {
           m = `set '${preferent.apitestparams[preferent.apiparams_count]}'`;
-        }else if(inScenarioChk(ut,'common-post-cmd')){
+        } else if (inScenarioChk(ut, 'common-post-cmd')) {
           apiTestAjax();
-        }else{
+        } else {
           m = "all params set. type 'post'.";
         }
-      }else{
-        if(inScenarioChk(ut,'common-post-cmd')){
+      } else {
+        if (inScenarioChk(ut, 'common-post-cmd')) {
           apiTestAjax();
-        }else{
+        } else {
           m = "no params. type 'post'.";
         }
       }
 
       break;
     case 'switchdb':
-      if(inScenarioChk(ut,'confirmation-sentences-cmd') && preferent.db != null && preferent.db != ""){
+      if (inScenarioChk(ut, 'confirmation-sentences-cmd') && preferent.db != null && preferent.db != "") {
         //post
         setDBFocus(preferent.db);
         loginuser.dbtype = preferent.db;
@@ -1643,14 +1659,14 @@ const functionPanelFunctions = (ut) => {
 
         let data = `{"param":"${preferent.db}"}`;
         postAjaxData(scenario['function-post-url'][9], data);
-      }else{
-        if(usedb != ""){
+      } else {
+        if (usedb != "") {
           // switch to usedb
           preferent.db = usedb;
-          m = chooseMsg('func-determine-db-msg', usedb,'r');
-        }else{
+          m = chooseMsg('func-determine-db-msg', usedb, 'r');
+        } else {
           // display a message for changing database
-          m = chooseMsg('func-select-db-msg','','');
+          m = chooseMsg('func-select-db-msg', '', '');
         }
 
         cmdCandidates.push(cmd);
@@ -1737,17 +1753,17 @@ const checkGenelicInput = (s) => {
         writing the sub query is on your own responsibility. :)
     */
     let arr = [];
-//    $(`${CONTAINERPANEL} span`).filter(".selectedItem").each(function () {
-    $("#columns span, #container span").filter('.item').each(function(){
+    //    $(`${CONTAINERPANEL} span`).filter(".selectedItem").each(function () {
+    $("#columns span, #container span").filter('.item').each(function () {
       arr.push($(this).text());
     });
 
     // 1st: "" -> '' because sql does not accept ""
     let sq = s.replaceAll("\"", "'");
     // 2nd: reject unexpected words
-    let unexpectedwords = ["delete","drop",";"];
-    for(i in unexpectedwords){
-      sq = sq.replaceAll(unexpectedwords[i],"");
+    let unexpectedwords = ["delete", "drop", ";"];
+    for (i in unexpectedwords) {
+      sq = sq.replaceAll(unexpectedwords[i], "");
     }
     // 3nd: items in the subquery sentence are in the open items list
     /*
@@ -1766,17 +1782,17 @@ const checkGenelicInput = (s) => {
       }
     }
 
-    if(0<pp.length){
+    if (0 < pp.length) {
       // ここが問題。最後のチェックで関係ないtableがまだsubqueryにないかどうかを見たいが"."だけだと小数点数字もアリなので困る
       if (pp.indexOf('.') != -1) {
         $(GENELICPANELINPUT).focus();
         ret = false;
       }
-    }else{
+    } else {
       ret = false;
     }
 
-    if(ret){
+    if (ret) {
       $(GENELICPANELINPUT).val(sq);
     }
   }
@@ -1845,6 +1861,10 @@ const deleteThisApi = (apis) => {
   }).fail(function (result) {
     checkResult(result);
     console.error("deleteThisApi() faild: ", result);
+    if (result.errnum != null) {
+      preferent.errnum = result.errnum;
+    }
+
     typingControll(chooseMsg('fail-msg', "", ""));
   }).always(function () {
     // release it for allowing to input new command in the chatbox 
@@ -1918,7 +1938,7 @@ const displayTablesAndApis = () => {
  */
 const refreshApiList = () => {
   cleanUp("apis");
-  if(preferent.apilist != null ){
+  if (preferent.apilist != null) {
     delete preferent.apilist
   }
 
@@ -1942,15 +1962,15 @@ const refreshTableList = () => {
  * 
  * @param {string} targetcmd command string
  */
-const tidyupcmdCandidates = (targetcmd) =>{
-  return cmdCandidates = cmdCandidates.filter(function(v){
+const tidyupcmdCandidates = (targetcmd) => {
+  return cmdCandidates = cmdCandidates.filter(function (v) {
     return v != targetcmd;
   });
 }
 
 const setLeftPanelTitle = () => {
   title = "Table List";
-  if(loginuser.dbtype == "redis"){
+  if (loginuser.dbtype == "redis") {
     title = "Keys List";
   }
 
@@ -1960,7 +1980,7 @@ const setLeftPanelTitle = () => {
 const isSelectedItem = () => {
   let ret = false;
   let selecteditems = $(`${CONTAINERPANEL} span`).filter(".selectedItem").text();
-  if(0<selecteditems.length){
+  if (0 < selecteditems.length) {
     ret = true;
   }
 

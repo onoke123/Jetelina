@@ -10,6 +10,9 @@
 # this post url is as same as the WebAPI is provided to user
 @jdic function-apitest-usr:"/apiactions"
 
+# this post url is for searching 'errnum' in the log file
+@jdic function-search-log-errnum:"/searcherror"
+
 # get urls for function panel 
 @jdic function-get-url:"/getapilist","/getalldbtable","/getconfigchangehistory","/goodbyenow"
 
@@ -50,7 +53,7 @@
 @jdic no-authority-js-msg:"you do not have the authority, yet"
 @jdic no-authority-jl-msg:"you cannot cheat me, you do not have the authority"
 
-# miss login 
+# login failed 
 @jdic starting-4-msg:"I am sorry, but ", "Something wrong, hum, "
 
 # ask using db but not login yet
@@ -159,7 +162,8 @@
 @jdic func-subpanel-close-cmd:"close query","hide query","close subquery","hide subquery","close sub","hide sub"
 @jdic func-subpanel-opened-msg:"Set your sub query in \"Sub Query\" field","Ready to \"Sub Query\" field"
 @jdic func-api-test-msg:"Why do not you try it, type \"sql test\" to execute this SQL","Let's check it with typing \"sql check\""
-@jdic func-api-test-cmd:"do sql test","do api test","test sql","test api","sql check","do api check","check sql","check api","execute sql test","execute api test","execute test","do test"
+@jdic func-api-test-cmd:"do sql test","do api test","test sql","test api","api test","sql check","do api check","check sql","check api","execute sql test","execute api test","execute test","do test"
+@jdic func-api-test-done-msg:"api test done, attention 'OUT'.","done, attention 'OUT', how's going","done, attention 'OUT', satisfied?"
 @jdic func-api-test-panel-show-cmd:"show api test","open api test","show sql test","open sql test","display api test","display sql test","open test result","show test result"
 @jdic func-api-test-panel-hide-cmd:"hide api test","close api test","hide sql test","close sql test","undisplay api test","undisplay sql test","close test result","hide test result"
 @jdic func-api-test-subquery-chk-error-msg:"subquery error. I don't know what you wanna do. look carefully."
@@ -197,7 +201,9 @@
 # show or hide error message 
 #
 @jdic hide-something-msg-cmd:"hide error","close error","delete error","hide message","close message","delete message"
-@jdic show-something-msg-cmd:"show error","open error", "display error","show message","open message","display message"
+@jdic show-something-msg-cmd:"show message","open message","display message"
+@jdic "searching-errnum-cmd":"show error","open error", "display error","what has happend","what's happen"
+@jdic "func-api-error-searching-msg":"gott you?"
 
 #
 # configuration update caution/error message
