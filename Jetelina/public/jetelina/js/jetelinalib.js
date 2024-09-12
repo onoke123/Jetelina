@@ -132,6 +132,11 @@ const checkResult = (o) => {
             let em = "";
             let errmsg;
             let error;
+
+            if (o.errnum != null) {
+                preferent.errnum = o.errnum;
+            }
+
             if (o[response] != null) {
                 errmsg = o[response][errMsg];
                 error = o[response][errorStr];
@@ -350,116 +355,116 @@ const getAjaxData = (url) => {
                 return ret;
             }
         }).done(function (result, textStatus, jqXHR) {
+            let m = "";
             // go data parse
             const dataurls = scenario['analyzed-data-collect-url'];
-
-            if (url == dataurls[3]) {
-                /*
-                    Tips:
-                        dataurls[3] is for checking existing Jetelina's suggestion.
-                        resume below if the return were true,meaning exsit her one.
-                */
-                if (result) {
-                    // set suggestion existing flag to display my message
-                    isSuggestion = true;
-                    // set my suggestion
-                    $(SOMETHINGMSGPANELMSG).addClass("jetelina_suggestion");
-                    $(SOMETHINGMSGPANELMSG).text(`${result.Jetelina.apino}:${result.Jetelina.suggestion}`);
-                    // relation access & combination
-                    getAjaxData(dataurls[0]);
-                    // simply sql speed
-                    getAjaxData(dataurls[1]);
-                    // sql speed on test db
-                    getAjaxData(dataurls[2]);
-                }
-
-                /*
-                    Tips:
-                        dataurls[4] is for sql access count data.
-                        this data always is executed.
-                */
-                getAjaxData(dataurls[4]);
-
-            } else if (inScenarioChk(url, 'analyzed-data-collect-url')) {
-                let type = "";
-                if (url == dataurls[0]) {
-                    // access vs combination
-                    type = "ac";
-                } else if (url == dataurls[1]) {
-                    // real performance. execute sql on the DB. considering needs or not, 2023/11/25
-                    type = "real";
-                } else if (url == dataurls[2]) {
-                    // test performance. execute sql on test DB
-                    type = "test";
-                } else if (url == dataurls[4]) {
-                    // sql access
-                    type = "access";
-                }
-                /*
-                    Tips:
-                        drow graphic in condition panel.
-                        this setGraphDta() function is defined in conditionpanel.js.
-                */
-                let acVscom = setGraphData(result, type);
-
-                if (isSuggestion) {
+            if (checkResult(result)) {
+                if (url == dataurls[3]) {
                     /*
                         Tips:
-                            isSuggestion = true, the meaning of the file existing is Jetelina wanna put inform you something 'improving suggestion'.
-                            the below message is for it.
-                            but abandon any 'suggestion" in Ver.1
+                            dataurls[3] is for checking existing Jetelina's suggestion.
+                            resume below if the return were true,meaning exsit her one.
                     */
-                    typingControll(chooseMsg("cond-performance-improve-msg", "", ""));
+                    if (result) {
+                        // set suggestion existing flag to display my message
+                        isSuggestion = true;
+                        // set my suggestion
+                        $(SOMETHINGMSGPANELMSG).addClass("jetelina_suggestion");
+                        $(SOMETHINGMSGPANELMSG).text(`${result.Jetelina.apino}:${result.Jetelina.suggestion}`);
+                        // relation access & combination
+                        getAjaxData(dataurls[0]);
+                        // simply sql speed
+                        getAjaxData(dataurls[1]);
+                        // sql speed on test db
+                        getAjaxData(dataurls[2]);
+                    }
+
+                    /*
+                        Tips:
+                            dataurls[4] is for sql access count data.
+                            this data always is executed.
+                    */
+                    getAjaxData(dataurls[4]);
+
+                } else if (inScenarioChk(url, 'analyzed-data-collect-url')) {
+                    let type = "";
+                    if (url == dataurls[0]) {
+                        // access vs combination
+                        type = "ac";
+                    } else if (url == dataurls[1]) {
+                        // real performance. execute sql on the DB. considering needs or not, 2023/11/25
+                        type = "real";
+                    } else if (url == dataurls[2]) {
+                        // test performance. execute sql on test DB
+                        type = "test";
+                    } else if (url == dataurls[4]) {
+                        // sql access
+                        type = "access";
+                    }
+                    /*
+                        Tips:
+                            drow graphic in condition panel.
+                            this setGraphDta() function is defined in conditionpanel.js.
+                    */
+                    let acVscom = setGraphData(result, type);
+
+                    if (isSuggestion) {
+                        /*
+                            Tips:
+                                isSuggestion = true, the meaning of the file existing is Jetelina wanna put inform you something 'improving suggestion'.
+                                the below message is for it.
+                                but abandon any 'suggestion" in Ver.1
+                        */
+                        typingControll(chooseMsg("cond-performance-improve-msg", "", ""));
+                    } else {
+                        typingControll(chooseMsg("success-msg", "", ""));
+                    }
                 } else {
-                    typingControll(chooseMsg("success-msg", "", ""));
+                    /*
+                        Attention:
+                            reset "api_list_title" here.
+                            indeed it needs in case of switching table/api list <- geturl[0]:api list, and geturl[1]:table list
+                            but there is not reason to set it in each, so far, therefore do it at here.
+                            change this position if it would have an issue. :P
+                    */
+                    const geturl = scenario['function-get-url'];
+                    if (url == geturl[0]) {
+                        //rendering api list
+                        preferent.apilist = result;
+                        getdata(result, 2);
+                        /*
+                            Tips:
+                                ②
+                                in the case of calling to show the newest api in table list panel,
+                                in fact it maybe called in chatKeyDonw() first (at ①), 
+                                it has a process as showing api-list then pointing the newest one.
+                                this process is executed by a chat word in chatKeyDown().
+                                the newest api no is set in presentaction.orderapino at the early line of chatKeyDown(). 
+                        */
+                        if (isVisibleApiContainer() && presentaction.orderapino != null) {
+                            let orderdapino = presentaction.orderapino;
+                            presentaction.orderapino = null;
+                            chatKeyDown(`open ${orderdapino}`);
+                        }
+                    } else if (url == geturl[1]) {
+                        // get db table list
+                        getdata(result, 0);
+                    } else if (url == geturl[2]) {
+                        // configuration change history
+                        getdata(result, 3);
+                    } else if (url == geturl[3]) {
+                        // simply logout and the chat message unnecessary
+                        return;
+                    }
+
+                    m = 'success-msg';
                 }
             } else {
-                /*
-                    Attention:
-                        reset "api_list_title" here.
-                        indeed it needs in case of switching table/api list <- geturl[0]:api list, and geturl[1]:table list
-                        but there is not reason to set it in each, so far, therefore do it at here.
-                        change this position if it would have an issue. :P
-                */
-                //                $(RightPanelTitle).text('');
-
-                const geturl = scenario['function-get-url'];
-                if (url == geturl[0]) {
-                    //rendering api list
-                    preferent.apilist = result;
-                    getdata(result, 2);
-                    /*
-                        Tips:
-                            ②
-                            in the case of calling to show the newest api in table list panel,
-                            in fact it maybe called in chatKeyDonw() first (at ①), 
-                            it has a process as showing api-list then pointing the newest one.
-                            this process is executed by a chat word in chatKeyDown().
-                            the newest api no is set in presentaction.orderapino at the early line of chatKeyDown(). 
-                    */
-                    if (isVisibleApiContainer() && presentaction.orderapino != null) {
-                        let orderdapino = presentaction.orderapino;
-                        presentaction.orderapino = null;
-                        chatKeyDown(`open ${orderdapino}`);
-                    }
-                } else if (url == geturl[1]) {
-                    // get db table list
-                    getdata(result, 0);
-                } else if (url == geturl[2]) {
-                    // configuration change history
-                    getdata(result, 3);
-                } else if (url == geturl[3]) {
-                    // simply logout and the chat message unnecessary
-                    return;
-                }
-
-                typingControll(chooseMsg("success-msg", "", ""));
+                m = 'fail-msg';
             }
+
+            typingControll(chooseMsg(m, '', ''));
         }).fail(function (result) {
-            if (result.errnum != null) {
-                preferent.errnum = result.errnum;
-            }
-
             checkResult(result);
             console.error("getAjaxData() fail");
             typingControll(chooseMsg("fail-msg", "", ""));
@@ -496,127 +501,99 @@ const postAjaxData = (url, data) => {
                 return ret;
             }
         }).done(function (result, textStatus, jqXHR) {
-            const posturls = scenario['function-post-url'];
-            let specialmsg = "";
-            if (url == posturls[0] || url == posturls[7]) {
-                // userdata update or new user register
-
-                // clean up user register parameters
-                rejectCancelableCmdList(USERMANAGE);
-                presentaction.cmd = null;
-                presentaction.um = null;
-                if (!result.result) {
-                    specialmsg = result["message from Jetelina"];
-                }
-
-            } else if (url == posturls[1]) {
-                // jetelinawords -> nothing do
-            } else if (url == posturls[2]) {
-                // get a configuration parameter, then show it in there
-                let configMsg = "Oh oh, I do not know it, another one plz.";
-                $.each(result, function (name, value) {
-                    if (name != "result") {
-                        presentaction.config_data = value;
-                        configMsg = `${name} is '${value}' so far`;
+            let m = "";
+            if (checkResult(result)) {
+                const posturls = scenario['function-post-url'];
+                let specialmsg = "";
+                if (url == posturls[0] || url == posturls[7]) {
+                    // userdata update or new user register
+                    // clean up user register parameters
+                    rejectCancelableCmdList(USERMANAGE);
+                    presentaction.cmd = null;
+                    presentaction.um = null;
+                    if (!result.result) {
+                        specialmsg = result["message from Jetelina"];
                     }
-                });
-
-                $(SOMETHINGMSGPANELMSG).text(configMsg);
-                showSomethingMsgPanel(true);
-            } else if (url == posturls[3]) {
-                // configuration parameter change success then cleanup the "#something_msg"
-                setDBFocus(presentaction.dbtype);
-                loginuser.dbtype = presentaction.dbtype;
-                presentaction = {};
-                showSomethingInputField(false);
-            } else if (url == posturls[8]) {
-                let str = "";
-                if (result.list != 0) {
-                    /*
-                        Tips:
-                            result.target -> "table name e.g. ftest1" or "api name e.g. js112"
-                            therefore, relatedDataList[result.target] is the related talbes/apis list with 'result.target'
-                    */
-                    relatedDataList[result.target] = result.list;
-                    /*
-                                        let c = "api";
-                                        if(!$(RightPanelTitle).text().startsWith("TABLEs") ){
-                                            c = "table";
-                                        }else{
-                                            // every time clean up in case showing related table
-                                            cleanupRelatedList(false);
-                                        }
-                    */
-                    // collect items on the relational list are already
-                    let existList = [];
-                    /*
-                        Tips:
-                            add the list into APICONTAINER when relatedDataList.type = "table", because a 'table' was clicked
-                            opposit in case of 'api'
-                    */
-                    let targetcontainer = TABLECONTAINER;
-                    if (relatedDataList.type == "api") {
-                        targetcontainer = APICONTAINER;
-                    }
-
-                    $(`${targetcontainer} span`).each(function () {
-                        existList.push($(this).text());
+                } else if (url == posturls[1]) {
+                    // jetelinawords -> nothing do
+                } else if (url == posturls[2]) {
+                    // get a configuration parameter, then show it in there
+                    let configMsg = "Oh oh, I do not know it, another one plz.";
+                    $.each(result, function (name, value) {
+                        if (name != "result") {
+                            presentaction.config_data = value;
+                            configMsg = `${name} is '${value}' so far`;
+                        }
                     });
-                    /*
-                                        if(relatedDataList.type == "api"){
-                                            cleanUp("apis");
-                                        }else{
-                                            cleanUp("tables");
-                                        }
-                    */
 
-                    // collect the difference items between getting list(result.list) and on the relational list
-                    //                    let newaddlist = result.list.filter(x=>!existList.includes(x));
-                    let newaddlist = result.list.filter(x => existList.includes(x));
-                    if (0 < newaddlist.length) {
+                    $(SOMETHINGMSGPANELMSG).text(configMsg);
+                    showSomethingMsgPanel(true);
+                } else if (url == posturls[3]) {
+                    // configuration parameter change success then cleanup the "#something_msg"
+                    setDBFocus(presentaction.dbtype);
+                    loginuser.dbtype = presentaction.dbtype;
+                    presentaction = {};
+                    showSomethingInputField(false);
+                } else if (url == posturls[8]) {
+                    let str = "";
+                    if (result.list != 0) {
+                        /*
+                            Tips:
+                                result.target -> "table name e.g. ftest1" or "api name e.g. js112"
+                                therefore, relatedDataList[result.target] is the related talbes/apis list with 'result.target'
+                        */
+                        relatedDataList[result.target] = result.list;
+                        // collect items on the relational list are already
+                        let existList = [];
+                        /*
+                            Tips:
+                                add the list into APICONTAINER when relatedDataList.type = "table", because a 'table' was clicked
+                                opposit in case of 'api'
+                        */
+                        let targetcontainer = TABLECONTAINER;
+                        if (relatedDataList.type == "api") {
+                            targetcontainer = APICONTAINER;
+                        }
+
                         $(`${targetcontainer} span`).each(function () {
-                            for (let i in newaddlist) {
-                                if ($(this).text() == newaddlist[i]) {
-                                    if (!$(this).hasClass("activeItem")) {
-                                        //$(this).removeClass("activeItem");
-                                        $(this).addClass("relatedItem");
-                                    }
-
-                                    //$(this).addClass("relatedItem");
-                                }
-                            }
+                            existList.push($(this).text());
                         });
 
-                        // add only diffrences to the list
-                        /*                        for(let i in newaddlist){
-                                                    str += `<span class="${relatedDataList.type}">${newaddlist[i]}</span>`;
-                                                }*/
-                        /*                    }else{
-                                                // list the result, because there is no items on the list yet
-                                                for(let i in result.list){
-                                                    str += `<span class="${c}">${result.list[i]}</span>`;
-                                                } */
+                        // collect the difference items between getting list(result.list) and on the relational list
+                        let newaddlist = result.list.filter(x => existList.includes(x));
+                        if (0 < newaddlist.length) {
+                            $(`${targetcontainer} span`).each(function () {
+                                for (let i in newaddlist) {
+                                    if ($(this).text() == newaddlist[i]) {
+                                        if (!$(this).hasClass("activeItem")) {
+                                            //$(this).removeClass("activeItem");
+                                            $(this).addClass("relatedItem");
+                                        }
+                                    }
+                                }
+                            });
+                        }
+
+                        // append it ＼(^o^)／
+                        $(targetcontainer).append(str);
                     }
-
-                    // append it ＼(^o^)／
-                    $(targetcontainer).append(str);
+                } else if (url == posturls[9]) {
+                    // switching database
+                    // do not expect any returns, but refresh table and api list
+                    displayTablesAndApis();
                 }
-            } else if (url == posturls[9]) {
-                // switching database
-                // do not expect any returns, but refresh table and api list
-                displayTablesAndApis();
-            }
 
-            if (specialmsg == "") {
-                typingControll(chooseMsg("success-msg", "", ""));
+                if (specialmsg == "") {
+                    m = chooseMsg("success-msg", "", "")
+                } else {
+                    m = specialmsg;
+                }
             } else {
-                typingControll(specialmsg);
-            }
-        }).fail(function (result) {
-            if (result.errnum != null) {
-                preferent.errnum = result.errnum;
+                m = chooseMsg("fail-msg", "", "");
             }
 
+            typingControll(m, '', '');
+        }).fail(function (result) {
             checkResult(result);
             console.error("postAjaxData() fail");
             typingControll(chooseMsg("fail-msg", "", ""));
@@ -672,130 +649,132 @@ const authAjax = (un) => {
             return ret;
         }
     }).done(function (result, textStatus, jqXHR) {
-        let scenarioNumber = "starting-4-msg";
-        if (result != null) {
+        let m = "";
+        if (checkResult(result)) {
             const o = result;
-            let m = "";
+            let scenarioNumber = "starting-4-msg";
             loginuser.available = result.available;
             if (result.last_dbtype != null && 0 < result.last_dbtype.length) {
                 setDBFocus(result.last_dbtype);
                 loginuser.dbtype = result.last_dbtype;
             }
-            //           let jetelinamsg = result["message from Jetelina"];
+
             // found user
             Object.keys(o).some(function (key) {
-                if (key == "Jetelina" && o[key].length == 1) {
-                    $.each(o[key][0], function (k, v) {
-                        if (k == "user_id") {
-                            loginuser.user_id = v;
-                        } else if (k == "username") {
-                            if ((v != null) && (0 < v.length)) {
-                                let name = v.split(' ');
-                                if ((name != null) && (0 < name.length)) {
-                                    loginuser.firstname = name[1];
-                                    loginuser.lastname = name[0];
-                                    if (0 < loginuser.lastname.length) {
-                                        m = loginuser.lastname;
-                                    } else {
-                                        m = loginuser.firstname;
+                if (key == "Jetelina") {
+                    if (o[key].length == 1) {
+                        $.each(o[key][0], function (k, v) {
+                            if (k == "user_id") {
+                                loginuser.user_id = v;
+                            } else if (k == "username") {
+                                if ((v != null) && (0 < v.length)) {
+                                    let name = v.split(' ');
+                                    if ((name != null) && (0 < name.length)) {
+                                        loginuser.firstname = name[1];
+                                        loginuser.lastname = name[0];
+                                        if (0 < loginuser.lastname.length) {
+                                            m = loginuser.lastname;
+                                        } else {
+                                            m = loginuser.firstname;
+                                        }
                                     }
                                 }
+                            } else if (k == "nickname") {
+                                loginuser.nickname = v;
+                            } else if (k == "logincount") {
+                                loginuser.logincount = v;
+                            } else if (k == "logindate") {
+                                loginuser.logindate = v;
+                            } else if (k == "logoutdate") {
+                                loginuser.logoutdate = v;
+                            } else if (k == "generation") {
+                                loginuser.generation = v;
                             }
-                        } else if (k == "nickname") {
-                            loginuser.nickname = v;
-                        } else if (k == "logincount") {
-                            loginuser.logincount = v;
-                        } else if (k == "logindate") {
-                            loginuser.logindate = v;
-                        } else if (k == "logoutdate") {
-                            loginuser.logoutdate = v;
-                        } else if (k == "generation") {
-                            loginuser.generation = v;
+                        });
+
+                        // nickname has a priority
+                        if (loginuser.nickname != null) {
+                            m = loginuser.nickname;
                         }
-                    });
+                        /*
+                            Tips:
+                                authentiaction count. this is the key to get auth in Jetelina.
+                                Jetelina asks some questions in order to user info, ex. hobby, living....
+                                these info are inquired to DB, then count up if it matched.
+                                after around 1 to 4 counted up, the user has been authenticated, then
+                                can move from 'login"success' to 'lets_do_something' stage.
 
-                    // nickname has a priority
-                    if (loginuser.nickname != null) {
-                        m = loginuser.nickname;
-                    }
-                    /*
-                        Tips:
-                            authentiaction count. this is the key to get auth in Jetelina.
-                            Jetelina asks some questions in order to user info, ex. hobby, living....
-                            these info are inquired to DB, then count up if it matched.
-                            after around 1 to 4 counted up, the user has been authenticated, then
-                            can move from 'login"success' to 'lets_do_something' stage.
-
-                            loginuser and authcount are defined in dashboard.js as global.
-                    */
-                    if (0 < loginuser.logincount) {
-                        scenarioNumber = "starting-5-msg";
-                    } else {
-                        scenarioNumber = "first-login-msg";
-                    }
-                    /*
-                        Tips:
-                            user roll is defined by its "generation" and "logincount".
-                            generation        logincount vs roll
-                                            create   delete   user register
-                                0              1        1<=       1<=
-                                1              1        5<=       8<=
-                                2              1       x3<=       <-<=
-                                3              1       x4<=       <-<=
-
-                            i mean user who is 0 generation and less than 2 logincount can execute only create table/api, 
-                            later over 3 shift to "delete" roll that is able to till delete table/api.
-                            need over 8 logincount to get "user register" roll.
-                            other generation, e.g 1st is 2 times of 0 one.  
-                    */
-                    const p_roll = [1, 5, 8]; // <- generation=1 [create,delete,user register] 
-                    if (loginuser.generation == 0) {
-                        loginuser.roll = "admin";
-                    } else {
-                        loginuser.roll = "beginner";
-                        let t = 1;
-                        if (loginuser.generation == 2) {
-                            t = 3;
-                        } else if (loginuser.generation == 3) {
-                            t = 4;
+                                loginuser and authcount are defined in dashboard.js as global.
+                        */
+                        if (0 < loginuser.logincount) {
+                            scenarioNumber = "starting-5-msg";
+                        } else {
+                            scenarioNumber = "first-login-msg";
                         }
+                        /*
+                            Tips:
+                                user roll is defined by its "generation" and "logincount".
+                                generation        logincount vs roll
+                                                create   delete   user register
+                                    0              1        1<=       1<=
+                                    1              1        5<=       8<=
+                                    2              1       x3<=       <-<=
+                                    3              1       x4<=       <-<=
 
-                        if (p_roll[2] * t <= loginuser.logincount) {
+                                i mean user who is 0 generation and less than 2 logincount can execute only create table/api, 
+                                later over 3 shift to "delete" roll that is able to till delete table/api.
+                                need over 8 logincount to get "user register" roll.
+                                other generation, e.g 1st is 2 times of 0 one.  
+                        */
+                        const p_roll = [1, 5, 8]; // <- generation=1 [create,delete,user register] 
+                        if (loginuser.generation == 0) {
                             loginuser.roll = "admin";
-                        } else if (p_roll[1] * t <= loginuser.logincount) {
-                            loginuser.roll = "manager";
+                        } else {
+                            loginuser.roll = "beginner";
+                            let t = 1;
+                            if (loginuser.generation == 2) {
+                                t = 3;
+                            } else if (loginuser.generation == 3) {
+                                t = 4;
+                            }
+
+                            if (p_roll[2] * t <= loginuser.logincount) {
+                                loginuser.roll = "admin";
+                            } else if (p_roll[1] * t <= loginuser.logincount) {
+                                loginuser.roll = "manager";
+                            }
                         }
+
+                        stage = 'login_success';
+                        //                        m = scenarioNumber;
+                        if (scenarioNumber != 'first-login-msg') {
+                            m = chooseMsg(scenarioNumber, m, "a");
+                        } else {
+                            m = chooseMsg(scenarioNumber, m, "r");
+                        }
+                    } else if (1 < o[key].length) {
+                        // some candidates
+                        scenarioNumber = "multi-candidates-msg";
+                        stage = 'login';
+                    } else {
+                        // no user
+                        m = result["message from Jetelina"];
+                        if (m == null || m == "") {
+                            m = chooseMsg('fail-msg', '', '');
+                        }
+
+                        stage = 'login';
+                        typingControll(m);
+                        return true;
                     }
-
-                    stage = 'login_success';
-                } else if (1 < o[key].length) {
-                    // some candidates
-                    scenarioNumber = "multi-candidates-msg";
-                    stage = 'login';
-                } else {
-                    // no user
-                    //                    scenarioNumber = "not-registered-msg";
-                    m = result["message from Jetelina"];
-                    stage = 'login';
-                    typingControll(m);
-                    return true;
                 }
-
-                if (scenarioNumber != 'first-login-msg') {
-                    m = chooseMsg(scenarioNumber, m, "a");
-                } else {
-                    m = chooseMsg(scenarioNumber, m, "r");
-                }
-
-                typingControll(m);
-                return true;
             });
-        }
-    }).fail(function (result) {
-        if (result.errnum != null) {
-            preferent.errnum = result.errnum;
+        } else {
+            m = chooseMsg("fail-msg", "", "");
         }
 
+        typingControll(m);
+    }).fail(function (result) {
         checkResult(result);
         // something error happened
         console.error("authAjax(): unexpected error");
@@ -926,7 +905,7 @@ const chatKeyDown = (cmd) => {
 
     if (ut != null && 0 < ut.length) {
         ut = $.trim(ut);
-//        ut = $.trim(ut.toLowerCase());
+        //        ut = $.trim(ut.toLowerCase());
         /*
             Tips:
                 After registring a new api, maybe called it to open.
@@ -983,8 +962,8 @@ const chatKeyDown = (cmd) => {
                 showSomethingMsgPanel(true);
             }
 
-            if(inScenarioChk(ut,'searching-errnum-cmd') && preferent.errnum != null){
-                searchLogAjax();   
+            if (inScenarioChk(ut, 'searching-errnum-cmd') && preferent.errnum != null) {
+                searchLogAjax();
             }
 
             /*
@@ -1213,7 +1192,7 @@ const chatKeyDown = (cmd) => {
                     } else {
                         if (!logoutflg && m.length == 0) {
                             m = chooseMsg("starting-3-msg", "", "");
-                        } else {
+                        }else if(!logoutflg && 0<m.length){
                             m = chooseMsg('greeting-ask-msg', '', '');
                         }
                     }
@@ -1849,24 +1828,17 @@ const apiTestAjax = () => {
         }
     }).done(function (result, textStatus, jqXHR) {
         let m = 'func-api-test-done-msg';
-        if(result.result){
+        if (checkResult(result)) {
             let ret = JSON.stringify(result);
             $(`${COLUMNSPANEL} [name='apiout']`).addClass("attentionapiinout").text(ret);
-        }else{
+        } else {
             m = "fail-msg";
-            if(result.errnum != null){
-                preferent.errnum = result.errnum;
-            }
         }
 
         typingControll(chooseMsg(m, '', ''));
     }).fail(function (result) {
         checkResult(result);
         console.error("apiTestAjax() fail");
-        if (result.errnum != null) {
-            preferent.errnum = result.errnum;
-        }
-
         typingControll(chooseMsg("fail-msg", "", ""));
     }).always(function () {
         // release it for allowing to input new command in the chatbox 
@@ -1899,10 +1871,10 @@ const searchLogAjax = () => {
     }).done(function (result, textStatus, jqXHR) {
         let ret = JSON.stringify(result);
         let m = 'func-api-error-searching-msg';
-        if(result.result){
+        if (checkResult(result)) {
             $(SOMETHINGMSGPANELMSG).text(result.errlog);
             showSomethingMsgPanel(true);
-        }else{
+        } else {
             m = "fail-msg";
         }
 
@@ -1910,10 +1882,6 @@ const searchLogAjax = () => {
     }).fail(function (result) {
         checkResult(result);
         console.error("searchLogAjax() fail");
-        if (result.errnum != null) {
-            preferent.errnum = result.errnum;
-        }
-
         typingControll(chooseMsg("fail-msg", "", ""));
     }).always(function () {
         // release it for allowing to input new command in the chatbox 

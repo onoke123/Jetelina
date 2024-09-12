@@ -63,6 +63,9 @@ scenario["func-item-select-all-cmd"]=["select all", "select everything", "select
 scenario["func-selecteditem-cancel-cmd"]=["cancel","remove","reject","withdraw"];
 scenario["func-selecteditem-all-cancel-cmd"]=["cancel all","remove all","reject all","withdraw all"];
 scenario["common-post-cmd"]=["post","send","push"];
+
+scenario["common-execute-again-cmd"]=["again","do it again","once more","do again","one more"];
+
 scenario["func-cleanup-cmd"]=["refresh","cleanup","clean"];
 scenario["func-tabledrop-cmd"]=["drop","drop table","table drop","tabledrop","droptable"];
 scenario["func-tabledrop-msg"]=["Which table do you want to drop?","correct order is \"droptable <table name>\" and so on"];
@@ -87,6 +90,11 @@ scenario["func-subpanel-open-cmd"]=["show query","show subquery","show sub","sub
 scenario["func-subpanel-close-cmd"]=["close query","hide query","close subquery","hide subquery","close sub","hide sub"];
 scenario["func-subpanel-opened-msg"]=["Set your sub query in \"Sub Query\" field","Ready to \"Sub Query\" field"];
 scenario["func-api-test-msg"]=["Why do not you try it, type \"sql test\" to execute this SQL","Let's check it with typing \"sql check\""];
+
+scenario["func-api-test-ready-msg"]=["all params set, type 'post'","we are in ready, type 'post'"];
+scenario["func-api-test-ready-no-param-msg"]=["no params, type 'post'"];
+
+
 scenario["func-api-test-cmd"]=["do sql test","do api test","test sql","test api","api test","sql check","do api check","check sql","check api","execute sql test","execute api test","execute test","do test"];
 scenario["func-api-test-done-msg"]=["api test done, attention 'OUT'.","done, attention 'OUT', how's going","done, attention 'OUT', satisfied?"];
 scenario["func-api-test-panel-show-cmd"]=["show api test","open api test","show sql test","open sql test","display api test","display sql test","open test result","show test result"];
@@ -108,11 +116,9 @@ scenario["logout-cmd"]=["logout","exit","log out","out","return","bye","bye bye"
 scenario["afterlogout-msg"]=["Bye", "Have a good day","Hope you will back soon","I am looking forward you"];
 scenario["unknown-msg"]=["Hey hey hey","Ah.... what?","Could not catch yours, what?","Oh oh oh, what?"];
 scenario["hide-something-msg-cmd"]=["hide error","close error","delete error","hide message","close message","delete message"];
-
 scenario["show-something-msg-cmd"]=["show message","open message","display message"];
 scenario["searching-errnum-cmd"]=["show error","open error", "display error","what has happend","what's happen"];
 scenario["func-api-error-searching-msg"]=["gott you?"];
-
 scenario["config-update-simple-message"]=["put someting in there"];
 scenario["config-update-plural-message"]=["which config?"];
 scenario["config-update-plural-candidates-message"]=["there are multi candidates "];

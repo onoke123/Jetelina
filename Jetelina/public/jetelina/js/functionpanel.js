@@ -351,10 +351,6 @@ const fileupload = () => {
     checkResult(result);
     // something error happened
     console.error("fileupload(): unexpected error");
-    if (result.errnum != null) {
-      preferent.errnum = result.errnum;
-    }
-
     typingControll(chooseMsg("fail-msg", "", ""));
   }).always(function () {
     // release it for allowing to input new command in the chatbox 
@@ -846,14 +842,14 @@ const getColumn = (tablename) => {
         return ret;
       }
     }).done(function (result, textStatus, jqXHR) {
-      // got to data parse
-      return getdata(result, 1);
+      if(checkResult(result)){
+        // got to data parse
+        return getdata(result, 1);
+      }else{
+        typingControll(chooseMsg('fail-msg', "", ""));
+      }
     }).fail(function (result) {
       checkResult(result);
-      if (result.errnum != null) {
-        preferent.errnum = result.errnum;
-      }
-
       typingControll(chooseMsg('fail-msg', "", ""));
     }).always(function () {
       // release it for allowing to input new command in the chatbox 
@@ -906,7 +902,7 @@ const dropThisTable = (tables) => {
     }
   }).done(function (result, textStatus, jqXHR) {
     let m = "";
-    if (result.result) {
+    if (checkResult(result)) {
       for (let i = 0; i < tables.length; i++) {
         $(`${TABLECONTAINER} span`).filter(function () {
           if ($(this).text() === tables[i]) {
@@ -929,18 +925,17 @@ const dropThisTable = (tables) => {
       m = chooseMsg('refreshing-msg', '', '');
     } else {
       m = result["message from Jetelina"];
+      if(m == null || m == ""){
+        m = chooseMsg('fail-msg', '','');
+      }
       // try again
-      $(SOMETHINGINPUT).focus();
+      //$(SOMETHINGINPUT).focus();
     }
 
     typingControll(m);
   }).fail(function (result) {
     checkResult(result);
     console.error("dropThisTable() faild: ", result);
-    if (result.errnum != null) {
-      preferent.errnum = result.errnum;
-    }
-
     typingControll(chooseMsg('fail-msg', "", ""));
   }).always(function () {
     // release it for allowing to input new command in the chatbox 
@@ -992,45 +987,48 @@ const postSelectedColumns = (mode) => {
       return ret;
     }
   }).done(function (result, textStatus, jqXHR) {
-    if (mode != "pre") {
-      /*
-        if there is not a quite similar api in there -> return as alike {"apino":"js10"} or false in error.
-        if there already is a quite similar api in there -> return api no as alike {"resembled":"js10"}.
-      */
-      if (result.apino != null && 0 < result.apino.length) {
-        // hide api test panel if it is desplayed
-        if (isVisibleApiTestPanel()) {
-          showApiTestPanel(false);
+    let m = "";
+    if(checkResult(result)){
+      if (mode != "pre") {
+        /*
+          if there is not a quite similar api in there -> return as alike {"apino":"js10"} or false in error.
+          if there already is a quite similar api in there -> return api no as alike {"resembled":"js10"}.
+        */
+        if (result.apino != null && 0 < result.apino.length) {
+          // hide api test panel if it is desplayed
+          if (isVisibleApiTestPanel()) {
+            showApiTestPanel(false);
+          }
+
+          $(CONTAINERPANEL).append(`<span class="newapino"><p>api no is ${result.apino}</p></span>`);
+//          typingControll(chooseMsg('success-msg', "", ""));
+        } else if (result.resembled != null && 0 < result.resembled.length) {
+          $(CONTAINERPANEL).append(`<span class="newapino"><p>there is similar API already exist:  ${result.resembled}</p></span>`);
         }
 
-        $(CONTAINERPANEL).append(`<span class="newapino"><p>api no is ${result.apino}</p></span>`);
-        typingControll(chooseMsg('success-msg', "", ""));
-      } else if (result.resembled != null && 0 < result.resembled.length) {
-        $(CONTAINERPANEL).append(`<span class="newapino"><p>there is similar API already exist:  ${result.resembled}</p></span>`);
+        if (isVisibleGenelicPanel()) {
+          $(GENELICPANEL).hide();
+        }
+      } else {
+        /* API test mode */
+        getdata(result, 4);
+        if (!isVisibleApiTestPanel()) {
+          $(`${APITESTPANEL} span`).remove();
+          showApiTestPanel(true);
+          let testmsg = "<span class='jetelina_suggestion'><p>Oh oh, no data. Try again with other params</p></span>";
+          $(`${APITESTPANEL} [name='api-test-msg']`).append(`${testmsg}`);
+        }
       }
 
-      if (isVisibleGenelicPanel()) {
-        $(GENELICPANEL).hide();
-      }
-    } else {
-      /* API test mode */
-      getdata(result, 4);
-      if (!isVisibleApiTestPanel()) {
-        $(`${APITESTPANEL} span`).remove();
-        showApiTestPanel(true);
-        let testmsg = "<span class='jetelina_suggestion'><p>Oh oh, no data. Try again with other params</p></span>";
-        $(`${APITESTPANEL} [name='api-test-msg']`).append(`${testmsg}`);
-      }
+      m = "success-msg";
+    }else{
+      m = 'fail-msg';
     }
-
-    typingControll(chooseMsg("success-msg", "", ""));
+ 
+    typingControll(chooseMsg(m, "", ""));
   }).fail(function (result) {
     checkResult(result);
     console.error("postSelectedColumns() fail");
-    if (result.errnum != null) {
-      preferent.errnum = result.errnum;
-    }
-
     typingControll(chooseMsg('fail-msg', "", ""));
   }).always(function () {
     // release it for allowing to input new command in the chatbox 
@@ -1039,9 +1037,6 @@ const postSelectedColumns = (mode) => {
     if (mode != "pre") {
       // initializing
       preferent.cmd = "";
-      //      $(GENELICPANELINPUT).val('');
-      //      $(`${CONTAINERPANEL} .selectedItem`).remove();
-      //      cleanupItems4Switching();// clear(=close) opened table items. defined in jetelinalib.js
       rejectCancelableCmdList(SELECTITEM);
     }
   });
@@ -1058,7 +1053,7 @@ const functionPanelFunctions = (ut) => {
   let m = IGNORE;
   let cmd = "";
   let usedb = "";// database name for switching
-
+/*
   if (inCancelableCmdList(["apitest"])) {
     let p = `{${preferent.apitestparams[preferent.apiparams_count]}}`;
     let inp = $(`${COLUMNSPANEL} [name='apiin']`).text();
@@ -1066,9 +1061,20 @@ const functionPanelFunctions = (ut) => {
     $(`${COLUMNSPANEL} [name='apiin']`).addClass("attentionapiinout").text(reps);
     cmd = "apitest";
   }
+*/
+  if(inScenarioChk(ut, 'common-execute-again-cmd')){
+    if(0<cancelableCmdList.length){
+      cmd = cancelableCmdList[0];
+      if(inCancelableCmdList(["apitest"])){
+        preferent.apiparams_count = 0;
+        $(`${COLUMNSPANEL} [name='apiin']`).removeClass("attentionapiinout");
+        $(`${COLUMNSPANEL} [name='apiin']`).text(preferent.original_apiin_str);
+      }
+    }
+  }
 
   if (1 < cmdCandidates.length) {
-    cmd = whichCommandsInOrders(ut);
+      cmd = whichCommandsInOrders(ut);
   } else {
     /*
       Tips:
@@ -1216,6 +1222,24 @@ const functionPanelFunctions = (ut) => {
     if (preferent.ut != null && 0 < preferent.ut.length) {
       ut = preferent.ut;
       preferent.ut = "";
+    }
+
+    if(cmd == "" && inScenarioChk(ut, 'common-execute-again-cmd')){
+      cmd = cancelableCmdList[0];
+    }
+  
+    if(cmd != "cancel" && inCancelableCmdList(["apitest"])){
+      let p = `{${preferent.apitestparams[preferent.apiparams_count]}}`;
+      let inp = $(`${COLUMNSPANEL} [name='apiin']`).text();
+      let reps = inp.replace(p, original_chatbox_input_text);
+      $(`${COLUMNSPANEL} [name='apiin']`).addClass("attentionapiinout").text(reps);
+      cmd = "apitest";  
+    }
+
+    if($.inArray(cmd, ["apitest", "preapitest"]) == -1 && inCancelableCmdList(["apitest", "preapitest"])) {
+      rejectCancelableCmdList("apitest");
+      rejectCancelableCmdList("preapitest");
+      preferent.apiparams_count = null;
     }
   }
   /*
@@ -1571,8 +1595,8 @@ const functionPanelFunctions = (ut) => {
         }
 
       } else if (inCancelableCmdList(["apitest", "preapitest"])) {
-        rejectCancelableCmdList("apitest");
-        rejectCancelableCmdList("preapitest");
+//        rejectCancelableCmdList("apitest");
+//        rejectCancelableCmdList("preapitest");
         $(`${COLUMNSPANEL} [name='apiin']`).removeClass("attentionapiinout").text(preferent.original_apiin_str);
         $(`${COLUMNSPANEL} [name='apiout']`).removeClass("attentionapiinout").text(preferent.original_apiout_str);
         m = chooseMsg('cancel-msg', '', '');
@@ -1599,7 +1623,6 @@ const functionPanelFunctions = (ut) => {
       if (0 < selectedItemsArr.length) {
         // API test mode before registering
         // before hitting this command, should desplay 'func-api-test-msg' in anywhere.
-        //        let subquerysentence = $(GENELICPANELINPUT).val();
         if (checkGenelicInput($(GENELICPANELINPUT).val())) {
           postSelectedColumns("pre");
         } else {
@@ -1613,8 +1636,17 @@ const functionPanelFunctions = (ut) => {
           API 'IN' parameters are already collected in buildJetelinaJsonForm() as preferent.apitestparams.
           ust this for setting each ones in chatting.
       */
-      preferent.original_apiin_str = $(`${COLUMNSPANEL} [name='apiin']`).text();
-      preferent.original_apiout_str = $(`${COLUMNSPANEL} [name='apiout']`).text();
+      if(preferent.original_apiin_str == null || preferent.original_apiin_str == ""){
+        preferent.original_apiin_str = $(`${COLUMNSPANEL} [name='apiin']`).text();
+      }
+
+      if(preferent.original_apiout_str == null || preferent.original_apiout_str == ""){
+        preferent.original_apiout_str = $(`${COLUMNSPANEL} [name='apiout']`).text();
+      }
+
+      if(inScenarioChk(ut,'common-execute-again-cmd')){
+        preferent.apiparams_count = 0;
+      }
 
       if (preferent.apitestparams != null && 0 < preferent.apitestparams.length) {
         if (preferent.apiparams_count == null) {
@@ -1627,14 +1659,16 @@ const functionPanelFunctions = (ut) => {
           m = `set '${preferent.apitestparams[preferent.apiparams_count]}'`;
         } else if (inScenarioChk(ut, 'common-post-cmd')) {
           apiTestAjax();
+          m = chooseMsg('inprogress-msg','','');
         } else {
-          m = "all params set. type 'post'.";
+          m = chooseMsg('func-api-test-ready-msg','','');
         }
       } else {
         if (inScenarioChk(ut, 'common-post-cmd')) {
           apiTestAjax();
+          m = chooseMsg('inprogress-msg','','');
         } else {
-          m = "no params. type 'post'.";
+          m = chooseMsg('func-api-test-ready-no-param-msg','','');
         }
       }
 
@@ -1832,8 +1866,8 @@ const deleteThisApi = (apis) => {
       return ret;
     }
   }).done(function (result, textStatus, jqXHR) {
-    let m = chooseMsg('success-msg', "", "");
-    if (result.result) {
+    let m = "";
+    if (checkResult(result)) {
       for (let i = 0; i < apis.length; i++) {
         $(`${APICONTAINER} span`).filter(function () {
           if ($(this).text() === apis[i]) {
@@ -1851,20 +1885,20 @@ const deleteThisApi = (apis) => {
       showSomethingMsgPanel(false);
       rejectCancelableCmdList(TABLEAPIDELETE);
       preferent.cmd = "";
+      m = chooseMsg('success-msg','','')
     } else {
       m = result["message from Jetelina"];
+      if(m == null || m == ""){
+        m = chooseMsg('fail-msg', '','');
+      }
       // try again
-      $(SOMETHINGINPUT).focus();
+      //$(SOMETHINGINPUT).focus();
     }
 
     typingControll(m);
   }).fail(function (result) {
     checkResult(result);
     console.error("deleteThisApi() faild: ", result);
-    if (result.errnum != null) {
-      preferent.errnum = result.errnum;
-    }
-
     typingControll(chooseMsg('fail-msg', "", ""));
   }).always(function () {
     // release it for allowing to input new command in the chatbox 

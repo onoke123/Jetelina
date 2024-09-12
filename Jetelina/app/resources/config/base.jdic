@@ -116,18 +116,19 @@
 #
 # basic commands in function panel
 #
+@jdic common-post-cmd:"post","send","push"
+@jdic common-execute-again-cmd":"again","do it again","once more","do again","one more"
 @jdic common-cancel-cmd:"cancel","withdraw","abandon","postpone","give up","quit"
 @jdic common-confirm-msg:"Sure?","Really?","Do it now?"
 @jdic common-alert-msg:"Boo","no hit","could not make it"
 @jdic common-ajax-error-msg:"Oh my, something server error happened:"
 @jdic common-comand-duplicated-msg:"which do you point to {Q}","Oh oh,{Q},which one?","you makes me confuse, which one {Q}?"
+
 @jdic func-table-api-open-close-cmd:"open","close","select","find"
 @jdic func-item-select-cmd:"select","choose","pick"
 @jdic func-item-select-all-cmd:"select all", "select everything", "select all columns","choose all","choose everything","choose all columns","pic all","pic everything","pic all columns"
 @jdic func-selecteditem-cancel-cmd:"cancel","remove","reject","withdraw"
 @jdic func-selecteditem-all-cancel-cmd:"cancel all","remove all","reject all","withdraw all"
-
-@jdic common-post-cmd:"post","send","push"
 @jdic func-cleanup-cmd:"refresh","cleanup","clean"
 @jdic func-tabledrop-cmd:"drop","drop table","table drop","tabledrop","droptable"
 @jdic func-tabledrop-msg:"Which table do you want to drop?","correct order is \"droptable <table name>\" and so on"
@@ -162,6 +163,9 @@
 @jdic func-subpanel-close-cmd:"close query","hide query","close subquery","hide subquery","close sub","hide sub"
 @jdic func-subpanel-opened-msg:"Set your sub query in \"Sub Query\" field","Ready to \"Sub Query\" field"
 @jdic func-api-test-msg:"Why do not you try it, type \"sql test\" to execute this SQL","Let's check it with typing \"sql check\""
+@jdic func-api-test-ready-msg:"all params set, type 'post'","we are in ready, type 'post'"
+@jdic func-api-test-ready-no-param-msg:"no params, type 'post'"
+
 @jdic func-api-test-cmd:"do sql test","do api test","test sql","test api","api test","sql check","do api check","check sql","check api","execute sql test","execute api test","execute test","do test"
 @jdic func-api-test-done-msg:"api test done, attention 'OUT'.","done, attention 'OUT', how's going","done, attention 'OUT', satisfied?"
 @jdic func-api-test-panel-show-cmd:"show api test","open api test","show sql test","open sql test","display api test","display sql test","open test result","show test result"
@@ -202,8 +206,8 @@
 #
 @jdic hide-something-msg-cmd:"hide error","close error","delete error","hide message","close message","delete message"
 @jdic show-something-msg-cmd:"show message","open message","display message"
-@jdic "searching-errnum-cmd":"show error","open error", "display error","what has happend","what's happen"
-@jdic "func-api-error-searching-msg":"gott you?"
+@jdic searching-errnum-cmd:"show error","open error", "display error","what has happend","what's happen"
+@jdic func-api-error-searching-msg:"gott you?"
 
 #
 # configuration update caution/error message
