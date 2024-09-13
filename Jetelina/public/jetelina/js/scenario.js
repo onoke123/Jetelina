@@ -91,8 +91,9 @@ scenario["func-subpanel-close-cmd"]=["close query","hide query","close subquery"
 scenario["func-subpanel-opened-msg"]=["Set your sub query in \"Sub Query\" field","Ready to \"Sub Query\" field"];
 scenario["func-api-test-msg"]=["Why do not you try it, type \"sql test\" to execute this SQL","Let's check it with typing \"sql check\""];
 
-scenario["func-api-test-ready-msg"]=["all params set, type 'post'","we are in ready, type 'post'"];
-scenario["func-api-test-ready-no-param-msg"]=["no params, type 'post'"];
+scenario["func-api-test-execute-cmd"]=["bang","boom","honk","thud"];
+scenario["func-api-test-ready-msg"]=["all params set, type '{Q}'","we are in ready, type '{Q}'","here we go with typing '{Q}'"];
+scenario["func-api-test-ready-no-param-msg"]=["no params, type '{Q}'","here we go with typing '{Q}'"];
 
 
 scenario["func-api-test-cmd"]=["do sql test","do api test","test sql","test api","api test","sql check","do api check","check sql","check api","execute sql test","execute api test","execute test","do test"];

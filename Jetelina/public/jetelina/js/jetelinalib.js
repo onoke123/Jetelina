@@ -54,9 +54,15 @@ const SOMETHINGINPUTFIELD = "#something_input_field";
 const SOMETHINGINPUT = `${SOMETHINGINPUTFIELD} input[name='something_input']`;
 const SOMETHINGTEXT = `${SOMETHINGINPUTFIELD} text[name='something_text']`;
 const FILEUP = "#fileup";
+const MYFORM = "#my_form";
+const UPFILE = `${MYFORM} input[name='upfile']`;
+const LeftPanelTitle = "#table_list_title";
+const RightPanelTitle = "#api_list_title";
 const TABLECONTAINER = "#table_container";
 const APICONTAINER = "#api_container";
 const GENELICPANEL = "#genelic_panel";
+const GENELICPANELINPUT = `${GENELICPANEL} input[name='genelic_input']`;
+const GENELICPANELTEXT = `${GENELICPANEL} text[name='genelic_text']`;
 const APITESTPANEL = "#apitest";
 const CONFIGCHANGE = "config-change";// command in cancelable command list 
 const USERMANAGE = "account-manage"; //       〃
@@ -1794,7 +1800,7 @@ const isVisibleFavicon = (b) => {
     }
 }
 // return to the chat box if 'return key' is typed in something_input_field
-$(document).on("keydown", SOMETHINGINPUT, function (e) {
+$(document).on("keydown", `${SOMETHINGINPUT}, ${GENELICPANELINPUT}`, function (e) {
     if (e.keyCode == 13) {
         focusonJetelinaPanel()
     }

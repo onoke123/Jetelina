@@ -41,12 +41,6 @@
 */
 let selectedItemsArr = [];
 let cmdCandidates = [];// ordered commands for checking duplication 
-const MYFORM = "#my_form";
-const UPFILE = `${MYFORM} input[name='upfile']`;
-const LeftPanelTitle = "#table_list_title";
-const RightPanelTitle = "#api_list_title";
-const GENELICPANELINPUT = `${GENELICPANEL} input[name='genelic_input']`;
-const GENELICPANELTEXT = `${GENELICPANEL} text[name='genelic_text']`;
 
 /*
    change label when selected a file
@@ -842,10 +836,10 @@ const getColumn = (tablename) => {
         return ret;
       }
     }).done(function (result, textStatus, jqXHR) {
-      if(checkResult(result)){
+      if (checkResult(result)) {
         // got to data parse
         return getdata(result, 1);
-      }else{
+      } else {
         typingControll(chooseMsg('fail-msg', "", ""));
       }
     }).fail(function (result) {
@@ -925,8 +919,8 @@ const dropThisTable = (tables) => {
       m = chooseMsg('refreshing-msg', '', '');
     } else {
       m = result["message from Jetelina"];
-      if(m == null || m == ""){
-        m = chooseMsg('fail-msg', '','');
+      if (m == null || m == "") {
+        m = chooseMsg('fail-msg', '', '');
       }
       // try again
       //$(SOMETHINGINPUT).focus();
@@ -988,7 +982,7 @@ const postSelectedColumns = (mode) => {
     }
   }).done(function (result, textStatus, jqXHR) {
     let m = "";
-    if(checkResult(result)){
+    if (checkResult(result)) {
       if (mode != "pre") {
         /*
           if there is not a quite similar api in there -> return as alike {"apino":"js10"} or false in error.
@@ -1001,7 +995,7 @@ const postSelectedColumns = (mode) => {
           }
 
           $(CONTAINERPANEL).append(`<span class="newapino"><p>api no is ${result.apino}</p></span>`);
-//          typingControll(chooseMsg('success-msg', "", ""));
+          //          typingControll(chooseMsg('success-msg', "", ""));
         } else if (result.resembled != null && 0 < result.resembled.length) {
           $(CONTAINERPANEL).append(`<span class="newapino"><p>there is similar API already exist:  ${result.resembled}</p></span>`);
         }
@@ -1021,10 +1015,10 @@ const postSelectedColumns = (mode) => {
       }
 
       m = "success-msg";
-    }else{
+    } else {
       m = 'fail-msg';
     }
- 
+
     typingControll(chooseMsg(m, "", ""));
   }).fail(function (result) {
     checkResult(result);
@@ -1053,19 +1047,19 @@ const functionPanelFunctions = (ut) => {
   let m = IGNORE;
   let cmd = "";
   let usedb = "";// database name for switching
-/*
-  if (inCancelableCmdList(["apitest"])) {
-    let p = `{${preferent.apitestparams[preferent.apiparams_count]}}`;
-    let inp = $(`${COLUMNSPANEL} [name='apiin']`).text();
-    let reps = inp.replace(p, original_chatbox_input_text);
-    $(`${COLUMNSPANEL} [name='apiin']`).addClass("attentionapiinout").text(reps);
-    cmd = "apitest";
-  }
-*/
-  if(inScenarioChk(ut, 'common-execute-again-cmd')){
-    if(0<cancelableCmdList.length){
+  /*
+    if (inCancelableCmdList(["apitest"])) {
+      let p = `{${preferent.apitestparams[preferent.apiparams_count]}}`;
+      let inp = $(`${COLUMNSPANEL} [name='apiin']`).text();
+      let reps = inp.replace(p, original_chatbox_input_text);
+      $(`${COLUMNSPANEL} [name='apiin']`).addClass("attentionapiinout").text(reps);
+      cmd = "apitest";
+    }
+  */
+  if (inScenarioChk(ut, 'common-execute-again-cmd')) {
+    if (0 < cancelableCmdList.length) {
       cmd = cancelableCmdList[0];
-      if(inCancelableCmdList(["apitest"])){
+      if (inCancelableCmdList(["apitest"])) {
         preferent.apiparams_count = 0;
         $(`${COLUMNSPANEL} [name='apiin']`).removeClass("attentionapiinout");
         $(`${COLUMNSPANEL} [name='apiin']`).text(preferent.original_apiin_str);
@@ -1074,7 +1068,7 @@ const functionPanelFunctions = (ut) => {
   }
 
   if (1 < cmdCandidates.length) {
-      cmd = whichCommandsInOrders(ut);
+    cmd = whichCommandsInOrders(ut);
   } else {
     /*
       Tips:
@@ -1224,19 +1218,19 @@ const functionPanelFunctions = (ut) => {
       preferent.ut = "";
     }
 
-    if(cmd == "" && inScenarioChk(ut, 'common-execute-again-cmd')){
+    if (cmd == "" && inScenarioChk(ut, 'common-execute-again-cmd')) {
       cmd = cancelableCmdList[0];
     }
-  
-    if(cmd != "cancel" && inCancelableCmdList(["apitest"])){
+
+    if (cmd != "cancel" && inCancelableCmdList(["apitest"])) {
       let p = `{${preferent.apitestparams[preferent.apiparams_count]}}`;
       let inp = $(`${COLUMNSPANEL} [name='apiin']`).text();
       let reps = inp.replace(p, original_chatbox_input_text);
       $(`${COLUMNSPANEL} [name='apiin']`).addClass("attentionapiinout").text(reps);
-      cmd = "apitest";  
+      cmd = "apitest";
     }
 
-    if($.inArray(cmd, ["apitest", "preapitest"]) == -1 && inCancelableCmdList(["apitest", "preapitest"])) {
+    if ($.inArray(cmd, ["apitest", "preapitest"]) == -1 && inCancelableCmdList(["apitest", "preapitest"])) {
       rejectCancelableCmdList("apitest");
       rejectCancelableCmdList("preapitest");
       preferent.apiparams_count = null;
@@ -1330,7 +1324,22 @@ const functionPanelFunctions = (ut) => {
       }
 
       for (let n = 0; n < t.length; n++) {
-        $("#table_container span, #api_container span").each(function (i, v) {
+        /*
+          Tips:
+            at the first, searching in the table list, then the api list if did not hit.
+            respect table seaching if there were a word 'table' in 'ut'.
+
+            because... may the name of table has variety, against it the name of api has a rule.
+            if there were the same name in the both list, this selection hit both, but puting 'table' in the order,
+            it could be limited in the table list.
+            and wanna execute vargue hitting in the api list.
+            i mean
+              'js100' is in the both table and api list. yes rare case. :)
+                  case 1. order 'open js100' hit the both.
+                  case 2. order 'open table js100' hit the only table.
+                  case 3. order 'open 100' hit the only api.
+        */
+        $(`${TABLECONTAINER} span`).each(function (i, v) {
           if (v.textContent == t[n]) {
             $(this).hasClass("activeItem");
             listClick($(this));
@@ -1338,6 +1347,17 @@ const functionPanelFunctions = (ut) => {
             findflg = true;
           }
         });
+
+        if (ut.indexOf("table") == -1) {
+          $(`${APICONTAINER} span`).each(function (i, v) {
+            if (v.textContent.indexOf(t[n]) != -1) {
+              $(this).hasClass("activeItem");
+              listClick($(this));
+              m = chooseMsg('success-msg', "", "");
+              findflg = true;
+            }
+          });
+        }
       }
 
       // !findlg meaning is not for openging table or api, this time is for selecting columns in opening tables
@@ -1389,7 +1409,7 @@ const functionPanelFunctions = (ut) => {
              but 'pass phrase' is must item. 
           */
           if (($(SOMETHINGINPUT).is(":visible") && 0 < $(SOMETHINGINPUT).val().length) || (loginuser.sw != null && 0 < loginuser.sw.length)) {
-            if (isVisibleTableContainer()) {
+//            if (isVisibleTableContainer()) {
               let droptables = [];
               $(`${TABLECONTAINER} span`).filter('.deleteItem').each(function () {
                 droptables.push($(this).text());
@@ -1399,9 +1419,9 @@ const functionPanelFunctions = (ut) => {
                 //                preferent.cmd = "";
                 dropThisTable(droptables);
               }
-            }
+//            }
 
-            if (isVisibleApiContainer()) {
+//            if (isVisibleApiContainer()) {
               let deleteapis = [];
               $(`${APICONTAINER} span`).filter('.deleteItem').each(function () {
                 deleteapis.push($(this).text());
@@ -1411,7 +1431,7 @@ const functionPanelFunctions = (ut) => {
                 //                preferent.cmd = "";
                 deleteThisApi(deleteapis);
               }
-            }
+//            }
           }
 
           m = IGNORE;
@@ -1431,22 +1451,24 @@ const functionPanelFunctions = (ut) => {
           Attention:
             only 'js*' api can be deleted.
         */
-        for (let i = 0; i < utarray.length; i++) {
-          $(`${TABLECONTAINER}`).find("span").each(function () {
-            if ($(this).text() == utarray[i]) {
+        for (let n = 0; n < utarray.length; n++) {
+          $(`${TABLECONTAINER} span`).each(function (i,v) {
+            if (v.textContent == utarray[n]) {
               $(this).addClass("deleteItem");
               m = chooseMsg("common-confirm-msg", "", "");
             }
           });
 
           let jijujdexist = false;
-          $(`${APICONTAINER}`).find("span").each(function () {
-            if (utarray[i].startsWith(('js')) && ($(this).text() == utarray[i])) {
-              $(this).addClass("deleteItem");
+          $(`${APICONTAINER} span`).each(function (i,v) {
+            if(v.textContent.indexOf(utarray[n]) != -1){
+            if (v.textContent.startsWith('js')){
+                $(this).addClass("deleteItem");
               m = chooseMsg("common-confirm-msg", "", "");
-            } else if (utarray[i].startsWith('ji') || utarray[i].startsWith('ju') || utarray[i].startsWith('jd')) {
+            } else if (v.textContent.startsWith('ji') || v.textContent.startsWith('ju') || v.textContent.startsWith('jd')) {
               jijujdexist = true;
             }
+          }
           });
 
           if (jijujdexist) {
@@ -1595,8 +1617,8 @@ const functionPanelFunctions = (ut) => {
         }
 
       } else if (inCancelableCmdList(["apitest", "preapitest"])) {
-//        rejectCancelableCmdList("apitest");
-//        rejectCancelableCmdList("preapitest");
+        //        rejectCancelableCmdList("apitest");
+        //        rejectCancelableCmdList("preapitest");
         $(`${COLUMNSPANEL} [name='apiin']`).removeClass("attentionapiinout").text(preferent.original_apiin_str);
         $(`${COLUMNSPANEL} [name='apiout']`).removeClass("attentionapiinout").text(preferent.original_apiout_str);
         m = chooseMsg('cancel-msg', '', '');
@@ -1636,15 +1658,15 @@ const functionPanelFunctions = (ut) => {
           API 'IN' parameters are already collected in buildJetelinaJsonForm() as preferent.apitestparams.
           ust this for setting each ones in chatting.
       */
-      if(preferent.original_apiin_str == null || preferent.original_apiin_str == ""){
+      if (preferent.original_apiin_str == null || preferent.original_apiin_str == "") {
         preferent.original_apiin_str = $(`${COLUMNSPANEL} [name='apiin']`).text();
       }
 
-      if(preferent.original_apiout_str == null || preferent.original_apiout_str == ""){
+      if (preferent.original_apiout_str == null || preferent.original_apiout_str == "") {
         preferent.original_apiout_str = $(`${COLUMNSPANEL} [name='apiout']`).text();
       }
 
-      if(inScenarioChk(ut,'common-execute-again-cmd')){
+      if (inScenarioChk(ut, 'common-execute-again-cmd')) {
         preferent.apiparams_count = 0;
       }
 
@@ -1659,16 +1681,17 @@ const functionPanelFunctions = (ut) => {
           m = `set '${preferent.apitestparams[preferent.apiparams_count]}'`;
         } else if (inScenarioChk(ut, 'common-post-cmd')) {
           apiTestAjax();
-          m = chooseMsg('inprogress-msg','','');
+          m = chooseMsg('inprogress-msg', '', '');
         } else {
-          m = chooseMsg('func-api-test-ready-msg','','');
+          e = chooseMsg('func-api-test-execute-cmd', '', '');
+          m = chooseMsg('func-api-test-ready-msg', e, 'r');
         }
       } else {
         if (inScenarioChk(ut, 'common-post-cmd')) {
           apiTestAjax();
-          m = chooseMsg('inprogress-msg','','');
+          m = chooseMsg('inprogress-msg', '', '');
         } else {
-          m = chooseMsg('func-api-test-ready-no-param-msg','','');
+          m = chooseMsg('func-api-test-ready-no-param-msg', '', '');
         }
       }
 
@@ -1747,13 +1770,13 @@ const containsMultiTables = () => {
  */
 const showGenelicPanel = (b) => {
   if (b) {
-    if (isVisibleTableContainer()) {
-      /*
-        in the case of showing table list, this field is for expecting 'Sub Query'
-      */
-      $(GENELICPANELTEXT).text("Sub Query:");
-      $(GENELICPANELINPUT).attr('placeholder', 'where .....');
-    }
+    //    if (isVisibleTableContainer()) {
+    /*
+      in the case of showing table list, this field is for expecting 'Sub Query'
+    */
+    $(GENELICPANELTEXT).text("Sub Query:");
+    $(GENELICPANELINPUT).attr('placeholder', 'where .....');
+    //    }
 
     $(GENELICPANEL).show();
     $(GENELICPANELINPUT).focus();
@@ -1885,11 +1908,11 @@ const deleteThisApi = (apis) => {
       showSomethingMsgPanel(false);
       rejectCancelableCmdList(TABLEAPIDELETE);
       preferent.cmd = "";
-      m = chooseMsg('success-msg','','')
+      m = chooseMsg('success-msg', '', '')
     } else {
       m = result["message from Jetelina"];
-      if(m == null || m == ""){
-        m = chooseMsg('fail-msg', '','');
+      if (m == null || m == "") {
+        m = chooseMsg('fail-msg', '', '');
       }
       // try again
       //$(SOMETHINGINPUT).focus();
@@ -2020,10 +2043,3 @@ const isSelectedItem = () => {
 
   return ret;
 }
-
-// return to the chat box if 'return key' is typed in genelic_panel
-$(document).on("keydown", GENELICPANELINPUT, function (e) {
-  if (e.keyCode == 13) {
-    focusonJetelinaPanel()
-  }
-});
