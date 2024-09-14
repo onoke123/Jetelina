@@ -571,8 +571,11 @@ const postAjaxData = (url, data) => {
                             $(`${targetcontainer} span`).each(function () {
                                 for (let i in newaddlist) {
                                     if ($(this).text() == newaddlist[i]) {
-                                        if (!$(this).hasClass("activeItem")) {
-                                            //$(this).removeClass("activeItem");
+                                        if ($(this).hasClass("activeItem")) {
+//                                            if (!$(this).hasClass("activeItem")) {
+                                            $(this).removeClass("activeItem");
+                                            $(this).addClass("activeandrelatedItem");
+                                        }else{
                                             $(this).addClass("relatedItem");
                                         }
                                     }

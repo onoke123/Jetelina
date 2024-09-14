@@ -76,6 +76,15 @@ body {
   100% { background-color: rgb(228, 218, 130)}
 }
 
+.activeandrelatedItem {
+  animation: blinkmixItem 1s infinite alternate;
+}
+
+@keyframes blinkmixItem{
+  0% { background-color: lightcoral}
+  100% { background-color: rgb(228, 218, 130)}
+}
+
 /* columns sample data pop up */
 .tooltip {
   display: none;
