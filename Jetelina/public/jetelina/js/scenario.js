@@ -52,6 +52,8 @@ scenario["cond-performance-improve-msg"]=["There is an improving suggestion.","D
 scenario["cond-no-suggestion-msg"]=["I do not have any suggestions so far.","No suggestions","I do not give it to you.","Hey, Nothing at all"];
 scenario["starting-6a-msg"]=["OK, here you are","Hey ho","This"];
 scenario["starting-6b-msg"]=["Command me, if you need"];
+scenario["common-post-cmd"]=["post","send","push"];
+scenario["common-execute-again-cmd"]=["again","do it again","once more","do again","one more"];
 scenario["common-cancel-cmd"]=["cancel","withdraw","abandon","postpone","give up","quit"];
 scenario["common-confirm-msg"]=["Sure?","Really?","Do it now?"];
 scenario["common-alert-msg"]=["Boo","no hit","could not make it"];
@@ -62,10 +64,6 @@ scenario["func-item-select-cmd"]=["select","choose","pick"];
 scenario["func-item-select-all-cmd"]=["select all", "select everything", "select all columns","choose all","choose everything","choose all columns","pic all","pic everything","pic all columns"];
 scenario["func-selecteditem-cancel-cmd"]=["cancel","remove","reject","withdraw"];
 scenario["func-selecteditem-all-cancel-cmd"]=["cancel all","remove all","reject all","withdraw all"];
-scenario["common-post-cmd"]=["post","send","push"];
-
-scenario["common-execute-again-cmd"]=["again","do it again","once more","do again","one more"];
-
 scenario["func-cleanup-cmd"]=["refresh","cleanup","clean"];
 scenario["func-tabledrop-cmd"]=["drop","drop table","table drop","tabledrop","droptable"];
 scenario["func-tabledrop-msg"]=["Which table do you want to drop?","correct order is \"droptable <table name>\" and so on"];
@@ -90,12 +88,9 @@ scenario["func-subpanel-open-cmd"]=["show query","show subquery","show sub","sub
 scenario["func-subpanel-close-cmd"]=["close query","hide query","close subquery","hide subquery","close sub","hide sub"];
 scenario["func-subpanel-opened-msg"]=["Set your sub query in \"Sub Query\" field","Ready to \"Sub Query\" field"];
 scenario["func-api-test-msg"]=["Why do not you try it, type \"sql test\" to execute this SQL","Let's check it with typing \"sql check\""];
-
 scenario["func-api-test-execute-cmd"]=["bang","boom","honk","thud"];
 scenario["func-api-test-ready-msg"]=["all params set, type '{Q}'","we are in ready, type '{Q}'","here we go with typing '{Q}'"];
 scenario["func-api-test-ready-no-param-msg"]=["no params, type '{Q}'","here we go with typing '{Q}'"];
-
-
 scenario["func-api-test-cmd"]=["do sql test","do api test","test sql","test api","api test","sql check","do api check","check sql","check api","execute sql test","execute api test","execute test","do test"];
 scenario["func-api-test-done-msg"]=["api test done, attention 'OUT'.","done, attention 'OUT', how's going","done, attention 'OUT', satisfied?"];
 scenario["func-api-test-panel-show-cmd"]=["show api test","open api test","show sql test","open sql test","display api test","display sql test","open test result","show test result"];

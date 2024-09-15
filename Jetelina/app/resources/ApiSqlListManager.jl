@@ -174,7 +174,7 @@ function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String
 		# write the relation between tables and api to the file
 		try
 			open(tableapiFile, "a") do ff
-				println(ff, string(suffix, seq_no, ":", join(tablename_arr, ",")))
+				println(ff, string(suffix, seq_no, ":", join(tablename_arr, ","),":",db))
 			end
 		catch err
 			JLog.writetoLogfile("ApiSqlListManager.writeTolist() error: $err")
@@ -196,7 +196,7 @@ end
 """
 function deleteTableFromlist(tablename::Vector)
 
-	delete table name from JC["sqllistfile"] synchronized with dropping table.
+	delete table name from JC["sqllistfile"] and JC["tableapifile"] synchronized with dropping table.
 
 # Arguments
 - `tablename::Vector`: target tables name
@@ -225,14 +225,21 @@ function deleteTableFromlist(tablename::Vector)
 				for ss in eachline(taf, keep = false)
 					if contains(ss, ':')
 						p = split(ss, ":") # api_name:table,table,....
-						tmparr = split(p[2], ',')
-						for i in eachindex(tablename)
-							if tablename[i] ∈ tmparr
-								push!(targetapi, p[1]) # ["js1","ji2,.....]
-								setdiff!(untargetapi,[p[1]])
-							else
-								# remain others in the file
-								push!(untargetapi, p[1]) # ["js1","ji2,.....]
+						#===
+							Tips:
+								there is a chance to exist the same table name in postgres and mysql,
+								therefore look at p[3]
+						===#
+						if(p[3] == j_config.JC["dbtype"])
+							tmparr = split(p[2], ',')
+							for i in eachindex(tablename)
+								if tablename[i] ∈ tmparr
+									push!(targetapi, p[1]) # ["js1","ji2,.....]
+									setdiff!(untargetapi,[p[1]])
+								else
+									# remain others in the file
+									push!(untargetapi, p[1]) # ["js1","ji2,.....]
+								end
 							end
 						end
 					end
@@ -296,7 +303,7 @@ end
 """
 function deleteApiFromList(apis:Vector)
 
-	delete api by ordering from JC["sqllistfile"] file, then refresh the DataFrame.
+	delete api by ordering from JC["sqllistfile"] and JC["tableapifile"] file, then refresh the DataFrame.
 	
 # Arguments
 - `tablename::Vector`: target tables name
@@ -348,12 +355,7 @@ function deleteApiFromList(apis::Vector)
 				for ss in eachline(taf, keep = false)
 					p = split(ss, ":")
 					if p[1] ∉ apis
-
-#					for i in eachindex(apis)
-#						if !startswith(ss, apis[i])
-							# leave it in the file
-							println(ttaf, ss)
-#						end
+						println(ttaf, ss)
 					end
 				end
 			end
@@ -395,17 +397,28 @@ function getRelatedList(searchKey::String, target::String)
 				key::String = ""
 				p = split(ss,':')
 				if searchKey == "table"
-					c = split(p[2],',')  
-					keys = split(target,',')
-					for i in eachindex(keys)
-						for ii in eachindex(c)
-							if keys[i] == c[ii]
-								push!(ret,p[1])
-							end 
+					#===
+						Tips:
+							there is a chance to exist the same table name in postgres and mysql,
+							therefore look at p[3]
+					===#
+					if(p[3] == j_config.JC["dbtype"])
+						c = split(p[2],',')  
+						keys = split(target,',')
+						for i in eachindex(keys)
+							for ii in eachindex(c)
+								if keys[i] == c[ii]
+									push!(ret,p[1])
+								end 
+							end
 						end
 					end
 				else
 					c = p[1]
+					#===
+						Tips:
+							p[1] is unique api number.
+					===#
 					if target == p[1]
 						#===
 							Tips:

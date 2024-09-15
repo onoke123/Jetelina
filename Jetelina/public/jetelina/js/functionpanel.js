@@ -273,13 +273,13 @@ const cleanUp = (s) => {
  */
 const cleanupItems4Switching = () => {
   cleanUp("items");
-  if (isVisibleTableContainer()) {
-    $("#columns_title").text("");
-    $(`${TABLECONTAINER} span`).removeClass("activeItem");
-  } else if (isVisibleApiContainer()) {
-    $(`${APICONTAINER} span`).removeClass("activeItem");
-    $(`${CONTAINERPANEL} span`).remove();
-  }
+  //  if (isVisibleTableContainer()) {
+  $("#columns_title").text("");
+  $(`${TABLECONTAINER} span`).removeClass("activeItem");
+  //  } else if (isVisibleApiContainer()) {
+  $(`${APICONTAINER} span`).removeClass("activeItem");
+  $(`${CONTAINERPANEL} span`).remove();
+  //  }
 }
 /**
 * @function cleanupContainers
@@ -290,19 +290,7 @@ const cleanupContainers = (t) => {
   showApiTestPanel(false);
   showGenelicPanel(false);
 
-  let p = "";
-  if( t == 'api' ){
-//    $(`${CONTAINERPANEL} span,${CONDITIONPANEL} span`).remove();
-    p = `${CONDITIONPANEL} span`;
-  }else if( t == 'table'){
-//    $(`${CONTAINERPANEL} span,${CONDITIONPANEL} span`).remove();
-    p = `${CONTAINERPANEL} span`;
-  }else{
-//    $(`${CONTAINERPANEL} span,${CONDITIONPANEL} span`).remove();
-    p = `${CONTAINERPANEL} span,${CONDITIONPANEL} span`;
-  }
-  $(p).remove();
-
+  $(`${CONTAINERPANEL} span,${CONDITIONPANEL} span`).remove();
 }
 /**
  * @function fileupload
@@ -436,66 +424,116 @@ const listClick = (p) => {
       in case to turn p to 'INACTIVE'
     */
     if (p.hasClass("api")) {
-      cleanupContainers("api");
-      cleanUp("items");
+      cleanupContainers();
+      $(`${COLUMNSPANEL} span`).filter(".apisql").remove();
     } else {
     }
     /* 
         Tips:
-          clean up 'table' in the relation data list.
+          clean up in the relation data list.
           a little bit complex.
-          only unique api in target talbe removes from the related list.
+          only unique api in target table removes from the related list.
           i mean
             relatedDataList["table1"] = ["ju1","jd2","ji3","js4","js5"]
             relatedDataList["table2"] = ["ju11","jd12","ji13","js14","js5"]
   
             "ju1","jd2","ji3","js4" should be removed when "table1" has been inactive.
             "js5" should be remained in the list, because it is duplicated with "table2".
+
+          in the case of 'api', '.activeItem' or '.activeandrelatedItem' allows to exists only one,
+          therefore it can use the below codes as well because it's simple logic.
     */
+    let activeArr = [];
     if (relatedDataList[t] != null) {
       /*
         gather 'activeItem' items in the list
+
+        Attention:
+          'sourcePanel' vs activeArr
+            in case APICONTAINER, activeArr.length = 1.
+            in case TABLECONTAINER, activeArr.length >= 1.
       */
-      let activeArr = [];
-      $(`${sourcePanel} span`).filter('.activeItem, .activeandrelatedItem').each(function () {
-        let n = $(this).text();
-        if (n == t) {
-          activeArr.push(n);
-        }
+      $(`${sourcePanel} span, ${relatedPanel} span`).filter('.activeItem, .activeandrelatedItem').each(function () {
+        activeArr.push($(this).text());
       });
-
-      if (0 < activeArr.length) {
-        let ar1 = relatedDataList[t];// clicked item's relation data list
-        let diff = [];
-        for (let i in activeArr) {
-          let ar2 = relatedDataList[activeArr[i]];// 'activeItem' relation data list 
-          diff[i] = ar1.filter(x => ar2.includes(x)); // pick the difference(nor) between the clicked item and 'activeItem' item
-        }
-
-        if (0 < diff.length) {
-          for (let i in diff) {
-            for (let ii in diff[i]) {
-              $(`${relatedPanel} span`).each(function () {
-                if ($(this).text() == diff[i][ii]) {
+console.log("act arr: ", activeArr.length);
+console.log("sourcepanl: ", sourcePanel);
+console.log("relatepanel: ", relatedPanel);
+      if (1 < activeArr.length) {
+        $(`${relatedPanel} span`).filter('.relatedItem, .activeandrelatedItem').each(function (i, v) {
+          if ($.inArray(v.textContent, relatedDataList[t]) != -1) {
+            if (p.hasClass("activeandrelatedItem")) {
+              p.removeClass("activeandrelatedItem");
+            }  
+            if (v.textContent.startsWith('js')) {
+              for (let i in activeArr) {
+                if ($.inArray(v.textContent, relatedDataList[activeArr[i]]) != -1) {
+                }else{
                   $(this).removeClass("relatedItem");
                 }
-              });
+              }
+            }else{
+              $(this).removeClass("relatedItem");
             }
           }
-        }
+        });
+//        p.toggleClass("activeItem");
+
       } else {
-        cleanupRelatedList(true);
+        $(`${relatedPanel} span`).filter('.relatedItem, .activeandrelatedItem').each(function (i, v) {
+          if (p.hasClass("activeandrelatedItem")) {
+            p.removeClass("activeandrelatedItem");
+
+          } else {
+            $(this).removeClass("relatedItem");
+          }
+
+          if($.inArray(t,relatedDataList[v.textContent]) != -1){
+//            p.addClass("relatedItem");
+          }
+        });
+//        p.toggleClass("activeItem");
       }
 
-      delete relatedDataList[t];
+      p.toggleClass("activeItem");
+
+
+
+
+      /*      
+            if (1 < activeArr.length) {
+              let ar1 = relatedDataList[t];// clicked item's relation data list
+              let diff = [];
+              for (let i in activeArr) {
+                if(activeArr[i] != t){
+                let ar2 = relatedDataList[activeArr[i]];// 'activeItem' relation data list 
+                diff[i] = ar1.filter(x => !ar2.includes(x)); // pick the difference(nor) between the clicked item and 'activeItem' item
+              }}
+      */
+      /*
+              if (0 < diff.length) {
+                for (let i in diff) {
+                  for (let ii in diff[i]) {
+                    $(`${relatedPanel} span`).each(function () {
+                      if ($(this).text() == diff[i][ii]) {
+                        $(this).removeClass("relatedItem");
+                      }
+                    });
+                  }
+                }
+              }
+      */
+    } else {
+      // delete target 
+      //        cleanupRelatedList(true);
+      $(`${relatedPanel} span`).filter('.relatedItem').each(function () {
+        $(this).removeClass("relatedItem");
+      });
     }
 
-    if(p.hasClass("activeandrelatedItem")){
-      p.removeClass("activeandrelatedItem");
-//      p.addClass("relatedItem");
-    }else{
-      p.toggleClass("activeItem");
-    }  
+    //    console.log("related.:", relatedPanel);
+    //    cleanupRelatedList(true);
+    //    delete relatedDataList[t];
   } else {
     /*
       in case to turn p to 'ACTIVE'
@@ -514,13 +552,17 @@ const listClick = (p) => {
       */
       $(`${APICONTAINER} span`).filter(".relatedItem, .activeItem, .activeandrelatedItem").each(function () {
         if (t != $(this).text()) {
+          if ($(this).hasClass("activeandrelatedItem")) {
+            $(this).addClass("relatedItem");
+          }
+
           $(this).removeClass("activeItem activeandrelatedItem");
           $(`${TABLECONTAINER} span`).removeClass("relatedItem");
         }
       });
 
       // reset all activeItem class and sql
-      cleanupContainers("all");
+      cleanupContainers();
 
       // showing ordered sql from preferent.apilist that is gotten by getAjaxData("/getapilist",...)
       if (preferent.apilist != null && preferent.apilist.length != 0) {
@@ -541,40 +583,41 @@ const listClick = (p) => {
     postAjaxData(scenario["function-post-url"][8], data);
 
     if (p.hasClass("relatedItem")) {
-      p.removeClass("relatedItem");
+//      p.removeClass("relatedItem");
       p.addClass("activeandrelatedItem");
-    }else{
+    } else {
       p.toggleClass("activeItem");
     }
-/*
-    if (!p.hasClass("relatedItem")) {
-      p.toggleClass("activeItem");
-    }
-*/
+    /*
+        if (!p.hasClass("relatedItem")) {
+          p.toggleClass("activeItem");
+        }
+    */
   }
 
   // set the panel title
-  if (!p.hasClass("relatedItem")) {
-    let label2columns = "";
-    $("#table_container span, #api_container span").filter('.activeItem').each(function () {
-      let tn = $(this).text();
-      if (label2columns.length == 0) {
-        label2columns = tn;
-      } else {
-        label2columns += " & " + tn;
-      }
-    });
-
-    if (0 < label2columns.length) {
-      if (sourcePanel == TABLECONTAINER) {
-        label2columns = `Registered columns in ${label2columns}`;
-      } else {
-        label2columns = `IN/OUT interface of ${label2columns}`;
-      }
+  //  if (!p.hasClass("relatedItem")) {
+  let label2columns = "";
+  $(`${TABLECONTAINER} span, ${APICONTAINER} span`).filter('.activeItem, .activeandrelatedItem').each(function () {
+    //      $("#table_container span, #api_container span").filter('.activeItem .activeandrelatedItem').each(function () {
+    let tn = $(this).text();
+    if (label2columns.length == 0) {
+      label2columns = tn;
+    } else {
+      label2columns += " & " + tn;
     }
+  });
 
-    $("#columns_title").text(label2columns);
+  if (0 < label2columns.length) {
+    if (sourcePanel == TABLECONTAINER) {
+      label2columns = `Registered columns in ${label2columns}`;
+    } else {
+      label2columns = `IN/OUT interface of ${label2columns}`;
+    }
   }
+
+  $("#columns_title").text(label2columns);
+  //  }
 }
 /**
  * @function setApiIF_In
@@ -921,7 +964,7 @@ const dropThisTable = (tables) => {
           if ($(this).text() === tables[i]) {
             $(this).remove();
             removeColumn(tables[i]);
-            cleanupContainers("table");
+            cleanupContainers();
             return;
           }
         });
@@ -1301,7 +1344,7 @@ const functionPanelFunctions = (ut) => {
 
       // cleanup the screen first 
       cleanupItems4Switching();
-      cleanupContainers("all");
+      cleanupContainers();
 
       if (inScenarioChk(ut, 'func-show-table-list-cmd')) {
         showApiTestPanel(false);
@@ -1334,7 +1377,7 @@ const functionPanelFunctions = (ut) => {
           if ($(this).hasClass("activeItem")) {
             $(this).removeClass("activeItem");
           }
-          if($(this).hasClass("activeandrelatedItem")){
+          if ($(this).hasClass("activeandrelatedItem")) {
             $(this).removeClass("activeandrelatedItem");
           }
 
@@ -1363,7 +1406,7 @@ const functionPanelFunctions = (ut) => {
         */
         $(`${TABLECONTAINER} span`).each(function (i, v) {
           if (v.textContent == t[n]) {
-//            $(this).hasClass("activeItem");
+            //            $(this).hasClass("activeItem");
             listClick($(this));
             m = chooseMsg('success-msg', "", "");
             findflg = true;
@@ -1373,7 +1416,7 @@ const functionPanelFunctions = (ut) => {
         if (ut.indexOf("table") == -1) {
           $(`${APICONTAINER} span`).each(function (i, v) {
             if (v.textContent.indexOf(t[n]) != -1) {
-//              $(this).hasClass("activeItem");
+              //              $(this).hasClass("activeItem");
               listClick($(this));
               m = chooseMsg('success-msg', "", "");
               findflg = true;
@@ -1431,29 +1474,29 @@ const functionPanelFunctions = (ut) => {
              but 'pass phrase' is must item. 
           */
           if (($(SOMETHINGINPUT).is(":visible") && 0 < $(SOMETHINGINPUT).val().length) || (loginuser.sw != null && 0 < loginuser.sw.length)) {
-//            if (isVisibleTableContainer()) {
-              let droptables = [];
-              $(`${TABLECONTAINER} span`).filter('.deleteItem').each(function () {
-                droptables.push($(this).text());
-              });
+            //            if (isVisibleTableContainer()) {
+            let droptables = [];
+            $(`${TABLECONTAINER} span`).filter('.deleteItem').each(function () {
+              droptables.push($(this).text());
+            });
 
-              if (0 < droptables.length) {
-                //                preferent.cmd = "";
-                dropThisTable(droptables);
-              }
-//            }
+            if (0 < droptables.length) {
+              //                preferent.cmd = "";
+              dropThisTable(droptables);
+            }
+            //            }
 
-//            if (isVisibleApiContainer()) {
-              let deleteapis = [];
-              $(`${APICONTAINER} span`).filter('.deleteItem').each(function () {
-                deleteapis.push($(this).text());
-              });
+            //            if (isVisibleApiContainer()) {
+            let deleteapis = [];
+            $(`${APICONTAINER} span`).filter('.deleteItem').each(function () {
+              deleteapis.push($(this).text());
+            });
 
-              if (0 < deleteapis.length) {
-                //                preferent.cmd = "";
-                deleteThisApi(deleteapis);
-              }
-//            }
+            if (0 < deleteapis.length) {
+              //                preferent.cmd = "";
+              deleteThisApi(deleteapis);
+            }
+            //            }
           }
 
           m = IGNORE;
@@ -1474,7 +1517,7 @@ const functionPanelFunctions = (ut) => {
             only 'js*' api can be deleted.
         */
         for (let n = 0; n < utarray.length; n++) {
-          $(`${TABLECONTAINER} span`).each(function (i,v) {
+          $(`${TABLECONTAINER} span`).each(function (i, v) {
             if (v.textContent == utarray[n]) {
               $(this).addClass("deleteItem");
               m = chooseMsg("common-confirm-msg", "", "");
@@ -1482,15 +1525,15 @@ const functionPanelFunctions = (ut) => {
           });
 
           let jijujdexist = false;
-          $(`${APICONTAINER} span`).each(function (i,v) {
-            if(v.textContent.indexOf(utarray[n]) != -1){
-            if (v.textContent.startsWith('js')){
+          $(`${APICONTAINER} span`).each(function (i, v) {
+            if (v.textContent.indexOf(utarray[n]) != -1) {
+              if (v.textContent.startsWith('js')) {
                 $(this).addClass("deleteItem");
-              m = chooseMsg("common-confirm-msg", "", "");
-            } else if (v.textContent.startsWith('ji') || v.textContent.startsWith('ju') || v.textContent.startsWith('jd')) {
-              jijujdexist = true;
+                m = chooseMsg("common-confirm-msg", "", "");
+              } else if (v.textContent.startsWith('ji') || v.textContent.startsWith('ju') || v.textContent.startsWith('jd')) {
+                jijujdexist = true;
+              }
             }
-          }
           });
 
           if (jijujdexist) {
@@ -1507,9 +1550,9 @@ const functionPanelFunctions = (ut) => {
       break;
     case 'post':
       // if api test result panel is openend yet
-      if (isVisibleApiContainer()) {
-        showApiTestPanel(false);
-      }
+      //      if (isVisibleApiContainer()) {
+      showApiTestPanel(false);
+      //      }
       /*
         Tips:
           the first 'post' is ut=cmd for asking 'sub query' sentnece.
@@ -1575,30 +1618,30 @@ const functionPanelFunctions = (ut) => {
       // cancel table drop and/or api delete
       if (inCancelableCmdList([TABLEAPIDELETE])) {
         // if api test result panel is openend yet
-        if (isVisibleApiContainer()) {
-          //          showApiTestPanel(false);
-        }
+        //        if (isVisibleApiContainer()) {
+        //          showApiTestPanel(false);
+        //        }
 
-        if (isVisibleApiContainer()) {
-          // if api test result panel is openend yet
-          showApiTestPanel(false);
-          // cleanup the screen
-          cleanupItems4Switching();
-          cleanupContainers("all");
-          showSomethingInputField(false);
-          showSomethingMsgPanel(false);
+        //        if (isVisibleApiContainer()) {
+        // if api test result panel is openend yet
+        showApiTestPanel(false);
+        // cleanup the screen
+        cleanupItems4Switching();
+        cleanupContainers();
+        showSomethingInputField(false);
+        showSomethingMsgPanel(false);
+        rejectCancelableCmdList(TABLEAPIDELETE);
+        m = chooseMsg('cancel-msg', "", "");
+        //        } else {
+        // table list
+        if (deleteSelectedItems()) {
+          showGenelicPanel(false);
           rejectCancelableCmdList(TABLEAPIDELETE);
           m = chooseMsg('cancel-msg', "", "");
         } else {
-          // table list
-          if (deleteSelectedItems()) {
-            showGenelicPanel(false);
-            rejectCancelableCmdList(TABLEAPIDELETE);
-            m = chooseMsg('cancel-msg', "", "");
-          } else {
-            m = chooseMsg('unknown-msg', "", "");
-          }
+          m = chooseMsg('unknown-msg', "", "");
         }
+        //        }
 
         $(`${TABLECONTAINER} span`).removeClass('deleteItem');
         $(`${APICONTAINER} span`).removeClass('deleteItem');
@@ -1651,14 +1694,14 @@ const functionPanelFunctions = (ut) => {
     case 'cleanup': //clean up the panels
       cleanupItems4Switching();
       deleteSelectedItems();
-      cleanupContainers("all");
+      cleanupContainers();
       m = chooseMsg('success-msg', '', '');
       break;
     case 'subquery': //open subquery panel
       // if api test result panel is openend yet
-      if (isVisibleApiContainer()) {
-        showApiTestPanel(false);
-      }
+      //      if (isVisibleApiContainer()) {
+      showApiTestPanel(false);
+      //      }
 
       showGenelicPanel(true);
       m = chooseMsg('func-subpanel-opened-msg', '', '');
@@ -1701,7 +1744,7 @@ const functionPanelFunctions = (ut) => {
 
         if (preferent.apiparams_count < preferent.apitestparams.length) {
           m = `set '${preferent.apitestparams[preferent.apiparams_count]}'`;
-        } else if (inScenarioChk(ut, 'common-post-cmd')) {
+        } else if (inScenarioChk(ut, 'func-api-test-execute-cmd')) {
           apiTestAjax();
           m = chooseMsg('inprogress-msg', '', '');
         } else {
@@ -1709,7 +1752,7 @@ const functionPanelFunctions = (ut) => {
           m = chooseMsg('func-api-test-ready-msg', e, 'r');
         }
       } else {
-        if (inScenarioChk(ut, 'common-post-cmd')) {
+        if (inScenarioChk(ut, 'func-api-test-execute-cmd')) {
           apiTestAjax();
           m = chooseMsg('inprogress-msg', '', '');
         } else {
@@ -1727,7 +1770,7 @@ const functionPanelFunctions = (ut) => {
         tidyupcmdCandidates(cmd);
         deleteSelectedItems();
         cleanupItems4Switching();
-        cleanupContainers("all");
+        cleanupContainers();
         cancelableCmdList = [];
 
         // clean up the parameters for api test
@@ -1918,7 +1961,7 @@ const deleteThisApi = (apis) => {
           if ($(this).text() === apis[i]) {
             $(this).remove();
             removeColumn(apis[i]);
-            cleanupContainers("all");
+            cleanupContainers();
             return;
           }
         });

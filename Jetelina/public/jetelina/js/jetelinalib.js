@@ -827,7 +827,6 @@ const chooseMsg = (i, m, p) => {
 
         ret = s;
     } else {
-        console.info(`scenario -> ${i} is null`);
     }
 
     return ret;

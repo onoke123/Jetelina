@@ -117,7 +117,7 @@
 # basic commands in function panel
 #
 @jdic common-post-cmd:"post","send","push"
-@jdic common-execute-again-cmd":"again","do it again","once more","do again","one more"
+@jdic common-execute-again-cmd:"again","do it again","once more","do again","one more"
 @jdic common-cancel-cmd:"cancel","withdraw","abandon","postpone","give up","quit"
 @jdic common-confirm-msg:"Sure?","Really?","Do it now?"
 @jdic common-alert-msg:"Boo","no hit","could not make it"
