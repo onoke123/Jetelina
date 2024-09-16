@@ -22,3 +22,7 @@ ji707,"insert into ftest3 (ftest3_name,ftest3_sex,ftest3_age,ftest3_dumy,jetelin
 ju708,"update ftest3 set ftest3_name='{ftest3_name}',ftest3_sex='{ftest3_sex}',ftest3_age={ftest3_age},ftest3_dumy={ftest3_dumy}","where ftest3_jt_id={jt_id}","mysql"
 jd709,"update ftest3 set jetelina_delete_flg=1","where ftest3_jt_id={jt_id}","mysql"
 js710,"select ftest.ftest_jt_id,ftest.ftest_name,ftest.ftest_sex,ftest.ftest_age,ftest.ftest_ave,ftest3.ftest3_jt_id,ftest3.ftest3_name,ftest3.ftest3_sex,ftest3.ftest3_age,ftest3.ftest3_dumy,ftest2.ftest2_jt_id,ftest2.ftest2_name,ftest2.ftest2_sex,ftest2.ftest2_age,ftest2.ftest2_ave from ftest as ftest,ftest3 as ftest3,ftest2 as ftest2","ignore","mysql"
+js733,"select ftest2.ftest2_jt_id,ftest2.ftest2_name,ftest2.ftest2_sex,ftest2.ftest2_age,ftest2.ftest2_ave from ftest2 as ftest2","ignore","mysql"
+js734,"select ftest2.ftest2_jt_id,ftest2.ftest2_name,ftest2.ftest2_sex,ftest2.ftest2_age from ftest2 as ftest2","ignore","mysql"
+js735,"select ftest2.ftest2_jt_id,ftest2.ftest2_name,ftest2.ftest2_sex from ftest2 as ftest2","ignore","mysql"
+js736,"select ftest2.ftest2_jt_id,ftest2.ftest2_name from ftest2 as ftest2","ignore","mysql"

@@ -171,9 +171,11 @@ const checkResult = (o) => {
                 em = chooseMsg("common-ajax-error-msg", error, "a");
             }
 
-            $(SOMETHINGMSGPANELMSG).text(em);
-            showSomethingMsgPanel(true);
-
+            if( em != "" ){
+                $(SOMETHINGMSGPANELMSG).text(em);
+                showSomethingMsgPanel(true);
+            }
+            
             ret = false;
         } else {
             $(SOMETHINGMSGPANELMSG).text("");

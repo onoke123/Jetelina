@@ -253,11 +253,25 @@ const deleteSelectedItems = (p) => {
  * droped items & columns of selecting table
  */
 const cleanUp = (s) => {
+  /*
+    Tips:
+      be empty selectedItemArr, 
+      .... but i forgot why it did here... 
+      leave it as a good luck charm  :P
+  */
   selectedItemsArr.splice(0);
+
+  $("#columns_title").text("");
 
   if (s == "items") {
     // clean up items
-    $(".item_area .item,.apisql").remove();
+    /*
+      Attention:
+        remove targets are
+          '.item' at '.item_area'
+          and all '.apisql'
+    */
+    $(".item_area > .item, .apisql, .selectedItem").remove();
   } else if (s == "tables") {
     // clean up tables
     $(`${TABLECONTAINER} .table`).remove();
@@ -453,18 +467,17 @@ const listClick = (p) => {
             in case APICONTAINER, activeArr.length = 1.
             in case TABLECONTAINER, activeArr.length >= 1.
       */
-      $(`${sourcePanel} span, ${relatedPanel} span`).filter('.activeItem, .activeandrelatedItem').each(function () {
+      $(`${sourcePanel} span`).filter('.activeItem, .activeandrelatedItem').each(function () {
         activeArr.push($(this).text());
       });
-console.log("act arr: ", activeArr.length);
-console.log("sourcepanl: ", sourcePanel);
-console.log("relatepanel: ", relatedPanel);
+
       if (1 < activeArr.length) {
         $(`${relatedPanel} span`).filter('.relatedItem, .activeandrelatedItem').each(function (i, v) {
           if ($.inArray(v.textContent, relatedDataList[t]) != -1) {
             if (p.hasClass("activeandrelatedItem")) {
               p.removeClass("activeandrelatedItem");
-            }  
+              p.addClass("activeItem");
+            }  console.log("v.tex:", v.textContent);
             if (v.textContent.startsWith('js')) {
               for (let i in activeArr) {
                 if ($.inArray(v.textContent, relatedDataList[activeArr[i]]) != -1) {
@@ -477,63 +490,25 @@ console.log("relatepanel: ", relatedPanel);
             }
           }
         });
-//        p.toggleClass("activeItem");
-
       } else {
         $(`${relatedPanel} span`).filter('.relatedItem, .activeandrelatedItem').each(function (i, v) {
           if (p.hasClass("activeandrelatedItem")) {
             p.removeClass("activeandrelatedItem");
-
-          } else {
-            $(this).removeClass("relatedItem");
+            p.addClass("activeItem");
           }
-
-          if($.inArray(t,relatedDataList[v.textContent]) != -1){
-//            p.addClass("relatedItem");
-          }
+          
+          $(this).removeClass("relatedItem");
         });
-//        p.toggleClass("activeItem");
       }
 
       p.toggleClass("activeItem");
-
-
-
-
-      /*      
-            if (1 < activeArr.length) {
-              let ar1 = relatedDataList[t];// clicked item's relation data list
-              let diff = [];
-              for (let i in activeArr) {
-                if(activeArr[i] != t){
-                let ar2 = relatedDataList[activeArr[i]];// 'activeItem' relation data list 
-                diff[i] = ar1.filter(x => !ar2.includes(x)); // pick the difference(nor) between the clicked item and 'activeItem' item
-              }}
-      */
-      /*
-              if (0 < diff.length) {
-                for (let i in diff) {
-                  for (let ii in diff[i]) {
-                    $(`${relatedPanel} span`).each(function () {
-                      if ($(this).text() == diff[i][ii]) {
-                        $(this).removeClass("relatedItem");
-                      }
-                    });
-                  }
-                }
-              }
-      */
     } else {
       // delete target 
       //        cleanupRelatedList(true);
-      $(`${relatedPanel} span`).filter('.relatedItem').each(function () {
+      $(`${relatedPanel} span, ${relatedPanel} span`).filter('.relatedItem').each(function () {
         $(this).removeClass("relatedItem");
       });
     }
-
-    //    console.log("related.:", relatedPanel);
-    //    cleanupRelatedList(true);
-    //    delete relatedDataList[t];
   } else {
     /*
       in case to turn p to 'ACTIVE'
@@ -583,23 +558,15 @@ console.log("relatepanel: ", relatedPanel);
     postAjaxData(scenario["function-post-url"][8], data);
 
     if (p.hasClass("relatedItem")) {
-//      p.removeClass("relatedItem");
       p.addClass("activeandrelatedItem");
     } else {
       p.toggleClass("activeItem");
     }
-    /*
-        if (!p.hasClass("relatedItem")) {
-          p.toggleClass("activeItem");
-        }
-    */
   }
 
   // set the panel title
-  //  if (!p.hasClass("relatedItem")) {
   let label2columns = "";
   $(`${TABLECONTAINER} span, ${APICONTAINER} span`).filter('.activeItem, .activeandrelatedItem').each(function () {
-    //      $("#table_container span, #api_container span").filter('.activeItem .activeandrelatedItem').each(function () {
     let tn = $(this).text();
     if (label2columns.length == 0) {
       label2columns = tn;
@@ -617,7 +584,6 @@ console.log("relatepanel: ", relatedPanel);
   }
 
   $("#columns_title").text(label2columns);
-  //  }
 }
 /**
  * @function setApiIF_In
@@ -959,16 +925,17 @@ const dropThisTable = (tables) => {
   }).done(function (result, textStatus, jqXHR) {
     let m = "";
     if (checkResult(result)) {
-      for (let i = 0; i < tables.length; i++) {
-        $(`${TABLECONTAINER} span`).filter(function () {
-          if ($(this).text() === tables[i]) {
-            $(this).remove();
-            removeColumn(tables[i]);
-            cleanupContainers();
-            return;
-          }
-        });
-      }
+//      for (let i = 0; i < tables.length; i++) {
+//        $(`${TABLECONTAINER} span`).filter(function () {
+//          if ($(this).text() === tables[i]) {
+            cleanUp("items");
+            //$(this).remove();
+            //removeColumn(tables[i]);
+            //cleanupContainers();
+//            return;
+//          }
+//        });
+//      }
 
       // 'pass' is authorized by Jetelina
       loginuser.sw = pd["pass"];
@@ -976,8 +943,8 @@ const dropThisTable = (tables) => {
       showSomethingMsgPanel(false);
       rejectCancelableCmdList(TABLEAPIDELETE);
       preferent.cmd = "";
-      // new api list 
       refreshApiList();
+      refreshTableList();
       m = chooseMsg('refreshing-msg', '', '');
     } else {
       m = result["message from Jetelina"];
@@ -1044,6 +1011,8 @@ const postSelectedColumns = (mode) => {
     }
   }).done(function (result, textStatus, jqXHR) {
     let m = "";
+    $(".newapino").remove();
+
     if (checkResult(result)) {
       if (mode != "pre") {
         /*
@@ -1056,10 +1025,13 @@ const postSelectedColumns = (mode) => {
             showApiTestPanel(false);
           }
 
+          selectedItemsArr = [];
+          rejectCancelableCmdList(SELECTITEM);
+          cleanUp("items");
           $(CONTAINERPANEL).append(`<span class="newapino"><p>api no is ${result.apino}</p></span>`);
-          //          typingControll(chooseMsg('success-msg', "", ""));
-        } else if (result.resembled != null && 0 < result.resembled.length) {
-          $(CONTAINERPANEL).append(`<span class="newapino"><p>there is similar API already exist:  ${result.resembled}</p></span>`);
+          refreshApiList();
+          refreshTableList();
+          m = chooseMsg('refreshing-msg', '', '');    
         }
 
         if (isVisibleGenelicPanel()) {
@@ -1079,6 +1051,9 @@ const postSelectedColumns = (mode) => {
       m = "success-msg";
     } else {
       m = 'fail-msg';
+      if (result.resembled != null && 0 < result.resembled.length) {
+        $(CONTAINERPANEL).append(`<span class="newapino"><p>there is similar API already exist:  ${result.resembled}</p></span>`);
+      }
     }
 
     typingControll(chooseMsg(m, "", ""));
@@ -1093,7 +1068,6 @@ const postSelectedColumns = (mode) => {
     if (mode != "pre") {
       // initializing
       preferent.cmd = "";
-      rejectCancelableCmdList(SELECTITEM);
     }
   });
 }
@@ -1164,7 +1138,6 @@ const functionPanelFunctions = (ut) => {
     } else if (cmd == "" && inScenarioChk(ut, 'func-fileupload-open-cmd')) {
       cmd = FILESELECTOROPEN;
       cmdCandidates.push("file open");
-      //    } else if (cmd == "" && inScenarioChk(ut, 'func-table-api-open-close-cmd')) {
     } else if (inScenarioChk(ut, 'func-table-api-open-close-cmd')) {
       rejectCancelableCmdList(cmd);
       cmd = SELECTITEM;
@@ -1369,7 +1342,12 @@ const functionPanelFunctions = (ut) => {
 
       // for opening table 
       $(CONTAINERNEWAPINO).remove();
-      if (($.inArray('all', t) != -1) && (($.inArray('cancel', t) != -1) || ($.inArray('cancel', t) != -1) || ($.inArray('close', t) != -1))) {
+      /*
+        Attention:
+          if statement exectution is 'all' + 'close'
+            -> in the case of 'ut' is 'close all', 'all close'
+      */
+      if (($.inArray('all', t) != -1) && ($.inArray('close', t) != -1)) {
         $("#table_container span, #api_container span").filter(".relatedItem, .activeItem, .activeandrelatedItem").each(function () {
           if ($(this).hasClass("relatedItem")) {
             $(this).removeClass("relatedItem");
@@ -1381,6 +1359,7 @@ const functionPanelFunctions = (ut) => {
             $(this).removeClass("activeandrelatedItem");
           }
 
+          cleanUp("items");
           let n = $(this).text();
           if (relatedDataList[n] != null) {
             delete relatedDataList[n];
@@ -1474,29 +1453,22 @@ const functionPanelFunctions = (ut) => {
              but 'pass phrase' is must item. 
           */
           if (($(SOMETHINGINPUT).is(":visible") && 0 < $(SOMETHINGINPUT).val().length) || (loginuser.sw != null && 0 < loginuser.sw.length)) {
-            //            if (isVisibleTableContainer()) {
             let droptables = [];
             $(`${TABLECONTAINER} span`).filter('.deleteItem').each(function () {
               droptables.push($(this).text());
             });
 
             if (0 < droptables.length) {
-              //                preferent.cmd = "";
               dropThisTable(droptables);
             }
-            //            }
-
-            //            if (isVisibleApiContainer()) {
             let deleteapis = [];
             $(`${APICONTAINER} span`).filter('.deleteItem').each(function () {
               deleteapis.push($(this).text());
             });
 
             if (0 < deleteapis.length) {
-              //                preferent.cmd = "";
               deleteThisApi(deleteapis);
             }
-            //            }
           }
 
           m = IGNORE;
@@ -1956,16 +1928,26 @@ const deleteThisApi = (apis) => {
   }).done(function (result, textStatus, jqXHR) {
     let m = "";
     if (checkResult(result)) {
-      for (let i = 0; i < apis.length; i++) {
-        $(`${APICONTAINER} span`).filter(function () {
-          if ($(this).text() === apis[i]) {
-            $(this).remove();
-            removeColumn(apis[i]);
-            cleanupContainers();
-            return;
-          }
-        });
-      }
+//      for (let i = 0; i < apis.length; i++) {
+//        $(`${APICONTAINER} span`).each(function () {
+//          if ($(this).text() === apis[i]) {
+//            if($(this).hasClass("activeItem") || $(this).hasClass("activeandrelatedItem")){
+              cleanUp("items");
+//              for(let n in relatedDataList[apis[i]]){
+//                $(`${TABLECONTAINER} span`).filter(".relatedItem").each(function () {
+//                  if($(this).text() == relatedDataList[apis[i]][n]){
+//                    $(this).removeClass("relatedItem");
+//                  }
+//                });
+//              }
+//            }
+//            $(this).remove();
+//            removeColumn(apis[i]);
+//            cleanupContainers();
+//            return;
+//          }
+//        });
+//      }
 
       // 'pass' is authorized by Jetelina
       loginuser.sw = pd["pass"];
@@ -1973,7 +1955,9 @@ const deleteThisApi = (apis) => {
       showSomethingMsgPanel(false);
       rejectCancelableCmdList(TABLEAPIDELETE);
       preferent.cmd = "";
-      m = chooseMsg('success-msg', '', '')
+      refreshApiList();
+      refreshTableList();
+      m = chooseMsg('refreshing-msg', '', '');
     } else {
       m = result["message from Jetelina"];
       if (m == null || m == "") {
