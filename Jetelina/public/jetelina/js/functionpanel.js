@@ -14,7 +14,7 @@
       deleteSelectedItems(p) delete the selected columns from #container field
       cleanUp(s)  droped items & columns of selecting table
       cleanupItems4Switching() clear screen in activeItem class when switching table list/api list 
-      cleanupContainers() clear screen in the detail zone showing when switching table list/api list 
+      cleanupContainers(s) clear screen in the detail zone showing when switching table list/api list 
       fileupload() CSV file upload
       getdataFromJson(o,k) aquire the ordered data from the ordered json object
       listClick(p)   do something by clicking tble list or api list items  
@@ -193,9 +193,9 @@ const itemSelect = (p) => {
   let item = p.attr("colname");
 
   // delete the showing because the api no is displayed in there initially.
-  if ($(`${CONTAINERPANEL} span`).hasClass('apisql')) {
-    $(`${CONTAINERPANEL} span`).remove();
-  }
+//  if ($(`${CONTAINERPANEL} span`).hasClass('apisql')) {
+//    $(`${CONTAINERPANEL} span`).remove();
+//  }
 
   if (p.hasClass("selectedItem")) {
     // delete
@@ -213,6 +213,9 @@ const itemSelect = (p) => {
     cancelableCmdList.push(SELECTITEM);
     selectedItemsArr.push(item);
   }
+
+  // open subquery input field anyhow
+  showGenelicPanel(true);
 }
 /**
  * @function deleteSelectedItems
@@ -232,11 +235,11 @@ const deleteSelectedItems = (p) => {
     });
 
     $(p).removeClass("selectedItem");
-    $(p).detach().appendTo(`${COLUMNSPANEL} div`);
+    $(p).detach().appendTo(`${COLUMNSPANEL} div[name='columns_area']`);
     ret = true;
   } else {
     // delete all items
-    selectedItemsArr.length = 0;
+    selectedItemsArr = [];
     $(`${CONTAINERPANEL} span`).removeClass("selectedItem");
     $(`${CONTAINERPANEL} .apisql`).remove();
     $(`${COLUMNSPANEL} .apisql`).remove();
@@ -297,14 +300,27 @@ const cleanupItems4Switching = () => {
 }
 /**
 * @function cleanupContainers
-* 
+* @param {string} s  point to target : 'api' or null
+*
 * clear screen in the detail zone showing when switching table list/api list
 */
-const cleanupContainers = (t) => {
-  showApiTestPanel(false);
-  showGenelicPanel(false);
+const cleanupContainers = (s) => {
+  if( s == null || s == "" ){
+    s = "all";
+  }
 
-  $(`${CONTAINERPANEL} span,${CONDITIONPANEL} span`).remove();
+  showApiTestPanel(false);
+
+  if( s == "api" ){
+    if( selectedItemsArr != null && selectedItemsArr.length == 0 ){
+      showGenelicPanel(false);
+    }
+
+    $(`${CONTAINERPANEL} span, ${COLUMNSPANEL} span`).filter(".apisql").remove();
+  }else{
+    showGenelicPanel(false);
+    $(`${CONTAINERPANEL} span,${CONDITIONPANEL} span`).remove();
+  }
 }
 /**
  * @function fileupload
@@ -438,9 +454,9 @@ const listClick = (p) => {
       in case to turn p to 'INACTIVE'
     */
     if (p.hasClass("api")) {
-      cleanupContainers();
-      $(`${COLUMNSPANEL} span`).filter(".apisql").remove();
+      cleanupContainers("api");
     } else {
+
     }
     /* 
         Tips:
@@ -477,7 +493,8 @@ const listClick = (p) => {
             if (p.hasClass("activeandrelatedItem")) {
               p.removeClass("activeandrelatedItem");
               p.addClass("activeItem");
-            }  console.log("v.tex:", v.textContent);
+            }
+
             if (v.textContent.startsWith('js')) {
               for (let i in activeArr) {
                 if ($.inArray(v.textContent, relatedDataList[activeArr[i]]) != -1) {
@@ -537,7 +554,7 @@ const listClick = (p) => {
       });
 
       // reset all activeItem class and sql
-      cleanupContainers();
+//      cleanupContainers();
 
       // showing ordered sql from preferent.apilist that is gotten by getAjaxData("/getapilist",...)
       if (preferent.apilist != null && preferent.apilist.length != 0) {
@@ -1103,6 +1120,18 @@ const functionPanelFunctions = (ut) => {
     }
   }
 
+  if(inScenarioChk(ut, 'func-subpanel-focus-cmd')){
+    if(isVisibleGenelicPanel()){
+      $(GENELICPANELINPUT).focus();
+    }
+
+    if(containsMultiTables()){
+      m = chooseMsg('func-postcolumn-where-indispensable-msg', "", "");
+    }else{
+      m = chooseMsg('func-postcolumn-where-option-msg', "", "");
+    }
+  }
+
   if (1 < cmdCandidates.length) {
     cmd = whichCommandsInOrders(ut);
   } else {
@@ -1359,6 +1388,7 @@ const functionPanelFunctions = (ut) => {
             $(this).removeClass("activeandrelatedItem");
           }
 
+          showGenelicPanel(false);
           cleanUp("items");
           let n = $(this).text();
           if (relatedDataList[n] != null) {
@@ -1385,17 +1415,16 @@ const functionPanelFunctions = (ut) => {
         */
         $(`${TABLECONTAINER} span`).each(function (i, v) {
           if (v.textContent == t[n]) {
-            //            $(this).hasClass("activeItem");
             listClick($(this));
             m = chooseMsg('success-msg', "", "");
             findflg = true;
           }
         });
 
-        if (ut.indexOf("table") == -1) {
+//        if (ut.indexOf("table") == -1) {
+        if(!findflg){      
           $(`${APICONTAINER} span`).each(function (i, v) {
             if (v.textContent.indexOf(t[n]) != -1) {
-              //              $(this).hasClass("activeItem");
               listClick($(this));
               m = chooseMsg('success-msg', "", "");
               findflg = true;
@@ -1408,13 +1437,13 @@ const functionPanelFunctions = (ut) => {
       if (!findflg) {
         if (inScenarioChk(ut, "func-item-select-all-cmd")) {
           // select all items
-          $(COLUMNSPANEL).find("span").each(function () {
+          $(`${COLUMNSPANEL} span`).filter(".item").each(function () {
             itemSelect($(this));
           });
         } else {
           // ordered item
           for (let n = 0; n < t.length; n++) {
-            $(COLUMNSPANEL).find("span").each(function (i, v) {
+            $(`${COLUMNSPANEL} span`).filter(".item").each(function (i, v) {
               if (v.textContent.indexOf(t[n]) != -1) {
                 itemSelect($(this));
                 m = chooseMsg('success-msg', "", "");
@@ -1521,10 +1550,7 @@ const functionPanelFunctions = (ut) => {
 
       break;
     case 'post':
-      // if api test result panel is openend yet
-      //      if (isVisibleApiContainer()) {
       showApiTestPanel(false);
-      //      }
       /*
         Tips:
           the first 'post' is ut=cmd for asking 'sub query' sentnece.
@@ -1540,33 +1566,46 @@ const functionPanelFunctions = (ut) => {
           // the first calling            
           if (containsMultiTables()) {
             // 'where sentence' is demanded if there were multi tables
-            showGenelicPanel(true);
-            m = chooseMsg('func-postcolumn-where-indispensable-msg', "", "");
+//            showGenelicPanel(true);
+            if(subquerysentence != "" && subquerysentence != IGNORE){
+              if (checkGenelicInput(subquerysentence)) {
+                postSelectedColumns("");
+                m = IGNORE;
+              }    
+            }else{
+              m = chooseMsg('func-postcolumn-where-indispensable-msg', "", "");
+            }
           } else {
             // 'where sentence' is not demanded but ask it once time
             if (subquerysentence != IGNORE) {
               m = chooseMsg('func-postcolumn-where-option-msg', "", "");
             } else {
-
             }
           }
+
           if (checkGenelicInput(subquerysentence)) {
             postSelectedColumns("");
             m = IGNORE;
           }
         } else {
           // the secound calling, sub query open or not
-          if (inScenarioChk(ut, 'confirmation-sentences-cmd')) {
-            showGenelicPanel(true);
-            m = chooseMsg('func-subpanel-opened-msg', "", "");
-          } else {
-            $(GENELICPANELINPUT).val(IGNORE);
-          }
+//          if (inScenarioChk(ut, 'confirmation-sentences-cmd')) {
+//            showGenelicPanel(true);
+//            m = chooseMsg('func-subpanel-opened-msg', "", "");
+//          } else {
+ //           $(GENELICPANELINPUT).val(IGNORE);
+ //         }
 
-          // use $(..).val() because this may was set 'ignore' just above.
-          if ($(GENELICPANELINPUT).val() != "") {
-            m = chooseMsg('func-postcolumn-available-msg', "", "");
+          if(!containsMultiTables()){
+            if (subquerysentence == "") {
+              $(GENELICPANELINPUT).val(IGNORE);
+              m = chooseMsg('func-postcolumn-available-msg', "", "");
+            }
           }
+          // use $(..).val() because this may was set 'ignore' just above.
+          //if ($(GENELICPANELINPUT).val() != "") {
+            m = chooseMsg('func-postcolumn-available-msg', "", "");
+          //}
 
         }
 
@@ -1628,7 +1667,7 @@ const functionPanelFunctions = (ut) => {
         // cancel selected columns
         if (inScenarioChk(ut, "func-selecteditem-all-cancel-cmd")) {
           // cancel all items
-          $(CONTAINERPANEL).find("span").each(function (i, v) {
+          $(`${CONTAINERPANEL} span`).filter(".selectedItem").each(function (i, v) {
             itemSelect($(this));
           });
 
@@ -1640,7 +1679,7 @@ const functionPanelFunctions = (ut) => {
           m = chooseMsg('cancel-msg', "", "");
         } else {
           // cancel each item
-          $(CONTAINERPANEL).find("span").each(function (i, v) {
+          $(`${CONTAINERPANEL} span`).filter(".selectedItem").each(function (i, v) {
             if (v.textContent.indexOf(t[1]) != -1) {
               itemSelect($(this));
               rejectSelectedItemsArr(v.textContent);
@@ -1667,7 +1706,9 @@ const functionPanelFunctions = (ut) => {
       cleanupItems4Switching();
       deleteSelectedItems();
       cleanupContainers();
-      m = chooseMsg('success-msg', '', '');
+      refreshApiList();
+      refreshTableList();
+      m = chooseMsg('refreshing-msg', '', '');
       break;
     case 'subquery': //open subquery panel
       // if api test result panel is openend yet
@@ -1816,7 +1857,7 @@ const showGenelicPanel = (b) => {
     //    }
 
     $(GENELICPANEL).show();
-    $(GENELICPANELINPUT).focus();
+//    $(GENELICPANELINPUT).focus();
   } else {
     $(GENELICPANEL).hide();
     $(GENELICPANELINPUT).val("");

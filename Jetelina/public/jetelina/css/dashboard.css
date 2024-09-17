@@ -154,6 +154,14 @@ input.user-input {
   width: 300px;
 }
 
+textarea.user-input{
+  outline: none;
+  border: none;
+  color: #a8ce49;
+  background: rgb(53, 41, 94, 0.1);
+  width: 500px;
+}
+
 .yourText {
   font-size: 6px;
   color: rgb(199, 199, 227);

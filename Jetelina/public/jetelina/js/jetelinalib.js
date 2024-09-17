@@ -61,7 +61,8 @@ const RightPanelTitle = "#api_list_title";
 const TABLECONTAINER = "#table_container";
 const APICONTAINER = "#api_container";
 const GENELICPANEL = "#genelic_panel";
-const GENELICPANELINPUT = `${GENELICPANEL} input[name='genelic_input']`;
+const GENELICPANELINPUT = `${GENELICPANEL} textarea[name='genelic_input']`;
+//const GENELICPANELINPUT = `${GENELICPANEL} input[name='genelic_input']`;
 const GENELICPANELTEXT = `${GENELICPANEL} text[name='genelic_text']`;
 const APITESTPANEL = "#apitest";
 const CONFIGCHANGE = "config-change";// command in cancelable command list 
@@ -175,7 +176,7 @@ const checkResult = (o) => {
                 $(SOMETHINGMSGPANELMSG).text(em);
                 showSomethingMsgPanel(true);
             }
-            
+
             ret = false;
         } else {
             $(SOMETHINGMSGPANELMSG).text("");

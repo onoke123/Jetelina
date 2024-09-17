@@ -26,3 +26,4 @@ js733,"select ftest2.ftest2_jt_id,ftest2.ftest2_name,ftest2.ftest2_sex,ftest2.ft
 js734,"select ftest2.ftest2_jt_id,ftest2.ftest2_name,ftest2.ftest2_sex,ftest2.ftest2_age from ftest2 as ftest2","ignore","mysql"
 js735,"select ftest2.ftest2_jt_id,ftest2.ftest2_name,ftest2.ftest2_sex from ftest2 as ftest2","ignore","mysql"
 js736,"select ftest2.ftest2_jt_id,ftest2.ftest2_name from ftest2 as ftest2","ignore","mysql"
+js737,"select ftest.ftest_jt_id,ftest.ftest_name,ftest.ftest_sex,ftest.ftest_age,ftest.ftest_ave from ftest as ftest","ignore","mysql"
