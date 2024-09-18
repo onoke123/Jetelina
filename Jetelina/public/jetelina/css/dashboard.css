@@ -193,13 +193,14 @@ textarea.user-input{
 }
 
 .apisql {
-  width:500px;
+  width:70%/*500px*/;
   font-size: 16px;
   color: #7dc37f;
   top:50%;
   left:10%;
   position: absolute;
   transform: translate(+10%,-50%);
+  word-wrap: break-word;
 }
 
 .apisql.apiin {
@@ -233,8 +234,12 @@ textarea.user-input{
 } 
 
 .jetelina_message {
-    color: #e32910;  
+    color: #e7d967/*#e32910*/;  
     font-style: italic;
+    width: 600px;/* match with parent .somthing_msg_def */
+    display: inline-block;
+    word-wrap: break-word;
+    text-align: left;
 }
 
 .jetelina_message.config_history_text {

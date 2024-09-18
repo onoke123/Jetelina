@@ -20,6 +20,7 @@ scenario["greeting-2-msg"]=["I'm fine, thank you for your asking","Well, so so",
 scenario["starting-2-msg"]=["Could you give me your name?","Let me know your name, please","May I ask your name?"];
 scenario["starting-3-msg"]=["What?","Are you kidding me?","Never mind"];
 scenario["general-thanks-cmd"]=["thank you","thanks","thx"];
+scenario["general-complement-cmd"]=["nice","well done","great","awesome","genious","incredible","super"];
 scenario["general-thanks-msg"]=["you're welcome","my pleasure, {Q}"];
 scenario["no-authority-js-msg"]=["you do not have the authority, yet"];
 scenario["no-authority-jl-msg"]=["you cannot cheat me, you do not have the authority"];

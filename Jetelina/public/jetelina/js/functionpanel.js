@@ -554,7 +554,7 @@ const listClick = (p) => {
       });
 
       // reset all activeItem class and sql
-//      cleanupContainers();
+      cleanupContainers("api");
 
       // showing ordered sql from preferent.apilist that is gotten by getAjaxData("/getapilist",...)
       if (preferent.apilist != null && preferent.apilist.length != 0) {
@@ -628,13 +628,17 @@ const setApiIF_In = (t, s) => {
       let subquery_str = "";
       let isCurry = s_subquery.indexOf('{');
       while (-1 < isCurry) {
+        if(0<subquery_str.length){
+          subquery_str += ',';
+        }
+
         let sp = s_subquery.indexOf('{');
         let ep = s_subquery.indexOf('}');
         if (sp != -1 && ep != -1) {
           let cd = s_subquery.substring(sp + 1, ep);
           subquery_str += `'${cd}': `;
           if (s_subquery[sp - 1] == "\'") {
-            subquery_str += `'{${cd}}', `;
+            subquery_str += `'{${cd}}'`;
           } else {
             subquery_str += `{${cd}}`;
           }
@@ -642,6 +646,7 @@ const setApiIF_In = (t, s) => {
           preferent.apitestparams.push(cd);
           s_subquery = s_subquery.substring(ep + 1, s_subquery.length);
         }
+
         isCurry = s_subquery.indexOf('{');
       }
 
@@ -999,13 +1004,14 @@ const postSelectedColumns = (mode) => {
   /*
     absolutely something is in 'getelic_input'.
     'ignore' is if nothing done by the user.
-    'where' is mandatory
+    'where' is mandatory <- ??? yet?
   */
   let subq = $(GENELICPANELINPUT).val();
+/*
   if ((subq != IGNORE && subq != "") && subq.indexOf("where") == -1) {
     subq = `where ${subq}`;
   }
-
+*/
   pd["subquery"] = subq;
 
   let dd = JSON.stringify(pd);
@@ -1100,6 +1106,8 @@ const functionPanelFunctions = (ut) => {
   let m = IGNORE;
   let cmd = "";
   let usedb = "";// database name for switching
+  let complementflg = false;// turn to 'true' if got compliment words
+
   /*
     if (inCancelableCmdList(["apitest"])) {
       let p = `{${preferent.apitestparams[preferent.apiparams_count]}}`;
@@ -1122,7 +1130,11 @@ const functionPanelFunctions = (ut) => {
 
   if(inScenarioChk(ut, 'func-subpanel-focus-cmd')){
     if(isVisibleGenelicPanel()){
-      $(GENELICPANELINPUT).focus();
+      let subq = $(GENELICPANELINPUT).val();
+      let p = subq.length;
+//      $(GENELICPANELINPUT).val('');
+      $(GENELICPANELINPUT).focus().get(0).setSelectionRange(p,p)
+//      $(GENELICPANELINPUT).val(subq);
     }
 
     if(containsMultiTables()){
@@ -1235,14 +1247,19 @@ const functionPanelFunctions = (ut) => {
 
     // show/hide command, maybe
     if (inScenarioChk(ut, 'func-api-test-panel-show-cmd')) {
-      //      if (cmd == "" && inScenarioChk(ut, 'func-api-test-panel-show-cmd')) {
       showApiTestPanel(true);
     } else if (inScenarioChk(ut, 'func-api-test-panel-hide-cmd')) {
-      //    } else if (cmd == "" && inScenarioChk(ut, 'func-api-test-panel-hide-cmd')) {
       showApiTestPanel(false);
     } else if (inScenarioChk(ut, 'func-subpanel-close-cmd')) {
-      //    } else if (cmd == "" && inScenarioChk(ut, 'func-subpanel-close-cmd')) {
       showGenelicPanel(false);
+    }
+
+    // greeting for something execution
+    if(inScenarioChk(ut,'general-thanks-cmd')||inScenarioChk(ut,'general-complement-cmd')){
+      if(inCancelableCmdList(["apitest","preapitest"])){
+        complementflg = true;
+        cmd = "cancel";
+      }
     }
   }
 
@@ -1293,12 +1310,12 @@ const functionPanelFunctions = (ut) => {
       $(`${COLUMNSPANEL} [name='apiin']`).addClass("attentionapiinout").text(reps);
       cmd = "apitest";
     }
-
+/*
     if ($.inArray(cmd, ["apitest", "preapitest"]) == -1 && inCancelableCmdList(["apitest", "preapitest"])) {
       rejectCancelableCmdList("apitest");
       rejectCancelableCmdList("preapitest");
       preferent.apiparams_count = null;
-    }
+    }*/
   }
   /*
       this 'swich' commands manipulates 'table' and 'csv file upload'.
@@ -1628,13 +1645,6 @@ const functionPanelFunctions = (ut) => {
       */
       // cancel table drop and/or api delete
       if (inCancelableCmdList([TABLEAPIDELETE])) {
-        // if api test result panel is openend yet
-        //        if (isVisibleApiContainer()) {
-        //          showApiTestPanel(false);
-        //        }
-
-        //        if (isVisibleApiContainer()) {
-        // if api test result panel is openend yet
         showApiTestPanel(false);
         // cleanup the screen
         cleanupItems4Switching();
@@ -1693,11 +1703,16 @@ const functionPanelFunctions = (ut) => {
         }
 
       } else if (inCancelableCmdList(["apitest", "preapitest"])) {
-        //        rejectCancelableCmdList("apitest");
-        //        rejectCancelableCmdList("preapitest");
+        rejectCancelableCmdList("apitest");
+        rejectCancelableCmdList("preapitest");
         $(`${COLUMNSPANEL} [name='apiin']`).removeClass("attentionapiinout").text(preferent.original_apiin_str);
         $(`${COLUMNSPANEL} [name='apiout']`).removeClass("attentionapiinout").text(preferent.original_apiout_str);
-        m = chooseMsg('cancel-msg', '', '');
+        if(complementflg){
+          m = chooseMsg('general-thanks-msg', loginuser.lastname, "c");
+        }else{
+          m = chooseMsg('cancel-msg', '', '');
+        }
+
         preferent.apiparams_count = null;
       }
 
@@ -1848,13 +1863,12 @@ const containsMultiTables = () => {
  */
 const showGenelicPanel = (b) => {
   if (b) {
-    //    if (isVisibleTableContainer()) {
     /*
       in the case of showing table list, this field is for expecting 'Sub Query'
     */
     $(GENELICPANELTEXT).text("Sub Query:");
-    $(GENELICPANELINPUT).attr('placeholder', 'where .....');
-    //    }
+    $(GENELICPANELINPUT).val("where ");
+//    $(GENELICPANELINPUT).attr('placeholder', 'where .....');
 
     $(GENELICPANEL).show();
 //    $(GENELICPANELINPUT).focus();
@@ -2133,3 +2147,18 @@ const isSelectedItem = () => {
 
   return ret;
 }
+
+$(GENELICPANELINPUT).blur(function(){
+  let subq = $(GENELICPANELINPUT).val();
+  /*
+  if( $.inArray(subq[subq.length-1],["\n","\r\n"] != -1) ){
+    console.log("subq:",subq);
+    let subq1 = subq.slice(0,subq.lenth-1);
+    console.log("change subquey str: ", subq1, subq.length, "->", subq1.length);
+    $(GENELICPANELINPUT).val(subq1);
+  }*/
+ let subq1 = subq.replace(/\r?\n/g,'');
+ console.log("change subquey str: ", subq, "=>", subq1, subq.length, "->", subq1.length);
+ $(GENELICPANELINPUT).val('');
+ $(GENELICPANELINPUT).val(subq1);
+});

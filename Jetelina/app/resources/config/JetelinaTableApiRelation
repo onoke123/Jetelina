@@ -26,3 +26,12 @@ js734:ftest2:mysql
 js735:ftest2:mysql
 js736:ftest2:mysql
 js737:ftest:mysql
+js738:ftest3,ftest2:mysql
+js739:ftest3,ftest2:mysql
+js740:ftest2,ftest3:mysql
+js741:ftest2,ftest3:mysql
+js742:ftest,ftest2:mysql
+js743:ftest,ftest2:mysql
+js747:ftest:mysql
+js748:ftest3,ftest2:mysql
+js749:ftest3,ftest2:mysql

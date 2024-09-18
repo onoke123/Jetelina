@@ -7,6 +7,7 @@
  *       getRandomNumber(i) create random number. the range is 0 to i.
  */
 const ANIMATEDURATION = 1500;// animate() duration
+const ANIMATEDSCROLLING = 2000;// message scrolling duration in box
 const IGNORE = "ignore"; // when jetelina message is nothing
 const JETELINAPANEL ="#jetelina_panel"; 
 const FUNCTIONPANEL = "#function_panel";

@@ -1654,10 +1654,20 @@ const showSomethingInputField = (b, type) => {
 const showSomethingMsgPanel = (b) => {
     let sm = $(SOMETHINGMSGPANEL);
     if (b) {
-        sm.show();
+        if(sm.text().indexOf(preferent.errnum) != -1){
+            sm.css({'height':'120px'});
+            sm.draggable().show().animate({
+                top: "55%",
+                left: "25%"
+            }, ANIMATEDURATION);
+        }else{
+            sm.css({'height':'70px'});// default number in .something_msg_def
+            sm.draggable().show();
+        }
+
         messageScrollTimerID = setInterval(function () {
             sm.animate({ scrollTop: (sm.scrollTop() == 0 ? sm.height() : 0) }, 4000);
-        }, 2000);
+        }, ANIMATEDSCROLLING);
     } else {
         // these classes are for configuration changing history message
         sm.removeClass("config_history");
@@ -1843,6 +1853,8 @@ const apiTestAjax = () => {
             let ret = JSON.stringify(result);
             $(`${COLUMNSPANEL} [name='apiout']`).addClass("attentionapiinout").text(ret);
         } else {
+            rejectCancelableCmdList("apitest");
+            rejectCancelableCmdList("preapitest");
             m = "fail-msg";
         }
 
