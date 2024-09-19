@@ -963,6 +963,7 @@ const dropThisTable = (tables) => {
       loginuser.sw = pd["pass"];
       showSomethingInputField(false);
       showSomethingMsgPanel(false);
+      showGenelicPanel(false);
       rejectCancelableCmdList(TABLEAPIDELETE);
       preferent.cmd = "";
       refreshApiList();
@@ -1006,12 +1007,11 @@ const postSelectedColumns = (mode) => {
     'ignore' is if nothing done by the user.
     'where' is mandatory <- ??? yet?
   */
-  let subq = $(GENELICPANELINPUT).val();
-/*
-  if ((subq != IGNORE && subq != "") && subq.indexOf("where") == -1) {
-    subq = `where ${subq}`;
+  let subq = $.trim($(GENELICPANELINPUT).val()).replace(/\r?\n/g,'');
+  if(subq == "" || subq == "where"){
+    subq = IGNORE;
   }
-*/
+
   pd["subquery"] = subq;
 
   let dd = JSON.stringify(pd);
@@ -1051,7 +1051,7 @@ const postSelectedColumns = (mode) => {
           selectedItemsArr = [];
           rejectCancelableCmdList(SELECTITEM);
           cleanUp("items");
-          $(CONTAINERPANEL).append(`<span class="newapino"><p>api no is ${result.apino}</p></span>`);
+//          $(CONTAINERPANEL).append(`<span class="newapino"><p>api no is ${result.apino}</p></span>`);
           refreshApiList();
           refreshTableList();
           m = chooseMsg('refreshing-msg', '', '');    
@@ -1060,6 +1060,8 @@ const postSelectedColumns = (mode) => {
         if (isVisibleGenelicPanel()) {
           $(GENELICPANEL).hide();
         }
+
+        m = `new api no is ${result.apino}`;
       } else {
         /* API test mode */
         getdata(result, 4);
@@ -1069,17 +1071,19 @@ const postSelectedColumns = (mode) => {
           let testmsg = "<span class='jetelina_suggestion'><p>Oh oh, no data. Try again with other params</p></span>";
           $(`${APITESTPANEL} [name='api-test-msg']`).append(`${testmsg}`);
         }
+
+        m = chooseMsg('success-msg','','');
       }
 
-      m = "success-msg";
     } else {
-      m = 'fail-msg';
+      m = chooseMsg('fail-msg','','');
       if (result.resembled != null && 0 < result.resembled.length) {
-        $(CONTAINERPANEL).append(`<span class="newapino"><p>there is similar API already exist:  ${result.resembled}</p></span>`);
+//        $(CONTAINERPANEL).append(`<span class="newapino"><p>there is similar API already exist:  ${result.resembled}</p></span>`);
+        m = `there is a similar API already existing:  ${result.resembled}`;
       }
     }
 
-    typingControll(chooseMsg(m, "", ""));
+    typingControll(m);
   }).fail(function (result) {
     checkResult(result);
     console.error("postSelectedColumns() fail");
@@ -1092,6 +1096,8 @@ const postSelectedColumns = (mode) => {
       // initializing
       preferent.cmd = "";
     }
+
+    rejectCancelableCmdList("post");
   });
 }
 /**
@@ -1615,7 +1621,7 @@ const functionPanelFunctions = (ut) => {
 
           if(!containsMultiTables()){
             if (subquerysentence == "") {
-              $(GENELICPANELINPUT).val(IGNORE);
+//              $(GENELICPANELINPUT).val(IGNORE);
               m = chooseMsg('func-postcolumn-available-msg', "", "");
             }
           }
@@ -1880,17 +1886,21 @@ const showGenelicPanel = (b) => {
 }
 /**
  * @function checkGenelicInput
- * @param {string} s  sub query sentence strings 
+ * @param {string} ss  sub query sentence strings 
  * @returns {boolean}  true->acceptable  false->something suspect
  * 
  * check sub query sentence. 'ignore' is always acceptable.
  */
-const checkGenelicInput = (s) => {
+const checkGenelicInput = (ss) => {
   let ret = true;
+  let s = $.trim(ss);
 
-  if (s == "") {
-    ret = false;
-  } else if (s != IGNORE) {
+  if( s == "where" || s == "" ){
+    s = IGNORE;
+//    $(GENELICPANELINPUT).val(s);
+  }
+
+  if (s != IGNORE) {
     // sub query check
     /*
       Tips:
@@ -1903,16 +1913,20 @@ const checkGenelicInput = (s) => {
     */
     let arr = [];
     //    $(`${CONTAINERPANEL} span`).filter(".selectedItem").each(function () {
-    $("#columns span, #container span").filter('.item').each(function () {
+    $(`${COLUMNSPANEL} span, ${CONTAINERPANEL} span`).filter('.item').each(function () {
       arr.push($(this).text());
     });
 
     // 1st: "" -> '' because sql does not accept ""
-    let sq = s.replaceAll("\"", "'");
+    let unacceptablemarks = ["\"","`"];
+    for( let i in unacceptablemarks){
+      s = s.replaceAll(unacceptablemarks[i],"'");      
+    }
+//    let sq = s.replaceAll("\"", "'");
     // 2nd: reject unexpected words
     let unexpectedwords = ["delete", "drop", ";"];
     for (i in unexpectedwords) {
-      sq = sq.replaceAll(unexpectedwords[i], "");
+      s = s.replaceAll(unexpectedwords[i], "");
     }
     // 3nd: items in the subquery sentence are in the open items list
     /*
@@ -1922,8 +1936,11 @@ const checkGenelicInput = (s) => {
             where ftest.ftest_name='AAA' -> where ='AAA'
             where ftest.ftest_name=ftest2.ftest2_name  -> where =
             where ftest.ftest_ave<0.2  -> where <0.2
+
+        but this logic is postponed because of incomplete on sep/2024
     */
-    let pp = sq;
+   /*
+    let pp = s;
     for (i in arr) {
       let p = pp.indexOf(arr[i]);
       if (0 < p) {
@@ -1940,9 +1957,9 @@ const checkGenelicInput = (s) => {
     } else {
       ret = false;
     }
-
+  */
     if (ret) {
-      $(GENELICPANELINPUT).val(sq);
+      $(GENELICPANELINPUT).val(s);
     }
   }
 
@@ -2008,6 +2025,7 @@ const deleteThisApi = (apis) => {
       loginuser.sw = pd["pass"];
       showSomethingInputField(false);
       showSomethingMsgPanel(false);
+      showGenelicPanel(false);
       rejectCancelableCmdList(TABLEAPIDELETE);
       preferent.cmd = "";
       refreshApiList();

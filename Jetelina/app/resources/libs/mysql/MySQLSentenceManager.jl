@@ -7,7 +7,6 @@ Description:
 	General DB action controller
 
 functions
-	sqlDuplicationCheck(nsql::String, subq::String)  confirm duplication, if 'nsql' exists in JC["sqllistfile"].but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
 	checkSubQuery(subquery::String) check posted subquery strings wheather exists any illegal strings in it.
 	createApiInsertSentence(tn::String,cs::String,ds::String) create sql input sentence by queries.
 	createApiUpdateSentence(tn::String,us::Any) create sql update sentence by queries.
@@ -23,70 +22,8 @@ using Jetelina.InitApiSqlListManager.ApiSqlListManager, Jetelina.JMessage
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export sqlDuplicationCheck, checkSubQuery, createApiInsertSentence, createApiUpdateSentence, createApiDeleteSentence, createApiSelectSentence, createExecutionSqlSentence
+export checkSubQuery, createApiInsertSentence, createApiUpdateSentence, createApiDeleteSentence, createApiSelectSentence, createExecutionSqlSentence
 
-"""
-function sqlDuplicationCheck(nsql::String, subq::String)
-
-	confirm duplication, if 'nsql' exists in JC["sqllistfile"].
-	but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
-
-# Arguments
-- `nsql::String`: sql sentence
-- `subq::String`: sub query string for 'nsql'
-- return:  tuple style
-		   exist     -> ture, api no(ex.js100)
-		   not exist -> false
-"""
-function sqlDuplicationCheck(nsql::String, subq::String)
-    #===
-    		Tips:
-    			ApiSql...readSql...()[1] contains true/false.
-    			ApiSql...readSql...()[2] contains dataframe list if [] is true, in the case of false is nothing.
-    	===#
-    if 0 < nrow(ApiSqlListManager.Df_JetelinaSqlList)
-        df = ApiSqlListManager.Df_JetelinaSqlList
-        filter!(:db => p -> p == "mysql", df)
-        # already exist?
-        for i ∈ 1:nrow(df)
-            #===
-            				Tips:
-            					the result in process4 will be
-            						exist -> length(process4)=1
-            						not exist -> length(process4)=2
-            					because coutmap() do group together.
-            			===#
-            # duplication check for SQL
-            strs = [nsql, df[!, :sql][i]]
-            process1 = split.(strs, r"\W", keepempty=false)
-            process2 = map(x -> lowercase.(x), process1)
-            process3 = sort.(process2)
-            process4 = countmap(process3)
-
-            # duplication check for Sub query
-            s_process4::Any = ""
-            sq = df[!, :subquery][i]
-            if !ismissing(sq)
-                s_strs = [subq, sq]
-                s_process1 = split.(s_strs, r"\W", keepempty=false)
-                s_process2 = map(y -> lowercase.(y), s_process1)
-                s_process3 = sort.(s_process2)
-                s_process4 = countmap(s_process3)
-            else
-                # in the case of all were 'missing',be length(s_prrocess4)=1, anyhow :p
-                s_process4 = ["dummy"]
-            end
-
-            if length(process4) == 1 && length(s_process4) == 1
-                return true, df[!, :apino][i]
-            end
-
-        end
-    end
-
-    # consequently, not exist.
-    return false
-end
 """
 function checkSubQuery(subquery::String)
 
@@ -217,7 +154,7 @@ function createApiSelectSentence(json_d, mode::String)
     selectSql = """select $selectSql from $tableName"""
 
     if mode != "pre"
-        ck = sqlDuplicationCheck(selectSql, subq_d)
+        ck = ApiSqlListManager.sqlDuplicationCheck(selectSql, subq_d)
         if ck[1]
             # already exist it. return it and do nothing.
             return json(Dict("result" => false, "resembled" => ck[2]))
@@ -225,10 +162,10 @@ function createApiSelectSentence(json_d, mode::String)
             # yes this is the new
             ret = ApiSqlListManager.writeTolist(selectSql, subq_d, tablename_arr, "mysql")
             #===
-                            Tips:
-                                writeTolist() returns tuple({true/false,apino/null}).
-                                return apino in json style if the first in tuple were true.
-                        ===#
+                Tips:
+                    writeTolist() returns tuple({true/false,apino/null}).
+                    return apino in json style if the first in tuple were true.
+            ===#
             if ret[1]
                 return json(Dict("result" => true, "apino" => ret[2]))
             else

@@ -944,7 +944,7 @@ const chatKeyDown = (cmd) => {
             whatJetelinaTold = $(JETELINACHATTELL).text();
             $(JETELINACHATTELL).text("");
             $(JETELINACHATBOX).val("");
-            $(CHATBOXYOURTELL).text(ut);
+//            $(CHATBOXYOURTELL).text(ut);
 
             // logout
             if (logoutChk(ut)) {
@@ -973,8 +973,21 @@ const chatKeyDown = (cmd) => {
                 showSomethingMsgPanel(true);
             }
 
+            // search error log in the log file by 'errnum' that is the unique order number 
             if (inScenarioChk(ut, 'searching-errnum-cmd') && preferent.errnum != null) {
                 searchLogAjax();
+            }
+
+            /*
+                Tips:
+                    indeed, this zoom procedure is discripted in dashboard.js, around #130 as .on().
+                    this code use it by asking 'what-did-i-say'. :)
+            */
+            if(inScenarioChk(ut,'what-did-i-say')){
+                $(".yourText").mouseover();
+            }else{
+                $(".yourText").mouseout();
+                $(CHATBOXYOURTELL).text(ut);
             }
 
             /*
@@ -1866,6 +1879,7 @@ const apiTestAjax = () => {
     }).always(function () {
         // release it for allowing to input new command in the chatbox 
         inprogress = false;
+        rejectCancelableCmdList("preapitest");
     });
 }
 /**

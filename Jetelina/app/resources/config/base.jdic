@@ -49,7 +49,9 @@
 # etc 
 @jdic starting-3-msg:"What?","Are you kidding me?","Never mind"
 @jdic general-thanks-cmd:"thank you","thanks","thx"
+@jdic general-complement-cmd:"nice","well done","great","awesome","genious","incredible","super"
 @jdic general-thanks-msg:"you're welcome","my pleasure, {Q}"
+@jdic what-did-i-say:"did i say","did i type"
 @jdic no-authority-js-msg:"you do not have the authority, yet"
 @jdic no-authority-jl-msg:"you cannot cheat me, you do not have the authority"
 
@@ -66,7 +68,7 @@
 @jdi refreshing-msg:"REFRESHING...","REFRECTING..."
 
 # refuse any command due to progress something 
-@jdic refuse-command-msg:"I am busy now","I cannot do multi task at once","You kill me?","Later..."
+@jdic refuse-command-msg:"I AM BUSY NOW","I CANNOT DO MULTI TASKS AT ONCE","YOU KILL ME?","LATER..."
 
 # greeting to u after successing login 
 @jdic starting-5-msg:"Welcome back ", "Nice to see you again, ","I missed you, ","Oh my.. incredible, "
@@ -208,7 +210,7 @@
 #
 @jdic hide-something-msg-cmd:"hide error","close error","delete error","hide message","close message","delete message"
 @jdic show-something-msg-cmd:"show message","open message","display message"
-@jdic searching-errnum-cmd:"show error","open error", "display error","what has happend","what's happen"
+@jdic searching-errnum-cmd:"show error","open error", "display error","what has happend","what's happen","what happened"
 @jdic func-api-error-searching-msg:"gott you?"
 
 #

@@ -14,6 +14,7 @@ functions
 	deleteTableFromlist(tablename::Vector) delete tables name from JC["sqllistfile"] synchronized with dropping table.
 	deleteApiFromList(apis:Vector) delete api by ordering from JC["sqllistfile"] file, then refresh the DataFrame.
 	getRelatedList(searchKey::String,target::String) earch in JetelinaTableApiRelation file to find 'target' due to 'searchKey'
+	sqlDuplicationCheck(nsql::String, subq::String)  confirm duplication, if 'nsql' exists in JC["sqllistfile"].but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
 """
 module ApiSqlListManager
 
@@ -23,7 +24,7 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export Df_JetelinaSqlList, readSqlList2DataFrame, writeTolist, deleteTableFromlist
+export Df_JetelinaSqlList, readSqlList2DataFrame, writeTolist, deleteTableFromlist, sqlDuplicationCheck
 
 """
 function __init__()
@@ -31,8 +32,8 @@ function __init__()
 	this is the initialize process for importing registered SQL sentence list in JC["sqllistfile"] to DataFrame.
 """
 function __init__()
-	@info "=======ApiSqlListManager init=========="
-	_setApiSequenceNumber()
+    @info "=======ApiSqlListManager init=========="
+    _setApiSequenceNumber()
 end
 """
 function _setApiSequenceNumber
@@ -49,25 +50,25 @@ function _setApiSequenceNumber
 	how to update apisequencenumber ..ApiSqlListManager.apisequencenumber.apino[1] += 1
 """
 function _setApiSequenceNumber()
-	global Df_JetelinaSqlList = DataFrame()
+    global Df_JetelinaSqlList = DataFrame()
 
-	if readSqlList2DataFrame()[1]
-		df = readSqlList2DataFrame()[2]
-		#===
-			Tips:
-				Df_JetelinaSqlList is a global data.
-				this data has a possibility be accessed by other program, 
-				therefore it is listed in the export list 
-		===#
-		Df_JetelinaSqlList = df
-		existapino::Array = chop.(df.apino, head=2,tail=0)
-		nextapino = maximum(parse.(Int,existapino)) + 1
-		global apisequencenumber = DataFrame(apino=nextapino)
+    if readSqlList2DataFrame()[1]
+        df = readSqlList2DataFrame()[2]
+        #===
+        			Tips:
+        				Df_JetelinaSqlList is a global data.
+        				this data has a possibility be accessed by other program, 
+        				therefore it is listed in the export list 
+        		===#
+        Df_JetelinaSqlList = df
+        existapino::Array = chop.(df.apino, head=2, tail=0)
+        nextapino = maximum(parse.(Int, existapino)) + 1
+        global apisequencenumber = DataFrame(apino=nextapino)
 
-		if j_config.JC["debug"]
-			@info apisequencenumber
-		end
-	end
+        if j_config.JC["debug"]
+            @info apisequencenumber
+        end
+    end
 end
 """
 function getApiSequenceNumber()
@@ -77,9 +78,9 @@ function getApiSequenceNumber()
 - return: Integer: api sequence number 	
 """
 function getApiSequenceNumber()
-	ret::Int = apisequencenumber.apino[1]
-	apisequencenumber.apino[1] += 1
-	return ret
+    ret::Int = apisequencenumber.apino[1]
+    apisequencenumber.apino[1] += 1
+    return ret
 end
 """
 function readSqlList2DataFrame()
@@ -93,23 +94,23 @@ function readSqlList2DataFrame()
 
 """
 function readSqlList2DataFrame()
-	sqlFile = JFiles.getFileNameFromConfigPath(j_config.JC["sqllistfile"])
-	if isfile(sqlFile)
-		df = CSV.read(sqlFile, DataFrame)
-		if j_config.JC["debug"]
-			@info "ApiSqlListManager.readSqlList2DataFrame() sql list in DataFrame: ", df
-		end
+    sqlFile = JFiles.getFileNameFromConfigPath(j_config.JC["sqllistfile"])
+    if isfile(sqlFile)
+        df = CSV.read(sqlFile, DataFrame)
+        if j_config.JC["debug"]
+            @info "ApiSqlListManager.readSqlList2DataFrame() sql list in DataFrame: ", df
+        end
 
-		#===
-			Tips:
-				to refresh Df_Jete....., 'global' keyword is mandatory. 😯
-		===#
-		global Df_JetelinaSqlList = df
+        #===
+        			Tips:
+        				to refresh Df_Jete....., 'global' keyword is mandatory. 😯
+        		===#
+        global Df_JetelinaSqlList = df
 
-		return true, df
-	end
+        return true, df
+    end
 
-	return false, nothing
+    return false, nothing
 end
 """
 function writeTolist(sql::String, tablename_arr::Vector{String}, db::String)
@@ -125,73 +126,66 @@ function writeTolist(sql::String, tablename_arr::Vector{String}, db::String)
 				 failed   (false::Boolean, nothing)
 """
 function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String}, db::String)
-	sql = strip(sql)
-	samedb = filter(x->x.db == db, ApiSqlListManager.Df_JetelinaSqlList)
-	d = filter(x->x.sql == sql, samedb)
-	if nrow(d) == 0
-		sqlFile = JFiles.getFileNameFromConfigPath(j_config.JC["sqllistfile"])
-		tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JC["tableapifile"])
+    sql = strip(sql)
+    sqlFile = JFiles.getFileNameFromConfigPath(j_config.JC["sqllistfile"])
+    tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JC["tableapifile"])
 
-		suffix = string()
+    suffix = string()
 
-		#===
-			Tips:
-				insert/update/select are for RDBMS
-				set/get are for Redis
-		===#
-		if startswith(sql, "insert") || (startswith(sql, "set") && (sql == "set::"))
-			suffix = "ji"
-		elseif startswith(sql, "update") && contains(sql, "jetelina_delete_flg=1")
-			suffix = "jd"
-		elseif startswith(sql, "update") || (startswith(sql, "set") && (sql != "set::"))
-			suffix = "ju"
-		elseif startswith(sql, "select") || startswith(sql, "get")
-			suffix = "js"
-		end
+    #===
+    			Tips:
+    				insert/update/select are for RDBMS
+    				set/get are for Redis
+    		===#
+    if startswith(sql, "insert") || (startswith(sql, "set") && (sql == "set::"))
+        suffix = "ji"
+    elseif startswith(sql, "update") && contains(sql, "jetelina_delete_flg=1")
+        suffix = "jd"
+    elseif startswith(sql, "update") || (startswith(sql, "set") && (sql != "set::"))
+        suffix = "ju"
+    elseif startswith(sql, "select") || startswith(sql, "get")
+        suffix = "js"
+    end
 
-		seq_no = getApiSequenceNumber()
-		sqlsentence = """$suffix$seq_no,\"$sql\",\"$subquery\",\"$db\""""
+    seq_no = getApiSequenceNumber()
+    sqlsentence = """$suffix$seq_no,\"$sql\",\"$subquery\",\"$db\""""
 
-		# write the sql to the file
-		thefirstflg = true
-		if !isfile(sqlFile)
-			thefirstflg = false
-		end
+    # write the sql to the file
+    thefirstflg = true
+    if !isfile(sqlFile)
+        thefirstflg = false
+    end
 
-		try
-			open(sqlFile, "a") do f
-				if !thefirstflg
-					println(f, string(j_config.JC["file_column_apino"], ',', j_config.JC["file_column_sql"], ',', j_config.JC["file_column_subquery"]), ',', j_config.JC["file_column_db"])
-				end
+    try
+        open(sqlFile, "a") do f
+            if !thefirstflg
+                println(f, string(j_config.JC["file_column_apino"], ',', j_config.JC["file_column_sql"], ',', j_config.JC["file_column_subquery"]), ',', j_config.JC["file_column_db"])
+            end
 
-				println(f, sqlsentence)
-			end
-		catch err
-			JLog.writetoLogfile("ApiSqlListManager.writeTolist() error: $err")
-			return false, nothing
-		end
+            println(f, sqlsentence)
+        end
+    catch err
+        JLog.writetoLogfile("ApiSqlListManager.writeTolist() error: $err")
+        return false, nothing
+    end
 
-		# write the relation between tables and api to the file
-		try
-			open(tableapiFile, "a") do ff
-				println(ff, string(suffix, seq_no, ":", join(tablename_arr, ","),":",db))
-			end
-		catch err
-			JLog.writetoLogfile("ApiSqlListManager.writeTolist() error: $err")
-			return false, nothing
-		end
+    # write the relation between tables and api to the file
+    try
+        open(tableapiFile, "a") do ff
+            println(ff, string(suffix, seq_no, ":", join(tablename_arr, ","), ":", db))
+        end
+    catch err
+        JLog.writetoLogfile("ApiSqlListManager.writeTolist() error: $err")
+        return false, nothing
+    end
 
-		# update DataFrame
-		readSqlList2DataFrame()
+    # update DataFrame
+    readSqlList2DataFrame()
 
-		# write to operationhistoryfile
-		JLog.writetoOperationHistoryfile(string("create api", ",", suffix, seq_no))
+    # write to operationhistoryfile
+    JLog.writetoOperationHistoryfile(string("create api", ",", suffix, seq_no))
 
-		return true, string(suffix, seq_no)
-	else
-		# already exist
-		return false, ""
-	end
+    return true, string(suffix, seq_no)
 end
 """
 function deleteTableFromlist(tablename::Vector)
@@ -203,102 +197,102 @@ function deleteTableFromlist(tablename::Vector)
 - return: boolean: true -> all done ,  false -> something failed
 """
 function deleteTableFromlist(tablename::Vector)
-	sqlFile = JFiles.getFileNameFromConfigPath(j_config.JC["sqllistfile"])
-	tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JC["tableapifile"])
-	sqlTmpFile = string(sqlFile, ".tmp")
-	tableapiTmpFile = string(tableapiFile, ",tmp")
+    sqlFile = JFiles.getFileNameFromConfigPath(j_config.JC["sqllistfile"])
+    tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JC["tableapifile"])
+    sqlTmpFile = string(sqlFile, ".tmp")
+    tableapiTmpFile = string(tableapiFile, ",tmp")
 
-	targetapi = []
-	untargetapi = []
+    targetapi = []
+    untargetapi = []
 
-	# take the backup file
-	JFiles.fileBackup(tableapiFile)
-	JFiles.fileBackup(sqlFile)
+    # take the backup file
+    JFiles.fileBackup(tableapiFile)
+    JFiles.fileBackup(sqlFile)
 
-	try
-		open(tableapiTmpFile, "w") do ttaf
-			open(tableapiFile, "r") do taf
-				#===
-					Tips: 
-						'keep=false' omits the line-feed in each line, then do println()
-				===#
-				for ss in eachline(taf, keep = false)
-					if contains(ss, ':')
-						p = split(ss, ":") # api_name:table,table,....
-						#===
-							Tips:
-								there is a chance to exist the same table name in postgres and mysql,
-								therefore look at p[3]
-						===#
-						if(p[3] == j_config.JC["dbtype"])
-							tmparr = split(p[2], ',')
-							for i in eachindex(tablename)
-								if tablename[i] ∈ tmparr
-									push!(targetapi, p[1]) # ["js1","ji2,.....]
-									setdiff!(untargetapi,[p[1]])
-								else
-									# remain others in the file
-									push!(untargetapi, p[1]) # ["js1","ji2,.....]
-								end
-							end
-						end
-					end
-				end
+    try
+        open(tableapiTmpFile, "w") do ttaf
+            open(tableapiFile, "r") do taf
+                #===
+                					Tips: 
+                						'keep=false' omits the line-feed in each line, then do println()
+                				===#
+                for ss in eachline(taf, keep=false)
+                    if contains(ss, ':')
+                        p = split(ss, ":") # api_name:table,table,....
+                        #===
+                        							Tips:
+                        								there is a chance to exist the same table name in postgres and mysql,
+                        								therefore look at p[3]
+                        						===#
+                        if (p[3] == j_config.JC["dbtype"])
+                            tmparr = split(p[2], ',')
+                            for i in eachindex(tablename)
+                                if tablename[i] ∈ tmparr
+                                    push!(targetapi, p[1]) # ["js1","ji2,.....]
+                                    setdiff!(untargetapi, [p[1]])
+                                else
+                                    # remain others in the file
+                                    push!(untargetapi, p[1]) # ["js1","ji2,.....]
+                                end
+                            end
+                        end
+                    end
+                end
 
-				#===
-					Tips:
-						return to the file top ＼(^o^)／
-						indeed, there are 3 funcs in julia
-						   - seek(taf,0) move 'taf' to the position '0'
-						   - seekstart(taf) same above
-						   - seekend(taf) move 'taf' to the position tail
-						
-						seek(taf,0) can apply here, but use seekstart(taf) because the position is obvioous
-				===#
-				seekstart(taf)
+                #===
+                					Tips:
+                						return to the file top ＼(^o^)／
+                						indeed, there are 3 funcs in julia
+                						   - seek(taf,0) move 'taf' to the position '0'
+                						   - seekstart(taf) same above
+                						   - seekend(taf) move 'taf' to the position tail
 
-				for ss in eachline(taf, keep = false)
-					if contains(ss, ':')
-						p = split(ss, ":") # api_name:table,table,....
-						if p[1] ∉ targetapi
-							println(ttaf, ss)
-						end
-					end
-				end 
-			end
-		end
-	catch err
-		JLog.writetoLogfile("ApiSqlListManager.deleteTableFromlist() error: $err")
-		return false
-	end
+                						seek(taf,0) can apply here, but use seekstart(taf) because the position is obvioous
+                				===#
+                seekstart(taf)
 
-	# remain SQL sentence not include in the target api
-	try
-		open(sqlTmpFile, "w") do tf
-			open(sqlFile, "r") do f
-				for ss in eachline(f, keep = false)
-					p = split(ss, "\"") # js1,"select..."
-					if rstrip(p[1], ',') ∉ targetapi
-						# write out sql that does not contain the target table
-						println(tf, ss)
-					else
-					end
-				end
-			end
-		end
-	catch err
-		JLog.writetoLogfile("ApiSqlListManager.deleteTableFromlist() error: $err")
-		return false
-	end
+                for ss in eachline(taf, keep=false)
+                    if contains(ss, ':')
+                        p = split(ss, ":") # api_name:table,table,....
+                        if p[1] ∉ targetapi
+                            println(ttaf, ss)
+                        end
+                    end
+                end
+            end
+        end
+    catch err
+        JLog.writetoLogfile("ApiSqlListManager.deleteTableFromlist() error: $err")
+        return false
+    end
 
-	# change the file name
-	mv(sqlTmpFile, sqlFile, force = true)
-	mv(tableapiTmpFile, tableapiFile, force = true)
+    # remain SQL sentence not include in the target api
+    try
+        open(sqlTmpFile, "w") do tf
+            open(sqlFile, "r") do f
+                for ss in eachline(f, keep=false)
+                    p = split(ss, "\"") # js1,"select..."
+                    if rstrip(p[1], ',') ∉ targetapi
+                        # write out sql that does not contain the target table
+                        println(tf, ss)
+                    else
+                    end
+                end
+            end
+        end
+    catch err
+        JLog.writetoLogfile("ApiSqlListManager.deleteTableFromlist() error: $err")
+        return false
+    end
 
-	# update DataFrame
-	readSqlList2DataFrame()
+    # change the file name
+    mv(sqlTmpFile, sqlFile, force=true)
+    mv(tableapiTmpFile, tableapiFile, force=true)
 
-	return true
+    # update DataFrame
+    readSqlList2DataFrame()
+
+    return true
 end
 """
 function deleteApiFromList(apis:Vector)
@@ -310,72 +304,72 @@ function deleteApiFromList(apis:Vector)
 - return: boolean: true -> all done ,  false -> something failed
 """
 function deleteApiFromList(apis::Vector)
-	#===
-		Tips:
-			apis is Array. ex. apino:["js100","js102"]
-			insert(ji*),update(ju*),delete(jd*) api are forbidden to delete.
-			only select(js*) is able to be rejected from api list.
-	===#
-	for a in apis
-		if (!startswith(a, "js"))
-			return false
-		end
-	end
+    #===
+    		Tips:
+    			apis is Array. ex. apino:["js100","js102"]
+    			insert(ji*),update(ju*),delete(jd*) api are forbidden to delete.
+    			only select(js*) is able to be rejected from api list.
+    	===#
+    for a in apis
+        if (!startswith(a, "js"))
+            return false
+        end
+    end
 
-	apiFile = JFiles.getFileNameFromConfigPath(j_config.JC["sqllistfile"])
-	tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JC["tableapifile"])
-	apiFile_tmp = string(apiFile, ".tmp")
-	tableapiTmpFile = string(tableapiFile, ",tmp")
+    apiFile = JFiles.getFileNameFromConfigPath(j_config.JC["sqllistfile"])
+    tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JC["tableapifile"])
+    apiFile_tmp = string(apiFile, ".tmp")
+    tableapiTmpFile = string(tableapiFile, ",tmp")
 
-	# take the backup file
-	JFiles.fileBackup(tableapiFile)
-	JFiles.fileBackup(apiFile)
+    # take the backup file
+    JFiles.fileBackup(tableapiFile)
+    JFiles.fileBackup(apiFile)
 
-	try
-		open(apiFile_tmp, "w") do tio
-			open(apiFile, "r") do io
-				for ss in eachline(io, keep = false)
-					p = split(ss, ",")
-					if p[1] ∉ apis
-						# remain others in the file
-						println(tio, ss)
-					end
-				end
-			end
-		end
-	catch err
-		JLog.writetoLogfile("ApiSqlListManager.deleteApiFromList() error: $err")
-		return false
-	end
+    try
+        open(apiFile_tmp, "w") do tio
+            open(apiFile, "r") do io
+                for ss in eachline(io, keep=false)
+                    p = split(ss, ",")
+                    if p[1] ∉ apis
+                        # remain others in the file
+                        println(tio, ss)
+                    end
+                end
+            end
+        end
+    catch err
+        JLog.writetoLogfile("ApiSqlListManager.deleteApiFromList() error: $err")
+        return false
+    end
 
-	try
-		open(tableapiTmpFile, "w") do ttaf
-			open(tableapiFile, "r") do taf
-				# Tips: delete line feed by 'keep=false', then do println()
-				for ss in eachline(taf, keep = false)
-					p = split(ss, ":")
-					if p[1] ∉ apis
-						println(ttaf, ss)
-					end
-				end
-			end
-		end
-	catch err
-		JLog.writetoLogfile("ApiSqlListManager.deleteApiFromlist() error: $err")
-		return false
-	end
+    try
+        open(tableapiTmpFile, "w") do ttaf
+            open(tableapiFile, "r") do taf
+                # Tips: delete line feed by 'keep=false', then do println()
+                for ss in eachline(taf, keep=false)
+                    p = split(ss, ":")
+                    if p[1] ∉ apis
+                        println(ttaf, ss)
+                    end
+                end
+            end
+        end
+    catch err
+        JLog.writetoLogfile("ApiSqlListManager.deleteApiFromlist() error: $err")
+        return false
+    end
 
-	# change the file name.
-	mv(apiFile_tmp, apiFile, force = true)
-	mv(tableapiTmpFile, tableapiFile, force = true)
+    # change the file name.
+    mv(apiFile_tmp, apiFile, force=true)
+    mv(tableapiTmpFile, tableapiFile, force=true)
 
-	# update DataFrame
-	readSqlList2DataFrame()
+    # update DataFrame
+    readSqlList2DataFrame()
 
-	# write to operationhistoryfile
-	JLog.writetoOperationHistoryfile(string("delete api", ",", join(apis, ",")))
+    # write to operationhistoryfile
+    JLog.writetoOperationHistoryfile(string("delete api", ",", join(apis, ",")))
 
-	return true
+    return true
 end
 """
 function getRelatedList(searchKey::String, target::String)
@@ -388,56 +382,83 @@ function getRelatedList(searchKey::String, target::String)
 - return: Vector: the result of finding, in case 'api' is single data, in case 'talbe' has possibility multi data
 """
 function getRelatedList(searchKey::String, target::String)
-	tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JC["tableapifile"])
-	ret = []
+    tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JC["tableapifile"])
+    ret = []
 
-	try
-		open(tableapiFile, "r") do taf			
-			for ss in eachline(taf, keep = false)
-				key::String = ""
-				p = split(ss,':')
-				if searchKey == "table"
-					#===
-						Tips:
-							there is a chance to exist the same table name in postgres and mysql,
-							therefore look at p[3]
-					===#
-					if(p[3] == j_config.JC["dbtype"])
-						c = split(p[2],',')  
-						keys = split(target,',')
-						for i in eachindex(keys)
-							for ii in eachindex(c)
-								if keys[i] == c[ii]
-									push!(ret,p[1])
-								end 
-							end
-						end
-					end
-				else
-					c = p[1]
-					#===
-						Tips:
-							p[1] is unique api number.
-					===#
-					if target == p[1]
-						#===
-							Tips:
-								p[2] has possibility multi data. e.g table1,table2
-						===#
-						c = split(p[2],',')
-						for i in eachindex(c)
-							push!(ret,c[i])
-						end
-					end
-				end
-			end
-		end
-	catch err
-		JLog.writetoLogfile("ApiSqlListManager.getRelatedList() error: $err")
-		return false
-	end
+    try
+        open(tableapiFile, "r") do taf
+            for ss in eachline(taf, keep=false)
+                key::String = ""
+                p = split(ss, ':')
+                if searchKey == "table"
+                    #===
+                    						Tips:
+                    							there is a chance to exist the same table name in postgres and mysql,
+                    							therefore look at p[3]
+                    					===#
+                    if (p[3] == j_config.JC["dbtype"])
+                        c = split(p[2], ',')
+                        keys = split(target, ',')
+                        for i in eachindex(keys)
+                            for ii in eachindex(c)
+                                if keys[i] == c[ii]
+                                    push!(ret, p[1])
+                                end
+                            end
+                        end
+                    end
+                else
+                    c = p[1]
+                    #===
+                    						Tips:
+                    							p[1] is unique api number.
+                    					===#
+                    if target == p[1]
+                        #===
+                        							Tips:
+                        								p[2] has possibility multi data. e.g table1,table2
+                        						===#
+                        c = split(p[2], ',')
+                        for i in eachindex(c)
+                            push!(ret, c[i])
+                        end
+                    end
+                end
+            end
+        end
+    catch err
+        JLog.writetoLogfile("ApiSqlListManager.getRelatedList() error: $err")
+        return false
+    end
 
-	return convert(Vector{String},ret)
+    return convert(Vector{String}, ret)
 end
+"""
+function sqlDuplicationCheck(nsql::String, subq::String)
 
+	confirm duplication, if 'nsql' exists in JC["sqllistfile"].
+	but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
+
+# Arguments
+- `nsql::String`: sql sentence
+- `subq::String`: sub query string for 'nsql'
+- return:  tuple style
+		   exist     -> ture, api no(ex.js100)
+		   not exist -> false
+"""
+function sqlDuplicationCheck(nsql::String, subq::String)
+    if 0 < nrow(Df_JetelinaSqlList)
+        df = Df_JetelinaSqlList
+        filter!(:db => p -> p == "mysql", df)
+
+        for i ∈ 1:nrow(df)
+            if df[!, :sql][i] == nsql && df[!, :subquery][i] == subq
+                return true, df[!, :apino][i]
+            end
+        end
+    end
+
+    # consequently, not exist.
+    return false
+end
 end

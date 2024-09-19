@@ -7,30 +7,30 @@ Description:
 	DB controller for MySQL
 
 functions
-	x6/39 create_jetelina_database() create 'jetelina' database because of mysql special.
-	x6/20 open_connection() open connection to the DB.
-	x6/20 close_connection(conn::DBInterface.Connection)  close the DB connection
-	x6/29 getTableList(s::String) get all table name from 'jetelina' database
-	x6/22 getJetelinaSequenceNumber(t::Integer, tablename) 	get seaquence number from jetelina_sql_sequence, jetelina_user_id_sequence or <table>_id_sequence
-	x7/1 dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
-	x6/26 dropTable(tableName::Vector) drop the tables and delete its related data from jetelina_table_manager table
-	x6/26 getColumns(tableName::String) get columns name of ordereing table.
-	x7/2 executeApi(json_d::Dict,target_api::DataFrame) execute API order by json data
+	 create_jetelina_database() create 'jetelina' database because of mysql special.
+	 open_connection() open connection to the DB.
+	 close_connection(conn::DBInterface.Connection)  close the DB connection
+	 getTableList(s::String) get all table name from 'jetelina' database
+	 getJetelinaSequenceNumber(t::Integer, tablename) 	get seaquence number from jetelina_sql_sequence, jetelina_user_id_sequence or <table>_id_sequence
+	 dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
+	 dropTable(tableName::Vector) drop the tables and delete its related data from jetelina_table_manager table
+	 getColumns(tableName::String) get columns name of ordereing table.
+	 executeApi(json_d::Dict,target_api::DataFrame) execute API order by json data
 	doSelect(sql::String,mode::String) execute select data by ordering sql sentence, but get sql execution time of ordered sql if 'mode' is 'measure'.
 	measureSqlPerformance() measure exectution time of all listed sql sentences. then write it out to JC["sqlperformancefile"].
-	x6/21 create_jetelina_user_table() create 'jetelina_table_user_table' table.
-	x6/22 userRegist(username::String) register a new user
-	x6/22 getUserData(s::String) get jetelina user data by ordering 's'.	
-	x6/22 chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
-	x6/25 getUserInfoKeys(uid::Integer) get "user_info" column key data.
-	x6/25 refUserAttribute(uid::Integer, key::String, val, rettype::Integer) inquiring user_info data 
-	x6/25 updateUserInfo(uid::Integer,key::String,value) update user data (jetelina_user_table.user_info)
-	x6/25 refUserInfo(uid::Integer,key::String,rettype::Integer)	simple inquiring user_info data 
-	x6/25 updateUserData(uid::Integer,key::String,value) update user data, exept json column
-	x6/25 updateUserLoginData(uid::Integer) update user login data if it succeeded to login
-	x6/21 deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
-	x6/25 checkTheRoll(roll::String) check the ordered user's authority in order to 'roll'.
-	x6/25 refStichWort(stichwort::String)	reference and matching with user_info->stichwort
+	 create_jetelina_user_table() create 'jetelina_table_user_table' table.
+	 userRegist(username::String) register a new user
+	 getUserData(s::String) get jetelina user data by ordering 's'.	
+	 chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
+	 getUserInfoKeys(uid::Integer) get "user_info" column key data.
+	 refUserAttribute(uid::Integer, key::String, val, rettype::Integer) inquiring user_info data 
+	 updateUserInfo(uid::Integer,key::String,value) update user data (jetelina_user_table.user_info)
+	 refUserInfo(uid::Integer,key::String,rettype::Integer)	simple inquiring user_info data 
+	 updateUserData(uid::Integer,key::String,value) update user data, exept json column
+	 updateUserLoginData(uid::Integer) update user login data if it succeeded to login
+	 deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
+	 checkTheRoll(roll::String) check the ordered user's authority in order to 'roll'.
+	 refStichWort(stichwort::String)	reference and matching with user_info->stichwort
 """
 module MyDBController
 
