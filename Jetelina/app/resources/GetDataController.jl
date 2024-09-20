@@ -150,7 +150,7 @@ function getApiList()
 			ApiSql...readSql...()[2] contains dataframe list if [] is true, in the case of false is nothing.
 	===#
 	if 0 < nrow(ApiSqlListManager.Df_JetelinaSqlList)
-		return json(Dict("result" => true, "Jetelina" => copy.(eachrow(ApiSqlListManager.Df_JetelinaSqlList))))
+		return json(Dict("result" => true, "Jetelina" => copy.(eachrow(reverse(ApiSqlListManager.Df_JetelinaSqlList)))))
 	else
 		# not found SQL list
 		return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "Oops! there is no api list data"))

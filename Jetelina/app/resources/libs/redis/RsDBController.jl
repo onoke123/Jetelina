@@ -161,7 +161,7 @@ function getKeyList(s::String)
 
         df = DataFrame(keysArr=valueArr)
         if s == "json"
-            return json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
+            return json(Dict("result" => true, "Jetelina" => copy.(eachrow(reverse(df))), "message from Jetelina" => jmsg))
         elseif s == "dataframe"
             return df
         end

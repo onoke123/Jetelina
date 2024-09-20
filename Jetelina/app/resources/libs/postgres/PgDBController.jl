@@ -190,7 +190,7 @@ function getTableList(s::String)
 function getTableList(s::String)
     df = _getTableList()
     if s == "json"
-        return json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
+        return json(Dict("result" => true, "Jetelina" => copy.(eachrow(reverse(df)))))
     elseif s == "dataframe"
         return df
     end

@@ -974,8 +974,12 @@ const chatKeyDown = (cmd) => {
             }
 
             // search error log in the log file by 'errnum' that is the unique order number 
-            if (inScenarioChk(ut, 'searching-errnum-cmd') && preferent.errnum != null) {
-                searchLogAjax();
+            if (inScenarioChk(ut, 'searching-errnum-cmd')){
+                if( preferent.errnum != null && 0<preferent.errnum.length) {
+                    searchLogAjax();
+                }else{
+                    m = chooseMsg('func-api-error-cannot-searching-msg','','');
+                }
             }
 
             /*

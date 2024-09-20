@@ -212,6 +212,7 @@
 @jdic show-something-msg-cmd:"show message","open message","display message"
 @jdic searching-errnum-cmd:"show error","open error", "display error","what has happend","what's happen","what happened"
 @jdic func-api-error-searching-msg:"gott you?"
+@jdic func-api-error-cannot-searching-msg:"showed message is everything"
 
 #
 # configuration update caution/error message

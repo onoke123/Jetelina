@@ -37,3 +37,7 @@ js760,"select people500000.people500000_jt_id,people500000.people500000_first_na
 js761,"select ftest2.ftest2_jt_id,ftest2.ftest2_name,ftest2.ftest2_sex from ftest2 as ftest2","where ftest2.ftest2_jt_id={jt_id}","mysql"
 js762,"select ftest2.ftest2_jt_id,ftest2.ftest2_name,ftest2.ftest2_sex,ftest2.ftest2_age,ftest2.ftest2_ave from ftest2 as ftest2","where ftest2.ftest2_jt_id>{jt_id}","mysql"
 js763,"select people500000.people500000_index,people500000.people500000_user_id,people500000.people500000_job_title,people500000.people500000_first_name,people500000.people500000_last_name from people500000 as people500000","where people500000.people500000_index between {index1} and {index2}","mysql"
+js764,"select ftest2.ftest2_jt_id,ftest2.ftest2_name,ftest2.ftest2_sex,ftest2.ftest2_age,ftest2.ftest2_ave from ftest2 as ftest2","where ftest2.ftest2_jt_id<{jt_id}","mysql"
+js767,"select ftest.ftest_jt_id,ftest.ftest_name,ftest.ftest_sex,ftest.ftest_age,ftest.ftest_ave from ftest as ftest","where ftest.ftest_jt_id<{jt_id}","mysql"
+js768,"select ftest.ftest_jt_id,ftest.ftest_sex from ftest as ftest","where ftest.ftest_jt_id={jt_id}","mysql"
+js769,"select ftest.ftest_sex,ftest.ftest_name from ftest as ftest","ignore","mysql"

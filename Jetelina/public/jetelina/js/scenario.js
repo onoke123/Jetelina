@@ -118,6 +118,7 @@ scenario["hide-something-msg-cmd"]=["hide error","close error","delete error","h
 scenario["show-something-msg-cmd"]=["show message","open message","display message"];
 scenario["searching-errnum-cmd"]=["show error","open error", "display error","what has happend","what's happen","what happened"];
 scenario["func-api-error-searching-msg"]=["gott you?"];
+scenario["func-api-error-cannot-searching-msg"]=["showed message is everything"];
 scenario["config-update-simple-message"]=["put someting in there"];
 scenario["config-update-plural-message"]=["which config?"];
 scenario["config-update-plural-candidates-message"]=["there are multi candidates "];

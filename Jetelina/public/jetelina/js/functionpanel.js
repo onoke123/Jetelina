@@ -1062,6 +1062,8 @@ const postSelectedColumns = (mode) => {
         }
 
         m = `new api no is ${result.apino}`;
+        $(CHATBOXYOURTELL).text(m);
+        $(".yourText").mouseover();
       } else {
         /* API test mode */
         getdata(result, 4);
@@ -2176,7 +2178,6 @@ $(GENELICPANELINPUT).blur(function(){
     $(GENELICPANELINPUT).val(subq1);
   }*/
  let subq1 = subq.replace(/\r?\n/g,'');
- console.log("change subquey str: ", subq, "=>", subq1, subq.length, "->", subq1.length);
  $(GENELICPANELINPUT).val('');
  $(GENELICPANELINPUT).val(subq1);
 });
