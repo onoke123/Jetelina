@@ -226,6 +226,8 @@ function _executeApi(json_d::Dict, dfRedis::DataFrame)
                 ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "failed set in $k because no value, look carefully more."))
             end
         elseif startswith(apino, "ji")
+            ret_u::Tuple = (Bool,String)
+            ret_s::Tuple = (Bool,String)
             k = json_d["key1"]
             v = json_d["key2"]
             # set
@@ -240,11 +242,11 @@ function _executeApi(json_d::Dict, dfRedis::DataFrame)
                 if(update_str != "")
                     key_arr::Vector{String} = []
                     push!(key_arr,k)    
-                    ApiSqlListManager.writeTolist(update_str, "", key_arr, "redis")
+                    ret_u = ApiSqlListManager.writeTolist(update_str, "", key_arr, "redis")
 
                     select_str = RsSQLSentenceManager.createApiSelectSentence(k)
                     if(select_str != "")
-                        ApiSqlListManager.writeTolist(select_str,"", key_arr, "redis")
+                        ret_s = ApiSqlListManager.writeTolist(select_str,"", key_arr, "redis")
                     end
                 end
 
@@ -254,7 +256,19 @@ function _executeApi(json_d::Dict, dfRedis::DataFrame)
                         but maybe they would be succeed.
                         it was not a lottery, but confidence. :)
                 ===#
-                ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
+                if ret_u[1] && ret_s[1]
+                    apino_u = ret_u[2]
+                    apino_s = ret_s[2]
+                    ret = json(Dict("result" => true, "Jetelina" => "[{}]", "apino" => ["$apino_u","$apino_s"],"message from Jetelina" => jmsg))
+                elseif ret_u[1]
+                    apino_u = ret_u[2]
+                    jmsg = "only update api has been created, select api is why?"
+                    ret = json(Dict("result" => true, "Jetelina" => "[{}]", "apino" => ["$apino_u",""],"message from Jetelina" => jmsg))
+                elseif ret_s[1]
+                    apino_s = ret_s[2]
+                    jmsg = "only select api has been created, update api is why?"
+                    ret = json(Dict("result" => true, "Jetelina" => "[{}]", "apino" => ["","$apino_s"],"message from Jetelina" => jmsg))
+                end
             else
                 k = p[1]
                 v = p[2]

@@ -1865,17 +1865,37 @@ const apiTestAjax = () => {
             return ret;
         }
     }).done(function (result, textStatus, jqXHR) {
-        let m = 'func-api-test-done-msg';
+        let m = chooseMsg('func-api-test-done-msg','','');
         if (checkResult(result)) {
-            let ret = JSON.stringify(result);
-            $(`${COLUMNSPANEL} [name='apiout']`).addClass("attentionapiinout").text(ret);
+            if(loginuser.dbtype != "redis"){
+                let ret = JSON.stringify(result);
+                $(`${COLUMNSPANEL} [name='apiout']`).addClass("attentionapiinout").text(ret);
+            }else{
+                if(0<result.Jetelina.length){
+                    let ret = JSON.stringify(result);
+                    $(`${COLUMNSPANEL} [name='apiout']`).addClass("attentionapiinout").text(ret);
+                }else{
+                    let newapis = result.apino;
+                    if(newapis[0] != "" && newapis[1] != ""){
+                        m = `new api no are ${newapis[0]} & ${newapis[1]}. ${result["message from Jetelina"]}`;
+                    }else if(newapis[0] != "" && newapis[1] == ""){
+                        m = `new api no is ${newapis[0]}. ${result["message from Jetelina"]}`;
+                    }else if(newapis[0] == "" && newapis[1] != ""){
+                        m = `new api no is ${newapis[1]}. ${result["message from Jetelina"]}`;
+                    }
+                    $(CHATBOXYOURTELL).text(m);
+                    $(".yourText").mouseover();
+                    refreshApiList();
+                    refreshTableList();
+                }      
+            }
         } else {
             rejectCancelableCmdList("apitest");
             rejectCancelableCmdList("preapitest");
-            m = "fail-msg";
+            m = chooseMsg("fail-msg",'','');
         }
 
-        typingControll(chooseMsg(m, '', ''));
+        typingControll(m);
     }).fail(function (result) {
         checkResult(result);
         console.error("apiTestAjax() fail");
@@ -1883,6 +1903,7 @@ const apiTestAjax = () => {
     }).always(function () {
         // release it for allowing to input new command in the chatbox 
         inprogress = false;
+        rejectCancelableCmdList("apitest");
         rejectCancelableCmdList("preapitest");
     });
 }

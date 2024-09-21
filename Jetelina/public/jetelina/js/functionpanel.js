@@ -564,7 +564,7 @@ const listClick = (p) => {
           related_api = s.apino;
           // api in/out json
           $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiin"><bold>IN:</bold><div name="apiin" >${setApiIF_In(t, s)}</div></span>`);
-          $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiout"><bold>OUT:</bold><div name="apiout">${setApiIF_Out(t, s)}</div></span>`);
+          $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiout"><bold>OUT:</bold><div name="apiout" style="height:100px;" class="right_left_panel_scroll">${setApiIF_Out(t, s)}</div></span>`);
           // sample execution sql
           $(CONTAINERPANEL).append(`<span class="apisql"><p>${setApiIF_Sql(s)}</p></span>`);
         }
@@ -1784,7 +1784,7 @@ const functionPanelFunctions = (ut) => {
           apiTestAjax();
           m = chooseMsg('inprogress-msg', '', '');
         } else {
-          e = chooseMsg('func-api-test-execute-cmd', '', '');
+          let e = chooseMsg('func-api-test-execute-cmd', '', '');
           m = chooseMsg('func-api-test-ready-msg', e, 'r');
         }
       } else {
@@ -1792,7 +1792,8 @@ const functionPanelFunctions = (ut) => {
           apiTestAjax();
           m = chooseMsg('inprogress-msg', '', '');
         } else {
-          m = chooseMsg('func-api-test-ready-no-param-msg', '', '');
+          let e = chooseMsg('func-api-test-execute-cmd', '', '');
+          m = chooseMsg('func-api-test-ready-no-param-msg', e, 'r');
         }
       }
 
