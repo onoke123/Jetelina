@@ -101,6 +101,7 @@ jetelinadb = postgresql
 dbtype = postgresql
 
 # PostgreSQL setting
+pg_work = true
 @jdic pg_host:"postgresql host"
 pg_host = localhost
 @jdic pg_port:"postgresql port"
@@ -121,6 +122,7 @@ pg_testdbname = testdb
 #
 
 # MySQL setting
+my_work = true
 @jdic my_host:"mysql host"
 my_host = localhost
 @jdic my_port:"mysql port"
@@ -137,6 +139,7 @@ my_unix_socket = /var/run/mysqld/mysqld.sock
 my_testdbname = testdb
 
 # Redis setting
+redis_work = true
 @jdic redis_host:"redis host"
 redis_host = 127.0.0.1
 @jdic redis_port:"redis port"

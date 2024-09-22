@@ -1272,7 +1272,8 @@ const functionPanelFunctions = (ut) => {
   }
 
   if (-1 < $.inArray(cmd, [TABLEAPILISTOPEN, FILESELECTOROPEN])) {
-    openFunctionPanel();
+    getAjaxData(scenario["function-get-url"][4]);
+    openFunctionPanel();    
   } else {
     // nothing happens without opening function panel :P
   }
@@ -1820,9 +1821,30 @@ const functionPanelFunctions = (ut) => {
         postAjaxData(scenario['function-post-url'][9], data);
       } else {
         if (usedb != "") {
-          // switch to usedb
-          preferent.db = usedb;
-          m = chooseMsg('func-determine-db-msg', usedb, 'r');
+          if($(`#databaselist span[name='${usedb}']`).is(":visible")){
+            // switch to usedb
+            preferent.db = usedb;
+            m = chooseMsg('func-determine-db-msg', usedb, 'r');
+          }else{
+            // start to use this db, but
+            if(loginuser.roll == "admin"){
+              // only admin can change the availability of this db
+              let dbconfname = ""
+              if(usedb == "postgresql"){
+                dbconfname = "pg_work";
+              }else if(usedb == "mysql"){
+                dbconfname = "my_work";
+              }else if(usedb == "redis"){
+                dbconfname = "redis_work";
+              }
+
+              let data = `{"${dbconfname}":"true"}`;
+              postAjaxData(scenario["function-post-url"][3], data);
+            }else{
+              // display a message 'lack of roll'
+              m = chooseMsg('no-authority-js-msg','','');
+            }
+          }
         } else {
           // display a message for changing database
           m = chooseMsg('func-select-db-msg', '', '');

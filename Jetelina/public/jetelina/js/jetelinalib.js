@@ -205,6 +205,7 @@ const checkResult = (o) => {
  *                     2->api(sql) list 
  *                     3->conifguration changing history
  *                     4->api(sql) test before registring 
+ *                     5->indicate available db 
  *  @returns {object} only in the case of t=3, conifguration changing history object
  *
  *  resolve the json object into each data
@@ -298,6 +299,23 @@ const getdata = (o, t) => {
                                     });
 
                                     configChangeHistoryStr += "<br>";
+                                }
+                            } else if (t == 5) {
+                                // indicate db icons if it were available.
+                                if(v["postgres"]){
+                                    $("#databaselist span[name='postgresql']").show();
+                                }else{
+                                    $("#databaselist span[name='postgresql']").hide();
+                                }
+                                if(v["mysql"]){
+                                    $("#databaselist span[name='mysql']").show();
+                                }else{
+                                    $("#databaselist span[name='mysql']").hide();
+                                }
+                                if(v["redis"]){
+                                    $("#databaselist span[name='redis']").show();
+                                }else{
+                                    $("#databaselist span[name='redis']").hide();
                                 }
                             }
 
@@ -464,6 +482,9 @@ const getAjaxData = (url) => {
                     } else if (url == geturl[3]) {
                         // simply logout and the chat message unnecessary
                         return;
+                    } else if (url == geturl[4]){
+                        // available dbs
+                        getdata(result, 5)
                     }
 
                     m = 'success-msg';
@@ -543,6 +564,41 @@ const postAjaxData = (url, data) => {
                     loginuser.dbtype = presentaction.dbtype;
                     presentaction = {};
                     showSomethingInputField(false);
+                    if(result.target != null && 0<result.target.length){
+                        let tdb = ""
+                        if(result.target == "pg_work"){
+                            tdb = "postgresql";
+                        }else if(result.target == "my_work"){
+                            tdb = "mysql";
+                        }else if(result.target == "redis_work"){
+                            tdb = "redis";
+                        }
+
+                        if( tdb != ""){
+                            preferent.db = tdb;
+                            $(`#databaselist span[name='${tdb}']`).show();
+                            setDBFocus(preferent.db);
+
+                            // clean clean clean... :)
+                            loginuser.dbtype = preferent.db;
+                            setLeftPanelTitle();
+                            tidyupcmdCandidates("switchdb");
+                            deleteSelectedItems();
+                            cleanupItems4Switching();
+                            cleanupContainers();
+                            cancelableCmdList = [];
+                    
+                            // clean up the parameters for api test
+                            preferent.apitestparams = [];
+                            preferent.apiparams_count = null;
+                            preferent.original_apiin_str = "";
+                            preferent.original_apiout_str = "";
+
+                            // mandatory post for changing the session param in server side.
+                            let data = `{"param":"${preferent.db}"}`;
+                            postAjaxData(scenario['function-post-url'][9], data);
+                        }
+                    }
                 } else if (url == posturls[8]) {
                     let str = "";
                     if (result.list != 0) {

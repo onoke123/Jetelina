@@ -398,6 +398,7 @@ function configParamUpdate()
 function configParamUpdate()
 	ret = ""
 	param = jsonpayload()
+	jmsg::String = string("compliment me!")
 
 	#===
 		Tips:
@@ -408,14 +409,23 @@ function configParamUpdate()
 			technical reasons.(T_T)
 			someday, when Genie compiler will not need .autoload sequence.
 	===#
+	key::String = ""
+	value::String = ""
 	for (k,v) in param
+		key = k
+		value = v
 		if k == "dbtype" && v == "mysql"
 			DBDataController.createJetelinaDatabaseinMysql()
 		end
 	end
 
 	if !isnothing(param)
-		ret = j_config.configParamUpdate(param)
+		cpur::Bool = false
+		if j_config.configParamUpdate(param)
+			cpur = true
+		end
+
+		ret = json(Dict("result" => cpur, "Jetelina" => "[{}]", "target" => key, "message from Jetelina" => jmsg))
 	end
 
 	return ret

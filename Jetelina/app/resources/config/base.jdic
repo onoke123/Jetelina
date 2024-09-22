@@ -14,7 +14,7 @@
 @jdic function-search-log-errnum:"/searcherror"
 
 # get urls for function panel 
-@jdic function-get-url:"/getapilist","/getalldbtable","/getconfigchangehistory","/goodbyenow"
+@jdic function-get-url:"/getapilist","/getalldbtable","/getconfigchangehistory","/goodbyenow","/getdbsavailability"
 
 # null 
 @jdic null-msg:"",""

@@ -54,6 +54,8 @@ route( "/jetelinawords", PostDataController._addJetelinaWords, method = POST)
 #===
     -Handle DB tables
 ===#
+# returns DBs working availability
+route( "/getdbsavailability",GetDataController.getWorkingDBList )
 # returns table list data in Json
 route( "/getalldbtable", GetDataController.getTableList )
 # drops table by ordering
