@@ -27,6 +27,7 @@
 		deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
 		createApiSelectSentence(json_d::Dict,mode::String) create API and SQL select sentence from posting data.
 		refStichWort(stichwort::String)	reference and matching with user_info->stichwort
+		checkConnection() simply connection checking
 """
 
 module DBDataController
@@ -52,7 +53,7 @@ include("libs/redis/RsSQLSentenceManager.jl")
 export init_Jetelina_table, createJetelinaDatabaseinMysql,
 	dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,
 	executeApi, userRegist, chkUserExistence, getUserInfoKeys, refUserAttribute, refUserInfo, updateUserInfo, updateUserData, deleteUserAccount,
-	createApiSelectSentence, refStichWort
+	createApiSelectSentence, refStichWort, checkConnection
 
 
 """
@@ -545,6 +546,28 @@ function refStichWort(stichwort::String)
 		MyDBController.refStichWort(stichwort)
 	elseif j_config.JC["jetelinadb"] == "oracle"
 	end
+end
+"""
+function checkConnection(db::String) 
+	
+	simply connection checking
+
+# Arguments
+- `db::String`: check db
+- return: success -> true, fail -> false
+"""
+function checkConnection(db::String)
+	ret = ""
+
+	if db == "postgresql"
+		ret = PgDBController.checkConnection()
+	elseif db == "mysql"
+		ret = MyDBController.checkConnection()
+	elseif db == "redis"
+		ret = RsDBController.checkConnection()
+	end
+
+	return ret
 end
 
 end

@@ -1267,6 +1267,8 @@ const functionPanelFunctions = (ut) => {
       if(inCancelableCmdList(["apitest","preapitest"])){
         complementflg = true;
         cmd = "cancel";
+      }else{
+        showSomethingMsgPanel(false);
       }
     }
   }
@@ -1821,25 +1823,17 @@ const functionPanelFunctions = (ut) => {
         postAjaxData(scenario['function-post-url'][9], data);
       } else {
         if (usedb != "") {
+          preferent.db = usedb;
           if($(`#databaselist span[name='${usedb}']`).is(":visible")){
             // switch to usedb
-            preferent.db = usedb;
-            m = chooseMsg('func-determine-db-msg', usedb, 'r');
+            m = chooseMsg('func-determine-db-msg', preferent.db, 'r');
           }else{
             // start to use this db, but
             if(loginuser.roll == "admin"){
               // only admin can change the availability of this db
-              let dbconfname = ""
-              if(usedb == "postgresql"){
-                dbconfname = "pg_work";
-              }else if(usedb == "mysql"){
-                dbconfname = "my_work";
-              }else if(usedb == "redis"){
-                dbconfname = "redis_work";
-              }
 
-              let data = `{"${dbconfname}":"true"}`;
-              postAjaxData(scenario["function-post-url"][3], data);
+              let data = `{"db":"${preferent.db}"}`;
+              postAjaxData(scenario["function-post-url"][10], data);
             }else{
               // display a message 'lack of roll'
               m = chooseMsg('no-authority-js-msg','','');

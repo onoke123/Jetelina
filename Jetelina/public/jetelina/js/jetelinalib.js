@@ -172,7 +172,7 @@ const checkResult = (o) => {
                 em = chooseMsg("common-ajax-error-msg", error, "a");
             }
 
-            if( em != "" ){
+            if (em != "") {
                 $(SOMETHINGMSGPANELMSG).text(em);
                 showSomethingMsgPanel(true);
             }
@@ -302,19 +302,19 @@ const getdata = (o, t) => {
                                 }
                             } else if (t == 5) {
                                 // indicate db icons if it were available.
-                                if(v["postgres"]){
+                                if (v["postgres"]) {
                                     $("#databaselist span[name='postgresql']").show();
-                                }else{
+                                } else {
                                     $("#databaselist span[name='postgresql']").hide();
                                 }
-                                if(v["mysql"]){
+                                if (v["mysql"]) {
                                     $("#databaselist span[name='mysql']").show();
-                                }else{
+                                } else {
                                     $("#databaselist span[name='mysql']").hide();
                                 }
-                                if(v["redis"]){
+                                if (v["redis"]) {
                                     $("#databaselist span[name='redis']").show();
-                                }else{
+                                } else {
                                     $("#databaselist span[name='redis']").hide();
                                 }
                             }
@@ -482,7 +482,7 @@ const getAjaxData = (url) => {
                     } else if (url == geturl[3]) {
                         // simply logout and the chat message unnecessary
                         return;
-                    } else if (url == geturl[4]){
+                    } else if (url == geturl[4]) {
                         // available dbs
                         getdata(result, 5)
                     }
@@ -490,12 +490,14 @@ const getAjaxData = (url) => {
                     m = 'success-msg';
                 }
             } else {
+                cmdCandidates = [];
                 m = 'fail-msg';
             }
 
             typingControll(chooseMsg(m, '', ''));
         }).fail(function (result) {
             checkResult(result);
+            cmdCandidates = [];
             console.error("getAjaxData() fail");
             typingControll(chooseMsg("fail-msg", "", ""));
         }).always(function () {
@@ -551,6 +553,7 @@ const postAjaxData = (url, data) => {
                     let configMsg = "Oh oh, I do not know it, another one plz.";
                     $.each(result, function (name, value) {
                         if (name != "result") {
+                            presentaction.config_name = name;
                             presentaction.config_data = value;
                             configMsg = `${name} is '${value}' so far`;
                         }
@@ -564,17 +567,17 @@ const postAjaxData = (url, data) => {
                     loginuser.dbtype = presentaction.dbtype;
                     presentaction = {};
                     showSomethingInputField(false);
-                    if(result.target != null && 0<result.target.length){
+                    if (result.target != null && 0 < result.target.length) {
                         let tdb = ""
-                        if(result.target == "pg_work"){
+                        if (result.target == "pg_work") {
                             tdb = "postgresql";
-                        }else if(result.target == "my_work"){
+                        } else if (result.target == "my_work") {
                             tdb = "mysql";
-                        }else if(result.target == "redis_work"){
+                        } else if (result.target == "redis_work") {
                             tdb = "redis";
                         }
 
-                        if( tdb != ""){
+                        if (tdb != "") {
                             preferent.db = tdb;
                             $(`#databaselist span[name='${tdb}']`).show();
                             setDBFocus(preferent.db);
@@ -587,7 +590,7 @@ const postAjaxData = (url, data) => {
                             cleanupItems4Switching();
                             cleanupContainers();
                             cancelableCmdList = [];
-                    
+
                             // clean up the parameters for api test
                             preferent.apitestparams = [];
                             preferent.apiparams_count = null;
@@ -631,10 +634,10 @@ const postAjaxData = (url, data) => {
                                 for (let i in newaddlist) {
                                     if ($(this).text() == newaddlist[i]) {
                                         if ($(this).hasClass("activeItem")) {
-//                                            if (!$(this).hasClass("activeItem")) {
+                                            //                                            if (!$(this).hasClass("activeItem")) {
                                             $(this).removeClass("activeItem");
                                             $(this).addClass("activeandrelatedItem");
-                                        }else{
+                                        } else {
                                             $(this).addClass("relatedItem");
                                         }
                                     }
@@ -649,6 +652,23 @@ const postAjaxData = (url, data) => {
                     // switching database
                     // do not expect any returns, but refresh table and api list
                     displayTablesAndApis();
+                } else if (url == posturls[10]) {
+                    /*
+                        Tips:
+                            posturls[10] is for checking the connection,
+                            then make it use by posturls[3].
+                    */
+                    let dbconfname = ""
+                    if (preferent.db == "postgresql") {
+                        dbconfname = "pg_work";
+                    } else if (preferent.db == "mysql") {
+                        dbconfname = "my_work";
+                    } else if (preferent.db == "redis") {
+                        dbconfname = "redis_work";
+                    }
+
+                    let data = `{"${dbconfname}":"true"}`;
+                    postAjaxData(scenario["function-post-url"][3], data);
                 }
 
                 if (specialmsg == "") {
@@ -657,12 +677,14 @@ const postAjaxData = (url, data) => {
                     m = specialmsg;
                 }
             } else {
+                cmdCandidates = [];
                 m = chooseMsg("fail-msg", "", "");
             }
 
             typingControll(m, '', '');
         }).fail(function (result) {
             checkResult(result);
+            cmdCandidates = [];
             console.error("postAjaxData() fail");
             typingControll(chooseMsg("fail-msg", "", ""));
         }).always(function () {
@@ -1000,7 +1022,7 @@ const chatKeyDown = (cmd) => {
             whatJetelinaTold = $(JETELINACHATTELL).text();
             $(JETELINACHATTELL).text("");
             $(JETELINACHATBOX).val("");
-//            $(CHATBOXYOURTELL).text(ut);
+            //            $(CHATBOXYOURTELL).text(ut);
 
             // logout
             if (logoutChk(ut)) {
@@ -1030,11 +1052,12 @@ const chatKeyDown = (cmd) => {
             }
 
             // search error log in the log file by 'errnum' that is the unique order number 
-            if (inScenarioChk(ut, 'searching-errnum-cmd')){
-                if( preferent.errnum != null && 0<preferent.errnum.length) {
+            if (inScenarioChk(ut, 'searching-errnum-cmd')) {
+                if (preferent.errnum != null && 0 < preferent.errnum.length) {
                     searchLogAjax();
-                }else{
-                    m = chooseMsg('func-api-error-cannot-searching-msg','','');
+                } else {
+                    typingControll(chooseMsg('func-api-error-cannot-searching-msg', '', ''));
+                    return;
                 }
             }
 
@@ -1043,9 +1066,9 @@ const chatKeyDown = (cmd) => {
                     indeed, this zoom procedure is discripted in dashboard.js, around #130 as .on().
                     this code use it by asking 'what-did-i-say'. :)
             */
-            if(inScenarioChk(ut,'what-did-i-say')){
+            if (inScenarioChk(ut, 'what-did-i-say')) {
                 $(".yourText").mouseover();
-            }else{
+            } else {
                 $(".yourText").mouseout();
                 $(CHATBOXYOURTELL).text(ut);
             }
@@ -1128,7 +1151,7 @@ const chatKeyDown = (cmd) => {
                     /*
                         Attention:
                             only "admin" roll can operate configuration and user account.
-                            do not worry, it is checked in Jetelina by posting data if the roll were hacked. 
+                            do not worry, it is checked in Jetelina by posting data even if the roll were hacked. 
                     */
                     if ((m.length == 0 || m == IGNORE) && loginuser.roll == "admin") {
                         let multi = 0;
@@ -1276,7 +1299,7 @@ const chatKeyDown = (cmd) => {
                     } else {
                         if (!logoutflg && m.length == 0) {
                             m = chooseMsg("starting-3-msg", "", "");
-                        }else if(!logoutflg && 0<m.length){
+                        } else if (!logoutflg && 0 < m.length) {
                             m = chooseMsg('greeting-ask-msg', '', '');
                         }
                     }
@@ -1727,14 +1750,14 @@ const showSomethingInputField = (b, type) => {
 const showSomethingMsgPanel = (b) => {
     let sm = $(SOMETHINGMSGPANEL);
     if (b) {
-        if(sm.text().indexOf(preferent.errnum) != -1){
-            sm.css({'height':'120px'});
+        if (sm.text().indexOf(preferent.errnum) != -1) {
+            sm.css({ 'height': '120px' });
             sm.draggable().show().animate({
                 top: "55%",
                 left: "25%"
             }, ANIMATEDURATION);
-        }else{
-            sm.css({'height':'70px'});// default number in .something_msg_def
+        } else {
+            sm.css({ 'height': '70px' });// default number in .something_msg_def
             sm.draggable().show();
         }
 
@@ -1921,39 +1944,40 @@ const apiTestAjax = () => {
             return ret;
         }
     }).done(function (result, textStatus, jqXHR) {
-        let m = chooseMsg('func-api-test-done-msg','','');
+        let m = chooseMsg('func-api-test-done-msg', '', '');
         if (checkResult(result)) {
-            if(loginuser.dbtype != "redis"){
+            if (loginuser.dbtype != "redis") {
                 let ret = JSON.stringify(result);
                 $(`${COLUMNSPANEL} [name='apiout']`).addClass("attentionapiinout").text(ret);
-            }else{
-                if(0<result.Jetelina.length){
+            } else {
+                if (0 < result.Jetelina.length) {
                     let ret = JSON.stringify(result);
                     $(`${COLUMNSPANEL} [name='apiout']`).addClass("attentionapiinout").text(ret);
-                }else{
+                } else {
                     let newapis = result.apino;
-                    if(newapis[0] != "" && newapis[1] != ""){
+                    if (newapis[0] != "" && newapis[1] != "") {
                         m = `new api no are ${newapis[0]} & ${newapis[1]}. ${result["message from Jetelina"]}`;
-                    }else if(newapis[0] != "" && newapis[1] == ""){
+                    } else if (newapis[0] != "" && newapis[1] == "") {
                         m = `new api no is ${newapis[0]}. ${result["message from Jetelina"]}`;
-                    }else if(newapis[0] == "" && newapis[1] != ""){
+                    } else if (newapis[0] == "" && newapis[1] != "") {
                         m = `new api no is ${newapis[1]}. ${result["message from Jetelina"]}`;
                     }
                     $(CHATBOXYOURTELL).text(m);
                     $(".yourText").mouseover();
                     refreshApiList();
                     refreshTableList();
-                }      
+                }
             }
         } else {
             rejectCancelableCmdList("apitest");
             rejectCancelableCmdList("preapitest");
-            m = chooseMsg("fail-msg",'','');
+            m = chooseMsg("fail-msg", '', '');
         }
 
         typingControll(m);
     }).fail(function (result) {
         checkResult(result);
+        cmdCandidates = [];
         console.error("apiTestAjax() fail");
         typingControll(chooseMsg("fail-msg", "", ""));
     }).always(function () {
@@ -1993,12 +2017,14 @@ const searchLogAjax = () => {
             $(SOMETHINGMSGPANELMSG).text(result.errlog);
             showSomethingMsgPanel(true);
         } else {
+            cmdCandidates = [];
             m = "fail-msg";
         }
 
         typingControll(chooseMsg(m, '', ''));
     }).fail(function (result) {
         checkResult(result);
+        cmdCandidates = [];
         console.error("searchLogAjax() fail");
         typingControll(chooseMsg("fail-msg", "", ""));
     }).always(function () {

@@ -66,6 +66,8 @@ route( "/getcolumns", PostDataController.getColumns, method = POST )
 route( "/apiactions", PostDataController.handleApipostdata, method = POST )
 # switching user handle database
 route( "/switchdb", PostDataController.switchDB, method = POST )
+# database connection check
+route("/ispath", PostDataController.checkConnection, method = POST)
 
 #===
     -Handle APIs

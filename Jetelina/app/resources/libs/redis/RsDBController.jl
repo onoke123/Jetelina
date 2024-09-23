@@ -17,7 +17,8 @@ functions
     get(k) get value data in redis in order to match name 'k'
     matchingScan(i,k) scan, indeed searching, data to find matching from 'i' cursor position with 'k' string
     simpleScan(i,n) scan, indeed searching, data from 'i' cursor position order by 'n' counts.
-    """
+    checkConnection() simple connection checking
+"""
 module RsDBController
 
 using Genie, Genie.Renderer, Genie.Renderer.Json
@@ -30,7 +31,7 @@ JMessage.showModuleInCompiling(@__MODULE__)
 include("RsDataTypeList.jl")
 include("RsSQLSentenceManager.jl")
 
-export open_connection, close_connection, dataInsertFromCSV, getKeyList, executeApi
+export open_connection, close_connection, dataInsertFromCSV, getKeyList, executeApi, checkConnection
 
 """
 function open_connection()
@@ -365,4 +366,25 @@ function simpleScan(i, n)
         close_connection(conn)
     end
 end
+"""
+function checkConnection()
+
+	simple connection checking
+		
+# Arguments
+- return: success -> true, fail -> false
+"""
+function checkConnection()
+    try
+        conn::Redis.RedisConnection = open_connection()
+        close_connection(conn)
+        return json(Dict("result" => true, "Jetelina" => "[{}]"))
+    catch err
+        errnum = JLog.getLogHash()
+        JLog.writetoLogfile("[errnum:$errnum] RsDBController.checkConnection() error : $err")
+        return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "$err", "errnum"=>"$errnum"))
+    finally
+    end
+end
+
 end

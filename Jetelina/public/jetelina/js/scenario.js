@@ -1,6 +1,6 @@
 let scenario = []; let config = [];
 scenario["analyzed-data-collect-url"]=["/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getsqlaccessdata"];
-scenario["function-post-url"]=["/updateuserdata","/jetelinawords","/getconfigdata","/changeconfigdata","/createapi","/testapi","/chkaccount","/userregist","/getrelatedlist","/switchdb"];
+scenario["function-post-url"]=["/updateuserdata","/jetelinawords","/getconfigdata","/changeconfigdata","/createapi","/testapi","/chkaccount","/userregist","/getrelatedlist","/switchdb","/ispath"];
 scenario["function-apitest-usr"]=["/apiactions"];
 scenario["function-search-log-errnum"]=["/searcherror"];
 scenario["function-get-url"]=["/getapilist","/getalldbtable","/getconfigchangehistory","/goodbyenow","/getdbsavailability"];
@@ -38,7 +38,7 @@ scenario["first-login-ask-info-msg"]=["Thank you so much,{Q}, then what is your 
 scenario["first-login-ask-info-then-msg"]=["Sounds nice, and more?","Cool, others?","I love it too, and?","Great, you are lucky, and more?"];
 scenario["first-login-ask-info-end-msg"]=["Thank you so much,{Q}. Now you can type 'Guide' or 'Manual' to see what can I do for you."];
 scenario["starting-6-msg"]=["HERE WE GO","LET'S FUN TOGETHER","YEEEEAH","FOLLOW ME"];
-scenario["success-msg"]=["Done","Success","I am so happy","Yes"];
+scenario["success-msg"]=["Done","Success","I am so happy","Yes","Yeeeeeah","Here we go","Com'on"];
 scenario["fail-msg"]=["Uge","Noooooooo","Sorry something wrong"];
 scenario["cancel-msg"]=["It has been canceld","Has been withdrawn","Canceled","Withdrew","Called off"];
 scenario["confirmation-sentences-cmd"]=["yes","sure","why not","do it","do","i want to do it","i wanna do it","kick ass"];
@@ -116,7 +116,7 @@ scenario["afterlogout-msg"]=["Bye", "Have a good day","Hope you will back soon",
 scenario["unknown-msg"]=["Hey hey hey","Ah.... what?","Could not catch yours, what?","Oh oh oh, what?"];
 scenario["hide-something-msg-cmd"]=["hide error","close error","delete error","hide message","close message","delete message"];
 scenario["show-something-msg-cmd"]=["show message","open message","display message"];
-scenario["searching-errnum-cmd"]=["show error","open error", "display error","what has happend","what's happen","what happened"];
+scenario["searching-errnum-cmd"]=["show error","open error", "display error","what has happend","what's happen","what happened","detail"];
 scenario["func-api-error-searching-msg"]=["gott you?"];
 scenario["func-api-error-cannot-searching-msg"]=["showed message is everything"];
 scenario["config-update-simple-message"]=["put someting in there"];

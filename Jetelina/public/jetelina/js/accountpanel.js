@@ -33,12 +33,15 @@ const accountManager = (s) =>{
 
         ret = chooseMsg('user-manage-username-msg',"","");
     }else if(inScenarioChk(s,'user-manage-show-profile')){
-        let prof = `"${loginuser.lastname} ${loginuser.firstname}"`;
+        let prof = `"${loginuser.lastname} ${loginuser.firstname}" with "roll"=>"${loginuser.roll}", "id"=>"${loginuser.user_id}, "last logout"=>"${loginuser.logoutdate}", "total logins"=>"${loginuser.logincount}", "generation"=>"${loginuser.generation}"`;
         if(loginuser.nickname != null && 0<loginuser.nickname.length){
             prof = prof + `, and sometimes I call you "${loginuser.nickname}"`;
         }
         
-        ret = chooseMsg('user-manage-profile-msg',prof,'m');
+        prof = chooseMsg('user-manage-profile-msg',prof,'m');
+        $(SOMETHINGMSGPANELMSG).text(prof);
+        showSomethingMsgPanel(true);
+        ret = IGNORE;
     }else{
     }
 
