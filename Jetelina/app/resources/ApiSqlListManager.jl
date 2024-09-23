@@ -51,9 +51,9 @@ function _setApiSequenceNumber
 """
 function _setApiSequenceNumber()
     global Df_JetelinaSqlList = DataFrame()
-
-    if readSqlList2DataFrame()[1]
-        df = readSqlList2DataFrame()[2]
+    p = readSqlList2DataFrame(); 
+    if p[1]
+        df = p[2]
         #===
         			Tips:
         				Df_JetelinaSqlList is a global data.

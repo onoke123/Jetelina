@@ -30,7 +30,7 @@ JMessage.showModuleInCompiling(@__MODULE__)
 procflg = Ref(true) # analyze process progressable -> true, stop/error -> false
 
 function __init__()
-	@info "=========SQLAnalyzer.jl init===========" j_config.JC["dbtype"]
+	@info "=========SQLAnalyzer.jl init==========="
 	include("DBDataController.jl")
 	if j_config.JC["dbtype"] == "postgresql"
 		include("libs/postgres/PgDBController.jl")

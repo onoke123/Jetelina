@@ -229,7 +229,6 @@ function configParamUpdate(d::Dict)
 			param = dn[n]
 			var = d[dn[n]]
 			prev = string(JC[param])
-			@info "config update: " param prev var
 			#
 			#  Tips:
 			#     update it on memory as global parameters.
@@ -258,7 +257,6 @@ function configParamUpdate(d::Dict)
 
 						history_previous = string("\"",param,"\":","\"",prev,"\",",history_previous)
 						history_latest = string(",\"",param,"\":","\"",var,"\"",history_latest)
-						@info n i history_previous history_latest
 					end
 				end
 			end

@@ -1139,7 +1139,7 @@ const chatKeyDown = (cmd) => {
                         left: "5%" //"210px"
                     }, ANIMATEDURATION);
 
-                    if (!inScenarioChk(ut, 'config-update-cmd') && (presentaction.cmd != CONFIGCHANGE)) {
+                    if (!inScenarioChk(ut, 'config-show-cmd') && (presentaction.cmd != CONFIGCHANGE)) {
                         // if 'ut' is a command for driving function
                         m = functionPanelFunctions(ut);
                         if (m.length == 0 || m == IGNORE) {
@@ -1167,9 +1167,22 @@ const chatKeyDown = (cmd) => {
                             m = chooseMsg("cancel-msg", "", "");
                         }
 
-                        // configuration management
-                        // 下でCONFIGCHANGEが設定されてからここにくる
+                        // configuration management ①->②
+                        // ②the parameter searching in config[]
                         if (presentaction.cmd != null && presentaction.cmd == CONFIGCHANGE) {
+                            /*
+                                Tips:
+                                    after displaying the ordered parameter, the update procedure is canceled by 'thank you'. 
+                            */
+                            if (inScenarioChk(ut, "general-thanks-cmd")) {
+                                typingControll(chooseMsg('general-thanks-msg', loginuser.lastname, "c"));
+                                           
+                                showSomethingMsgPanel(false);
+                                rejectCancelableCmdList(CONFIGCHANGE);
+                                presentaction = {};
+                                return;
+                            }
+
                             for (zzz in config) {
                                 /*
                                     Tips:
@@ -1251,8 +1264,8 @@ const chatKeyDown = (cmd) => {
                             }
                         }
 
-                        /* come here first, anyhow */
-                        if (inScenarioChk(ut, 'config-update-cmd')) {
+                        /* ①come here first, anyhow */
+                        if (inScenarioChk(ut, 'config-show-cmd')) {
                             presentaction.cmd = CONFIGCHANGE;
                             cancelableCmdList.push(presentaction.cmd);
                             if (presentaction.config_name != null && presentaction.config_data != null) {
@@ -1863,7 +1876,8 @@ const rejectSelectedItemsArr = (item) => {
 const subPanelCheck = () => {
     if (isVisibleSomethingMsgPanel()) {
         if (0 < $(SOMETHINGINPUT).val().length) {
-            typingControll(chooseMsg('common-confirm-msg', "", ""));
+            let e = chooseMsg('common-post-cmd', '', '');  
+            typingControll(chooseMsg('config-update-msg', e, "r"));
         }
     }
 }
@@ -1911,8 +1925,8 @@ const isVisibleFavicon = (b) => {
     }
 }
 // return to the chat box if 'return key' is typed in something_input_field
-$(document).on("keydown", `${SOMETHINGINPUT}, ${GENELICPANELINPUT}`, function (e) {
-    if (e.keyCode == 13) {
+$(document).on("keydown focusout", `${SOMETHINGINPUT}, ${GENELICPANELINPUT}`, function (e) { console.log("event ;", e.type);
+    if (e.keyCode == 13 || e.type == "focusout") {
         focusonJetelinaPanel()
     }
 });
