@@ -172,10 +172,10 @@
 @jdic func-api-test-ready-no-param-msg:"no params, type '{Q}'","here we go with typing '{Q}'"
 
 @jdic func-api-test-cmd:"do sql test","do api test","test sql","test api","api test","sql check","do api check","check sql","check api","execute sql test","execute api test","execute test","do test"
-@jdic func-api-test-done-msg:"api test done, attention 'OUT'.","done, attention 'OUT', how's going","done, attention 'OUT', satisfied?"
+@jdic func-api-test-done-msg:"api test done, attention 'OUT'."
 @jdic func-api-test-panel-show-cmd:"show api test","open api test","show sql test","open sql test","display api test","display sql test","open test result","show test result"
 @jdic func-api-test-panel-hide-cmd:"hide api test","close api test","hide sql test","close sql test","undisplay api test","undisplay sql test","close test result","hide test result"
-@jdic func-api-test-subquery-chk-error-msg:"subquery error. I don't know what you wanna do. look carefully."
+@jdic func-api-subquery-chk-error:"subquery error. I don't know what you wanna do. look carefully."
 
 # database switching
 @jdic what-db-use-now-cmd:"database now", "current database","current db","current data base"

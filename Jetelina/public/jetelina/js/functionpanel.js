@@ -1050,8 +1050,8 @@ const postSelectedColumns = (mode) => {
 
           selectedItemsArr = [];
           rejectCancelableCmdList(SELECTITEM);
+          rejectCancelableCmdList("post");
           cleanUp("items");
-//          $(CONTAINERPANEL).append(`<span class="newapino"><p>api no is ${result.apino}</p></span>`);
           refreshApiList();
           refreshTableList();
           m = chooseMsg('refreshing-msg', '', '');    
@@ -1594,12 +1594,13 @@ const functionPanelFunctions = (ut) => {
           // the first calling            
           if (containsMultiTables()) {
             // 'where sentence' is demanded if there were multi tables
-//            showGenelicPanel(true);
             if(subquerysentence != "" && subquerysentence != IGNORE){
               if (checkGenelicInput(subquerysentence)) {
                 postSelectedColumns("");
                 m = IGNORE;
-              }    
+              }else{
+                m = chooseMsg('func-api-subquery-chk-error','','');
+              }
             }else{
               m = chooseMsg('func-postcolumn-where-indispensable-msg', "", "");
             }
@@ -1614,25 +1615,21 @@ const functionPanelFunctions = (ut) => {
           if (checkGenelicInput(subquerysentence)) {
             postSelectedColumns("");
             m = IGNORE;
+          }else{
+            m = chooseMsg('func-api-subquery-chk-error','','');
           }
         } else {
-          // the secound calling, sub query open or not
-//          if (inScenarioChk(ut, 'confirmation-sentences-cmd')) {
-//            showGenelicPanel(true);
-//            m = chooseMsg('func-subpanel-opened-msg', "", "");
-//          } else {
- //           $(GENELICPANELINPUT).val(IGNORE);
- //         }
-
           if(!containsMultiTables()){
             if (subquerysentence == "") {
-//              $(GENELICPANELINPUT).val(IGNORE);
               m = chooseMsg('func-postcolumn-available-msg', "", "");
             }
           }
+
           // use $(..).val() because this may was set 'ignore' just above.
-          //if ($(GENELICPANELINPUT).val() != "") {
             m = chooseMsg('func-postcolumn-available-msg', "", "");
+            m = chooseMsg('func-postcolumn-available-msg', "", "");
+          //}
+          m = chooseMsg('func-postcolumn-available-msg', "", "");
           //}
 
         }
@@ -1664,7 +1661,6 @@ const functionPanelFunctions = (ut) => {
         showSomethingMsgPanel(false);
         rejectCancelableCmdList(TABLEAPIDELETE);
         m = chooseMsg('cancel-msg', "", "");
-        //        } else {
         // table list
         if (deleteSelectedItems()) {
           showGenelicPanel(false);
@@ -1673,7 +1669,6 @@ const functionPanelFunctions = (ut) => {
         } else {
           m = chooseMsg('unknown-msg', "", "");
         }
-        //        }
 
         $(`${TABLECONTAINER} span`).removeClass('deleteItem');
         $(`${APICONTAINER} span`).removeClass('deleteItem');
@@ -1725,6 +1720,8 @@ const functionPanelFunctions = (ut) => {
         }
 
         preferent.apiparams_count = null;
+      } else{
+        cancelableCmdList = [];
       }
 
       break;
@@ -1737,11 +1734,7 @@ const functionPanelFunctions = (ut) => {
       m = chooseMsg('refreshing-msg', '', '');
       break;
     case 'subquery': //open subquery panel
-      // if api test result panel is openend yet
-      //      if (isVisibleApiContainer()) {
       showApiTestPanel(false);
-      //      }
-
       showGenelicPanel(true);
       m = chooseMsg('func-subpanel-opened-msg', '', '');
       break;
@@ -1752,7 +1745,7 @@ const functionPanelFunctions = (ut) => {
         if (checkGenelicInput($(GENELICPANELINPUT).val())) {
           postSelectedColumns("pre");
         } else {
-          m = chooseMsg('func-api-test-subquery-chk-error-msg', '', '');
+          m = chooseMsg('func-api-subquery-chk-error', '', '');
         }
       }
       break;
@@ -1769,11 +1762,11 @@ const functionPanelFunctions = (ut) => {
       if (preferent.original_apiout_str == null || preferent.original_apiout_str == "") {
         preferent.original_apiout_str = $(`${COLUMNSPANEL} [name='apiout']`).text();
       }
-
+/*
       if (inScenarioChk(ut, 'common-execute-again-cmd')) {
         preferent.apiparams_count = 0;
       }
-
+*/
       if (preferent.apitestparams != null && 0 < preferent.apitestparams.length) {
         if (preferent.apiparams_count == null) {
           preferent.apiparams_count = 0;
@@ -1791,12 +1784,27 @@ const functionPanelFunctions = (ut) => {
           m = chooseMsg('func-api-test-ready-msg', e, 'r');
         }
       } else {
-        if (inScenarioChk(ut, 'func-api-test-execute-cmd')) {
-          apiTestAjax();
-          m = chooseMsg('inprogress-msg', '', '');
-        } else {
-          let e = chooseMsg('func-api-test-execute-cmd', '', '');
-          m = chooseMsg('func-api-test-ready-no-param-msg', e, 'r');
+        if(preferent.apiparams_count != null){
+          if (inScenarioChk(ut, 'func-api-test-execute-cmd')) {
+            apiTestAjax();
+            m = chooseMsg('inprogress-msg', '', '');
+          } else {
+            let e = chooseMsg('func-api-test-execute-cmd', '', '');
+            m = chooseMsg('func-api-test-ready-no-param-msg', e, 'r');
+          }
+        }else{
+          /*
+            Attention:
+              after executing api test, we do not know what the user will type.
+              maybe "select api","selct table","cancel","open file".....
+              this part is ready for the next command with clean up something.
+              I GUESS reject 'apitest' in cancelableCmdList is enough it, but not sure...
+              then re-do with 'ut' in jetelinaLib.js chatKeyDown().
+
+              guess there is a better way with survaying the whole logic, but have done this as the first-aid in ver2.  2024/9/24 :P
+          */
+          rejectCancelableCmdList("apitest");
+          chatKeyDown(ut);
         }
       }
 
@@ -1831,7 +1839,6 @@ const functionPanelFunctions = (ut) => {
             // start to use this db, but
             if(loginuser.roll == "admin"){
               // only admin can change the availability of this db
-
               let data = `{"db":"${preferent.db}"}`;
               postAjaxData(scenario["function-post-url"][10], data);
             }else{
@@ -1916,7 +1923,6 @@ const checkGenelicInput = (ss) => {
 
   if( s == "where" || s == "" ){
     s = IGNORE;
-//    $(GENELICPANELINPUT).val(s);
   }
 
   if (s != IGNORE) {
@@ -1931,7 +1937,6 @@ const checkGenelicInput = (ss) => {
         writing the sub query is on your own responsibility. :)
     */
     let arr = [];
-    //    $(`${CONTAINERPANEL} span`).filter(".selectedItem").each(function () {
     $(`${COLUMNSPANEL} span, ${CONTAINERPANEL} span`).filter('.item').each(function () {
       arr.push($(this).text());
     });
@@ -1941,42 +1946,26 @@ const checkGenelicInput = (ss) => {
     for( let i in unacceptablemarks){
       s = s.replaceAll(unacceptablemarks[i],"'");      
     }
-//    let sq = s.replaceAll("\"", "'");
+
     // 2nd: reject unexpected words
     let unexpectedwords = ["delete", "drop", ";"];
     for (i in unexpectedwords) {
       s = s.replaceAll(unexpectedwords[i], "");
     }
-    // 3nd: items in the subquery sentence are in the open items list
-    /*
-      Tips:
-        open items are rejected from 'sq', then the remains will be a string except items.
-        i mean
-            where ftest.ftest_name='AAA' -> where ='AAA'
-            where ftest.ftest_name=ftest2.ftest2_name  -> where =
-            where ftest.ftest_ave<0.2  -> where <0.2
 
-        but this logic is postponed because of incomplete on sep/2024
-    */
-   /*
-    let pp = s;
-    for (i in arr) {
-      let p = pp.indexOf(arr[i]);
-      if (0 < p) {
-        pp = pp.substring(0, p) + pp.substring(p + arr[i].length, pp.length);
-      }
-    }
-
-    if (0 < pp.length) {
-      // ここが問題。最後のチェックで関係ないtableがまだsubqueryにないかどうかを見たいが"."だけだと小数点数字もアリなので困る
-      if (pp.indexOf('.') != -1) {
-        $(GENELICPANELINPUT).focus();
+    // 3nd: the number of '{' and '}' is equal
+    let cur_l = s.match(/{/igm)
+    let cur_r =  s.match(/}/igm)
+    if( cur_l != null && cur_r != null ){
+      if(cur_l.length != cur_r.length){
         ret = false;
       }
-    } else {
+    }else if((cur_l != null && cur_r == null)||(cur_l == null && cur_r != null)){
       ret = false;
+    }else{
+      // both null is available
     }
-  */
+
     if (ret) {
       $(GENELICPANELINPUT).val(s);
     }

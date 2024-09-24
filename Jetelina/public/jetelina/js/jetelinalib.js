@@ -1144,7 +1144,8 @@ const chatKeyDown = (cmd) => {
                         m = functionPanelFunctions(ut);
                         if (m.length == 0 || m == IGNORE) {
                             // if 'ut' is a command for driving condition
-                            m = conditionPanelFunctions(ut);
+                            // this routine is for ver3 :)
+                            //m = conditionPanelFunctions(ut);
                         }
                     }
 
@@ -1176,11 +1177,16 @@ const chatKeyDown = (cmd) => {
                             */
                             if (inScenarioChk(ut, "general-thanks-cmd")) {
                                 typingControll(chooseMsg('general-thanks-msg', loginuser.lastname, "c"));
+                                typingControll(chooseMsg('general-thanks-msg', loginuser.lastname, "c"));
+                                           
+                                typingControll(chooseMsg('general-thanks-msg', loginuser.lastname, "c"));           
                                            
                                 showSomethingMsgPanel(false);
-                                rejectCancelableCmdList(CONFIGCHANGE);
-                                presentaction = {};
-                                return;
+                                if(inCancelableCmdList([CONFIGCHANGE])){
+                                    rejectCancelableCmdList(CONFIGCHANGE);
+                                    presentaction = {};
+                                    return;
+                                }
                             }
 
                             for (zzz in config) {
@@ -1416,6 +1422,7 @@ const logout = () => {
     $(CONDITIONPANEL).hide();
     $(GENELICPANEL).hide();
     $(GENELICPANELINPUT).val('');
+    $(SOMETHINGINPUT).val('');
     $(CHARTPANEL).hide();
     $("#api_access").hide();
     $("#performance_real").hide();
@@ -1876,8 +1883,12 @@ const rejectSelectedItemsArr = (item) => {
 const subPanelCheck = () => {
     if (isVisibleSomethingMsgPanel()) {
         if (0 < $(SOMETHINGINPUT).val().length) {
-            let e = chooseMsg('common-post-cmd', '', '');  
-            typingControll(chooseMsg('config-update-msg', e, "r"));
+            if(inCancelableCmdList([CONFIGCHANGE])){
+                let e = chooseMsg('common-post-cmd', '', '');  
+                typingControll(chooseMsg('config-update-msg', e, "r"));
+            }else if(inCancelableCmdList([TABLEAPIDELETE])){
+                typingControll(chooseMsg('common-confirm-msg','',""));
+            }
         }
     }
 }
@@ -1925,7 +1936,7 @@ const isVisibleFavicon = (b) => {
     }
 }
 // return to the chat box if 'return key' is typed in something_input_field
-$(document).on("keydown focusout", `${SOMETHINGINPUT}, ${GENELICPANELINPUT}`, function (e) { console.log("event ;", e.type);
+$(document).on("keydown focusout", `${SOMETHINGINPUT}, ${GENELICPANELINPUT}`, function (e) {
     if (e.keyCode == 13 || e.type == "focusout") {
         focusonJetelinaPanel()
     }
@@ -1997,8 +2008,8 @@ const apiTestAjax = () => {
     }).always(function () {
         // release it for allowing to input new command in the chatbox 
         inprogress = false;
-        rejectCancelableCmdList("apitest");
-        rejectCancelableCmdList("preapitest");
+        preferent.apitestparams = [];
+        preferent.apiparams_count = null;
     });
 }
 /**
