@@ -1294,7 +1294,7 @@ const chatKeyDown = (cmd) => {
                         }
                     } else {
                         // do not have an authority
-                        if (inScenarioChk(ut, 'user-manage-add') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-delete')) {
+                        if (inScenarioChk(ut, 'user-manage-add') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-delete') || inScenarioChk(ut,'config-show-cmd')) {
                             m = chooseMsg("no-authority-js-msg", "", "");
                         } else {
                             // normal reply e.g "next?"

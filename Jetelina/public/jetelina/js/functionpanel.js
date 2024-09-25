@@ -1203,13 +1203,29 @@ const functionPanelFunctions = (ut) => {
     }
 
     if (cmd == "" && inScenarioChk(ut, 'func-tabledrop-cmd')) {
-      cmd = TABLEAPIDELETE;
-      preferent.cmd = cmd;
-      cmdCandidates.push("drop table");
+      /*
+        Attention:
+          only 'admin' can drop tables
+      */
+      if(loginuser.roll == "admin"){
+        cmd = TABLEAPIDELETE;
+        preferent.cmd = cmd;
+        cmdCandidates.push("drop table");
+      }else{
+          m = chooseMsg('no-authority-js-msg','','');
+      }
     } else if (cmd == "" && inScenarioChk(ut, 'func-apidelete-cmd')) {
-      cmd = TABLEAPIDELETE;
-      preferent.cmd = cmd;
-      cmdCandidates.push("delete api");
+      /*
+        Attention:
+          'admin' and 'manager' can delete apis
+      */
+      if(loginuser.roll != "beginner"){
+        cmd = TABLEAPIDELETE;
+        preferent.cmd = cmd;
+        cmdCandidates.push("delete api");
+        }else{
+          m = chooseMsg('no-authority-js-msg','','');
+        }
     }
 
     // db switching
@@ -1267,9 +1283,9 @@ const functionPanelFunctions = (ut) => {
       if(inCancelableCmdList(["apitest","preapitest"])){
         complementflg = true;
         cmd = "cancel";
-      }else{
-        showSomethingMsgPanel(false);
       }
+        showSomethingMsgPanel(false);
+      
     }
   }
 
@@ -1691,6 +1707,8 @@ const functionPanelFunctions = (ut) => {
             showGenelicPanel(false);
           }
 
+          showSomethingInputField(false);
+          showSomethingMsgPanel(false);  
           selectedItemsArr = [];
           m = chooseMsg('cancel-msg', "", "");
         } else {

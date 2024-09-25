@@ -24,7 +24,6 @@ js747:ftest:mysql
 ji748:ftest:postgresql
 ju749:ftest:postgresql
 jd750:ftest:postgresql
-js751:ftest:postgresql
 js752:ftest:postgresql
 js753:ftest:postgresql
 js754:ftest:postgresql
@@ -39,7 +38,6 @@ js763:people500000:mysql
 js764:ftest2:mysql
 js767:ftest:mysql
 js768:ftest:mysql
-js769:ftest:mysql
 ju770:sep21:redis
 js771:sep21:redis
 ju772:sep21a:redis
@@ -56,7 +54,9 @@ ju782:sep21f:redis
 js783:sep21f:redis
 ju784:sep21z:redis
 js785:sep21z:redis
-ji786:ftest2:postgresql
-ju787:ftest2:postgresql
-jd788:ftest2:postgresql
 js794:ftest:postgresql
+ji795:ftest2:postgresql
+ju796:ftest2:postgresql
+jd797:ftest2:postgresql
+js799:ftest2:postgresql
+js800:ftest2:postgresql
