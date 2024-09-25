@@ -38,7 +38,10 @@
       refreshApiList() refresh displaying of api list
       refreshTableList() refresh displaying of table list
       tidyupcmdCandidates(targetcmd) reject 'targetcmd' from cmdCandidates
-*/
+      setLeftPanelTitle() set to the title in the left panel
+      isSelectedItem() check exsisting a selected item in the container panel
+      resetApiTestProcedure reset something about apitest/preapitest
+ */
 let selectedItemsArr = [];
 let cmdCandidates = [];// ordered commands for checking duplication 
 
@@ -1252,14 +1255,25 @@ const functionPanelFunctions = (ut) => {
       cancelableCmdList.push("post");
     }
 
-    if (cmd == "" && !isSelectedItem() && inScenarioChk(ut, 'func-api-test-cmd')) {
-      cmd = "apitest";
-      cancelableCmdList.push("apitest");
-    }
+    if (cmd == "" && inScenarioChk(ut, 'func-api-test-cmd')) {
+      let selectedapino = $(`${APICONTAINER} span`).filter(".activeItem, .activeandrelatedItem");
+    
+      if(0<selectedapino.length){
+        let san = selectedapino.text();
+        let sanArr = san.split("js");
 
-    if (cmd == "" && isSelectedItem() && inScenarioChk(ut, 'func-api-test-cmd')) {
-      cmd = "preapitest";
-      cancelableCmdList.push("preapitest");
+        if( ut.indexOf(san) != -1 || ut.indexOf(sanArr[1]) != -1  || !isSelectedItem() ){
+          showApiTestPanel(false);
+          cmd = "apitest";
+          cancelableCmdList.push("apitest");
+        }else{
+          cmd = "preapitest";
+          cancelableCmdList.push("preapitest");
+        }
+      }else{
+        cmd = "preapitest";
+        cancelableCmdList.push("preapitest");  
+      }
     }
 
     if (cmd.length == 0) {
@@ -1281,10 +1295,15 @@ const functionPanelFunctions = (ut) => {
     // greeting for something execution
     if(inScenarioChk(ut,'general-thanks-cmd')||inScenarioChk(ut,'general-complement-cmd')){
       if(inCancelableCmdList(["apitest","preapitest"])){
+        showApiTestPanel(false);
         complementflg = true;
         cmd = "cancel";
       }
+
         showSomethingMsgPanel(false);
+        showSomethingMsgPanel(false);
+      
+      showSomethingMsgPanel(false);
       
     }
   }
@@ -1421,8 +1440,9 @@ const functionPanelFunctions = (ut) => {
             -> in the case of 'ut' is 'close all', 'all close'
       */
       if (($.inArray('all', t) != -1) && ($.inArray('close', t) != -1)) {
-        $("#table_container span, #api_container span").filter(".relatedItem, .activeItem, .activeandrelatedItem").each(function () {
-          if ($(this).hasClass("relatedItem")) {
+        $(`${TABLECONTAINER} span, ${APICONTAINER} span`).filter(".relatedItem, .activeItem, .activeandrelatedItem").each(function () {
+//          $("#table_container span, #api_container span").filter(".relatedItem, .activeItem, .activeandrelatedItem").each(function () {
+            if ($(this).hasClass("relatedItem")) {
             $(this).removeClass("relatedItem");
           }
           if ($(this).hasClass("activeItem")) {
@@ -1727,10 +1747,7 @@ const functionPanelFunctions = (ut) => {
         }
 
       } else if (inCancelableCmdList(["apitest", "preapitest"])) {
-        rejectCancelableCmdList("apitest");
-        rejectCancelableCmdList("preapitest");
-        $(`${COLUMNSPANEL} [name='apiin']`).removeClass("attentionapiinout").text(preferent.original_apiin_str);
-        $(`${COLUMNSPANEL} [name='apiout']`).removeClass("attentionapiinout").text(preferent.original_apiout_str);
+        resetApiTestProcedure();
         if(complementflg){
           m = chooseMsg('general-thanks-msg', loginuser.lastname, "c");
         }else{
@@ -2172,7 +2189,11 @@ const tidyupcmdCandidates = (targetcmd) => {
     return v != targetcmd;
   });
 }
-
+/**
+ * @function setLeftPanelTitle
+ * 
+ * set to the title in the left panel
+ */
 const setLeftPanelTitle = () => {
   title = "Table List";
   if (loginuser.dbtype == "redis") {
@@ -2181,7 +2202,12 @@ const setLeftPanelTitle = () => {
 
   $(LeftPanelTitle).text(title);
 }
-
+/**
+ * @function isSelectedItem
+ * @return {boolean} true -> existing, false -> nothing
+ * 
+ * check exsisting a selected item in the container panel
+ */
 const isSelectedItem = () => {
   let ret = false;
   let selecteditems = $(`${CONTAINERPANEL} span`).filter(".selectedItem").text();
@@ -2190,6 +2216,22 @@ const isSelectedItem = () => {
   }
 
   return ret;
+}
+/**
+ * @function resetApiTestProcedure
+ * 
+ * reset something about apitest/preapitest
+ */
+const resetApiTestProcedure = () => {
+  if(inCancelableCmdList(["apitest"])){
+    $(`${COLUMNSPANEL} [name='apiin']`).removeClass("attentionapiinout").text(preferent.original_apiin_str);
+    $(`${COLUMNSPANEL} [name='apiout']`).removeClass("attentionapiinout").text(preferent.original_apiout_str);
+    rejectCancelableCmdList("apitest");
+  }
+
+  if(inCancelableCmdList(["preapitest"])){
+    rejectCancelableCmdList("preapitest");
+  }
 }
 
 $(GENELICPANELINPUT).blur(function(){

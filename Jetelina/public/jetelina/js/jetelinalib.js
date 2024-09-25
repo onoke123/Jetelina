@@ -1339,6 +1339,7 @@ const chatKeyDown = (cmd) => {
                 typingControll(m);
             } else if (m == IGNORE && stage != 'login') {
                 if (inScenarioChk(ut, "general-thanks-cmd")) {
+                    resetApiTestProcedure();
                     typingControll(chooseMsg('general-thanks-msg', loginuser.lastname, "c"));
                 } else {
                     typingControll(chooseMsg('waiting-next-msg', "", ""));
