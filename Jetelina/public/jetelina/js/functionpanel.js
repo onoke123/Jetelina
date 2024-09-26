@@ -1617,7 +1617,9 @@ const functionPanelFunctions = (ut) => {
               }
             } else {
               m = chooseMsg('func-postcolumn-where-indispensable-msg', "", "");
-            }
+              let p = subquerysentence.length;
+              $(GENELICPANELINPUT).focus().get(0).setSelectionRange(p, p)
+                    }
           } else {
             postSelectedColumns("");
           }
@@ -1627,8 +1629,12 @@ const functionPanelFunctions = (ut) => {
               Tips:
                 sub..length<6 meaning is 'where' is mandatory in multi tables;
             */
-            if (subquerysentence.length < 6 || subquerysentence.indexOf("where") != -1 || subquerysentence == IGNORE) {
+            if (subquerysentence.length < 6 || subquerysentence.indexOf("where") <0 || subquerysentence == IGNORE) {
               m = chooseMsg('func-postcolumn-where-indispensable-msg', "", "");
+              let p = subquerysentence.length;
+              $(GENELICPANELINPUT).focus().get(0).setSelectionRange(p, p)
+            }else{
+              m = chooseMsg('func-postcolumn-available-msg', "", "");
             }
           }else{
             m = chooseMsg('func-postcolumn-available-msg', "", "");
@@ -1896,11 +1902,12 @@ const showGenelicPanel = (b) => {
       in the case of showing table list, this field is for expecting 'Sub Query'
     */
     $(GENELICPANELTEXT).text("Sub Query:");
-    $(GENELICPANELINPUT).val("where ");
-    //    $(GENELICPANELINPUT).attr('placeholder', 'where .....');
+
+    if($.trim($(GENELICPANELINPUT).val())<6){
+      $(GENELICPANELINPUT).val("where ");
+    }
 
     $(GENELICPANEL).show();
-    //    $(GENELICPANELINPUT).focus();
   } else {
     $(GENELICPANEL).hide();
     $(GENELICPANELINPUT).val("");
@@ -2205,7 +2212,7 @@ $(GENELICPANELINPUT).blur(function () {
     console.log("change subquey str: ", subq1, subq.length, "->", subq1.length);
     $(GENELICPANELINPUT).val(subq1);
   }*/
-  let subq1 = subq.replace(/\r?\n/g, '');
+  let subq1 = subq.replace(/\r?\n/g, ' ');
   $(GENELICPANELINPUT).val('');
   $(GENELICPANELINPUT).val(subq1);
 });

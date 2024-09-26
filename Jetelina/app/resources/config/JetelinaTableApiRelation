@@ -57,3 +57,5 @@ jd821:ftest2:postgresql
 js834:ftest,ftest2:postgresql
 js835:ftest:postgresql
 js836:ftest,ftest2:postgresql
+js837:ftest2:postgresql
+js838:ftest,ftest2:postgresql
