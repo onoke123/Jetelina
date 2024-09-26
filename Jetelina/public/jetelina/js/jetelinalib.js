@@ -1995,8 +1995,7 @@ const apiTestAjax = () => {
                 }
             }
         } else {
-            rejectCancelableCmdList("apitest");
-            rejectCancelableCmdList("preapitest");
+            resetApiTestProcedure();
             m = chooseMsg("fail-msg", '', '');
         }
 
