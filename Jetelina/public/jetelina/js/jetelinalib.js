@@ -298,7 +298,9 @@ const getdata = (o, t) => {
                                         configChangeHistoryStr += `${kk}=${vv} `;
                                     });
 
-                                    configChangeHistoryStr += "<br>";
+                                }
+                                if(v.name != null){
+                                    configChangeHistoryStr += ` by ${v.name}<br>`;
                                 }
                             } else if (t == 5) {
                                 // indicate db icons if it were available.
@@ -1280,7 +1282,7 @@ const chatKeyDown = (cmd) => {
                             } else {
                                 m = chooseMsg("config-update-plural-message", "", "");
                             }
-                        } else if (inScenarioChk(ut, 'get-config-change-history')) {
+                        } else if (inScenarioChk(ut, 'get-config-change-history-cmd')) {
                             getAjaxData(scenario['function-get-url'][2]);
                         }
 
@@ -1772,13 +1774,13 @@ const showSomethingMsgPanel = (b) => {
     let sm = $(SOMETHINGMSGPANEL);
     if (b) {
         if (sm.text().indexOf(preferent.errnum) != -1) {
-            sm.css({ 'height': '120px' });
+            sm.css({ 'height': '200px'});
             sm.draggable().show().animate({
-                top: "55%",
+                top: "45%",
                 left: "25%"
-            }, ANIMATEDURATION);
+            }, 100);// Attention: i do not know why but 'ANIMATEDURATION' is ignored here, thus use '100' insted of it. :p
         } else {
-            sm.css({ 'height': '70px' });// default number in .something_msg_def
+            sm.css({ 'height': '100px' });// default number in .something_msg_def
             sm.draggable().show();
         }
 

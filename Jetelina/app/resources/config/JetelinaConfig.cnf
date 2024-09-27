@@ -26,7 +26,7 @@
 version = 2.0
 
 @jdic debug:"debug"
-debug = true
+debug = false
 
 @jdic logfile:"log name","log file name","log-name"
 logfile = log.log
@@ -124,7 +124,7 @@ pg_testdbname = testdb
 
 # MySQL setting
 @jdic my_work:"mysql run","mysql availability","start mysql","mysql start"
-my_work = true
+my_work = false
 @jdic my_host:"mysql host"
 my_host = localhost
 @jdic my_port:"mysql port"

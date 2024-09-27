@@ -274,13 +274,13 @@ function configParamUpdate(d::Dict)
 		mv(configfile_tmp, configfile, force = true)
 		#
 		#  write the history
-		#  Caution:2024/3/18 "change user name" will be login user's name, but not yet.
 		#
 		open(configChangeHistoryFile,"a+") do h 
 			hd = Dates.format(now(), "yyyy-mm-dd HH:MM:SS")
 			history_previous = strip(history_previous,',')
 			history_latest = strip(history_latest,',')
-			historyString = """{"date":"$hd","name":"changed user name","previous":{$history_previous},"latest":{$history_latest}}"""
+			operator = JSession.get()[1];
+			historyString = """{"date":"$hd","name":"$operator","previous":{$history_previous},"latest":{$history_latest}}"""
 			println(h,historyString)
 		end
 

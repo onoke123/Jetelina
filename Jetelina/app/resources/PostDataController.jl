@@ -48,16 +48,16 @@ function getConfigData()
 """
 function getConfigData()
 	d = jsonpayload("param")
-	if !contains(d, "password")
+#	if !contains(d, "password")
 		if !isnothing(j_config.JC[d])
 			return json(Dict("result" => true, d => j_config.JC[d]))
 		else
 			return json(Dict("result" => false))
 		end
-	else
+#	else
 		# if "password" is required
-		return json(Dict("result" => true, d => "keep it secret.(^^)v"))
-	end
+#		return json(Dict("result" => true, d => "keep it secret.(^^)v"))
+#	end
 end
 
 """
@@ -501,7 +501,26 @@ function checkConnection()
 """
 function checkConnection()
 	db::String = jsonpayload("db")
-	return DBDataController.checkConnection(db)
+	available::Bool = false
+	db_config::String = ""
+
+	if db == "postgresql"
+		available = j_config.JC["pg_work"]
+		db_config = "pg_work"
+	elseif db == "mysql"
+		available = j_config.JC["my_work"]
+		db_config = "my_work"
+	elseif db == "redis"
+		available = j_config.JC["redis_work"]
+		db_config = "redis_work"
+	end
+
+	if available
+		return DBDataController.checkConnection(db)
+	else
+		jmg::String = """$db is not available yet. change it to be 'true' first by typing 'show server parameter' -> 'which...' -> type '$db_config' -> then type 'change parameter' -> then follow me"""
+		return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "$jmg"))
+	end
 end
 
 end
