@@ -153,7 +153,7 @@ function open_connection()
     ===#
     try
         DBInterface.execute(conn, "use jetelina")
-    catch
+    catch err
         JLog.writetoLogfile("MyDBController.open_connection() error: $err")
         return false
     finally
@@ -1406,14 +1406,18 @@ function checkConnection()
 - return: success -> true, fail -> false
 """
 function checkConnection()
+    ret::Bool = false
     try
+        create_jetelina_database()
         conn::DBInterface.Connection = open_connection()
         close_connection(conn)
-        return json(Dict("result" => true, "Jetelina" => "[{}]"))
+        return true, ""
+#        return json(Dict("result" => true, "Jetelina" => "[{}]"))
     catch err
         errnum = JLog.getLogHash()
         JLog.writetoLogfile("[errnum:$errnum] MyDBController.checkConnection() error : $err")
-        return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "$err", "errnum"=>"$errnum"))
+        return ret, errnum
+#        return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "$err", "errnum"=>"$errnum"))
     finally
     end
 end

@@ -304,17 +304,17 @@ const getdata = (o, t) => {
                                 }
                             } else if (t == 5) {
                                 // indicate db icons if it were available.
-                                if (v["postgres"]) {
+                                if (v["postgres"] == true) {
                                     $("#databaselist span[name='postgresql']").show();
                                 } else {
                                     $("#databaselist span[name='postgresql']").hide();
                                 }
-                                if (v["mysql"]) {
+                                if (v["mysql"] == true) {
                                     $("#databaselist span[name='mysql']").show();
                                 } else {
                                     $("#databaselist span[name='mysql']").hide();
                                 }
-                                if (v["redis"]) {
+                                if (v["redis"] == true) {
                                     $("#databaselist span[name='redis']").show();
                                 } else {
                                     $("#databaselist span[name='redis']").hide();
@@ -679,6 +679,10 @@ const postAjaxData = (url, data) => {
                     m = specialmsg;
                 }
             } else {
+                if (url == posturls[10]){
+                    console.log("connection error: ", stringify(result));
+                }
+                
                 cmdCandidates = [];
                 m = chooseMsg("fail-msg", "", "");
             }
@@ -1783,17 +1787,18 @@ const showSomethingMsgPanel = (b) => {
             sm.css({ 'height': '100px' });// default number in .something_msg_def
             sm.draggable().show();
         }
-
+/*
         messageScrollTimerID = setInterval(function () {
             sm.animate({ scrollTop: (sm.scrollTop() == 0 ? sm.height() : 0) }, 4000);
         }, ANIMATEDSCROLLING);
+*/
     } else {
         // these classes are for configuration changing history message
         sm.removeClass("config_history");
         $(SOMETHINGMSGPANELMSG).removeClass("config_history_text");
         $(SOMETHINGMSGPANELMSG).text("");
 
-        clearInterval(messageScrollTimerID);
+//        clearInterval(messageScrollTimerID);
         sm.hide();
     }
 }

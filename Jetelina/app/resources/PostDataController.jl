@@ -515,12 +515,24 @@ function checkConnection()
 		db_config = "redis_work"
 	end
 
-	if available
-		return DBDataController.checkConnection(db)
+	ret =  DBDataController.checkConnection(db)
+	if ret[1]
+		if !available
+			# change config parameter
+			if j_config.configParamUpdate(Dict(db_config=>"true"))
+		        return json(Dict("result" => true, "Jetelina" => "[{}]"))
+			else
+				err = """Ooops, failed at updating configuration $db_config"""
+		        return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "$err"))
+			end
+		end
 	else
-		jmg::String = """$db is not available yet. change it to be 'true' first by typing 'show server parameter' -> 'which...' -> type '$db_config' -> then type 'change parameter' -> then follow me"""
-		return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "$jmg"))
+		err = """Ooops, failed at checkin' the connection, may need to update the connection parameters"""
+		return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "$err"))
 	end
+
+#		jmg::String = """$db is not available yet. change it to be 'true' first by typing 'show server parameter' -> 'which...' -> type '$db_config' -> then type 'change parameter' -> then follow me"""
+#		return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "$jmg"))
 end
 
 end
