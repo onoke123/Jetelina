@@ -38,6 +38,3 @@ js835:ftest:postgresql
 js836:ftest,ftest2:postgresql
 js837:ftest2:postgresql
 js838:ftest,ftest2:postgresql
-ji839:ftest3:mysql
-ju840:ftest3:mysql
-jd841:ftest3:mysql

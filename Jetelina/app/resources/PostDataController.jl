@@ -29,7 +29,7 @@ functions
 """
 module PostDataController
 
-using Genie, Genie.Requests, Genie.Renderer.Json
+using Genie, Genie.Requests, Genie.Renderer.Json, DataFrames
 using Jetelina.JFiles, Jetelina.JLog, Jetelina.InitApiSqlListManager.ApiSqlListManager, Jetelina.DBDataController, Jetelina.JMessage, Jetelina.JSession
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
@@ -503,6 +503,7 @@ function checkConnection()
 	db::String = jsonpayload("db")
 	available::Bool = false
 	db_config::String = ""
+	df::DataFrame = DataFrame()
 
 	if db == "postgresql"
 		available = j_config.JC["pg_work"]
@@ -510,6 +511,7 @@ function checkConnection()
 	elseif db == "mysql"
 		available = j_config.JC["my_work"]
 		db_config = "my_work"
+		df = DataFrame("my_host"=>j_config.JC["my_host"],"my_port"=>j_config.JC["my_port"],"my_user"=>j_config.JC["my_user"],"my_password"=>j_config.JC["my_password"],"my_dbname"=>j_config.JC["my_dbname"],"my_unix_socket"=>j_config.JC["my_unix_socket"])
 	elseif db == "redis"
 		available = j_config.JC["redis_work"]
 		db_config = "redis_work"
@@ -522,13 +524,13 @@ function checkConnection()
 			if j_config.configParamUpdate(Dict(db_config=>"true"))
 		        return json(Dict("result" => true, "Jetelina" => "[{}]"))
 			else
-				err = """Ooops, failed at updating configuration $db_config"""
+				err = """Oh my, failed at updating configuration $db_config"""
 		        return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "$err"))
 			end
 		end
 	else
 		err = """Ooops, failed at checkin' the connection, may need to update the connection parameters"""
-		return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "$err"))
+		return json(Dict("result" => false, "Jetelina" =>  copy.(eachrow(df)), "errmsg" => "$err"))
 	end
 
 #		jmg::String = """$db is not available yet. change it to be 'true' first by typing 'show server parameter' -> 'which...' -> type '$db_config' -> then type 'change parameter' -> then follow me"""

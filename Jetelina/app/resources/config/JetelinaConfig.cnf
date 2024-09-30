@@ -132,6 +132,7 @@ my_port = 3306
 @jdic my_user:"mysql user","mysql login"
 my_user = user
 @jdic my_password:"mysql password","password in mysql"
+#my_password = userpasswd
 my_password = userpasswd
 #
 # Caution: the initial db name is 'mysql', then Jetelina will rewrite it to 'jetelina'

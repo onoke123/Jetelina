@@ -44,6 +44,7 @@
       isVisibleFavicon(b) show/hide the favicon message
       apiTestAjax() ajax function for executing API test.
       searchLogAjax() ajax function for searching 'errnum' in the log file
+      showConfigPanel() "#config_panel" show or hide
  */
 const JETELINACHATTELL = `${JETELINAPANEL} [name='jetelina_tell']`;
 const SOMETHINGMSGPANEL = "#something_msg";
@@ -72,6 +73,8 @@ const SELECTITEM = "select-item";// 　　　　　〃
 const TABLEAPIDELETE = "table-api-delete";// 〃
 const FILESELECTOROPEN = "files-elector-open"; // 　〃
 const LOCALPARAM = "login2jetelina"; // local strage parameter
+const CONFIGPANEL = "#config_panel ";
+const CONFIGPANELLIST = `${CONFIGPANEL} [name='config_list']`;
 //const USETCOUNTMAX = getRandomNumber(4) + 1; // only use for the first login in checkNewCommer
 
 //let enterNumber = 0;
@@ -536,8 +539,8 @@ const postAjaxData = (url, data) => {
             }
         }).done(function (result, textStatus, jqXHR) {
             let m = "";
+            const posturls = scenario['function-post-url'];
             if (checkResult(result)) {
-                const posturls = scenario['function-post-url'];
                 let specialmsg = "";
                 if (url == posturls[0] || url == posturls[7]) {
                     // userdata update or new user register
@@ -655,6 +658,7 @@ const postAjaxData = (url, data) => {
                     // do not expect any returns, but refresh table and api list
                     displayTablesAndApis();
                 } else if (url == posturls[10]) {
+                    showConfigPanel(false);
                     /*
                         Tips:
                             posturls[10] is for checking the connection,
@@ -680,9 +684,19 @@ const postAjaxData = (url, data) => {
                 }
             } else {
                 if (url == posturls[10]){
-                    console.log("connection error: ", stringify(result));
+                    console.log("connection error: ", JSON.stringify(result));
+                    let dbinfo = result["Jetelina"][0];
+                    let dbparams = "";
+                    let i=1;
+                    $.each(dbinfo,function(k,v){
+                        dbparams += `<div style="text-align:left;"><span name="k${i}" class="configparams_key">${k}:</span><span name="v${i}" class="configparams_val">${v}</span></div>`;
+                        i++;
+                    });
+
+                    $(CONFIGPANELLIST).append(dbparams);
+                    showConfigPanel(true);
                 }
-                
+
                 cmdCandidates = [];
                 m = chooseMsg("fail-msg", "", "");
             }
@@ -1182,12 +1196,9 @@ const chatKeyDown = (cmd) => {
                                     after displaying the ordered parameter, the update procedure is canceled by 'thank you'. 
                             */
                             if (inScenarioChk(ut, "general-thanks-cmd")) {
-                                typingControll(chooseMsg('general-thanks-msg', loginuser.lastname, "c"));
-                                typingControll(chooseMsg('general-thanks-msg', loginuser.lastname, "c"));
-                                           
-                                typingControll(chooseMsg('general-thanks-msg', loginuser.lastname, "c"));           
-                                           
+                                typingControll(chooseMsg('general-thanks-msg', loginuser.lastname, "c"));                                          
                                 showSomethingMsgPanel(false);
+                                showConfigPanel(false);
                                 if(inCancelableCmdList([CONFIGCHANGE])){
                                     rejectCancelableCmdList(CONFIGCHANGE);
                                     presentaction = {};
@@ -1262,6 +1273,24 @@ const chatKeyDown = (cmd) => {
                                             */
                                             if (presentaction.config_name == "dbtype") {
                                                 presentaction.dbtype = new_param;
+                                            }
+
+                                            if( $(CONFIGPANEL).is(":visible")){
+                                                $(`${CONFIGPANELLIST} span`).filter(".configparams_key").each(function(){
+                                                    let p = $(this);
+                                                    let key = p.text();
+
+                                                    if(0<key.length && key.endsWith(":") ){
+                                                        key = key.slice(0,-1);
+                                                    }
+
+                                                    if(key == presentaction.config_name){
+                                                        let k = p.attr("name");
+                                                        let v = "v" + k.substr(1);
+                                                        $(`${CONFIGPANELLIST} span[name='${v}']`).text(new_param);
+                                                        return;
+                                                    }
+                                                });
                                             }
 
                                             let data = `{"${presentaction.config_name}":"${new_param}"}`;
@@ -1346,6 +1375,7 @@ const chatKeyDown = (cmd) => {
             } else if (m == IGNORE && stage != 'login') {
                 if (inScenarioChk(ut, "general-thanks-cmd")) {
                     resetApiTestProcedure();
+                    showConfigPanel(false);
                     typingControll(chooseMsg('general-thanks-msg', loginuser.lastname, "c"));
                 } else {
                     typingControll(chooseMsg('waiting-next-msg', "", ""));
@@ -1436,6 +1466,7 @@ const logout = () => {
     $("#performance_test").hide();
     $("#command_list").hide();
     showSomethingMsgPanel(false);
+    showConfigPanel(false);
     setDBFocus("");
     isVisibleDatabaseList(false);
 
@@ -2063,4 +2094,20 @@ const searchLogAjax = () => {
         // release it for allowing to input new command in the chatbox 
         inprogress = false;
     });
+}
+/**
+ * @function showConfigPanel
+ *
+ * @param {boolean} true -> show, false -> hide
+ *  
+ * "#config_panel" show or hide
+ */
+const showConfigPanel = (b) => {
+    if (b) {
+        $(CONFIGPANEL).show().draggable();
+    } else {
+        // delete all test results
+        $(CONFIGPANEL).hide();
+        $(CONFIGPANEL).filter(".configparams").remove();
+    }
 }

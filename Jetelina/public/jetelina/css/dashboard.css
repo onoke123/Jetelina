@@ -307,3 +307,12 @@ textarea.user-input{
     100% { color:#7dc37f}
   }
   
+  .configparams_key {
+    color: #7dc37f;
+    text-align: left;
+  }
+
+  .configparams_val {
+    color: #f1ef46;
+    text-align: left;
+  }
