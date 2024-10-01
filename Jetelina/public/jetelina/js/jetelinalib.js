@@ -684,7 +684,6 @@ const postAjaxData = (url, data) => {
                 }
             } else {
                 if (url == posturls[10]){
-                    console.log("connection error: ", JSON.stringify(result));
                     let dbinfo = result["Jetelina"][0];
                     let dbparams = "";
                     let i=1;
@@ -2108,6 +2107,6 @@ const showConfigPanel = (b) => {
     } else {
         // delete all test results
         $(CONFIGPANEL).hide();
-        $(CONFIGPANEL).filter(".configparams").remove();
+        $(`${CONFIGPANEL} span`).filter(".configparams_key, .configparams_val").remove();
     }
 }

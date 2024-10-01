@@ -1412,12 +1412,10 @@ function checkConnection()
         conn::DBInterface.Connection = open_connection()
         close_connection(conn)
         return true, ""
-#        return json(Dict("result" => true, "Jetelina" => "[{}]"))
     catch err
         errnum = JLog.getLogHash()
         JLog.writetoLogfile("[errnum:$errnum] MyDBController.checkConnection() error : $err")
         return ret, errnum
-#        return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "$err", "errnum"=>"$errnum"))
     finally
     end
 end

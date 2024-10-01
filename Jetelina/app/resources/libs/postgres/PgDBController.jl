@@ -1471,14 +1471,15 @@ function checkConnection()
 - return: success -> true, fail -> false
 """
 function checkConnection()
+    ret::Bool = false
     try
         conn::LibPQ.Connection = open_connection()
         close_connection(conn)
-        return json(Dict("result" => true, "Jetelina" => "[{}]"))
+        return true, ""
     catch err
         errnum = JLog.getLogHash()
         JLog.writetoLogfile("[errnum:$errnum] PgDBController.checkConnection() error : $err")
-        return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "$err", "errnum"=>"$errnum"))
+        return ret, errnum
     finally
     end
 end

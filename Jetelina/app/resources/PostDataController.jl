@@ -508,6 +508,7 @@ function checkConnection()
 	if db == "postgresql"
 		available = j_config.JC["pg_work"]
 		db_config = "pg_work"
+		df = DataFrame("pg_host"=>j_config.JC["pg_host"],"pg_port"=>j_config.JC["pg_port"],"pg_user"=>j_config.JC["pg_user"],"pg_password"=>j_config.JC["pg_password"],"pg_dbname"=>j_config.JC["pg_dbname"],"pg_sslmode"=>j_config.JC["pg_sslmode"])
 	elseif db == "mysql"
 		available = j_config.JC["my_work"]
 		db_config = "my_work"
@@ -515,6 +516,7 @@ function checkConnection()
 	elseif db == "redis"
 		available = j_config.JC["redis_work"]
 		db_config = "redis_work"
+		df = DataFrame("redis_host"=>j_config.JC["redis_host"],"redis_port"=>j_config.JC["redis_port"],"redis_password"=>j_config.JC["redis_password"],"redis_dbname"=>j_config.JC["redis_dbname"])
 	end
 
 	ret =  DBDataController.checkConnection(db)
@@ -529,7 +531,7 @@ function checkConnection()
 			end
 		end
 	else
-		err = """Ooops, failed at checkin' the connection, may need to update the connection parameters"""
+		err = """Ooops, failed at checkin' the connection, may need to update the connection parameters. type 'show parameter' -> which ... -> type to point parameter like 'my_password' -> then type 'change parameter' -> set your new data for updating, then rely on me :)"""
 		return json(Dict("result" => false, "Jetelina" =>  copy.(eachrow(df)), "errmsg" => "$err"))
 	end
 

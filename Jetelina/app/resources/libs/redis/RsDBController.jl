@@ -45,7 +45,7 @@ function open_connection()
 function open_connection()
     rhost = string(j_config.JC["redis_host"])
     rport = parse(Int, j_config.JC["redis_port"])
-    rdb = parse(Int, j_config.JC["redis_db"])
+    rdb = parse(Int, j_config.JC["redis_dbname"])
     rpassword = string(j_config.JC["redis_password"])
 
     return conn = Redis.RedisConnection(host="$rhost", port=rport, password="$rpassword", db=rdb)
@@ -375,14 +375,15 @@ function checkConnection()
 - return: success -> true, fail -> false
 """
 function checkConnection()
+    ret::Bool = false
     try
         conn::Redis.RedisConnection = open_connection()
         close_connection(conn)
-        return json(Dict("result" => true, "Jetelina" => "[{}]"))
+        return true, ""
     catch err
         errnum = JLog.getLogHash()
         JLog.writetoLogfile("[errnum:$errnum] RsDBController.checkConnection() error : $err")
-        return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "$err", "errnum"=>"$errnum"))
+        return ret, errnum
     finally
     end
 end
