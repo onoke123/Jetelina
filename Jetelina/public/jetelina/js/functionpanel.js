@@ -68,8 +68,8 @@ $(UPFILE).on("change", function () {
 */
 $(document).on({
   mouseenter: function (e) {
-    let moveLeft = -10/*-150/*20*/;
-    let moveDown = -10 /*-90/*10*/;
+    let moveLeft = -10;
+    let moveDown = -10;
 
     $("#pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
 
@@ -106,19 +106,19 @@ const openFunctionPanel = () => {
   if (isVisibleColumns()) {
     $(FILEUP).draggable().animate({
       top: "4%",
-      left: "1%" //"5%"
+      left: "1%"
     }, ANIMATEDURATION);
     $("#left_panel").draggable().animate({
       top: "10%",
-      left: "1%" //"5%"
+      left: "1%"
     }, ANIMATEDURATION);
     $(COLUMNSPANEL).draggable().animate({
       top: "10%",
-      left: "19%" //"30%"
+      left: "19%"
     }, ANIMATEDURATION);
     $(CONTAINERPANEL).draggable().animate({
       bottom: "6%",
-      left: "19%" //"30%"
+      left: "19%"
     }, ANIMATEDURATION);
 
     $(RELATEDTABLESAPIS).draggable().animate({
@@ -192,13 +192,7 @@ const isVisibleColumns = () => {
  */
 const itemSelect = (p) => {
   let cl = p.attr("class");
-  //  let item = p.text();
   let item = p.attr("colname");
-
-  // delete the showing because the api no is displayed in there initially.
-  //  if ($(`${CONTAINERPANEL} span`).hasClass('apisql')) {
-  //    $(`${CONTAINERPANEL} span`).remove();
-  //  }
 
   if (p.hasClass("selectedItem")) {
     // delete
@@ -293,13 +287,10 @@ const cleanUp = (s) => {
  */
 const cleanupItems4Switching = () => {
   cleanUp("items");
-  //  if (isVisibleTableContainer()) {
   $("#columns_title").text("");
   $(`${TABLECONTAINER} span`).removeClass("activeItem");
-  //  } else if (isVisibleApiContainer()) {
   $(`${APICONTAINER} span`).removeClass("activeItem");
   $(`${CONTAINERPANEL} span`).remove();
-  //  }
 }
 /**
 * @function cleanupContainers
@@ -335,7 +326,6 @@ const fileupload = () => {
   let fd = new FormData($(MYFORM).get(0));
   $("#upbtn").prop("disabled", true);
 
-  //  const uploadFilename = $("input[type=file]").prop("files")[0].name;
   const uploadFilename = $(UPFILE).prop("files")[0].name;
   const tablename = uploadFilename.split(".")[0];
 
@@ -524,7 +514,6 @@ const listClick = (p) => {
       p.toggleClass("activeItem");
     } else {
       // delete target 
-      //        cleanupRelatedList(true);
       $(`${relatedPanel} span, ${relatedPanel} span`).filter('.relatedItem').each(function () {
         $(this).removeClass("relatedItem");
       });
@@ -656,10 +645,6 @@ const setApiIF_In = (t, s) => {
       if(subquery_str != ""){
         ret = `{"apino": \"${t}\","subquery":\"[${subquery_str}]\"}`;
       }else{
-        /*
-          Tips:
-
-        */
         ret = `{"apino":\"${t}\"}`;
       }
     } else {
@@ -812,7 +797,6 @@ const buildJetelinaJsonForm = (t, s) => {
       ss = $.trim(ss);
       preferent.apitestparams.push(ss);
       ret = `${ret}\"${ss}\":\"{${ss}}\",`;
-      //      ret = `${ret}\"${$.trim(ss)}\":\"{${$.trim(ss)}}\",`;
     }
   }
 
@@ -930,9 +914,8 @@ const removeColumn = (p) => {
  * Ajax function for deleting the target tables from DataBase. 
  */
 const dropThisTable = (tables) => {
-  //  if (0 < tablename.length || tablename != undefined) {
   let pd = {};
-  //    pd["tablename"] = $.trim(tablename);
+
   pd["tablename"] = tables;
 
   if (loginuser.sw == null || loginuser.sw == "") {
@@ -958,18 +941,7 @@ const dropThisTable = (tables) => {
   }).done(function (result, textStatus, jqXHR) {
     let m = "";
     if (checkResult(result)) {
-      //      for (let i = 0; i < tables.length; i++) {
-      //        $(`${TABLECONTAINER} span`).filter(function () {
-      //          if ($(this).text() === tables[i]) {
       cleanUp("items");
-      //$(this).remove();
-      //removeColumn(tables[i]);
-      //cleanupContainers();
-      //            return;
-      //          }
-      //        });
-      //      }
-
       // 'pass' is authorized by Jetelina
       loginuser.sw = pd["pass"];
       showSomethingInputField(false);
@@ -985,8 +957,6 @@ const dropThisTable = (tables) => {
       if (m == null || m == "") {
         m = chooseMsg('fail-msg', '', '');
       }
-      // try again
-      //$(SOMETHINGINPUT).focus();
     }
 
     typingControll(m);
@@ -1072,7 +1042,7 @@ const postSelectedColumns = (mode) => {
           $(GENELICPANEL).hide();
         }
 
-        m = `new api no is ${result.apino}`;
+        m = chooseMsg('func-newapino-msg',`is ${result.apino}`, 'r');
         $(CHATBOXYOURTELL).text(m);
         $(".yourText").mouseover();
       } else {
@@ -1091,8 +1061,7 @@ const postSelectedColumns = (mode) => {
     } else {
       m = chooseMsg('fail-msg', '', '');
       if (result.resembled != null && 0 < result.resembled.length) {
-        //        $(CONTAINERPANEL).append(`<span class="newapino"><p>there is similar API already exist:  ${result.resembled}</p></span>`);
-        m = `there is a similar API already existing:  ${result.resembled}`;
+        m = chooseMsg('func-duplicateapi-msg',`${result.resembled}`,'r');
       }
     }
 
@@ -1762,14 +1731,6 @@ const functionPanelFunctions = (ut) => {
           API 'IN' parameters are already collected in buildJetelinaJsonForm() as preferent.apitestparams.
           ust this for setting each ones in chatting.
       */
-      //      if (preferent.original_apiin_str == null || preferent.original_apiin_str == "") {
-      //        preferent.original_apiin_str = $(`${COLUMNSPANEL} [name='apiin']`).text();
-      //      }
-
-      //      if (preferent.original_apiout_str == null || preferent.original_apiout_str == "") {
-      //        preferent.original_apiout_str = $(`${COLUMNSPANEL} [name='apiout']`).text();
-      //      }
-
       if (preferent.apitestparams != null && 0 < preferent.apitestparams.length) {
         if (preferent.apiparams_count == null) {
           preferent.apiparams_count = 0;
@@ -1778,7 +1739,7 @@ const functionPanelFunctions = (ut) => {
         }
 
         if (preferent.apiparams_count < preferent.apitestparams.length) {
-          m = `set '${preferent.apitestparams[preferent.apiparams_count]}'`;
+          m = chooseMsg('func-api-test-set-params-msg',`${preferent.apitestparams[preferent.apiparams_count]}`,'r');
         } else if (inScenarioChk(ut, 'func-api-test-execute-cmd')) {
           apiTestAjax();
           m = chooseMsg('inprogress-msg', '', '');
@@ -1787,7 +1748,6 @@ const functionPanelFunctions = (ut) => {
           m = chooseMsg('func-api-test-ready-msg', e, 'r');
         }
       } else {
-        //        if(preferent.apiparams_count != null){
         if (inScenarioChk(ut, 'func-api-test-execute-cmd')) {
           apiTestAjax();
           m = chooseMsg('inprogress-msg', '', '');
@@ -1795,20 +1755,6 @@ const functionPanelFunctions = (ut) => {
           let e = chooseMsg('func-api-test-execute-cmd', '', '');
           m = chooseMsg('func-api-test-ready-no-param-msg', e, 'r');
         }
-        //        }else{
-        /*
-          Attention:
-            after executing api test, we do not know what the user will type.
-            maybe "select api","selct table","cancel","open file".....
-            this part is ready for the next command with clean up something.
-            I GUESS reject 'apitest' in cancelableCmdList is enough it, but not sure...
-            then re-do with 'ut' in jetelinaLib.js chatKeyDown().
-      
-            guess there is a better way with survaying the whole logic, but have done this as the first-aid in ver2.  2024/9/24 :P
-        */
-        //          rejectCancelableCmdList("apitest");
-        //          chatKeyDown(ut);
-        //        }
       }
 
       break;
@@ -1842,7 +1788,7 @@ const functionPanelFunctions = (ut) => {
             // start to use this db, but
             if (loginuser.roll == "admin") {
               // only admin can change the availability of this db
-              let data = `{"db":"${preferent.db}"}`;
+              let data = `{"db":"${preferent.db}","mode":"check"}`;
               postAjaxData(scenario["function-post-url"][10], data);
             } else {
               // display a message 'lack of roll'
@@ -1984,9 +1930,7 @@ const checkGenelicInput = (ss) => {
  * Ajax function for deleting the target api from api list doc. 
  */
 const deleteThisApi = (apis) => {
-  //  if (0 < apino.length || apino != undefined) {
   let pd = {};
-  //   pd["apino"] = $.trim(apino);
   pd["apino"] = apis;
 
   if (loginuser.sw == null || loginuser.sw == "") {
@@ -2012,26 +1956,7 @@ const deleteThisApi = (apis) => {
   }).done(function (result, textStatus, jqXHR) {
     let m = "";
     if (checkResult(result)) {
-      //      for (let i = 0; i < apis.length; i++) {
-      //        $(`${APICONTAINER} span`).each(function () {
-      //          if ($(this).text() === apis[i]) {
-      //            if($(this).hasClass("activeItem") || $(this).hasClass("activeandrelatedItem")){
       cleanUp("items");
-      //              for(let n in relatedDataList[apis[i]]){
-      //                $(`${TABLECONTAINER} span`).filter(".relatedItem").each(function () {
-      //                  if($(this).text() == relatedDataList[apis[i]][n]){
-      //                    $(this).removeClass("relatedItem");
-      //                  }
-      //                });
-      //              }
-      //            }
-      //            $(this).remove();
-      //            removeColumn(apis[i]);
-      //            cleanupContainers();
-      //            return;
-      //          }
-      //        });
-      //      }
 
       // 'pass' is authorized by Jetelina
       loginuser.sw = pd["pass"];
@@ -2048,8 +1973,6 @@ const deleteThisApi = (apis) => {
       if (m == null || m == "") {
         m = chooseMsg('fail-msg', '', '');
       }
-      // try again
-      //$(SOMETHINGINPUT).focus();
     }
 
     typingControll(m);
@@ -2205,13 +2128,6 @@ const resetApiTestProcedure = () => {
 
 $(GENELICPANELINPUT).blur(function () {
   let subq = $(GENELICPANELINPUT).val();
-  /*
-  if( $.inArray(subq[subq.length-1],["\n","\r\n"] != -1) ){
-    console.log("subq:",subq);
-    let subq1 = subq.slice(0,subq.lenth-1);
-    console.log("change subquey str: ", subq1, subq.length, "->", subq1.length);
-    $(GENELICPANELINPUT).val(subq1);
-  }*/
   let subq1 = subq.replace(/\r?\n/g, ' ');
   $(GENELICPANELINPUT).val('');
   $(GENELICPANELINPUT).val(subq1);

@@ -27,7 +27,7 @@
 		deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
 		createApiSelectSentence(json_d::Dict,mode::String) create API and SQL select sentence from posting data.
 		refStichWort(stichwort::String)	reference and matching with user_info->stichwort
-		checkConnection() simply connection checking
+		prepareDbEnvironment(db::String,mode::String) database connection checking, and initializing database if needed
 """
 
 module DBDataController
@@ -53,7 +53,7 @@ include("libs/redis/RsSQLSentenceManager.jl")
 export init_Jetelina_table, createJetelinaDatabaseinMysql,
 	dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,
 	executeApi, userRegist, chkUserExistence, getUserInfoKeys, refUserAttribute, refUserInfo, updateUserInfo, updateUserData, deleteUserAccount,
-	createApiSelectSentence, refStichWort, checkConnection
+	createApiSelectSentence, refStichWort, prepareDbEnvironment
 
 
 """
@@ -548,23 +548,24 @@ function refStichWort(stichwort::String)
 	end
 end
 """
-function checkConnection(db::String) 
+function prepareDbEnvironment(db::String,mode::String) 
 	
-	simply connection checking
+	database connection checking, and initializing database if needed
 
 # Arguments
-- `db::String`: check db
+- `db::String`: target db
+- `mode::String`: 'init' -> initialize, others -> connection check
 - return: success -> true, fail -> false
 """
-function checkConnection(db::String)
+function prepareDbEnvironment(db::String,mode::String)
 	ret = ""
 
 	if db == "postgresql"
-		ret = PgDBController.checkConnection()
+		ret = PgDBController.prepareDbEnvironment(mode)
 	elseif db == "mysql"
-		ret = MyDBController.checkConnection()
+		ret = MyDBController.prepareDbEnvironment(mode)
 	elseif db == "redis"
-		ret = RsDBController.checkConnection()
+		ret = RsDBController.prepareDbEnvironment(mode)
 	end
 
 	return ret

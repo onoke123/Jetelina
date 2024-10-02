@@ -25,10 +25,7 @@
       instractionMode(s) confirmation in adding a new scenario
       showManualCommandList(s) show/hide manual and/or command list panel
       inScenarioChk(s,sc,type) check if user input string is in the ordered scenario
-      checkBandA(o,p) check the target sting is effective or not in the array string.
       countCandidates(s,sc,type) count config/scenario candidates
-//      checkNewCommer(s) check the login user is a newcommer or not.
-      checkBeginner() check the login user is a beginner or not.
       isVisibleFunctionPanel() check the function panel is visible or not
       inVisibleConditionPanel() check the condition panel is visible or not
       isVisibleSomethingMsgPanel() checking "#something_msg" is visible or not
@@ -40,11 +37,13 @@
       rejectCancelableCmdList(cmd) reject command from cancelableCmdList
       rejectSelectedItemsArr(item) reject selected item from selectedItemsArr
       subPanelCheck() confirm sub panels condition when focus moves on Jetelina Chat Box
+      isVisibleDatabaseList(b) '#databaselist" show or hide
       setDBFocus(s) set blinking to the current db
       isVisibleFavicon(b) show/hide the favicon message
       apiTestAjax() ajax function for executing API test.
       searchLogAjax() ajax function for searching 'errnum' in the log file
-      showConfigPanel() "#config_panel" show or hide
+      showConfigPanel(b) "#config_panel" show or hide
+      showPreciousPanel(b) "#jetelina_teach_you_smg" show or hide
  */
 const JETELINACHATTELL = `${JETELINAPANEL} [name='jetelina_tell']`;
 const SOMETHINGMSGPANEL = "#something_msg";
@@ -63,7 +62,6 @@ const TABLECONTAINER = "#table_container";
 const APICONTAINER = "#api_container";
 const GENELICPANEL = "#genelic_panel";
 const GENELICPANELINPUT = `${GENELICPANEL} textarea[name='genelic_input']`;
-//const GENELICPANELINPUT = `${GENELICPANEL} input[name='genelic_input']`;
 const GENELICPANELTEXT = `${GENELICPANEL} text[name='genelic_text']`;
 const APITESTPANEL = "#apitest";
 const CONFIGCHANGE = "config-change";// command in cancelable command list 
@@ -75,9 +73,8 @@ const FILESELECTOROPEN = "files-elector-open"; // 　〃
 const LOCALPARAM = "login2jetelina"; // local strage parameter
 const CONFIGPANEL = "#config_panel ";
 const CONFIGPANELLIST = `${CONFIGPANEL} [name='config_list']`;
-//const USETCOUNTMAX = getRandomNumber(4) + 1; // only use for the first login in checkNewCommer
+const PRECIOUSWORDPANEL = "#jetelina_teach_you_smg";//showing something precious word by Jetelina
 
-//let enterNumber = 0;
 let typingTimeoutID;
 let whatJetelinaTold = ""; // what jetelina was telling in just previous time 
 let relatedDataList = {}; // relation data to table/api has been contained here as temporary
@@ -147,6 +144,12 @@ const checkResult = (o) => {
                 preferent.errnum = o.errnum;
             }
 
+            if(o.preciousmsg != null){
+                let prw = o.preciousmsg.replaceAll("<start>","<br><br>□").replaceAll("<st>","<br>□").replaceAll("<end>","<br><br>");
+                $(`${PRECIOUSWORDPANEL} [name='precious_word']`).append(prw);
+                showPreciousPanel(true);
+            }
+
             if (o[response] != null) {
                 errmsg = o[response][errMsg];
                 error = o[response][errorStr];
@@ -182,7 +185,7 @@ const checkResult = (o) => {
 
             ret = false;
         } else {
-            $(SOMETHINGMSGPANELMSG).text("");
+//            $(SOMETHINGMSGPANELMSG).text("");
             showSomethingMsgPanel(false);
             /*
                 Tips:
@@ -684,6 +687,10 @@ const postAjaxData = (url, data) => {
                 }
             } else {
                 if (url == posturls[10]){
+                    if($(CONFIGPANEL).is(":visible")){
+                        $(`${CONFIGPANEL} span`).filter(".configparams_key, .configparams_val").remove();
+                    }
+
                     let dbinfo = result["Jetelina"][0];
                     let dbparams = "";
                     let i=1;
@@ -855,7 +862,7 @@ const authAjax = (un) => {
                         }
 
                         stage = 'login_success';
-                        //                        m = scenarioNumber;
+
                         if (scenarioNumber != 'first-login-msg') {
                             m = chooseMsg(scenarioNumber, m, "a");
                         } else {
@@ -1013,7 +1020,6 @@ const chatKeyDown = (cmd) => {
 
     if (ut != null && 0 < ut.length) {
         ut = $.trim(ut);
-        //        ut = $.trim(ut.toLowerCase());
         /*
             Tips:
                 After registring a new api, maybe called it to open.
@@ -1041,7 +1047,6 @@ const chatKeyDown = (cmd) => {
             whatJetelinaTold = $(JETELINACHATTELL).text();
             $(JETELINACHATTELL).text("");
             $(JETELINACHATBOX).val("");
-            //            $(CHATBOXYOURTELL).text(ut);
 
             // logout
             if (logoutChk(ut)) {
@@ -1198,6 +1203,7 @@ const chatKeyDown = (cmd) => {
                                 typingControll(chooseMsg('general-thanks-msg', loginuser.lastname, "c"));                                          
                                 showSomethingMsgPanel(false);
                                 showConfigPanel(false);
+                                showPreciousPanel(false);
                                 if(inCancelableCmdList([CONFIGCHANGE])){
                                     rejectCancelableCmdList(CONFIGCHANGE);
                                     presentaction = {};
@@ -1375,6 +1381,7 @@ const chatKeyDown = (cmd) => {
                 if (inScenarioChk(ut, "general-thanks-cmd")) {
                     resetApiTestProcedure();
                     showConfigPanel(false);
+                    showPreciousPanel(false);
                     typingControll(chooseMsg('general-thanks-msg', loginuser.lastname, "c"));
                 } else {
                     typingControll(chooseMsg('waiting-next-msg', "", ""));
@@ -1417,7 +1424,7 @@ const openingMessage = () => {
  * idling message in the initial screen
  */
 const burabura = () => {
-    const t = 30000;// chage the idling message after 20 sec
+    const t = 30000;// chage the idling message after 30 sec
     timerId = setInterval(function () {
         $(JETELINACHATTELL).text("");
         $(CHATBOXYOURTELL).text("");
@@ -1466,6 +1473,7 @@ const logout = () => {
     $("#command_list").hide();
     showSomethingMsgPanel(false);
     showConfigPanel(false);
+    showPreciousPanel(false);
     setDBFocus("");
     isVisibleDatabaseList(false);
 
@@ -1597,25 +1605,6 @@ const inScenarioChk = (s, sc, type) => {
     return false;
 }
 /**
- * @function checkBandA
- * @param {string} o target string
- * @param {string} p found position in an array 
- * @returns {boolean}  true -> ok, false -> no good
- * 
- * check the target sting is effective or not in the array string.
- *     ex. wanna check 'open' in o->"ftestopen"  p->10 then true is " open","open ","'open",",open","open'","open,"
- *         i mean 'topen' is NG.
- */
-const checkBandA = (o, p) => {
-    let ret = false;
-    let c = [' ', ',', '\'', '\"'];
-    if ((p == 0) || ((o[p - 1] != null && o[p - 1].includes(c)) && (o[p + o.length + 1] != null && o[p + o.length + 1].includes(c)))) {
-        ret = true;
-    }
-
-    return ret;
-}
-/**
  * @function countCandidates
  * @param {string} s  user input data
  * @param {string} sc scenario data array name 
@@ -1650,71 +1639,6 @@ const countCandidates = (s, sc, type) => {
     }
 
     return [c, candidate];
-}
-/**
- * @function checkNewCommer
- * @param {string} s  user input data
- * @returns {array[boolean,string]}  [true -> yes a newcommer, false -> an expert, "scenario message"]
- * 
- *  check the login user is a newcommer or not.
- *  ask some attribute if a newcommer.
- 
-const checkNewCommer = (s) => {
-    if (loginuser.logincount == 0) {
-        let data;
-        let m;
-        if (usetcount < 3) {
-            // set user's firstname and lastname, these are mandatory.
-            switch (authcount) {
-                case 0: // anyhow the first access
-                    m = chooseMsg('first-login-msg', loginuser.login, "");
-                    break;
-                case 1: // set 'fiestname'
-                    data = `{"uid":${loginuser.user_id},"key":"firstname","val":"${s}"}`;
-                    m = chooseMsg('first-login-ask-lastname-msg', "", "");
-                    break;
-                case 2: // set 'lastname'
-                    data = `{"uid":${loginuser.user_id},"key":"lastname","val":"${s}"}`;
-                    m = chooseMsg('first-login-ask-info-msg', loginuser.login, "");
-                    break;
-                default:
-                    m = chooseMsg('first-login-ask-firstname-msg', "", "");
-                    break;
-            }
-
-            postAjaxData(scenario["function-post-url"][0], data);
-        } else {
-            // set user's info, these are using for authentication.
-            if (usetcount < USETCOUNTMAX) {
-                m = chooseMsg('first-login-ask-info-then-msg', "", "");
-                data = `{"uid":${loginuser.user_id},"key":"lastname","val":"${s}"}`;
-            } else {
-                m = chooseMsg('first-login-ask-info-end-msg', "", "");
-            }
-        }
-
-        usetcount++;
-        return [true, m];
-    }
-    if (loginuser.login == loginuser.fistname && loginuser.login == loginuser.lastname) {
-        m = chooseMsg('first-login', loginuser.login, "");
-        authcount++;
-    }
-}
-*/
-/**
- * @function checkBeginner
- * @returns {boolean}  true -> yes a beginner, false -> an expert
- * 
- * check the login user is a beginner or not.
- */
-const checkBeginner = () => {
-    if (loginuser.logincount < 3) {
-
-    } else if (10 < loginuser.logincount) {
-
-    } else {
-    }
 }
 /**
  * @function isVisibleFunctionPanel
@@ -1760,9 +1684,9 @@ const isVisibleSomethingMsgPanel = () => {
 }
 /**
  * @function showSomethingInputField
- *
  * @param {boolean} b true -> show, false -> hide
  * @param {integer} type 0->config change 1->register pass phrase 2->inquire pass phrase
+ * 
  * "#something_input_field" show or hide
  */
 const showSomethingInputField = (b, type) => {
@@ -1783,14 +1707,12 @@ const showSomethingInputField = (b, type) => {
             } else {
                 t = "";
             }
-
-            //            $(SOMETHINGINPUTFIELD).append(`<text name="whatfor" class="box_text">${t}</text>`);
         }
 
         $(SOMETHINGINPUTFIELD).show();
         $(SOMETHINGINPUT).focus();
     } else {
-        $(SOMETHINGMSGPANELMSG).text("");
+//        $(SOMETHINGMSGPANELMSG).text("");
         $(SOMETHINGTEXT).text("");
         $(SOMETHINGINPUT).val("");
         $(SOMETHINGINPUTFIELD).hide();
@@ -1799,7 +1721,6 @@ const showSomethingInputField = (b, type) => {
 }
 /**
  * @function showSomethingMsgPanel
- *
  * @param {boolean} true -> show, false -> hide
  *  
  * "#something_msg" show or hide
@@ -1818,6 +1739,8 @@ const showSomethingMsgPanel = (b) => {
             sm.draggable().show();
         }
 /*
+        here is for scrolling up the messages, but wonder if it required or not, then commented out, who knows.:O
+
         messageScrollTimerID = setInterval(function () {
             sm.animate({ scrollTop: (sm.scrollTop() == 0 ? sm.height() : 0) }, 4000);
         }, ANIMATEDSCROLLING);
@@ -1848,7 +1771,6 @@ const isVisibleApiTestPanel = () => {
 }
 /**
  * @function showApiTestPanel
- *
  * @param {boolean} true -> show, false -> hide
  *  
  * "#apitest" show or hide
@@ -1870,7 +1792,6 @@ const showApiTestPanel = (b) => {
 }
 /**
  * @function inCancelableCmdList
- *
  * @param {array} command name array ex.[CONFIGCHANGE,..]
  * @preturn {boolean} true -> is in the list  false -> no
  *  
@@ -1889,7 +1810,6 @@ const inCancelableCmdList = (cmd) => {
 }
 /**
  * @function rejectCancelableCmdList
- *
  * @param {string} command name ex.CONFIGCHANGE..
  *  
  * reject command from cancelableCmdList
@@ -1901,7 +1821,6 @@ const rejectCancelableCmdList = (cmd) => {
 }
 /**
  * @function rejectSelectedItemsArr
- *
  * @param {string} item selectd item name
  *  
  * reject selected item from selectedItemsArr
@@ -1931,19 +1850,21 @@ const subPanelCheck = () => {
     }
 }
 /**
+ * @function isVisibleDatabaseList
+ * @param {boolean} b true -> show, false -> hide
+ * 
+ * '#databaselist" show or hide
  * 
  */
 const isVisibleDatabaseList = (b) => {
     if (b) {
         $("#databaselist").show();
-
     } else {
         $("#databaselist").hide();
     }
 }
 /**
  * @function setDBFocus
- *  
  * @param {string} new database name
  * 
  * set blinking to the current db
@@ -1961,7 +1882,6 @@ const setDBFocus = (s) => {
 }
 /**
  * @function isVisibleFavicon
- * 
  * @param {boolean} b true -> show , false -> hide
  * 
  * show/hide the favicon message
@@ -2019,11 +1939,11 @@ const apiTestAjax = () => {
                 } else {
                     let newapis = result.apino;
                     if (newapis[0] != "" && newapis[1] != "") {
-                        m = `new api no are ${newapis[0]} & ${newapis[1]}. ${result["message from Jetelina"]}`;
+                        m = chooseMsg('func-newapino-msg',`are ${newapis[0]} & ${newapis[1]}. ${result["message from Jetelina"]}`,'r');
                     } else if (newapis[0] != "" && newapis[1] == "") {
-                        m = `new api no is ${newapis[0]}. ${result["message from Jetelina"]}`;
+                        m = chooseMsg('func-newapino-msg',`is ${newapis[0]}. ${result["message from Jetelina"]}`,'r');
                     } else if (newapis[0] == "" && newapis[1] != "") {
-                        m = `new api no is ${newapis[1]}. ${result["message from Jetelina"]}`;
+                        m = chooseMsg('func-newapino-msg',`is ${newapis[1]}. ${result["message from Jetelina"]}`,'r');
                     }
                     $(CHATBOXYOURTELL).text(m);
                     $(".yourText").mouseover();
@@ -2096,7 +2016,6 @@ const searchLogAjax = () => {
 }
 /**
  * @function showConfigPanel
- *
  * @param {boolean} true -> show, false -> hide
  *  
  * "#config_panel" show or hide
@@ -2108,5 +2027,20 @@ const showConfigPanel = (b) => {
         // delete all test results
         $(CONFIGPANEL).hide();
         $(`${CONFIGPANEL} span`).filter(".configparams_key, .configparams_val").remove();
+    }
+}
+/**
+ * @function showPreciousPanel
+ * @param {boolean} true -> show, false -> hide
+ *  
+ * "#jetelina_teach_you_smg" show or hide
+ */
+const showPreciousPanel = (b) => {
+    if (b) {
+        $(PRECIOUSWORDPANEL).show().draggable();
+    } else {
+        // delete all test results
+        $(`${PRECIOUSWORDPANEL} [name='precious_word']`).text("");
+        $(PRECIOUSWORDPANEL).hide();
     }
 }

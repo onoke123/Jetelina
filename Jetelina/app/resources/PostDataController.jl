@@ -25,7 +25,7 @@ functions
 	configParamUpdate()	update configuration parameter
 	getRelatedTableApi() get the list of relational with 'table' or 'api'
 	searchErrorLog() searching orderd log as 'errnum' in log file
-	checkConnection() simply connection check
+	prepareDbEnvironment() database connection checking, and initializing database if needed
 """
 module PostDataController
 
@@ -36,7 +36,7 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 JMessage.showModuleInCompiling(@__MODULE__)
 
 export getConfigData, handleApipostdata, createApi, getColumns, deleteTable, userRegist, login, getUserInfoKeys, refUserAttribute, refUserInfo, updateUserInfo,
-	updateUserData, updateUserLoginData, deleteUserAccount, deleteApi, configParamUpdate, searchErrorLog, checkConnection
+	updateUserData, updateUserLoginData, deleteUserAccount, deleteApi, configParamUpdate, searchErrorLog, prepareDbEnvironment
 
 """
 function getConfigData()
@@ -492,15 +492,16 @@ function searchErrorLog()
 	return json(Dict("result" => true, "errlog" => "$err"))
 end
 """
-function checkConnection()
+function prepareDbEnvironment()
 
 	simply connection check
 
 # Arguments
 - return::String  success -> true, fail -> false
 """
-function checkConnection()
+function prepareDbEnvironment()
 	db::String = jsonpayload("db")
+	mode::String = jsonpayload("mode")
 	available::Bool = false
 	db_config::String = ""
 	df::DataFrame = DataFrame()
@@ -519,7 +520,7 @@ function checkConnection()
 		df = DataFrame("redis_host"=>j_config.JC["redis_host"],"redis_port"=>j_config.JC["redis_port"],"redis_password"=>j_config.JC["redis_password"],"redis_dbname"=>j_config.JC["redis_dbname"])
 	end
 
-	ret =  DBDataController.checkConnection(db)
+	ret =  DBDataController.prepareDbEnvironment(db,mode)
 	if ret[1]
 		if !available
 			# change config parameter
@@ -531,12 +532,9 @@ function checkConnection()
 			end
 		end
 	else
-		err = """Ooops, failed at checkin' the connection, may need to update the connection parameters. type 'show parameter' -> which ... -> type to point parameter like 'my_password' -> then type 'change parameter' -> set your new data for updating, then rely on me :)"""
-		return json(Dict("result" => false, "Jetelina" =>  copy.(eachrow(df)), "errmsg" => "$err"))
+		err = """Ooops, failed at checkin' the connection, may need to update the connection parameters. <start>type 'show parameter'<st>which ... -> type to point parameter like 'my_password'<st>type 'change parameter'<st>set your new data for updating<end>then try again. rely on me :)"""
+		return json(Dict("result" => false, "Jetelina" =>  copy.(eachrow(df)), "preciousmsg" => "$err"))
 	end
-
-#		jmg::String = """$db is not available yet. change it to be 'true' first by typing 'show server parameter' -> 'which...' -> type '$db_config' -> then type 'change parameter' -> then follow me"""
-#		return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "$jmg"))
 end
 
 end

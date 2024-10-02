@@ -67,7 +67,7 @@ route( "/apiactions", PostDataController.handleApipostdata, method = POST )
 # switching user handle database
 route( "/switchdb", PostDataController.switchDB, method = POST )
 # database connection check
-route("/ispath", PostDataController.checkConnection, method = POST)
+route("/ispath", PostDataController.prepareDbEnvironment, method = POST)
 
 #===
     -Handle APIs

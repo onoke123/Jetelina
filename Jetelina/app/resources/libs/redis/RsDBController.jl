@@ -17,7 +17,7 @@ functions
     get(k) get value data in redis in order to match name 'k'
     matchingScan(i,k) scan, indeed searching, data to find matching from 'i' cursor position with 'k' string
     simpleScan(i,n) scan, indeed searching, data from 'i' cursor position order by 'n' counts.
-    checkConnection() simple connection checking
+    prepareDbEnvironment(mode::String) database connection checking, and initializing database if needed
 """
 module RsDBController
 
@@ -31,7 +31,7 @@ JMessage.showModuleInCompiling(@__MODULE__)
 include("RsDataTypeList.jl")
 include("RsSQLSentenceManager.jl")
 
-export open_connection, close_connection, dataInsertFromCSV, getKeyList, executeApi, checkConnection
+export open_connection, close_connection, dataInsertFromCSV, getKeyList, executeApi, prepareDbEnvironment
 
 """
 function open_connection()
@@ -367,14 +367,17 @@ function simpleScan(i, n)
     end
 end
 """
-function checkConnection()
+function prepareDbEnvironment()
 
-	simple connection checking
+	database connection checking, and initializing database if needed
 		
 # Arguments
+- `mode::String`: 'init' -> initialize, others -> connection check
+                  but this parameter does not have any meaning in here, 
+                  just match with the same name function of mysql/postgresql. :p
 - return: success -> true, fail -> false
 """
-function checkConnection()
+function prepareDbEnvironment(mode::String)
     ret::Bool = false
     try
         conn::Redis.RedisConnection = open_connection()
@@ -382,7 +385,7 @@ function checkConnection()
         return true, ""
     catch err
         errnum = JLog.getLogHash()
-        JLog.writetoLogfile("[errnum:$errnum] RsDBController.checkConnection() error : $err")
+        JLog.writetoLogfile("[errnum:$errnum] RsDBController.prepareDbEnvironment() error : $err")
         return ret, errnum
     finally
     end

@@ -34,7 +34,7 @@ functions
 	deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
 	checkTheRoll(roll::String) check the ordered user's authority in order to 'roll'.
 	refStichWort(stichwort::String)	reference and matching with user_info->stichwort
-    checkConnection() simple connection checking
+    prepareDbEnvironment(mode::String) database connection checking, and initializing database if needed
 """
 module PgDBController
 
@@ -51,7 +51,7 @@ include("PgSQLSentenceManager.jl")
 export create_jetelina_database, create_jetelina_table, create_jetelina_id_sequence, open_connection, close_connection,
     getTableList, getJetelinaSequenceNumber, dataInsertFromCSV, dropTable, getColumns,
     executeApi, doSelect, measureSqlPerformance, create_jetelina_user_table, userRegist, getUserData, chkUserExistence, getUserInfoKeys,
-    refUserAttribute, updateUserInfo, refUserInfo, updateUserData, deleteUserAccount, checkTheRoll, refStichWort, checkConnection
+    refUserAttribute, updateUserInfo, refUserInfo, updateUserData, deleteUserAccount, checkTheRoll, refStichWort, prepareDbEnvironment
 
 """
 function create_jetelina_database()
@@ -1463,22 +1463,29 @@ function refStichWort(stichwort::String)
     return ret
 end
 """
-function checkConnection()
+function prepareDbEnvironment(mode::String)
 
-	simple connection checking
+	database connection checking, and initializing database if needed
 		
 # Arguments
+- `mode::String`: 'init' -> initialize, others -> connection check
 - return: success -> true, fail -> false
 """
-function checkConnection()
+function prepareDbEnvironment(mode::String)
     ret::Bool = false
     try
         conn::LibPQ.Connection = open_connection()
         close_connection(conn)
+
+        if mode == "init"
+            create_jetelina_id_sequence()
+            create_jetelina_user_table()
+        end
+
         return true, ""
     catch err
         errnum = JLog.getLogHash()
-        JLog.writetoLogfile("[errnum:$errnum] PgDBController.checkConnection() error : $err")
+        JLog.writetoLogfile("[errnum:$errnum] PgDBController.prepareDbEnvironment() error : $err")
         return ret, errnum
     finally
     end
