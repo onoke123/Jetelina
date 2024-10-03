@@ -20,6 +20,10 @@ end
 route("/jetelina") do
   serve_static_file("jetelina/jetelina_dashboard.html")
 end
+#===
+  Jetelina initialize
+===#
+route("/initial", PostDataController.initial, method = POST )
 
 #===
 

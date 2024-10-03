@@ -10,7 +10,6 @@ Description:
 contain functions
 	__init__()
 	createScenario()  create scenario.js file from base.jdic and JetelinaConfig.cnf files. this function is mandatory working to realize Jetelina Chatting.
-	initialJetelinaDB() define the initial database, postgresql or mysql by admin user.
 	switchDbType() update 'dbtype' parameter every switching data base. 
 	configParamUpdate(d::Dict) update a configuration parameter in the configuration file.
 """
@@ -21,7 +20,7 @@ using Jetelina.JFiles, Jetelina.JMessage, Jetelina.JSession
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export JC, createScenario, configParamUpdate, initialJetelinaDB, switchDbType
+export JC, createScenario, configParamUpdate, switchDbType
 
 # configration file name
 const defaultConfigFile = "JetelinaConfig.cnf"
@@ -181,17 +180,6 @@ function createScenario()
 	end
 end
 """
-function initialJetelinaDB() 
-	
-	define the initial database, postgresql or mysql by admin user.
-
-#Arguments
-- `db::String`: database to use
-"""
-function initialJetelinaDB(db)
-	configParamUpdate(Dict("jetelinadb"=>db))
-end
-"""
 function switchDbType() 
 	
 	update 'dbtype' parameter every switching data base. 
@@ -209,11 +197,11 @@ function configParamUpdate(d::Dict)
 	the param is ensured as is not 'nothing' in PostDataController.configParamUpdate().
 
 # Arguments
-- `d::Dict`:  json style configuration parameter
+- `dd::Dict`:  json style configuration parameter
 """
 function configParamUpdate(d::Dict)
 	dn = collect(keys(d))
-
+	
 	configfile = JFiles.getFileNameFromConfigPath(defaultConfigFile)
 	configfile_tmp = string(configfile, ".tmp")
 	configChangeHistoryFile = JFiles.getFileNameFromLogPath(JC["config_change_history_file"])
@@ -239,9 +227,16 @@ function configParamUpdate(d::Dict)
 			else
 				JC[param] = var
 
-				# also rewrite the session data
-				if(param == "dbtype")
-					JSession.setDBType(var)
+				#===
+					Tips:
+						if "jetelinadb" parameter exists in dn, this is the initialize process.
+						therefore there is no session data, skip it.
+				===#
+				if "jetelinadb" ∉ dn
+					# also rewrite the session data
+					if(param == "dbtype")
+						JSession.setDBType(var)
+					end
 				end
 			end
 			#
@@ -272,6 +267,7 @@ function configParamUpdate(d::Dict)
 		close(tf)
 		close(f)
 		mv(configfile_tmp, configfile, force = true)
+		
 		#
 		#  write the history
 		#
@@ -279,7 +275,15 @@ function configParamUpdate(d::Dict)
 			hd = Dates.format(now(), "yyyy-mm-dd HH:MM:SS")
 			history_previous = strip(history_previous,',')
 			history_latest = strip(history_latest,',')
-			operator = JSession.get()[1];
+			
+			# ref. around 242
+			operator = ""
+			if "jetelinadb" ∉ dn
+				operator = JSession.get()[1];
+			else
+				operator = "it is me"
+			end
+
 			historyString = """{"date":"$hd","name":"$operator","previous":{$history_previous},"latest":{$history_latest}}"""
 			println(h,historyString)
 		end

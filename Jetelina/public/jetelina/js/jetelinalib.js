@@ -1130,8 +1130,16 @@ const chatKeyDown = (cmd) => {
                         authAjax(ut);
                         m = IGNORE;
                     } else {
-                        m = chooseMsg('starting-5-msg', `my special guest,you are a privilege user`, "a");
-                        stage = 'login_success';
+                        /*
+                            this is the first login to Jetelina.
+                            must go to the initialization process.
+
+                            the process is defined in initialprocess.js
+                            and do not get out by the normal logout because of session data.
+                        */
+
+                        $(JETELINAPANEL).hide();
+                        jetelinaInitialize();
                     }
 
                     break;

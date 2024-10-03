@@ -7,6 +7,7 @@ Description:
 	all controll for poting data from clients
 
 functions
+	initial() the first database setting to Jetelina. this is the initialize of all. once in a life.
 	getConfigData()	get a configuration parameter data ordered by posting data.
 	handleApipostdata() execute ordered API by posting data.
 	createApi()  create API and SQL select sentence from posting data.
@@ -35,9 +36,27 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export getConfigData, handleApipostdata, createApi, getColumns, deleteTable, userRegist, login, getUserInfoKeys, refUserAttribute, refUserInfo, updateUserInfo,
+export initial, getConfigData, handleApipostdata, createApi, getColumns, deleteTable, userRegist, login, getUserInfoKeys, refUserAttribute, refUserInfo, updateUserInfo,
 	updateUserData, updateUserLoginData, deleteUserAccount, deleteApi, configParamUpdate, searchErrorLog, prepareDbEnvironment
 
+"""
+	function initial() 
+		
+		the first database setting to Jetelina. this is the initialize of all. once in a life.
+"""
+function initial()
+	db::String = jsonpayload("jetelinadb")
+	mode::String = "initial"
+	param = jsonpayload()
+	flg::Bool = false
+
+	ret = _configParamUpdate(param)
+	if DBDataController.prepareDbEnvironment(db,mode)[1]
+		flg = true
+	end
+
+	return json(Dict("result" => flg, "Jetelina" => "[{}]"))
+end
 """
 function getConfigData()
 
@@ -396,10 +415,13 @@ function configParamUpdate()
 - return: ture/false in json form
 """
 function configParamUpdate()
-	ret = ""
 	param = jsonpayload()
-	jmsg::String = string("compliment me!")
+	return _configParamUpdate(param)
+end
 
+function _configParamUpdate(param::Dict)
+	ret = ""
+	jmsg::String = string("compliment me!")
 	#===
 		Tips:
 			as you know, 'jetelina' database should be created in mysql, not in postgresql, the reasons are ref each lib programs.

@@ -175,6 +175,16 @@ textarea.user-input{
   background: rgb(53, 41, 94, 0.1);
 }
 
+.functionpanel-parts > ol {
+  padding-left:50%;
+  text-align: left;
+  list-style: decimal;
+}
+
+.initializepanel {
+  text-align: left;
+}
+
 .sqllist > p {
   color: #a8ce49;
   text-shadow: 0 0 10px rgb(14, 225, 31), 0 0 15px rgb(229, 232, 198);
