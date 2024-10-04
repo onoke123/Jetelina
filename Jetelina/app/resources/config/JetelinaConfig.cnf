@@ -108,9 +108,9 @@ pg_host = localhost
 @jdic pg_port:"postgresql port"
 pg_port = 5432
 @jdic pg_user:"postgresql user","postgresql login"
-pg_user =
+pg_user = postgres
 @jdic pg_password:"postgresql password","password in postgresql"
-pg_password =
+pg_password = postgres
 @jdic pg_sslmode:"postgresql sslmode","postgresql ssl mode","postgresql ssl"
 pg_sslmode = prefer
 @jdic pg_dbname:"postgresql database name","postgresql db name","postgresql dbname"
@@ -126,18 +126,18 @@ pg_testdbname = testdb
 @jdic my_work:"mysql run","mysql availability","start mysql","mysql start"
 my_work = true
 @jdic my_host:"mysql host"
-localhostmy_host = 
+my_host = localhost
 @jdic my_port:"mysql port"
-3306my_port = 
+my_port = 3306
 @jdic my_user:"mysql user","mysql login"
-usermy_user = 
+my_user = user 
 @jdic my_password:"mysql password","password in mysql"
-userpasswdmy_password = 
+my_password = userpasswd 
 #
 # Caution: the initial db name is 'mysql', then Jetelina will rewrite it to 'jetelina'
 # 
 @jdic my_dbname:"mysql database name","mysql db name","mysql dbname"
-mysqlmy_dbname = 
+my_dbname = jetelina 
 @jdic mys_unix_socket:"mysql unix socket","mysql socket"
 my_unix_socket = /var/run/mysqld/mysqld.sock
 @jdic my_testdbname:"mysql test database"
