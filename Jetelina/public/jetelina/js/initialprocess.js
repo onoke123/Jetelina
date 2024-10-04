@@ -8,12 +8,16 @@
  * 
  * Functions:
  *      jetelinaInitialize() initialize the primary database that is selected by the first user(it's me)
+ *      cleanupMyself() delete 'myself' user account from jetelina_user_table
+ *      initializeMsg(s) set message order by initialize process
+ *      initialAjax(url,data) general ajax function for initialization
  */
 const initialparams = {};
 const INITIALIZEPANEL = "#initialize";
 const POSTGREINITIALIZE = `${INITIALIZEPANEL} [name='params4postgres']`;
 const MYSQLINITIALIZE = `${INITIALIZEPANEL} [name='params4mysql']`;
-const SETBUTTON = `${INITIALIZEPANEL} [name='paramsetbutton']`;
+const FIRSTUSERS = `${INITIALIZEPANEL} [name='firstusers']`;
+const initialUrl = ["/initialdb","/initialuser","/deleteuser"];
 /**
  * @function jetelinaInitialize
  * 
@@ -32,9 +36,9 @@ const jetelinaInitialize = () =>{
    $(`${INITIALIZEPANEL}`).show();
 }
 
-$("#initialize input[name='primarydb']").on("click",function(){
+$(`${INITIALIZEPANEL} input[name='primarydb']`).on("click",function(){
     initialparams.db = $(this).val();
-    $(SETBUTTON).show();
+    $(`${INITIALIZEPANEL} [name='paramsetbutton']`).show();
 
     if(initialparams.db == "postgresql"){
         $(POSTGREINITIALIZE).show();
@@ -45,7 +49,7 @@ $("#initialize input[name='primarydb']").on("click",function(){
     }    
 });
 
-$(SETBUTTON).on('click',function(){
+$(`${INITIALIZEPANEL} [name='paramsetbutton']`).on('click',function(){
     let data = {};
 
     if(initialparams.db == "postgresql"){
@@ -67,16 +71,62 @@ $(SETBUTTON).on('click',function(){
         data = `{"jetelinadb":"${initialparams.db}","dbtype":"${initialparams.db}","my_work":"true","my_host":"${host}","my_port":"${port}","my_user":"${user}","my_password":"${pw}","my_dbname":"${dbname}","my_unix_socket":"${unix_socket}"}`;
     }
 
-    initialAjax(data);
+    initialAjax(initialUrl[0], data);
 });
 
+$(`${INITIALIZEPANEL} [name='userregbutton']`).on('click',function(){
+    let users = [];
+    let user = "";
+
+    for(let i=1; i<10; i++){
+        user = $.trim($(`${FIRSTUSERS} input[name='pu${i}']`).val());
+        if(user != ""){
+            users.push(user);
+        }
+    }
+
+    if( 0<users.length){
+        let um = JSON.stringify(users);
+        let data = `{"users":${um}}`;
+        initialAjax(initialUrl[1], data);
+    }else{
+        initializeMsg("Hey no users, are you kidding me? (・・?");
+    }
+});
+
+$(`${INITIALIZEPANEL} [name='gologinbutton'], ${INITIALIZEPANEL} [name='cancelbutton']`).on('click',function(){
+    cleanupMyself();
+    window.location.href = location.href;
+});
+/**
+ * @function cleanupMyself
+ * 
+ * delete 'myself' user account from jetelina_user_table
+ */
+
+const cleanupMyself = () =>{
+    let data = `{"uid":0}`;
+    initialAjax(initialUrl[2],data);
+}
+/**
+ * @function initializeMsg
+ * @param {string} s 
+ * 
+ * set message order by initialize process
+ */
 const initializeMsg = (s) =>{
     $(`${INITIALIZEPANEL} [name='message']`).text(s);
 }
-
-const initialAjax = (data) =>{
+/**
+ * @function initialAjax
+ * @param {string} url 
+ * @param {object} data 
+ * 
+ * general ajax function for initialization
+ */
+const initialAjax = (url,data) =>{
     $.ajax({
-        url: "/initial",
+        url: url,
         type: "post",
         contentType: 'application/json',
         data: data,
@@ -84,9 +134,32 @@ const initialAjax = (data) =>{
         dataType: "json",
     }).done(function (result, textStatus, jqXHR) {
         if(result.result){
-            initializeMsg("Done, congra ＼(^o^)／, clike 'GO..' next");
-            $(`${INITIALIZEPANEL} [name='paramsetbutton']`).hide();
-            $(`${INITIALIZEPANEL} [name='gologinbutton']`).show();
+            if(url == initialUrl[0]){
+                // initialize database
+                initializeMsg("Done, congra ＼(^o^)／, next user registration, here we go");
+                $(`${INITIALIZEPANEL} [name='paramsetbutton']`).hide();
+                $(`${INITIALIZEPANEL} [name='userregbutton']`).show();
+                $(`${INITIALIZEPANEL} [name='cancelbutton']`).show();
+                $(POSTGREINITIALIZE).hide();
+                $(MYSQLINITIALIZE).hide();
+                $(FIRSTUSERS).show();
+            }else if(url == initialUrl[1]){
+                // register users
+                initializeMsg("Great, everything fine. Hit the 'GO..' button to login screen, let's enjoy.");
+                $(`${INITIALIZEPANEL} [name='userregbutton']`).hide();
+                $(`${INITIALIZEPANEL} [name='gologinbutton']`).show();
+            }else if(url == initialUrl[2]){
+                $(`${INITIALIZEPANEL} [name='userregbutton']`).hide();
+                $(`${INITIALIZEPANEL} [name='gologinbutton']`).hide();
+                $(`${INITIALIZEPANEL} [name='cancelbutton']`).hide();
+                $(POSTGREINITIALIZE).hide();
+                $(MYSQLINITIALIZE).hide();
+                $(FIRSTUSERS).hide();
+                $(`${INITIALIZEPANEL} input[name='primarydb']`).prop("checked",false);
+
+                $(INITIALIZEPANEL).hide();
+                $(JETELINAPANEL).show();
+            }
         }else{
             initializeMsg("Fail to connect, review the parameters once more.");
         }

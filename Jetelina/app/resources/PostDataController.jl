@@ -8,6 +8,7 @@ Description:
 
 functions
 	initial() the first database setting to Jetelina. this is the initialize of all. once in a life.
+	initialUser() register the first users into jetelina_user_table. once in a life.
 	getConfigData()	get a configuration parameter data ordered by posting data.
 	handleApipostdata() execute ordered API by posting data.
 	createApi()  create API and SQL select sentence from posting data.
@@ -36,19 +37,31 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export initial, getConfigData, handleApipostdata, createApi, getColumns, deleteTable, userRegist, login, getUserInfoKeys, refUserAttribute, refUserInfo, updateUserInfo,
+export initialDb, initialUser, getConfigData, handleApipostdata, createApi, getColumns, deleteTable, userRegist, login, getUserInfoKeys, refUserAttribute, refUserInfo, updateUserInfo,
 	updateUserData, updateUserLoginData, deleteUserAccount, deleteApi, configParamUpdate, searchErrorLog, prepareDbEnvironment
 
 """
-	function initial() 
+	function initialDb() 
 		
 		the first database setting to Jetelina. this is the initialize of all. once in a life.
 """
-function initial()
+function initialDb()
 	db::String = jsonpayload("jetelinadb")
-	mode::String = "initial"
+	mode::String = "init"
 	param = jsonpayload()
 	flg::Bool = false
+
+	#===
+		Attention:
+			this session data is mandatory, because in _comfingParam.. and registering user process
+			require this session data.
+			indeed this 'myself' is registerd in the table at the same time of creating user table,
+			and is deleted at the end of this initial process by calling deleteUser() in initialprocess.js.
+
+			the secound param '0' is dummy. but it expectables in Postgres, but not Mysql, whichever the following
+			process use the first param 'myself', do not worry. :) 
+	===#
+	JSession.set("myself",0)
 
 	ret = _configParamUpdate(param)
 	if DBDataController.prepareDbEnvironment(db,mode)[1]
@@ -56,6 +69,23 @@ function initial()
 	end
 
 	return json(Dict("result" => flg, "Jetelina" => "[{}]"))
+end
+"""
+	function initialUser() 
+		
+		register the first users into jetelina_user_table. once in a life.
+"""
+function initialUser()
+	ret = ""
+	users = jsonpayload("users")
+
+	if !isnothing(users)
+		for un in users
+			ret = DBDataController.userRegist(un)
+		end
+	end
+
+	return ret
 end
 """
 function getConfigData()
@@ -431,21 +461,23 @@ function _configParamUpdate(param::Dict)
 			technical reasons.(T_T)
 			someday, when Genie compiler will not need .autoload sequence.
 	===#
-	key::String = ""
-	value::String = ""
-	for (k,v) in param
-		key = k
-		value = v
-		if k == "dbtype" && v == "mysql"
-			DBDataController.createJetelinaDatabaseinMysql()
-		end
-	end
-
 	if !isnothing(param)
 		cpur::Bool = false
+		key::String = ""
+		value::String = ""
+
 		if j_config.configParamUpdate(param)
 			cpur = true
 		end
+
+		for (k,v) in param
+			key = k
+			value = v
+			if k == "dbtype" && v == "mysql"
+				DBDataController.createJetelinaDatabaseinMysql()
+			end
+		end
+	
 
 		ret = json(Dict("result" => cpur, "Jetelina" => "[{}]", "target" => key, "message from Jetelina" => jmsg))
 	end

@@ -877,10 +877,14 @@ function create_jetelina_user_table()
     		jetelina_delete_flg integer default 0
     	);
     """
+    insert_first_user = """
+    	insert into jetelina_user_table (user_id,username,generation) values(0,'myself',-1);
+    """
 
     conn = open_connection()
     try
         execute(conn, create_jetelina_user_table_str)
+        execute(conn, insert_first_user)
     catch err
         JLog.writetoLogfile("PgDBController.create_jetelina_user_table() error: $err")
     finally
@@ -1251,6 +1255,10 @@ function updateUserData(uid::Integer, key::String, value)
     ret = ""
     set_str::String = ""
 
+    #===
+        Caution:
+            now() and 'now()' are both available in Postgres, not Mysql ・ω・
+    ===#
     if isa(value, String)
         set_str = """ $key='$value' """
     else
@@ -1271,7 +1279,7 @@ function updateUserData(uid::Integer, key::String, value)
     catch err
         errnum = JLog.getLogHash()
         ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
-        JLog.writetoLogfile("[errnum:$errnum] PgDBController.updateUserData() with user $uid $key->$val error : $err")
+        JLog.writetoLogfile("[errnum:$errnum] PgDBController.updateUserData() with user $uid $key->$value error : $err")
     finally
         close_connection(conn)
     end
@@ -1343,12 +1351,24 @@ function deleteUserAccount(uid::Integer)
 """
 function deleteUserAccount(uid::Integer)
     ret = ""
+    sql::String = ""
 
-    sql = """
-    update jetelina_user_table set
-    	jetelina_delete_flg=1
-    	where user_id=$uid;
-    """
+    if 0<uid 
+        sql = """
+        update jetelina_user_table set
+            jetelina_delete_flg=1
+            where user_id=$uid;
+        """
+    else
+        #===
+            Caution:
+                this sql is special for 'myself' who is used in the first instllation.
+        ===#
+        sql = """
+        delete from jetelina_user_table where username='myself' and generation=-1;
+        """
+    end
+
     conn = open_connection()
     try
         execute(conn, sql)
@@ -1358,7 +1378,7 @@ function deleteUserAccount(uid::Integer)
     catch err
         errnum = JLog.getLogHash()
         ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
-        JLog.writetoLogfile("[errnum:$errnum] PgDBController.deleteUserAccount() with user $uid $key->$val error : $err")
+        JLog.writetoLogfile("[errnum:$errnum] PgDBController.deleteUserAccount() with user $uid error : $err")
     finally
         close_connection(conn)
     end
@@ -1397,7 +1417,7 @@ function checkTheRoll(roll::String)
             generation = df[:, :generation][1]
             logincount = df[:, :logincount][1]
 
-            if generation == 0
+            if generation <= 0
                 ret = true
             else
                 delete_base_number = 5 # this number is for basic login count number ref in function description
@@ -1424,7 +1444,7 @@ function checkTheRoll(roll::String)
         end
 
     catch err
-        JLog.writetoLogfile("PgDBController.deleteUserAccount() with user $uid $key->$val error : $err")
+        JLog.writetoLogfile("PgDBController.checkTheRoll() with user $uid error : $err")
     finally
         close_connection(conn)
     end

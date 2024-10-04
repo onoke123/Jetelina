@@ -23,7 +23,8 @@ end
 #===
   Jetelina initialize
 ===#
-route("/initial", PostDataController.initial, method = POST )
+route("/initialdb", PostDataController.initialDb, method = POST )
+route("/initialuser", PostDataController.initialUser, method = POST )
 
 #===
 

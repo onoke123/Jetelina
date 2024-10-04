@@ -88,7 +88,7 @@ file_column_mean = mean
 #   defined database should be RDB, therefore postgresql org mysql so far
 #
 @jdic jetelnadb:"default db","default database","original db","original database","user db","user database"
-jetelinadb = postgresql
+mysqljetelinadb =
 
 #
 #  default database
@@ -98,19 +98,19 @@ jetelinadb = postgresql
 #                MySQL      -> mysql
 #                Oracle     -> oracle
 @jdic dbtype:"db","database","data base"
-dbtype = postgresql
+mysqldbtype =
 
 # PostgreSQL setting
 @jdic pg_work:"postgresql run","postgresql availability","start postgresql","postgresql start"
-pg_work = true
+pg_work = false
 @jdic pg_host:"postgresql host"
 pg_host = localhost
 @jdic pg_port:"postgresql port"
 pg_port = 5432
 @jdic pg_user:"postgresql user","postgresql login"
-pg_user = postgres
+pg_user =
 @jdic pg_password:"postgresql password","password in postgresql"
-pg_password = postgres
+pg_password =
 @jdic pg_sslmode:"postgresql sslmode","postgresql ssl mode","postgresql ssl"
 pg_sslmode = prefer
 @jdic pg_dbname:"postgresql database name","postgresql db name","postgresql dbname"
@@ -126,18 +126,18 @@ pg_testdbname = testdb
 @jdic my_work:"mysql run","mysql availability","start mysql","mysql start"
 my_work = true
 @jdic my_host:"mysql host"
-my_host = localhost
+localhostmy_host = 
 @jdic my_port:"mysql port"
-my_port = 3306
+3306my_port = 
 @jdic my_user:"mysql user","mysql login"
-my_user = user
+usermy_user = 
 @jdic my_password:"mysql password","password in mysql"
-my_password = userpasswd
+userpasswdmy_password = 
 #
 # Caution: the initial db name is 'mysql', then Jetelina will rewrite it to 'jetelina'
 # 
 @jdic my_dbname:"mysql database name","mysql db name","mysql dbname"
-my_dbname = jetelina
+mysqlmy_dbname = 
 @jdic mys_unix_socket:"mysql unix socket","mysql socket"
 my_unix_socket = /var/run/mysqld/mysqld.sock
 @jdic my_testdbname:"mysql test database"

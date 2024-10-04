@@ -767,10 +767,14 @@ function create_jetelina_user_table()
     		jetelina_delete_flg integer default 0
     	);
     """
+    insert_first_user = """
+    	insert into jetelina_user_table (username,generation) values('myself',-1);
+    """
 
     conn = open_connection()
     try
         DBInterface.execute(conn, create_jetelina_user_table_str)
+        DBInterface.execute(conn, insert_first_user)
     catch err
         JLog.writetoLogfile("MyDBController.create_jetelina_user_table() error: $err")
     finally
@@ -1059,7 +1063,7 @@ function updateUserInfo(uid::Integer, key::String, value)
     catch err
         errnum = JLog.getLogHash()
         ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
-        JLog.writetoLogfile("[errnum:$errnum] MyDBController.updateUserInfo() with user $uid $key->$val error : $err")
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.updateUserInfo() with user $uid $key->$value error : $err")
     finally
         close_connection(conn)
     end
@@ -1093,7 +1097,7 @@ function refUserInfo(uid::Integer, key::String, rettype::Integer)
     			and both json and dataframe treat "stichwort" as "json_extract(....)", that is the reason why "as". 
     	===#
     sql = """
-    	select json_extract(user_info,'\$.$key') as stichwort from jetelina_user_table where user_id=$uid;
+    	select json_extract(user_info,'\$.$key') as $key from jetelina_user_table where user_id=$uid;
     """
     conn = open_connection()
     try
@@ -1134,7 +1138,11 @@ function updateUserData(uid::Integer, key::String, value)
     ret = ""
     set_str::String = ""
 
-    if isa(value, String)
+    #===
+        Caution:
+            now() and 'now()' are both available in Postgres, not Mysql ・ω・
+    ===#
+    if isa(value, String) && (value != "now()")
         set_str = """ $key='$value' """
     else
         set_str = """ $key=$value """
@@ -1227,12 +1235,24 @@ function deleteUserAccount(uid::Integer)
 """
 function deleteUserAccount(uid::Integer)
     ret = ""
+    sql::String = ""
 
-    sql = """
-    update jetelina_user_table set
-    	jetelina_delete_flg=1
-    	where user_id=$uid;
-    """
+    if 0<uid 
+        sql = """
+        update jetelina_user_table set
+            jetelina_delete_flg=1
+            where user_id=$uid;
+        """
+    else
+        #===
+            Caution:
+                this sql is special for 'myself' who is used in the first instllation.
+        ===#
+        sql = """
+        delete from jetelina_user_table where username='myself' and generation=-1;
+        """
+    end
+
     conn = open_connection()
     try
         DBInterface.execute(conn, sql)
@@ -1242,7 +1262,7 @@ function deleteUserAccount(uid::Integer)
     catch err
         errnum = JLog.getLogHash()
         ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
-        JLog.writetoLogfile("MyDBController.deleteUserAccount() with user $uid $key->$val error : $err")
+        JLog.writetoLogfile("MyDBController.deleteUserAccount() with user $uid error : $err")
     finally
         close_connection(conn)
     end
@@ -1267,13 +1287,26 @@ function checkTheRoll(roll::String)
 - return: have authority -> true, does not have -> false
 """
 function checkTheRoll(roll::String)
-    uid = JSession.get()[2]
     ret::Bool = false
+    uid = ""
+    sql = ""
 
-    sql = """
-    	select logincount, generation from jetelina_user_table 
-    	where (jetelina_delete_flg=0) and (user_id=$uid);
-    """
+    uname = JSession.get()[1]
+    
+    if uname != "myself"
+        uid = JSession.get()[2]
+
+        sql = """
+            select logincount, generation from jetelina_user_table 
+            where (jetelina_delete_flg=0) and (user_id=$uid);
+        """
+    else
+        sql = """
+            select logincount, generation from jetelina_user_table 
+            where (jetelina_delete_flg=0) and (username='$uname') and (generation=-1);
+        """
+    end
+
     conn = open_connection()
     try
         df = DataFrame(columntable(DBInterface.execute(conn, sql)))
@@ -1281,7 +1314,7 @@ function checkTheRoll(roll::String)
             generation = df[:, :generation][1]
             logincount = df[:, :logincount][1]
 
-            if generation == 0
+            if generation <= 0
                 ret = true
             else
                 delete_base_number = 5 # this number is for basic login count number ref in function description
@@ -1308,7 +1341,7 @@ function checkTheRoll(roll::String)
         end
 
     catch err
-        JLog.writetoLogfile("MyDBController.deleteUserAccount() with user $uid $key->$val error : $err")
+        JLog.writetoLogfile("MyDBController.checkTheRoll() with user $uid error : $err")
     finally
         close_connection(conn)
     end

@@ -50,15 +50,27 @@
 				　　port:　<input type="text" name="my_port" value="3306">
 				　　user:　<input type="text" name="my_user">
 				password:　<input type="text" name="my_password">
-				　dbname:　<input type="text" name="my_bname" value="mysql">
+				　dbname:　<input type="text" name="my_dbname" value="mysql">
 				unix_socket:　<input type="text" name="my_unix_socket" value="/var/run/mysqld/mysqld.sock">
 			</div>
-
-			<div name="paramsetbutton" hidden>
-				<button name="paramsset">SET & Try to connect</button>
+			<div name="firstusers" hidden>
+				<span>Original 10 Users: type alike 'Jhon Ron'. This name is to be login account.</span><br>
+				1:<input type="text" name="pu1" value="Jhon Ron">
+				2:<input type="text" name="pu2">
+				3:<input type="text" name="pu3">
+				4:<input type="text" name="pu4">
+				5:<input type="text" name="pu5">
+				6:<input type="text" name="pu6">
+				7:<input type="text" name="pu7">
+				8:<input type="text" name="pu8">
+				9:<input type="text" name="pu9">
+				10:<input type="text" name="pu10">
 			</div>
-			<div name="gologinbutton" hidden>
-				<button name="gologin">GO LOGOIN</button>
+			<div>
+				<button name="paramsetbutton" hidden>SET & Try to connect</button>
+				<button name="userregbutton" hidden>Register Users</button>
+				<button name="gologinbutton" hidden>GO LOGOIN</button>
+				<button name="cancelbutton" hidden>CANCEL</button>
 			</div>
 			<div name="message" class="box_text">
 			</div>
