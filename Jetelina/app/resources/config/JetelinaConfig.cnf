@@ -88,7 +88,7 @@ file_column_mean = mean
 #   defined database should be RDB, therefore postgresql org mysql so far
 #
 @jdic jetelnadb:"default db","default database","original db","original database","user db","user database"
-mysqljetelinadb =
+jetelinadb = mysql
 
 #
 #  default database
@@ -98,7 +98,7 @@ mysqljetelinadb =
 #                MySQL      -> mysql
 #                Oracle     -> oracle
 @jdic dbtype:"db","database","data base"
-mysqldbtype =
+dbtype = mysql
 
 # PostgreSQL setting
 @jdic pg_work:"postgresql run","postgresql availability","start postgresql","postgresql start"

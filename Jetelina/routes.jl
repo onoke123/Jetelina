@@ -67,8 +67,13 @@ route( "/getalldbtable", GetDataController.getTableList )
 route( "/deletetable", PostDataController.deleteTable, method = POST )
 # returns column list ordered by table in Json
 route( "/getcolumns", PostDataController.getColumns, method = POST )
-# handle json data for db action of insert/update/delete/select
+#===
+ handle json data for db action of insert/update/delete/select
+ can use whichever url, the backs are same. :)
+===#
 route( "/apiactions", PostDataController.handleApipostdata, method = POST )
+route( "/plzjetelina", PostDataController.handleApipostdata, method = POST )
+route( "/executionapi", PostDataController.handleApipostdata, method = POST )
 # switching user handle database
 route( "/switchdb", PostDataController.switchDB, method = POST )
 # database connection check

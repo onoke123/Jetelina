@@ -10,6 +10,7 @@
  *      jetelinaInitialize() initialize the primary database that is selected by the first user(it's me)
  *      cleanupMyself() delete 'myself' user account from jetelina_user_table
  *      initializeMsg(s) set message order by initialize process
+ *      initializeAlertMsg(s) set alert message order by initialize process
  *      initialAjax(url,data) general ajax function for initialization
  */
 const initialparams = {};
@@ -17,7 +18,11 @@ const INITIALIZEPANEL = "#initialize";
 const POSTGREINITIALIZE = `${INITIALIZEPANEL} [name='params4postgres']`;
 const MYSQLINITIALIZE = `${INITIALIZEPANEL} [name='params4mysql']`;
 const FIRSTUSERS = `${INITIALIZEPANEL} [name='firstusers']`;
-const initialUrl = ["/initialdb","/initialuser","/deleteuser"];
+/*
+    Attention:
+        indeed, "/getconfigdata" is as same as scenario["function-post-url"][2]
+*/
+const initialUrl = ["/initialdb","/initialuser","/deleteuser","/getconfigdata"];
 /**
  * @function jetelinaInitialize
  * 
@@ -33,7 +38,9 @@ const jetelinaInitialize = () =>{
         5.generation '0' user register
         6.switch to the normal login screen 
     */
-   $(`${INITIALIZEPANEL}`).show();
+        $(`${INITIALIZEPANEL}`).show();
+        let data = `{"param":"jetelinadb"}`;
+    initialAjax(initialUrl[3], data);
 }
 
 $(`${INITIALIZEPANEL} input[name='primarydb']`).on("click",function(){
@@ -118,6 +125,16 @@ const initializeMsg = (s) =>{
     $(`${INITIALIZEPANEL} [name='message']`).text(s);
 }
 /**
+ * @function initializeAlertMsg
+ * @param {string} s 
+ * 
+ * set alert message order by initialize process
+ */
+const initializeAlertMsg = (s) =>{
+    $(`${INITIALIZEPANEL} [name='initialalert']`).text(s);
+}
+
+/**
  * @function initialAjax
  * @param {string} url 
  * @param {object} data 
@@ -159,6 +176,16 @@ const initialAjax = (url,data) =>{
 
                 $(INITIALIZEPANEL).hide();
                 $(JETELINAPANEL).show();
+            }else if(url == initialUrl[3]){
+                $.each(result, function (name, value) {
+                    if (name != "result") {
+                        if( $.inArray(value,["postgresql","mysql"]) != -1 ){
+                            initializeAlertMsg(`ATTENTION: Hey, i have already been initialized with ${value}`);
+                            $(`${INITIALIZEPANEL} [name='cancelbutton']`).show();
+                            return false;
+                        }
+                    }
+                });
             }
         }else{
             initializeMsg("Fail to connect, review the parameters once more.");

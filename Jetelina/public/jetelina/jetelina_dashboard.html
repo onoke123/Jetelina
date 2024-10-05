@@ -23,7 +23,8 @@
 		Jetelina initialize page. only one time using, maybe. :)
 	-->
 	<div id="initialize" style="left:20%;top:20%;" class="functionpanel-parts commonpanel box_text initializepanel" hidden>
-		<pre>
+			<div name="initialalert" class="initial_alert_text"></div>
+			<pre>
 			Welcome to Jetelina.
 			
 			You dive into the new web development world. I bet this provide you incredible comfortable environment.
@@ -37,7 +38,7 @@
 
 
 			<div name="params4postgres" hidden>
-				<span>PostgreSQL connection parameters</span><br>
+				<span>PostgreSQL connection parameters. The defaults are my guess. :)</span><br>
 				　　host:　<input type="text" name="pg_host" value="localhost">
 				　　port:　<input type="text" name="pg_port" value="5432">
 				　　user:　<input type="text" name="pg_user">
@@ -45,7 +46,7 @@
 				　dbname:　<input type="text" name="pg_dbname" value="postgres">
 			</div>
 			<div name="params4mysql" hidden>
-				<span>MySQL connection parameters</span><br>
+				<span>MySQL connection parameters. The defaults are my guess. :)</span><br>
 				　　host:　<input type="text" name="my_host" value="localhost">
 				　　port:　<input type="text" name="my_port" value="3306">
 				　　user:　<input type="text" name="my_user">
