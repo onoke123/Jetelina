@@ -340,6 +340,9 @@ function chkUserExistence(s::String)
 		# Case in MySQL
 		MyDBController.chkUserExistence(s)
 	elseif j_config.JC["jetelinadb"] == "oracle"
+	else
+		# when 'jetelinadb' is not determined yet.
+		return Dict("result" => false, "Jetelina" => [], "message from Jetelina" => "Hum, you should set me first, type 'it is me' to start it.")
 	end
 end
 """

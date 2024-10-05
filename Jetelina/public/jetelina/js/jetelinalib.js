@@ -145,7 +145,7 @@ const checkResult = (o) => {
             }
 
             if(o.preciousmsg != null){
-                let prw = o.preciousmsg.replaceAll("<start>","<br><br>□").replaceAll("<st>","<br>□").replaceAll("<end>","<br><br>");
+                let prw = o.preciousmsg.replaceAll("<start>","<ol class=\"jetelina_teach_you_ol\"><li>").replaceAll("<st>","</li><li>").replaceAll("<end>","</li></ol>");
                 $(`${PRECIOUSWORDPANEL} [name='precious_word']`).append(prw);
                 showPreciousPanel(true);
             }
@@ -886,7 +886,8 @@ const authAjax = (un) => {
                 }
             });
         } else {
-            m = chooseMsg("fail-msg", "", "");
+//            m = chooseMsg("fail-msg", "", "");
+            m = result["message from Jetelina"];
         }
 
         typingControll(m);

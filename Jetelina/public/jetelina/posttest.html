@@ -45,12 +45,12 @@
     let insertcountnumber = 5;
 //    const sample = {"date":"2024-03-18 11:28:40","name":"changed user name","previous":{"debug":"true","logfile":"log.txt"},"latest":{"debug":"false","logfile":"log1.txt"}};
     const sample = {"date":"2024-03-18 11:28:40","name":"changed user name","previous":{},"latest":{"debug":"false","logfile":"log1.txt"}};
-    console.log(typeof(sample));
+//    console.log(typeof(sample));
     Object.keys(sample).forEach(function(key){
-        console.log("key is ", key);
+//        console.log("key is ", key);
         if( key == "previous"){
             $.each(sample[key],function(k,v){
-                console.log(sample[key], " -> key=value ", k,v);
+//                console.log(sample[key], " -> key=value ", k,v);
             });
         }
     });
@@ -79,8 +79,8 @@
         pd["subquery"] = "where 2020<org1000.founded"; 
         pd["mode"] = "pre";
         let dd = JSON.stringify(pd);
-        console.log("dd is ", dd);
-        console.log("aa is ", aa);
+//        console.log("dd is ", dd);
+//        console.log("aa is ", aa);
         $.ajax( {
             url: "/createapi",
             type: "post",
@@ -88,9 +88,9 @@
             contentType: 'application/json',
             dataType: "json",
         }).done(function(result, textStatus, jqXHR) {
-            console.log("data count: ", result.Jetelina.length);
-            console.log("data strig ", JSON.stringify(result.Jetelina));
-            console.log("message : ", result["message from Jetelina"]);
+//            console.log("data count: ", result.Jetelina.length);
+//            console.log("data strig ", JSON.stringify(result.Jetelina));
+//            console.log("message : ", result["message from Jetelina"]);
             let datanumber = result.Jetelina.length;
             let jetelinamessage = result["message from Jetelina"];
             let testmsg =`<span class="apisql"><p>Conguraturation, well done.<br>aquaiable data number is ${datanumber}</p></span>`
@@ -110,32 +110,32 @@
         }else if(s=="w"){
 //            pd["apino"] = "js333";
 //            pd["subquery"] = "['ftest_ave':0.4,'ftest_age':20]";
-            pd["apino"] = "js331";
-            pd["subquery"] = "[]";
-}else if(s=="u"){
-            pd["apino"] = "ju325";
+            pd["apino"] = "js789";
+            pd["subquery"] = "['sex':'m']";
+        }else if(s=="u"){
+            pd["apino"] = "ju787";
             pd["ftest_name"] = "AAA10";
             pd["ftest_sex"] = "f";
             pd["ftest_age"] = 30;
             pd["ftest_ave"] = 0.9;
             pd["subquery"] = 1;
         }else if(s=="i"){
-            pd["apino"] = "ji324";
-            pd["ftest_jt_id"] = insertcountnumber++,
-            pd["ftest_name"] = "EEE";
+            pd["apino"] = "ji786";
+            pd["ftest_name"] = "ZZZ";
             pd["ftest_sex"] = "m";
             pd["ftest_age"] = 60;
             pd["ftest_ave"] = 0.5;
         }else if(s=="d"){
-            pd["apino"] = "jd326";
-            pd["subquery"] = insertcountnumber -1;
+            pd["apino"] = "jd788";
+            pd["subquery"] = 5;
         }
 
         let dd = JSON.stringify(pd);
         console.log("dd is ", dd);
-        
+
+        let url = "http://127.0.0.1:8000/apiactions"
         $.ajax( {
-            url: "/apiactions",
+            url: url,
             type: "post",
             data: dd,
             contentType: 'application/json',
@@ -147,7 +147,7 @@
                 Object.keys(result).forEach(function (key) {
                 if(key=="Jetelina"){
                     $.each(result[key],function (k, v) {
-                        console.log(k,":",v);
+//                        console.log(k,":",v);
                         vv = JSON.stringify(v);
                             $("#result").append(`<p class="">${vv}</p>`);
                     });

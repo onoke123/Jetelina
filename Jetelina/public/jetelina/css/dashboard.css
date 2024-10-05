@@ -253,6 +253,12 @@ textarea.user-input{
   left:50%;
 }
 
+.jetelina_teach_you_ol {
+  padding-left:5%;
+  text-align: left;
+  list-style: decimal;
+}
+
 .something_msg_def.config_history {
   height:200px;
   top:50%;

@@ -1016,7 +1016,7 @@ function chkUserExistence(s::String)
             dfudb = refUserInfo(df[:, :user_id][1], "last_dbtype", 1)
             if size(dfudb)[1] == 1
                 if !ismissing(dfudb[:, :last_dbtype][1])
-                    dbtype = dfudb[:, :last_dbtype][1]
+                    dbtype = replace(dfudb[:, :last_dbtype][1],"\""=>"")
                 else
                     dbtype = j_config.JC["dbtype"]
                 end

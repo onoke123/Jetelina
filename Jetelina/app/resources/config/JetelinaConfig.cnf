@@ -88,7 +88,7 @@ file_column_mean = mean
 #   defined database should be RDB, therefore postgresql org mysql so far
 #
 @jdic jetelnadb:"default db","default database","original db","original database","user db","user database"
-jetelinadb = mysql
+jetelinadb = postgresql
 
 #
 #  default database
@@ -98,11 +98,11 @@ jetelinadb = mysql
 #                MySQL      -> mysql
 #                Oracle     -> oracle
 @jdic dbtype:"db","database","data base"
-dbtype = mysql
+dbtype = postgresql
 
 # PostgreSQL setting
 @jdic pg_work:"postgresql run","postgresql availability","start postgresql","postgresql start"
-pg_work = false
+pg_work = true
 @jdic pg_host:"postgresql host"
 pg_host = localhost
 @jdic pg_port:"postgresql port"
@@ -150,7 +150,7 @@ redis_work = true
 redis_host = 127.0.0.1
 @jdic redis_port:"redis port"
 #redis_port = 6379
-redis_port = 637900
+redis_port = 6379
 @jdic redis_dbname:"redis database name","redis db name","redis dbname"
 redis_dbname = 0
 @jdic redis_password:"redis password","password in redis"

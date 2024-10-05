@@ -1697,6 +1697,8 @@ const functionPanelFunctions = (ut) => {
 
         preferent.apiparams_count = null;
       } else {
+        showPreciousPanel(false);
+        showConfigPanel(false);
         cancelableCmdList = [];
       }
 
@@ -1707,7 +1709,9 @@ const functionPanelFunctions = (ut) => {
       cleanupContainers();
       refreshApiList();
       refreshTableList();
-      m = chooseMsg('refreshing-msg', '', '');
+      showPreciousPanel(false);
+      showConfigPanel(false);
+    m = chooseMsg('refreshing-msg', '', '');
       break;
     case 'subquery': //open subquery panel
       showApiTestPanel(false);
