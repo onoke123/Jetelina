@@ -1936,7 +1936,8 @@ const apiTestAjax = () => {
             return ret;
         }
     }).done(function (result, textStatus, jqXHR) {
-        let m = chooseMsg('func-api-test-done-msg', '', '');
+        let complementmsg = chooseMsg('general-thanks-cmd','','');
+        let m = chooseMsg('func-api-test-done-msg', complementmsg, 'r');
         if (checkResult(result)) {
             if (loginuser.dbtype != "redis") {
                 let ret = JSON.stringify(result);
