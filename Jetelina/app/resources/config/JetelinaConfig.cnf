@@ -88,7 +88,7 @@ file_column_mean = mean
 #   defined database should be RDB, therefore postgresql org mysql so far
 #
 @jdic jetelnadb:"default db","default database","original db","original database","user db","user database"
-jetelinadb = postgresql
+jetelinadb = foo
 
 #
 #  default database
@@ -98,11 +98,11 @@ jetelinadb = postgresql
 #                MySQL      -> mysql
 #                Oracle     -> oracle
 @jdic dbtype:"db","database","data base"
-dbtype = postgresql
+dbtype = foo
 
 # PostgreSQL setting
 @jdic pg_work:"postgresql run","postgresql availability","start postgresql","postgresql start"
-pg_work = true
+pg_work = false
 @jdic pg_host:"postgresql host"
 pg_host = localhost
 @jdic pg_port:"postgresql port"
@@ -124,7 +124,7 @@ pg_testdbname = testdb
 
 # MySQL setting
 @jdic my_work:"mysql run","mysql availability","start mysql","mysql start"
-my_work = true
+my_work = false
 @jdic my_host:"mysql host"
 my_host = localhost
 @jdic my_port:"mysql port"
@@ -137,7 +137,7 @@ my_password = userpasswd
 # Caution: the initial db name is 'mysql', then Jetelina will rewrite it to 'jetelina'
 # 
 @jdic my_dbname:"mysql database name","mysql db name","mysql dbname"
-my_dbname = jetelina 
+my_dbname = mysql 
 @jdic mys_unix_socket:"mysql unix socket","mysql socket"
 my_unix_socket = /var/run/mysqld/mysqld.sock
 @jdic my_testdbname:"mysql test database"
@@ -145,7 +145,7 @@ my_testdbname = testdb
 
 # Redis setting
 @jdic redis_work:"redis run","redis availability","start redis","redis start"
-redis_work = true
+redis_work = false
 @jdic redis_host:"redis host"
 redis_host = 127.0.0.1
 @jdic redis_port:"redis port"
