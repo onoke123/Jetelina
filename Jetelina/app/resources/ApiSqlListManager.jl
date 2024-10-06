@@ -106,9 +106,9 @@ function readSqlList2DataFrame()
         end
 
         #===
-        			Tips:
-        				to refresh Df_Jete....., 'global' keyword is mandatory. 😯
-        		===#
+        	Tips:
+        		to refresh Df_Jete....., 'global' keyword is mandatory. 😯
+        ===#
         global Df_JetelinaSqlList = df
 
         return true, df
