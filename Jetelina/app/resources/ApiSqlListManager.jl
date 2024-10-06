@@ -62,7 +62,11 @@ function _setApiSequenceNumber()
         		===#
         Df_JetelinaSqlList = df
         existapino::Array = chop.(df.apino, head=2, tail=0)
-        nextapino = maximum(parse.(Int, existapino)) + 1
+        nextapino::Int = 1
+        if 0<nrow(df)
+            nextapino = maximum(parse.(Int, existapino)) + 1
+        end
+
         global apisequencenumber = DataFrame(apino=nextapino)
 
         if j_config.JC["debug"]
