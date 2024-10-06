@@ -200,8 +200,8 @@ function _executeApi(apino::String, dfRedis::DataFrame)
 """
 function _executeApi(json_d::Dict, dfRedis::DataFrame)
     apino = json_d["apino"]
-    @info "redis exe " apino 
-    println(dfRedis)
+#    @info "redis exe " apino 
+#    println(dfRedis)
     ret = ""
     jmsg::String = string("compliment me!")
 

@@ -144,8 +144,8 @@ const checkResult = (o) => {
                 preferent.errnum = o.errnum;
             }
 
-            if(o.preciousmsg != null){
-                let prw = o.preciousmsg.replaceAll("<start>","<ol class=\"jetelina_teach_you_ol\"><li>").replaceAll("<st>","</li><li>").replaceAll("<end>","</li></ol>");
+            if (o.preciousmsg != null) {
+                let prw = o.preciousmsg.replaceAll("<start>", "<ol class=\"jetelina_teach_you_ol\"><li>").replaceAll("<st>", "</li><li>").replaceAll("<end>", "</li></ol>");
                 $(`${PRECIOUSWORDPANEL} [name='precious_word']`).append(prw);
                 showPreciousPanel(true);
             }
@@ -185,7 +185,7 @@ const checkResult = (o) => {
 
             ret = false;
         } else {
-//            $(SOMETHINGMSGPANELMSG).text("");
+            //            $(SOMETHINGMSGPANELMSG).text("");
             showSomethingMsgPanel(false);
             /*
                 Tips:
@@ -305,7 +305,7 @@ const getdata = (o, t) => {
                                     });
 
                                 }
-                                if(v.name != null){
+                                if (v.name != null) {
                                     configChangeHistoryStr += ` by ${v.name}<br>`;
                                 }
                             } else if (t == 5) {
@@ -686,15 +686,15 @@ const postAjaxData = (url, data) => {
                     m = specialmsg;
                 }
             } else {
-                if (url == posturls[10]){
-                    if($(CONFIGPANEL).is(":visible")){
+                if (url == posturls[10]) {
+                    if ($(CONFIGPANEL).is(":visible")) {
                         $(`${CONFIGPANEL} span`).filter(".configparams_key, .configparams_val").remove();
                     }
 
                     let dbinfo = result["Jetelina"][0];
                     let dbparams = "";
-                    let i=1;
-                    $.each(dbinfo,function(k,v){
+                    let i = 1;
+                    $.each(dbinfo, function (k, v) {
                         dbparams += `<div style="text-align:left;"><span name="k${i}" class="configparams_key">${k}:</span><span name="v${i}" class="configparams_val">${v}</span></div>`;
                         i++;
                     });
@@ -886,7 +886,7 @@ const authAjax = (un) => {
                 }
             });
         } else {
-//            m = chooseMsg("fail-msg", "", "");
+            //            m = chooseMsg("fail-msg", "", "");
             m = result["message from Jetelina"];
         }
 
@@ -1209,11 +1209,11 @@ const chatKeyDown = (cmd) => {
                                     after displaying the ordered parameter, the update procedure is canceled by 'thank you'. 
                             */
                             if (inScenarioChk(ut, "general-thanks-cmd")) {
-                                typingControll(chooseMsg('general-thanks-msg', loginuser.lastname, "c"));                                          
+                                typingControll(chooseMsg('general-thanks-msg', loginuser.lastname, "c"));
                                 showSomethingMsgPanel(false);
                                 showConfigPanel(false);
                                 showPreciousPanel(false);
-                                if(inCancelableCmdList([CONFIGCHANGE])){
+                                if (inCancelableCmdList([CONFIGCHANGE])) {
                                     rejectCancelableCmdList(CONFIGCHANGE);
                                     presentaction = {};
                                     return;
@@ -1289,16 +1289,16 @@ const chatKeyDown = (cmd) => {
                                                 presentaction.dbtype = new_param;
                                             }
 
-                                            if( $(CONFIGPANEL).is(":visible")){
-                                                $(`${CONFIGPANELLIST} span`).filter(".configparams_key").each(function(){
+                                            if ($(CONFIGPANEL).is(":visible")) {
+                                                $(`${CONFIGPANELLIST} span`).filter(".configparams_key").each(function () {
                                                     let p = $(this);
                                                     let key = p.text();
 
-                                                    if(0<key.length && key.endsWith(":") ){
-                                                        key = key.slice(0,-1);
+                                                    if (0 < key.length && key.endsWith(":")) {
+                                                        key = key.slice(0, -1);
                                                     }
 
-                                                    if(key == presentaction.config_name){
+                                                    if (key == presentaction.config_name) {
                                                         let k = p.attr("name");
                                                         let v = "v" + k.substr(1);
                                                         $(`${CONFIGPANELLIST} span[name='${v}']`).text(new_param);
@@ -1343,7 +1343,7 @@ const chatKeyDown = (cmd) => {
                         }
                     } else {
                         // do not have an authority
-                        if (inScenarioChk(ut, 'user-manage-add') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-delete') || inScenarioChk(ut,'config-show-cmd')) {
+                        if (inScenarioChk(ut, 'user-manage-add') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-delete') || inScenarioChk(ut, 'config-show-cmd')) {
                             m = chooseMsg("no-authority-js-msg", "", "");
                         } else {
                             // normal reply e.g "next?"
@@ -1721,7 +1721,7 @@ const showSomethingInputField = (b, type) => {
         $(SOMETHINGINPUTFIELD).show();
         $(SOMETHINGINPUT).focus();
     } else {
-//        $(SOMETHINGMSGPANELMSG).text("");
+        //        $(SOMETHINGMSGPANELMSG).text("");
         $(SOMETHINGTEXT).text("");
         $(SOMETHINGINPUT).val("");
         $(SOMETHINGINPUTFIELD).hide();
@@ -1738,7 +1738,7 @@ const showSomethingMsgPanel = (b) => {
     let sm = $(SOMETHINGMSGPANEL);
     if (b) {
         if (sm.text().indexOf(preferent.errnum) != -1) {
-            sm.css({ 'height': '200px'});
+            sm.css({ 'height': '200px' });
             sm.draggable().show().animate({
                 top: "45%",
                 left: "25%"
@@ -1747,20 +1747,20 @@ const showSomethingMsgPanel = (b) => {
             sm.css({ 'height': '100px' });// default number in .something_msg_def
             sm.draggable().show();
         }
-/*
-        here is for scrolling up the messages, but wonder if it required or not, then commented out, who knows.:O
-
-        messageScrollTimerID = setInterval(function () {
-            sm.animate({ scrollTop: (sm.scrollTop() == 0 ? sm.height() : 0) }, 4000);
-        }, ANIMATEDSCROLLING);
-*/
+        /*
+                here is for scrolling up the messages, but wonder if it required or not, then commented out, who knows.:O
+        
+                messageScrollTimerID = setInterval(function () {
+                    sm.animate({ scrollTop: (sm.scrollTop() == 0 ? sm.height() : 0) }, 4000);
+                }, ANIMATEDSCROLLING);
+        */
     } else {
         // these classes are for configuration changing history message
         sm.removeClass("config_history");
         $(SOMETHINGMSGPANELMSG).removeClass("config_history_text");
         $(SOMETHINGMSGPANELMSG).text("");
 
-//        clearInterval(messageScrollTimerID);
+        //        clearInterval(messageScrollTimerID);
         sm.hide();
     }
 }
@@ -1849,11 +1849,11 @@ const rejectSelectedItemsArr = (item) => {
 const subPanelCheck = () => {
     if (isVisibleSomethingMsgPanel()) {
         if (0 < $(SOMETHINGINPUT).val().length) {
-            if(inCancelableCmdList([CONFIGCHANGE])){
-                let e = chooseMsg('common-post-cmd', '', '');  
+            if (inCancelableCmdList([CONFIGCHANGE])) {
+                let e = chooseMsg('common-post-cmd', '', '');
                 typingControll(chooseMsg('config-update-msg', e, "r"));
-            }else if(inCancelableCmdList([TABLEAPIDELETE])){
-                typingControll(chooseMsg('common-confirm-msg','',""));
+            } else if (inCancelableCmdList([TABLEAPIDELETE])) {
+                typingControll(chooseMsg('common-confirm-msg', '', ""));
             }
         }
     }
@@ -1942,23 +1942,24 @@ const apiTestAjax = () => {
                 let ret = JSON.stringify(result);
                 $(`${COLUMNSPANEL} [name='apiout']`).addClass("attentionapiinout").text(ret);
             } else {
-                if (0 < result.Jetelina.length) {
-                    let ret = JSON.stringify(result);
-                    $(`${COLUMNSPANEL} [name='apiout']`).addClass("attentionapiinout").text(ret);
-                } else {
+                if (result.apino != null) {
                     let newapis = result.apino;
                     if (newapis[0] != "" && newapis[1] != "") {
-                        m = chooseMsg('func-newapino-msg',`are ${newapis[0]} & ${newapis[1]}. ${result["message from Jetelina"]}`,'r');
+                        m = chooseMsg('func-newapino-msg', `are ${newapis[0]} & ${newapis[1]}. ${result["message from Jetelina"]}`, 'r');
                     } else if (newapis[0] != "" && newapis[1] == "") {
-                        m = chooseMsg('func-newapino-msg',`is ${newapis[0]}. ${result["message from Jetelina"]}`,'r');
+                        m = chooseMsg('func-newapino-msg', `is ${newapis[0]}. ${result["message from Jetelina"]}`, 'r');
                     } else if (newapis[0] == "" && newapis[1] != "") {
-                        m = chooseMsg('func-newapino-msg',`is ${newapis[1]}. ${result["message from Jetelina"]}`,'r');
+                        m = chooseMsg('func-newapino-msg', `is ${newapis[1]}. ${result["message from Jetelina"]}`, 'r');
                     }
                     $(CHATBOXYOURTELL).text(m);
                     $(".yourText").mouseover();
                     refreshApiList();
                     refreshTableList();
                 }
+
+                let ret = JSON.stringify(result);
+                $(`${COLUMNSPANEL} [name='apiout']`).addClass("attentionapiinout").text(ret);
+
             }
         } else {
             resetApiTestProcedure();

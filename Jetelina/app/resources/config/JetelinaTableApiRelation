@@ -35,3 +35,15 @@ ji790:ftest2:mysql
 ju791:ftest2:mysql
 jd792:ftest2:mysql
 js793:ftest2:mysql
+ju794:Oct6a:redis
+js795:Oct6a:redis
+ju796:Oct6b:redis
+js797:Oct6b:redis
+ju798:Oct6c:redis
+js799:Oct6c:redis
+js800:ftest3:postgresql
+ju801:Oct6d:redis
+js802:Oct6d:redis
+ju803:Oct6e:redis
+js804:Oct6e:redis
+js805:ftest3:postgresql
