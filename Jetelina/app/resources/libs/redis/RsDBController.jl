@@ -76,47 +76,48 @@ function dataInsertFromCSV(fname::String)
 - return: boolean: true -> success, false -> get fail
 """
 function dataInsertFromCSV(fname::String)
-#    @info "fname " fname
+    #    @info "fname " fname
     ret = ""
-#	redisdbname = "default" # this is temporary dummy name, indeed it's ok what a name
+    #	redisdbname = "default" # this is temporary dummy name, indeed it's ok what a name
     jmsg::String = string("compliment me!")
-#    tablename_arr::Vector{String} = []
+    #    tablename_arr::Vector{String} = []
 
     df = DataFrame(CSV.File(fname))
     rename!(lowercase, df)
-#    push!(tablename_arr, redisdbname)
+    #    push!(tablename_arr, redisdbname)
 
-    if(0<nrow(df))
-    #===
-            Tips:
-                to make matching with ApiSql..writeToList(), the secound parameter is to be 'key_arr' and
-                it is contained the key name instead of table name in RDBMS.
-        ===#
-		for i ∈ 1:nrow(df)
+    if (0 < nrow(df))
+        #===
+                Tips:
+                    to make matching with ApiSql..writeToList(), the secound parameter is to be 'key_arr' and
+                    it is contained the key name instead of table name in RDBMS.
+            ===#
+        for i ∈ 1:nrow(df)
             key_arr::Vector{String} = []
+            df.key[i] = lowercase(df.key[i])
             #===
                 Caution:
                     in fact, insert_str is enough only one, but in the loop because of 
                     using 'apino'
             ===#
             insert_str = RsSQLSentenceManager.createApiInsertSentence()
-            if(insert_str != "")
+            if (insert_str != "")
                 ApiSqlListManager.writeTolist(insert_str, "", key_arr, "redis")
             end
 
-            push!(key_arr,df.key[i])
+            push!(key_arr, df.key[i])
             # update (set)
             update_str = RsSQLSentenceManager.createApiUpdateSentence(df.key[i])
-            if(update_str != "")
-                if(set(df.key[i],df.value[i]))
+            if (update_str != "")
+                if (set(df.key[i], df.value[i]))
                     ApiSqlListManager.writeTolist(update_str, "", key_arr, "redis")
                 end
             end
 
             # select (get)
             select_str = RsSQLSentenceManager.createApiSelectSentence(df.key[i])
-            if(select_str != "")
-                ApiSqlListManager.writeTolist(select_str,"", key_arr, "redis")
+            if (select_str != "")
+                ApiSqlListManager.writeTolist(select_str, "", key_arr, "redis")
             end
         end
 
@@ -149,14 +150,14 @@ function getKeyList(s::String)
     jmsg::String = string("compliment me!")
 
     keys = simpleScan(i, n)
-    if(keys[1] == 0)
+    if (keys[1] == 0)
         for i ∈ 1:length(keys[2])
             #===
                 Tips:
                     they said keys[2][i] is string type.
             ===#
             if keys[2][i] != ""
-                push!(valueArr,keys[2][i])
+                push!(valueArr, keys[2][i])
             end
         end
 
@@ -166,7 +167,7 @@ function getKeyList(s::String)
         elseif s == "dataframe"
             return df
         end
-    end 
+    end
 end
 """
 function executeApi(json_d::Dict,target_api::DataFrame)
@@ -200,82 +201,93 @@ function _executeApi(apino::String, dfRedis::DataFrame)
 """
 function _executeApi(json_d::Dict, dfRedis::DataFrame)
     apino = json_d["apino"]
-#    @info "redis exe " apino 
-#    println(dfRedis)
+    #    @info "redis exe " apino 
+    #    println(dfRedis)
     ret = ""
     jmsg::String = string("compliment me!")
 
-        if startswith(apino, "js")
-            # get 
-            p = split(dfRedis[:,:sql][1], ':') # dfRedis[:,:sql][1] -> get:<key>
-            v = get(p[2])
-            df = DataFrame(key=p[2],value=v)
+    if startswith(apino, "js")
+        # get 
+        p = split(dfRedis[:, :sql][1], ':') # dfRedis[:,:sql][1] -> get:<key>
+        r = get(p[2])
+        if(r[1])
+            v = r[2]
+            df = DataFrame(key=p[2], value=v)
             ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
-        elseif startswith(apino, "ju")
-            v = json_d["key"]
-            if !isnothing(v)
-                p = split(dfRedis[:,:sql][1], ':') # dfRedis[:,:sql][1] -> get:<key>
-                r = set(p[2],v)
-#                @info "redis set " p[2] v r
-                if(r)
-                    ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
-                else
-                    k = p[2]
-                    ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "failed set $v in $k, sorry"))
-                end
-            else
-                ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "failed set in $k because no value, look carefully more."))
-            end
-        elseif startswith(apino, "ji")
-            ret_u::Tuple = (Bool,String)
-            ret_s::Tuple = (Bool,String)
-            k = json_d["key1"]
-            v = json_d["key2"]
-            # set
-            r = set(k,v)
-            if(r)
-                #===
-                    Attention:
-                        'ji***' is for registring a new key/value data.
-                        therefore need to create a new api 'ju***' and 'js***' at here.
-                ===#
-                update_str = RsSQLSentenceManager.createApiUpdateSentence(k)
-                if(update_str != "")
-                    key_arr::Vector{String} = []
-                    push!(key_arr,k)    
-                    ret_u = ApiSqlListManager.writeTolist(update_str, "", key_arr, "redis")
-
-                    select_str = RsSQLSentenceManager.createApiSelectSentence(k)
-                    if(select_str != "")
-                        ret_s = ApiSqlListManager.writeTolist(select_str,"", key_arr, "redis")
-                    end
-                end
-
-                #===
-                    Caution:
-                        i was wondering it was ok without looking at the result of writeTolist().
-                        but maybe they would be succeed.
-                        it was not a lottery, but confidence. :)
-                ===#
-                if ret_u[1] && ret_s[1]
-                    apino_u = ret_u[2]
-                    apino_s = ret_s[2]
-                    ret = json(Dict("result" => true, "Jetelina" => "[{}]", "apino" => ["$apino_u","$apino_s"],"message from Jetelina" => jmsg))
-                elseif ret_u[1]
-                    apino_u = ret_u[2]
-                    jmsg = "only update api has been created, select api is why?"
-                    ret = json(Dict("result" => true, "Jetelina" => "[{}]", "apino" => ["$apino_u",""],"message from Jetelina" => jmsg))
-                elseif ret_s[1]
-                    apino_s = ret_s[2]
-                    jmsg = "only select api has been created, update api is why?"
-                    ret = json(Dict("result" => true, "Jetelina" => "[{}]", "apino" => ["","$apino_s"],"message from Jetelina" => jmsg))
-                end
-            else
-                k = p[1]
-                v = p[2]
-                ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "failed set $v in $k sorry"))
-            end
+        else
+            err = "Oops got error something, oh my"
+            errnum = r[2]
+            ret = json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg"=>"$err","errnum"=>"$errnum"))
         end
+    elseif startswith(apino, "ju")
+        v = json_d["key"]
+        if !isnothing(v)
+            p = split(dfRedis[:, :sql][1], ':') # dfRedis[:,:sql][1] -> get:<key>
+            r = set(p[2], v)
+            #                @info "redis set " p[2] v r
+            if (r[1])
+                ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
+            else
+                k = p[2]
+                errnum = r[2]
+                ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "failed set $v in $k, sorry","errnum"=>"$errnum"))
+            end
+        else
+            ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "failed set in $k because no value, look carefully more."))
+        end
+    elseif startswith(apino, "ji")
+#        ret_u::Tuple = (Bool, String)
+#        ret_s::Tuple = (Bool, String)
+        ret_u::String = ""
+        ret_s::String = ""
+        k = lowercase(json_d["key1"])
+        v = json_d["key2"]
+        # set
+        r = set(k, v)
+        if (r[1])
+            #===
+                Attention:
+                    'ji***' is for registring a new key/value data.
+                    therefore need to create a new api 'ju***' and 'js***' at here.
+            ===#
+            update_str = RsSQLSentenceManager.createApiUpdateSentence(k)
+            if (update_str != "")
+                key_arr::Vector{String} = []
+                push!(key_arr, k)
+                ret_u = ApiSqlListManager.writeTolist(update_str, "", key_arr, "redis")
+
+                select_str = RsSQLSentenceManager.createApiSelectSentence(k)
+                if (select_str != "")
+                    ret_s = ApiSqlListManager.writeTolist(select_str, "", key_arr, "redis")
+                end
+            end
+
+            #===
+                Caution:
+                    i was wondering it was ok without looking at the result of writeTolist().
+                    but maybe they would be succeed.
+                    it was not a lottery, but confidence. :)
+            ===#
+            if (0<length(ret_u)) && (0<length(ret_s))
+                apino_u = ret_u
+                apino_s = ret_s
+                ret = json(Dict("result" => true, "Jetelina" => "[{}]", "apino" => ["$apino_u", "$apino_s"], "message from Jetelina" => jmsg))
+            elseif 0<length(ret_u)
+                apino_u = ret_u
+                jmsg = "only update api has been created, select api is why?"
+                ret = json(Dict("result" => true, "Jetelina" => "[{}]", "apino" => ["$apino_u", ""], "message from Jetelina" => jmsg))
+            elseif 0<length(ret_s)
+                apino_s = ret_s
+                jmsg = "only select api has been created, update api is why?"
+                ret = json(Dict("result" => true, "Jetelina" => "[{}]", "apino" => ["", "$apino_s"], "message from Jetelina" => jmsg))
+            end
+        else
+            k = p[1]
+            v = p[2]
+            errnum = r[2]
+            ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "failed set $v in $k sorry","errnum"=>"$errnum"))
+        end
+    end
 
     return ret
 end
@@ -287,16 +299,17 @@ function set(k,v)
 # Arguments
 - `k:String`: name
 - `v:Any`: value
-- return: boolean:  success -> true::boolean, fail -> err::String
+- return: tuple(boolean,string):  success -> (true,""), fail -> (false,error number)
 """
 function set(k, v)
     conn = open_connection()
     try
         Redis.set(conn, k, v)
-        return true
+        return true, ""
     catch err
-        JLog.writetoLogfile("RsDBController.set() error: $err")
-        return err
+        errnum = JLog.getLogHash()
+        JLog.writetoLogfile("[errnum:$errnum] RsDBController.set() error: $err")
+        return false, errnum
     finally
         close_connection(conn)
     end
@@ -308,16 +321,17 @@ function get(k)
 
 # Arguments
 - `k:String`: target matching name
-- return: String:  value in redis in matching key name
+- return: tuple(boolean,String): success->(true, value in redis in matching key name) false -> (false, error number)
 """
 function get(k)
     conn = open_connection()
     try
         v = Redis.get(conn, k)
-        return v
+        return true, v
     catch err
-        JLog.writetoLogfile("RsDBController.get() error: $err")
-        return false
+        errnum = JLog.getLogHash()
+        JLog.writetoLogfile("[errnum:$errnum] RsDBController.get() error: $err")
+        return false, errnum
     finally
         close_connection(conn)
     end
