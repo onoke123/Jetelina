@@ -44,9 +44,6 @@ js812:Z2:redis
 ju813:Z3:redis
 js814:Z3:redis
 ji818::redis
-ji846:ftest2:mysql
-ju847:ftest2:mysql
-jd848:ftest2:mysql
-ji852:ftest:postgresql
-ju853:ftest:postgresql
-jd854:ftest:postgresql
+ji819:ftest:postgresql
+ju820:ftest:postgresql
+jd821:ftest:postgresql

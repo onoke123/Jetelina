@@ -124,8 +124,11 @@ function create_jetelina_id_sequence()
 
 	create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
 
+    deprecated
+
 	jetelina_table_id is deprecated
     jetelina_sql_sequnce is deprecated
+    jetelina__user_id_sequence deprecated
 """
 function create_jetelina_id_sequence()
     #===
@@ -228,6 +231,8 @@ function setJetelinaSequenceNumber(tablename::String,n::Integer)
 
 	set seaquence number in the ordered sequence table
 
+    deprecated because 'jt_id' changed to 'serial'
+
 # Arguments
 - `tablename: String`: expect the target sequence table name if 't'=3
 - `n: Integer` : the set number to 'tablename' sequence table
@@ -257,6 +262,9 @@ end
 function getJetelinaSequenceNumber(t::Integer,tablename)
 
 	get seaquence number from jetelina_id table
+
+    deprecated because 'user_id' changed to 'serial'
+
 
 # Arguments
 - `t: Integer`  : type order  0-> jetelina_table_id, 1-> jetelian_sql_sequence
@@ -313,10 +321,10 @@ function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer, tablenam
                 select nextval('jetelina_user_id_sequence');
             """
         else
-            seqtable = string(tablename,"_id_sequence")
-            sql = """
-            	select nextval('$seqtable');
-            """
+#            seqtable = string(tablename,"_id_sequence")
+#            sql = """
+#            	select nextval('$seqtable');
+#            """
         end
 
         sequence_number = columntable(execute(conn, sql))
@@ -393,7 +401,7 @@ function dataInsertFromCSV(fname::String)
 
     column_type = eltype.(eachcol(df))
     column_type_string = Array{Union{Nothing,String}}(nothing, length(column_name)) # using for creating table
-    column_str = string(keyword2, " integer primary key,") # using for creating table
+    column_str = string(keyword2, " serial primary key,") # using for creating table
     insert_column_str = string() # columns definition string
     insert_data_str = string() # data string
     update_str = string()
@@ -467,13 +475,22 @@ function dataInsertFromCSV(fname::String)
     	Tips:
     	    create table and sequence with 'not exists'.
     	    then insert csv data to there. this is because of forgiving adding data to the same table.
+
+            'jt_id' has been 'serial primary key' from 'integer primary key'. this column is incremented automatically, 
+            therefore 'seqT' does not need any more.
     ===#
-    seqT = string(tableName, "_id_sequence")
-    create_table_str = """
+#    seqT = string(tableName, "_id_sequence")
+#=    create_table_str = """
     	create table if not exists $tableName(
     		$column_str   
     	);create sequence if not exists $seqT;
+    """ =#
+    create_table_str = """
+    	create table if not exists $tableName(
+    		$column_str   
+    	);
     """
+
     conn = open_connection()
     try
         execute(conn, create_table_str)
@@ -506,23 +523,39 @@ function dataInsertFromCSV(fname::String)
                  1 |   1           bob        m
                  2 |   2           henry      m
                  . |   .            .         .
+
+        Attention:
+            'df' is the dataframe data of the csv file.
+            'df0' is the existence data in the 'tableName'
     ===#
-    insertStartid::Integer = getJetelinaSequenceNumber(3,tableName)
+    #    insertStartid::Integer = getJetelinaSequenceNumber(3,tableName)
+    insertStartid::Integer = nrow(df0) + 1
     # append data into the exists table, and take care '+1' and '-1'
     insertEndid::Integer = insertStartid + nrow(df) -1
+#    @info "n_df0, n_df start end " nrow(df0) nrow(df) insertStartid insertEndid
     insertcols!(df,1,keyword2=>insertStartid:insertEndid)
 
     select!(df, cols)
-
 
     # create rows
     row_strings = imap(eachrow(df)) do row
         join((ismissing(x) ? "null" : x for x in row), ",") * "\n"
     end
 
+    #===
+        Tips:
+            'jt_id' column is defined as serial primary key.
+            this key must update after a csv file insert, because of executing 'ji**' function.
+    ===#
+    sequencename = string(tableName,"_",keyword2,"_seq")
+    setjtidno = """
+        select setval ('$sequencename', $insertEndid+1, false);
+    """
+
     copyin = LibPQ.CopyIn("COPY $tableName FROM STDIN (FORMAT CSV);", row_strings)
     try
         execute(conn, copyin)
+        execute(conn, setjtidno)
         ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
     catch err
         errnum = JLog.getLogHash()
@@ -555,7 +588,7 @@ function dataInsertFromCSV(fname::String)
         ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, "postgresql")
     end
     # update sequence number with the end of row number
-    setJetelinaSequenceNumber(tableName, insertEndid)
+#    setJetelinaSequenceNumber(tableName, insertEndid)
 
     return ret
 end
@@ -578,7 +611,8 @@ function dropTable(tableName::Vector)
     try
         for i in eachindex(tableName)
             # drop the tableName
-            drop_table_str = string("drop table ", tableName[i],";drop sequence ", tableName[i], "_id_sequence")
+#            drop_table_str = string("drop table ", tableName[i],";drop sequence ", tableName[i], "_id_sequence")
+            drop_table_str = string("drop table ", tableName[i],";")
             # delete the related data from jetelina_table_manager
             #delete_data_str = string("delete from jetelina_table_manager where table_name = '", tableName[i], "'")
 
@@ -869,7 +903,7 @@ function create_jetelina_user_table()
     ===#
     create_jetelina_user_table_str = """
     	create table if not exists jetelina_user_table(
-    		user_id integer not null primary key,
+    		user_id serial not null primary key,
     		username varchar(256),
     		nickname varchar(256),
     		logincount integer not null default 0,
@@ -881,7 +915,7 @@ function create_jetelina_user_table()
     	);
     """
     insert_first_user = """
-    	insert into jetelina_user_table (user_id,username,generation) values(0,'myself',-1);
+    	insert into jetelina_user_table (username,generation) values('myself',-1);
     """
 
     conn = open_connection()
@@ -917,26 +951,29 @@ function userRegist(username::String)
         end
     end
 
-    user_id = getJetelinaSequenceNumber(2,"")
+#    user_id = getJetelinaSequenceNumber(2,"")
     existentuserdata = getUserData(JSession.get()[1])
     j = existentuserdata["Jetelina"][1]
     parentGeneration = j[:generation]
     thisuserGeneration = parentGeneration + 1 # to make easy understand
-    insert_basic_st = """
-    	insert into jetelina_user_table (user_id,username,generation) values($user_id,'$username','$thisuserGeneration');
-    """
+#    insert_basic_st = """
+#    	insert into jetelina_user_table (username,generation) values('$username','$thisuserGeneration');
+#    """
 
     inviterId = JSession.get()[2]
     registerDate = Dates.format(now(), "yyyy-mm-dd HH:MM:SS")
-
-    insert_additional_st = """
-    	update jetelina_user_table set user_info = '{"register_date":"$registerDate","inviter":$inviterId}' where user_id=$user_id;
+    insert_basic_st = """
+    	insert into jetelina_user_table (username,user_info,generation) values('$username','{"register_date":"$registerDate","inviter":$inviterId}','$thisuserGeneration');
     """
+
+#    insert_additional_st = """
+#    	update jetelina_user_table set user_info = '{"register_date":"$registerDate","inviter":$inviterId}' where user_id=$user_id;
+#    """
 
     conn = open_connection()
     try
         execute(conn, insert_basic_st)
-        execute(conn, insert_additional_st)
+#        execute(conn, insert_additional_st)
         ret = json(Dict("result" => true, "message from Jetelina" => jmsg))
     catch err
         errnum = JLog.getLogHash()
@@ -1501,7 +1538,7 @@ function prepareDbEnvironment(mode::String)
         close_connection(conn)
 
         if mode == "init"
-            create_jetelina_id_sequence()
+#            create_jetelina_id_sequence()
             create_jetelina_user_table()
         end
 

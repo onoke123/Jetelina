@@ -61,7 +61,7 @@ function initialDb()
 			the secound param '0' is dummy. but it expectables in Postgres, but not Mysql, whichever the following
 			process use the first param 'myself', do not worry. :) 
 	===#
-	JSession.set("myself",0)
+	JSession.set("myself",1)
 
 	ret = _configParamUpdate(param)
 	if DBDataController.prepareDbEnvironment(db,mode)[1]
