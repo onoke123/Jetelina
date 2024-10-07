@@ -1061,7 +1061,7 @@ const postSelectedColumns = (mode) => {
     } else {
       m = chooseMsg('fail-msg', '', '');
       if (result.resembled != null && 0 < result.resembled.length) {
-        m = chooseMsg('func-duplicateapi-msg',`${result.resembled}`,'r');
+        m = chooseMsg('func-duplicateapi-msg',`${result.resembled}`,'a');
       }
     }
 

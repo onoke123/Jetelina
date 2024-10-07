@@ -541,16 +541,19 @@ function dataInsertFromCSV(fname::String)
     	===#
     push!(tablename_arr, tableName)
     insert_str = PgSQLSentenceManager.createApiInsertSentence(tableName, insert_column_str, insert_data_str)
-    ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, "postgresql")
-
+    if ApiSqlListManager.sqlDuplicationCheck(insert_str, "", "postgresql")[1] == false
+        ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, "postgresql")
+    end
     # update
     update_str = PgSQLSentenceManager.createApiUpdateSentence(tableName, update_str)
-    ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, "postgresql")
-
+    if ApiSqlListManager.sqlDuplicationCheck(update_str[1], update_str[2], "postgresql")[1] == false
+        ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, "postgresql")
+    end
     # delete
     delete_str = PgSQLSentenceManager.createApiDeleteSentence(tableName)
-    ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, "postgresql")
-
+    if ApiSqlListManager.sqlDuplicationCheck(delete_str[1], delete_str[2], "postgresql")[1] == false
+        ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, "postgresql")
+    end
     # update sequence number with the end of row number
     setJetelinaSequenceNumber(tableName, insertEndid)
 
@@ -744,7 +747,7 @@ function doSelect(sql::String,mode::String)
 		'mesure' mode -> exectution time of tuple(max,min,mean) 
 """
 function doSelect(sql::String, mode::String)
-    @info "PgD... doSelect: " mode sql
+#    @info "PgD... doSelect: " mode sql
     conn = open_connection()
     ret = ""
     try

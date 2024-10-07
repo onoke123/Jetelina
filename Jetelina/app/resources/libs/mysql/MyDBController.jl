@@ -431,15 +431,19 @@ function dataInsertFromCSV(fname::String)
     	===#
     push!(tablename_arr, tableName)
     insert_str = MySQLSentenceManager.createApiInsertSentence(tableName, insert_column_str, insert_data_str)
-    ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, "mysql")
-
+    if ApiSqlListManager.sqlDuplicationCheck(insert_str, "", "mysql")[1] == false
+        ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, "mysql")
+    end
     # update
     update_str = MySQLSentenceManager.createApiUpdateSentence(tableName, update_str)
-    ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, "mysql")
-
+    if ApiSqlListManager.sqlDuplicationCheck(update_str[1], update_str[2], "mysql")[1] == false
+        ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, "mysql")
+    end
     # delete
     delete_str = MySQLSentenceManager.createApiDeleteSentence(tableName)
-    ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, "mysql")
+    if ApiSqlListManager.sqlDuplicationCheck(delete_str[1], delete_str[2], "mysql")[1] == false
+        ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, "mysql")
+    end
 
     return ret
 end

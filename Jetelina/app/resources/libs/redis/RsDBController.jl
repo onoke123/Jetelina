@@ -76,7 +76,7 @@ function dataInsertFromCSV(fname::String)
 - return: boolean: true -> success, false -> get fail
 """
 function dataInsertFromCSV(fname::String)
-    @info "fname " fname
+#    @info "fname " fname
     ret = ""
 #	redisdbname = "default" # this is temporary dummy name, indeed it's ok what a name
     jmsg::String = string("compliment me!")
@@ -216,7 +216,7 @@ function _executeApi(json_d::Dict, dfRedis::DataFrame)
             if !isnothing(v)
                 p = split(dfRedis[:,:sql][1], ':') # dfRedis[:,:sql][1] -> get:<key>
                 r = set(p[2],v)
-                @info "redis set " p[2] v r
+#                @info "redis set " p[2] v r
                 if(r)
                     ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
                 else

@@ -154,7 +154,7 @@ function createApiSelectSentence(json_d, mode::String)
     selectSql = """select $selectSql from $tableName"""
 
     if mode != "pre"
-        ck = ApiSqlListManager.sqlDuplicationCheck(selectSql, subq_d)
+        ck = ApiSqlListManager.sqlDuplicationCheck(selectSql, subq_d, "postgresql")
         if ck[1]
             # already exist it. return it and do nothing.
             return json(Dict("result" => false, "resembled" => ck[2]))

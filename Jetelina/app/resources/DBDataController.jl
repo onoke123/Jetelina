@@ -183,21 +183,25 @@ function dropTable(tableName::Vector, stichwort::String)
 			ret = MyDBController.dropTable(tableName)
 		elseif j_config.JC["dbtype"] == "oracle"
 		end
+
+		if stichret && ret[1]
+			# update SQL list
+			ApiSqlListManager.deleteTableFromlist(tableName)
+		end
+		#==
+			Tips:
+				ret[2] is expected
+				delete succeeded
+					json(Dict("result" => true, "tablename" => "$tableName", "message from Jetelina" => jmsg))
+				something error happened
+					json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err"))
+		==#
+		return ret[2]	
+	else
+		jmg = "Hum, wrong pass phrase, was it? type 'cancel' then try it again."
+		return json(Dict("result" => false,  "errmsg" => "$jmg"))
 	end
 
-	if stichret && ret[1]
-		# update SQL list
-		ApiSqlListManager.deleteTableFromlist(tableName)
-	end
-	#==
-		Tips:
-			ret[2] is expected
-			delete succeeded
-				json(Dict("result" => true, "tablename" => "$tableName", "message from Jetelina" => jmsg))
-			something error happened
-				json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err"))
-	==#
-	return ret[2]
 end
 """
 function getColumns(tableName::String)

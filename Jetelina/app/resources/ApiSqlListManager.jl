@@ -446,13 +446,12 @@ function sqlDuplicationCheck(nsql::String, subq::String)
 		   exist     -> ture, api no(ex.js100)
 		   not exist -> false
 """
-function sqlDuplicationCheck(nsql::String, subq::String)
+function sqlDuplicationCheck(nsql::String, subq::String, dbtype::String)
     if 0 < nrow(Df_JetelinaSqlList)
-        df = Df_JetelinaSqlList
-        filter!(:db => p -> p == "mysql", df)
+        df = subset(ApiSqlListManager.Df_JetelinaSqlList, :db => ByRow(==(dbtype)), skipmissing = true)
 
         for i ∈ 1:nrow(df)
-            if df[!, :sql][i] == nsql && df[!, :subquery][i] == subq
+            if df[!, :sql][i] == nsql && coalesce(df[!, :subquery][i],"") == subq
                 return true, df[!, :apino][i]
             end
         end
