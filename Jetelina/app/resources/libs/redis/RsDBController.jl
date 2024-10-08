@@ -109,7 +109,7 @@ function dataInsertFromCSV(fname::String)
             # update (set)
             update_str = RsSQLSentenceManager.createApiUpdateSentence(df.key[i])
             if (update_str != "")
-                if (set(df.key[i], df.value[i]))
+                if (set(df.key[i], df.value[i])[1])
                     ApiSqlListManager.writeTolist(update_str, "", key_arr, "redis")
                 end
             end
