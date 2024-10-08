@@ -236,10 +236,10 @@ function _executeApi(json_d::Dict, dfRedis::DataFrame)
             ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "failed set in $k because no value, look carefully more."))
         end
     elseif startswith(apino, "ji")
-#        ret_u::Tuple = (Bool, String)
-#        ret_s::Tuple = (Bool, String)
-        ret_u::String = ""
-        ret_s::String = ""
+        ret_u::Tuple = (Bool, String)
+        ret_s::Tuple = (Bool, String)
+#        ret_u::String = ""
+#        ret_s::String = ""
         k = lowercase(json_d["key1"])
         v = json_d["key2"]
         # set
@@ -268,16 +268,16 @@ function _executeApi(json_d::Dict, dfRedis::DataFrame)
                     but maybe they would be succeed.
                     it was not a lottery, but confidence. :)
             ===#
-            if (0<length(ret_u)) && (0<length(ret_s))
-                apino_u = ret_u
-                apino_s = ret_s
+            if ret_u[1] && ret_s[1]
+                apino_u = ret_u[2]
+                apino_s = ret_s[2]
                 ret = json(Dict("result" => true, "Jetelina" => "[{}]", "apino" => ["$apino_u", "$apino_s"], "message from Jetelina" => jmsg))
-            elseif 0<length(ret_u)
-                apino_u = ret_u
+            elseif ret_u[1]
+                apino_u = ret_u[2]
                 jmsg = "only update api has been created, select api is why?"
                 ret = json(Dict("result" => true, "Jetelina" => "[{}]", "apino" => ["$apino_u", ""], "message from Jetelina" => jmsg))
-            elseif 0<length(ret_s)
-                apino_s = ret_s
+            elseif ret_s[1]
+                apino_s = ret_s[2]
                 jmsg = "only select api has been created, update api is why?"
                 ret = json(Dict("result" => true, "Jetelina" => "[{}]", "apino" => ["", "$apino_s"], "message from Jetelina" => jmsg))
             end
