@@ -189,21 +189,112 @@
 	<div id="guidance" class="functionpanel-parts commonpanel squarepanel" hidden>
 		<div style="size:a3;color:lightgreen;width:80%;height:50%">
 			This is my current skills.<br><br>
-			<table style="margin:auto;text-align:left;">
+			<table name="page1" style="margin:auto;text-align:left;">
 				<tr>
-					<td>
-						■Login/Logout<br>
-						We always start with 'Hi','Hello' or some greetings. When you wanna login to me, you just type
-						your account in my chatbox.
-						After you enter in me, you can logout whenever by typing 'logout',,'exit','bye' and so on, but I
-						am pleasure if you type 'have a nice day'.
-						<br><br>
+					<td><pre>
+	Hi, I am Jetelina that is your helper to create database tables and WebAPIs that are related with the created database.
+	The databases that I can manage so far are PostgreSql, MySql and Redis. Redis is experimental implementation for me, BECAUSE
+	I do not know its use cases yet, indeed. :p
+
+	The handling process that I recommend to you is,
+		1. you upload your csv data file to me
+		2. i create a data base table according to your uploding csv file
+		3. you open the created table
+		4. you select some columns that you wanna to be data of your WebAPI, this is to be the sql source code
+		5. pre-test the sql source code to make confirm
+		6. finally create WebAPI is related with the sql
+						
+		since 6, you can use the created new WebAPI in your web page/application, of couse it can be tested on my palm.
+		Anyhow let's try it, do not worry I suggest you how to do it.
+
+		Oops, I must tell you something before you use me.
+		You command me every your order through our chatbox. Some functions are able to be used by a mouse, but INDEED you will know
+		typing is enough to us. Mouse manipuration is old fashion. JUST talk to me. :)
+					</pre></td>
+				</tr>
+				<tr>
+					<td style="color: antiquewhite;font-size: larger;"><pre>
+	These are a little bit details, but you can see more detail in jetelina.org site.
+					</pre></td>
+				</tr>
+				<tr>
+					<td><pre>
+	■Login/Logout<br>
+		We always start with 'Hi','Hello' or some greetings. When you wanna login to me, you just type
+		your account in my chatbox.
+		After you enter in me, you can logout whenever by typing 'logout',,'exit','bye' and so on, but I
+		am pleasure if you type 'have a nice day'.
+					</pre></td>
+				</tr>
+				<tr>
+					<td><pre>
+	■Upload csv file
+		Your uploading csv file is to be a origin of created database table.
+		The created table is displayed after uploading it.
+		The format is very common csv format,
+			e.g
+				ftest.csv   ← see in 'testdata' directory
+				name,sex,age,ave   ← be a table column name
+				AAA1,m,10,0.1      ← data
+				BBB2,f,20,0.2
+				CCC3,m,30,0.3
+
+	Attention, the headers (name,sex..) are to be column name, thus you can use '-' and so on these are not allowd to use in there depend on a database.
+	In fact, the column name will be named with the file name + header name, for example, ftest_name, ftest_sex... in above example.
+	Because I wish every columns are uniquness.
+					</pre></td>
+				</tr>
+				<tr>
+					<td style="text-align:center;">
+						Page <a href="#" onclick="page(1)">1</a> <a href="#" onclick="page(2)">2</a> <a href="#" onclick="page(3)">3</a> 
 					</td>
+				</tr>
+			</table>
+			<table name="page2" style="margin:auto;text-align:left;" hidden>
+				<tr>
+					<td><pre>
+						■WebAPIs
+						Some WebAPIs are created automatically by creating a table, I mean uploading csv file.
+						These are displayed on the right side panel. They have a meaning full name,
+						
+						- created automatically
+						　'ji': data insert api. I create it automatically by uploading your csv file.
+						　'ju': data update api. Same above.
+						　'jd': data delete api. Again.
+
+						- you will create
+						　'js': data select api. You created.
+
+						try to type its name, for example 'select ji12' or simply 'select 12', it is opend what it is.
+						You will see 'IN','OUT' and a sql sentence below. 'IN' and 'OUT' are the WebAPI's I/F, and the sql sentence is the execution in fact. 
+
+						To create 'js' API, 
+						1. select table by typing its name, for example, 'select ftest'. 'ftest' is the table name, 'open ftest' can be done as well
+						2. select columns as same, the selected column name moves to below, for example 'select age', 'age' is the colunm. 'select all' is .. you know :)
+						3. you can cancel it by typing 'cancel' or 'reject' with the column name, for example 'cancel age, every columns are canceld by typing 'cancel all'
+						4. type 'go subquery' or simply 'go sub' to move subquery input area and set a subquery phrase if you need, for example 'where ftest.ftest.age < 30'
+						5. to test these setting, you type 'test api' or 'test sql'...., I execute the sql that is defined by selected items and the subquery
+						6. the test result is displayed with 'OUT' I/F form, check it
+						7. to create api, simply type 'create api', BUT ATTENTION,
+						   in the case of you set the subquery, its variable parameter must ensureed with '{}', and the rule is following the database 
+						   I mean, if you tested the api with 'where ftest.ftest_age < 30', and you wanna '30' to be a variable parameter, you must change it {age},
+						　　　　　　where ftest.ftest_age < 30    →    where ftest.ftest_age < {age}     ← CAUTION: {age} because 'age' is integer
+							in the case of character, for example 'name'
+						　　　　　　where ftest.ftest_name = 'AAA' →  where ftest.ftest_name = '{name}'     ← CAUTION: '{name}' because 'name' is character
+
+						To test the created API,
+						1. select API's name by typing ..... as same as above 1
+						2. type 'test api' or 'check api' and so on
+						3. I ask you the input values due to 'IN' I/F, you set the values in out chatbox, then the inputs are replaced in 'IN', look at them
+						4. I say to you "..type 'boom'..." after all params are set, then you type it
+						5. the result is displayed in 'OUT' I/F, confirm it
+						6. finally you say 'thank you', 'great'... to me, OK? :)
+					</pre></td>
 				</tr>
 				<tr>
 					<td>
 						■Managing DB and WebAPI<br>
-						I can manage creating Database table from uploading your csv file, then also can manage creating
+						I can manage creating Database table by uploading csv file., then also can manage creating
 						your WebAPI that is related with your created Database table.
 						<br>
 						To see your listed tables, type 'show me tables', 'table lists' and so on.
@@ -435,5 +526,13 @@
 <script type="text/javascript" src="jetelina/js/functionpanel.js"></script>
 <script type="text/javascript" src="jetelina/js/conditionpanel.js"></script>
 <script type="text/javascript" src="jetelina/js/accountpanel.js"></script>
-
+<script>
+	const page = (n) =>{ console.log("n is ", n);
+		switch (n){
+		case 1: $("#guidance [name='page1']").show();$("#guidance [name='page2']").hide(); break;
+		case 2: $("#guidance [name='page2']").show();$("#guidance [name='page1']").hide(); break;
+		default:break;
+		}
+	}
+</script>
 </html>
