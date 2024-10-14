@@ -27,6 +27,7 @@ Vagrantfile
 *.log.*
 JetelinaTableApiRelation*
 JetelinaSqlList*
+*.out
 
 # OS or Editor folders
 .DS_Store
