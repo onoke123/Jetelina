@@ -1,1 +1,2138 @@
-const _0x25314d=_0x545d;(function(_0x47204d,_0x34525c){const _0x6507fc=_0x545d,_0x436182=_0x47204d();while(!![]){try{const _0x220687=-parseInt(_0x6507fc(0x1c2))/0x1+parseInt(_0x6507fc(0x100))/0x2*(-parseInt(_0x6507fc(0x1c3))/0x3)+parseInt(_0x6507fc(0x132))/0x4*(-parseInt(_0x6507fc(0xca))/0x5)+parseInt(_0x6507fc(0x142))/0x6+-parseInt(_0x6507fc(0xcc))/0x7*(parseInt(_0x6507fc(0x166))/0x8)+-parseInt(_0x6507fc(0x1a1))/0x9*(parseInt(_0x6507fc(0x145))/0xa)+-parseInt(_0x6507fc(0x1c6))/0xb*(-parseInt(_0x6507fc(0x193))/0xc);if(_0x220687===_0x34525c)break;else _0x436182['push'](_0x436182['shift']());}catch(_0x4f9fd7){_0x436182['push'](_0x436182['shift']());}}}(_0x1672,0xaf923));let selectedItemsArr=[],cmdCandidates=[];$(UPFILE)['on'](_0x25314d(0x163),function(){const _0x41bdc6=_0x25314d;let _0x228596=$(this)[_0x41bdc6(0x13c)]();if(_0x228596!=null&&0x0<_0x228596[_0x41bdc6(0x15a)]){let _0x5012df=_0x228596[_0x41bdc6(0x101)]('\x5c'),_0x5da8d9=_0x5012df[_0x5012df[_0x41bdc6(0x15a)]-0x1];$(MYFORM+_0x41bdc6(0x106))[_0x41bdc6(0x14d)](_0x5da8d9),$(FILEUP)[_0x41bdc6(0x1d1)]('genelic_panel'),cancelableCmdList[_0x41bdc6(0xe9)](FILESELECTOROPEN),typingControll(chooseMsg(_0x41bdc6(0x18f),_0x5da8d9,'r'));}else $(this)[_0x41bdc6(0x14f)]('genelic_panel')&&$(this)[_0x41bdc6(0x13e)](_0x41bdc6(0x17a));}),$(document)['on']({'mouseenter':function(_0x42565d){const _0x4a47d9=_0x25314d;let _0x3e1543=-0xa,_0x2ebd81=-0xa;$(_0x4a47d9(0x133))['css'](_0x4a47d9(0x110),_0x42565d[_0x4a47d9(0x10d)]+_0x2ebd81)[_0x4a47d9(0x128)](_0x4a47d9(0x149),_0x42565d[_0x4a47d9(0xe3)]+_0x3e1543);let _0x27d914=$(this)['attr']('d');$(_0x4a47d9(0x1bd))[_0x4a47d9(0x14d)]('e.g.\x20'+_0x27d914)[_0x4a47d9(0x16e)]();},'mouseleave':function(){const _0x357d90=_0x25314d;$(_0x357d90(0x1bd))[_0x357d90(0x12f)]();},'click':function(){itemSelect($(this));}},_0x25314d(0xcd));function _0x545d(_0x1cef1a,_0x129dca){const _0x167263=_0x1672();return _0x545d=function(_0x545dc6,_0x7122dc){_0x545dc6=_0x545dc6-0xc9;let _0x53244b=_0x167263[_0x545dc6];return _0x53244b;},_0x545d(_0x1cef1a,_0x129dca);}function _0x1672(){const _0xfcb106=['dbtype','\x20.item,\x20','/deleteapi','\x27:\x20','switchdb','val','click','removeClass','toLowerCase','replaceAll','success-msg','978228wtpWOG','application/json','selectedItem','10BLjUFQ','indexOf','sql','Registered\x20columns\x20in\x20','left','attr','admin','#databaselist\x20span[name=\x27','text','\x20[name=\x27apiin\x27]','hasClass','jt_id','func-fileupload-cmd','common-comand-duplicated-msg','.relatedItem,\x20.activeItem,\x20.activeandrelatedItem','func-api-test-cmd','func-item-select-all-cmd','func-select-db-msg','select','mysql','apiparams_count','length','postSelectedColumns()\x20fail','tablename','forEach','general-thanks-cmd','func-use-redis-cmd','apis','files','xhr','change','textContent','getColumn()\x20ajax\x20url\x20is\x20not\x20defined','384232llHDIV','where\x20','/getcolumns','82%','roll','func-determine-db-msg','.selectedItem','blur','show','append','insert','delete','table','match','func-show-api-list-cmd','.relatedItem,\x20.activeandrelatedItem','func-api-subquery-chk-error','focus','mode','close','genelic_panel','pass','\x20{your\x20value\x20data}','keys','func-fileupload-open-msg','get','pre','type','common-cancel-cmd','func-csv-format-error-msg','func-api-test-ready-no-param-msg','open\x20or\x20close\x20table/api','item','common-confirm-msg','func-use-mysql-cmd','cancel','post','inprogress-msg','<span\x20class=\x22apisql\x22><p>','<span\x20class=\x22apisql\x20apiout\x22><bold>OUT:</bold><div\x20name=\x22apiout\x22\x20style=\x22height:100px;\x22\x20class=\x22right_left_panel_scroll\x22>','}\x22}]\x22,\x22message\x20from\x20Jetelina\x22:\x22\x22.....\x22\x22}','func-fileupload-upload-msg','\x20div','ajax','toggleClass','420OCtGen','{\x22db\x22:\x22','is\x20','cmd','prop','\x20{your\x20key\x20data}\x20{your\x20value\x20data}','name','func-item-select-cmd','<span\x20class=\x22apisql\x20apiin\x22><bold>IN:</bold><div\x20name=\x22apiin\x22\x20>','func-api-test-execute-cmd','func-table-api-open-close-cmd','redis','{\x22param\x22:\x22','dropThisTable()\x20faild:\x20','9568773DpGFrV','original_apiin_str','substring','lastname','/postcsvfile','\x20[name=\x27apiout\x27]','your\x20key\x20data','remove','#upbtn','splice','Jetelina','where','\x20span','func-register-stichwort-msg','resembled','jetelina_delete_flg','drop\x20table','.table,.api','show\x20api\x20list','.yourText','cleanup','startsWith','Upload\x20CSV\x20File','#columns_title','func-postcolumn-where-indispensable-msg','always','error','your\x20value\x20data','div#pop-up','func-subpanel-open-cmd','detach','{\x22table\x22:\x22','fileupload():\x20unexpected\x20error','537662YmKZzX','186747LFJRIQ',',\x22subquery\x22:\x22{jt_id}\x22','inArray','1356729ZXHEIf','beginner','\x20.table','replace','\x22,\x22api\x22:\x22','general-thanks-msg','func-api-test-panel-hide-cmd','unknown-msg','19%','.activeItem,\x20.activeandrelatedItem','trim','addClass','activeandrelatedItem',']\x22,\x22message\x20from\x20Jetelina\x22:\x22\x22.....\x22\x22}','file\x20open','deleteItem','func-fileupload-msg','preapitest','{\x22apino\x22:\x22','1070395OIMwif','\x20.api','84NwQRKI','.item','func-use-postgresql-cmd','select\x20columns\x20all','\x20.item_area','apitestparams','\x20span,\x20','show\x20table\x20list','\x20.item','func-tabledrop-cmd','Keys\x20List','activeItem','func-cleanup-cmd','func-api-test-panel-show-cmd','done','\x22,\x22subquery\x22:\x22[','original_apiout_str','disabled','open\x20sub\x20query\x20panel','tables','func-fileupload-open-cmd','filter','slice','pageX','each','#right_panel','true\x20or\x20false','function-get-url','cancel-msg','push','delete\x20api','\x20div[name=\x27columns_area\x27]','func-require-stichwort-msg','animate','func-subpanel-close-cmd','relatedItem','innerWidth','func-apidelete-cmd',']\x22}','draggable','available','fail-msg','withdraw',':visible','func-subpanel-focus-cmd','appendTo','apitest','.deleteItem','func-selecteditem-cancel-cmd','#left_panel','setSelectionRange','apino','44ddrdEL','split','func-post-err-msg','}\x22,','10%','refreshing-msg','\x20label\x20span','</div></span>','fileupload','clean\x20up','\x22:\x22{','items','api','pageY','values(','func-selecteditem-all-cancel-cmd','top','func-apidelete-forbidden-msg','select\x20columns','\x22,\x22key\x22:\x22{your\x20value\x20data}\x22}','class','not','.relatedItem','subquery','stringify','apilist','json','confirmation-sentences-cmd','starting-4-msg','func-show-table-list-cmd','\x22,\x22mode\x22:\x22check\x22}','common-alert-msg','\x20.apisql','func-db-switch-cmd','from','no-authority-js-msg','ajaxSettings','IN/OUT\x20interface\x20of\x20','fail','postgresql','css','Table\x20List','func-postcolumn-available-msg','message\x20from\x20Jetelina','attentionapiinout','.apisql','\x20&\x20','hide','{\x22result\x22:true\x20or\x20false,\x22Jetelina\x22:\x22[{\x22','function-post-url','4FWwIDM','#pop-up','file\x20upload','\x20[name=\x27api-test-msg\x27]','colname'];_0x1672=function(){return _0xfcb106;};return _0x1672();}const openFunctionPanel=()=>{const _0x5d36e7=_0x25314d;inVisibleConditionPanel()&&$(CONDITIONPANEL)[_0x5d36e7(0x12f)](),$(FUNCTIONPANEL)[_0x5d36e7(0x16e)]()['animate']({'width':window[_0x5d36e7(0xf0)]*0.92,'height':window['innerHeight']*0.92,'top':'2%','left':'2%'},ANIMATEDURATION),isVisibleColumns()&&($(FILEUP)[_0x5d36e7(0xf3)]()[_0x5d36e7(0xed)]({'top':'4%','left':'1%'},ANIMATEDURATION),$(_0x5d36e7(0xfd))[_0x5d36e7(0xf3)]()['animate']({'top':_0x5d36e7(0x104),'left':'1%'},ANIMATEDURATION),$(COLUMNSPANEL)['draggable']()['animate']({'top':_0x5d36e7(0x104),'left':_0x5d36e7(0x1ce)},ANIMATEDURATION),$(CONTAINERPANEL)[_0x5d36e7(0xf3)]()[_0x5d36e7(0xed)]({'bottom':'6%','left':'19%'},ANIMATEDURATION),$(RELATEDTABLESAPIS)['draggable']()[_0x5d36e7(0xed)]({'top':_0x5d36e7(0x104),'left':_0x5d36e7(0x169)},ANIMATEDURATION));},isVisibleTableContainer=()=>{let _0xd89f51=![];return $(TABLECONTAINER)['is'](':visible')&&(_0xd89f51=!![]),_0xd89f51;},isVisibleApiContainer=()=>{const _0x3ee45c=_0x25314d;let _0x488567=![];return $(APICONTAINER)['is'](_0x3ee45c(0xf7))&&(_0x488567=!![]),_0x488567;},isVisibleGenelicPanel=()=>{const _0x25d389=_0x25314d;let _0x467062=![];return $(GENELICPANEL)['is'](_0x25d389(0xf7))&&(_0x467062=!![]),_0x467062;},isVisibleColumns=()=>{const _0x366519=_0x25314d;let _0x2fbc09=![];return $(COLUMNSPANEL)['is'](_0x366519(0xf7))&&(_0x2fbc09=!![]),_0x2fbc09;},itemSelect=_0x263685=>{const _0xd18267=_0x25314d;let _0x4159e6=_0x263685[_0xd18267(0x14a)](_0xd18267(0x114)),_0x42e9c0=_0x263685[_0xd18267(0x14a)](_0xd18267(0x136));_0x263685[_0xd18267(0x14f)](_0xd18267(0x144))?deleteSelectedItems(_0x263685):($[_0xd18267(0x1c5)](_0x42e9c0,selectedItemsArr)!=-0x1?_0x263685[_0xd18267(0x1bf)]():(_0x263685[_0xd18267(0x1d1)](_0xd18267(0x144)),_0x263685['detach']()[_0xd18267(0xf9)](CONTAINERPANEL)),cmdCandidates=[],cancelableCmdList[_0xd18267(0xe9)](SELECTITEM),selectedItemsArr[_0xd18267(0xe9)](_0x42e9c0)),showGenelicPanel(!![]);},deleteSelectedItems=_0x22e013=>{const _0x5e66d1=_0x25314d;let _0x596227=![];if(_0x22e013!=null){let _0x477977=$(_0x22e013)[_0x5e66d1(0x14d)]();selectedItemsArr=selectedItemsArr[_0x5e66d1(0xe1)](_0x4471d5=>{return _0x4471d5!==_0x477977;}),$(_0x22e013)['removeClass'](_0x5e66d1(0x144)),$(_0x22e013)[_0x5e66d1(0x1bf)]()[_0x5e66d1(0xf9)](COLUMNSPANEL+_0x5e66d1(0xeb)),_0x596227=!![];}else selectedItemsArr=[],$(CONTAINERPANEL+'\x20span')[_0x5e66d1(0x13e)]('selectedItem'),$(CONTAINERPANEL+_0x5e66d1(0x120))[_0x5e66d1(0x1a8)](),$(COLUMNSPANEL+_0x5e66d1(0x120))[_0x5e66d1(0x1a8)](),$(CONTAINERPANEL+'\x20span')['detach']()[_0x5e66d1(0xf9)](COLUMNSPANEL+_0x5e66d1(0x190)),_0x596227=!![];return _0x596227;},cleanUp=_0x5f1d35=>{const _0x283841=_0x25314d;selectedItemsArr[_0x283841(0x1aa)](0x0),$('#columns_title')[_0x283841(0x14d)]('');if(_0x5f1d35==_0x283841(0x10b))$('.item_area\x20>\x20.item,\x20.apisql,\x20.selectedItem')[_0x283841(0x1a8)]();else{if(_0x5f1d35==_0x283841(0xdf))$(TABLECONTAINER+_0x283841(0x1c8))['remove']();else _0x5f1d35=='apis'&&$(APICONTAINER+_0x283841(0xcb))[_0x283841(0x1a8)]();}},cleanupItems4Switching=()=>{const _0x1bf0e4=_0x25314d;cleanUp(_0x1bf0e4(0x10b)),$(_0x1bf0e4(0x1b8))[_0x1bf0e4(0x14d)](''),$(TABLECONTAINER+_0x1bf0e4(0x1ad))['removeClass'](_0x1bf0e4(0xd7)),$(APICONTAINER+_0x1bf0e4(0x1ad))[_0x1bf0e4(0x13e)](_0x1bf0e4(0xd7)),$(CONTAINERPANEL+_0x1bf0e4(0x1ad))['remove']();},cleanupContainers=_0x1fa556=>{const _0x49c19b=_0x25314d;(_0x1fa556==null||_0x1fa556=='')&&(_0x1fa556='all'),showApiTestPanel(![]),_0x1fa556=='api'?(selectedItemsArr!=null&&selectedItemsArr[_0x49c19b(0x15a)]==0x0&&showGenelicPanel(![]),$(CONTAINERPANEL+'\x20span,\x20'+COLUMNSPANEL+'\x20span')[_0x49c19b(0xe1)](_0x49c19b(0x12d))[_0x49c19b(0x1a8)]()):(showGenelicPanel(![]),$(CONTAINERPANEL+'\x20span,'+CONDITIONPANEL+_0x49c19b(0x1ad))[_0x49c19b(0x1a8)]());},fileupload=()=>{const _0x3595f4=_0x25314d;let _0x1bc070=new FormData($(MYFORM)[_0x3595f4(0x17f)](0x0));$(_0x3595f4(0x1a9))[_0x3595f4(0x197)](_0x3595f4(0xdd),!![]);const _0x1f5880=$(UPFILE)[_0x3595f4(0x197)](_0x3595f4(0x161))[0x0][_0x3595f4(0x199)],_0x4742e7=_0x1f5880[_0x3595f4(0x101)]('.')[0x0];$[_0x3595f4(0x191)]({'url':_0x3595f4(0x1a5),'type':_0x3595f4(0x18a),'data':_0x1bc070,'cache':![],'contentType':![],'processData':![],'dataType':_0x3595f4(0x11a),'xhr':function(){const _0x22e2b1=_0x3595f4;return ret=$['ajaxSettings'][_0x22e2b1(0x162)](),inprogress=!![],typingControll(chooseMsg(_0x22e2b1(0x18b),'','')),ret;}})[_0x3595f4(0xda)](function(_0x3c03f6,_0x241d0f,_0x23ab81){const _0x113f3f=_0x3595f4;checkResult(_0x3c03f6)?($(UPFILE)[_0x113f3f(0x13c)](''),$(_0x113f3f(0x1a9))[_0x113f3f(0x197)](_0x113f3f(0xdd),![]),$(MYFORM+_0x113f3f(0x106))[_0x113f3f(0x14d)](_0x113f3f(0x1b7)),cleanupRelatedList(!![]),typingControll(chooseMsg(_0x113f3f(0x105),'','')),chatKeyDown(scenario[_0x113f3f(0x11d)][0x0])):typingControll(chooseMsg(_0x113f3f(0x183),'',''));})[_0x3595f4(0x126)](function(_0x462a5c){const _0x3f3310=_0x3595f4;checkResult(_0x462a5c),console['error'](_0x3f3310(0x1c1)),typingControll(chooseMsg('fail-msg','',''));})[_0x3595f4(0x1ba)](function(){const _0x3254bd=_0x3595f4;return inprogress=![],$(FILEUP)[_0x3254bd(0x13e)]('genelic_panel'),rejectCancelableCmdList(FILESELECTOROPEN),!![];});};$(document)['on']('click',_0x25314d(0x1b2),function(){listClick($(this));});const getdataFromJson=(_0x36d8f3,_0x941396)=>{const _0xfbcd99=_0x25314d,_0xc74e0d=_0xfbcd99(0x1ab);let _0x2ffe96='';return Object[_0xfbcd99(0x17d)](_0x36d8f3)[_0xfbcd99(0x15d)](function(_0xafae5){const _0x20cf5f=_0xfbcd99;let _0x57ea7f=0x1,_0x3bd626=0x1;_0xafae5==_0xc74e0d&&_0x36d8f3[_0xafae5][_0x20cf5f(0x15a)]>0x0&&$[_0x20cf5f(0xe4)](_0x36d8f3[_0xafae5],function(_0x69c61,_0x158f06){const _0x4f491f=_0x20cf5f;$[_0x4f491f(0xe4)](_0x158f06,function(_0x31060c,_0x565ac5){if(_0x565ac5==_0x941396)return _0x2ffe96=_0x158f06,![];});});}),_0x2ffe96;},listClick=_0x4e0150=>{const _0x3e9eba=_0x25314d;let _0x1b60d9=_0x4e0150[_0x3e9eba(0x14d)](),_0x4ac785=_0x4e0150[_0x3e9eba(0x14a)](_0x3e9eba(0x114));removeColumn(_0x1b60d9),cmdCandidates=[],relatedDataList[_0x3e9eba(0x181)]=_0x3e9eba(0x10c);_0x4e0150[_0x3e9eba(0x14f)]('api')&&(relatedDataList[_0x3e9eba(0x181)]=_0x3e9eba(0x172));let _0x475db4=TABLECONTAINER,_0x17b603=APICONTAINER;relatedDataList['type']==_0x3e9eba(0x172)&&(_0x475db4=APICONTAINER,_0x17b603=TABLECONTAINER);if(_0x4e0150[_0x3e9eba(0x14f)](_0x3e9eba(0xd7))||_0x4e0150[_0x3e9eba(0x14f)](_0x3e9eba(0x1d2))){if(_0x4e0150[_0x3e9eba(0x14f)](_0x3e9eba(0x10c)))cleanupContainers(_0x3e9eba(0x10c));else{}let _0x5f9252=[];relatedDataList[_0x1b60d9]!=null?($(_0x475db4+'\x20span')[_0x3e9eba(0xe1)](_0x3e9eba(0x1cf))[_0x3e9eba(0xe4)](function(){const _0x56a0e0=_0x3e9eba;_0x5f9252[_0x56a0e0(0xe9)]($(this)[_0x56a0e0(0x14d)]());}),0x1<_0x5f9252[_0x3e9eba(0x15a)]?$(_0x17b603+_0x3e9eba(0x1ad))['filter'](_0x3e9eba(0x175))['each'](function(_0x5d84a6,_0x2d13cc){const _0x188d8d=_0x3e9eba;if($[_0x188d8d(0x1c5)](_0x2d13cc[_0x188d8d(0x164)],relatedDataList[_0x1b60d9])!=-0x1){_0x4e0150[_0x188d8d(0x14f)](_0x188d8d(0x1d2))&&(_0x4e0150[_0x188d8d(0x13e)]('activeandrelatedItem'),_0x4e0150[_0x188d8d(0x1d1)](_0x188d8d(0xd7)));if(_0x2d13cc[_0x188d8d(0x164)]['startsWith']('js'))for(let _0x2963d5 in _0x5f9252){if($[_0x188d8d(0x1c5)](_0x2d13cc['textContent'],relatedDataList[_0x5f9252[_0x2963d5]])!=-0x1){}else $(this)[_0x188d8d(0x13e)]('relatedItem');}else $(this)[_0x188d8d(0x13e)]('relatedItem');}}):$(_0x17b603+_0x3e9eba(0x1ad))[_0x3e9eba(0xe1)](_0x3e9eba(0x175))[_0x3e9eba(0xe4)](function(_0x36bb18,_0x1907dd){const _0x511075=_0x3e9eba;_0x4e0150['hasClass']('activeandrelatedItem')&&(_0x4e0150[_0x511075(0x13e)]('activeandrelatedItem'),_0x4e0150[_0x511075(0x1d1)](_0x511075(0xd7))),$(this)[_0x511075(0x13e)](_0x511075(0xef));}),_0x4e0150[_0x3e9eba(0x192)]('activeItem')):$(_0x17b603+_0x3e9eba(0xd2)+_0x17b603+'\x20span')['filter'](_0x3e9eba(0x116))[_0x3e9eba(0xe4)](function(){const _0x921b4e=_0x3e9eba;$(this)['removeClass'](_0x921b4e(0xef));});}else{let _0x596717='',_0x805f91='';if(_0x4ac785[_0x3e9eba(0x146)](_0x3e9eba(0x172))!=-0x1)_0x596717=_0x1b60d9,getColumn(_0x1b60d9);else{$(APICONTAINER+'\x20span')['filter'](_0x3e9eba(0x153))[_0x3e9eba(0xe4)](function(){const _0x517009=_0x3e9eba;_0x1b60d9!=$(this)[_0x517009(0x14d)]()&&($(this)[_0x517009(0x14f)](_0x517009(0x1d2))&&$(this)['addClass'](_0x517009(0xef)),$(this)[_0x517009(0x13e)]('activeItem\x20activeandrelatedItem'),$(TABLECONTAINER+_0x517009(0x1ad))[_0x517009(0x13e)](_0x517009(0xef)));}),cleanupContainers(_0x3e9eba(0x10c));if(preferent[_0x3e9eba(0x119)]!=null&&preferent[_0x3e9eba(0x119)][_0x3e9eba(0x15a)]!=0x0){let _0x43008a=getdataFromJson(preferent[_0x3e9eba(0x119)],_0x1b60d9);0x0<_0x43008a[_0x3e9eba(0x147)][_0x3e9eba(0x15a)]&&($(COLUMNSPANEL+_0x3e9eba(0x1ad))['filter'](_0x3e9eba(0x12d))[_0x3e9eba(0x1a8)](),_0x805f91=_0x43008a[_0x3e9eba(0xff)],$(COLUMNSPANEL+_0x3e9eba(0xd0))[_0x3e9eba(0x16f)](_0x3e9eba(0x19b)+setApiIF_In(_0x1b60d9,_0x43008a)+_0x3e9eba(0x107)),$(COLUMNSPANEL+_0x3e9eba(0xd0))['append'](_0x3e9eba(0x18d)+setApiIF_Out(_0x1b60d9,_0x43008a)+_0x3e9eba(0x107)),$(CONTAINERPANEL)[_0x3e9eba(0x16f)](_0x3e9eba(0x18c)+setApiIF_Sql(_0x43008a)+'</p></span>'));}}let _0x3227e8=_0x3e9eba(0x1c0)+_0x596717+_0x3e9eba(0x1ca)+_0x805f91+'\x22}';postAjaxData(scenario[_0x3e9eba(0x131)][0x8],_0x3227e8),_0x4e0150['hasClass'](_0x3e9eba(0xef))?_0x4e0150['addClass'](_0x3e9eba(0x1d2)):_0x4e0150[_0x3e9eba(0x192)](_0x3e9eba(0xd7));}let _0x2d79ee='';$(TABLECONTAINER+_0x3e9eba(0xd2)+APICONTAINER+_0x3e9eba(0x1ad))['filter'](_0x3e9eba(0x1cf))[_0x3e9eba(0xe4)](function(){const _0x1700a3=_0x3e9eba;let _0x5a997c=$(this)[_0x1700a3(0x14d)]();_0x2d79ee['length']==0x0?_0x2d79ee=_0x5a997c:_0x2d79ee+=_0x1700a3(0x12e)+_0x5a997c;}),0x0<_0x2d79ee[_0x3e9eba(0x15a)]&&(_0x475db4==TABLECONTAINER?_0x2d79ee=_0x3e9eba(0x148)+_0x2d79ee:_0x2d79ee=_0x3e9eba(0x125)+_0x2d79ee),$(_0x3e9eba(0x1b8))['text'](_0x2d79ee);},setApiIF_In=(_0x18638a,_0x30d1e5)=>{const _0x2f6412=_0x25314d;let _0x3ab0b0=_0x18638a[_0x2f6412(0x13f)](),_0x5e2281='';preferent[_0x2f6412(0xd1)]=[];if(_0x3ab0b0[_0x2f6412(0x1b6)]('js')){if(_0x30d1e5[_0x2f6412(0x117)]!=null&&0x0<_0x30d1e5['subquery']['length']&&_0x30d1e5['subquery']!=IGNORE){let _0x541312=_0x30d1e5[_0x2f6412(0x117)],_0x27f0a7='',_0x1c6d32=_0x541312[_0x2f6412(0x146)]('{');while(-0x1<_0x1c6d32){0x0<_0x27f0a7['length']&&(_0x27f0a7+=',');let _0x5c5519=_0x541312['indexOf']('{'),_0x4fc8f5=_0x541312[_0x2f6412(0x146)]('}');if(_0x5c5519!=-0x1&&_0x4fc8f5!=-0x1){let _0x5a808d=_0x541312[_0x2f6412(0x1a3)](_0x5c5519+0x1,_0x4fc8f5);_0x27f0a7+='\x27'+_0x5a808d+_0x2f6412(0x13a),_0x541312[_0x5c5519-0x1]=='\x27'?_0x27f0a7+='\x27{'+_0x5a808d+'}\x27':_0x27f0a7+='{'+_0x5a808d+'}',preferent[_0x2f6412(0xd1)][_0x2f6412(0xe9)](_0x5a808d),_0x541312=_0x541312[_0x2f6412(0x1a3)](_0x4fc8f5+0x1,_0x541312[_0x2f6412(0x15a)]);}_0x1c6d32=_0x541312[_0x2f6412(0x146)]('{');}_0x27f0a7!=''?_0x5e2281='{\x22apino\x22:\x20\x22'+_0x18638a+_0x2f6412(0xdb)+_0x27f0a7+_0x2f6412(0xf2):_0x5e2281=_0x2f6412(0xc9)+_0x18638a+'\x22}';}else _0x5e2281=_0x2f6412(0xc9)+_0x18638a+'\x22}';}else{if(_0x3ab0b0['startsWith']('ji')){if(loginuser[_0x2f6412(0x137)]!='redis'){let _0x13a0fe=_0x30d1e5[_0x2f6412(0x147)][_0x2f6412(0x101)](_0x2f6412(0x10e));_0x13a0fe[0x1]=_0x13a0fe[0x1]['slice'](0x0,_0x13a0fe[0x1][_0x2f6412(0x15a)]-0x1)[_0x2f6412(0x140)]('\x27','')[_0x2f6412(0x140)]('{','')['replaceAll']('}',''),_0x5e2281=buildJetelinaJsonForm(_0x3ab0b0,_0x13a0fe[0x1]);}else{let _0xeccfda=_0x30d1e5[_0x2f6412(0x147)][_0x2f6412(0x101)](':');_0x5e2281=_0x2f6412(0xc9)+_0x18638a+'\x22,\x22key1\x22:\x22{your\x20key\x20data}\x22,\x22key2\x22:\x22{your\x20value\x20data}\x22}',preferent[_0x2f6412(0xd1)]['push'](_0x2f6412(0x1a7)),preferent[_0x2f6412(0xd1)][_0x2f6412(0xe9)]('your\x20value\x20data');}}else{if(_0x3ab0b0[_0x2f6412(0x1b6)]('ju')||_0x3ab0b0[_0x2f6412(0x1b6)]('jd')){if(loginuser[_0x2f6412(0x137)]!=_0x2f6412(0x19e)){let _0x21e15c=_0x30d1e5[_0x2f6412(0x147)]['split']('set');_0x5e2281=buildJetelinaJsonForm(_0x3ab0b0,_0x21e15c[0x1]),preferent[_0x2f6412(0xd1)][_0x2f6412(0xe9)](_0x2f6412(0x150)),_0x5e2281=_0x5e2281[_0x2f6412(0xe2)](0x0,_0x5e2281['length']-0x1)+_0x2f6412(0x1c4)+_0x5e2281[_0x2f6412(0xe2)](_0x5e2281[_0x2f6412(0x15a)]-0x1,_0x5e2281['length']);}else{let _0x577f82=_0x30d1e5[_0x2f6412(0x147)][_0x2f6412(0x101)](':');_0x5e2281=_0x2f6412(0xc9)+_0x18638a+_0x2f6412(0x113),preferent[_0x2f6412(0xd1)]['push'](_0x2f6412(0x1bc));}}else{}}}return _0x5e2281;},setApiIF_Out=(_0x14b0a3,_0x21da2d)=>{const _0x23e4e5=_0x25314d;let _0x313aa1=_0x23e4e5(0xe6),_0x1b7d13=_0x14b0a3[_0x23e4e5(0x13f)]();if(_0x1b7d13[_0x23e4e5(0x1b6)]('js')){if(loginuser[_0x23e4e5(0x137)]!=_0x23e4e5(0x19e)){let _0x23010a=_0x21da2d['sql']['split'](_0x23e4e5(0x157)),_0x3196ff=_0x23010a[0x1]['split'](_0x23e4e5(0x122));_0x3196ff[0x0]!=null&&0x0<_0x3196ff[0x0]['length']&&(_0x313aa1=buildJetelinaOutJsonForm(_0x1b7d13,_0x3196ff[0x0]));}else{let _0x59fb0b=_0x21da2d[_0x23e4e5(0x147)][_0x23e4e5(0x101)](':');_0x59fb0b[0x1]!=null&&0x0<_0x59fb0b[0x1][_0x23e4e5(0x15a)]&&(_0x313aa1=_0x23e4e5(0x130)+_0x59fb0b[0x1]+_0x23e4e5(0x10a)+_0x59fb0b[0x1]+_0x23e4e5(0x18e));}}else _0x313aa1='{\x22result\x22:true\x20or\x20false,\x22Jetelina\x22:\x22[{}]\x22,\x22message\x20from\x20Jetelina\x22:\x22\x22.....\x22\x22}';return _0x313aa1;},setApiIF_Sql=_0x5dbb79=>{const _0x5268b4=_0x25314d;let _0x18f641='';if(loginuser[_0x5268b4(0x137)]!=_0x5268b4(0x19e)){_0x5dbb79[_0x5268b4(0x117)]!=null&&_0x5dbb79['subquery']!=IGNORE?_0x18f641=_0x5dbb79[_0x5268b4(0x147)]+'\x20'+_0x5dbb79[_0x5268b4(0x117)]+';':_0x18f641=_0x5dbb79[_0x5268b4(0x147)]+';';let _0x8c33f1=_0x5268b4(0x1b0);_0x18f641[_0x5268b4(0x1b6)](_0x5268b4(0x170))&&(_0x18f641=_0x18f641['replaceAll'](',{'+_0x8c33f1+'}','')[_0x5268b4(0x140)](','+_0x8c33f1,''));}else{let _0x51080a=_0x5dbb79['sql'][_0x5268b4(0x101)](':');if(_0x5dbb79[_0x5268b4(0xff)][_0x5268b4(0x1b6)]('ji'))_0x18f641=_0x51080a[0x0]+_0x5268b4(0x198);else{if(_0x5dbb79[_0x5268b4(0xff)][_0x5268b4(0x1b6)]('ju'))_0x18f641=_0x51080a[0x0]+'\x20'+_0x51080a[0x1]+_0x5268b4(0x17c);else _0x5dbb79[_0x5268b4(0xff)][_0x5268b4(0x1b6)]('js')&&(_0x18f641=_0x51080a[0x0]+'\x20'+_0x51080a[0x1]);}}return _0x18f641;},buildJetelinaJsonForm=(_0x88489c,_0x3b6f5f)=>{const _0x57f85c=_0x25314d;let _0x513f09='',_0x195072=_0x3b6f5f[_0x57f85c(0x101)](',');for(let _0x1d40b8=0x0;_0x1d40b8<_0x195072[_0x57f85c(0x15a)];_0x1d40b8++){let _0x5ceee5=_0x195072[_0x1d40b8][_0x57f85c(0x101)]('.');_0x513f09[_0x57f85c(0x15a)]==0x0&&(_0x513f09=_0x57f85c(0xc9)+_0x88489c+'\x22,');let _0x4142b5='';_0x5ceee5[0x1]!=null&&0x0<_0x5ceee5[0x1][_0x57f85c(0x15a)]?_0x4142b5=_0x5ceee5[0x1]:_0x195072[_0x1d40b8][_0x57f85c(0x146)]('=')!=-0x1?_0x4142b5=_0x195072[_0x1d40b8][_0x57f85c(0x101)]('=')[0x0]:_0x4142b5=_0x195072[_0x1d40b8],_0x4142b5[_0x57f85c(0x146)]('jetelina_delete_flg')<0x0&&(_0x4142b5=$[_0x57f85c(0x1d0)](_0x4142b5),preferent[_0x57f85c(0xd1)][_0x57f85c(0xe9)](_0x4142b5),_0x513f09=_0x513f09+'\x22'+_0x4142b5+_0x57f85c(0x10a)+_0x4142b5+_0x57f85c(0x103));}return 0x0<_0x513f09[_0x57f85c(0x15a)]&&(_0x513f09=_0x513f09[_0x57f85c(0xe2)](0x0,_0x513f09['length']-0x1),_0x513f09=_0x513f09+'}'),_0x513f09;},buildJetelinaOutJsonForm=(_0x493a08,_0x557fc4)=>{const _0x409e24=_0x25314d;let _0x182431='',_0x29696a=_0x557fc4[_0x409e24(0x101)](',');for(let _0x2acc70=0x0;_0x2acc70<_0x29696a[_0x409e24(0x15a)];_0x2acc70++){let _0x92c70c=_0x29696a[_0x2acc70][_0x409e24(0x101)]('.');_0x182431[_0x409e24(0x15a)]==0x0&&(_0x182431='{\x22result\x22:true\x20or\x20false,\x22Jetelina\x22:\x22[{');let _0x22e212='';_0x92c70c[0x1]!=null&&0x0<_0x92c70c[0x1][_0x409e24(0x15a)]?_0x22e212=_0x92c70c[0x1]:_0x29696a[_0x2acc70][_0x409e24(0x146)]('=')!=-0x1?_0x22e212=_0x29696a[_0x2acc70][_0x409e24(0x101)]('=')[0x0]:_0x22e212=_0x29696a[_0x2acc70],_0x22e212[_0x409e24(0x146)]('jetelina_delete_flg')<0x0&&(_0x182431=_0x182431+'\x22'+$[_0x409e24(0x1d0)](_0x22e212)+_0x409e24(0x10a)+$[_0x409e24(0x1d0)](_0x22e212)+_0x409e24(0x103));}return 0x0<_0x182431[_0x409e24(0x15a)]&&(_0x182431=_0x182431['slice'](0x0,_0x182431[_0x409e24(0x15a)]-0x1),_0x182431=_0x182431+_0x409e24(0x1d3)),_0x182431;},getColumn=_0x295bfa=>{const _0x50680d=_0x25314d;if(0x0<_0x295bfa[_0x50680d(0x15a)]||_0x295bfa!=undefined){let _0x10219a={};_0x10219a[_0x50680d(0x15c)]=$['trim'](_0x295bfa);let _0x334c5e=JSON['stringify'](_0x10219a);$[_0x50680d(0x191)]({'url':_0x50680d(0x168),'type':'post','data':_0x334c5e,'contentType':_0x50680d(0x143),'dataType':_0x50680d(0x11a),'xhr':function(){const _0x3d0f1a=_0x50680d;return ret=$['ajaxSettings'][_0x3d0f1a(0x162)](),inprogress=!![],typingControll(chooseMsg('inprogress-msg','','')),ret;}})[_0x50680d(0xda)](function(_0x40729c,_0x156e9d,_0x2adfe5){const _0x373dd2=_0x50680d;if(checkResult(_0x40729c))return getdata(_0x40729c,0x1);else typingControll(chooseMsg(_0x373dd2(0xf5),'',''));})[_0x50680d(0x126)](function(_0x528ad9){const _0x507968=_0x50680d;checkResult(_0x528ad9),typingControll(chooseMsg(_0x507968(0xf5),'',''));})[_0x50680d(0x1ba)](function(){inprogress=![];});}else console[_0x50680d(0x1bb)](_0x50680d(0x165));},removeColumn=_0x483974=>{const _0x5c4ffd=_0x25314d;$(COLUMNSPANEL+_0x5c4ffd(0x138)+CONTAINERPANEL+_0x5c4ffd(0xd4))[_0x5c4ffd(0x115)](_0x5c4ffd(0x16c))['remove'](':contains('+_0x483974+'_)');},dropThisTable=_0x2bb468=>{const _0x360134=_0x25314d;let _0x54582a={};_0x54582a['tablename']=_0x2bb468;loginuser['sw']==null||loginuser['sw']==''?_0x54582a[_0x360134(0x17b)]=$(SOMETHINGINPUT)[_0x360134(0x13c)]():_0x54582a[_0x360134(0x17b)]=loginuser['sw'];let _0x1b1093=JSON[_0x360134(0x118)](_0x54582a);$[_0x360134(0x191)]({'url':'/deletetable','type':_0x360134(0x18a),'data':_0x1b1093,'contentType':'application/json','dataType':'json','xhr':function(){const _0x3e7d44=_0x360134;return ret=$['ajaxSettings']['xhr'](),inprogress=!![],typingControll(chooseMsg(_0x3e7d44(0x18b),'','')),ret;}})[_0x360134(0xda)](function(_0x17cd12,_0x314eb9,_0x2bb8a7){const _0x47629c=_0x360134;let _0x4e9006='';checkResult(_0x17cd12)?(cleanUp(_0x47629c(0x10b)),loginuser['sw']=_0x54582a[_0x47629c(0x17b)],showSomethingInputField(![]),showSomethingMsgPanel(![]),showGenelicPanel(![]),rejectCancelableCmdList(TABLEAPIDELETE),preferent[_0x47629c(0x196)]='',refreshApiList(),refreshTableList(),_0x4e9006=chooseMsg(_0x47629c(0x105),'','')):(_0x4e9006=_0x17cd12[_0x47629c(0x12b)],(_0x4e9006==null||_0x4e9006=='')&&(_0x4e9006=chooseMsg(_0x47629c(0xf5),'',''))),typingControll(_0x4e9006);})[_0x360134(0x126)](function(_0x4a6259){const _0x35b169=_0x360134;checkResult(_0x4a6259),console[_0x35b169(0x1bb)](_0x35b169(0x1a0),_0x4a6259),typingControll(chooseMsg('fail-msg','',''));})['always'](function(){inprogress=![];});},postSelectedColumns=_0x39f6e6=>{const _0x5291b5=_0x25314d;let _0x162ec1={};_0x162ec1[_0x5291b5(0x186)]=selectedItemsArr,_0x162ec1[_0x5291b5(0x178)]=_0x39f6e6;let _0x237c45=$[_0x5291b5(0x1d0)]($(GENELICPANELINPUT)[_0x5291b5(0x13c)]())[_0x5291b5(0x1c9)](/\r?\n/g,'');(_0x237c45==''||_0x237c45=='where')&&(_0x237c45=IGNORE);_0x162ec1['subquery']=_0x237c45;let _0x922c78=JSON[_0x5291b5(0x118)](_0x162ec1),_0x54c46c=scenario['function-post-url'][0x4];_0x39f6e6==_0x5291b5(0x180)&&(_0x54c46c=scenario[_0x5291b5(0x131)][0x5]),$[_0x5291b5(0x191)]({'url':_0x54c46c,'type':'POST','data':_0x922c78,'contentType':'application/json','dataType':_0x5291b5(0x11a),'xhr':function(){const _0x22dc18=_0x5291b5;return ret=$[_0x22dc18(0x124)][_0x22dc18(0x162)](),inprogress=!![],typingControll(chooseMsg('inprogress-msg','','')),ret;}})['done'](function(_0x4c304c,_0x173c73,_0x528752){const _0x3c9e09=_0x5291b5;let _0x20fc85='';$('.newapino')[_0x3c9e09(0x1a8)]();if(checkResult(_0x4c304c)){if(_0x39f6e6!=_0x3c9e09(0x180))_0x4c304c[_0x3c9e09(0xff)]!=null&&0x0<_0x4c304c[_0x3c9e09(0xff)][_0x3c9e09(0x15a)]&&(isVisibleApiTestPanel()&&showApiTestPanel(![]),selectedItemsArr=[],rejectCancelableCmdList(SELECTITEM),rejectCancelableCmdList('post'),cleanUp(_0x3c9e09(0x10b)),refreshApiList(),refreshTableList(),_0x20fc85=chooseMsg(_0x3c9e09(0x105),'','')),isVisibleGenelicPanel()&&$(GENELICPANEL)['hide'](),_0x20fc85=chooseMsg('func-newapino-msg',_0x3c9e09(0x195)+_0x4c304c['apino'],'r'),$(CHATBOXYOURTELL)[_0x3c9e09(0x14d)](_0x20fc85),$(_0x3c9e09(0x1b4))['mouseover']();else{getdata(_0x4c304c,0x4);if(!isVisibleApiTestPanel()){$(APITESTPANEL+'\x20span')[_0x3c9e09(0x1a8)](),showApiTestPanel(!![]);let _0xbd756='<span\x20class=\x27jetelina_suggestion\x27><p>Oh\x20oh,\x20no\x20data.\x20Try\x20again\x20with\x20other\x20params</p></span>';$(APITESTPANEL+_0x3c9e09(0x135))['append'](''+_0xbd756);}_0x20fc85=chooseMsg(_0x3c9e09(0x141),'','');}}else _0x20fc85=chooseMsg(_0x3c9e09(0xf5),'',''),_0x4c304c[_0x3c9e09(0x1af)]!=null&&0x0<_0x4c304c[_0x3c9e09(0x1af)][_0x3c9e09(0x15a)]&&(_0x20fc85=chooseMsg('func-duplicateapi-msg',''+_0x4c304c['resembled'],'a'));typingControll(_0x20fc85);})['fail'](function(_0x4659d3){const _0x10462d=_0x5291b5;checkResult(_0x4659d3),console[_0x10462d(0x1bb)](_0x10462d(0x15b)),typingControll(chooseMsg(_0x10462d(0xf5),'',''));})[_0x5291b5(0x1ba)](function(){const _0xa40194=_0x5291b5;inprogress=![],_0x39f6e6!=_0xa40194(0x180)&&(preferent['cmd']=''),rejectCancelableCmdList(_0xa40194(0x18a));});},functionPanelFunctions=_0x1b8e7a=>{const _0xa32b12=_0x25314d;let _0x316f81=IGNORE,_0x41d1a3='',_0xa2a682='',_0x4e2f68=![];if(inScenarioChk(_0x1b8e7a,_0xa32b12(0xf8))){if(isVisibleGenelicPanel()){let _0x2a7229=$(GENELICPANELINPUT)[_0xa32b12(0x13c)](),_0x504512=_0x2a7229[_0xa32b12(0x15a)];$(GENELICPANELINPUT)[_0xa32b12(0x177)]()[_0xa32b12(0x17f)](0x0)['setSelectionRange'](_0x504512,_0x504512);}containsMultiTables()?_0x316f81=chooseMsg('func-postcolumn-where-indispensable-msg','',''):_0x316f81=chooseMsg('func-postcolumn-where-option-msg','','');}if(0x1<cmdCandidates[_0xa32b12(0x15a)])_0x41d1a3=whichCommandsInOrders(_0x1b8e7a);else{(inScenarioChk(_0x1b8e7a,_0xa32b12(0x182))||inScenarioChk(_0x1b8e7a,_0xa32b12(0xfc)))&&(_0x41d1a3=_0xa32b12(0x189),preferent[_0xa32b12(0x196)]='',cmdCandidates[_0xa32b12(0xe9)]('cancel'));_0x41d1a3==''&&inScenarioChk(_0x1b8e7a,_0xa32b12(0xd8))&&(_0x41d1a3='cleanup',cmdCandidates[_0xa32b12(0xe9)](_0xa32b12(0x109)));_0x41d1a3==''&&$(UPFILE)['val']()!=''&&inScenarioChk(_0x1b8e7a,_0xa32b12(0x151))&&(_0x41d1a3=_0xa32b12(0x108),cmdCandidates[_0xa32b12(0xe9)]('file\x20upload'));if(_0x41d1a3==''&&inScenarioChk(_0x1b8e7a,'func-show-table-list-cmd'))_0x41d1a3=TABLEAPILISTOPEN,cmdCandidates[_0xa32b12(0xe9)](_0xa32b12(0xd3));else{if(_0x41d1a3==''&&inScenarioChk(_0x1b8e7a,_0xa32b12(0x174)))_0x41d1a3=TABLEAPILISTOPEN,cmdCandidates[_0xa32b12(0xe9)](_0xa32b12(0x1b3));else{if(_0x41d1a3==''&&inScenarioChk(_0x1b8e7a,_0xa32b12(0xe0)))_0x41d1a3=FILESELECTOROPEN,cmdCandidates['push'](_0xa32b12(0x1d4));else{if(inScenarioChk(_0x1b8e7a,_0xa32b12(0x19d)))rejectCancelableCmdList(_0x41d1a3),_0x41d1a3=SELECTITEM,cmdCandidates[_0xa32b12(0xe9)](_0xa32b12(0x185));else{if(_0x41d1a3==''&&inScenarioChk(_0x1b8e7a,_0xa32b12(0x19a)))_0x41d1a3=SELECTITEM,cmdCandidates['push'](_0xa32b12(0x112));else{if(_0x41d1a3==''&&inScenarioChk(_0x1b8e7a,_0xa32b12(0x155)))_0x41d1a3=SELECTITEM,cmdCandidates[_0xa32b12(0xe9)](_0xa32b12(0xcf));else _0x41d1a3==''&&inScenarioChk(_0x1b8e7a,_0xa32b12(0x1be))&&(_0x41d1a3=_0xa32b12(0x117),cmdCandidates[_0xa32b12(0xe9)]('open\x20sub\x20query\x20panel'));}}}}}if(_0x41d1a3==''&&inScenarioChk(_0x1b8e7a,_0xa32b12(0xd5)))loginuser[_0xa32b12(0x16a)]==_0xa32b12(0x14b)?(_0x41d1a3=TABLEAPIDELETE,preferent['cmd']=_0x41d1a3,cmdCandidates[_0xa32b12(0xe9)](_0xa32b12(0x1b1))):_0x316f81=chooseMsg(_0xa32b12(0x123),'','');else _0x41d1a3==''&&inScenarioChk(_0x1b8e7a,_0xa32b12(0xf1))&&(loginuser['roll']!=_0xa32b12(0x1c7)?(_0x41d1a3=TABLEAPIDELETE,preferent['cmd']=_0x41d1a3,cmdCandidates[_0xa32b12(0xe9)](_0xa32b12(0xea))):_0x316f81=chooseMsg('no-authority-js-msg','',''));if(_0x41d1a3==''&&inScenarioChk(_0x1b8e7a,_0xa32b12(0x121)))_0x41d1a3=_0xa32b12(0x13b),_0xa2a682='';else{if(_0x41d1a3==''&&inScenarioChk(_0x1b8e7a,_0xa32b12(0xce)))_0x41d1a3=_0xa32b12(0x13b),_0xa2a682=_0xa32b12(0x127);else{if(_0x41d1a3==''&&inScenarioChk(_0x1b8e7a,_0xa32b12(0x188)))_0x41d1a3=_0xa32b12(0x13b),_0xa2a682=_0xa32b12(0x158);else{if(_0x41d1a3==''&&inScenarioChk(_0x1b8e7a,_0xa32b12(0x15f)))_0x41d1a3=_0xa32b12(0x13b),_0xa2a682=_0xa32b12(0x19e);else _0x41d1a3==''&&$[_0xa32b12(0x1c5)](_0xa32b12(0x13b),cmdCandidates)!=-0x1&&(_0x41d1a3=_0xa32b12(0x13b));}}}(_0x41d1a3==''&&inScenarioChk(_0x1b8e7a,'common-post-cmd')||_0x41d1a3==''&&inScenarioChk(_0x1b8e7a,'func-apicreate-cmd'))&&(_0x41d1a3=_0xa32b12(0x18a),cancelableCmdList[_0xa32b12(0xe9)](_0xa32b12(0x18a)));if(_0x41d1a3==''&&inScenarioChk(_0x1b8e7a,_0xa32b12(0x154))){let _0x5d004e=$(APICONTAINER+_0xa32b12(0x1ad))['filter'](_0xa32b12(0x1cf));if(0x0<_0x5d004e['length']){let _0x3c23e0=_0x5d004e[_0xa32b12(0x14d)](),_0x274662=_0x3c23e0[_0xa32b12(0x101)]('js');_0x1b8e7a[_0xa32b12(0x146)](_0x3c23e0)!=-0x1||_0x1b8e7a[_0xa32b12(0x146)](_0x274662[0x1])!=-0x1||!isSelectedItem()?(preferent[_0xa32b12(0x1a2)]=$(COLUMNSPANEL+'\x20[name=\x27apiin\x27]')['text'](),preferent[_0xa32b12(0xdc)]=$(COLUMNSPANEL+_0xa32b12(0x1a6))[_0xa32b12(0x14d)](),showApiTestPanel(![]),_0x41d1a3=_0xa32b12(0xfa),cancelableCmdList[_0xa32b12(0xe9)](_0xa32b12(0xfa))):(_0x41d1a3='preapitest',cancelableCmdList[_0xa32b12(0xe9)](_0xa32b12(0x1d7)));}else _0x41d1a3=_0xa32b12(0x1d7),cancelableCmdList[_0xa32b12(0xe9)]('preapitest');}_0x41d1a3[_0xa32b12(0x15a)]==0x0&&(_0x41d1a3=getPreferentPropertie('cmd'),_0x41d1a3[_0xa32b12(0x15a)]==0x0&&(_0x41d1a3=_0x1b8e7a));if(inScenarioChk(_0x1b8e7a,_0xa32b12(0xd9)))showApiTestPanel(!![]);else{if(inScenarioChk(_0x1b8e7a,_0xa32b12(0x1cc)))showApiTestPanel(![]);else inScenarioChk(_0x1b8e7a,_0xa32b12(0xee))&&showGenelicPanel(![]);}inScenarioChk(_0x1b8e7a,_0xa32b12(0x15e))&&(inCancelableCmdList(['apitest',_0xa32b12(0x1d7)])&&(showApiTestPanel(![]),_0x4e2f68=!![],_0x41d1a3=_0xa32b12(0x189)),showSomethingMsgPanel(![]));}if(-0x1<$['inArray'](_0x41d1a3,[TABLEAPILISTOPEN,FILESELECTOROPEN]))getAjaxData(scenario[_0xa32b12(0xe7)][0x4]),openFunctionPanel();else{}if(0x1<cmdCandidates[_0xa32b12(0x15a)]){(preferent['ut']==null||preferent['ut']=='')&&(preferent['ut']=_0x1b8e7a);_0x41d1a3='';let _0x2c4ab2='';for(let _0x143412=0x0;_0x143412<cmdCandidates[_0xa32b12(0x15a)];_0x143412++){_0x2c4ab2+='\x27'+cmdCandidates[_0x143412]+'\x27,';}_0x316f81=chooseMsg(_0xa32b12(0x152),_0x2c4ab2,'');}if(0x0<_0x41d1a3[_0xa32b12(0x15a)]){cmdCandidates=[];preferent['ut']!=null&&0x0<preferent['ut'][_0xa32b12(0x15a)]&&(_0x1b8e7a=preferent['ut'],preferent['ut']='');if(_0x41d1a3!=_0xa32b12(0x189)&&inCancelableCmdList(['apitest'])){let _0x2681aa='{'+preferent[_0xa32b12(0xd1)][preferent['apiparams_count']]+'}',_0x48a3ee=$(COLUMNSPANEL+'\x20[name=\x27apiin\x27]')[_0xa32b12(0x14d)](),_0x25b40c=_0x48a3ee[_0xa32b12(0x1c9)](_0x2681aa,original_chatbox_input_text);$(COLUMNSPANEL+_0xa32b12(0x14e))[_0xa32b12(0x1d1)](_0xa32b12(0x12c))[_0xa32b12(0x14d)](_0x25b40c),_0x41d1a3='apitest';}}switch(_0x41d1a3){case FILESELECTOROPEN:$(UPFILE)[_0xa32b12(0x13d)](),_0x316f81=chooseMsg(_0xa32b12(0x17e),'','');break;case _0xa32b12(0x108):const _0x9daaa2=$(UPFILE)['prop'](_0xa32b12(0x161));_0x9daaa2!=null&&0x0<_0x9daaa2[_0xa32b12(0x15a)]?(delete preferent['apilist'],fileupload(),_0x316f81=chooseMsg(_0xa32b12(0x18b),'','')):_0x316f81=chooseMsg(_0xa32b12(0x1d6),'','');break;case TABLEAPILISTOPEN:setLeftPanelTitle(),isVisibleDatabaseList(!![]);let _0x416f3e=APICONTAINER,_0x343343=TABLECONTAINER,_0x1750e2=scenario['function-get-url'][0x1];cleanupItems4Switching(),cleanupContainers();if(inScenarioChk(_0x1b8e7a,_0xa32b12(0x11d)))showApiTestPanel(![]),cleanUp(_0xa32b12(0xdf));else inScenarioChk(_0x1b8e7a,'func-show-api-list-cmd')&&(_0x416f3e=TABLECONTAINER,_0x343343=APICONTAINER,$(GENELICPANEL)[_0xa32b12(0x12f)](),_0x1750e2=scenario[_0xa32b12(0xe7)][0x0]);delete preferent[_0xa32b12(0x119)],cleanupRelatedList(![]),displayTablesAndApis(),_0x316f81=IGNORE;break;case SELECTITEM:let _0xb4e602=![],_0x1ff376=_0x1b8e7a['split']('\x20');$(CONTAINERNEWAPINO)[_0xa32b12(0x1a8)]();$['inArray']('all',_0x1ff376)!=-0x1&&$['inArray'](_0xa32b12(0x179),_0x1ff376)!=-0x1&&$(TABLECONTAINER+_0xa32b12(0xd2)+APICONTAINER+_0xa32b12(0x1ad))[_0xa32b12(0xe1)]('.relatedItem,\x20.activeItem,\x20.activeandrelatedItem')[_0xa32b12(0xe4)](function(){const _0x2c50fa=_0xa32b12;$(this)[_0x2c50fa(0x14f)](_0x2c50fa(0xef))&&$(this)['removeClass']('relatedItem');$(this)['hasClass'](_0x2c50fa(0xd7))&&$(this)[_0x2c50fa(0x13e)](_0x2c50fa(0xd7));$(this)[_0x2c50fa(0x14f)]('activeandrelatedItem')&&$(this)[_0x2c50fa(0x13e)](_0x2c50fa(0x1d2));showGenelicPanel(![]),cleanUp(_0x2c50fa(0x10b));let _0x2b3a03=$(this)[_0x2c50fa(0x14d)]();relatedDataList[_0x2b3a03]!=null&&delete relatedDataList[_0x2b3a03];});for(let _0x58ecd7=0x0;_0x58ecd7<_0x1ff376[_0xa32b12(0x15a)];_0x58ecd7++){$(TABLECONTAINER+_0xa32b12(0x1ad))[_0xa32b12(0xe4)](function(_0x1edc1d,_0x39b756){const _0x3fac95=_0xa32b12;_0x39b756['textContent']==_0x1ff376[_0x58ecd7]&&(listClick($(this)),_0x316f81=chooseMsg(_0x3fac95(0x141),'',''),_0xb4e602=!![]);}),!_0xb4e602&&$(APICONTAINER+_0xa32b12(0x1ad))['each'](function(_0x22a37f,_0x2d7a42){const _0x232577=_0xa32b12;_0x2d7a42[_0x232577(0x164)][_0x232577(0x146)](_0x1ff376[_0x58ecd7])!=-0x1&&(listClick($(this)),_0x316f81=chooseMsg(_0x232577(0x141),'',''),_0xb4e602=!![]);});}if(!_0xb4e602){if(inScenarioChk(_0x1b8e7a,_0xa32b12(0x155)))$(COLUMNSPANEL+'\x20span')[_0xa32b12(0xe1)]('.item')[_0xa32b12(0xe4)](function(){itemSelect($(this));});else for(let _0x3fcaef=0x0;_0x3fcaef<_0x1ff376[_0xa32b12(0x15a)];_0x3fcaef++){$(COLUMNSPANEL+_0xa32b12(0x1ad))[_0xa32b12(0xe1)](_0xa32b12(0xcd))[_0xa32b12(0xe4)](function(_0x546652,_0x1e59c2){const _0x13fe12=_0xa32b12;_0x1e59c2[_0x13fe12(0x164)][_0x13fe12(0x146)](_0x1ff376[_0x3fcaef])!=-0x1&&(itemSelect($(this)),_0x316f81=chooseMsg(_0x13fe12(0x141),'',''));});}}_0x316f81[_0xa32b12(0x15a)]==0x0&&(_0x316f81=chooseMsg(_0xa32b12(0x1cd),'',''));break;case TABLEAPIDELETE:let _0x386e8b=_0x1b8e7a[_0xa32b12(0x101)]('\x20');if(inScenarioChk(_0x1b8e7a,_0xa32b12(0x11b))){if((loginuser['sw']==null||loginuser['sw']=='')&&!$(SOMETHINGINPUT)['is'](_0xa32b12(0xf7)))showSomethingMsgPanel(!![]),loginuser[_0xa32b12(0xf4)]?(showSomethingInputField(!![],0x2),_0x316f81=chooseMsg(_0xa32b12(0xec),'','')):(showSomethingInputField(!![],0x1),_0x316f81=chooseMsg(_0xa32b12(0x1ae),'',''));else{if($(SOMETHINGINPUT)['is'](_0xa32b12(0xf7))&&0x0<$(SOMETHINGINPUT)['val']()[_0xa32b12(0x15a)]||loginuser['sw']!=null&&0x0<loginuser['sw'][_0xa32b12(0x15a)]){let _0x4195c9=[];$(TABLECONTAINER+'\x20span')[_0xa32b12(0xe1)](_0xa32b12(0xfb))[_0xa32b12(0xe4)](function(){const _0x19ee43=_0xa32b12;_0x4195c9[_0x19ee43(0xe9)]($(this)[_0x19ee43(0x14d)]());});0x0<_0x4195c9[_0xa32b12(0x15a)]&&dropThisTable(_0x4195c9);let _0x5b7fb6=[];$(APICONTAINER+_0xa32b12(0x1ad))[_0xa32b12(0xe1)]('.deleteItem')[_0xa32b12(0xe4)](function(){const _0x311b72=_0xa32b12;_0x5b7fb6[_0x311b72(0xe9)]($(this)['text']());}),0x0<_0x5b7fb6['length']&&deleteThisApi(_0x5b7fb6);}_0x316f81=IGNORE;}}else{preferent['cmd']=TABLEAPIDELETE,cancelableCmdList[_0xa32b12(0xe9)](TABLEAPIDELETE);for(let _0x2ee335=0x0;_0x2ee335<_0x386e8b['length'];_0x2ee335++){$(TABLECONTAINER+'\x20span')['each'](function(_0x2a6350,_0xd2acb5){const _0x3dddcb=_0xa32b12;_0xd2acb5[_0x3dddcb(0x164)]==_0x386e8b[_0x2ee335]&&($(this)[_0x3dddcb(0x1d1)]('deleteItem'),_0x316f81=chooseMsg('common-confirm-msg','',''));});let _0x23c484=![];$(APICONTAINER+_0xa32b12(0x1ad))['each'](function(_0x2e1646,_0x12510d){const _0x546277=_0xa32b12;if(_0x12510d[_0x546277(0x164)][_0x546277(0x146)](_0x386e8b[_0x2ee335])!=-0x1){if(_0x12510d['textContent']['startsWith']('js'))$(this)['addClass'](_0x546277(0x1d5)),_0x316f81=chooseMsg(_0x546277(0x187),'','');else(_0x12510d[_0x546277(0x164)][_0x546277(0x1b6)]('ji')||_0x12510d['textContent']['startsWith']('ju')||_0x12510d[_0x546277(0x164)][_0x546277(0x1b6)]('jd'))&&(_0x23c484=!![]);}}),_0x23c484&&(_0x316f81=chooseMsg(_0xa32b12(0x111),'',''));}}_0x316f81['length']==0x0&&(_0x316f81=chooseMsg(_0xa32b12(0x11f),'',''));break;case _0xa32b12(0x18a):showApiTestPanel(![]);let _0x20c571=$(GENELICPANELINPUT)[_0xa32b12(0x13c)]();if(_0x20c571!=null)_0x20c571=$[_0xa32b12(0x1d0)](_0x20c571);else{_0x316f81=chooseMsg(_0xa32b12(0x11c),'','');break;}if(0x0<selectedItemsArr[_0xa32b12(0x15a)]){if(_0x1b8e7a==_0x41d1a3){if(containsMultiTables()){if(0x5<_0x20c571['length']&&_0x20c571[_0xa32b12(0x146)](_0xa32b12(0x1ac))!=-0x1&&_0x20c571!=IGNORE)checkGenelicInput(_0x20c571)?postSelectedColumns(''):_0x316f81=chooseMsg(_0xa32b12(0x176),'','');else{_0x316f81=chooseMsg(_0xa32b12(0x1b9),'','');let _0x371443=_0x20c571[_0xa32b12(0x15a)];$(GENELICPANELINPUT)[_0xa32b12(0x177)]()[_0xa32b12(0x17f)](0x0)[_0xa32b12(0xfe)](_0x371443,_0x371443);}}else postSelectedColumns('');}else{if(containsMultiTables()){if(_0x20c571[_0xa32b12(0x15a)]<0x6||_0x20c571['indexOf']('where')<0x0||_0x20c571==IGNORE){_0x316f81=chooseMsg(_0xa32b12(0x1b9),'','');let _0x4f692a=_0x20c571[_0xa32b12(0x15a)];$(GENELICPANELINPUT)[_0xa32b12(0x177)]()[_0xa32b12(0x17f)](0x0)[_0xa32b12(0xfe)](_0x4f692a,_0x4f692a);}else _0x316f81=chooseMsg('func-postcolumn-available-msg','','');}else _0x316f81=chooseMsg(_0xa32b12(0x12a),'','');}preferent[_0xa32b12(0x196)]=_0x41d1a3;}else _0x316f81=chooseMsg(_0xa32b12(0x102),'','');break;case'cancel':case _0xa32b12(0xf6):if(inCancelableCmdList([TABLEAPIDELETE]))showApiTestPanel(![]),cleanupItems4Switching(),cleanupContainers(),showSomethingInputField(![]),showSomethingMsgPanel(![]),rejectCancelableCmdList(TABLEAPIDELETE),_0x316f81=chooseMsg('cancel-msg','',''),deleteSelectedItems()?(showGenelicPanel(![]),rejectCancelableCmdList(TABLEAPIDELETE),_0x316f81=chooseMsg('cancel-msg','','')):_0x316f81=chooseMsg(_0xa32b12(0x1cd),'',''),$(TABLECONTAINER+_0xa32b12(0x1ad))[_0xa32b12(0x13e)](_0xa32b12(0x1d5)),$(APICONTAINER+_0xa32b12(0x1ad))[_0xa32b12(0x13e)](_0xa32b12(0x1d5));else{if(inCancelableCmdList([FILESELECTOROPEN]))$(UPFILE)[_0xa32b12(0x13c)](''),$(MYFORM+_0xa32b12(0x106))['text'](_0xa32b12(0x1b7)),$(FILEUP)[_0xa32b12(0x13e)](_0xa32b12(0x17a)),rejectCancelableCmdList(FILESELECTOROPEN),_0x316f81=chooseMsg(_0xa32b12(0xe8),'','');else{if(inCancelableCmdList([SELECTITEM])){let _0x854725=_0x1b8e7a[_0xa32b12(0x101)]('\x20');inScenarioChk(_0x1b8e7a,_0xa32b12(0x10f))?($(CONTAINERPANEL+_0xa32b12(0x1ad))['filter'](_0xa32b12(0x16c))[_0xa32b12(0xe4)](function(_0x3a183c,_0x5858b2){itemSelect($(this));}),isVisibleGenelicPanel()&&showGenelicPanel(![]),showSomethingInputField(![]),showSomethingMsgPanel(![]),selectedItemsArr=[],_0x316f81=chooseMsg(_0xa32b12(0xe8),'','')):$(CONTAINERPANEL+_0xa32b12(0x1ad))[_0xa32b12(0xe1)]('.selectedItem')[_0xa32b12(0xe4)](function(_0x559f45,_0x1b57c2){const _0x4e3936=_0xa32b12;_0x1b57c2['textContent']['indexOf'](_0x854725[0x1])!=-0x1&&(itemSelect($(this)),rejectSelectedItemsArr(_0x1b57c2[_0x4e3936(0x164)]),_0x316f81=chooseMsg(_0x4e3936(0xe8),'',''));}),!$(CONTAINERPANEL+'\x20span')[_0xa32b12(0x14f)]('selectedItem')&&(rejectCancelableCmdList(SELECTITEM),rejectCancelableCmdList(_0xa32b12(0x18a)));}else inCancelableCmdList([_0xa32b12(0xfa),'preapitest'])?(resetApiTestProcedure(),_0x4e2f68?_0x316f81=chooseMsg(_0xa32b12(0x1cb),loginuser[_0xa32b12(0x1a4)],'c'):_0x316f81=chooseMsg('cancel-msg','',''),preferent[_0xa32b12(0x159)]=null):(showPreciousPanel(![]),showConfigPanel(![]),cancelableCmdList=[]);}}break;case _0xa32b12(0x1b5):cleanupItems4Switching(),deleteSelectedItems(),cleanupContainers(),refreshApiList(),refreshTableList(),showPreciousPanel(![]),showConfigPanel(![]),_0x316f81=chooseMsg(_0xa32b12(0x105),'','');break;case _0xa32b12(0x117):showApiTestPanel(![]),showGenelicPanel(!![]),_0x316f81=chooseMsg('func-subpanel-opened-msg','','');break;case'preapitest':0x0<selectedItemsArr[_0xa32b12(0x15a)]&&(checkGenelicInput($(GENELICPANELINPUT)[_0xa32b12(0x13c)]())?postSelectedColumns(_0xa32b12(0x180)):_0x316f81=chooseMsg(_0xa32b12(0x176),'',''));break;case _0xa32b12(0xfa):if(preferent['apitestparams']!=null&&0x0<preferent[_0xa32b12(0xd1)][_0xa32b12(0x15a)]){preferent[_0xa32b12(0x159)]==null?preferent['apiparams_count']=0x0:preferent[_0xa32b12(0x159)]+=0x1;if(preferent['apiparams_count']<preferent[_0xa32b12(0xd1)][_0xa32b12(0x15a)])_0x316f81=chooseMsg('func-api-test-set-params-msg',''+preferent[_0xa32b12(0xd1)][preferent['apiparams_count']],'r');else{if(inScenarioChk(_0x1b8e7a,_0xa32b12(0x19c)))apiTestAjax(),_0x316f81=chooseMsg(_0xa32b12(0x18b),'','');else{let _0x1b08c9=chooseMsg(_0xa32b12(0x19c),'','');_0x316f81=chooseMsg('func-api-test-ready-msg',_0x1b08c9,'r');}}}else{if(inScenarioChk(_0x1b8e7a,_0xa32b12(0x19c)))apiTestAjax(),_0x316f81=chooseMsg(_0xa32b12(0x18b),'','');else{let _0x4888f7=chooseMsg(_0xa32b12(0x19c),'','');_0x316f81=chooseMsg(_0xa32b12(0x184),_0x4888f7,'r');}}break;case _0xa32b12(0x13b):if(inScenarioChk(_0x1b8e7a,_0xa32b12(0x11b))&&preferent['db']!=null&&preferent['db']!=''){setDBFocus(preferent['db']),loginuser['dbtype']=preferent['db'],setLeftPanelTitle(),tidyupcmdCandidates(_0x41d1a3),deleteSelectedItems(),cleanupItems4Switching(),cleanupContainers(),cancelableCmdList=[],preferent[_0xa32b12(0xd1)]=[],preferent[_0xa32b12(0x159)]=null,preferent[_0xa32b12(0x1a2)]='',preferent[_0xa32b12(0xdc)]='';let _0x114de5=_0xa32b12(0x19f)+preferent['db']+'\x22}';postAjaxData(scenario[_0xa32b12(0x131)][0x9],_0x114de5);}else{if(_0xa2a682!=''){preferent['db']=_0xa2a682;if($(_0xa32b12(0x14c)+_0xa2a682+'\x27]')['is'](':visible'))_0x316f81=chooseMsg(_0xa32b12(0x16b),preferent['db'],'r');else{if(loginuser[_0xa32b12(0x16a)]==_0xa32b12(0x14b)){let _0x31b901=_0xa32b12(0x194)+preferent['db']+_0xa32b12(0x11e);postAjaxData(scenario['function-post-url'][0xa],_0x31b901);}else _0x316f81=chooseMsg(_0xa32b12(0x123),'','');}}else _0x316f81=chooseMsg(_0xa32b12(0x156),'','');cmdCandidates[_0xa32b12(0xe9)](_0x41d1a3);}break;default:break;}return _0x316f81;},containsMultiTables=()=>{const _0x50b728=_0x25314d;if(0x0<selectedItemsArr[_0x50b728(0x15a)]){let _0x5f151e=[];return $[_0x50b728(0xe4)](selectedItemsArr,function(_0x2d0803,_0x521864){const _0x3673e1=_0x50b728;if(0x0<_0x521864[_0x3673e1(0x15a)]&&_0x521864[_0x3673e1(0x146)]('.')!=-0x1){let _0x4250ac=_0x521864[_0x3673e1(0x101)]('.');$[_0x3673e1(0x1c5)](_0x4250ac[0x0],_0x5f151e)===-0x1&&_0x5f151e['push'](_0x4250ac[0x0]);}}),0x1<_0x5f151e[_0x50b728(0x15a)]?!![]:![];}},showGenelicPanel=_0x14a4b4=>{const _0x5b3490=_0x25314d;_0x14a4b4?($(GENELICPANELTEXT)[_0x5b3490(0x14d)]('Sub\x20Query:'),$['trim']($(GENELICPANELINPUT)['val']())<0x6&&$(GENELICPANELINPUT)[_0x5b3490(0x13c)](_0x5b3490(0x167)),$(GENELICPANEL)[_0x5b3490(0x16e)]()):($(GENELICPANEL)[_0x5b3490(0x12f)](),$(GENELICPANELINPUT)[_0x5b3490(0x13c)](''),focusonJetelinaPanel());},checkGenelicInput=_0x44cd3c=>{const _0xb8eaac=_0x25314d;let _0xc62f15=!![],_0x4a26d1=$[_0xb8eaac(0x1d0)](_0x44cd3c);(_0x4a26d1==_0xb8eaac(0x1ac)||_0x4a26d1=='')&&(_0x4a26d1=IGNORE);if(_0x4a26d1!=IGNORE){let _0x28db48=[];$(COLUMNSPANEL+_0xb8eaac(0xd2)+CONTAINERPANEL+_0xb8eaac(0x1ad))['filter'](_0xb8eaac(0xcd))[_0xb8eaac(0xe4)](function(){const _0x527dd7=_0xb8eaac;_0x28db48[_0x527dd7(0xe9)]($(this)[_0x527dd7(0x14d)]());});let _0x4c1b24=['\x22','`'];for(let _0x2bcb00 in _0x4c1b24){_0x4a26d1=_0x4a26d1[_0xb8eaac(0x140)](_0x4c1b24[_0x2bcb00],'\x27');}let _0x5d4541=[_0xb8eaac(0x171),'drop',';'];for(i in _0x5d4541){_0x4a26d1=_0x4a26d1[_0xb8eaac(0x140)](_0x5d4541[i],'');}let _0x4fe19a=_0x4a26d1[_0xb8eaac(0x173)](/{/igm),_0x413492=_0x4a26d1[_0xb8eaac(0x173)](/}/igm);if(_0x4fe19a!=null&&_0x413492!=null)_0x4fe19a['length']!=_0x413492['length']&&(_0xc62f15=![]);else{if(_0x4fe19a!=null&&_0x413492==null||_0x4fe19a==null&&_0x413492!=null)_0xc62f15=![];else{}}_0xc62f15&&$(GENELICPANELINPUT)[_0xb8eaac(0x13c)](_0x4a26d1);}return _0xc62f15;},deleteThisApi=_0x2f4bf8=>{const _0x5c3287=_0x25314d;let _0x17e87b={};_0x17e87b[_0x5c3287(0xff)]=_0x2f4bf8;loginuser['sw']==null||loginuser['sw']==''?_0x17e87b[_0x5c3287(0x17b)]=$(SOMETHINGINPUT)[_0x5c3287(0x13c)]():_0x17e87b[_0x5c3287(0x17b)]=loginuser['sw'];let _0x421af3=JSON[_0x5c3287(0x118)](_0x17e87b);$[_0x5c3287(0x191)]({'url':_0x5c3287(0x139),'type':_0x5c3287(0x18a),'data':_0x421af3,'contentType':_0x5c3287(0x143),'dataType':_0x5c3287(0x11a),'xhr':function(){const _0x539fc7=_0x5c3287;return ret=$[_0x539fc7(0x124)][_0x539fc7(0x162)](),inprogress=!![],typingControll(chooseMsg('inprogress-msg','','')),ret;}})[_0x5c3287(0xda)](function(_0xce8902,_0x500664,_0x2ca6d6){const _0x486a90=_0x5c3287;let _0x52b6b4='';checkResult(_0xce8902)?(cleanUp('items'),loginuser['sw']=_0x17e87b[_0x486a90(0x17b)],showSomethingInputField(![]),showSomethingMsgPanel(![]),showGenelicPanel(![]),rejectCancelableCmdList(TABLEAPIDELETE),preferent[_0x486a90(0x196)]='',refreshApiList(),refreshTableList(),_0x52b6b4=chooseMsg(_0x486a90(0x105),'','')):(_0x52b6b4=_0xce8902[_0x486a90(0x12b)],(_0x52b6b4==null||_0x52b6b4=='')&&(_0x52b6b4=chooseMsg('fail-msg','',''))),typingControll(_0x52b6b4);})[_0x5c3287(0x126)](function(_0x31ca69){const _0x1a14c0=_0x5c3287;checkResult(_0x31ca69),console[_0x1a14c0(0x1bb)]('deleteThisApi()\x20faild:\x20',_0x31ca69),typingControll(chooseMsg(_0x1a14c0(0xf5),'',''));})['always'](function(){inprogress=![];});},whichCommandsInOrders=_0x326a0f=>{const _0x3356c8=_0x25314d;let _0x2f1f45='';for(key in cmdCandidates){if(_0x326a0f==cmdCandidates[key]){switch(_0x326a0f){case _0x3356c8(0x189):_0x2f1f45=_0x3356c8(0x189);break;case _0x3356c8(0x109):_0x2f1f45=_0x3356c8(0x1b5);break;case _0x3356c8(0x134):_0x2f1f45=_0x3356c8(0x108);break;case _0x3356c8(0xd3),'show\x20api\x20list':_0x2f1f45=TABLEAPILISTOPEN;break;case'file\x20open':_0x2f1f45=FILESELECTOROPEN;break;case _0x3356c8(0x185):case'select\x20columns':case _0x3356c8(0xcf):_0x2f1f45=SELECTITEM;break;case _0x3356c8(0xde):_0x2f1f45=subquery;break;case _0x3356c8(0x1b1):case _0x3356c8(0xea):_0x2f1f45=TABLEAPIDELETE;break;case _0x3356c8(0x18a):_0x2f1f45='post';break;case _0x3356c8(0x1d7):_0x2f1f45=_0x3356c8(0x1d7);break;case _0x3356c8(0xfa):_0x2f1f45='apitest';break;case _0x3356c8(0x13b):_0x2f1f45=_0x3356c8(0x13b);break;default:break;}return cmdCandidates=[],_0x2f1f45;}}return _0x2f1f45;},cleanupRelatedList=_0x2f35e9=>{if(_0x2f35e9)for(let _0x21c856 in relatedDataList){delete relatedDataList[_0x21c856];}},displayTablesAndApis=()=>{refreshApiList(),refreshTableList();},refreshApiList=()=>{const _0x1376a6=_0x25314d;cleanUp(_0x1376a6(0x160)),preferent[_0x1376a6(0x119)]!=null&&delete preferent[_0x1376a6(0x119)],$(_0x1376a6(0xe5))['addClass']('genelic_panel'),getAjaxData(scenario[_0x1376a6(0xe7)][0x0]);},refreshTableList=()=>{const _0x58f75d=_0x25314d;cleanUp('tables'),$(_0x58f75d(0xfd))[_0x58f75d(0x1d1)]('genelic_panel'),getAjaxData(scenario[_0x58f75d(0xe7)][0x1]);},tidyupcmdCandidates=_0x192005=>{const _0x318a47=_0x25314d;return cmdCandidates=cmdCandidates[_0x318a47(0xe1)](function(_0x623de0){return _0x623de0!=_0x192005;});},setLeftPanelTitle=()=>{const _0x324c9c=_0x25314d;title=_0x324c9c(0x129),loginuser[_0x324c9c(0x137)]==_0x324c9c(0x19e)&&(title=_0x324c9c(0xd6)),$(LeftPanelTitle)['text'](title);},isSelectedItem=()=>{const _0x14ab5b=_0x25314d;let _0x410b4b=![],_0x288512=$(CONTAINERPANEL+_0x14ab5b(0x1ad))[_0x14ab5b(0xe1)](_0x14ab5b(0x16c))[_0x14ab5b(0x14d)]();return 0x0<_0x288512[_0x14ab5b(0x15a)]&&(_0x410b4b=!![]),_0x410b4b;},resetApiTestProcedure=()=>{const _0x181cad=_0x25314d;inCancelableCmdList([_0x181cad(0xfa)])&&($(COLUMNSPANEL+_0x181cad(0x14e))['removeClass'](_0x181cad(0x12c))[_0x181cad(0x14d)](preferent['original_apiin_str']),$(COLUMNSPANEL+_0x181cad(0x1a6))[_0x181cad(0x13e)]('attentionapiinout')[_0x181cad(0x14d)](preferent[_0x181cad(0xdc)]),rejectCancelableCmdList(_0x181cad(0xfa))),inCancelableCmdList([_0x181cad(0x1d7)])&&rejectCancelableCmdList('preapitest');};$(GENELICPANELINPUT)[_0x25314d(0x16d)](function(){const _0x8cca53=_0x25314d;let _0x389bc4=$(GENELICPANELINPUT)['val'](),_0x2f1718=_0x389bc4[_0x8cca53(0x1c9)](/\r?\n/g,'\x20');$(GENELICPANELINPUT)[_0x8cca53(0x13c)](''),$(GENELICPANELINPUT)['val'](_0x2f1718);});
+/**
+    JS library for Jetelina Function Panel
+    @author Ono Keiji
+
+    This js lib works with dashboard.js and jetelinalib.js for the Function Panel.
+    
+    Functions:
+      openFunctionPanel() open and visible "#function_panel"
+      isVisibleTableContainer() checking "#table_container" is visible or not
+      isVisibleApiContainer() checking "#api_container" is visible or not
+      isVisibleGenelicPanel() checking "#genelic_panel" is visible or not
+      isVisibleColumns() checking "#columns" is visible or not
+      itemSelect(p) select table column
+      deleteSelectedItems(p) delete the selected columns from #container field
+      cleanUp(s)  droped items & columns of selecting table
+      cleanupItems4Switching() clear screen in activeItem class when switching table list/api list 
+      cleanupContainers(s) clear screen in the detail zone showing when switching table list/api list 
+      fileupload() CSV file upload
+      getdataFromJson(o,k) aquire the ordered data from the ordered json object
+      listClick(p)   do something by clicking tble list or api list items  
+      setApiIF_In(t,s) Show Json of 'API　IN'
+      setApiIF_Out(t,s) Show Json of 'API OUT'
+      setApiIF_Sql(s) Show sample execution sql sentence
+      buildJetelinaJsonForm(t,s)  Create display Json form data from a API
+      buildJetelinaOutJsonForm(t, s) Create display 'OUT' Json form data from a API. mainly using in 'select' API.
+      getColumn(tablename) Ajax function for getting the column names of the ordered table 
+      removeColumn(tablename) Delete a column from selected item list on the display 
+      dropThisTable(tables)　Ajax function for deleting the target table from DataBase. 
+      postSelectedColumns(mode) Ajax function for posting the selected columns.
+      functionPanelFunctions(ut)　Exectute some functions ordered by user chat input message    
+      containsMultiTables() Judge demanding 'where sentence' before post to the server
+      showGenelicPanel(b) genelic panel open or close. 
+      checkGenelicInput() check genelic panel input. caution: will imprement this in V2 if necessary
+      deleteThisApi() Ajax function for deleting the target api from api list doc.
+      whichCommandsInOrders(s) match with user input in cmdCandidates
+      cleanupRelatedList(b) clear screen in api_container panel and/or relatedDataList object
+      displayTablesAndApis() display table list and api list
+      refreshApiList() refresh displaying of api list
+      refreshTableList() refresh displaying of table list
+      tidyupcmdCandidates(targetcmd) reject 'targetcmd' from cmdCandidates
+      setLeftPanelTitle() set to the title in the left panel
+      isSelectedItem() check exsisting a selected item in the container panel
+      resetApiTestProcedure reset something about apitest/preapitest
+ */
+let selectedItemsArr = [];
+let cmdCandidates = [];// ordered commands for checking duplication 
+
+/*
+   change label when selected a file
+*/
+$(UPFILE).on("change", function () {
+  let fullfilename = $(this).val();
+  if (fullfilename != null && 0 < fullfilename.length) {
+    let p = fullfilename.split("\\");
+    let filename = p[p.length - 1];
+    $(`${MYFORM} label span`).text(filename);
+    $(FILEUP).addClass("genelic_panel"); // blinking panel border but not fire immediately
+    cancelableCmdList.push(FILESELECTOROPEN);
+    typingControll(chooseMsg("func-fileupload-upload-msg", filename, "r"));
+  } else {
+    if ($(this).hasClass("genelic_panel")) {
+      $(this).removeClass("genelic_panel");
+    }
+  }
+});
+/*
+  tooltip for columns list
+*/
+$(document).on({
+  mouseenter: function (e) {
+    let moveLeft = -10;
+    let moveDown = -10;
+
+    $("#pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
+
+    let d = $(this).attr("d");
+
+    $('div#pop-up').text(`e.g. ${d}`).show();
+  },
+  mouseleave: function () {
+    $('div#pop-up').hide();
+  },
+  click:
+    function () {
+      itemSelect($(this));
+    }
+}, ".item");
+/**
+ * @function openFunctionPanel
+ * 
+ * open and visible "#function_panel"
+ * hide "#condition_panel" at the same time if it is visible
+ */
+const openFunctionPanel = () => {
+  if (inVisibleConditionPanel()) {
+    $(CONDITIONPANEL).hide();
+  }
+
+  $(FUNCTIONPANEL).show().animate({
+    width: window.innerWidth * 0.92,
+    height: window.innerHeight * 0.92,
+    top: "2%",
+    left: "2%"
+  }, ANIMATEDURATION);
+
+  if (isVisibleColumns()) {
+    $(FILEUP).draggable().animate({
+      top: "4%",
+      left: "1%"
+    }, ANIMATEDURATION);
+    $("#left_panel").draggable().animate({
+      top: "10%",
+      left: "1%"
+    }, ANIMATEDURATION);
+    $(COLUMNSPANEL).draggable().animate({
+      top: "10%",
+      left: "19%"
+    }, ANIMATEDURATION);
+    $(CONTAINERPANEL).draggable().animate({
+      bottom: "6%",
+      left: "19%"
+    }, ANIMATEDURATION);
+
+    $(RELATEDTABLESAPIS).draggable().animate({
+      top: "10%",
+      left: "82%"
+    }, ANIMATEDURATION);
+
+  }
+}
+/**
+ * @function isVisibleTableContainer
+ * @returns {boolean}  true -> visible, false -> invisible
+ * 
+ * checking "#table_container" is visible or not
+ */
+const isVisibleTableContainer = () => {
+  let ret = false;
+  if ($(TABLECONTAINER).is(":visible")) {
+    ret = true;
+  }
+
+  return ret;
+}
+/**
+ * @function isVisibleApiContainer
+ * @returns {boolean}  true -> visible, false -> invisible
+ * 
+ * checking "#api_container" is visible or not
+ */
+const isVisibleApiContainer = () => {
+  let ret = false;
+  if ($(APICONTAINER).is(":visible")) {
+    ret = true;
+  }
+
+  return ret;
+}
+/**
+ * @function isVisibleGenelicPanel
+ * @returns {boolean}  true -> visible, false -> invisible
+ * 
+ * checking "#genelic_panel" is visible or not
+ */
+const isVisibleGenelicPanel = () => {
+  let ret = false;
+  if ($(GENELICPANEL).is(":visible")) {
+    ret = true;
+  }
+
+  return ret;
+}
+/**
+ * @function isVisibleColumns
+ * @returns {boolean}  true -> visible, false -> invisible
+ * 
+ * checking "#columns" is visible or not
+ */
+const isVisibleColumns = () => {
+  let ret = false;
+  if ($(COLUMNSPANEL).is(":visible")) {
+    ret = true;
+  }
+
+  return ret;
+}
+/**
+ * @function itemSelect
+ * @param {object} p  jquery tag object
+ * 
+ * select table column 
+ */
+const itemSelect = (p) => {
+  let cl = p.attr("class");
+  let item = p.attr("colname");
+
+  if (p.hasClass("selectedItem")) {
+    // delete
+    deleteSelectedItems(p);
+  } else {
+    // adding
+    if ($.inArray(item, selectedItemsArr) != -1) {
+      p.detach();
+    } else {
+      p.addClass("selectedItem");
+      p.detach().appendTo(CONTAINERPANEL);
+    }
+
+    cmdCandidates = [];
+    cancelableCmdList.push(SELECTITEM);
+    selectedItemsArr.push(item);
+  }
+
+  // open subquery input field anyhow
+  showGenelicPanel(true);
+}
+/**
+ * @function deleteSelectedItems
+ * @param {string} p  jquery tag string 
+ * @returns {boolean}  true->success done  false->no action
+ * 
+ * delete the selected columns from #container field
+ */
+const deleteSelectedItems = (p) => {
+  let ret = false;
+
+  if (p != null) {
+    // delete the ordered item
+    let item = $(p).text();
+    selectedItemsArr = selectedItemsArr.filter(elm => {
+      return elm !== item;
+    });
+
+    $(p).removeClass("selectedItem");
+    $(p).detach().appendTo(`${COLUMNSPANEL} div[name='columns_area']`);
+    ret = true;
+  } else {
+    // delete all items
+    selectedItemsArr = [];
+    $(`${CONTAINERPANEL} span`).removeClass("selectedItem");
+    $(`${CONTAINERPANEL} .apisql`).remove();
+    $(`${COLUMNSPANEL} .apisql`).remove();
+    $(`${CONTAINERPANEL} span`).detach().appendTo(`${COLUMNSPANEL} div`);
+    ret = true;
+  }
+
+  return ret;
+}
+/**
+ * @function cleanUp
+ * @param {string} s  point to target : 'items' or 'tables' or 'apis'
+ * 
+ * droped items & columns of selecting table
+ */
+const cleanUp = (s) => {
+  /*
+    Tips:
+      be empty selectedItemArr, 
+      .... but i forgot why it did here... 
+      leave it as a good luck charm  :P
+  */
+  selectedItemsArr.splice(0);
+
+  $("#columns_title").text("");
+
+  if (s == "items") {
+    // clean up items
+    /*
+      Attention:
+        remove targets are
+          '.item' at '.item_area'
+          and all '.apisql'
+    */
+    $(".item_area > .item, .apisql, .selectedItem").remove();
+  } else if (s == "tables") {
+    // clean up tables
+    $(`${TABLECONTAINER} .table`).remove();
+  } else if (s == "apis") {
+    // clean up API list
+    $(`${APICONTAINER} .api`).remove();
+  }
+}
+/**
+ * @function cleanupItems4Switching
+ * 
+ * clear screen in activeItem class when switching table list/api list
+ */
+const cleanupItems4Switching = () => {
+  cleanUp("items");
+  $("#columns_title").text("");
+  $(`${TABLECONTAINER} span`).removeClass("activeItem");
+  $(`${APICONTAINER} span`).removeClass("activeItem");
+  $(`${CONTAINERPANEL} span`).remove();
+}
+/**
+* @function cleanupContainers
+* @param {string} s  point to target : 'api' or null
+*
+* clear screen in the detail zone showing when switching table list/api list
+*/
+const cleanupContainers = (s) => {
+  if (s == null || s == "") {
+    s = "all";
+  }
+
+  showApiTestPanel(false);
+
+  if (s == "api") {
+    if (selectedItemsArr != null && selectedItemsArr.length == 0) {
+      showGenelicPanel(false);
+    }
+
+    $(`${CONTAINERPANEL} span, ${COLUMNSPANEL} span`).filter(".apisql").remove();
+  } else {
+    showGenelicPanel(false);
+    $(`${CONTAINERPANEL} span,${CONDITIONPANEL} span`).remove();
+  }
+}
+/**
+ * @function fileupload
+ * 
+ * CSV file upload.
+ * The target csv files is ordered in '#my_form'
+ */
+const fileupload = () => {
+  let fd = new FormData($(MYFORM).get(0));
+  $("#upbtn").prop("disabled", true);
+
+  const uploadFilename = $(UPFILE).prop("files")[0].name;
+  const tablename = uploadFilename.split(".")[0];
+
+  $.ajax({
+    url: "/postcsvfile",
+    type: "post",
+    data: fd,
+    cache: false,
+    contentType: false,
+    processData: false,
+    dataType: "json",
+    xhr: function () {
+      ret = $.ajaxSettings.xhr();
+      inprogress = true;// in progress. for priventing accept a new command.
+      typingControll(chooseMsg('inprogress-msg', "", ""));
+      return ret;
+    }
+  }).done(function (result, textStatus, jqXHR) {
+    if (checkResult(result)) {
+      // clean up
+      $(UPFILE).val("");
+      $("#upbtn").prop("disabled", false);
+      $(`${MYFORM} label span`).text("Upload CSV File");
+
+      //refresh table list 
+      cleanupRelatedList(true);
+      typingControll(chooseMsg('refreshing-msg', '', ''));
+
+      chatKeyDown(scenario["func-show-table-list-cmd"][0]);
+    } else {
+      // csv file format error
+      typingControll(chooseMsg('func-csv-format-error-msg', "", ""));
+    }
+  }).fail(function (result) {
+    checkResult(result);
+    // something error happened
+    console.error("fileupload(): unexpected error");
+    typingControll(chooseMsg("fail-msg", "", ""));
+  }).always(function () {
+    // release it for allowing to input new command in the chatbox 
+    inprogress = false;
+    $(FILEUP).removeClass("genelic_panel");
+    rejectCancelableCmdList(FILESELECTOROPEN);
+    return true;
+  });
+}
+
+/*
+  get the ordered table column.
+  Once clicking it, this table's class attribute has changed
+      before clicking & secound time : table
+      after the first clicking       : table activeItem
+
+  the excecution of getting column is judged by this 'activeItem' attribute.
+*/
+$(document).on("click", ".table,.api", function () {
+  listClick($(this));
+});
+
+/**
+ * @function getdataFromJson
+ * @param {object} o  json object 
+ * @param {string} k  targeted desiring data (json name part)
+ * @returns {object}  targeted desiring data (apino, sql, subquery)
+ * 
+ * aquire the ordered data from the ordered json object.
+ */
+const getdataFromJson = (o, k) => {
+  const Jkey = 'Jetelina';
+  let ret = "";
+  Object.keys(o).forEach(function (key) {
+    // because the value in ’Jetelina’ is an object: name=>key value=>o[key]
+    let row = 1, col = 1;
+    if (key == Jkey && o[key].length > 0) {
+      $.each(o[key], function (n, v) {
+        $.each(v, function (name, value) {
+          if (value == k) {
+            ret = v;
+            return false;
+          }
+        });
+      });
+    }
+  });
+
+  return ret;
+}
+/**
+ * @function listClick
+ * @param {object} p  jquery tag object
+ * 
+ * do something by clicking tble list or api list items 
+ */
+const listClick = (p) => {
+  let t = p.text();
+  let c = p.attr("class");
+
+  removeColumn(t);
+  cmdCandidates = [];
+  /*
+    Tips:
+        in case of clicking 'table', relatedDataList.type = "api", because the server returns the related api list
+        opposit in case of 'api'
+  */
+  relatedDataList.type = "api";
+  if (p.hasClass("api")) {
+    relatedDataList.type = "table";
+  }
+
+  let sourcePanel = TABLECONTAINER; // the 'p' is in here
+  let relatedPanel = APICONTAINER;// the related items are in there
+  if (relatedDataList.type == "table") {
+    sourcePanel = APICONTAINER;
+    relatedPanel = TABLECONTAINER;
+  }
+
+  if (p.hasClass("activeItem") || p.hasClass("activeandrelatedItem")) {
+    /*
+      in case to turn p to 'INACTIVE'
+    */
+    if (p.hasClass("api")) {
+      cleanupContainers("api");
+    } else {
+
+    }
+    /* 
+        Tips:
+          clean up in the relation data list.
+          a little bit complex.
+          only unique api in target table removes from the related list.
+          i mean
+            relatedDataList["table1"] = ["ju1","jd2","ji3","js4","js5"]
+            relatedDataList["table2"] = ["ju11","jd12","ji13","js14","js5"]
+  
+            "ju1","jd2","ji3","js4" should be removed when "table1" has been inactive.
+            "js5" should be remained in the list, because it is duplicated with "table2".
+
+          in the case of 'api', '.activeItem' or '.activeandrelatedItem' allows to exists only one,
+          therefore it can use the below codes as well because it's simple logic.
+    */
+    let activeArr = [];
+    if (relatedDataList[t] != null) {
+      /*
+        gather 'activeItem' items in the list
+
+        Attention:
+          'sourcePanel' vs activeArr
+            in case APICONTAINER, activeArr.length = 1.
+            in case TABLECONTAINER, activeArr.length >= 1.
+      */
+      $(`${sourcePanel} span`).filter('.activeItem, .activeandrelatedItem').each(function () {
+        activeArr.push($(this).text());
+      });
+
+      if (1 < activeArr.length) {
+        $(`${relatedPanel} span`).filter('.relatedItem, .activeandrelatedItem').each(function (i, v) {
+          if ($.inArray(v.textContent, relatedDataList[t]) != -1) {
+            if (p.hasClass("activeandrelatedItem")) {
+              p.removeClass("activeandrelatedItem");
+              p.addClass("activeItem");
+            }
+
+            if (v.textContent.startsWith('js')) {
+              for (let i in activeArr) {
+                if ($.inArray(v.textContent, relatedDataList[activeArr[i]]) != -1) {
+                } else {
+                  $(this).removeClass("relatedItem");
+                }
+              }
+            } else {
+              $(this).removeClass("relatedItem");
+            }
+          }
+        });
+      } else {
+        $(`${relatedPanel} span`).filter('.relatedItem, .activeandrelatedItem').each(function (i, v) {
+          if (p.hasClass("activeandrelatedItem")) {
+            p.removeClass("activeandrelatedItem");
+            p.addClass("activeItem");
+          }
+
+          $(this).removeClass("relatedItem");
+        });
+      }
+
+      p.toggleClass("activeItem");
+    } else {
+      // delete target 
+      $(`${relatedPanel} span, ${relatedPanel} span`).filter('.relatedItem').each(function () {
+        $(this).removeClass("relatedItem");
+      });
+    }
+  } else {
+    /*
+      in case to turn p to 'ACTIVE'
+    */
+    let related_table = "";
+    let related_api = "";
+
+    if (c.indexOf("table") != -1) {
+      related_table = t;
+      // get&show table columns
+      getColumn(t);
+    } else {
+      /*
+        Tips:
+          only one can be selected in API list
+      */
+      $(`${APICONTAINER} span`).filter(".relatedItem, .activeItem, .activeandrelatedItem").each(function () {
+        if (t != $(this).text()) {
+          if ($(this).hasClass("activeandrelatedItem")) {
+            $(this).addClass("relatedItem");
+          }
+
+          $(this).removeClass("activeItem activeandrelatedItem");
+          $(`${TABLECONTAINER} span`).removeClass("relatedItem");
+        }
+      });
+
+      // reset all activeItem class and sql
+      cleanupContainers("api");
+
+      // showing ordered sql from preferent.apilist that is gotten by getAjaxData("/getapilist",...)
+      if (preferent.apilist != null && preferent.apilist.length != 0) {
+        let s = getdataFromJson(preferent.apilist, t);
+        if (0 < s.sql.length) {
+          $(`${COLUMNSPANEL} span`).filter(".apisql").remove();
+          related_api = s.apino;
+          // api in/out json
+          $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiin"><bold>IN:</bold><div name="apiin" >${setApiIF_In(t, s)}</div></span>`);
+          $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiout"><bold>OUT:</bold><div name="apiout" style="height:100px;" class="right_left_panel_scroll">${setApiIF_Out(t, s)}</div></span>`);
+          // sample execution sql
+          $(CONTAINERPANEL).append(`<span class="apisql"><p>${setApiIF_Sql(s)}</p></span>`);
+        }
+      }
+    }
+
+    let data = `{"table":"${related_table}","api":"${related_api}"}`;
+    postAjaxData(scenario["function-post-url"][8], data);
+
+    if (p.hasClass("relatedItem")) {
+      p.addClass("activeandrelatedItem");
+    } else {
+      p.toggleClass("activeItem");
+    }
+  }
+
+  // set the panel title
+  let label2columns = "";
+  $(`${TABLECONTAINER} span, ${APICONTAINER} span`).filter('.activeItem, .activeandrelatedItem').each(function () {
+    let tn = $(this).text();
+    if (label2columns.length == 0) {
+      label2columns = tn;
+    } else {
+      label2columns += " & " + tn;
+    }
+  });
+
+  if (0 < label2columns.length) {
+    if (sourcePanel == TABLECONTAINER) {
+      label2columns = `Registered columns in ${label2columns}`;
+    } else {
+      label2columns = `IN/OUT interface of ${label2columns}`;
+    }
+  }
+
+  $("#columns_title").text(label2columns);
+}
+/**
+ * @function setApiIF_In
+ * @param {string} t targeted desiring data (json name part)
+ * @param {object} s targeted desiring data object(apino, sql, subquery)
+ * @returns {string} json form string
+ * 
+ * Show Json of 'API　IN'
+ */
+const setApiIF_In = (t, s) => {
+  let ta = t.toLowerCase();
+  let ret = "";
+
+  /*
+    Tips:
+      for api test, each json parameter's name are contained in this array.
+      pushing is executed in buildJetelinaJsonForm() mostly, except somes e.g. case in redis
+  */
+  preferent.apitestparams = [];
+
+  if (ta.startsWith("js")) {
+    //select. 'ignore' -> no sub query
+    if (s.subquery != null && 0 < s.subquery.length && s.subquery != IGNORE) {
+      let s_subquery = s.subquery;
+      let subquery_str = "";
+      let isCurry = s_subquery.indexOf('{');
+      while (-1 < isCurry) {
+        if (0 < subquery_str.length) {
+          subquery_str += ',';
+        }
+
+        let sp = s_subquery.indexOf('{');
+        let ep = s_subquery.indexOf('}');
+        if (sp != -1 && ep != -1) {
+          let cd = s_subquery.substring(sp + 1, ep);
+          subquery_str += `'${cd}': `;
+          if (s_subquery[sp - 1] == "\'") {
+            subquery_str += `'{${cd}}'`;
+          } else {
+            subquery_str += `{${cd}}`;
+          }
+
+          preferent.apitestparams.push(cd);
+          s_subquery = s_subquery.substring(ep + 1, s_subquery.length);
+        }
+
+        isCurry = s_subquery.indexOf('{');
+      }
+
+      if(subquery_str != ""){
+        ret = `{"apino": \"${t}\","subquery":\"[${subquery_str}]\"}`;
+      }else{
+        ret = `{"apino":\"${t}\"}`;
+      }
+    } else {
+      ret = `{"apino":\"${t}\"}`;
+    }
+  } else if (ta.startsWith("ji")) {
+    if (loginuser.dbtype != "redis") {
+      /*
+        insert
+          a,b,... in insert into table values(a,b,...) 
+      */
+      let i_sql = s.sql.split("values(");
+      i_sql[1] = i_sql[1].slice(0, i_sql[1].length - 1).replaceAll('\'', '').replaceAll('{', '').replaceAll('}', '');
+      ret = buildJetelinaJsonForm(ta, i_sql[1]);
+    } else {
+      let i_sql = s.sql.split(":");
+      ret = `{"apino":\"${t}\","key1":"{your key data}","key2":"{your value data}"}`;
+      preferent.apitestparams.push("your key data");
+      preferent.apitestparams.push("your value data");
+    }
+  } else if (ta.startsWith("ju") || ta.startsWith("jd")) {
+    if (loginuser.dbtype != "redis") {
+      /*
+        update and delete(the true color is update)
+          a=d_a,b=d_b... in update table set a=d_a,b=d_b..... 
+      */
+      let u_sql = s.sql.split("set");
+      ret = buildJetelinaJsonForm(ta, u_sql[1]);
+      /*
+        special for 'ju and 'jd'
+          because the subquery in update/delete is executed with jt_id in 'where' sentence.
+          this is the protocol so far.
+      */
+      preferent.apitestparams.push("jt_id");
+      ret = ret.slice(0, ret.length - 1) + `,\"subquery\":\"{jt_id}\"` + ret.slice(ret.length - 1, ret.length);
+    } else {
+      let u_sql = s.sql.split(":");
+      ret = `{"apino":\"${t}\","key":"{your value data}"}`;
+      preferent.apitestparams.push("your value data");
+    }
+  } else {
+    // who knows
+  }
+
+  return ret;
+}
+/**
+ * @function setApiIF_Out
+ * @param {string} t targeted desiring data (json name part)
+ * @param {object} s targeted desiring data object(apino, sql, subquery)
+ * @returns {string} json form string in select sentece, other true/false
+ *
+ * Show Json of 'API OUT'
+ * Only select sql  
+ */
+const setApiIF_Out = (t, s) => {
+  let ret = "true or false";
+  let ta = t.toLowerCase();
+
+  if (ta.startsWith("js")) {
+    if (loginuser.dbtype != "redis") {
+      let pb = s.sql.split("select");
+      let pf = pb[1].split("from");
+      // there is the items in pf[0]
+      if (pf[0] != null && 0 < pf[0].length) {
+        ret = buildJetelinaOutJsonForm(ta, pf[0]);
+      }
+    } else {
+      let pb = s.sql.split(":");
+      if (pb[1] != null && 0 < pb[1].length) {
+        ret = `{"result":true or false,"Jetelina":"[{\"${pb[1]}\":\"{${pb[1]}}\"}]","message from Jetelina":"\".....\""}`;
+      }
+    }
+  } else {
+    // insert, update, delete
+    ret = '{"result":true or false,"Jetelina":"[{}]","message from Jetelina":"\".....\""}';
+  }
+
+  return ret;
+}
+/**
+ * @function setApiIF_Sql
+ * @param {object} s targeted desiring data object(apino, sql, subquery)
+ * @returns {string} sample execution sql sentence
+ *
+ * Show sample execution sql sentence
+ */
+const setApiIF_Sql = (s) => {
+  let ret = "";
+
+  if (loginuser.dbtype != "redis") {
+    // possibly s.subquery is null. 'ignore' -> no sub query
+    if (s.subquery != null && s.subquery != IGNORE) {
+      ret = `${s.sql} ${s.subquery};`;
+    } else {
+      ret = `${s.sql};`;
+    }
+
+    let reject_jetelina_delete_flg = "jetelina_delete_flg";
+    if (ret.startsWith("insert")) {
+      ret = ret.replaceAll(`,{${reject_jetelina_delete_flg}}`, '').replaceAll(`,${reject_jetelina_delete_flg}`, '');
+    }
+  } else {
+    let d = s.sql.split(":");
+    if (s.apino.startsWith("ji")) {
+      ret = `${d[0]} {your key data} {your value data}`;
+    } else if (s.apino.startsWith("ju")) {
+      ret = `${d[0]} ${d[1]} {your value data}`;
+    } else if (s.apino.startsWith("js")) {
+      ret = `${d[0]} ${d[1]}`;
+    }
+  }
+
+  return ret;
+}
+/**
+ * @function buildJetelinaJsonForm
+ * @param {string} t targeted desiring data (json name part)
+ * @param {string} s tables(after 'from' sentence in a sql)
+ * @returns {string} Json form string
+ * 
+ * Create display Json form data from a API
+ */
+const buildJetelinaJsonForm = (t, s) => {
+  let ret = "";
+
+  let c = s.split(",");
+  for (let i = 0; i < c.length; i++) {
+    let cn = c[i].split('.');
+    if (ret.length == 0) {
+      ret = `{"apino":\"${t}\",`;
+    }
+
+    let ss = "";
+    if (cn[1] != null && 0 < cn[1].length) {
+      // select
+      ss = cn[1];
+    } else {
+      //insert update delete
+      if (c[i].indexOf("=") != -1) {
+        //update
+        ss = c[i].split("=")[0];
+      } else {
+        //insert delete
+        ss = c[i];
+      }
+    }
+
+    if (ss.indexOf("jetelina_delete_flg") < 0) {
+      ss = $.trim(ss);
+      preferent.apitestparams.push(ss);
+      ret = `${ret}\"${ss}\":\"{${ss}}\",`;
+    }
+  }
+
+  if (0 < ret.length) {
+    ret = ret.slice(0, ret.length - 1);// reject ',' from the tail
+    ret = `${ret}}`; // caution: the last '}' is necessary
+  }
+
+  return ret;
+}
+
+/**
+ * @function buildJetelinaOutJsonForm
+ * @param {string} t targeted desiring data (json name part)
+ * @param {string} s tables(after 'from' sentence in a sql)
+ * @returns {string} Json form string
+ * 
+ * Create display 'OUT' Json form data from a API
+ * mainly using in 'select' API.
+ */
+const buildJetelinaOutJsonForm = (t, s) => {
+  let ret = "";
+
+  let c = s.split(",");
+  for (let i = 0; i < c.length; i++) {
+    let cn = c[i].split('.');
+    if (ret.length == 0) {
+      ret = `{"result":true or false,"Jetelina":"[{`;
+    }
+
+    let ss = "";
+    if (cn[1] != null && 0 < cn[1].length) {
+      // select
+      ss = cn[1];
+    } else {
+      //insert update delete
+      if (c[i].indexOf("=") != -1) {
+        //update
+        ss = c[i].split("=")[0];
+      } else {
+        //insert delete
+        ss = c[i];
+      }
+    }
+
+    if (ss.indexOf("jetelina_delete_flg") < 0) {
+      ret = `${ret}\"${$.trim(ss)}\":\"{${$.trim(ss)}}\",`;
+    }
+  }
+
+  if (0 < ret.length) {
+    ret = ret.slice(0, ret.length - 1);// reject ',' from the tail
+    ret = `${ret}]","message from Jetelina":"\".....\""}`; // caution: the last '}' is necessary
+  }
+
+  return ret;
+}
+
+/**
+ * @function getColumn
+ * @param {string} tablename  targeted table name
+ * 
+ * Ajax function for getting the column names of the ordered table.
+ * Then display in the function panel.
+ */
+const getColumn = (tablename) => {
+  if (0 < tablename.length || tablename != undefined) {
+    let pd = {};
+    pd["tablename"] = $.trim(tablename);
+    let dd = JSON.stringify(pd);
+
+    $.ajax({
+      url: "/getcolumns",
+      type: "post",
+      data: dd,
+      contentType: 'application/json',
+      dataType: "json",
+      xhr: function () {
+        ret = $.ajaxSettings.xhr();
+        inprogress = true;// in progress. for priventing accept a new command.
+        typingControll(chooseMsg('inprogress-msg', "", ""));
+        return ret;
+      }
+    }).done(function (result, textStatus, jqXHR) {
+      if (checkResult(result)) {
+        // got to data parse
+        return getdata(result, 1);
+      } else {
+        typingControll(chooseMsg('fail-msg', "", ""));
+      }
+    }).fail(function (result) {
+      checkResult(result);
+      typingControll(chooseMsg('fail-msg', "", ""));
+    }).always(function () {
+      // release it for allowing to input new command in the chatbox 
+      inprogress = false;
+    });
+  } else {
+    console.error("getColumn() ajax url is not defined");
+  }
+}
+/**
+ * @function removeColumn
+ * @param {string} p  target column name
+ * 
+ * delete a column from selected item list on the display  
+ */
+const removeColumn = (p) => {
+  $(`${COLUMNSPANEL} .item, ${CONTAINERPANEL} .item`).not('.selectedItem').remove(`:contains(${p}_)`);
+}
+/**
+ * @function dropThisTable
+ * @param {Array} tables  target tables name
+ * 
+ * Ajax function for deleting the target tables from DataBase. 
+ */
+const dropThisTable = (tables) => {
+  let pd = {};
+
+  pd["tablename"] = tables;
+
+  if (loginuser.sw == null || loginuser.sw == "") {
+    pd["pass"] = $(SOMETHINGINPUT).val();
+  } else {
+    pd["pass"] = loginuser.sw;
+  }
+
+  let dd = JSON.stringify(pd);
+
+  $.ajax({
+    url: "/deletetable",
+    type: "post",
+    data: dd,
+    contentType: 'application/json',
+    dataType: "json",
+    xhr: function () {
+      ret = $.ajaxSettings.xhr();
+      inprogress = true;// in progress. for priventing accept a new command.
+      typingControll(chooseMsg('inprogress-msg', "", ""));
+      return ret;
+    }
+  }).done(function (result, textStatus, jqXHR) {
+    let m = "";
+    if (checkResult(result)) {
+      cleanUp("items");
+      // 'pass' is authorized by Jetelina
+      loginuser.sw = pd["pass"];
+      showSomethingInputField(false);
+      showSomethingMsgPanel(false);
+      showGenelicPanel(false);
+      rejectCancelableCmdList(TABLEAPIDELETE);
+      preferent.cmd = "";
+      refreshApiList();
+      refreshTableList();
+      m = chooseMsg('refreshing-msg', '', '');
+    } else {
+      m = result["message from Jetelina"];
+      if (m == null || m == "") {
+        m = chooseMsg('fail-msg', '', '');
+      }
+    }
+
+    typingControll(m);
+  }).fail(function (result) {
+    checkResult(result);
+    console.error("dropThisTable() faild: ", result);
+    typingControll(chooseMsg('fail-msg', "", ""));
+  }).always(function () {
+    // release it for allowing to input new command in the chatbox 
+    inprogress = false;
+  });
+}
+/**
+ * @function postSelectedColumns
+ * @param {string} mode  null->API registration  "pre"-> only test execution
+ * 
+ * Ajax function for posting the selected columns.
+ * in the case of mode is "pre", this post procedure executes API test.
+ * in the case of mode is null, this post executes API registration.
+ */
+const postSelectedColumns = (mode) => {
+  let pd = {};
+
+  pd["item"] = selectedItemsArr;
+  pd["mode"] = mode;
+
+  /*
+    absolutely something is in 'getelic_input'.
+    'ignore' is if nothing done by the user.
+    'where' is mandatory <- ??? yet?
+  */
+  let subq = $.trim($(GENELICPANELINPUT).val()).replace(/\r?\n/g, '');
+  if (subq == "" || subq == "where") {
+    subq = IGNORE;
+  }
+
+  pd["subquery"] = subq;
+
+  let dd = JSON.stringify(pd);
+  let posturl = scenario["function-post-url"][4];
+  if (mode == "pre") {
+    posturl = scenario["function-post-url"][5];
+  }
+
+  $.ajax({
+    url: posturl,
+    type: "POST",
+    data: dd,
+    contentType: 'application/json',
+    dataType: "json",
+    xhr: function () {
+      ret = $.ajaxSettings.xhr();
+      inprogress = true;// in progress. for priventing accept a new command.
+      typingControll(chooseMsg('inprogress-msg', "", ""));
+      return ret;
+    }
+  }).done(function (result, textStatus, jqXHR) {
+    let m = "";
+    $(".newapino").remove();
+
+    if (checkResult(result)) {
+      if (mode != "pre") {
+        /*
+          if there is not a quite similar api in there -> return as alike {"apino":"js10"} or false in error.
+          if there already is a quite similar api in there -> return api no as alike {"resembled":"js10"}.
+        */
+        if (result.apino != null && 0 < result.apino.length) {
+          // hide api test panel if it is desplayed
+          if (isVisibleApiTestPanel()) {
+            showApiTestPanel(false);
+          }
+
+          selectedItemsArr = [];
+          rejectCancelableCmdList(SELECTITEM);
+          rejectCancelableCmdList("post");
+          cleanUp("items");
+          refreshApiList();
+          refreshTableList();
+          m = chooseMsg('refreshing-msg', '', '');
+        }
+
+        if (isVisibleGenelicPanel()) {
+          $(GENELICPANEL).hide();
+        }
+
+        m = chooseMsg('func-newapino-msg',`is ${result.apino}`, 'r');
+        $(CHATBOXYOURTELL).text(m);
+        $(".yourText").mouseover();
+      } else {
+        /* API test mode */
+        getdata(result, 4);
+        if (!isVisibleApiTestPanel()) {
+          $(`${APITESTPANEL} span`).remove();
+          showApiTestPanel(true);
+          let testmsg = "<span class='jetelina_suggestion'><p>Oh oh, no data. Try again with other params</p></span>";
+          $(`${APITESTPANEL} [name='api-test-msg']`).append(`${testmsg}`);
+        }
+
+        m = chooseMsg('success-msg', '', '');
+      }
+
+    } else {
+      m = chooseMsg('fail-msg', '', '');
+      if (result.resembled != null && 0 < result.resembled.length) {
+        m = chooseMsg('func-duplicateapi-msg',`${result.resembled}`,'a');
+      }
+    }
+
+    typingControll(m);
+  }).fail(function (result) {
+    checkResult(result);
+    console.error("postSelectedColumns() fail");
+    typingControll(chooseMsg('fail-msg', "", ""));
+  }).always(function () {
+    // release it for allowing to input new command in the chatbox 
+    inprogress = false;
+
+    if (mode != "pre") {
+      // initializing
+      preferent.cmd = "";
+    }
+
+    rejectCancelableCmdList("post");
+  });
+}
+/**
+ * @function functionPanelFunctions
+ * @param {string} ut  chat message by user 
+ * @returns {string}  answer chat message by Jetelina
+ * 
+ * Exectute some functions ordered by user chat input message 
+ */
+const functionPanelFunctions = (ut) => {
+  // default return chat message
+  let m = IGNORE;
+  let cmd = "";
+  let usedb = "";// database name for switching
+  let complementflg = false;// turn to 'true' if got compliment words
+
+  if (inScenarioChk(ut, 'func-subpanel-focus-cmd')) {
+    if (isVisibleGenelicPanel()) {
+      let subq = $(GENELICPANELINPUT).val();
+      let p = subq.length;
+      $(GENELICPANELINPUT).focus().get(0).setSelectionRange(p, p)
+    }
+
+    if (containsMultiTables()) {
+      m = chooseMsg('func-postcolumn-where-indispensable-msg', "", "");
+    } else {
+      m = chooseMsg('func-postcolumn-where-option-msg', "", "");
+    }
+  }
+
+  if (1 < cmdCandidates.length) {
+    cmd = whichCommandsInOrders(ut);
+  } else {
+    /*
+      Tips:
+        because of scenario[], it has a chance duplicate commands.
+        cmdCandidates is for judging, and the belows 'if' sentences are to find
+        this duplicated commands.
+        it is not good as 'if{}else if{}else....', here shoud be 'if{} if{}...'
+    */
+    if (inScenarioChk(ut, 'common-cancel-cmd') || inScenarioChk(ut, 'func-selecteditem-cancel-cmd')) {
+      cmd = 'cancel';
+      preferent.cmd = "";
+      cmdCandidates.push("cancel");
+    }
+
+    if (cmd == "" && inScenarioChk(ut, 'func-cleanup-cmd')) {
+      cmd = 'cleanup';
+      cmdCandidates.push("clean up");
+    }
+
+    if (cmd == "" && $(UPFILE).val() != "" && inScenarioChk(ut, 'func-fileupload-cmd')) {
+      cmd = 'fileupload';
+      cmdCandidates.push("file upload");
+    }
+
+    if (cmd == "" && inScenarioChk(ut, 'func-show-table-list-cmd')) {
+      cmd = TABLEAPILISTOPEN;
+      cmdCandidates.push("show table list");
+    } else if (cmd == "" && inScenarioChk(ut, 'func-show-api-list-cmd')) {
+      cmd = TABLEAPILISTOPEN;
+      cmdCandidates.push("show api list");
+    } else if (cmd == "" && inScenarioChk(ut, 'func-fileupload-open-cmd')) {
+      cmd = FILESELECTOROPEN;
+      cmdCandidates.push("file open");
+    } else if (inScenarioChk(ut, 'func-table-api-open-close-cmd')) {
+      rejectCancelableCmdList(cmd);
+      cmd = SELECTITEM;
+      cmdCandidates.push("open or close table/api");
+    } else if (cmd == "" && inScenarioChk(ut, 'func-item-select-cmd')) {
+      cmd = SELECTITEM;
+      cmdCandidates.push("select columns");
+    } else if (cmd == "" && inScenarioChk(ut, "func-item-select-all-cmd")) {
+      cmd = SELECTITEM;
+      cmdCandidates.push("select columns all");
+    } else if (cmd == "" && inScenarioChk(ut, 'func-subpanel-open-cmd')) {
+      cmd = "subquery";
+      cmdCandidates.push("open sub query panel");
+    }
+
+    if (cmd == "" && inScenarioChk(ut, 'func-tabledrop-cmd')) {
+      /*
+        Attention:
+          only 'admin' can drop tables
+      */
+      if (loginuser.roll == "admin") {
+        cmd = TABLEAPIDELETE;
+        preferent.cmd = cmd;
+        cmdCandidates.push("drop table");
+      } else {
+        m = chooseMsg('no-authority-js-msg', '', '');
+      }
+    } else if (cmd == "" && inScenarioChk(ut, 'func-apidelete-cmd')) {
+      /*
+        Attention:
+          'admin' and 'manager' can delete apis
+      */
+      if (loginuser.roll != "beginner") {
+        cmd = TABLEAPIDELETE;
+        preferent.cmd = cmd;
+        cmdCandidates.push("delete api");
+      } else {
+        m = chooseMsg('no-authority-js-msg', '', '');
+      }
+    }
+
+    // db switching
+    if (cmd == "" && inScenarioChk(ut, 'func-db-switch-cmd')) {
+      cmd = "switchdb";
+      usedb = "";
+    } else if (cmd == "" && inScenarioChk(ut, 'func-use-postgresql-cmd')) {
+      cmd = "switchdb";
+      usedb = "postgresql";
+    } else if (cmd == "" && inScenarioChk(ut, 'func-use-mysql-cmd')) {
+      cmd = "switchdb";
+      usedb = "mysql";
+    } else if (cmd == "" && inScenarioChk(ut, 'func-use-redis-cmd')) {
+      cmd = "switchdb";
+      usedb = "redis";
+    } else if (cmd == "" && $.inArray("switchdb", cmdCandidates) != -1) {
+      cmd = "switchdb";
+    }
+
+    if (cmd == "" && inScenarioChk(ut, 'common-post-cmd') ||
+      (cmd == "" && inScenarioChk(ut, 'func-apicreate-cmd'))) {
+      cmd = 'post';
+      //cmdCandidates.push("post");
+      cancelableCmdList.push("post");
+    }
+
+    if (cmd == "" && inScenarioChk(ut, 'func-api-test-cmd')) {
+      let selectedapino = $(`${APICONTAINER} span`).filter(".activeItem, .activeandrelatedItem");
+
+      if (0 < selectedapino.length) {
+        let san = selectedapino.text();
+        let sanArr = san.split("js");
+
+        if (ut.indexOf(san) != -1 || ut.indexOf(sanArr[1]) != -1 || !isSelectedItem()) {
+          preferent.original_apiin_str = $(`${COLUMNSPANEL} [name='apiin']`).text();
+          preferent.original_apiout_str = $(`${COLUMNSPANEL} [name='apiout']`).text();
+          showApiTestPanel(false);
+          cmd = "apitest";
+          cancelableCmdList.push("apitest");
+        } else {
+          cmd = "preapitest";
+          cancelableCmdList.push("preapitest");
+        }
+      } else {
+        cmd = "preapitest";
+        cancelableCmdList.push("preapitest");
+      }
+    }
+
+    if (cmd.length == 0) {
+      cmd = getPreferentPropertie('cmd');
+      if (cmd.length == 0) {
+        cmd = ut;
+      }
+    }
+
+    // show/hide command, maybe
+    if (inScenarioChk(ut, 'func-api-test-panel-show-cmd')) {
+      showApiTestPanel(true);
+    } else if (inScenarioChk(ut, 'func-api-test-panel-hide-cmd')) {
+      showApiTestPanel(false);
+    } else if (inScenarioChk(ut, 'func-subpanel-close-cmd')) {
+      showGenelicPanel(false);
+    }
+
+    // greeting for something execution
+    if (inScenarioChk(ut, 'general-thanks-cmd')) {
+      if (inCancelableCmdList(["apitest", "preapitest"])) {
+        showApiTestPanel(false);
+        complementflg = true;
+        cmd = "cancel";
+      }
+
+      showSomethingMsgPanel(false);
+    }
+  }
+
+  if (-1 < $.inArray(cmd, [TABLEAPILISTOPEN, FILESELECTOROPEN])) {
+    getAjaxData(scenario["function-get-url"][4]);
+    openFunctionPanel();
+  } else {
+    // nothing happens without opening function panel :P
+  }
+  /*
+    Tips:
+      this is a precautionary logic.
+      in the case of duplicating commands in scenario[], Jetelina asks you which is right.
+      the user request is postponed until the command is be clear with reserving it as preferent.ut.
+      that's why 'cmd' is be unset, then 'switch' goes to 'default', but it does not have any process. 👍
+  */
+  if (1 < cmdCandidates.length) {
+    if (preferent.ut == null || preferent.ut == "") {
+      preferent.ut = ut;
+    }
+
+    cmd = "";
+    let mm = "";
+    for (let i = 0; i < cmdCandidates.length; i++) {
+      mm += "'" + cmdCandidates[i] + "',";
+    }
+
+    m = chooseMsg('common-comand-duplicated-msg', mm, "");
+  }
+  /*
+    Tips:
+      clean up some parameters after defining 'cmd'.
+  */
+  if (0 < cmd.length) {
+    cmdCandidates = [];
+    if (preferent.ut != null && 0 < preferent.ut.length) {
+      ut = preferent.ut;
+      preferent.ut = "";
+    }
+
+    if (cmd != "cancel" && inCancelableCmdList(["apitest"])) {
+      let p = `{${preferent.apitestparams[preferent.apiparams_count]}}`;
+      let inp = $(`${COLUMNSPANEL} [name='apiin']`).text();
+      let reps = inp.replace(p, original_chatbox_input_text);
+      $(`${COLUMNSPANEL} [name='apiin']`).addClass("attentionapiinout").text(reps);
+      cmd = "apitest";
+    }
+  }
+  /*
+      this 'swich' commands manipulates 'table' and 'csv file upload'.
+      capitalized 'cmd' are defined as 'const' because these are cancelable commands. 
+      
+      'cmd'
+        1.FILESELECTOROPEN: open file selector
+        2.fileupload: csv file upload
+        3.TABLEAPILISTOPEN: handle table list and/or api list
+        4.SELECTITEM: select columns from opening tables
+        5.TABLEAPIDELETE: drop table in the table list and/or delete api in the api list
+        6.post: post selected columns 
+        7.cancel: cancel all selected columns
+        8.cleanup: cleanup column/selecteditem field
+        9.subquery: open subquery panel
+        10.preapitest: api test before registring
+        11.apitest: exist api test mode
+        12.switchdb: switchng using database
+        default: non
+  */
+  switch (cmd) {
+    case FILESELECTOROPEN://open file selector
+      $(UPFILE).click();
+      m = chooseMsg('func-fileupload-open-msg', "", "");
+      break;
+    case 'fileupload'://csv file upload
+      const f = $(UPFILE).prop("files");
+      if (f != null && 0 < f.length) {
+        delete preferent.apilist;
+        fileupload();
+        m = chooseMsg('inprogress-msg', '', '');
+      } else {
+        m = chooseMsg('func-fileupload-msg', "", "");
+      }
+
+      break;
+    case TABLEAPILISTOPEN:
+      // show database list
+      setLeftPanelTitle();
+      isVisibleDatabaseList(true);
+      // these defaults are for table list
+      let hidepanel = APICONTAINER;
+      let showpanel = TABLECONTAINER;
+      let geturl = scenario["function-get-url"][1];
+
+      // cleanup the screen first 
+      cleanupItems4Switching();
+      cleanupContainers();
+
+      if (inScenarioChk(ut, 'func-show-table-list-cmd')) {
+        showApiTestPanel(false);
+        cleanUp('tables');
+      } else if (inScenarioChk(ut, 'func-show-api-list-cmd')) {
+        hidepanel = TABLECONTAINER;
+        showpanel = APICONTAINER;
+        $(GENELICPANEL).hide();
+        geturl = scenario["function-get-url"][0];
+      }
+
+      delete preferent.apilist;
+
+      cleanupRelatedList(false);
+      displayTablesAndApis();
+
+      m = IGNORE;
+      break;
+    case SELECTITEM:
+      let findflg = false;
+      let t = ut.split(' ');
+
+      // for opening table 
+      $(CONTAINERNEWAPINO).remove();
+      /*
+        Attention:
+          if statement exectution is 'all' + 'close'
+            -> in the case of 'ut' is 'close all', 'all close'
+      */
+      if (($.inArray('all', t) != -1) && ($.inArray('close', t) != -1)) {
+        $(`${TABLECONTAINER} span, ${APICONTAINER} span`).filter(".relatedItem, .activeItem, .activeandrelatedItem").each(function () {
+          if ($(this).hasClass("relatedItem")) {
+            $(this).removeClass("relatedItem");
+          }
+          if ($(this).hasClass("activeItem")) {
+            $(this).removeClass("activeItem");
+          }
+          if ($(this).hasClass("activeandrelatedItem")) {
+            $(this).removeClass("activeandrelatedItem");
+          }
+
+          showGenelicPanel(false);
+          cleanUp("items");
+          let n = $(this).text();
+          if (relatedDataList[n] != null) {
+            delete relatedDataList[n];
+          }
+        });
+      }
+
+      for (let n = 0; n < t.length; n++) {
+        /*
+          Tips:
+            at the first, searching in the table list, then the api list if did not hit.
+            respect table seaching if there were a word 'table' in 'ut'.
+
+            because... may the name of table has variety, against it the name of api has a rule.
+            if there were the same name in the both list, this selection hit both, but puting 'table' in the order,
+            it could be limited in the table list.
+            and wanna execute vargue hitting in the api list.
+            i mean
+              'js100' is in the both table and api list. yes rare case. :)
+                  case 1. order 'open js100' hit the both.
+                  case 2. order 'open table js100' hit the only table.
+                  case 3. order 'open 100' hit the only api.
+        */
+        $(`${TABLECONTAINER} span`).each(function (i, v) {
+          if (v.textContent == t[n]) {
+            listClick($(this));
+            m = chooseMsg('success-msg', "", "");
+            findflg = true;
+          }
+        });
+
+        if (!findflg) {
+          $(`${APICONTAINER} span`).each(function (i, v) {
+            if (v.textContent.indexOf(t[n]) != -1) {
+              listClick($(this));
+              m = chooseMsg('success-msg', "", "");
+              findflg = true;
+            }
+          });
+        }
+      }
+
+      // !findlg meaning is not for openging table or api, this time is for selecting columns in opening tables
+      if (!findflg) {
+        if (inScenarioChk(ut, "func-item-select-all-cmd")) {
+          // select all items
+          $(`${COLUMNSPANEL} span`).filter(".item").each(function () {
+            itemSelect($(this));
+          });
+        } else {
+          // ordered item
+          for (let n = 0; n < t.length; n++) {
+            $(`${COLUMNSPANEL} span`).filter(".item").each(function (i, v) {
+              if (v.textContent.indexOf(t[n]) != -1) {
+                itemSelect($(this));
+                m = chooseMsg('success-msg', "", "");
+              }
+            });
+          }
+        }
+      }
+
+      if (m.length == 0) {
+        m = chooseMsg('unknown-msg', "", "");
+      }
+
+      break;
+    case TABLEAPIDELETE:
+      let utarray = ut.split(' ');
+
+      if (inScenarioChk(ut, 'confirmation-sentences-cmd')) {
+        /*
+          Tips:
+            get 'pass phrase' confirmation here.
+            continue the process if ..sw is not null, ask it if it is not in loginuser.sw. 
+            the matching the 'pass phrase' is done in Jetelina.
+        */
+        if ((loginuser.sw == null || loginuser.sw == "") && (!$(SOMETHINGINPUT).is(":visible"))) {
+          showSomethingMsgPanel(true);
+          if (loginuser.available) {
+            showSomethingInputField(true, 2);
+            m = chooseMsg('func-require-stichwort-msg', '', '');
+          } else {
+            showSomethingInputField(true, 1);
+            m = chooseMsg('func-register-stichwort-msg', '', '');
+          }
+        } else {
+          /* execute drop table and/or delete api,
+             but 'pass phrase' is must item. 
+          */
+          if (($(SOMETHINGINPUT).is(":visible") && 0 < $(SOMETHINGINPUT).val().length) || (loginuser.sw != null && 0 < loginuser.sw.length)) {
+            let droptables = [];
+            $(`${TABLECONTAINER} span`).filter('.deleteItem').each(function () {
+              droptables.push($(this).text());
+            });
+
+            if (0 < droptables.length) {
+              dropThisTable(droptables);
+            }
+            let deleteapis = [];
+            $(`${APICONTAINER} span`).filter('.deleteItem').each(function () {
+              deleteapis.push($(this).text());
+            });
+
+            if (0 < deleteapis.length) {
+              deleteThisApi(deleteapis);
+            }
+          }
+
+          m = IGNORE;
+        }
+      } else {
+        preferent.cmd = TABLEAPIDELETE;
+        cancelableCmdList.push(TABLEAPIDELETE);
+        /*
+          Tips:
+            searching for all tables and apis order by utarray.
+  
+            ex. ut->"delete js156 api" utarray->[delete,js156,api]
+                js156 found in APICONTAINER
+                ut ->"drop usertable" utarray->[drop,usertable]
+                usertable found in TABLECONTAINER
+  
+          Attention:
+            only 'js*' api can be deleted.
+        */
+        for (let n = 0; n < utarray.length; n++) {
+          $(`${TABLECONTAINER} span`).each(function (i, v) {
+            if (v.textContent == utarray[n]) {
+              $(this).addClass("deleteItem");
+              m = chooseMsg("common-confirm-msg", "", "");
+            }
+          });
+
+          let jijujdexist = false;
+          $(`${APICONTAINER} span`).each(function (i, v) {
+            if (v.textContent.indexOf(utarray[n]) != -1) {
+              if (v.textContent.startsWith('js')) {
+                $(this).addClass("deleteItem");
+                m = chooseMsg("common-confirm-msg", "", "");
+              } else if (v.textContent.startsWith('ji') || v.textContent.startsWith('ju') || v.textContent.startsWith('jd')) {
+                jijujdexist = true;
+              }
+            }
+          });
+
+          if (jijujdexist) {
+            m = chooseMsg("func-apidelete-forbidden-msg", "", "");
+          }
+        }
+      }
+
+      if (m.length == 0) {
+        m = chooseMsg("common-alert-msg", "", "");
+      }
+
+
+      break;
+    case 'post':
+      showApiTestPanel(false);
+      /*
+        Tips:
+          the first 'post' is ut=cmd for asking 'sub query' sentnece.
+          then if ut is positive answer alike 'yes' -> showGenelicPanel(true).
+          'sub query' is mandatory if its contains multi tables, it is optional if it is single table.
+          'ignore' is set in 'genelic_input' field if does not set the sub query.
+       
+          the secound post is ut!=cmd for execution of postion, maybe.
+      */
+      let subquerysentence = $(GENELICPANELINPUT).val();
+      if(subquerysentence != null ){
+        subquerysentence = $.trim(subquerysentence);
+      }else{
+        m = chooseMsg('starting-4-msg','','');
+        break;
+      }
+
+      if (0 < selectedItemsArr.length) {
+        if (ut == cmd) {
+          // the first calling            
+          if (containsMultiTables()) {
+            // 'where sentence' is demanded if there were multi tables
+            if (5 < subquerysentence.length && subquerysentence.indexOf("where") != -1 && subquerysentence != IGNORE) {
+              if (checkGenelicInput(subquerysentence)) {
+                postSelectedColumns("");
+              } else {
+                m = chooseMsg('func-api-subquery-chk-error', '', '');
+              }
+            } else {
+              m = chooseMsg('func-postcolumn-where-indispensable-msg', "", "");
+              let p = subquerysentence.length;
+              $(GENELICPANELINPUT).focus().get(0).setSelectionRange(p, p)
+                    }
+          } else {
+            postSelectedColumns("");
+          }
+        } else {
+          if (containsMultiTables()) {
+            /*
+              Tips:
+                sub..length<6 meaning is 'where' is mandatory in multi tables;
+            */
+            if (subquerysentence.length < 6 || subquerysentence.indexOf("where") <0 || subquerysentence == IGNORE) {
+              m = chooseMsg('func-postcolumn-where-indispensable-msg', "", "");
+              let p = subquerysentence.length;
+              $(GENELICPANELINPUT).focus().get(0).setSelectionRange(p, p)
+            }else{
+              m = chooseMsg('func-postcolumn-available-msg', "", "");
+            }
+          }else{
+            m = chooseMsg('func-postcolumn-available-msg', "", "");
+          }
+        }
+
+        // important
+        preferent.cmd = cmd;
+      } else {
+        m = chooseMsg('func-post-err-msg', "", "");
+      }
+
+      break;
+    case 'cancel': case 'withdraw':
+      /*
+        Tips:
+          'cancel' may happen here and there, this cancel routine is for 'cancel selected item', 'cancel file upload' ....
+          also it may happen in file up loading, oh my.. in apitest as well.
+       
+          Attention:
+            in the case of cancel 'drop table' and 'delete api' are be canceld every selected tables and apis.
+            in the case of cancel 'itme(column)' is able to be canceled selectively: each 'cancel <column name>'.
+      */
+      // cancel table drop and/or api delete
+      if (inCancelableCmdList([TABLEAPIDELETE])) {
+        showApiTestPanel(false);
+        // cleanup the screen
+        cleanupItems4Switching();
+        cleanupContainers();
+        showSomethingInputField(false);
+        showSomethingMsgPanel(false);
+        rejectCancelableCmdList(TABLEAPIDELETE);
+        m = chooseMsg('cancel-msg', "", "");
+        // table list
+        if (deleteSelectedItems()) {
+          showGenelicPanel(false);
+          rejectCancelableCmdList(TABLEAPIDELETE);
+          m = chooseMsg('cancel-msg', "", "");
+        } else {
+          m = chooseMsg('unknown-msg', "", "");
+        }
+
+        $(`${TABLECONTAINER} span`).removeClass('deleteItem');
+        $(`${APICONTAINER} span`).removeClass('deleteItem');
+      } else if (inCancelableCmdList([FILESELECTOROPEN])) {
+        $(UPFILE).val("");
+        $(`${MYFORM} label span`).text("Upload CSV File");
+        $(FILEUP).removeClass("genelic_panel");
+        rejectCancelableCmdList(FILESELECTOROPEN);
+        m = chooseMsg("cancel-msg", "", "");
+      } else if (inCancelableCmdList([SELECTITEM])) {
+        let t = ut.split(' ');
+        // cancel selected columns
+        if (inScenarioChk(ut, "func-selecteditem-all-cancel-cmd")) {
+          // cancel all items
+          $(`${CONTAINERPANEL} span`).filter(".selectedItem").each(function (i, v) {
+            itemSelect($(this));
+          });
+
+          if (isVisibleGenelicPanel()) {
+            showGenelicPanel(false);
+          }
+
+          showSomethingInputField(false);
+          showSomethingMsgPanel(false);
+          selectedItemsArr = [];
+          m = chooseMsg('cancel-msg', "", "");
+        } else {
+          // cancel each item
+          $(`${CONTAINERPANEL} span`).filter(".selectedItem").each(function (i, v) {
+            if (v.textContent.indexOf(t[1]) != -1) {
+              itemSelect($(this));
+              rejectSelectedItemsArr(v.textContent);
+              m = chooseMsg('cancel-msg', "", "");
+            }
+          });
+        }
+
+        if (!$(`${CONTAINERPANEL} span`).hasClass("selectedItem")) {
+          rejectCancelableCmdList(SELECTITEM);
+          rejectCancelableCmdList("post");
+        }
+
+      } else if (inCancelableCmdList(["apitest", "preapitest"])) {
+        resetApiTestProcedure();
+        if (complementflg) {
+          m = chooseMsg('general-thanks-msg', loginuser.lastname, "c");
+        } else {
+          m = chooseMsg('cancel-msg', '', '');
+        }
+
+        preferent.apiparams_count = null;
+      } else {
+        showPreciousPanel(false);
+        showConfigPanel(false);
+        cancelableCmdList = [];
+      }
+
+      break;
+    case 'cleanup': //clean up the panels
+      cleanupItems4Switching();
+      deleteSelectedItems();
+      cleanupContainers();
+      refreshApiList();
+      refreshTableList();
+      showPreciousPanel(false);
+      showConfigPanel(false);
+    m = chooseMsg('refreshing-msg', '', '');
+      break;
+    case 'subquery': //open subquery panel
+      showApiTestPanel(false);
+      showGenelicPanel(true);
+      m = chooseMsg('func-subpanel-opened-msg', '', '');
+      break;
+    case 'preapitest':
+      if (0 < selectedItemsArr.length) {
+        // API test mode before registering
+        // before hitting this command, should desplay 'func-api-test-msg' in anywhere.
+        if (checkGenelicInput($(GENELICPANELINPUT).val())) {
+          postSelectedColumns("pre");
+        } else {
+          m = chooseMsg('func-api-subquery-chk-error', '', '');
+        }
+      }
+      break;
+    case 'apitest':
+      /*
+        Tips:
+          API 'IN' parameters are already collected in buildJetelinaJsonForm() as preferent.apitestparams.
+          ust this for setting each ones in chatting.
+      */
+      if (preferent.apitestparams != null && 0 < preferent.apitestparams.length) {
+        if (preferent.apiparams_count == null) {
+          preferent.apiparams_count = 0;
+        } else {
+          preferent.apiparams_count += 1;
+        }
+
+        if (preferent.apiparams_count < preferent.apitestparams.length) {
+          m = chooseMsg('func-api-test-set-params-msg',`${preferent.apitestparams[preferent.apiparams_count]}`,'r');
+        } else if (inScenarioChk(ut, 'func-api-test-execute-cmd')) {
+          apiTestAjax();
+          m = chooseMsg('inprogress-msg', '', '');
+        } else {
+          let e = chooseMsg('func-api-test-execute-cmd', '', '');
+          m = chooseMsg('func-api-test-ready-msg', e, 'r');
+        }
+      } else {
+        if (inScenarioChk(ut, 'func-api-test-execute-cmd')) {
+          apiTestAjax();
+          m = chooseMsg('inprogress-msg', '', '');
+        } else {
+          let e = chooseMsg('func-api-test-execute-cmd', '', '');
+          m = chooseMsg('func-api-test-ready-no-param-msg', e, 'r');
+        }
+      }
+
+      break;
+    case 'switchdb':
+      if (inScenarioChk(ut, 'confirmation-sentences-cmd') && preferent.db != null && preferent.db != "") {
+        //post
+        setDBFocus(preferent.db);
+        loginuser.dbtype = preferent.db;
+        setLeftPanelTitle();
+        tidyupcmdCandidates(cmd);
+        deleteSelectedItems();
+        cleanupItems4Switching();
+        cleanupContainers();
+        cancelableCmdList = [];
+
+        // clean up the parameters for api test
+        preferent.apitestparams = [];
+        preferent.apiparams_count = null;
+        preferent.original_apiin_str = "";
+        preferent.original_apiout_str = "";
+
+        let data = `{"param":"${preferent.db}"}`;
+        postAjaxData(scenario['function-post-url'][9], data);
+      } else {
+        if (usedb != "") {
+          preferent.db = usedb;
+          if ($(`#databaselist span[name='${usedb}']`).is(":visible")) {
+            // switch to usedb
+            m = chooseMsg('func-determine-db-msg', preferent.db, 'r');
+          } else {
+            // start to use this db, but
+            if (loginuser.roll == "admin") {
+              // only admin can change the availability of this db
+              let data = `{"db":"${preferent.db}","mode":"check"}`;
+              postAjaxData(scenario["function-post-url"][10], data);
+            } else {
+              // display a message 'lack of roll'
+              m = chooseMsg('no-authority-js-msg', '', '');
+            }
+          }
+        } else {
+          // display a message for changing database
+          m = chooseMsg('func-select-db-msg', '', '');
+        }
+
+        cmdCandidates.push(cmd);
+      }
+
+      break;
+    default:
+      break;
+  }
+
+  return m;
+}
+/**
+ * @function containsMultiTables
+ * @returns {boolean}  true->demand false->not demand
+ * 
+ * Judge demanding 'where sentence' before post to the server
+ */
+const containsMultiTables = () => {
+  if (0 < selectedItemsArr.length) {
+    let tables = [];
+    $.each(selectedItemsArr, function (i, v) {
+      if (0 < v.length && v.indexOf('.') != -1) {
+        let p = v.split('.');
+        if ($.inArray(p[0], tables) === -1) {
+          tables.push(p[0]);
+        }
+      }
+    });
+
+    if (1 < tables.length) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+/**
+ * @function showGenelicPanel
+ *
+ * @param {boolean} true -> show, false -> hide
+ *  
+ * genelic panel open or close
+ */
+const showGenelicPanel = (b) => {
+  if (b) {
+    /*
+      in the case of showing table list, this field is for expecting 'Sub Query'
+    */
+    $(GENELICPANELTEXT).text("Sub Query:");
+
+    if($.trim($(GENELICPANELINPUT).val())<6){
+      $(GENELICPANELINPUT).val("where ");
+    }
+
+    $(GENELICPANEL).show();
+  } else {
+    $(GENELICPANEL).hide();
+    $(GENELICPANELINPUT).val("");
+    focusonJetelinaPanel();
+  }
+}
+/**
+ * @function checkGenelicInput
+ * @param {string} ss  sub query sentence strings 
+ * @returns {boolean}  true->acceptable  false->something suspect
+ * 
+ * check sub query sentence. 'ignore' is always acceptable.
+ */
+const checkGenelicInput = (ss) => {
+  let ret = true;
+  let s = $.trim(ss);
+
+  if (s == "where" || s == "") {
+    s = IGNORE;
+  }
+
+  if (s != IGNORE) {
+    // sub query check
+    /*
+      Tips:
+        check this sub query strings with #container->span text is in selected items,
+        check this string is collect,
+        check this string has its post query parameter, like '{parameter}',
+                                                                           etc...
+        well, there are a lot of tasks in here, therefore wanna set them beside now,
+        writing the sub query is on your own responsibility. :)
+    */
+    let arr = [];
+    $(`${COLUMNSPANEL} span, ${CONTAINERPANEL} span`).filter('.item').each(function () {
+      arr.push($(this).text());
+    });
+
+    // 1st: "" -> '' because sql does not accept ""
+    let unacceptablemarks = ["\"", "`"];
+    for (let i in unacceptablemarks) {
+      s = s.replaceAll(unacceptablemarks[i], "'");
+    }
+
+    // 2nd: reject unexpected words
+    let unexpectedwords = ["delete", "drop", ";"];
+    for (i in unexpectedwords) {
+      s = s.replaceAll(unexpectedwords[i], "");
+    }
+
+    // 3nd: the number of '{' and '}' is equal
+    let cur_l = s.match(/{/igm)
+    let cur_r = s.match(/}/igm)
+    if (cur_l != null && cur_r != null) {
+      if (cur_l.length != cur_r.length) {
+        ret = false;
+      }
+    } else if ((cur_l != null && cur_r == null) || (cur_l == null && cur_r != null)) {
+      ret = false;
+    } else {
+      // both null is available
+    }
+
+    if (ret) {
+      $(GENELICPANELINPUT).val(s);
+    }
+  }
+
+  return ret;
+}
+/**
+ * @function deleteThisApi
+ * @param {Array} apis  target api name
+ * 
+ * Ajax function for deleting the target api from api list doc. 
+ */
+const deleteThisApi = (apis) => {
+  let pd = {};
+  pd["apino"] = apis;
+
+  if (loginuser.sw == null || loginuser.sw == "") {
+    pd["pass"] = $(SOMETHINGINPUT).val();
+  } else {
+    pd["pass"] = loginuser.sw;
+  }
+
+  let dd = JSON.stringify(pd);
+
+  $.ajax({
+    url: "/deleteapi",
+    type: "post",
+    data: dd,
+    contentType: 'application/json',
+    dataType: "json",
+    xhr: function () {
+      ret = $.ajaxSettings.xhr();
+      inprogress = true;// in progress. for priventing accept a new command.
+      typingControll(chooseMsg('inprogress-msg', "", ""));
+      return ret;
+    }
+  }).done(function (result, textStatus, jqXHR) {
+    let m = "";
+    if (checkResult(result)) {
+      cleanUp("items");
+
+      // 'pass' is authorized by Jetelina
+      loginuser.sw = pd["pass"];
+      showSomethingInputField(false);
+      showSomethingMsgPanel(false);
+      showGenelicPanel(false);
+      rejectCancelableCmdList(TABLEAPIDELETE);
+      preferent.cmd = "";
+      refreshApiList();
+      refreshTableList();
+      m = chooseMsg('refreshing-msg', '', '');
+    } else {
+      m = result["message from Jetelina"];
+      if (m == null || m == "") {
+        m = chooseMsg('fail-msg', '', '');
+      }
+    }
+
+    typingControll(m);
+  }).fail(function (result) {
+    checkResult(result);
+    console.error("deleteThisApi() faild: ", result);
+    typingControll(chooseMsg('fail-msg', "", ""));
+  }).always(function () {
+    // release it for allowing to input new command in the chatbox 
+    inprogress = false;
+  });
+}
+/**
+ * @function whichCommandsInOrders
+ * @param {string} s user typing string
+ * @return {string} command string
+ * 
+ * match with user input in cmdCandidates
+ */
+const whichCommandsInOrders = (s) => {
+  let c = "";
+  for (key in cmdCandidates) {
+    if (s == cmdCandidates[key]) {
+      switch (s) {
+        case 'cancel': c = "cancel"; break;
+        case "clean up": c = "cleanup"; break;
+        case "file upload": c = "fileupload"; break;
+        case "show table list", "show api list": c = TABLEAPILISTOPEN; break;
+        case "file open": c = FILESELECTOROPEN; break;
+        case "open or close table/api": case "select columns": case "select columns all": c = SELECTITEM; break;
+        case "open sub query panel": c = subquery; break;
+        case "drop table": case "delete api": c = TABLEAPIDELETE; break;
+        case "post": c = "post"; break;
+        case "preapitest": c = "preapitest"; break;
+        case "apitest": c = "apitest"; break;
+        case "switchdb": c = "switchdb"; break;
+        default:
+          break;
+      }
+
+      cmdCandidates = [];
+      return c;
+    }
+  }
+
+  return c;
+}
+/**
+ * @function cleanupRelatedList
+ * 
+ * clear screen in api_container panel and/or relatedDataList object
+ *
+ * @param {boolean} b  false -> clear the list, true-> delete relatedDataList as well
+ */
+const cleanupRelatedList = (b) => {
+  //  $("#api_container span").remove();
+  if (b) {
+    for (let i in relatedDataList) {
+      delete relatedDataList[i];
+    }
+  }
+}
+/**
+ * @function displayTablesAndApis
+ * 
+ * display table list and api list
+ * 
+ */
+const displayTablesAndApis = () => {
+  refreshApiList();
+  refreshTableList();
+}
+/**
+ * @function refreshApiList
+ * 
+ * refresh displaying of api list
+ */
+const refreshApiList = () => {
+  cleanUp("apis");
+  if (preferent.apilist != null) {
+    delete preferent.apilist
+  }
+
+  $("#right_panel").addClass("genelic_panel");
+  getAjaxData(scenario["function-get-url"][0]);
+}
+/**
+ * @function refreshTableList
+ * 
+ * refresh displaying of table list
+ */
+const refreshTableList = () => {
+  cleanUp("tables");
+  $("#left_panel").addClass("genelic_panel");
+  getAjaxData(scenario["function-get-url"][1]);
+}
+/**
+ * @function tidyupcmdCandidates
+ * 
+ * reject 'targetcmd' from cmdCandidates
+ * 
+ * @param {string} targetcmd command string
+ */
+const tidyupcmdCandidates = (targetcmd) => {
+  return cmdCandidates = cmdCandidates.filter(function (v) {
+    return v != targetcmd;
+  });
+}
+/**
+ * @function setLeftPanelTitle
+ * 
+ * set to the title in the left panel
+ */
+const setLeftPanelTitle = () => {
+  title = "Table List";
+  if (loginuser.dbtype == "redis") {
+    title = "Keys List";
+  }
+
+  $(LeftPanelTitle).text(title);
+}
+/**
+ * @function isSelectedItem
+ * @return {boolean} true -> existing, false -> nothing
+ * 
+ * check exsisting a selected item in the container panel
+ */
+const isSelectedItem = () => {
+  let ret = false;
+  let selecteditems = $(`${CONTAINERPANEL} span`).filter(".selectedItem").text();
+  if (0 < selecteditems.length) {
+    ret = true;
+  }
+
+  return ret;
+}
+/**
+ * @function resetApiTestProcedure
+ * 
+ * reset something about apitest/preapitest
+ */
+const resetApiTestProcedure = () => {
+  if (inCancelableCmdList(["apitest"])) {
+    $(`${COLUMNSPANEL} [name='apiin']`).removeClass("attentionapiinout").text(preferent.original_apiin_str);
+    $(`${COLUMNSPANEL} [name='apiout']`).removeClass("attentionapiinout").text(preferent.original_apiout_str);
+    rejectCancelableCmdList("apitest");
+  }
+
+  if (inCancelableCmdList(["preapitest"])) {
+    rejectCancelableCmdList("preapitest");
+  }
+}
+
+$(GENELICPANELINPUT).blur(function () {
+  let subq = $(GENELICPANELINPUT).val();
+  let subq1 = subq.replace(/\r?\n/g, ' ');
+  $(GENELICPANELINPUT).val('');
+  $(GENELICPANELINPUT).val(subq1);
+});
