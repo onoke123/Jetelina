@@ -1,5 +1,5 @@
 """
-module: PgSQLSentenceManager
+module: MySQLSentenceManager
 
 Author: Ono keiji
 
@@ -14,7 +14,7 @@ functions
 	createApiSelectSentence(json_d::Dict,mode::String) create select sentence of SQL from posting data,
 	createExecutionSqlSentence(json_dict::Dict, df::DataFrame) create real execution SQL sentence.
 """
-module PgSQLSentenceManager
+module MySQLSentenceManager
 
 using DataFrames, StatsBase
 using Genie, Genie.Requests, Genie.Renderer.Json
@@ -82,7 +82,7 @@ function createApiDeleteSentence(tn::String)
     return """update $tn set jetelina_delete_flg=1""", """where $jtid={jt_id}"""
 end
 """
-function createApiSelectSentence(json_d::Dict, mode::String)
+function createApiSelectSentence(json_d::Dict,mode::String)
 
 	create API and SQL select sentence from posting data,then append it to JC["tableapifile"].
 
@@ -154,18 +154,18 @@ function createApiSelectSentence(json_d, mode::String)
     selectSql = """select $selectSql from $tableName"""
 
     if mode != "pre"
-        ck = ApiSqlListManager.sqlDuplicationCheck(selectSql, subq_d, "postgresql")
+        ck = ApiSqlListManager.sqlDuplicationCheck(selectSql, subq_d, "mysql")
         if ck[1]
             # already exist it. return it and do nothing.
             return json(Dict("result" => false, "resembled" => ck[2]))
         else
             # yes this is the new
-            ret = ApiSqlListManager.writeTolist(selectSql, subq_d, tablename_arr, "postgresql")
+            ret = ApiSqlListManager.writeTolist(selectSql, subq_d, tablename_arr, "mysql")
             #===
-                            Tips:
-                                writeTolist() returns tuple({true/false,apino/null}).
-                                return apino in json style if the first in tuple were true.
-                        ===#
+                Tips:
+                    writeTolist() returns tuple({true/false,apino/null}).
+                    return apino in json style if the first in tuple were true.
+            ===#
             if ret[1]
                 return json(Dict("result" => true, "apino" => ret[2]))
             else
@@ -206,15 +206,15 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
     execution_sql::String = ""
 
     #===
-   		Tips:
-   			this is a private function.
-   			this function manages building 'jetelina_delete_flg' subquery.
-   			in order to handle multi table, this 'jetelina_delete_flg' is also set as multi.
-   			i mean
-   				table1.jetelina_delete_flg=0 and table2.jetelina_delete_flg=0 and....
+        Tips:
+    		this is a private function.
+    		this function manages building 'jetelina_delete_flg' subquery.
+    		in order to handle multi table, this 'jetelina_delete_flg' is also set as multi.
+    		i mean
+    			table1.jetelina_delete_flg=0 and table2.jetelina_delete_flg=0 and....
 
-   			Caution: any local variables are not be duplicated with global ones. 
-   	===#
+    		Caution: any local variables are not be duplicated with global ones. 
+    ===#
     function __create_j_del_flg(sql::String)
         del_flg::String = "jetelina_delete_flg=0" # absolute select condition
 
@@ -268,15 +268,15 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
 
     if 0 < length(json_dict)
         #===
-        	Tips:
-        		case in 'insert' has a chance of 'missing' in df.subquery[1].
+    		Tips:
+    			case in 'insert' has a chance of 'missing' in df.subquery[1].
 
         		Attention: 
         			using 'subquery_str' String type has a benefit rather than using df.subquery[1],
         			because df fields length are fixed as DataFrame when it was created.
         			I mean using straight as df.* may happen over flow in the case of concate strings.
         				ex. df.subquery[1] -> fixed String(10) in DataFrame
-        						 df.subquery[1] = string(df.subquery[1], "AAAAAAAA") -> maybe get over flow 
+        					 df.subquery[1] = string(df.subquery[1], "AAAAAAAA") -> maybe get over flow 
         ===#
         if !ismissing(df.subquery[1])
             subquery_str = df.subquery[1]
@@ -286,7 +286,7 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
             # select
             if !isnothing(subquery_str) && !contains(subquery_str, keyword1) && !ismissing(subquery_str)
                 #===
-                	Tips:
+            		Tips:
                 		set subquery data in json to df.subquery.
                 		because it combines later with df.sql.
                 		managing df.subquery is very advantageous process at here.
@@ -294,7 +294,7 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
                 if haskey(json_dict, keyword2)
                     sp = split(json_dict[keyword2], ",")
                     if !isnothing(sp)
-                        for ii in eachindex(sp)
+                        for ii in eachindex(sp)                            
                             if ii == 1 || ii == length(sp)
                                 sp[ii] = replace.(sp[ii], "[" => "", "]" => "", "\"" => "", "'" => "")
                             end
@@ -302,7 +302,7 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
                             ssp = split(sp[ii], ":")
                             if !isnothing(ssp) && 1 < length(ssp)
                                 json_subquery_dict[strip(ssp[1])] = strip(ssp[2])
-                            end
+                            end                            
                         end
                     end
 
@@ -335,7 +335,7 @@ function createExecutionSqlSentence(json_dict::Dict, df::DataFrame)
         	Tips:
         		json data bind to the sql sentence.
         		Dict() is used alike associative array.
-    	===#
+        ===#
         for (k, v) in json_dict
             kk = string("{", k, "}")
             execution_sql = replace.(execution_sql, kk => v)

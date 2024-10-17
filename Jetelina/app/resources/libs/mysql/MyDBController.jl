@@ -1,91 +1,98 @@
 """
-module: PgDBController
+module: MyDBController
 
 Author: Ono keiji
 
 Description:
-	DB controller for PostgreSQL
+	DB controller for MySQL
 
 functions
-    create_jetelina_database()	create 'jetelina' database.
-	create_jetelina_id_sequence() create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
-	open_connection() open connection to the DB.
-	close_connection(conn::LibPQ.Connection)  close the DB connection
-	getTableList(s::String) get all table name from public 'schemaname'
-    setJetelinaSequenceNumber(tablename::String,n::Integer)	set seaquence number in the ordered sequence table
-	getJetelinaSequenceNumber(t::Integer, tablename) get seaquence number from jetelina_id table
-	dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
-	dropTable(tableName::Vector) drop the tables and delete its related data from jetelina_table_manager table
-	getColumns(tableName::String) get columns name of ordereing table.
-	executeApi(json_d::Dict,target_api::DataFrame) execute API order by json data
-	_executeApi(apino::String, sql_str::String) execute API with creating SQL sentence,this is a private function that is called by executeApi()
+	 create_jetelina_database() create 'jetelina' database because of mysql special.
+	 open_connection() open connection to the DB.
+	 close_connection(conn::DBInterface.Connection)  close the DB connection
+	 getTableList(s::String) get all table name from 'jetelina' database
+	 getJetelinaSequenceNumber(t::Integer, tablename) 	get seaquence number from jetelina_sql_sequence, jetelina_user_id_sequence or <table>_id_sequence
+	 dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
+	 dropTable(tableName::Vector) drop the tables and delete its related data from jetelina_table_manager table
+	 getColumns(tableName::String) get columns name of ordereing table.
+	 executeApi(json_d::Dict,target_api::DataFrame) execute API order by json data
 	doSelect(sql::String,mode::String) execute select data by ordering sql sentence, but get sql execution time of ordered sql if 'mode' is 'measure'.
 	measureSqlPerformance() measure exectution time of all listed sql sentences. then write it out to JC["sqlperformancefile"].
-	create_jetelina_user_table() create 'jetelina_table_user_table' table.
-	userRegist(username::String) register a new user
-	getUserData(s::String) get jetelina user data by ordering 's'.	
-	chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
-	getUserInfoKeys(uid::Integer) get "user_info" column key data.
-	refUserAttribute(uid::Integer, key::String, val, rettype::Integer) inquiring user_info data 
-	updateUserInfo(uid::Integer,key::String,value) update user data (jetelina_user_table.user_info)
-	refUserInfo(uid::Integer,key::String,rettype::Integer)	simple inquiring user_info data 
-	updateUserData(uid::Integer,key::String,value) update user data, exept jsonb column
-	updateUserLoginData(uid::Integer) update user login data if it succeeded to login
-	deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
-	checkTheRoll(roll::String) check the ordered user's authority in order to 'roll'.
-	refStichWort(stichwort::String)	reference and matching with user_info->stichwort
+	 create_jetelina_user_table() create 'jetelina_table_user_table' table.
+	 userRegist(username::String) register a new user
+	 getUserData(s::String) get jetelina user data by ordering 's'.	
+	 chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
+	 getUserInfoKeys(uid::Integer) get "user_info" column key data.
+	 refUserAttribute(uid::Integer, key::String, val, rettype::Integer) inquiring user_info data 
+	 updateUserInfo(uid::Integer,key::String,value) update user data (jetelina_user_table.user_info)
+	 refUserInfo(uid::Integer,key::String,rettype::Integer)	simple inquiring user_info data 
+	 updateUserData(uid::Integer,key::String,value) update user data, exept json column
+	 updateUserLoginData(uid::Integer) update user login data if it succeeded to login
+	 deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
+	 checkTheRoll(roll::String) check the ordered user's authority in order to 'roll'.
+	 refStichWort(stichwort::String)	reference and matching with user_info->stichwort
     prepareDbEnvironment(mode::String) database connection checking, and initializing database if needed
 """
-module PgDBController
+module MyDBController
 
 using Genie, Genie.Renderer, Genie.Renderer.Json
-using CSV, LibPQ, DataFrames, IterTools, Tables, Dates
+using CSV, MySQL, DataFrames, IterTools, Tables, Dates
 using Jetelina.JFiles, Jetelina.JLog, Jetelina.InitApiSqlListManager.ApiSqlListManager, Jetelina.JMessage, Jetelina.JSession
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-include("PgDataTypeList.jl")
-include("PgSQLSentenceManager.jl")
+include("MyDataTypeList.jl")
+include("MySQLSentenceManager.jl")
 
-export create_jetelina_database, create_jetelina_table, create_jetelina_id_sequence, open_connection, close_connection,
+export create_jetelina_database, create_jetelina_table, open_connection, close_connection,
     getTableList, getJetelinaSequenceNumber, dataInsertFromCSV, dropTable, getColumns,
     executeApi, doSelect, measureSqlPerformance, create_jetelina_user_table, userRegist, getUserData, chkUserExistence, getUserInfoKeys,
     refUserAttribute, updateUserInfo, refUserInfo, updateUserData, deleteUserAccount, checkTheRoll, refStichWort, prepareDbEnvironment
 
+
 """
 function create_jetelina_database()
 
-	create 'jetelina' database.
-    BUT, look like LibPQ does not support this substitution string so far, therefore abandon to create 'jetelinadb' now and 
-    keep working in default 'pg_dbname'.
-    will be real someday, hopefully  ・ω・
-	
+    create 'jetelina' database because of mysql special.
+    indeed in getTableList() cannot get effective list from the default database, i mean there are many unuseful tables following,
+    therefore creating this table for working jetelina speciality.
+    the database name 'jetelina' is unchangeable, so far. it will may be changeable but i do not know its necessity. :D
+    
 """
 function create_jetelina_database()
-    #===
-    	Tips:
-            PostpgreSQL does not have "if not exist" in creating database.
-            this idea is picked up from
-                https://commandprompt.com/education/postgresql-create-database-if-not-exists/
-                https://docs.julialang.org/en/v1/base/strings/
-
     jetelinadb = "jetelina"
 
     conn = open_connection()
-
-    jetelina_database = SubstitutionString("select 'create database jetelina' where not exists (select from pg_database where datname='jetelina')\\gexec")
+    #===
+            Tips:
+                jetelina works in 'jetelina' database in MySql, because of getTable().
+                and this function is called in DBControllerinit_Jetelina_table() as initializing process.
+                at the first, try to find existing 'jetelina' data base, then creat it if there were not.
+                after that, change j_config.JS["my_dbname"]. this "my_dbname" is defined in configuration file. 
+        ===#
     try
-        execute(conn, jetelina_database)
+        sql = "show databases"
+        df = DataFrame(DBInterface.execute(conn, sql))
+        if size(filter(x -> x.Database == jetelinadb, df))[1] == 0
+            @info "cannot find jetelina data base, ok try to create it, wow"
+            jetelina_database = """
+                create database if not exists jetelina;
+            """
+
+            DBInterface.execute(conn, jetelina_database)
+        else
+            @info "hey jetelina database is healthy, nice"
+        end
 
         # update memory&persistent environment paramter for next time
-        j_config.configParamUpdate(Dict("pg_dbname" => jetelinadb))
+        j_config.configParamUpdate(Dict("my_dbname" => jetelinadb))
     catch err
-        JLog.writetoLogfile("PgDBController.create_jetelina_database() error: $err")
+        JLog.writetoLogfile("MyDBController.create_jetelina_database() error: $err")
     finally
+        # close the connection finally
         close_connection(conn)
     end
-    ===#
 end
 
 """
@@ -100,7 +107,7 @@ function create_jetelina_table
 			   a column moved to other table, for example table_A.age and table_B.sex were united to as table_C, then
 			   *.age and *.sex should be table_C.age and table_C.sex, but maybe needed their origins when they are 
 			   updated and/or insert, I am not sure.
-			   In PostgreSQL, this table has been deprecated because of hiring 'incremental materialized view' system.
+			   In MySQL, this table has been deprecated because of hiring 'incremental materialized view' system.
 			   I would like to leave this function as a reference func when have a chance similar function for other DB systems.
 """
 function create_jetelina_table()
@@ -111,44 +118,13 @@ function create_jetelina_table()
     """
     conn = open_connection()
     try
-        execute(conn, create_jetelina_table_manager_str)
+        DBInterface.execute(conn, create_jetelina_table_manager_str)
     catch err
-        JLog.writetoLogfile("PgDBController.create_jetelina_table() error: $err")
+        JLog.writetoLogfile("MyDBController.create_jetelina_table() error: $err")
     finally
         close_connection(conn)
     end
 end
-
-"""
-function create_jetelina_id_sequence()
-
-	create 'jetelina_table_id_sequence','jetelina_sql_sequence' and 'jetelina_user_id_sequence' sequence.
-
-    deprecated
-
-	jetelina_table_id is deprecated
-    jetelina_sql_sequnce is deprecated
-    jetelina__user_id_sequence deprecated
-"""
-function create_jetelina_id_sequence()
-    #===
-    jetelina_id_sequence = """
-    	create sequence jetelina_table_id_sequence;create sequence jetelina_sql_sequence;create sequence jetelina_user_id_sequence;
-    """
-    ===#
-    jetelina_id_sequence = """
-    	create sequence if not exists jetelina_user_id_sequence;
-    """
-    conn = open_connection()
-    try
-        execute(conn, jetelina_id_sequence)
-    catch err
-        JLog.writetoLogfile("PgDBController.create_jetelina_id_sequence() error: $err")
-    finally
-        close_connection(conn)
-    end
-end
-
 """
 function open_connection()
 
@@ -156,34 +132,50 @@ function open_connection()
 	connection parameters are set by global variables.
 
 # Arguments
-- return: LibPQ.Connection object
+- return: DBInterface.Connection object
 """
 function open_connection()
-    con_str = string("host='", j_config.JC["pg_host"],
-        "' port='", j_config.JC["pg_port"],
-        "' user='", j_config.JC["pg_user"],
-        "' password='", j_config.JC["pg_password"],
-        "' sslmode='", j_config.JC["pg_sslmode"],
-        "' dbname='", j_config.JC["pg_dbname"], "'")
+    host = j_config.JC["my_host"]
+    user = j_config.JC["my_user"]
+    pwd = j_config.JC["my_password"]
+    db = j_config.JC["my_dbname"]
+    nport = parse(Int, j_config.JC["my_port"])
+    sock = j_config.JC["my_unix_socket"]
 
-    return conn = LibPQ.Connection(con_str)
+    #	return DBInterface.connect(MySQL.Connection,"localhost","user","userpasswd",db="mysql",port=3306,unix_socket="/var/run/mysqld/mysqld.sock")
+    conn = DBInterface.connect(MySQL.Connection, "$host", "$user", "$pwd", db="$db", port=nport, unix_socket="$sock")
+    #===
+        Tips:
+            because of mysql would not return its required table list in the case of default data base, Jetelina have to work in own data base named 'jetelina',
+            and all functions require this definition 'use jetelina' before running eachs, therefore this definition has done together with creating the connection
+            at here.
+            wow, it works fine.＼(^o^)／ 
+    ===#
+    try
+        DBInterface.execute(conn, "use jetelina")
+    catch err
+        JLog.writetoLogfile("MyDBController.open_connection() error: $err")
+        return false
+    finally
+        return conn
+    end
 end
 
 """
-function close_connection(conn::LibPQ.Connection)
+function close_connection(conn::DBInterface.Connection)
 
 	close the DB connection
 
 # Arguments
-- `conn:LibPQ.Connection`: LibPQ.Connection object
+- `conn:DBInterface.Connection`: DBInterface.Connection object
 """
-function close_connection(conn::LibPQ.Connection)
+function close_connection(conn::DBInterface.Connection)
     close(conn)
 end
 """
 function getTableList(s::String)
 
-	get all table name from public 'schemaname'
+	get all table name from 'jetelina' database
 
 # Arguments
 - `s:String`: 'json' -> required JSON form to return
@@ -203,7 +195,7 @@ end
 function _getTableList()
 
 	get table list then put it into DataFrame object. this is a private function, but can access from others
-	fixing as 'public' in schemaname. this is the protocol.
+	fixing as 'jetelina' database. this is the protocol.
 
 # Arguments
 - return: DataFrame object. empty if got fail.
@@ -212,13 +204,13 @@ function _getTableList()
     df = DataFrame()
     conn = open_connection()
     # Fixing as 'public' in schemaname. This is the protocol.
-    table_str = """select tablename from pg_tables where schemaname='public'"""
+    table_str = """select table_name from information_schema.tables where table_schema='jetelina';"""
     try
-        df = DataFrame(columntable(LibPQ.execute(conn, table_str)))
-        # do not include usertable in the return
-        DataFrames.filter!(row -> row.tablename != "jetelina_user_table", df)
+        df = DataFrame(columntable(DBInterface.execute(conn, table_str)))
+        # do not include usertable
+        DataFrames.filter!(row -> row.TABLE_NAME != "jetelina_user_table", df)
     catch err
-        JLog.writetoLogfile("PgDBController._getTableList() error: $err")
+        JLog.writetoLogfile("MyDBController._getTableList() error: $err")
         return DataFrame() # return empty DataFrame if got fail
     finally
         close_connection(conn)
@@ -227,118 +219,18 @@ function _getTableList()
     return df
 end
 """
-function setJetelinaSequenceNumber(tablename::String,n::Integer)
+function getJetelinaSequenceNumber()
 
-	set seaquence number in the ordered sequence table
+	get seaquence number for id of sql
 
-    deprecated because 'jt_id' changed to 'serial'
-
-# Arguments
-- `tablename: String`: expect the target sequence table name if 't'=3
-- `n: Integer` : the set number to 'tablename' sequence table
-- return:boolean: true -> success false -> fail
-"""
-function setJetelinaSequenceNumber(tablename::String,n::Integer)
-    conn = open_connection()
-    ret = true
-
-    seqtable = string(tablename,"_id_sequence")
-    sql = """
-        select setval('$seqtable','$n');
-    """
-
-    try
-        columntable(execute(conn, sql))
-    catch err
-        ret = false
-        JLog.writetoLogfile("PgDBController.setJetelinaSequenceNumber() error: $err")
-    finally
-        close_connection(conn)
-    end
-
-    return ret
-end
-"""
-function getJetelinaSequenceNumber(t::Integer,tablename)
-
-	get seaquence number from jetelina_id table
-
-    deprecated because 'user_id' changed to 'serial'
-
+    Attention:
+        MySql tables use 'auto_increment' in 'jt_id', therefore do not use any sequence table alike Postgres
 
 # Arguments
-- `t: Integer`  : type order  0-> jetelina_table_id, 1-> jetelian_sql_sequence
-- `tablename: any but string`: expect the target sequence table name if 't'=3
-- return: 0< sequence number   -1 fail
-"""
-function getJetelinaSequenceNumber(t::Integer,tablename)
-    conn = open_connection()
-    ret = -1
-    try
-        ret = _getJetelinaSequenceNumber(conn, t, tablename)
-    catch err
-        JLog.writetoLogfile("PgDBController.getJetelinaSequenceNumber() error: $err")
-    finally
-        close_connection(conn)
-    end
-
-    return ret
-end
-
-"""
-function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer, tablename)
-
-	get seaquence number from jetelina_table_id_sequence or jetelina_sql_sequence or jetelina_user_id_sequence, but this is a private function.
-	this function will never get fail, expectedly.:-P
-
-	jetelina_table_id is deprecated
-
-# Arguments
-- `conn: Object`: connection object
-- `t: Integer`  : type order  0-> jetelina_table_id_sequence, 1-> jetelian_sql_sequence 2->jetelina_user_id_sequence
-- `tablename: any but string`: expect the target sequence table name if 't'=3
 - return:Integer: sequence number 
 """
-function _getJetelinaSequenceNumber(conn::LibPQ.Connection, t::Integer, tablename)
-    sql = ""
-
-    if t == 0
-        #===
-        				sql = """
-        					select nextval('jetelina_table_id_sequence');
-        				"""
-        		===#
-    elseif t == 1
-        #===
-        sql = """
-        	select nextval('jetelina_sql_sequence');
-        """
-        ===#
-#        sqn = ApiSqlListManager.getApiSequenceNumber()
-    elseif t == 2 || t == 3
-        if tablename == ""
-            sql = """
-                select nextval('jetelina_user_id_sequence');
-            """
-        else
-#            seqtable = string(tablename,"_id_sequence")
-#            sql = """
-#            	select nextval('$seqtable');
-#            """
-        end
-
-        sequence_number = columntable(execute(conn, sql))
-        #===
-        		Tips:
-        		this sequence_number is a type of Union{Missing,Int64}{51} for example.
-        		wanted nextval() is {51}, then 
-        			sequence_number[1] -> Union{Int64}[51]
-        			sequence_number[1][1] -> 51
-        	===#
-        sqn = sequence_number[1][1]
-    end
-
-    return sqn
+function getJetelinaSequenceNumber()
+#    return ApiSqlListManager.getApiSequenceNumber()
 end
 """
 function dataInsertFromCSV(fname::String)
@@ -366,7 +258,7 @@ function dataInsertFromCSV(fname::String)
     tableName = splitext(splitdir(fname)[2])[1]
     #===
     	Tips:
-    		Postgresql does not forgive to use '-' in a table name
+    		MySql does not forgive to use '-' in a table name
     ===#
     tableName = replace(tableName, "-" => "_")
     #===
@@ -401,7 +293,14 @@ function dataInsertFromCSV(fname::String)
 
     column_type = eltype.(eachcol(df))
     column_type_string = Array{Union{Nothing,String}}(nothing, length(column_name)) # using for creating table
-    column_str = string(keyword2, " serial primary key,") # using for creating table
+    #==
+        Tips:
+            apply 'auto_increment' to 'jt_id' column.
+            this parameter is the special for MySQL.
+            'jt_id' is to be a sequence number because of this setting. 
+    ==#
+    column_str = string(keyword2, " integer not null auto_increment primary key,") # using for creating table
+
     insert_column_str = string() # columns definition string
     insert_data_str = string() # data string
     update_str = string()
@@ -416,7 +315,7 @@ function dataInsertFromCSV(fname::String)
         		the reason for this connection, see in doSelect()
         ===#
         cn = column_name[i]
-        column_type_string[i] = PgDataTypeList.getDataType(string(column_type[i]))
+        column_type_string[i] = MyDataTypeList.getDataType(string(column_type[i]))
         if contains(cn, keyword2)
             column_str = string(column_str, " ", cn, " ", column_type_string[i], " ", keyword3)
         else
@@ -443,7 +342,7 @@ function dataInsertFromCSV(fname::String)
             #==
             	Tips:
             		because 'jetelina_delete_flg' always comes into the tail
-            ==#
+        	==#
             if i < length(column_name) - 1
                 update_str = string(update_str, ",")
             end
@@ -462,133 +361,89 @@ function dataInsertFromCSV(fname::String)
     end
 
     if j_config.JC["debug"]
-        @info "PgDBController.dataInsertFromCSV() col str to create table: " column_str
+        @info "MyDBController.dataInsertFromCSV() col str to create table: " column_str
     end
-
-    #===
-    	check if the same name table already exists.
-    ===#
-    df_tl = _getTableList()
-    DataFrames.filter!(row -> row.tablename == tableName, df_tl)
-
     #===
     	Tips:
     	    create table and sequence with 'not exists'.
     	    then insert csv data to there. this is because of forgiving adding data to the same table.
-
-            'jt_id' has been 'serial primary key' from 'integer primary key'. this column is incremented automatically, 
-            therefore 'seqT' does not need any more.
+    		put isempty(df_tl) in there as same as insert2JetelinaTableManager if it does not forgive it.
     ===#
-#    seqT = string(tableName, "_id_sequence")
-#=    create_table_str = """
-    	create table if not exists $tableName(
-    		$column_str   
-    	);create sequence if not exists $seqT;
-    """ =#
-    create_table_str = """
-    	create table if not exists $tableName(
-    		$column_str   
-    	);
-    """
+    create_table_str = """create table if not exists $tableName($column_str);"""
 
     conn = open_connection()
     try
-        execute(conn, create_table_str)
+        DBInterface.execute(conn, create_table_str)
     catch err
-        close_connection(conn)
         errnum = JLog.getLogHash()
         ret = json(Dict("result" => false, "filename" => "$fname", "errmsg" => "$err", "errnum"=>"$errnum"))
-        JLog.writetoLogfile("[errnum:$errnum] PgDBController.dataInsertFromCSV() with $fname error : $err")
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.dataInsertFromCSV() with $fname error : $err")
         return ret
     finally
-        # do not close the connection because of resuming below yet.
+        # do not close the connection yet
     end
     #===
-    	then get column from the created table, because the columns are order by csv file, thus they can get after
-    	created the table
-    ===#
-    sql = """select * from $tableName"""
-    df0 = DataFrame(columntable(LibPQ.execute(conn, sql)))
-    rename!(lowercase, df0)
-    cols = map(x -> x, names(df0))
-    
-    # primary key jt_id is added to columns
-    #===
         Tips:
-            the secound param in insertcols!() points to the insert position.
-            e.g
-                insertcols!(df,1,keywors2=>......)
-                table.jt_id is inserted in the head because of '1'
-                row|table.jt_id  table.name table.sex.....
-                 1 |   1           bob        m
-                 2 |   2           henry      m
-                 . |   .            .         .
-
-        Attention:
-            'df' is the dataframe data of the csv file.
-            'df0' is the existence data in the 'tableName'
+            added column 'jt_id' is to be wanna auto increment primary key.
+            but it does not get sutisfied result if the target file were not modifiled.
+            because of getting mismatching in the column number between the file and the table.
+            to make fit them, a dummy data is inserted in to the file here.
+            this is tricky but worth. ＼(^o^)／
     ===#
-    #    insertStartid::Integer = getJetelinaSequenceNumber(3,tableName)
-    insertStartid::Integer = nrow(df0) + 1
-    # append data into the exists table, and take care '+1' and '-1'
-    insertEndid::Integer = insertStartid + nrow(df) -1
-#    @info "n_df0, n_df start end " nrow(df0) nrow(df) insertStartid insertEndid
-    insertcols!(df,1,keyword2=>insertStartid:insertEndid)
-
-    select!(df, cols)
-
-    # create rows
-    row_strings = imap(eachrow(df)) do row
-        join((ismissing(x) ? "null" : x for x in row), ",") * "\n"
-    end
-
+    dum = "dum"
+    insertcols!(df,1,dum=>" ")
+    tmpf = string(fname,".tmp")
+    CSV.write(tmpf,df, force=true,writeheader=false)
     #===
-        Tips:
-            'jt_id' column is defined as serial primary key.
-            this key must update after a csv file insert, because of executing 'ji**' function.
+    	Tips:
+    		there are no way to 'copy' csv file to table in APIS of MySQL.jl ver.1.1.2, so far.
+    		then anyway, have to use mysql special command 'load data ....', but to use this command, 
+    		the 'local_infile' that is the global variable in MySQL should be 'on'.
+    		unfortunately any APIs which can manage this global variable in the lib, therefore this setting
+    		is to be a precondition to use MySQL. Take care.
+    		and do not forget '..fields TERMINATED by', otherwise any data will not be inerted into there.
     ===#
-    sequencename = string(tableName,"_",keyword2,"_seq")
-    setjtidno = """
-        select setval ('$sequencename', $insertEndid+1, false);
-    """
+    copyin = string("LOAD DATA LOCAL INFILE '$tmpf' INTO TABLE $tableName FIELDS TERMINATED BY ',';")
 
-    copyin = LibPQ.CopyIn("COPY $tableName FROM STDIN (FORMAT CSV);", row_strings)
+    # change 'local_infile' setting to 'on' .  very important.
+    _infile_on(conn)
     try
-        execute(conn, copyin)
-        execute(conn, setjtidno)
+        DBInterface.execute(conn, copyin)
         ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
     catch err
         errnum = JLog.getLogHash()
         ret = json(Dict("result" => false, "filename" => "$fname", "errmsg" => "$err", "errnum"=>"$errnum"))
-        JLog.writetoLogfile("[errnum:$errnum] PgDBController.dataInsertFromCSV() with $fname error : $err")
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.dataInsertFromCSV() with $fname error : $err")
         return ret
     finally
+        # change 'local_infile' setting to 'off'
+        _infile_off(conn)
         # ok. close the connection finally
         close_connection(conn)
+        # never use any more
+        rm(tmpf)
     end
     #===
-    	Tips:
+    		Tips:
     		cols(see above) is ["id", "name", "sex", "age", "ave", "jetelina_delete_flg"], so can use it when
     		wanna use column name, but need to judge the data type both the case of 'insert' and 'update', 
     		that why do not use cols here. writing select sentence is done in PgSQLSentenceManager.createApiSelectSentence(). 
     	===#
     push!(tablename_arr, tableName)
-    insert_str = PgSQLSentenceManager.createApiInsertSentence(tableName, insert_column_str, insert_data_str)
-    if ApiSqlListManager.sqlDuplicationCheck(insert_str, "", "postgresql")[1] == false
-        ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, "postgresql")
+    insert_str = MySQLSentenceManager.createApiInsertSentence(tableName, insert_column_str, insert_data_str)
+    if ApiSqlListManager.sqlDuplicationCheck(insert_str, "", "mysql")[1] == false
+        ApiSqlListManager.writeTolist(insert_str, "", tablename_arr, "mysql")
     end
     # update
-    update_str = PgSQLSentenceManager.createApiUpdateSentence(tableName, update_str)
-    if ApiSqlListManager.sqlDuplicationCheck(update_str[1], update_str[2], "postgresql")[1] == false
-        ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, "postgresql")
+    update_str = MySQLSentenceManager.createApiUpdateSentence(tableName, update_str)
+    if ApiSqlListManager.sqlDuplicationCheck(update_str[1], update_str[2], "mysql")[1] == false
+        ApiSqlListManager.writeTolist(update_str[1], update_str[2], tablename_arr, "mysql")
     end
     # delete
-    delete_str = PgSQLSentenceManager.createApiDeleteSentence(tableName)
-    if ApiSqlListManager.sqlDuplicationCheck(delete_str[1], delete_str[2], "postgresql")[1] == false
-        ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, "postgresql")
+    delete_str = MySQLSentenceManager.createApiDeleteSentence(tableName)
+    if ApiSqlListManager.sqlDuplicationCheck(delete_str[1], delete_str[2], "mysql")[1] == false
+        ApiSqlListManager.writeTolist(delete_str[1], delete_str[2], tablename_arr, "mysql")
     end
-    # update sequence number with the end of row number
-#    setJetelinaSequenceNumber(tableName, insertEndid)
 
     return ret
 end
@@ -611,13 +466,13 @@ function dropTable(tableName::Vector)
     try
         for i in eachindex(tableName)
             # drop the tableName
-#            drop_table_str = string("drop table ", tableName[i],";drop sequence ", tableName[i], "_id_sequence")
-            drop_table_str = string("drop table ", tableName[i],";")
+            drop_table_str = string("drop table ", tableName[i],";drop table ", tableName[i], "_id_sequence")
+#            drop_table_str = string("drop table ", tableName[i])
             # delete the related data from jetelina_table_manager
-            #delete_data_str = string("delete from jetelina_table_manager where table_name = '", tableName[i], "'")
+            #				delete_data_str = string("delete from jetelina_table_manager where table_name = '", tableName[i], "'")
 
-            execute(conn, drop_table_str)
-            #execute(conn, delete_data_str)
+            DBInterface.execute(conn, drop_table_str)
+            #				DBInterface.execute(conn, delete_data_str)
         end
 
         ret = json(Dict("result" => true, "tablename" => "$rettables", "message from Jetelina" => jmsg))
@@ -627,7 +482,7 @@ function dropTable(tableName::Vector)
     catch err
         errnum = JLog.getLogHash()
         ret = json(Dict("result" => false, "tablename" => "$rettables", "errmsg" => "$err", "errnum"=>"$errnum"))
-        JLog.writetoLogfile("[errnum:$errnum] PgDBController.dropTable() with $rettables error : $err")
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.dropTable() with $rettables error : $err")
         return false, ret
     finally
         close_connection(conn)
@@ -658,7 +513,7 @@ function getColumns(tableName::String)
      """
     conn = open_connection()
     try
-        df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+        df = DataFrame(columntable(DBInterface.execute(conn, sql)))
         cols = map(x -> x, names(df))
         select!(df, cols)
 
@@ -666,7 +521,7 @@ function getColumns(tableName::String)
     catch err
         errnum = JLog.getLogHash()
         ret = json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err", "errnum"=>"$errnum"))
-        JLog.writetoLogfile("[errnum:$errnum] PgDBController.getColumns() with $tableName error : $err")
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.getColumns() with $tableName error : $err")
     finally
         close_connection(conn)
     end
@@ -689,7 +544,7 @@ function executeApi(json_d::Dict,target_api::DataFrame)
 """
 function executeApi(json_d::Dict, target_api::DataFrame)
     ret = ""
-    sql_str = PgSQLSentenceManager.createExecutionSqlSentence(json_d, target_api)
+    sql_str = MySQLSentenceManager.createExecutionSqlSentence(json_d, target_api)
     if 0 < length(sql_str)
         ret = _executeApi(json_d["apino"], sql_str)
     end
@@ -714,7 +569,7 @@ function _executeApi(apino::String, sql_str::String)
 
     conn = open_connection()
     try
-        sql_ret = LibPQ.execute(conn, sql_str)
+        sql_ret = DBInterface.execute(conn, sql_str)
         #===
         			Tips:
         				case in insert/update/delete, we cannot see if it got success or not by .execute().
@@ -722,8 +577,11 @@ function _executeApi(apino::String, sql_str::String)
         					in insert -> 0: normal end, the fault is caught in 'catch'
         					in update/delete -> 0: swing and miss
         									 -> 1: hit the ball
+
+        				attention: above story is only in PostgreSQL, MySQL.jl does not have this function yet,
+        						   therefore they are commented out, so far.
         		===#
-        affected_ret = LibPQ.num_affected_rows(sql_ret)
+        #		affected_ret = DBInterface.num_affected_rows(sql_ret)
         jmsg::String = string("compliment me!")
 
         if startswith(apino, "js")
@@ -737,25 +595,25 @@ function _executeApi(apino::String, sql_str::String)
             ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
         elseif startswith(apino, "ji")
             # insert
-            if affected_ret == 0
-                # this may will not happen
-                jmsg = "looks happen something, it is not my fault."
-            end
-
+            #==			if affected_ret == 0
+            							# this may will not happen
+            							jmsg = "looks happen something, it is not my fault."
+            						end
+            			==#
             ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
         else
             # update & delete
-            if affected_ret == 0
-                # the target data was not in there, guess wrong 'jt_id'
-                jmsg = "there was not it, jt_id is correct?. no matter what it is not my business."
-            end
-
+            #==			if affected_ret == 0
+            							# the target data was not in there, guess wrong 'jt_id'
+            							jmsg = "there was not it, jt_id is correct?. no matter what it is not my business."
+            						end
+            			==#
             ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
         end
     catch err
         errnum = JLog.getLogHash()
         ret = json(Dict("result" => false, "apino" => "$apino", "errmsg" => "$err", "errnum"=>"$errnum"))
-        JLog.writetoLogfile("[errnum:$errnum] PgDBController.executeApi() with $apino : $sql_str error : $err")
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.executeApi() with $apino : $sql_str error : $err")
     finally
         # close the connection finally
         close_connection(conn)
@@ -781,18 +639,17 @@ function doSelect(sql::String,mode::String)
 		'mesure' mode -> exectution time of tuple(max,min,mean) 
 """
 function doSelect(sql::String, mode::String)
-#    @info "PgD... doSelect: " mode sql
     conn = open_connection()
     ret = ""
     try
         if mode == "measure"
             #===
-            	aquire data types are max,best and mean
-            ===#
+            				aquire data types are max,best and mean
+            			===#
             exetime = []
             looptime = 10
             for loop in 1:looptime
-                stats = @timed z = LibPQ.execute(conn, sql)
+                stats = @timed z = DBInterface.execute(conn, sql)
                 push!(exetime, stats.time)
             end
 
@@ -801,24 +658,24 @@ function doSelect(sql::String, mode::String)
         end
 
         #===
-        	Caution:
-        		DataFrame() spits out error so that it could not resolve the column name if there were same ones.
-        			ex. select ftest.name, ftest3.name ..... -> "name" is duplicated in LibPG.execute() therefore DataFrame() confuses
+        			Caution:
+        				DataFrame() spits out error so that it could not resolve the column name if there were same ones.
+        					ex. select ftest.name, ftest3.name ..... -> "name" is duplicated in LibPG.execute() therefore DataFrame() confuses
 
-        		to resolve it, '*' are there. ref: https://github.com/iamed2/LibPQ.jl/issues/107
-        		but it ':auto' in DataFrame() creates quite new column name.
-        		Jetelina wanna return the table column anyhow, cannot take this process.
-        		then changed CSV file storing to table to use the "table name" with the column name. see dataInsertFromCSV()
-        			ex. old: ftest.csv  has columns 'name','sex'   -> table name: ftest, column name: name, sex
-        				new:                〃                     -> table name:   〃 , column name: ftest_name, ftest_sex
+        				to resolve it, '*' are there. ref: https://github.com/iamed2/LibPQ.jl/issues/107
+        				but it ':auto' in DataFrame() creates quite new column name.
+        				Jetelina wanna return the table column anyhow, cannot take this process.
+        				then changed CSV file storing to table to use the "table name" with the column name. see dataInsertFromCSV()
+        					ex. old: ftest.csv  has columns 'name','sex'   -> table name: ftest, column name: name, sex
+        						new:                〃                     -> table name:   〃 , column name: ftest_name, ftest_sex
 
-        		but it still has possibility in the case of direct import data to table by user hand. 
-        		threfore this is to be written in Jetelina manual as a regulation.4
-    	===#
+        				but it still has possibility in the case of direct import data to table by user hand. 
+        				threfore this is to be written in Jetelina manual as a regulation.4
+        		===#
         #*		result = LibPQ.execute(conn, sql)
         #*		vector_data = [convert(Vector,col) for col in Tables.columns(result)]
         #*		df = DataFrame(vector_data,:auto)
-        df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+        df = DataFrame(columntable(DBInterface.execute(conn, sql)))
         jmsg::String = ""
 
         if parse(Int, j_config.JC["selectlimit"]) < nrow(df)
@@ -828,14 +685,14 @@ function doSelect(sql::String, mode::String)
                 #*				result = LibPQ.execute(conn, sql)
                 #*				vector_data = [convert(Vector,col) for col in Tables.columns(result)]
                 #*				df = DataFrame(vector_data,:auto)
-                df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+                df = DataFrame(columntable(DBInterface.execute(conn, sql)))
                 jmsg = "this return is limited in 10 because the true result is $dfmax"
             end
         end
 
         return json(Dict("result" => true, "message from Jetelina" => jmsg, "Jetelina" => copy.(eachrow(df))))
     catch err
-        JLog.writetoLogfile("PgDBController.doSelect() with $mode $sql error : $err")
+        JLog.writetoLogfile("MyDBController.doSelect() with $mode $sql error : $err")
         return false, err
     finally
         # close the connection finally
@@ -894,7 +751,7 @@ function create_jetelina_user_table()
     		nickname varchar(256),
     		logincount integer not null default 0,
     		logindate timestamp with time zone,
-    		user_info jsonb,
+    		user_info json,
     		user_level integer not null default 0,
     		familiar_index integer default 0,
     		jetelina_delete_flg integer default 0
@@ -903,13 +760,13 @@ function create_jetelina_user_table()
     ===#
     create_jetelina_user_table_str = """
     	create table if not exists jetelina_user_table(
-    		user_id serial not null primary key,
+    		user_id integer not null auto_increment primary key,
     		username varchar(256),
     		nickname varchar(256),
     		logincount integer not null default 0,
-    		logindate timestamp with time zone,
-    		logoutdate timestamp with time zone,
-    		user_info jsonb,
+    		logindate timestamp,
+    		logoutdate timestamp,
+    		user_info json,
     		generation integer not null default 10,
     		jetelina_delete_flg integer default 0
     	);
@@ -920,10 +777,10 @@ function create_jetelina_user_table()
 
     conn = open_connection()
     try
-        execute(conn, create_jetelina_user_table_str)
-        execute(conn, insert_first_user)
+        DBInterface.execute(conn, create_jetelina_user_table_str)
+        DBInterface.execute(conn, insert_first_user)
     catch err
-        JLog.writetoLogfile("PgDBController.create_jetelina_user_table() error: $err")
+        JLog.writetoLogfile("MyDBController.create_jetelina_user_table() error: $err")
     finally
         close_connection(conn)
     end
@@ -951,34 +808,29 @@ function userRegist(username::String)
         end
     end
 
-#    user_id = getJetelinaSequenceNumber(2,"")
+    conn = open_connection()
+
+#    user_id = getJetelinaSequenceNumber()
     existentuserdata = getUserData(JSession.get()[1])
     j = existentuserdata["Jetelina"][1]
     parentGeneration = j[:generation]
     thisuserGeneration = parentGeneration + 1 # to make easy understand
-#    insert_basic_st = """
-#    	insert into jetelina_user_table (username,generation) values('$username','$thisuserGeneration');
-#    """
-
     inviterId = JSession.get()[2]
     registerDate = Dates.format(now(), "yyyy-mm-dd HH:MM:SS")
     insert_basic_st = """
     	insert into jetelina_user_table (username,user_info,generation) values('$username','{"register_date":"$registerDate","inviter":$inviterId}','$thisuserGeneration');
     """
-
-#    insert_additional_st = """
-#    	update jetelina_user_table set user_info = '{"register_date":"$registerDate","inviter":$inviterId}' where user_id=$user_id;
+#    insert_basic_st = """
+#    	insert into jetelina_user_table (user_id,username,user_info,generation) values($user_id,'$username','{"register_date":"$registerDate","inviter":$inviterId}','$thisuserGeneration');
 #    """
 
-    conn = open_connection()
     try
-        execute(conn, insert_basic_st)
-#        execute(conn, insert_additional_st)
+        DBInterface.execute(conn, insert_basic_st)
         ret = json(Dict("result" => true, "message from Jetelina" => jmsg))
     catch err
         errnum = JLog.getLogHash()
-        ret = json(Dict("result" => false, "username" => "$username", "errmsg" => "$err", "errnum"=>"$errnum"))
-        JLog.writetoLogfile("[errnum:$errnum] PgDBController.userRegist() with $username error : $err")
+        ret = json(Dict("result" => false, "username" => "$username", "errmsg" => "$err","errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.userRegist() with $username error : $err")
     finally
         close_connection(conn)
     end
@@ -1035,13 +887,13 @@ function chkUserExistence(s::String)
 
     conn = open_connection()
     try
-        df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+        df = DataFrame(columntable(DBInterface.execute(conn, sql)))
         #==
         			Tips:
         				every expression is fine, but take care of the data type
-        				    df[:, :user_id]    -> Vector{Union{Missing,Int}}
-        				    df[:, :user_id][1] -> Int
-        				    df.user_id         -> Vector{Union{Missing,Int}}
+        					df[:, :user_id]    -> Vector{Union{Missing,Int}}
+        					df[:, :user_id][1] -> Int
+        					df.user_id         -> Vector{Union{Missing,Int}}
         		==#
         if size(df)[1] == 1
             stichwort::Bool = false
@@ -1061,13 +913,6 @@ function chkUserExistence(s::String)
                     dbtype = j_config.JC["dbtype"]
                 end
 
-                #===
-                    Tips:
-                        necessary replace(), because it would be, e.g. "\"mysql\"" if not.
-                        look like this is an uniqueness in session.
-                ===#
-                dbtype = replace(dbtype, "\"" => "")
-
                 JSession.setDBType(dbtype)
                 j_config.JC["dbtype"] = dbtype
             end
@@ -1084,7 +929,7 @@ function chkUserExistence(s::String)
     catch err
         errnum = JLog.getLogHash()
         ret = Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum")
-        JLog.writetoLogfile("[errnum:$errnum] PgDBController.chkUserExistence() with $s error : $err")
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.chkUserExistence() with $s error : $err")
     finally
         close_connection(conn)
     end
@@ -1107,20 +952,31 @@ function getUserInfoKeys(uid::Integer)
     ret = ""
     jmsg::String = string("compliment me!")
 
-    sql = """   
-    SELECT
-    	jsonb_object_keys (user_info) as user_info
-    from jetelina_user_table
-    where user_id=$uid;
+    #===
+    		Tips:
+    			this sql returns like this 
+    			+-----------------+
+    			| j_key           |   *'j_key' is orderable e.g. jetelina_user_info_key ....
+    			+-----------------+\
+    			| "stichwort"     |
+    			| "inviter"       |
+    			| "register_date" |
+    			+-----------------+
+
+    			and this collection is for all, not in a specific data, therefore 'uid' does not use in it, but remains for matching with postgres lib.
+    	===#
+    sql = """
+    	select distinct j_key from jetelina_user_table, json_table(json_keys(user_info),'\$[*]' columns(j_key json path '\$')) t;
     """
+
     conn = open_connection()
     try
-        df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+        df = DataFrame(columntable(DBInterface.execute(conn, sql)))
         ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
     catch err
         errnum = JLog.getLogHash()
         ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
-        JLog.writetoLogfile("[errnum:$errnum] PgDBController.getUserInfoKeys() with $s error : $err")
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.getUserInfoKeys() with $s error : $err")
     finally
         close_connection(conn)
     end
@@ -1146,18 +1002,18 @@ function refUserAttribute(uid::Integer, key::String, val, rettype::Integer)
 
     #===
     		Tips:
-    			search jsonb data here, it possibly contains some data in it,
+    			search json data here, it possibly contains some data in it,
     			thus using 'like' sentence.
     	===#
     sql = """   
     SELECT
-    	user_id, user_info -> '$key' as u_info_$key
+    	user_id, user_info -> '\$.$key' as u_info_$key
     from jetelina_user_table
-    where (user_id=$uid)and(user_info->>'$key' like '%$val%')
+    where (user_id=$uid)and(user_info->>'\$.$key' like '%$val%')
     """
     conn = open_connection()
     try
-        df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+        df = DataFrame(columntable(DBInterface.execute(conn, sql)))
         if 0 < nrow(df)
             # match the info
             result = true
@@ -1171,7 +1027,7 @@ function refUserAttribute(uid::Integer, key::String, val, rettype::Integer)
     catch err
         errnum = JLog.getLogHash()
         ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
-        JLog.writetoLogfile("[errnum:$errnum] PgDBController.refUserAttribute() with user $uid $key->$val error : $err")
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.refUserAttribute() with user $uid $key->$val error : $err")
     finally
         close_connection(conn)
     end
@@ -1193,36 +1049,17 @@ function updateUserInfo(uid::Integer,key::String,value)
 function updateUserInfo(uid::Integer, key::String, value)
     ret = ""
 
-    #== get existing user info data
-    df = refUserAttribute(uid, key, value, 1)
-    # append new value data to old one
-    if 0 < nrow(df)
-    	value = string(df[:, :2], ',', value)
-    end
-    ==#
-    #===
-    		Tips:
-    			in the case of updating JSONB data type, the data is added at the tail if it were not existing.
-    			then do not need the hit or swing-miss by using LibPQ.num_affected_rows() alike in executeApi().
-
-    	sql = """
-    	update jetelina_user_table set
-    		user_info = jsonb_set(user_info,'{$key}','"$value"')
-    		where user_id=$uid;
-    	"""
-    	===#
-
     if (contains(value, "\""))
         value = replace(value, "\"" => "")
     end
 
     sql = """
-    	update jetelina_user_table set user_info = user_info || '{"$key":"$value"}' where user_id=$uid;
+    	update jetelina_user_table set user_info = json_set(user_info, '\$.$key','$value') where user_id=$uid;
     """
 
     conn = open_connection()
     try
-        execute(conn, sql)
+        DBInterface.execute(conn, sql)
 
         #		jmsg = """I have memorized your new $key, lucky knowing you more."""
         jmsg = "complement me."
@@ -1230,7 +1067,7 @@ function updateUserInfo(uid::Integer, key::String, value)
     catch err
         errnum = JLog.getLogHash()
         ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
-        JLog.writetoLogfile("[errnum:$errnum] PgDBController.updateUserInfo() with user $uid $key->$value error : $err")
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.updateUserInfo() with user $uid $key->$value error : $err")
     finally
         close_connection(conn)
     end
@@ -1252,13 +1089,23 @@ function refUserInfo(uid::Integer, key::String, rettype::Integer)
     ret = ""
     result = false
     jmsg::String = "no data, try again."
-
-    sql = """   
-    	select user_info->'$key' as $key from jetelina_user_table where user_id=$uid;
+    #===
+    		sql = """   
+    			select user_info->'$key' as $key from jetelina_user_table where user_id=$uid;
+    		"""
+    	===#
+    #===
+    		Tips:
+    			"$." expression expect after $ in string.
+    			therefore make escape it. 
+    			and both json and dataframe treat "stichwort" as "json_extract(....)", that is the reason why "as". 
+    	===#
+    sql = """
+    	select json_extract(user_info,'\$.$key') as $key from jetelina_user_table where user_id=$uid;
     """
     conn = open_connection()
     try
-        df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+        df = DataFrame(columntable(DBInterface.execute(conn, sql)))
         if 0 < nrow(df)
             result = true
             jmsg = "complement me"
@@ -1272,7 +1119,7 @@ function refUserInfo(uid::Integer, key::String, rettype::Integer)
     catch err
         errnum = JLog.getLogHash()
         ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
-        JLog.writetoLogfile("[errnum:$errnum] PgDBController.refUserInfo() with user $uid $key error : $err")
+        JLog.writetoLogfile("MyDBController.refUserInfo() with user $uid $key error : $err")
     finally
         close_connection(conn)
     end
@@ -1282,7 +1129,7 @@ end
 """
 function updateUserData(uid::Integer,key::String,value)
 
-	update user data, exept jsonb column
+	update user data, exept json column
 	this function can use for simple columns.
 
 # Arguments
@@ -1299,7 +1146,7 @@ function updateUserData(uid::Integer, key::String, value)
         Caution:
             now() and 'now()' are both available in Postgres, not Mysql ・ω・
     ===#
-    if isa(value, String)
+    if isa(value, String) && (value != "now()")
         set_str = """ $key='$value' """
     else
         set_str = """ $key=$value """
@@ -1310,16 +1157,17 @@ function updateUserData(uid::Integer, key::String, value)
     	$set_str
     	where user_id=$uid;
     """
+
     conn = open_connection()
     try
-        execute(conn, sql)
+        DBInterface.execute(conn, sql)
 
         jmsg = """He he, you are counted up in me."""
         ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
     catch err
         errnum = JLog.getLogHash()
         ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
-        JLog.writetoLogfile("[errnum:$errnum] PgDBController.updateUserData() with user $uid $key->$value error : $err")
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.updateUserData() with user $uid $key->$value error : $err")
     finally
         close_connection(conn)
     end
@@ -1349,7 +1197,7 @@ function updateUserLoginData(uid::Integer)
         	select cast(logindate as date) - cast(now() as date) from jetelina_user_table where user_id=$uid;
         """
 
-        df = DataFrame(columntable(LibPQ.execute(conn, complogindate)))
+        df = DataFrame(columntable(DBInterface.execute(conn, complogindate)))
         if !ismissing(df[:, 1][1])
             if df[:, 1][1] == 0
                 # update only logindate because multi login at same date
@@ -1369,11 +1217,11 @@ function updateUserLoginData(uid::Integer)
         		where user_id=$uid;
         """
 
-        execute(conn, sql)
+        DBInterface.execute(conn, sql)
 
     catch err
         ret = false
-        JLog.writetoLogfile("PgDBController.updateUserLoginData() with user $uid error : $err")
+        JLog.writetoLogfile("MyDBController.updateUserLoginData() with user $uid error : $err")
     finally
         close_connection(conn)
     end
@@ -1411,14 +1259,14 @@ function deleteUserAccount(uid::Integer)
 
     conn = open_connection()
     try
-        execute(conn, sql)
+        DBInterface.execute(conn, sql)
 
         jmsg = """See you someday"""
         ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
     catch err
         errnum = JLog.getLogHash()
         ret = json(Dict("result" => false, "errmsg" => "$err", "errnum"=>"$errnum"))
-        JLog.writetoLogfile("[errnum:$errnum] PgDBController.deleteUserAccount() with user $uid error : $err")
+        JLog.writetoLogfile("MyDBController.deleteUserAccount() with user $uid error : $err")
     finally
         close_connection(conn)
     end
@@ -1443,16 +1291,29 @@ function checkTheRoll(roll::String)
 - return: have authority -> true, does not have -> false
 """
 function checkTheRoll(roll::String)
-    uid = JSession.get()[2]
     ret::Bool = false
+    uid = ""
+    sql = ""
 
-    sql = """
-    	select logincount, generation from jetelina_user_table 
-    	where (jetelina_delete_flg=0) and (user_id=$uid);
-    """
+    uname = JSession.get()[1]
+    
+    if uname != "myself"
+        uid = JSession.get()[2]
+
+        sql = """
+            select logincount, generation from jetelina_user_table 
+            where (jetelina_delete_flg=0) and (user_id=$uid);
+        """
+    else
+        sql = """
+            select logincount, generation from jetelina_user_table 
+            where (jetelina_delete_flg=0) and (username='$uname') and (generation=-1);
+        """
+    end
+
     conn = open_connection()
     try
-        df = DataFrame(columntable(LibPQ.execute(conn, sql)))
+        df = DataFrame(columntable(DBInterface.execute(conn, sql)))
         if !ismissing(df[:, :generation][1]) && !ismissing(df[:, :logincount][1])
             generation = df[:, :generation][1]
             logincount = df[:, :logincount][1]
@@ -1484,7 +1345,7 @@ function checkTheRoll(roll::String)
         end
 
     catch err
-        JLog.writetoLogfile("PgDBController.checkTheRoll() with user $uid error : $err")
+        JLog.writetoLogfile("MyDBController.checkTheRoll() with user $uid error : $err")
     finally
         close_connection(conn)
     end
@@ -1505,10 +1366,11 @@ function refStichWort(stichwort::String)
     uid::Integer = JSession.get()[2]
     u = refUserInfo(uid, "stichwort", 1) # 1->DataFrame
     #===
-    	Tips:
-    		u[:,:stichwort][1] is to be "\"<something>\"".
-    		then have to remove '"\', OK?
-    ===#
+    		Tips:
+    			u[:,:stichwort][1] is to be "\"<something>\"".
+    			then have to remove '"\', OK?
+    	===#
+    #	@info "refStichWort " u[:,:stichwort]
     if !ismissing(u[:, :stichwort][1])
         intable_stichwort = replace(u[:, :stichwort][1], "\"" => "")
         if stichwort == intable_stichwort
@@ -1523,6 +1385,56 @@ function refStichWort(stichwort::String)
     return ret
 end
 """
+function _infile_on(conn::DBInterface.Connection)
+
+	set mysql global variable 'local_infile' to 'on'
+
+# Arguments
+- `conn:DBInterface.Connection`: DBInterface.Connection object
+"""
+function _infile_on(conn::DBInterface.Connection)
+    #	conn = open_connection()
+    try
+        sql = "show global variables like 'local_infile'"
+        df = DataFrame(DBInterface.execute(conn, sql))
+        k = filter(x -> x.Variable_name == "local_infile", df)
+        if lowercase(k[:, :Value][1]) == "off"
+            sql = "set global local_infile = on"
+            DBInterface.execute(conn, sql)
+        end
+    catch err
+        println("_infile_on: $err")
+    finally
+        # close the connection finally
+        #		close_connection(conn)
+    end
+end
+"""
+function _infile_off(conn::DBInterface.Connection)
+
+	set mysql global variable 'local_infile' to 'off'
+	
+# Arguments
+- `conn:DBInterface.Connection`: DBInterface.Connection object
+"""
+function _infile_off(conn::DBInterface.Connection)
+    #	conn = open_connection()
+    try
+        sql = "show global variables like 'local_infile'"
+        df = DataFrame(DBInterface.execute(conn, sql))
+        k = filter(x -> x.Variable_name == "local_infile", df)
+        if lowercase(k[:, :Value][1]) == "on"
+            sql = "set global local_infile = off"
+            DBInterface.execute(conn, sql)
+        end
+    catch err
+        println("_infile_off: $err")
+    finally
+        # close the connection finally
+        #		close_connection(conn)
+    end
+end
+"""
 function prepareDbEnvironment(mode::String)
 
 	database connection checking, and initializing database if needed
@@ -1534,20 +1446,60 @@ function prepareDbEnvironment(mode::String)
 function prepareDbEnvironment(mode::String)
     ret::Bool = false
     try
-        conn::LibPQ.Connection = open_connection()
-        close_connection(conn)
-
+        #===
+            Tips:
+                create_jetelina_database() executes 'db connection' -> 'create database' -> 'db connection release',
+                in the procedure 'create database' is executed 'if not exist', therefore this function is alternative to 
+                execute open_connection()/close_connection().
+        ===#
+        create_jetelina_database()
         if mode == "init"
-#            create_jetelina_id_sequence()
             create_jetelina_user_table()
         end
 
         return true, ""
     catch err
         errnum = JLog.getLogHash()
-        JLog.writetoLogfile("[errnum:$errnum] PgDBController.prepareDbEnvironment() error : $err")
+        JLog.writetoLogfile("[errnum:$errnum] MyDBController.prepareDbEnvironment() error : $err")
         return ret, errnum
     finally
+    end
+end
+
+#===
+	don't care, this is just for check or test in mysql something.
+===#
+function _mycheck()
+    conn = open_connection()
+    try
+        #sql = "select * from ftest10"    #-> some data selected
+        #sql = "update ftest10 set ftest10_age=33 where ftest10_jt_id=3;"  #-> 0size return in success/faile because of no data
+        #sql = "delete from ftest10 where ftest10_jt_id=3;"   #->0size return in success/faile because of no data
+        #sql = "insert into ftest10 values(3,'xx','m',20,1,0);" #->0size return in success
+        #sql = "show databases"
+        sql = "show global variables like 'local_infile'"
+        df = DataFrame(DBInterface.execute(conn, sql))
+        println(df)
+        k = filter(x -> x.Variable_name == "local_infile", df)
+        println(k)
+        @info "value? " k[:, :Value]
+        if lowercase(k[:, :Value][1]) == "on"
+            @info "ok"
+            sql = "set global local_infile = off"
+            df = DataFrame(DBInterface.execute(conn, sql))
+            println(df)
+        end
+        #===
+        @info "df " df[:, :Database]
+        if size(filter(x -> x.Database == "jetelina", df))[1] != 0
+        	@info "find jetelina"
+        end
+        ===#
+    catch err
+        println(err)
+    finally
+        # close the connection finally
+        close_connection(conn)
     end
 end
 

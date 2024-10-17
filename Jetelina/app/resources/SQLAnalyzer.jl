@@ -1,22 +1,22 @@
 """
-	module: SQLAnalyzer
+module: SQLAnalyzer
 
-	Author: Ono keiji
-	Version: 1.0
-	Description:
-		Analyze execution speed of all SQL sentences. 
+Author: Ono keiji
+
+Description:
+	Analyze execution speed of all SQL sentences. 
 	
-	functions
-		main() this function set as for kicking createAna..() from outer function.
-		createAnalyzedJsonFile() create json file for result of sql execution speed analyze data.
-		extractColumnsFromSql(s::String)  pick up columns data from 's'.
-		collectSqlAccessNumbers(df::DataFrame)  collect each sql access numbers then write out it to JC["sqlaccesscountfile"] file in JSON form for showing its graph in condition panel.
-		experimentalCreateView(df::DataFrame)  create view tables for test and execute all sql sentences for analyzing.
-		createView(df::DataFrame)  create view table from a sql sentence that has multi tables and hight use in the running db.
-		dropTestDB(conn)  drop testdb. doubtfull. :-p
-		creatTestDB()    create testdb by using running db(JC["pg_dbname"]). only postgresql now. other db should be impremented later.
-		tableCopy(df::DataFrame) copy some data from the running db to the test db. the number of copy data are ordered in JC["selectlimit"].
-		function stopanalyzer() manual stopper for analyzring repeat
+functions
+	main() this function set as for kicking createAna..() from outer function.
+	createAnalyzedJsonFile() create json file for result of sql execution speed analyze data.
+	extractColumnsFromSql(s::String)  pick up columns data from 's'.
+	collectSqlAccessNumbers(df::DataFrame)  collect each sql access numbers then write out it to JC["sqlaccesscountfile"] file in JSON form for showing its graph in condition panel.
+	experimentalCreateView(df::DataFrame)  create view tables for test and execute all sql sentences for analyzing.
+	createView(df::DataFrame)  create view table from a sql sentence that has multi tables and hight use in the running db.
+	dropTestDB(conn)  drop testdb. doubtfull. :-p
+	creatTestDB()    create testdb by using running db(JC["pg_dbname"]). only postgresql now. other db should be impremented later.
+	tableCopy(df::DataFrame) copy some data from the running db to the test db. the number of copy data are ordered in JC["selectlimit"].
+	function stopanalyzer() manual stopper for analyzring repeat
 """
 module SQLAnalyzer
 
@@ -30,13 +30,13 @@ JMessage.showModuleInCompiling(@__MODULE__)
 procflg = Ref(true) # analyze process progressable -> true, stop/error -> false
 
 function __init__()
-	@info "=========SQLAnalyzer.jl init===========" j_config.JC["dbtype"]
+	@info "=========SQLAnalyzer.jl init==========="
 	include("DBDataController.jl")
 	if j_config.JC["dbtype"] == "postgresql"
 		include("libs/postgres/PgDBController.jl")
 		include("libs/postgres/PgTestDBController.jl")
 		include("libs/postgres/PgDataTypeList.jl")
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -668,7 +668,7 @@ function creatTestDB()
 			PgDBController.close_connection(conn)
 		end
 
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end

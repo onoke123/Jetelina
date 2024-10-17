@@ -2,13 +2,14 @@
 	module: DBDataController
 
 	Author: Ono keiji
-	Version: 1.0
+
 	Description:
 		General DB action controller
 
 	functions
-		__init__() Initial action. Execute init_Jetelina_table()
-		init_Jetelina_table() Execute *.create_jetelina_table() depend on DB type.Execute *.readJetelinatable() depend on DB type.
+		init() Initial action. Execute init_Jetelina_table()
+		createJetelinaDatabaseinMysql()	special function for creating 'jetelina' database in Mysql.
+		init_Jetelina_table() Execute *.create_jetelina_table() depend on DB type.
 		dataInsertFromCSV(csvfname::String) CSV data inserts into DB. It executes in *.dataInsertFromCSV depend on DB type.
 		getTableList(s::String) Get the ordered table list by executing *.getTable() depend on DB type
 		dropTable(tableName::Vector) Drop the tables and delete its related data from jetelina_table_manager table
@@ -19,17 +20,20 @@
 		chkUserExistence(s::String) pre login, check the ordered user in jetelina_user_table or not
 		getUserInfoKeys(uid::Integer) get "user_info" column key data.
 		refUserAttribute(uid::Integer,key::String,val) inquiring user_info data 
+		refUserInfo(uid::Integer,key::String,rettype::Integer) simply inquiring user_info data 
 		updateUserInfo(uid::Integer,key::String,value) update user data (jetelina_user_table.user_info)
 		updateUserData(uid::Integer,key::String,value) update user data, exept jsonb column
 		updateUserLoginData(uid::Integer) update user login data if it succeeded to login
 		deleteUserAccount(uid::Integer) user delete, but not physical deleting, set jetelina_delete_flg to 1. 
 		createApiSelectSentence(json_d::Dict,mode::String) create API and SQL select sentence from posting data.
+		refStichWort(stichwort::String)	reference and matching with user_info->stichwort
+		prepareDbEnvironment(db::String,mode::String) database connection checking, and initializing database if needed
 """
 
 module DBDataController
 
 using DataFrames, Genie, Genie.Renderer, Genie.Renderer.Json
-using Jetelina.ApiSqlListManager, Jetelina.JMessage, Jetelina.JLog
+using Jetelina.InitApiSqlListManager.ApiSqlListManager, Jetelina.JMessage, Jetelina.JLog, Jetelina.JSession
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
@@ -37,22 +41,26 @@ JMessage.showModuleInCompiling(@__MODULE__)
 #===
 	Note: 
 		wanna these include() in init(), but not alll DBData.. is been included(), thus sometimes 'not found method ..' happen.
-	    guess should have a procedure alike JTimer.jl, I mean should include these in a dummy file to kick init(). :P  2024/2/10
+		guess should have a procedure alike JTimer.jl, I mean should include these in a dummy file to kick init(). :P  2024/2/10
 ===#
 include("libs/postgres/PgDBController.jl")
 include("libs/postgres/PgSQLSentenceManager.jl")
+include("libs/mysql/MyDBController.jl")
+include("libs/mysql/MySQLSentenceManager.jl")
+include("libs/redis/RsDBController.jl")
+include("libs/redis/RsSQLSentenceManager.jl")
 
-export init_Jetelina_table,
+export init_Jetelina_table, createJetelinaDatabaseinMysql,
 	dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,
-	executeApi, userRegist, chkUserExistence, getUserInfoKeys, refUserAttribute, updateUserInfo, updateUserData, deleteUserAccount,
-	createApiSelectSentence
+	executeApi, userRegist, chkUserExistence, getUserInfoKeys, refUserAttribute, refUserInfo, updateUserInfo, updateUserData, deleteUserAccount,
+	createApiSelectSentence, refStichWort, prepareDbEnvironment
 
 
 """
-function __init__()
+function init()
 	Initial action. Execute init_Jetelina_table()
 """
-function __init__()
+function init()
 	@info "==========DBDataController init================"
 	#===
 		Note: 
@@ -65,18 +73,30 @@ end
 """
 function init_Jetelina_table()
 	Execute *.create_jetelina_table() depend on DB type.
-	Execute *.readJetelinatable() depend on DB type.
 """
 function init_Jetelina_table()
-	if j_config.JC["dbtype"] == "postgresql"
+	if j_config.JC["jetelinadb"] == "postgresql"
 		# Case in PostgreSQL
+		PgDBController.create_jetelina_database()
 		PgDBController.create_jetelina_id_sequence()
-		PgDBController.create_jetelina_table()
-		PgDBController.readJetelinatable()
-	elseif j_config.JC["dbtype"] == "mariadb"
-	elseif j_config.JC["dbtype"] == "oracle"
+		PgDBController.create_jetelina_user_table()
+	elseif j_config.JC["jetelinadb"] == "mysql"
+		# Case in MySQL
+		createJetelinaDatabaseinMysql()
+		MyDBController.create_jetelina_user_table()
+	elseif j_config.JC["jetelinadb"] == "oracle"
 	end
 
+end
+"""
+function createJetelinaDatabaseinMysql()
+
+	special function for creating 'jetelina' database in Mysql.
+	the reaosn is refer to ConfigManager.configParamUpdate(), please, do not wanna talk a lot anymore.・ω・
+
+"""
+function createJetelinaDatabaseinMysql()
+	MyDBController.create_jetelina_database()
 end
 """
 function dataInsertFromCSV(csvfname::String)
@@ -89,9 +109,14 @@ function dataInsertFromCSV(csvfname::String)
 function dataInsertFromCSV(csvfname::String)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
-		PgDBController.dataInsertFromCSV(csvfname)
-	elseif j_config.JC["dbtype"] == "mariadb"
+		return PgDBController.dataInsertFromCSV(csvfname)
+	elseif j_config.JC["dbtype"] == "mysql"
+		# Case in MySQL
+		return MyDBController.dataInsertFromCSV(csvfname)
 	elseif j_config.JC["dbtype"] == "oracle"
+	elseif j_config.JC["dbtype"] == "redis"
+		# Case in Redis
+		return RsDBController.dataInsertFromCSV(csvfname)
 	end
 end
 """
@@ -110,38 +135,73 @@ function getTableList(s::String)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
 		PgDBController.getTableList(s)
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
+		# Case in MySQL
+		MyDBController.getTableList(s)
 	elseif j_config.JC["dbtype"] == "oracle"
+	elseif j_config.JC["dbtype"] == "redis"
+		# Case in Redis
+		#===
+			Caution:
+				getKeyList() returns the registered keys in redis.
+		===#
+		RsDBController.getKeyList(s)
 	end
 end
 """
-function dropTable(tableName::Vector)
+function dropTable(tableName::Vector, stichwort::String)
 		
 	Drop the tables and delete its related data from jetelina_table_manager table
 
 # Arguments
 - `tableName: Vector`: name of the tables
+- `stichwort: String`: a kind of pass phrase for executing
 """
-function dropTable(tableName::Vector)
-	if j_config.JC["dbtype"] == "postgresql"
-		# Case in PostgreSQL
-		ret = PgDBController.dropTable(tableName)
-		if ret[1]
+function dropTable(tableName::Vector, stichwort::String)
+	stichret::Bool = false
+	ret::Any = ""
+
+	#===
+		Tips:
+			check the stichwort in user_info.
+			in the case of nothing, register it into there,
+			in the case of being, take the matching.
+	===#
+	if j_config.JC["jetelinadb"] == "postgresql"
+		stichret = PgDBController.refStichWort(stichwort)
+	elseif j_config.JC["jetelinadb"] == "mysql"
+		stichret = MyDBController.refStichWort(stichwort)
+	elseif j_config.JC["jetelinadb"] == "oracle"
+	end
+
+	if (stichret)
+		if j_config.JC["dbtype"] == "postgresql"
+			# Case in PostgreSQL
+			ret = PgDBController.dropTable(tableName)
+		elseif j_config.JC["dbtype"] == "mysql"
+			# Case in MySQL
+			ret = MyDBController.dropTable(tableName)
+		elseif j_config.JC["dbtype"] == "oracle"
+		end
+
+		if stichret && ret[1]
 			# update SQL list
 			ApiSqlListManager.deleteTableFromlist(tableName)
 		end
 		#==
 			Tips:
 				ret[2] is expected
-					delete succeeded
-						json(Dict("result" => true, "tablename" => "$tableName", "message from Jetelina" => jmsg))
-					something error happened
-						json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err"))
+				delete succeeded
+					json(Dict("result" => true, "tablename" => "$tableName", "message from Jetelina" => jmsg))
+				something error happened
+					json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err"))
 		==#
-		return ret[2]
-	elseif j_config.JC["dbtype"] == "mariadb"
-	elseif j_config.JC["dbtype"] == "oracle"
+		return ret[2]	
+	else
+		jmg = "Hum, wrong pass phrase, was it? type 'cancel' then try it again."
+		return json(Dict("result" => false,  "errmsg" => "$jmg"))
 	end
+
 end
 """
 function getColumns(tableName::String)
@@ -155,8 +215,17 @@ function getColumns(tableName::String)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
 		PgDBController.getColumns(tableName)
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
+		# Case in MySQL
+		MyDBController.getColumns(tableName)
 	elseif j_config.JC["dbtype"] == "oracle"
+	elseif j_config.JC["dbtype"] == "redis"
+		# Case in Redis
+		#===
+			Caution: 
+				redis does not have columns.
+				the keys are getting in getTableList().
+		===#
 	end
 end
 """
@@ -176,8 +245,10 @@ function doSelect(sql::String,mode::String)
 function doSelect(sql::String, mode::String)
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
-		PgDBController.doSelect(sql,mode)
-	elseif j_config.JC["dbtype"] == "mariadb"
+		PgDBController.doSelect(sql, mode)
+	elseif j_config.JC["dbtype"] == "mysql"
+		# Case in MySQL
+		MyDBController.doSelect(sql, mode)
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -203,20 +274,28 @@ function executeApi(json_d::Dict)
 	# Step1
 	#===
 		Tips:
+			ApiSql...readSql...()[1] contains true/false.
+			ApiSql...readSql...()[2] contains dataframe list if [] is true, in the case of false is nothing.
+
 			use subset() here, because Df_JetelinaSqlList may have missing data.
 			subset() supports 'skipmissing', but filter() does not.
 	===#
-	if ApiSqlListManager.readSqlList2DataFrame()[1]
-		Df_JetelinaSqlList = ApiSqlListManager.readSqlList2DataFrame()[2]
-		target_api = subset(Df_JetelinaSqlList, :apino => ByRow(==(json_d["apino"])), skipmissing = true)
+	if 0 < nrow(ApiSqlListManager.Df_JetelinaSqlList)
+		target_api = subset(ApiSqlListManager.Df_JetelinaSqlList, :apino => ByRow(==(json_d["apino"])), skipmissing = true)
 		if 0 < nrow(target_api)
+			dbtype = target_api[!, :db][1]
 			# Step2:
-			if j_config.JC["dbtype"] == "postgresql"
+			if dbtype == "postgresql"
 				# Case in PostgreSQL
 				ret = PgDBController.executeApi(json_d, target_api)
+			elseif dbtype == "mysql"
+				# Case in MySQL
+				ret = MyDBController.executeApi(json_d, target_api)
+			elseif dbtype == "redis"
+				# Case in Redis
+				ret = RsDBController.executeApi(json_d, target_api)
+			elseif dbtype == "oracle"
 			end
-		elseif j_config.JC["dbtype"] == "mariadb"
-		elseif j_config.JC["dbtype"] == "oracle"
 		end
 	else
 		# not found SQL list 
@@ -233,15 +312,17 @@ function userRegist()
 	register a new user
 
 # Arguments
-- `username::String`:  user name. this data sets in as 'login','firstname' and 'lastname' at once.
+- `username::String`:  user name. this data sets in 'username'
 - return::boolean: success->true  fail->false
 """
 function userRegist(username::String)
-	if j_config.JC["dbtype"] == "postgresql"
+	if j_config.JC["jetelinadb"] == "postgresql"
 		# Case in PostgreSQL
-		PgDBController.userRegist(s)
-	elseif j_config.JC["dbtype"] == "mariadb"
-	elseif j_config.JC["dbtype"] == "oracle"
+		PgDBController.userRegist(username)
+	elseif j_config.JC["jetelinadb"] == "mysql"
+		# Case in MySQL
+		MyDBController.userRegist(username)
+	elseif j_config.JC["jetelinadb"] == "oracle"
 	end
 end
 """
@@ -256,11 +337,16 @@ function chkUserExistence(s::String)
 - return: success -> user data in json, fail -> ""
 """
 function chkUserExistence(s::String)
-	if j_config.JC["dbtype"] == "postgresql"
+	if j_config.JC["jetelinadb"] == "postgresql"
 		# Case in PostgreSQL
 		PgDBController.chkUserExistence(s)
-	elseif j_config.JC["dbtype"] == "mariadb"
-	elseif j_config.JC["dbtype"] == "oracle"
+	elseif j_config.JC["jetelinadb"] == "mysql"
+		# Case in MySQL
+		MyDBController.chkUserExistence(s)
+	elseif j_config.JC["jetelinadb"] == "oracle"
+	else
+		# when 'jetelinadb' is not determined yet.
+		return Dict("result" => false, "Jetelina" => [], "message from Jetelina" => "Hum, you should set me first, type 'it is me' to start it.")
 	end
 end
 """
@@ -273,11 +359,13 @@ function getUserInfoKeys(uid::Integer)
 - return: success -> user data in json or DataFrame, fail -> ""
 """
 function getUserInfoKeys(uid::Integer)
-	if j_config.JC["dbtype"] == "postgresql"
+	if j_config.JC["jetelinadb"] == "postgresql"
 		# Case in PostgreSQL
 		PgDBController.getUserInfoKeys(uid)
-	elseif j_config.JC["dbtype"] == "mariadb"
-	elseif j_config.JC["dbtype"] == "oracle"
+	elseif j_config.JC["jetelinadb"] == "mysql"
+		# Case in MySQL
+		MyDBController.getUserInfoKeys(uid)
+	elseif j_config.JC["jetelinadb"] == "oracle"
 	end
 end
 """
@@ -292,12 +380,36 @@ function refUserAttribute(uid::Integer,key::String,val)
 - return: success -> user data in json or DataFrame, fail -> ""
 """
 function refUserAttribute(uid::Integer, key::String, val)
-	if j_config.JC["dbtype"] == "postgresql"
+	rettype::Integer = 0 # because wanna the return as json type
+
+	if j_config.JC["jetelinadb"] == "postgresql"
 		# Case in PostgreSQL
-		rettype::Integer = 0 # because wanna the return as json type
 		PgDBController.refUserAttribute(uid, key, val, rettype)
-	elseif j_config.JC["dbtype"] == "mariadb"
-	elseif j_config.JC["dbtype"] == "oracle"
+	elseif j_config.JC["jetelinadb"] == "mysql"
+		# Case in MySQL
+		MyDBController.refUserAttribute(uid, key, val, rettype)
+	elseif j_config.JC["jetelinadb"] == "oracle"
+	end
+end
+"""
+function refUserInfo(uid::Integer,key::String,rettype::Integer)
+
+	simply inquiring user_info data 
+	
+# Arguments
+- `uid::Integer`: expect user_id
+- `key::String`: key name in user_info json data
+- `rettype::Integer`: return data type. 0->json 1->DataFrame 
+- return: success -> user data in json or DataFrame, fail -> ""
+"""
+function refUserInfo(uid::Integer, key::String, rettype::Integer)
+	if j_config.JC["jetelinadb"] == "postgresql"
+		# Case in PostgreSQL
+		PgDBController.refUserInfo(uid, key, rettype)
+	elseif j_config.JC["jetelinadb"] == "mysql"
+		# Case in MySQL
+		MyDBController.refUserInfo(uid, key, rettype)
+	elseif j_config.JC["jetelinadb"] == "oracle"
 	end
 end
 """
@@ -312,11 +424,13 @@ function updateUserInfo(uid::Integer,key::String,value)
 - return: success -> true, fail -> error message
 """
 function updateUserInfo(uid::Integer, key::String, value)
-	if j_config.JC["dbtype"] == "postgresql"
+	if j_config.JC["jetelinadb"] == "postgresql"
 		# Case in PostgreSQL
-		PgDBController.updateUserInfo(uid, key, val)
-	elseif j_config.JC["dbtype"] == "mariadb"
-	elseif j_config.JC["dbtype"] == "oracle"
+		PgDBController.updateUserInfo(uid, key, value)
+	elseif j_config.JC["jetelinadb"] == "mysql"
+		# Case in MySQL
+		MyDBController.updateUserInfo(uid, key, value)
+	elseif j_config.JC["jetelinadb"] == "oracle"
 	end
 end
 """
@@ -332,11 +446,13 @@ function updateUserData(uid::Integer,key::String,value)
 - return: success -> true, fail -> error message
 """
 function updateUserData(uid::Integer, key::String, value)
-	if j_config.JC["dbtype"] == "postgresql"
+	if j_config.JC["jetelinadb"] == "postgresql"
 		# Case in PostgreSQL
-		PgDBController.updateUserData(uid, key, val)
-	elseif j_config.JC["dbtype"] == "mariadb"
-	elseif j_config.JC["dbtype"] == "oracle"
+		PgDBController.updateUserData(uid, key, value)
+	elseif j_config.JC["jetelinadb"] == "mysql"
+		# Case in MySQL
+		MyDBController.updateUserData(uid, key, value)
+	elseif j_config.JC["jetelinadb"] == "oracle"
 	end
 end
 """
@@ -349,11 +465,13 @@ function updateUserLoginData(uid::Integer)
 - return: success -> true, fail -> error message
 """
 function updateUserLoginData(uid::Integer)
-	if j_config.JC["dbtype"] == "postgresql"
+	if j_config.JC["jetelinadb"] == "postgresql"
 		# Case in PostgreSQL
 		PgDBController.updateUserLoginData(uid)
-	elseif j_config.JC["dbtype"] == "mariadb"
-	elseif j_config.JC["dbtype"] == "oracle"
+	elseif j_config.JC["jetelinadb"] == "mysql"
+		# Case in MySQL
+		MyDBController.updateUserLoginData(uid)
+	elseif j_config.JC["jetelinadb"] == "oracle"
 	end
 end
 """
@@ -366,11 +484,13 @@ function deleteUserAccount(uid::Integer)
 - return: success -> true, fail -> error message
 """
 function deleteUserAccount(uid::Integer)
-	if j_config.JC["dbtype"] == "postgresql"
+	if j_config.JC["jetelinadb"] == "postgresql"
 		# Case in PostgreSQL
 		PgDBController.deleteUserAccount(uid)
-	elseif j_config.JC["dbtype"] == "mariadb"
-	elseif j_config.JC["dbtype"] == "oracle"
+	elseif j_config.JC["jetelinadb"] == "mysql"
+		# Case in MySQL
+		MyDBController.deleteUserAccount(uid)
+	elseif j_config.JC["jetelinadb"] == "oracle"
 	end
 end
 """
@@ -390,27 +510,69 @@ function createApiSelectSentence(json_d::Dict, mode::String)
 
 	if j_config.JC["dbtype"] == "postgresql"
 		# Case in PostgreSQL
-		if mode == "ok"
-			sqn = PgDBController.getJetelinaSequenceNumber(1) # attr '1' means 'jetelian_sql_sequence'. see its function.
-		elseif mode == "pre"
-			sqn = -1
-		end
-
-		if sqn isa Integer
-			ret = PgSQLSentenceManager.createApiSelectSentence(json_d, sqn)
-			if mode == "pre"
-				#===
-					Tips:
-						in the case of mode="pre", PgSQLSente...createApiSelect...() returns SQL sentence for pre executing.
-						it could not execute in PgSQLSentenceManager because of the relation in 'using'. :P 
-				===#
-				ret = PgDBController.doSelect(ret,"pre")
-			end
-		else
-			ret = "fail: Illegal Sequence Number"
-		end
-	elseif j_config.JC["dbtype"] == "mariadb"
+		ret = PgSQLSentenceManager.createApiSelectSentence(json_d, mode)
+	elseif j_config.JC["dbtype"] == "mysql"
+		# Case in MySQL
+		ret = MySQLSentenceManager.createApiSelectSentence(json_d, mode)
 	elseif j_config.JC["dbtype"] == "oracle"
+	end
+
+	if mode == "pre"
+		#===
+			Tips:
+				in the case of mode="pre", PgSQLSente...createApiSelect...() returns SQL sentence for pre executing.
+				it could not execute in PgSQLSentenceManager because of the relation in 'using'. :P 
+		===#
+		if j_config.JC["dbtype"] == "postgresql"
+			# Case in PostgreSQL
+			ret = PgDBController.doSelect(ret, "pre")
+		elseif j_config.JC["dbtype"] == "mysql"
+			# Case in MySQL
+			ret = MyDBController.doSelect(ret, "pre")
+		elseif j_config.JC["dbtype"] == "oracle"
+		end
+	end
+
+	return ret
+end
+"""
+function refStichWort(stichwort::String)
+
+	reference and matching with user_info->stichwort
+
+# Arguments
+- `stichwort::String`: user input pass phrase
+- return: match -> true, mismatch -> false, fail -> error message
+"""
+function refStichWort(stichwort::String)
+	if j_config.JC["jetelinadb"] == "postgresql"
+		# Case in PostgreSQL
+		PgDBController.refStichWort(stichwort)
+	elseif j_config.JC["jetelinadb"] == "mysql"
+		# Case in MySQL
+		MyDBController.refStichWort(stichwort)
+	elseif j_config.JC["jetelinadb"] == "oracle"
+	end
+end
+"""
+function prepareDbEnvironment(db::String,mode::String) 
+	
+	database connection checking, and initializing database if needed
+
+# Arguments
+- `db::String`: target db
+- `mode::String`: 'init' -> initialize, others -> connection check
+- return: success -> true, fail -> false
+"""
+function prepareDbEnvironment(db::String,mode::String)
+	ret = ""
+
+	if db == "postgresql"
+		ret = PgDBController.prepareDbEnvironment(mode)
+	elseif db == "mysql"
+		ret = MyDBController.prepareDbEnvironment(mode)
+	elseif db == "redis"
+		ret = RsDBController.prepareDbEnvironment(mode)
 	end
 
 	return ret

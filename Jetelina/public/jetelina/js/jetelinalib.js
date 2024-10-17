@@ -1,7 +1,6 @@
 /**
     JS library for Jetelina common library
     @author Ono Keiji
-    @version 1.0
 
     This js lib works with dashboard.js, functionpanel.js and conditionpanel.js.
     
@@ -27,20 +26,25 @@
       showManualCommandList(s) show/hide manual and/or command list panel
       inScenarioChk(s,sc,type) check if user input string is in the ordered scenario
       countCandidates(s,sc,type) count config/scenario candidates
-      checkNewCommer(s) check the login user is a newcommer or not.
-      checkBeginner() check the login user is a beginner or not.
       isVisibleFunctionPanel() check the function panel is visible or not
       inVisibleConditionPanel() check the condition panel is visible or not
       isVisibleSomethingMsgPanel() checking "#something_msg" is visible or not
-      showSomethingInputField(b) "#something_input_field" show or hide
+      showSomethingInputField(b,type) "#something_input_field" show or hide
       showSomethingMsgPanel(b) "#something_msg" show or hide
       isVisibleApiTestPanel() checking "#apitest" is visible or not
       showApiTestPanel(b) "#apitest" show or hide
-      inCancelableCmdList(cmd) check the ordered command is in cancelableCmdList or not
+      inCancelableCmdList(cmd) check the ordered commands are in cancelableCmdList or not
       rejectCancelableCmdList(cmd) reject command from cancelableCmdList
       rejectSelectedItemsArr(item) reject selected item from selectedItemsArr
-      checkBandA(o,p) check the target sting is effective or not in the array string.
-*/
+      subPanelCheck() confirm sub panels condition when focus moves on Jetelina Chat Box
+      isVisibleDatabaseList(b) '#databaselist" show or hide
+      setDBFocus(s) set blinking to the current db
+      isVisibleFavicon(b) show/hide the favicon message
+      apiTestAjax() ajax function for executing API test.
+      searchLogAjax() ajax function for searching 'errnum' in the log file
+      showConfigPanel(b) "#config_panel" show or hide
+      showPreciousPanel(b) "#jetelina_teach_you_smg" show or hide
+ */
 const JETELINACHATTELL = `${JETELINAPANEL} [name='jetelina_tell']`;
 const SOMETHINGMSGPANEL = "#something_msg";
 const SOMETHINGMSGPANELMSG = `${SOMETHINGMSGPANEL} [name='jetelina_message']`;
@@ -50,21 +54,33 @@ const SOMETHINGINPUTFIELD = "#something_input_field";
 const SOMETHINGINPUT = `${SOMETHINGINPUTFIELD} input[name='something_input']`;
 const SOMETHINGTEXT = `${SOMETHINGINPUTFIELD} text[name='something_text']`;
 const FILEUP = "#fileup";
+const MYFORM = "#my_form";
+const UPFILE = `${MYFORM} input[name='upfile']`;
+const LeftPanelTitle = "#table_list_title";
+const RightPanelTitle = "#api_list_title";
 const TABLECONTAINER = "#table_container";
 const APICONTAINER = "#api_container";
 const GENELICPANEL = "#genelic_panel";
+const GENELICPANELINPUT = `${GENELICPANEL} textarea[name='genelic_input']`;
+const GENELICPANELTEXT = `${GENELICPANEL} text[name='genelic_text']`;
 const APITESTPANEL = "#apitest";
 const CONFIGCHANGE = "config-change";// command in cancelable command list 
-const TABLEAPILISTOPEN = "table-api-open";// command in cancelable command list
-const SELECTITEM = "select-item";// command in cancelable command list
-const TABLEAPIDELETE = "table-api-delete";// command in cancelable command list
-const FILESELECTOROPEN = "files-elector-open"; // command in cancelable command list
+const USERMANAGE = "account-manage"; //       〃
+const TABLEAPILISTOPEN = "table-api-open";//  〃
+const SELECTITEM = "select-item";// 　　　　　〃
+const TABLEAPIDELETE = "table-api-delete";// 〃
+const FILESELECTOROPEN = "files-elector-open"; // 　〃
 const LOCALPARAM = "login2jetelina"; // local strage parameter
-const USETCOUNTMAX = getRandomNumber(4) + 1; // only use for the first login in checkNewCommer
+const CONFIGPANEL = "#config_panel ";
+const CONFIGPANELLIST = `${CONFIGPANEL} [name='config_list']`;
+const PRECIOUSWORDPANEL = "#jetelina_teach_you_smg";//showing something precious word by Jetelina
 
-//let enterNumber = 0;
 let typingTimeoutID;
-
+let whatJetelinaTold = ""; // what jetelina was telling in just previous time 
+let relatedDataList = {}; // relation data to table/api has been contained here as temporary
+let messageScrollTimerID; // '#someting_msg' auto scroll timer interval 
+let apitestScrollTimerID; // '#apitest' auto scroll timer interval
+let original_chatbox_input_text = ""; // original text in Jetelina chatbox.
 /**
  * 
  * @function getScenarioFile
@@ -123,6 +139,17 @@ const checkResult = (o) => {
             let em = "";
             let errmsg;
             let error;
+
+            if (o.errnum != null) {
+                preferent.errnum = o.errnum;
+            }
+
+            if (o.preciousmsg != null) {
+                let prw = o.preciousmsg.replaceAll("<start>", "<ol class=\"jetelina_teach_you_ol\"><li>").replaceAll("<st>", "</li><li>").replaceAll("<end>", "</li></ol>");
+                $(`${PRECIOUSWORDPANEL} [name='precious_word']`).append(prw);
+                showPreciousPanel(true);
+            }
+
             if (o[response] != null) {
                 errmsg = o[response][errMsg];
                 error = o[response][errorStr];
@@ -151,12 +178,14 @@ const checkResult = (o) => {
                 em = chooseMsg("common-ajax-error-msg", error, "a");
             }
 
-            $(SOMETHINGMSGPANELMSG).text(em);
-            showSomethingMsgPanel(true);
+            if (em != "") {
+                $(SOMETHINGMSGPANELMSG).text(em);
+                showSomethingMsgPanel(true);
+            }
 
             ret = false;
         } else {
-            $(SOMETHINGMSGPANELMSG).text("");
+            //            $(SOMETHINGMSGPANELMSG).text("");
             showSomethingMsgPanel(false);
             /*
                 Tips:
@@ -182,6 +211,7 @@ const checkResult = (o) => {
  *                     2->api(sql) list 
  *                     3->conifguration changing history
  *                     4->api(sql) test before registring 
+ *                     5->indicate available db 
  *  @returns {object} only in the case of t=3, conifguration changing history object
  *
  *  resolve the json object into each data
@@ -226,7 +256,14 @@ const getdata = (o, t) => {
 
                                     if (t == 0) {
                                         // table list
-                                        str += `<span class="table">${value}</span>`;
+                                        let existList = [];
+                                        $(`${TABLECONTAINER} span`).each(function () {
+                                            existList.push($(this).text());
+                                        });
+
+                                        if ($.inArray(value, existList) == -1) {
+                                            str += `<span class="table">${value}</span>`;
+                                        }
                                     } else if (t == 1) {
                                         // jetelina_delete_flg should not show in the column list
                                         if (name != "jetelina_delete_flg") {
@@ -246,7 +283,9 @@ const getdata = (o, t) => {
                                         case t=2: wanna show it in one line
                                         this is the api list.
                                 */
-                                str += `<span class="api">${v.apino}</span>`;
+                                if (loginuser.dbtype.indexOf(v.db) != -1) {
+                                    str += `<span class="api">${v.apino}</span>`;
+                                }
                             } else if (t == 3) {
                                 if (v.date != null) {
                                     configChangeHistoryStr += `[${v.date}] `;
@@ -265,7 +304,26 @@ const getdata = (o, t) => {
                                         configChangeHistoryStr += `${kk}=${vv} `;
                                     });
 
-                                    configChangeHistoryStr += "<br>";
+                                }
+                                if (v.name != null) {
+                                    configChangeHistoryStr += ` by ${v.name}<br>`;
+                                }
+                            } else if (t == 5) {
+                                // indicate db icons if it were available.
+                                if (v["postgres"] == true) {
+                                    $("#databaselist span[name='postgresql']").show();
+                                } else {
+                                    $("#databaselist span[name='postgresql']").hide();
+                                }
+                                if (v["mysql"] == true) {
+                                    $("#databaselist span[name='mysql']").show();
+                                } else {
+                                    $("#databaselist span[name='mysql']").hide();
+                                }
+                                if (v["redis"] == true) {
+                                    $("#databaselist span[name='redis']").show();
+                                } else {
+                                    $("#databaselist span[name='redis']").hide();
                                 }
                             }
 
@@ -278,7 +336,7 @@ const getdata = (o, t) => {
                                 tagid = APICONTAINER;
                             }
 
-                            $(tagid).append(`${str}`);
+                            $(tagid).append(str);
                         }
                     });
 
@@ -295,7 +353,7 @@ const getdata = (o, t) => {
                         $(`${APITESTPANEL} [name='api-test-msg']`).append(`${testmsg}<br>${aquisition_nubmer}`);
                         $(`${APITESTPANEL} [name='api-test-data'`).append(`<span class='apitestresult'><p>-return JSON data are</p><p>${testdata}</p></span>`);
                         if (0 < jetelinamessage.length) {
-                            $("#apitest [name='api-test-msg']").append(`<span class='apitestresult'><p>Attention: ${jetelinamessage}</p></span>`);
+                            $(`${APITESTPANEL} [name='api-test-msg']`).append(`<span class='apitestresult'><p>Attention: ${jetelinamessage}</p></span>`);
                         }
                     }
                 }
@@ -332,101 +390,122 @@ const getAjaxData = (url) => {
                 return ret;
             }
         }).done(function (result, textStatus, jqXHR) {
+            let m = "";
             // go data parse
             const dataurls = scenario['analyzed-data-collect-url'];
-
-            if (url == dataurls[3]) {
-                /*
-                    Tips:
-                        dataurls[3] is for checking existing Jetelina's suggestion.
-                        resume below if the return were true,meaning exsit her one.
-                */
-                if (result) {
-                    // set suggestion existing flag to display my message
-                    isSuggestion = true;
-                    // set my suggestion
-                    $(SOMETHINGMSGPANELMSG).addClass("jetelina_suggestion");
-                    $(SOMETHINGMSGPANELMSG).text(`${result.Jetelina.apino}:${result.Jetelina.suggestion}`);
-                    // relation access & combination
-                    getAjaxData(dataurls[0]);
-                    // simply sql speed
-                    getAjaxData(dataurls[1]);
-                    // sql speed on test db
-                    getAjaxData(dataurls[2]);
-                }
-
-                /*
-                    Tips:
-                        dataurls[4] is for sql access count data.
-                        this data always is executed.
-                */
-                getAjaxData(dataurls[4]);
-
-            } else if (inScenarioChk(url, 'analyzed-data-collect-url')) {
-                let type = "";
-                if (url == dataurls[0]) {
-                    // access vs combination
-                    type = "ac";
-                } else if (url == dataurls[1]) {
-                    // real performance. execute sql on the DB. considering needs or not, 2023/11/25
-                    type = "real";
-                } else if (url == dataurls[2]) {
-                    // test performance. execute sql on test DB
-                    type = "test";
-                } else if (url == dataurls[4]) {
-                    // sql access
-                    type = "access";
-                }
-                /*
-                    Tips:
-                        drow graphic in condition panel.
-                        this setGraphDta() function is defined in conditionpanel.js.
-                */
-                let acVscom = setGraphData(result, type);
-
-                if (isSuggestion) {
+            if (checkResult(result)) {
+                if (url == dataurls[3]) {
                     /*
                         Tips:
-                            isSuggestion = true, the meaning of the file existing is Jetelina wanna put inform you something 'improving suggestion'.
-                            the below message is for it.
-                            but abandon any 'suggestion" in Ver.1
+                            dataurls[3] is for checking existing Jetelina's suggestion.
+                            resume below if the return were true,meaning exsit her one.
                     */
-                    typingControll(chooseMsg("cond-performance-improve-msg", "", ""));
+                    if (result) {
+                        // set suggestion existing flag to display my message
+                        isSuggestion = true;
+                        // set my suggestion
+                        $(SOMETHINGMSGPANELMSG).addClass("jetelina_suggestion");
+                        $(SOMETHINGMSGPANELMSG).text(`${result.Jetelina.apino}:${result.Jetelina.suggestion}`);
+                        // relation access & combination
+                        getAjaxData(dataurls[0]);
+                        // simply sql speed
+                        getAjaxData(dataurls[1]);
+                        // sql speed on test db
+                        getAjaxData(dataurls[2]);
+                    }
+
+                    /*
+                        Tips:
+                            dataurls[4] is for sql access count data.
+                            this data always is executed.
+                    */
+                    getAjaxData(dataurls[4]);
+
+                } else if (inScenarioChk(url, 'analyzed-data-collect-url')) {
+                    let type = "";
+                    if (url == dataurls[0]) {
+                        // access vs combination
+                        type = "ac";
+                    } else if (url == dataurls[1]) {
+                        // real performance. execute sql on the DB. considering needs or not, 2023/11/25
+                        type = "real";
+                    } else if (url == dataurls[2]) {
+                        // test performance. execute sql on test DB
+                        type = "test";
+                    } else if (url == dataurls[4]) {
+                        // sql access
+                        type = "access";
+                    }
+                    /*
+                        Tips:
+                            drow graphic in condition panel.
+                            this setGraphDta() function is defined in conditionpanel.js.
+                    */
+                    let acVscom = setGraphData(result, type);
+
+                    if (isSuggestion) {
+                        /*
+                            Tips:
+                                isSuggestion = true, the meaning of the file existing is Jetelina wanna put inform you something 'improving suggestion'.
+                                the below message is for it.
+                                but abandon any 'suggestion" in Ver.1
+                        */
+                        typingControll(chooseMsg("cond-performance-improve-msg", "", ""));
+                    } else {
+                        typingControll(chooseMsg("success-msg", "", ""));
+                    }
                 } else {
-                    typingControll(chooseMsg("success-msg", "", ""));
+                    /*
+                        Attention:
+                            reset "api_list_title" here.
+                            indeed it needs in case of switching table/api list <- geturl[0]:api list, and geturl[1]:table list
+                            but there is not reason to set it in each, so far, therefore do it at here.
+                            change this position if it would have an issue. :P
+                    */
+                    const geturl = scenario['function-get-url'];
+                    if (url == geturl[0]) {
+                        //rendering api list
+                        preferent.apilist = result;
+                        getdata(result, 2);
+                        /*
+                            Tips:
+                                ②
+                                in the case of calling to show the newest api in table list panel,
+                                in fact it maybe called in chatKeyDonw() first (at ①), 
+                                it has a process as showing api-list then pointing the newest one.
+                                this process is executed by a chat word in chatKeyDown().
+                                the newest api no is set in presentaction.orderapino at the early line of chatKeyDown(). 
+                        */
+                        if (isVisibleApiContainer() && presentaction.orderapino != null) {
+                            let orderdapino = presentaction.orderapino;
+                            presentaction.orderapino = null;
+                            chatKeyDown(`open ${orderdapino}`);
+                        }
+                    } else if (url == geturl[1]) {
+                        // get db table list
+                        getdata(result, 0);
+                    } else if (url == geturl[2]) {
+                        // configuration change history
+                        getdata(result, 3);
+                    } else if (url == geturl[3]) {
+                        // simply logout and the chat message unnecessary
+                        return;
+                    } else if (url == geturl[4]) {
+                        // available dbs
+                        getdata(result, 5)
+                    }
+
+                    m = 'success-msg';
                 }
             } else {
-                const geturl = scenario['function-get-url'];
-                if (url == geturl[0]) {
-                    //rendering api list
-                    preferent.apilist = result;
-                    getdata(result, 2);
-                    /*
-                        Tips:
-                            ②
-                            in the case of calling to show the newest api in table list panel,
-                            in fact it maybe called in chatKeyDonw() first (at ①), 
-                            it has a process as showing api-list then pointing the newest one.
-                            this process is executed by a chat word in chatKeyDown().
-                            the newest api no is set in presentaction.orderapino at the early line of chatKeyDown(). 
-                    */
-                    if (isVisibleApiContainer() && presentaction.orderapino != null) {
-                        let orderdapino = presentaction.orderapino;
-                        presentaction.orderapino = null;
-                        chatKeyDown(`open ${orderdapino}`);
-                    }
-                } else if (url == geturl[1]) {
-                    // get db table list
-                    getdata(result, 0);
-                } else if (url == geturl[2]) {
-                    // configuration change history
-                    getdata(result, 3);
-                }
-
-                typingControll(chooseMsg("success-msg", "", ""));
+                cmdCandidates = [];
+                m = 'fail-msg';
             }
+
+            typingControll(chooseMsg(m, '', ''));
         }).fail(function (result) {
             checkResult(result);
+            cmdCandidates = [];
             console.error("getAjaxData() fail");
             typingControll(chooseMsg("fail-msg", "", ""));
         }).always(function () {
@@ -462,32 +541,176 @@ const postAjaxData = (url, data) => {
                 return ret;
             }
         }).done(function (result, textStatus, jqXHR) {
+            let m = "";
             const posturls = scenario['function-post-url'];
-            if (url == posturls[0]) {
-                // userdata update
-            } else if (url == posturls[1]) {
-                // jetelinawords -> nothing do
-            } else if (url == posturls[2]) {
-                // get a configuration parameter, then show it in there
-                let configMsg = "Oh oh, I do not know it, another one plz.";
-                $.each(result, function (name, value) {
-                    if (name != "result") {
-                        presentaction.config_data = value;
-                        configMsg = `${name} is '${value}' so far`;
+            if (checkResult(result)) {
+                let specialmsg = "";
+                if (url == posturls[0] || url == posturls[7]) {
+                    // userdata update or new user register
+                    // clean up user register parameters
+                    rejectCancelableCmdList(USERMANAGE);
+                    presentaction.cmd = null;
+                    presentaction.um = null;
+                    if (!result.result) {
+                        specialmsg = result["message from Jetelina"];
                     }
-                });
+                } else if (url == posturls[1]) {
+                    // jetelinawords -> nothing do
+                } else if (url == posturls[2]) {
+                    // get a configuration parameter, then show it in there
+                    let configMsg = "Oh oh, I do not know it, another one plz.";
+                    $.each(result, function (name, value) {
+                        if (name != "result") {
+                            presentaction.config_name = name;
+                            presentaction.config_data = value;
+                            configMsg = `${name} is '${value}' so far`;
+                        }
+                    });
 
-                $(SOMETHINGMSGPANELMSG).text(configMsg);
-                showSomethingMsgPanel(true);
-            } else if (url == posturls[3]) {
-                // configuration parameter change success then cleanup the "#something_msg"
-                presentaction.cmd = null;
-                showSomethingInputField(false);
+                    $(SOMETHINGMSGPANELMSG).text(configMsg);
+                    showSomethingMsgPanel(true);
+                } else if (url == posturls[3]) {
+                    // configuration parameter change success then cleanup the "#something_msg"
+                    setDBFocus(presentaction.dbtype);
+                    loginuser.dbtype = presentaction.dbtype;
+                    presentaction = {};
+                    showSomethingInputField(false);
+                    if (result.target != null && 0 < result.target.length) {
+                        let tdb = ""
+                        if (result.target == "pg_work") {
+                            tdb = "postgresql";
+                        } else if (result.target == "my_work") {
+                            tdb = "mysql";
+                        } else if (result.target == "redis_work") {
+                            tdb = "redis";
+                        }
+
+                        if (tdb != "") {
+                            preferent.db = tdb;
+                            $(`#databaselist span[name='${tdb}']`).show();
+                            setDBFocus(preferent.db);
+
+                            // clean clean clean... :)
+                            loginuser.dbtype = preferent.db;
+                            setLeftPanelTitle();
+                            tidyupcmdCandidates("switchdb");
+                            deleteSelectedItems();
+                            cleanupItems4Switching();
+                            cleanupContainers();
+                            cancelableCmdList = [];
+
+                            // clean up the parameters for api test
+                            preferent.apitestparams = [];
+                            preferent.apiparams_count = null;
+                            preferent.original_apiin_str = "";
+                            preferent.original_apiout_str = "";
+
+                            // mandatory post for changing the session param in server side.
+                            let data = `{"param":"${preferent.db}"}`;
+                            postAjaxData(scenario['function-post-url'][9], data);
+                        }
+                    }
+                } else if (url == posturls[8]) {
+                    let str = "";
+                    if (result.list != 0) {
+                        /*
+                            Tips:
+                                result.target -> "table name e.g. ftest1" or "api name e.g. js112"
+                                therefore, relatedDataList[result.target] is the related talbes/apis list with 'result.target'
+                        */
+                        relatedDataList[result.target] = result.list;
+                        // collect items on the relational list are already
+                        let existList = [];
+                        /*
+                            Tips:
+                                add the list into APICONTAINER when relatedDataList.type = "table", because a 'table' was clicked
+                                opposit in case of 'api'
+                        */
+                        let targetcontainer = TABLECONTAINER;
+                        if (relatedDataList.type == "api") {
+                            targetcontainer = APICONTAINER;
+                        }
+
+                        $(`${targetcontainer} span`).each(function () {
+                            existList.push($(this).text());
+                        });
+
+                        // collect the difference items between getting list(result.list) and on the relational list
+                        let newaddlist = result.list.filter(x => existList.includes(x));
+                        if (0 < newaddlist.length) {
+                            $(`${targetcontainer} span`).each(function () {
+                                for (let i in newaddlist) {
+                                    if ($(this).text() == newaddlist[i]) {
+                                        if ($(this).hasClass("activeItem")) {
+                                            //                                            if (!$(this).hasClass("activeItem")) {
+                                            $(this).removeClass("activeItem");
+                                            $(this).addClass("activeandrelatedItem");
+                                        } else {
+                                            $(this).addClass("relatedItem");
+                                        }
+                                    }
+                                }
+                            });
+                        }
+
+                        // append it ＼(^o^)／
+                        $(targetcontainer).append(str);
+                    }
+                } else if (url == posturls[9]) {
+                    // switching database
+                    // do not expect any returns, but refresh table and api list
+                    displayTablesAndApis();
+                } else if (url == posturls[10]) {
+                    showConfigPanel(false);
+                    /*
+                        Tips:
+                            posturls[10] is for checking the connection,
+                            then make it use by posturls[3].
+                    */
+                    let dbconfname = ""
+                    if (preferent.db == "postgresql") {
+                        dbconfname = "pg_work";
+                    } else if (preferent.db == "mysql") {
+                        dbconfname = "my_work";
+                    } else if (preferent.db == "redis") {
+                        dbconfname = "redis_work";
+                    }
+
+                    let data = `{"${dbconfname}":"true"}`;
+                    postAjaxData(scenario["function-post-url"][3], data);
+                }
+
+                if (specialmsg == "") {
+                    m = chooseMsg("success-msg", "", "")
+                } else {
+                    m = specialmsg;
+                }
+            } else {
+                if (url == posturls[10]) {
+                    if ($(CONFIGPANEL).is(":visible")) {
+                        $(`${CONFIGPANEL} span`).filter(".configparams_key, .configparams_val").remove();
+                    }
+
+                    let dbinfo = result["Jetelina"][0];
+                    let dbparams = "";
+                    let i = 1;
+                    $.each(dbinfo, function (k, v) {
+                        dbparams += `<div style="text-align:left;"><span name="k${i}" class="configparams_key">${k}:</span><span name="v${i}" class="configparams_val">${v}</span></div>`;
+                        i++;
+                    });
+
+                    $(CONFIGPANELLIST).append(dbparams);
+                    showConfigPanel(true);
+                }
+
+                cmdCandidates = [];
+                m = chooseMsg("fail-msg", "", "");
             }
 
-            typingControll(chooseMsg("success-msg", "", ""));
+            typingControll(m, '', '');
         }).fail(function (result) {
             checkResult(result);
+            cmdCandidates = [];
             console.error("postAjaxData() fail");
             typingControll(chooseMsg("fail-msg", "", ""));
         }).always(function () {
@@ -513,6 +736,7 @@ const typingControll = (m) => {
     */
     if (typingTimeoutID != null) {
         clearTimeout(typingTimeoutID);
+        whatJetelinaTold = $(JETELINACHATTELL).text();
         $(JETELINACHATTELL).text("");
     }
 
@@ -541,72 +765,132 @@ const authAjax = (un) => {
             return ret;
         }
     }).done(function (result, textStatus, jqXHR) {
-        let scenarioNumber = "starting-4-msg";
-        if (result != null) {
+        let m = "";
+        if (checkResult(result)) {
             const o = result;
-            let m = "";
+            let scenarioNumber = "starting-4-msg";
+            loginuser.available = result.available;
+            if (result.last_dbtype != null && 0 < result.last_dbtype.length) {
+                setDBFocus(result.last_dbtype);
+                loginuser.dbtype = result.last_dbtype;
+            }
+
             // found user
             Object.keys(o).some(function (key) {
-                if (key == "Jetelina" && o[key].length == 1) {
-                    $.each(o[key][0], function (k, v) {
-                        if (k == "user_id") {
-                            loginuser.user_id = v;
-                            localStorage[LOCALPARAM] = true;
-                        } else if (k == "login") {
-                            loginuser.login = v;
-                        } else if (k == "firstname") {
-                            loginuser.firstname = v;
-                        } else if (k == "lastname") {
-                            loginuser.lastname = v;
-                            m = v;
-                        } else if (k == "nickname") {
-                            loginuser.nickname = v;
-                        } else if (k == "logincount") {
-                            loginuser.logincount = v;
-                        } else if (k == "logindate") {
-                            loginuser.lastlogin = v;
-                        } else if (k == "user_level") {
-                            loginuser.user_level = v;
-                        } else if (k == "familiar_index") {
-                            loginuser.familiar_index = v;
+                if (key == "Jetelina") {
+                    if (o[key].length == 1) {
+                        $.each(o[key][0], function (k, v) {
+                            if (k == "user_id") {
+                                loginuser.user_id = v;
+                            } else if (k == "username") {
+                                if ((v != null) && (0 < v.length)) {
+                                    let name = v.split(' ');
+                                    if ((name != null) && (0 < name.length)) {
+                                        loginuser.firstname = name[1];
+                                        loginuser.lastname = name[0];
+                                        if (0 < loginuser.lastname.length) {
+                                            m = loginuser.lastname;
+                                        } else {
+                                            m = loginuser.firstname;
+                                        }
+                                    }
+                                }
+                            } else if (k == "nickname") {
+                                loginuser.nickname = v;
+                            } else if (k == "logincount") {
+                                loginuser.logincount = v;
+                            } else if (k == "logindate") {
+                                loginuser.logindate = v;
+                            } else if (k == "logoutdate") {
+                                loginuser.logoutdate = v;
+                            } else if (k == "generation") {
+                                loginuser.generation = v;
+                            }
+                        });
+
+                        // nickname has a priority
+                        if (loginuser.nickname != null) {
+                            m = loginuser.nickname;
                         }
-                    });
+                        /*
+                            Tips:
+                                authentiaction count. this is the key to get auth in Jetelina.
+                                Jetelina asks some questions in order to user info, ex. hobby, living....
+                                these info are inquired to DB, then count up if it matched.
+                                after around 1 to 4 counted up, the user has been authenticated, then
+                                can move from 'login"success' to 'lets_do_something' stage.
 
-                    // nickname has a priority
-                    if (loginuser.nickname != null) {
-                        m = loginuser.nickname;
+                                loginuser and authcount are defined in dashboard.js as global.
+                        */
+                        if (0 < loginuser.logincount) {
+                            scenarioNumber = "starting-5-msg";
+                        } else {
+                            scenarioNumber = "first-login-msg";
+                        }
+                        /*
+                            Tips:
+                                user roll is defined by its "generation" and "logincount".
+                                generation        logincount vs roll
+                                                create   delete   user register
+                                    0              1        1<=       1<=
+                                    1              1        5<=       8<=
+                                    2              1       x3<=       <-<=
+                                    3              1       x4<=       <-<=
+
+                                i mean user who is 0 generation and less than 2 logincount can execute only create table/api, 
+                                later over 3 shift to "delete" roll that is able to till delete table/api.
+                                need over 8 logincount to get "user register" roll.
+                                other generation, e.g 1st is 2 times of 0 one.  
+                        */
+                        const p_roll = [1, 5, 8]; // <- generation=1 [create,delete,user register] 
+                        if (loginuser.generation == 0) {
+                            loginuser.roll = "admin";
+                        } else {
+                            loginuser.roll = "beginner";
+                            let t = 1;
+                            if (loginuser.generation == 2) {
+                                t = 3;
+                            } else if (loginuser.generation == 3) {
+                                t = 4;
+                            }
+
+                            if (p_roll[2] * t <= loginuser.logincount) {
+                                loginuser.roll = "admin";
+                            } else if (p_roll[1] * t <= loginuser.logincount) {
+                                loginuser.roll = "manager";
+                            }
+                        }
+
+                        stage = 'login_success';
+
+                        if (scenarioNumber != 'first-login-msg') {
+                            m = chooseMsg(scenarioNumber, m, "a");
+                        } else {
+                            m = chooseMsg(scenarioNumber, m, "r");
+                        }
+                    } else if (1 < o[key].length) {
+                        // some candidates
+                        scenarioNumber = "multi-candidates-msg";
+                        stage = 'login';
+                    } else {
+                        // no user
+                        m = result["message from Jetelina"];
+                        if (m == null || m == "") {
+                            m = chooseMsg('fail-msg', '', '');
+                        }
+
+                        stage = 'login';
+                        typingControll(m);
+                        return true;
                     }
-                    /*
-                        Tips:
-                            authentiaction count. this is the key to get auth in Jetelina.
-                            Jetelina asks some questions in order to user info, ex. hobby, living....
-                            these info are inquired to DB, then count up if it matched.
-                            after around 1 to 4 counted up, the user has been authenticated, then
-                            can move from 'login"success' to 'lets_do_something' stage.
-
-                            loginuser and authcount are defined in dashboard.js as global.
-                    */
-                    loginuser.c = 0;
-                    authcount = getRandomNumber(3) + 1;
-
-                    scenarioNumber = "starting-5-msg";
-                    stage = 'login_success';
-                } else if (1 < o[key].length) {
-                    // some candidates
-                    scenarioNumber = "multi-candidates-msg";
-                    stage = 'login';
-                } else {
-                    // no user
-                    scenarioNumber = "not-registered-msg";
-                    stage = 'login';
                 }
-
-                m = chooseMsg(scenarioNumber, m, "a");
-
-                typingControll(m);
-                return true;
             });
+        } else {
+            //            m = chooseMsg("fail-msg", "", "");
+            m = result["message from Jetelina"];
         }
+
+        typingControll(m);
     }).fail(function (result) {
         checkResult(result);
         // something error happened
@@ -651,7 +935,6 @@ const chooseMsg = (i, m, p) => {
 
         ret = s;
     } else {
-        console.info(`scenario -> ${i} is null`);
     }
 
     return ret;
@@ -710,12 +993,25 @@ const chkUResponse = (n, s) => {
  * behavior of hitting enter key in the chat box by user
  */
 const chatKeyDown = (cmd) => {
-    /* ut is the input character by user */
-    let ut;
-    let m = ""; // chatbox message string by Jetelina.
+    let ut = ""; // ut is the input character by user
+    let m = ""; // chatbox message string by Jetelina
+
+    /*
+        Tips:
+            #left_panel or #right_panel, or both are maybe blinking in refreshApiList() and refreshTableList().
+            stop it here.
+    */
+    if ($("#left_panel").hasClass("genelic_panel")) {
+        $("#left_panel").removeClass("genelic_panel")
+    }
+
+    if ($("#right_panel").hasClass("genelic_panel")) {
+        $("#right_panel").removeClass("genelic_panel")
+    }
 
     if (cmd == null) {
-        ut = $(JETELINACHATBOX).val().toLowerCase();
+        original_chatbox_input_text = $(JETELINACHATBOX).val();
+        ut = original_chatbox_input_text.toLowerCase();
         ut = ut.replaceAll(',', ' ').replaceAll(':', ' ').replaceAll(';', ' ');
     } else {
         ut = cmd.toLowerCase();
@@ -724,7 +1020,7 @@ const chatKeyDown = (cmd) => {
     let logoutflg = false;
 
     if (ut != null && 0 < ut.length) {
-        ut = $.trim(ut.toLowerCase());
+        ut = $.trim(ut);
         /*
             Tips:
                 After registring a new api, maybe called it to open.
@@ -749,10 +1045,9 @@ const chatKeyDown = (cmd) => {
 
         /* do it only if there were a input character by user */
         if (0 < ut.length) {
-            //            enterNumber++;
+            whatJetelinaTold = $(JETELINACHATTELL).text();
             $(JETELINACHATTELL).text("");
             $(JETELINACHATBOX).val("");
-            $(CHATBOXYOURTELL).text(ut);
 
             // logout
             if (logoutChk(ut)) {
@@ -781,6 +1076,28 @@ const chatKeyDown = (cmd) => {
                 showSomethingMsgPanel(true);
             }
 
+            // search error log in the log file by 'errnum' that is the unique order number 
+            if (inScenarioChk(ut, 'searching-errnum-cmd')) {
+                if (preferent.errnum != null && 0 < preferent.errnum.length) {
+                    searchLogAjax();
+                } else {
+                    typingControll(chooseMsg('func-api-error-cannot-searching-msg', '', ''));
+                    return;
+                }
+            }
+
+            /*
+                Tips:
+                    indeed, this zoom procedure is discripted in dashboard.js, around #130 as .on().
+                    this code use it by asking 'what-did-i-say'. :)
+            */
+            if (inScenarioChk(ut, 'what-did-i-say')) {
+                $(".yourText").mouseover();
+            } else {
+                $(".yourText").mouseout();
+                $(CHATBOXYOURTELL).text(ut);
+            }
+
             /*
                 switch 1:between 'before login' and 'at login'
                        login:at login
@@ -790,24 +1107,13 @@ const chatKeyDown = (cmd) => {
             */
             switch (stage) {
                 case 1:
-//                    if (!chkUResponse("greeting-1-cmd", ut)) {
-/*
-                    if(!inScenarioChk(ut,"greeting-1-cmd")){
-                        m = chooseMsg("starting-2-msg", "", "");
-                        stage = 'login';
-                    } else {
-                        / say 'nice' if a user said 'fine' /
-                        m = chooseMsg('greeting-1a-msg', "", "");
-                    }
-*/
-
-                    if(inScenarioChk(ut,'greeting-1-cmd')){
+                    if (inScenarioChk(ut, 'greeting-1-cmd')) {
                         /* say 'nice' if a user said 'fine' */
                         m = chooseMsg('greeting-1a-msg', "", "");
-                    }else if(inScenarioChk(ut,'greeting-2-cmd')){
+                    } else if (inScenarioChk(ut, 'greeting-2-cmd')) {
                         /* reply something your mood if a uer asks you 'how about you' */
                         m = chooseMsg('greeting-2-msg', "", "");
-                    }else{
+                    } else {
                         /* lead to login with 'can I ask your name?' */
                         m = chooseMsg("starting-2-msg", "", "");
                         stage = 'login';
@@ -815,100 +1121,103 @@ const chatKeyDown = (cmd) => {
 
                     break;
                 case 'login':
-                    let chunk = "";
-
-                    if (ut.indexOf(" ") != -1) {
-                        let p = ut.split(" ");
-                        chunk = p[p.length - 1];
+                    /*
+                        Tips:
+                            in the case of the first login for setting Jetelina env.
+                            "it's me" or "it is me" are effective.
+                            but it will be diseffect after executing the setting.
+                    */
+                    if (ut.indexOf("it's me") == -1 && ut.indexOf("it is me") == -1) {
+                        authAjax(ut);
+                        m = IGNORE;
                     } else {
-                        chunk = ut;
+                        /*
+                            this is the first login to Jetelina.
+                            must go to the initialization process.
+
+                            the process is defined in initialprocess.js
+                            and do not get out by the normal logout because of session data.
+                        */
+
+                        $(JETELINAPANEL).hide();
+                        jetelinaInitialize();
                     }
 
-                    authAjax(chunk);
-                    m = IGNORE;
                     break;
                 case 'login_success':
                     /*
-                        Tips:
-                            login user's info has been contained in loginuser object. see authAjax().
-                            then take action in order to the user level.
-
-                            ask "firstname", "lastname" if these are as same as "login", because this person is a newcommer.
-                            show a guidance if "logincount" is less than 3, because this person is a beginner.
-                            count up "user_level" if "logincount" is over 10, these attribute should send to server to update user's attribute.
-                            and ask "nickname" if "familiar_level" is being 2. Jetelina can speak slang to a user who is "familiar_level" 3, in future.
-
-                            anyhow give greeting order to "lastlogin".
+                        Attention:
+                            in previous version, this case had a meaning, however it has be lost 
+                            in this version.
+                            but wanna say something to the login user before starting the working.
+                            switch to the function panel with chatKeyDown("show tables"), indeed this string
+                            is determind in the scenario 'func-show-table-list-cmd', then redirect to
+                            'lets_do_somthing', meanwhile 'starting-6-msg' is displayed.
                     */
-                    /* the authentication process has been postphoned in BBM.  2023/11/24
-                    let cnc = checkNewCommer(ut)
-                    if (cnc[0]){
-                        // set user's firstname,lastname and info
-                        m = cnc[1];
-                    }else if (checkBeginner()){
-                        // count up user level
-                    }else{
-                        // true authentication process
-                        loginuser.c++;
-                    }
-                    */
-                    //                    if(authcount<loginuser.c){
-                    m = chooseMsg("starting-6-msg", "", "");
                     stage = 'lets_do_something';
-                    //                    }
+
+                    chatKeyDown("show tables");
+                    m = chooseMsg("starting-6-msg", "", "");
 
                     break;
                 case 'lets_do_something':
+                    // hidden thanks for favicon
+                    isVisibleFavicon(false);
+                    m = "";
                     // chatbox moves to below
                     const panelTop = window.innerHeight - 110;
                     $(JETELINAPANEL).animate({
                         height: "70px",
-                        top: `${panelTop}px`,
-                        left: "210px"
+                        top: "85%", //`${panelTop}px`,
+                        left: "5%" //"210px"
                     }, ANIMATEDURATION);
+
+                    if (!inScenarioChk(ut, 'config-show-cmd') && (presentaction.cmd != CONFIGCHANGE)) {
+                        // if 'ut' is a command for driving function
+                        m = functionPanelFunctions(ut);
+                        if (m.length == 0 || m == IGNORE) {
+                            // if 'ut' is a command for driving condition
+                            // this routine is for ver3 :)
+                            //m = conditionPanelFunctions(ut);
+                        }
+                    }
+
                     /*
-                        Tips:
-                            if 'ut' is a command for driving configuration
-                            localStrage checking is for secure reason
+                        Attention:
+                            only "admin" roll can operate configuration and user account.
+                            do not worry, it is checked in Jetelina by posting data even if the roll were hacked. 
                     */
-                    if (localStorage[LOCALPARAM] == "true") {
+                    if ((m.length == 0 || m == IGNORE) && loginuser.roll == "admin") {
                         let multi = 0;
                         let multiscript = [];
                         // configuration parameter updating
-                        if (inScenarioChk(ut, 'common-cancel-cmd') && inCancelableCmdList("CONFIGCHANGE")) {
+                        if (inScenarioChk(ut, 'common-cancel-cmd') && inCancelableCmdList([CONFIGCHANGE, USERMANAGE])) {
                             preferent.cmd = null;
-                            presentaction.config_name = null;
-                            presentaction.config_data = null;
+                            presentaction = {};
+                            rejectCancelableCmdList(CONFIGCHANGE);
+                            rejectCancelableCmdList(USERMANAGE);
                             showSomethingInputField(false);
+                            showSomethingMsgPanel(false);
                             m = chooseMsg("cancel-msg", "", "");
                         }
 
-                        if (presentaction.cmd != null && presentaction.cmd == "CONFIGCHANGE") {
-                            if (presentaction.config_name != null) {
-                                if ($(SOMETHINGINPUT).is(":visible")) {
-                                    if (inScenarioChk(ut, 'common-post-cmd')) {
-                                        let new_param = $(SOMETHINGINPUT).val();
-                                        if (0 < new_param.length) {
-                                            let data = `{"${presentaction.config_name}":"${new_param}"}`;
-                                            postAjaxData(scenario["function-post-url"][3], data);
-                                        } else {
-                                            m = chooseMsg("config-update-alert-message","","");;
-                                        }
-                                    }
+                        // configuration management ①->②
+                        // ②the parameter searching in config[]
+                        if (presentaction.cmd != null && presentaction.cmd == CONFIGCHANGE) {
+                            /*
+                                Tips:
+                                    after displaying the ordered parameter, the update procedure is canceled by 'thank you'. 
+                            */
+                            if (inScenarioChk(ut, "general-thanks-cmd")) {
+                                typingControll(chooseMsg('general-thanks-msg', loginuser.lastname, "c"));
+                                showSomethingMsgPanel(false);
+                                showConfigPanel(false);
+                                showPreciousPanel(false);
+                                if (inCancelableCmdList([CONFIGCHANGE])) {
+                                    rejectCancelableCmdList(CONFIGCHANGE);
+                                    presentaction = {};
+                                    return;
                                 }
-                            } else {
-                                m = chooseMsg("config-update-error-message","","");
-                            }
-                        }
-
-                        if (inScenarioChk(ut, "config-update-cmd")) {
-                            presentaction.cmd = CONFIGCHANGE;
-                            cancelableCmdList.push(presentaction.cmd);
-                            if (presentaction.config_name != null && presentaction.config_data != null) {
-                                showSomethingInputField(true);
-                                m = chooseMsg("config-update-simple-message","","");
-                            } else {
-                                m = chooseMsg("config-update-plural-message","","");
                             }
 
                             for (zzz in config) {
@@ -941,7 +1250,7 @@ const chatKeyDown = (cmd) => {
                             if (1 < multi) {
                                 // pick candidates up
                                 m = chooseMsg('multi-candidates-msg', "", "");// this 'm' is displayed in chatbox
-                                let multimsg = chooseMsg("config-update-plural-candidates-message","","");// this 'multimsg' is displayed in SOMETHINGMSGPANEL
+                                let multimsg = chooseMsg("config-update-plural-candidates-message", "", "");// this 'multimsg' is displayed in SOMETHINGMSGPANEL
                                 for (i = 0; i < multi; i++) {
                                     multimsg += `'${multiscript[i]}',`;
                                 }
@@ -964,17 +1273,80 @@ const chatKeyDown = (cmd) => {
                                 $(SOMETHINGMSGPANELMSG).text(configMsg);
                                 showSomethingMsgPanel(true);
                             }
-                        } else if (inScenarioChk(ut, "get-config-change-history")) {
-                            getAjaxData(scenario["function-get-url"][2]);
-                        }
-                    }
 
-                    if (!$(SOMETHINGINPUT).is(":visible")) {
-                        // if 'ut' is a command for driving function
-                        m = functionPanelFunctions(ut);
-                        if (m.length == 0 || m == IGNORE) {
-                            // if 'ut' is a command for driving condition
-                            m = conditionPanelFunctions(ut);
+                            if (presentaction.config_name != null) {
+                                if ($(SOMETHINGINPUT).is(":visible")) {
+                                    if (inScenarioChk(ut, 'common-post-cmd')) {
+                                        let new_param = $(SOMETHINGINPUT).val();
+                                        if (0 < new_param.length) {
+                                            /*
+                                                Tips:
+                                                    loginuser attribute must be changed if the config param were 'dbtype'.
+                                                    presentaction.dbtype is a kind of temporary object data to be set into
+                                                    loginuser.dbtype that is switched in postAjaxData().
+                                            */
+                                            if (presentaction.config_name == "dbtype") {
+                                                presentaction.dbtype = new_param;
+                                            }
+
+                                            if ($(CONFIGPANEL).is(":visible")) {
+                                                $(`${CONFIGPANELLIST} span`).filter(".configparams_key").each(function () {
+                                                    let p = $(this);
+                                                    let key = p.text();
+
+                                                    if (0 < key.length && key.endsWith(":")) {
+                                                        key = key.slice(0, -1);
+                                                    }
+
+                                                    if (key == presentaction.config_name) {
+                                                        let k = p.attr("name");
+                                                        let v = "v" + k.substr(1);
+                                                        $(`${CONFIGPANELLIST} span[name='${v}']`).text(new_param);
+                                                        return;
+                                                    }
+                                                });
+                                            }
+
+                                            let data = `{"${presentaction.config_name}":"${new_param}"}`;
+                                            postAjaxData(scenario["function-post-url"][3], data);
+                                        } else {
+                                            m = chooseMsg("config-update-alert-message", "", "");;
+                                        }
+                                    }
+                                }
+                            } else {
+                                m = chooseMsg("config-update-error-message", "", "");
+                            }
+                        }
+
+                        /* ①come here first, anyhow */
+                        if (inScenarioChk(ut, 'config-show-cmd')) {
+                            presentaction.cmd = CONFIGCHANGE;
+                            cancelableCmdList.push(presentaction.cmd);
+                            if (presentaction.config_name != null && presentaction.config_data != null) {
+                                showSomethingInputField(true, 0);
+                                m = chooseMsg("config-update-simple-message", "", "");
+                            } else {
+                                m = chooseMsg("config-update-plural-message", "", "");
+                            }
+                        } else if (inScenarioChk(ut, 'get-config-change-history-cmd')) {
+                            getAjaxData(scenario['function-get-url'][2]);
+                        }
+
+                        // user management
+                        if ((presentaction.cmd != null && presentaction.cmd == USERMANAGE) || inScenarioChk(ut, 'user-manage-show-profile')) {
+                            m = accountManager(ut);
+                        } else if (inScenarioChk(ut, 'user-manage-add')) {
+                            presentaction.cmd = USERMANAGE;
+                            cancelableCmdList.push(presentaction.cmd);
+                            m = accountManager(ut);
+                        }
+                    } else {
+                        // do not have an authority
+                        if (inScenarioChk(ut, 'user-manage-add') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-delete') || inScenarioChk(ut, 'config-show-cmd')) {
+                            m = chooseMsg("no-authority-js-msg", "", "");
+                        } else {
+                            // normal reply e.g "next?"
                         }
                     }
 
@@ -987,26 +1359,42 @@ const chatKeyDown = (cmd) => {
                     if (logouttimerId) {
                         clearTimeout(logouttimerId);
                     }
-                
 
-//                    if (chkUResponse("greeting-0r-cmd", ut)) {
-                    if(inScenarioChk(ut,"greeting-0r-cmd")){
+                    if (inScenarioChk(ut, "greeting-0r-cmd")) {
                         // greeting
                         m = chooseMsg("greeting-1-msg", "", "");
                         stage = 1;/* into the login stage */
                     } else {
                         if (!logoutflg && m.length == 0) {
                             m = chooseMsg("starting-3-msg", "", "");
+                        } else if (!logoutflg && 0 < m.length) {
+                            m = chooseMsg('greeting-ask-msg', '', '');
                         }
                     }
 
                     break;
             }
 
+            // simple ask about using database type
+            if (inScenarioChk(ut, 'what-db-use-now-cmd')) {
+                if (loginuser.dbtype != null) {
+                    m = loginuser.dbtype;
+                } else {
+                    m = chooseMsg('db-not-determind-yet-msg', '', '');
+                }
+            }
+
             if (0 < m.length && m != IGNORE) {
                 typingControll(m);
             } else if (m == IGNORE && stage != 'login') {
-                typingControll(chooseMsg('waiting-next-msg', "", ""));
+                if (inScenarioChk(ut, "general-thanks-cmd")) {
+                    resetApiTestProcedure();
+                    showConfigPanel(false);
+                    showPreciousPanel(false);
+                    typingControll(chooseMsg('general-thanks-msg', loginuser.lastname, "c"));
+                } else {
+                    typingControll(chooseMsg('waiting-next-msg', "", ""));
+                }
             } else if (m == null || m.length == 0) {
                 // cannot understand what the user is typing
                 typingControll(chooseMsg('unknown-msg', "", ""));
@@ -1045,7 +1433,7 @@ const openingMessage = () => {
  * idling message in the initial screen
  */
 const burabura = () => {
-    const t = 30000;// chage the idling message after 20 sec
+    const t = 30000;// chage the idling message after 30 sec
     timerId = setInterval(function () {
         $(JETELINACHATTELL).text("");
         $(CHATBOXYOURTELL).text("");
@@ -1061,8 +1449,8 @@ const burabura = () => {
  */
 const logoutChk = (s) => {
     let logoutcmds = scenario["logout-cmd"];
-    for(key in logoutcmds){
-        if( logoutcmds[key] == s ){
+    for (key in logoutcmds) {
+        if (logoutcmds[key] == s) {
             return true;
         }
     }
@@ -1085,25 +1473,34 @@ const logout = () => {
     $(FUNCTIONPANEL).hide();
     $(CONDITIONPANEL).hide();
     $(GENELICPANEL).hide();
+    $(GENELICPANELINPUT).val('');
+    $(SOMETHINGINPUT).val('');
     $(CHARTPANEL).hide();
     $("#api_access").hide();
     $("#performance_real").hide();
     $("#performance_test").hide();
     $("#command_list").hide();
     showSomethingMsgPanel(false);
+    showConfigPanel(false);
+    showPreciousPanel(false);
+    setDBFocus("");
+    isVisibleDatabaseList(false);
 
     // global variables initialize
     isSuggestion = false;
-    localStorage[LOCALPARAM] = false;
     stage = 0;
     preferent = {};
     presentaction = {};
     loginuser = {};
+    cancelableCmdList = [];
 
     deleteSelectedItems();
     cleanUp("items");
     cleanUp("tables");
     cleanUp("apis");
+    isVisibleFavicon(true);
+
+    getAjaxData(scenario['function-get-url'][3]);
 }
 /**
  * @function getPreferentPropertie
@@ -1120,7 +1517,7 @@ const getPreferentPropertie = (p) => {
             if (preferent.cmd != null && 0 < preferent.cmd.length) {
                 c = preferent.cmd;
             }
-            
+
             break;
         default:
             break;
@@ -1209,31 +1606,12 @@ const inScenarioChk = (s, sc, type) => {
              then possible multi candidates because of realizing vague cpmparing.
              indeed using $.inArray() makes this judge strict, but remains a vagueness. 
         */
-        if( s.indexOf(order[key]) != -1) {
+        if (s.indexOf(order[key]) != -1) {
             return true;
         }
     }
 
     return false;
-}
-/**
- * @function checkBandA
- * @param {string} o target string
- * @param {string} p found position in an array 
- * @returns {boolean}  true -> ok, false -> no good
- * 
- * check the target sting is effective or not in the array string.
- *     ex. wanna check 'open' in o->"ftestopen"  p->10 then true is " open","open ","'open",",open","open'","open,"
- *         i mean 'topen' is NG.
- */
-const checkBandA = (o,p) =>{
-    let ret = false;
-    let c = [' ',',','\'','\"'];
-    if(( p==0 )||((o[p-1] != null && o[p-1].includes(c)) && (o[p+o.length+1] != null && o[p+o.length+1].includes(c)))){
-        ret = true;
-    }
-
-    return ret;
 }
 /**
  * @function countCandidates
@@ -1270,70 +1648,6 @@ const countCandidates = (s, sc, type) => {
     }
 
     return [c, candidate];
-}
-/**
- * @function checkNewCommer
- * @param {string} s  user input data
- * @returns {array[boolean,string]}  [true -> yes a newcommer, false -> an expert, "scenario message"]
- * 
- *  check the login user is a newcommer or not.
- *  ask some attribute if a newcommer.
- */
-const checkNewCommer = (s) => {
-    if (loginuser.logincount == 0) {
-        let data;
-        let m;
-        if (usetcount < 3) {
-            // set user's firstname and lastname, these are mandatory.
-            switch (authcount) {
-                case 0: // anyhow the first access
-                    m = chooseMsg('first-login-msg', loginuser.login, "");
-                    break;
-                case 1: // set 'fiestname'
-                    data = `{"uid":${loginuser.user_id},"key":"firstname","val":"${s}"}`;
-                    m = chooseMsg('first-login-ask-lastname-msg', "", "");
-                    break;
-                case 2: // set 'lastname'
-                    data = `{"uid":${loginuser.user_id},"key":"lastname","val":"${s}"}`;
-                    m = chooseMsg('first-login-ask-info-msg', loginuser.login, "");
-                    break;
-                default:
-                    m = chooseMsg('first-login-ask-firstname-msg', "", "");
-                    break;
-            }
-
-            postAjaxData(scenario["function-post-url"][0], data);
-        } else {
-            // set user's info, these are using for authentication.
-            if (usetcount < USETCOUNTMAX) {
-                m = chooseMsg('first-login-ask-info-then-msg', "", "");
-                data = `{"uid":${loginuser.user_id},"key":"lastname","val":"${s}"}`;
-            } else {
-                m = chooseMsg('first-login-ask-info-end-msg', "", "");
-            }
-        }
-
-        usetcount++;
-        return [true, m];
-    }
-    if (loginuser.login == loginuser.fistname && loginuser.login == loginuser.lastname) {
-        m = chooseMsg('first-login', loginuser.login, "");
-        authcount++;
-    }
-}
-/**
- * @function checkBeginner
- * @returns {boolean}  true -> yes a beginner, false -> an expert
- * 
- * check the login user is a beginner or not.
- */
-const checkBeginner = () => {
-    if (loginuser.logincount < 3) {
-
-    } else if (10 < loginuser.logincount) {
-
-    } else {
-    }
 }
 /**
  * @function isVisibleFunctionPanel
@@ -1379,45 +1693,75 @@ const isVisibleSomethingMsgPanel = () => {
 }
 /**
  * @function showSomethingInputField
- *
- * @param {boolean} true -> show, false -> hide
- *  
+ * @param {boolean} b true -> show, false -> hide
+ * @param {integer} type 0->config change 1->register pass phrase 2->inquire pass phrase
+ * 
  * "#something_input_field" show or hide
  */
-const showSomethingInputField = (b) => {
+const showSomethingInputField = (b, type) => {
     if (b) {
         if (isVisibleSomethingMsgPanel()) {
-            $("SOMETHINGTEXT").text("Change this to =>");
-            $(SOMETHINGINPUT).attr('placeholder', 'new parameter...');
+            let t = "config";  // 2024/6/11 do not know use or not yet but leave it 
+            if (type == 0) {
+                $(SOMETHINGTEXT).text("Change this to =>");
+                $(SOMETHINGINPUT).attr('placeholder', 'new parameter...');
+            } else if (type == 1) {
+                t = "regPass";
+                $(SOMETHINGTEXT).text("register your pass phrase =>");
+                $(SOMETHINGINPUT).attr('placeholder', 'put something your new pass phrase to continue ...');
+            } else if (type == 2) {
+                t = "reqPass";
+                $(SOMETHINGTEXT).text("request your pass phrase =>");
+                $(SOMETHINGINPUT).attr('placeholder', 'your registered one ...');
+            } else {
+                t = "";
+            }
         }
 
-        $("SOMETHINGINPUTFIELD").show();
+        $(SOMETHINGINPUTFIELD).show();
         $(SOMETHINGINPUT).focus();
     } else {
-        $(SOMETHINGMSGPANELMSG).text("");
-        $("SOMETHINGTEXT").text("");
+        //        $(SOMETHINGMSGPANELMSG).text("");
+        $(SOMETHINGTEXT).text("");
         $(SOMETHINGINPUT).val("");
-        $("SOMETHINGINPUTFIELD").hide();
+        $(SOMETHINGINPUTFIELD).hide();
         showSomethingMsgPanel(false);
     }
 }
 /**
  * @function showSomethingMsgPanel
- *
  * @param {boolean} true -> show, false -> hide
  *  
  * "#something_msg" show or hide
  */
 const showSomethingMsgPanel = (b) => {
+    let sm = $(SOMETHINGMSGPANEL);
     if (b) {
-        $(SOMETHINGMSGPANEL).show();
+        if (sm.text().indexOf(preferent.errnum) != -1) {
+            sm.css({ 'height': '200px' });
+            sm.draggable().show().animate({
+                top: "45%",
+                left: "25%"
+            }, 100);// Attention: i do not know why but 'ANIMATEDURATION' is ignored here, thus use '100' insted of it. :p
+        } else {
+            sm.css({ 'height': '100px' });// default number in .something_msg_def
+            sm.draggable().show();
+        }
+        /*
+                here is for scrolling up the messages, but wonder if it required or not, then commented out, who knows.:O
+        
+                messageScrollTimerID = setInterval(function () {
+                    sm.animate({ scrollTop: (sm.scrollTop() == 0 ? sm.height() : 0) }, 4000);
+                }, ANIMATEDSCROLLING);
+        */
     } else {
         // these classes are for configuration changing history message
-        $(SOMETHINGMSGPANEL).removeClass("config_history");
+        sm.removeClass("config_history");
         $(SOMETHINGMSGPANELMSG).removeClass("config_history_text");
         $(SOMETHINGMSGPANELMSG).text("");
 
-        $(SOMETHINGMSGPANEL).hide();
+        //        clearInterval(messageScrollTimerID);
+        sm.hide();
     }
 }
 /**
@@ -1436,7 +1780,6 @@ const isVisibleApiTestPanel = () => {
 }
 /**
  * @function showApiTestPanel
- *
  * @param {boolean} true -> show, false -> hide
  *  
  * "#apitest" show or hide
@@ -1444,58 +1787,270 @@ const isVisibleApiTestPanel = () => {
 const showApiTestPanel = (b) => {
     if (b) {
         $(APITESTPANEL).show().draggable();
-        $(APITESTPANEL).animate({top:"300px"},ANIMATEDURATION);
+        $(APITESTPANEL).animate({ top: "300px" }, ANIMATEDURATION);
+        let ap = $(`${APITESTPANEL} [name='api-test-data']`);
+        apitestScrollTimerID = setInterval(function () {
+            ap.animate({ scrollTop: (ap.scrollTop() == 0 ? ap.height() : 0) }, 4000);
+        }, 2000);
+
     } else {
+        clearInterval(apitestScrollTimerID);
         // delete all test results
         $(APITESTPANEL).hide();
     }
 }
 /**
  * @function inCancelableCmdList
- *
- * @param {string} command name ex.CONFIGCHANGE..
+ * @param {array} command name array ex.[CONFIGCHANGE,..]
  * @preturn {boolean} true -> is in the list  false -> no
  *  
- * check the ordered command is in cancelableCmdList or not
+ * check the ordered commands are in cancelableCmdList or not
  */
-const inCancelableCmdList = (cmd) =>{
+const inCancelableCmdList = (cmd) => {
     let ret = false;
-    if(-1<$.inArray(cmd,cancelableCmdList)){
-        ret = true;
+
+    for (let i = 0; i < cmd.length; i++) {
+        if (-1 < $.inArray(cmd[i], cancelableCmdList)) {
+            ret = true;
+        }
     }
 
     return ret;
 }
 /**
  * @function rejectCancelableCmdList
- *
  * @param {string} command name ex.CONFIGCHANGE..
  *  
  * reject command from cancelableCmdList
  */
-const rejectCancelableCmdList = (cmd) =>{
-    cancelableCmdList = cancelableCmdList.filter(function(d){
+const rejectCancelableCmdList = (cmd) => {
+    cancelableCmdList = cancelableCmdList.filter(function (d) {
         return d != cmd;
     });
 }
 /**
  * @function rejectSelectedItemsArr
- *
  * @param {string} item selectd item name
  *  
  * reject selected item from selectedItemsArr
  */
-const rejectSelectedItemsArr = (item) =>{
-    selectedItemsArr = selectedItemsArr.filter(function(d){
-        if(d.indexOf(item) < 0){
+const rejectSelectedItemsArr = (item) => {
+    selectedItemsArr = selectedItemsArr.filter(function (d) {
+        if (d.indexOf(item) < 0) {
             return d;
         }
     });
 }
+/**
+ * @function subPanelCheck
+ * 
+ * confirm sub panels condition when focus moves on Jetelina Chat Box
+ */
+const subPanelCheck = () => {
+    if (isVisibleSomethingMsgPanel()) {
+        if (0 < $(SOMETHINGINPUT).val().length) {
+            if (inCancelableCmdList([CONFIGCHANGE])) {
+                let e = chooseMsg('common-post-cmd', '', '');
+                typingControll(chooseMsg('config-update-msg', e, "r"));
+            } else if (inCancelableCmdList([TABLEAPIDELETE])) {
+                typingControll(chooseMsg('common-confirm-msg', '', ""));
+            }
+        }
+    }
+}
+/**
+ * @function isVisibleDatabaseList
+ * @param {boolean} b true -> show, false -> hide
+ * 
+ * '#databaselist" show or hide
+ * 
+ */
+const isVisibleDatabaseList = (b) => {
+    if (b) {
+        $("#databaselist").show();
+    } else {
+        $("#databaselist").hide();
+    }
+}
+/**
+ * @function setDBFocus
+ * @param {string} new database name
+ * 
+ * set blinking to the current db
+ */
+const setDBFocus = (s) => {
+    let currentdb = $(`#databaselist [name='${loginuser.dbtype}']`);
+    let newdb = $(`#databaselist [name='${s}']`);
+    let c = "dbfocus";
 
+    if (s != "") {
+        newdb.toggleClass(c);
+    }
+
+    currentdb.toggleClass(c);
+}
+/**
+ * @function isVisibleFavicon
+ * @param {boolean} b true -> show , false -> hide
+ * 
+ * show/hide the favicon message
+ */
+const isVisibleFavicon = (b) => {
+    if (b) {
+        $("#thxfavicon").show();
+    } else {
+        $("#thxfavicon").hide();
+    }
+}
 // return to the chat box if 'return key' is typed in something_input_field
-$(document).on("keydown", SOMETHINGINPUT, function (e) {
-    if (e.keyCode == 13) {
+$(document).on("keydown focusout", `${SOMETHINGINPUT}, ${GENELICPANELINPUT}`, function (e) {
+    if (e.keyCode == 13 || e.type == "focusout") {
         focusonJetelinaPanel()
     }
 });
+// database switching by clickin'
+$("#databaselist").on("click", ".databasename", function () {
+    chatKeyDown($(this).attr("name"));
+});
+/**
+ * @function apiTestAjax
+ * @param {string} url execute url
+ * @param {object} data json style object 
+ * 
+ * ajax function for executing API test.
+ */
+const apiTestAjax = () => {
+    let url = scenario["function-apitest-usr"][0];
+    let data = $(`${COLUMNSPANEL} [name='apiin']`).text();
+
+    $.ajax({
+        url: url,
+        type: "post",
+        contentType: 'application/json',
+        data: data,
+        dataType: "json",
+        xhr: function () {
+            ret = $.ajaxSettings.xhr();
+            inprogress = true;// in progress. for priventing accept a new command.
+            typingControll(chooseMsg('inprogress-msg', "", ""));
+            return ret;
+        }
+    }).done(function (result, textStatus, jqXHR) {
+        let m = chooseMsg('func-api-test-done-msg', '', '');
+        if (checkResult(result)) {
+            if (loginuser.dbtype != "redis") {
+                let ret = JSON.stringify(result);
+                $(`${COLUMNSPANEL} [name='apiout']`).addClass("attentionapiinout").text(ret);
+            } else {
+                if (result.apino != null) {
+                    let newapis = result.apino;
+                    if (newapis[0] != "" && newapis[1] != "") {
+                        m = chooseMsg('func-newapino-msg', `are ${newapis[0]} & ${newapis[1]}. ${result["message from Jetelina"]}`, 'r');
+                    } else if (newapis[0] != "" && newapis[1] == "") {
+                        m = chooseMsg('func-newapino-msg', `is ${newapis[0]}. ${result["message from Jetelina"]}`, 'r');
+                    } else if (newapis[0] == "" && newapis[1] != "") {
+                        m = chooseMsg('func-newapino-msg', `is ${newapis[1]}. ${result["message from Jetelina"]}`, 'r');
+                    }
+                    $(CHATBOXYOURTELL).text(m);
+                    $(".yourText").mouseover();
+                    refreshApiList();
+                    refreshTableList();
+                }
+
+                let ret = JSON.stringify(result);
+                $(`${COLUMNSPANEL} [name='apiout']`).addClass("attentionapiinout").text(ret);
+
+            }
+        } else {
+            resetApiTestProcedure();
+            m = chooseMsg("fail-msg", '', '');
+        }
+
+        typingControll(m);
+    }).fail(function (result) {
+        checkResult(result);
+        cmdCandidates = [];
+        console.error("apiTestAjax() fail");
+        typingControll(chooseMsg("fail-msg", "", ""));
+    }).always(function () {
+        // release it for allowing to input new command in the chatbox 
+        inprogress = false;
+        preferent.apitestparams = [];
+        preferent.apiparams_count = null;
+    });
+}
+/**
+ * @function searchLogAjax
+ * @param {string} url execute url
+ * @param {object} data json style object 
+ * 
+ * ajax function for searching 'errnum' in the log file
+ */
+const searchLogAjax = () => {
+    let url = scenario["function-search-log-errnum"][0];
+    let data = `{"errnum":"${preferent.errnum}"}`;
+
+    $.ajax({
+        url: url,
+        type: "post",
+        contentType: 'application/json',
+        data: data,
+        dataType: "json",
+        xhr: function () {
+            ret = $.ajaxSettings.xhr();
+            inprogress = true;// in progress. for priventing accept a new command.
+            typingControll(chooseMsg('inprogress-msg', "", ""));
+            return ret;
+        }
+    }).done(function (result, textStatus, jqXHR) {
+        let ret = JSON.stringify(result);
+        let m = 'func-api-error-searching-msg';
+        if (checkResult(result)) {
+            $(SOMETHINGMSGPANELMSG).text(result.errlog);
+            showSomethingMsgPanel(true);
+        } else {
+            cmdCandidates = [];
+            m = "fail-msg";
+        }
+
+        typingControll(chooseMsg(m, '', ''));
+    }).fail(function (result) {
+        checkResult(result);
+        cmdCandidates = [];
+        console.error("searchLogAjax() fail");
+        typingControll(chooseMsg("fail-msg", "", ""));
+    }).always(function () {
+        // release it for allowing to input new command in the chatbox 
+        inprogress = false;
+    });
+}
+/**
+ * @function showConfigPanel
+ * @param {boolean} true -> show, false -> hide
+ *  
+ * "#config_panel" show or hide
+ */
+const showConfigPanel = (b) => {
+    if (b) {
+        $(CONFIGPANEL).show().draggable();
+    } else {
+        // delete all test results
+        $(CONFIGPANEL).hide();
+        $(`${CONFIGPANEL} span`).filter(".configparams_key, .configparams_val").remove();
+    }
+}
+/**
+ * @function showPreciousPanel
+ * @param {boolean} true -> show, false -> hide
+ *  
+ * "#jetelina_teach_you_smg" show or hide
+ */
+const showPreciousPanel = (b) => {
+    if (b) {
+        $(PRECIOUSWORDPANEL).show().draggable();
+    } else {
+        // delete all test results
+        $(`${PRECIOUSWORDPANEL} [name='precious_word']`).text("");
+        $(PRECIOUSWORDPANEL).hide();
+    }
+}

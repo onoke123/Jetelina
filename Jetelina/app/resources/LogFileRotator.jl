@@ -1,14 +1,14 @@
 """
-	module: LogFileRotator
+module: LogFileRotator
 
-	Author: Ono keiji
-	Version: 1.0
-	Description:
-        This module is for rotating Jetelina log files.
+Author: Ono keiji
+
+Description:
+    This module is for rotating Jetelina log files.
 	
-	functions
-			main() wrap function for executing _exectuterotating() that is the real file rotating function.
-			stoprotating() manual stopper for log file totating repeat.
+functions
+	main() wrap function for executing _exectuterotating() that is the real file rotating function.
+	stoprotating() manual stopper for log file totating repeat.
 """
 module LogFileRotator
 

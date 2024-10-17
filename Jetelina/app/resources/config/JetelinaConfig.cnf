@@ -20,8 +20,13 @@
 #      tableapifile: file name for relation between talbe name and api no
 #      experimentsqllistfile: sql list file for execution in test db
 #      improvesuggestionfile: suggestion file name due to execute test db
+#      operationhistoryfile: table/api create/delete history log file
+#      operationhistoryfilesize: MB order ex. 10MB -> 10
+@jdic version:"version"
+version = 2.0
+
 @jdic debug:"debug"
-debug = true
+debug = false
 
 @jdic logfile:"log name","log file name","log-name"
 logfile = log.log
@@ -57,15 +62,33 @@ experimentsqllistfile = JetelinaExperimentSqlList
 improvesuggestionfile = JetelinaSuggestion.json
 
 #
+# operation history log file 
+#
+@jdic operationhistoryfile:"history file","history log","who did"
+operationhistoryfile = JetelinaOperationHistory.log
+
+@jdic operationhistoryfilesize:"history length","hisotry file size","history size"
+operationhistoryfilesize = 10
+
+#
 # column title of sqllogfile/sqllistfile/experimentalsqllistfile
 # these column titles are unchangeable
 # 
 file_column_apino = apino
 file_column_sql = sql
 file_column_subquery = subquery
+file_column_db = db
 file_column_max = max
 file_column_min = min
 file_column_mean = mean
+
+#
+# jetelina user table database
+#   this parameter is defined at installing
+#   defined database should be RDB, therefore postgresql org mysql so far
+#
+@jdic jetelnadb:"default db","default database","original db","original database","user db","user database"
+jetelinadb = foo
 
 #
 #  default database
@@ -75,22 +98,24 @@ file_column_mean = mean
 #                MySQL      -> mysql
 #                Oracle     -> oracle
 @jdic dbtype:"db","database","data base"
-dbtype = postgresql
+dbtype = foo
 
 # PostgreSQL setting
-@jdic pg_host:"host"
+@jdic pg_work:"postgresql run","postgresql availability","start postgresql","postgresql start"
+pg_work = false
+@jdic pg_host:"postgresql host"
 pg_host = localhost
-@jdic pg_port:"port"
+@jdic pg_port:"postgresql port"
 pg_port = 5432
-@jdic pg_user:"user","login"
+@jdic pg_user:"postgresql user","postgresql login"
 pg_user = postgres
-@jdic pg_password:"postgres password","database password","password in postgres","password in database"
+@jdic pg_password:"postgresql password","password in postgresql"
 pg_password = postgres
-@jdic pg_sslmode:"sslmode","ssl mode","ssl"
+@jdic pg_sslmode:"postgresql sslmode","postgresql ssl mode","postgresql ssl"
 pg_sslmode = prefer
-@jdic pg_dbname:"database name","db name","dbname"
+@jdic pg_dbname:"postgresql database name","postgresql db name","postgresql dbname"
 pg_dbname = postgres
-@jdic pg_testdbname:"test database"
+@jdic pg_testdbname:"postgresql test database"
 pg_testdbname = testdb
 
 #
@@ -98,13 +123,38 @@ pg_testdbname = testdb
 #
 
 # MySQL setting
+@jdic my_work:"mysql run","mysql availability","start mysql","mysql start"
+my_work = false
+@jdic my_host:"mysql host"
 my_host = localhost
-my_port = 
-my_user = 
-my_password = 
-my_sslmode = prefer
-my_dbname = 
+@jdic my_port:"mysql port"
+my_port = 3306
+@jdic my_user:"mysql user","mysql login"
+my_user = user 
+@jdic my_password:"mysql password","password in mysql"
+my_password = userpasswd 
+#
+# Caution: the initial db name is 'mysql', then Jetelina will rewrite it to 'jetelina'
+# 
+@jdic my_dbname:"mysql database name","mysql db name","mysql dbname"
+my_dbname = mysql 
+@jdic my_unix_socket:"mysql unix socket","mysql socket"
+my_unix_socket = /var/run/mysqld/mysqld.sock
+@jdic my_testdbname:"mysql test database"
 my_testdbname = testdb
+
+# Redis setting
+@jdic redis_work:"redis run","redis availability","start redis","redis start"
+redis_work = false
+@jdic redis_host:"redis host"
+redis_host = 127.0.0.1
+@jdic redis_port:"redis port"
+#redis_port = 6379
+redis_port = 6379
+@jdic redis_dbname:"redis database name","redis db name","redis dbname"
+redis_dbname = 0
+@jdic redis_password:"redis password","password in redis"
+redis_password =
 
 # Oracle setting
 or_host = localhost

@@ -1,22 +1,26 @@
 """
 module: ConfigManager
 
+Author: Ono keiji
+
+Description:
 	read configuration parameters from Jetelina.cnf file
 	then set them to global variables
 
-	contain functions
-		__init__()
-		createScenario()  create scenario.js file from base.jdic and JetelinaConfig.cnf files. this function is mandatory working to realize Jetelina Chatting.
-		configParamUpdate(d::Dict) update a configuration parameter in the configuration file.
+contain functions
+	__init__()
+	createScenario()  create scenario.js file from base.jdic and JetelinaConfig.cnf files. this function is mandatory working to realize Jetelina Chatting.
+	switchDbType() update 'dbtype' parameter every switching data base. 
+	configParamUpdate(d::Dict) update a configuration parameter in the configuration file.
 """
 
 module ConfigManager
 using Dates
-using Jetelina.JFiles, Jetelina.JMessage
+using Jetelina.JFiles, Jetelina.JMessage, Jetelina.JSession
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export JC, createScenario, configParamUpdate
+export JC, createScenario, configParamUpdate, switchDbType
 
 # configration file name
 const defaultConfigFile = "JetelinaConfig.cnf"
@@ -176,17 +180,28 @@ function createScenario()
 	end
 end
 """
+function switchDbType() 
+	
+	update 'dbtype' parameter every switching data base. 
+
+#Arguments
+- `db::String`: database to use
+"""
+function switchDbType(db)
+	configParamUpdate(Dict("dbtype"=>db))
+end
+"""
 function configParamUpdate(d::Dict)
 
 	update a configuration parameter in the configuration file.
 	the param is ensured as is not 'nothing' in PostDataController.configParamUpdate().
 
 # Arguments
-- `d::Dict`:  json style configuration parameter
+- `dd::Dict`:  json style configuration parameter
 """
 function configParamUpdate(d::Dict)
 	dn = collect(keys(d))
-
+	
 	configfile = JFiles.getFileNameFromConfigPath(defaultConfigFile)
 	configfile_tmp = string(configfile, ".tmp")
 	configChangeHistoryFile = JFiles.getFileNameFromLogPath(JC["config_change_history_file"])
@@ -202,7 +217,6 @@ function configParamUpdate(d::Dict)
 			param = dn[n]
 			var = d[dn[n]]
 			prev = string(JC[param])
-			@info "config update: " param prev var
 			#
 			#  Tips:
 			#     update it on memory as global parameters.
@@ -212,6 +226,18 @@ function configParamUpdate(d::Dict)
 				JC[param] = parse(Bool, var)
 			else
 				JC[param] = var
+
+				#===
+					Tips:
+						if "jetelinadb" parameter exists in dn, this is the initialize process.
+						therefore there is no session data, skip it.
+				===#
+				if "jetelinadb" ∉ dn
+					# also rewrite the session data
+					if(param == "dbtype")
+						JSession.setDBType(var)
+					end
+				end
 			end
 			#
 			#  Tips:
@@ -226,7 +252,6 @@ function configParamUpdate(d::Dict)
 
 						history_previous = string("\"",param,"\":","\"",prev,"\",",history_previous)
 						history_latest = string(",\"",param,"\":","\"",var,"\"",history_latest)
-						@info n i history_previous history_latest
 					end
 				end
 			end
@@ -242,15 +267,24 @@ function configParamUpdate(d::Dict)
 		close(tf)
 		close(f)
 		mv(configfile_tmp, configfile, force = true)
+		
 		#
 		#  write the history
-		#  Caution:2024/3/18 "change user name" will be login user's name, but not yet.
 		#
 		open(configChangeHistoryFile,"a+") do h 
 			hd = Dates.format(now(), "yyyy-mm-dd HH:MM:SS")
 			history_previous = strip(history_previous,',')
 			history_latest = strip(history_latest,',')
-			historyString = """{"date":"$hd","name":"changed user name","previous":{$history_previous},"latest":{$history_latest}}"""
+			
+			# ref. around 242
+			operator = ""
+			if "jetelinadb" ∉ dn
+				operator = JSession.get()[1];
+			else
+				operator = "it is me"
+			end
+
+			historyString = """{"date":"$hd","name":"$operator","previous":{$history_previous},"latest":{$history_latest}}"""
 			println(h,historyString)
 		end
 

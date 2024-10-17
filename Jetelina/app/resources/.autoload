@@ -1,8 +1,9 @@
 JMessage.jl
 JFiles.jl
+JSession.jl
 InitConfigManager.jl
 JLog.jl
-ApiSqlListManager.jl
+InitApiSqlListManager.jl
 DBDataController.jl
 FileUploadController.jl
 GetDataController.jl
@@ -11,6 +12,7 @@ JTimer.jl
 
 -#'these are neglected in auto loading'
 -ConfigManager.jl
+-ApiSqlListManager.jl
 -SQLAnalyzer.jl
 -TimerExecuter.jl
 -LogFileRotator.jl

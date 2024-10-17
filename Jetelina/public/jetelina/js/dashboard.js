@@ -1,18 +1,20 @@
 /**
  * @author Ono Keiji
- * @version 1.0
  * 
  * This is the main js file for Jetelina. These functions handle the initial behavior of Jetelina screen.
  * 
  *     Functions list:
- *       getRandomNumber(i) create random number. the range is 0 to i.
+ *        focusonJetelinaPanel() focust on the input tag of jetelina panel
+ *        getRandomNumber(i) create random number. the range is 0 to i.
  */
 const ANIMATEDURATION = 1500;// animate() duration
+const ANIMATEDSCROLLING = 2000;// message scrolling duration in box
 const IGNORE = "ignore"; // when jetelina message is nothing
 const JETELINAPANEL ="#jetelina_panel"; 
 const FUNCTIONPANEL = "#function_panel";
 const CONDITIONPANEL = "#condition_panel";
 const CONTAINERPANEL = "#container";
+const RELATEDTABLESAPIS = "#right_panel";
 const COLUMNSPANEL = "#columns";
 const JETELINACHATBOX = `${JETELINAPANEL} [name='chat_input']`;
 const CHARTPANEL = "#plot";
@@ -26,7 +28,6 @@ let logouttimerId;// interval timer of transfering logout to opening scree, use 
 let inprogress=false;// true -> ajax function is in progress , false -> is not i progress. set in $.ajax({xhr:})
 let loginuser = {}; // contains login user info
 let authcount = 0; // authentication count. this is randum number that is set in login function
-let usetcount = 0; // only use for the first login in checkNewCommer function in jetelinalib.js
 
 $(window).load(function () {
   /**
@@ -94,8 +95,8 @@ $(window).load(function () {
    */
   const focusonJetelinaPanel = () => {
     $(JETELINACHATBOX).focus();
+    subPanelCheck();
   }
-
 /**
  * chatting with Jetelina
  */

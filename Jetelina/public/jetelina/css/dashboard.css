@@ -67,6 +67,24 @@ body {
   background-color: lightcoral;
 }
 
+.relatedItem {
+  animation: blinkItem 1s infinite alternate;
+}
+
+@keyframes blinkItem{
+  0% { background-color: #7dc37f}
+  100% { background-color: rgb(228, 218, 130)}
+}
+
+.activeandrelatedItem {
+  animation: blinkmixItem 1s infinite alternate;
+}
+
+@keyframes blinkmixItem{
+  0% { background-color: lightcoral}
+  100% { background-color: rgb(228, 218, 130)}
+}
+
 /* columns sample data pop up */
 .tooltip {
   display: none;
@@ -128,12 +146,28 @@ body {
   text-shadow: 0 0 10px rgb(193, 206, 194), 0 0 15px rgb(193, 206, 206);
 }
 
+.initial_alert_text {
+  color: #f1ef46;
+  font-style: italic;
+  font-size: medium;
+  text-shadow: 0 0 10px rgb(193, 206, 194), 0 0 15px #f1ef46;
+  ;
+}
+
 input.user-input {
   outline: none;
   border: none;
   color: #a8ce49;
   background: rgb(53, 41, 94, 0.1);
   width: 300px;
+}
+
+textarea.user-input{
+  outline: none;
+  border: none;
+  color: #a8ce49;
+  background: rgb(53, 41, 94, 0.1);
+  width: 500px;
 }
 
 .yourText {
@@ -147,6 +181,16 @@ input.user-input {
   color: #a8ce49;
   text-shadow: 0 0 10px rgb(14, 225, 31), 0 0 15px rgb(229, 232, 198);
   background: rgb(53, 41, 94, 0.1);
+}
+
+.functionpanel-parts > ol {
+  padding-left:50%;
+  text-align: left;
+  list-style: decimal;
+}
+
+.initializepanel {
+  text-align: left;
 }
 
 .sqllist > p {
@@ -167,13 +211,14 @@ input.user-input {
 }
 
 .apisql {
-  width:500px;
+  width:70%/*500px*/;
   font-size: 16px;
   color: #7dc37f;
   top:50%;
   left:10%;
   position: absolute;
   transform: translate(+10%,-50%);
+  word-wrap: break-word;
 }
 
 .apisql.apiin {
@@ -196,9 +241,22 @@ input.user-input {
 
 .something_msg_def {
   width:600px;
-  height:70px;
-  top:80%;
+  height:100px;
+  top:65%;
   left:20%;
+}
+
+.jetelina_teach_you {
+  width:600px;
+  height:200px;
+  top:3%;
+  left:50%;
+}
+
+.jetelina_teach_you_ol {
+  padding-left:5%;
+  text-align: left;
+  list-style: decimal;
 }
 
 .something_msg_def.config_history {
@@ -207,8 +265,12 @@ input.user-input {
 } 
 
 .jetelina_message {
-    color: #e32910;  
+    color: #e7d967/*#e32910*/;  
     font-style: italic;
+    width: 600px;/* match with parent .somthing_msg_def */
+    display: inline-block;
+    word-wrap: break-word;
+    text-align: left;
 }
 
 .jetelina_message.config_history_text {
@@ -231,3 +293,57 @@ input.user-input {
   color: #72e799;  
   font-style: italic;
 }
+
+.msg_scroll {
+  margin: 0 auto;
+  overflow-y: scroll;
+  background-color: rgb(53, 41, 94, 0.1)/* #f8e9f2*/;
+  border: solid 1px rgb(0,255,255,0.75)/*#DE94BF*/;
+  border-radius: 5px;
+  scrollbar-color: rgba(49, 177, 117, 0.1)  rgba(41, 94, 59, 0.1)/* #FAF8D8 #DE94BF*/;
+  scrollbar-width: thin;
+}
+
+.right_left_panel_scroll {
+  margin: 0 auto;
+  overflow-y: auto;
+  scrollbar-color: rgba(49, 177, 117, 0.1)  rgba(87, 211, 190, 0.1)/* #FAF8D8 #DE94BF*/;
+  scrollbar-width: thin;
+}
+
+.dblist {
+  width:200px;
+  height:20px;
+  top:6%;
+  left:20%;
+}
+
+.dbfocus {
+/*  background-color: #7dc37f; */
+  animation: blinkDb 3s infinite alternate;
+}
+
+@keyframes blinkDb{
+  0% { background-color: rgba(12, 236, 12, 0.831)}
+  100% { background-color: rgba(255, 255, 255, 0.18)}
+}
+
+.attentionapiinout {
+  /*  background-color: #7dc37f; */
+    animation: blinkapiinout 3s infinite alternate;
+  }
+  
+  @keyframes blinkapiinout{
+    0% { color: rgba(12, 236, 12, 0.831)}
+    100% { color:#7dc37f}
+  }
+  
+  .configparams_key {
+    color: #7dc37f;
+    text-align: left;
+  }
+
+  .configparams_val {
+    color: #f1ef46;
+    text-align: left;
+  }

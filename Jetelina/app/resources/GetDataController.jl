@@ -2,11 +2,12 @@
 module: GetDataController
 
 Author: Ono keiji
-Version: 1.0
+
 Description:
 	get i/f of ajax
 
 functions
+	logout() logout procedure. update jetelina_user_table.logoutdate.
 	getTableList() calling DBDataController.getTableList() with json mode. the return is json form naturally.
 	getSqlAccessData() get JC["sqlaccesscountfile"] data file name. this file  contains access cound data in each sql due to sql.txt log file.
 	getTableCombiVsAccessRelationData()  get JC["tablecombinationfile"] data file name. this file is analyzed data for table combination.
@@ -15,17 +16,39 @@ functions
 	checkExistImproveApiFile()  get JC["improvesuggestionfile"] data file name. this file contains an improving suggestion data of a target api. 
 	getApiList()  get registering api list in json style.api list is refered in Df_JetelinaSqlList.
 	getConfigHistory() get configuration change history in json style.
+	getWorkingDBList() get db list that is working.
 """
 module GetDataController
 
-using Genie, Genie.Requests, Genie.Renderer.Json
-using Jetelina.JFiles, Jetelina.ApiSqlListManager, Jetelina.DBDataController, Jetelina.JMessage
+using Genie, Genie.Requests, Genie.Renderer.Json, DataFrames
+using Jetelina.JFiles, Jetelina.InitApiSqlListManager.ApiSqlListManager, Jetelina.DBDataController, Jetelina.JMessage, Jetelina.JSession
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export getTableList, getTableCombiVsAccessRelationData, getPerformanceRealData, getPerformanceTestData, checkExistImproveApiFile, getApiList, getConfigHistory
+export logout, getTableList, getTableCombiVsAccessRelationData, getPerformanceRealData, getPerformanceTestData, checkExistImproveApiFile, getApiList, getConfigHistory, getWorkingDBList
 
+"""
+function logout()
+
+	logout procedure. update jetelina_user_table.logoutdate.
+"""
+function logout()
+	uid = JSession.get()[2]
+	key1 = "logoutdate"
+	key2 = "last_dbtype"
+	value = "now()"
+
+	if !isnothing(uid)
+		DBDataController.updateUserInfo(uid, key2, JSession.getDBType())
+		ret = DBDataController.updateUserData(uid, key1, value)
+	end
+
+	# session data clear
+	JSession.clear()
+
+	return ret
+end
 """
 function getTableList()
 
@@ -122,12 +145,16 @@ function getApiList()
 	api list is refered in Df_JetelinaSqlList.
 """
 function getApiList()
-	if ApiSqlListManager.readSqlList2DataFrame()[1]
-		Df_JetelinaSqlList = ApiSqlListManager.readSqlList2DataFrame()[2]
-		return json(Dict("result" => true, "Jetelina" => copy.(eachrow(Df_JetelinaSqlList))))
+	#===
+		Tips:
+			ApiSql...readSql...()[1] contains true/false.
+			ApiSql...readSql...()[2] contains dataframe list if [] is true, in the case of false is nothing.
+	===#
+	if 0 < nrow(ApiSqlListManager.Df_JetelinaSqlList)
+		return json(Dict("result" => true, "Jetelina" => copy.(eachrow(reverse(ApiSqlListManager.Df_JetelinaSqlList)))))
 	else
 		# not found SQL list
-		return false
+		return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "Oops! there is no api list data"))
 	end
 end
 """
@@ -156,5 +183,16 @@ function getConfigHistory()
 		return false
 	end
 end
-
+"""
+function getWorkingDBList()
+	
+	get db list that is working.
+"""
+function getWorkingDBList()
+	postgres = j_config.JC["pg_work"]
+	mysql    = j_config.JC["my_work"]
+	redis    = j_config.JC["redis_work"]
+	df = DataFrame("postgres"=>postgres,"mysql"=>mysql,"redis"=>redis)
+	return json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
+end
 end

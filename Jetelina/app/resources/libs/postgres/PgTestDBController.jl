@@ -2,7 +2,7 @@
 module: PgTestDBController
 
 Author: Ono keiji
-Version: 1.0
+
 Description:
 	test db controller for PostgreSQL.
 	this module might should be integrated in PgDBController module.:-p
