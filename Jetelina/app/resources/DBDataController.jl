@@ -49,6 +49,8 @@ include("libs/mysql/MyDBController.jl")
 include("libs/mysql/MySQLSentenceManager.jl")
 include("libs/redis/RsDBController.jl")
 include("libs/redis/RsSQLSentenceManager.jl")
+include("libs/monog/MonDBController.jl")
+include("libs/mongo/MonSQLSentenceManager.jl")
 
 export init_Jetelina_table, createJetelinaDatabaseinMysql,
 	dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,

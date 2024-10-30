@@ -23,7 +23,7 @@
 #      operationhistoryfile: table/api create/delete history log file
 #      operationhistoryfilesize: MB order ex. 10MB -> 10
 @jdic version:"version"
-version = 2.0
+version = 3.0
 
 @jdic debug:"debug"
 debug = false
