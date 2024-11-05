@@ -81,6 +81,10 @@ file_column_db = db
 file_column_max = max
 file_column_min = min
 file_column_mean = mean
+file_column_time = time
+file_column_username = username
+file_column_userid = userid
+file_column_operation = operation
 
 #
 # jetelina user table database

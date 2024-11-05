@@ -8,7 +8,7 @@ Description:
 
 functions
 	writetoLogfile(s)  write 's' to log file. date format is "yyyy-mm-dd HH:MM:SS".'s' is available whatever type.
-	writetoSQLLogfile(apino::String, sql::String)  write executed sql with its apino to SQL log file. date format is "yyyy-mm-dd HH:MM:SS".
+	writetoSQLLogfile(apino::String, dbtype::String)  write executed sql with its apino to SQL log file. date format is "yyyy-mm-dd HH:MM:SS".
 	writetoOperationHistoryfile(operationstr::String) write operation history to the file.
 	getLogHash() return a hash number for identifying log data.
 	searchinLogfile(errnum::String)	searching orderd log as 'errnum' in log file
@@ -88,24 +88,30 @@ function _closeLogfile(io::IOStream)
 end
 
 """
-function writetoSQLLogfile(apino::String, sql::String)
+function writetoSQLLogfile(apino::String, dbtype::String)
 
 	write executed sql with its apino to SQL log file. date format is "yyyy-mm-dd HH:MM:SS".
 	in this function, trying to be simple file accessing, not use Logging module
 
 # Arguments
-- `apino::String`: apino ex. ji101
-- `sql::String`  : SQL sentence. ex. select aa,bb from table
+- `apino::String` : apino ex. ji101
+- `dbtype::String`: using database name. ex. postgresql, mysql, redis, mongodb
 """
-function writetoSQLLogfile(apino, sql)
+function writetoSQLLogfile(apino, dbtype)
 	#==
 		Tips:
 			csv format is requested by SQLAnalyzer.
 			ref: SQLAnalyzer.createAnalyzedJsonFile()
 	===#
-	log_str = string(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"), ",", apino, ",\"", sql, "\"")
 	sqllogfile = JFiles.getFileNameFromLogPath(j_config.JC["sqllogfile"])
 	sqlfilemaxsize = parse(Int, j_config.JC["sqllogfilesize"])
+
+	thefirstflg::Bool = true
+    if !isfile(sqllogfile)
+        thefirstflg = false
+    end
+
+	log_str = string(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"), ",", apino, ",", dbtype)
 
 	try
 		if ispath(sqllogfile)
@@ -117,6 +123,10 @@ function writetoSQLLogfile(apino, sql)
 		end
 
 		open(sqllogfile, "a+") do f
+            if !thefirstflg
+                println(f, string(j_config.JC["file_column_time"], ',', j_config.JC["file_column_apino"], ',', j_config.JC["file_column_db"]))
+            end
+
 			println(f, log_str)
 		end
 	catch err
@@ -139,10 +149,16 @@ function writetoOperationHistoryfile(operationstr::String)
 		Tips:
 			JSession.get() returns tuple as (username, userid)
 	===#
-	sessiondata = JSession.get()
-	log_str = string(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"), ",", operationstr, ",", sessiondata[1], ",", sessiondata[2])
 	operationfile = JFiles.getFileNameFromLogPath(j_config.JC["operationhistoryfile"])
 	operationfilemaxsize = parse(Int, j_config.JC["operationhistoryfilesize"])
+	sessiondata = JSession.get()
+
+	thefirstflg::Bool = true
+    if !isfile(operationfile)
+        thefirstflg = false
+    end
+
+	log_str = string(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"), ",\"", operationstr, "\",", sessiondata[1], ",", sessiondata[2])
 
 	try
 		if ispath(operationfile)
@@ -154,6 +170,10 @@ function writetoOperationHistoryfile(operationstr::String)
 		end
 
 		open(operationfile, "a+") do f
+            if !thefirstflg
+                println(f, string(j_config.JC["file_column_time"], ',', j_config.JC["file_column_operation"], ',', j_config.JC["file_column_username"], ',', j_config.JC["file_column_userid"]))
+            end
+
 			println(f, log_str)
 		end
 	catch err

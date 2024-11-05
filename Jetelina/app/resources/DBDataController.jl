@@ -49,7 +49,7 @@ include("libs/mysql/MyDBController.jl")
 include("libs/mysql/MySQLSentenceManager.jl")
 include("libs/redis/RsDBController.jl")
 include("libs/redis/RsSQLSentenceManager.jl")
-include("libs/monog/MonDBController.jl")
+include("libs/mongo/MonDBController.jl")
 include("libs/mongo/MonSQLSentenceManager.jl")
 
 export init_Jetelina_table, createJetelinaDatabaseinMysql,
@@ -304,7 +304,7 @@ function executeApi(json_d::Dict)
 	end
 
 	# write execution sql to log file
-	JLog.writetoSQLLogfile(json_d["apino"], sql_str)
+	JLog.writetoSQLLogfile(json_d["apino"], dbtype)
 
 	return ret
 end
