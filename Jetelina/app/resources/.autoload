@@ -9,9 +9,10 @@ FileUploadController.jl
 GetDataController.jl
 PostDataController.jl
 JTimer.jl
-SQLAnalyzer.jl
+ApiAccessCounter.jl
 
 -#'these are neglected in auto loading'
+-SQLAnalyzer.jl
 -ConfigManager.jl
 -ApiSqlListManager.jl
 -TimerExecuter.jl

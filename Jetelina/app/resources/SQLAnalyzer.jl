@@ -16,7 +16,7 @@ functions
 	dropTestDB(conn)  drop testdb. doubtfull. :-p
 	creatTestDB()    create testdb by using running db(JC["pg_dbname"]). only postgresql now. other db should be impremented later.
 	tableCopy(df::DataFrame) copy some data from the running db to the test db. the number of copy data are ordered in JC["selectlimit"].
-	function stopanalyzer() manual stopper for analyzring repeat
+	stopanalyzer() manual stopper for repeating analyzring
 """
 module SQLAnalyzer
 
