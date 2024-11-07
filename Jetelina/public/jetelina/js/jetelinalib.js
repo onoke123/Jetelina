@@ -393,6 +393,10 @@ const getAjaxData = (url) => {
             let m = "";
             // go data parse
             const dataurls = scenario['analyzed-data-collect-url'];
+            if(url == dataurls[4]){
+                setGraphData(result, "access");
+            }
+
             if (checkResult(result)) {
                 if (url == dataurls[3]) {
                     /*

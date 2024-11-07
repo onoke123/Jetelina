@@ -22,7 +22,7 @@
  */
 const openConditionPanel = () => {
     if( isVisibleFunctionPanel() ){
-        $(FUNCTIONPANEL).hide();
+//        $(FUNCTIONPANEL).hide();
     }
     
     $(CONDITIONPANEL).show().animate({
@@ -36,7 +36,9 @@ const openConditionPanel = () => {
     /*
         check for existing Jetelina's suggestion
     */
-    getAjaxData(dataurls[3]);
+//    getAjaxData(dataurls[3]);
+//    conditionPanelFunctions("graph");
+    getAjaxData(dataurls[4]);
 }
 /**
  * @function isVisibleApiAccessNumbers
@@ -277,6 +279,7 @@ const setGraphData = (o, type) => {
                     if (type == "ac") {
                         viewCombinationGraph(apino, base_table_no, combination_table, access_count);
                     } else if (type == "access"){
+                        console.log("apino, access...., type", type, apino, access_count);
                         viewPerformanceGraph(apino, access_count, type);
                     }else{
                         viewPerformanceGraph(apino, mean, type);
@@ -386,6 +389,7 @@ const viewPerformanceGraph = (apino, d, type) => {
     };
 
     if (type == "access"){
+        $("#api_access_numbers").show();
         Plotly.newPlot('api_access_numbers_graph', data, layout);
     } else if (type == "real") {
         Plotly.newPlot('performance_real_graph', data, layout);
