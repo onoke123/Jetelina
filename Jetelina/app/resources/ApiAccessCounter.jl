@@ -8,8 +8,8 @@ Description:
 	
 functions
 	main() this function set as for kicking createAna..() from outer function.
-	createAnalyzedJsonFile() create json file for result of sql execution speed analyze data.
-	collectSqlAccessNumbers(df::DataFrame)  collect each sql access numbers then write out it to JC["sqlaccesscountfile"] file in JSON form for showing its graph in condition panel.
+	collectSqlAccessNumbers() 	collect each api(sql) access numbers.
+	createAnalyzedJsonFile(df::DataFrame)  create json file for result of sql execution speed analyze data.
 	stopanalyzer() manual stopper for repeating analyzring
 """
 module ApiAccessCounter
@@ -26,7 +26,7 @@ procflg = Ref(true) # analyze process progressable -> true, stop/error -> false
 """
 function main()
 
-	wrap function for executing createAnalyzedJsonFile() that is the real analyzing function.
+	wrap function for executing collectSqlAccessNumbers() that is the real analyzing function.
 	this function set as for kicking createAna..() from outer function.
 """
 function main()
@@ -36,7 +36,7 @@ function main()
 		JLog.writetoLogfile(string("ApiAccessCounter.main() start with : ",j_config.JC["analyze_interval"]," hr interval"))
 
 		task = @async while procflg[]
-			createAnalyzedJsonFile()
+			collectSqlAccessNumbers()
 			sleep(interval)
 		end
 	else
@@ -46,14 +46,13 @@ function main()
 	end
 end
 """
-function createAnalyzedJsonFile()
+function collectSqlAccessNumbers()
 
-	create json file for result of sql execution speed analyze data.
+	collect each api(sql) access numbers.
 
 # Arguments
-
 """
-function createAnalyzedJsonFile()
+function collectSqlAccessNumbers()
 	#===
 		Tips:
 			read sql.log file
@@ -68,7 +67,7 @@ function createAnalyzedJsonFile()
 	if !isfile(sqllogfile)
         procflg[] = false
         errmsg::String = """oh my, there is no log file: $sqllogfile"""
-        JLog.writetoLogfile("ApiAccessCounter.createAnalyzedJsonFile() error: $errmsg")
+        JLog.writetoLogfile("ApiAccessCounter.collectSqlAccessNumbers() error: $errmsg")
         return
 	end
 
@@ -99,18 +98,18 @@ function createAnalyzedJsonFile()
 			push!(sql_df, [u[i], ac])
 		end
 
-        collectSqlAccessNumbers(sql_df)
+        createAnalyzedJsonFile(sql_df)
 	end
 end
 """
-function collectSqlAccessNumbers(df::DataFrame)
+function createAnalyzedJsonFile(df::DataFrame)
 
-	collect each sql access numbers then write out it to JC["sqlaccesscountfile"] file in JSON form for showing its graph in condition panel.
+	create json file for result of sql execution speed analyze data.
 
 # Arguments
 - `df::DataFrame`: target dataframe data
 """
-function collectSqlAccessNumbers(df::DataFrame)
+function createAnalyzedJsonFile(df::DataFrame)
 	this_df = copy(df)
 	sqlaccessnumberfile = JFiles.getFileNameFromLogPath(j_config.JC["sqlaccesscountfile"])
 	# delete this file if it exists, because this file is always fresh.
@@ -118,7 +117,7 @@ function collectSqlAccessNumbers(df::DataFrame)
 
 	select!(this_df, :apino, :access_numbers)
 	open(sqlaccessnumberfile, "w") do f
-		println(f, JSON.json(Dict("Jetelina" => copy.(eachrow(this_df)))))
+		println(f, JSON.json(Dict("result" => true, "Jetelina" => copy.(eachrow(this_df)))))
 	end
 end
 """

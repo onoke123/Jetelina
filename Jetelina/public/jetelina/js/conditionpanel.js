@@ -390,7 +390,8 @@ const viewPerformanceGraph = (apino, d, type) => {
 
     if (type == "access"){
         $("#api_access_numbers").show();
-        Plotly.newPlot('api_access_numbers_graph', data, layout);
+//        Plotly.newPlot('api_access_numbers_graph', data, layout);
+        Plotly.react('api_access_numbers_graph', data, layout);
     } else if (type == "real") {
         Plotly.newPlot('performance_real_graph', data, layout);
     } else {
