@@ -85,7 +85,7 @@ file_column_time = time
 file_column_username = username
 file_column_userid = userid
 file_column_operation = operation
-
+file_column_api_execution_time = exectime
 #
 # jetelina user table database
 #   this parameter is defined at installing

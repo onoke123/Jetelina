@@ -58,7 +58,7 @@ function collectSqlAccessNumbers()
 			read sql.log file
 				log/sql.log 
                     ex. 
-                        time,apino,db
+                        time,apino,exectime,db
                         2024-11-05 10:46:33,js4,postgresql
                                    ・
                                    ・

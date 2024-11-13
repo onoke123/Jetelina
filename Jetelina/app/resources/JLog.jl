@@ -8,7 +8,7 @@ Description:
 
 functions
 	writetoLogfile(s)  write 's' to log file. date format is "yyyy-mm-dd HH:MM:SS".'s' is available whatever type.
-	writetoSQLLogfile(apino::String, dbtype::String)  write executed sql with its apino to SQL log file. date format is "yyyy-mm-dd HH:MM:SS".
+	writetoSQLLogfile(apino, exetime, dbtype)  write executed sql with its apino to SQL log file. date format is "yyyy-mm-dd HH:MM:SS".
 	writetoOperationHistoryfile(operationstr::String) write operation history to the file.
 	getLogHash() return a hash number for identifying log data.
 	searchinLogfile(errnum::String)	searching orderd log as 'errnum' in log file
@@ -88,16 +88,17 @@ function _closeLogfile(io::IOStream)
 end
 
 """
-function writetoSQLLogfile(apino::String, dbtype::String)
+function writetoSQLLogfile(apino::String, exetime, dbtype::String)
 
 	write executed sql with its apino to SQL log file. date format is "yyyy-mm-dd HH:MM:SS".
 	in this function, trying to be simple file accessing, not use Logging module
 
 # Arguments
-- `apino::String` : apino ex. ji101
-- `dbtype::String`: using database name. ex. postgresql, mysql, redis, mongodb
+- `apino` : apino ex. ji101
+- `exetime`: api execution time. converted from Float64 to Float32, because it is enough and general, maybe.
+- `dbtype`: using database name. ex. postgresql, mysql, redis, mongodb
 """
-function writetoSQLLogfile(apino, dbtype)
+function writetoSQLLogfile(apino, exetime, dbtype)
 	#==
 		Tips:
 			csv format is requested by SQLAnalyzer.
@@ -111,7 +112,7 @@ function writetoSQLLogfile(apino, dbtype)
         thefirstflg = false
     end
 
-	log_str = string(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"), ",", apino, ",", dbtype)
+	log_str = string(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"), ",", apino, ",", exetime, ",", dbtype)
 
 	try
 		if ispath(sqllogfile)
@@ -124,7 +125,7 @@ function writetoSQLLogfile(apino, dbtype)
 
 		open(sqllogfile, "a+") do f
             if !thefirstflg
-                println(f, string(j_config.JC["file_column_time"], ',', j_config.JC["file_column_apino"], ',', j_config.JC["file_column_db"]))
+                println(f, string(j_config.JC["file_column_time"], ',', j_config.JC["file_column_apino"], ',', j_config.JC["file_column_api_execution_time"], ',', j_config.JC["file_column_db"]))
             end
 
 			println(f, log_str)

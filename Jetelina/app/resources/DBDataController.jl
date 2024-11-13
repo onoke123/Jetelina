@@ -265,6 +265,7 @@ function executeApi(json_d)
 function executeApi(json_d::Dict)
 	ret = ""
 	sql_str = ""
+	stats = ""
 	#===
 		Tips:
 			Steps
@@ -289,22 +290,24 @@ function executeApi(json_d::Dict)
 			# Step2:
 			if dbtype == "postgresql"
 				# Case in PostgreSQL
-				ret = PgDBController.executeApi(json_d, target_api)
+				stats = @timed ret = PgDBController.executeApi(json_d, target_api)
 			elseif dbtype == "mysql"
 				# Case in MySQL
-				ret = MyDBController.executeApi(json_d, target_api)
+				stats = @timed ret = MyDBController.executeApi(json_d, target_api)
 			elseif dbtype == "redis"
 				# Case in Redis
-				ret = RsDBController.executeApi(json_d, target_api)
+				stats = @timed ret = RsDBController.executeApi(json_d, target_api)
 			elseif dbtype == "oracle"
 			end
+
+			# write execution sql to log file
+			# maybe Float32 is enough, who knows :p
+			JLog.writetoSQLLogfile(json_d["apino"], Float32(stats.time), dbtype)
 		end
 	else
 		# not found SQL list 
 	end
 
-	# write execution sql to log file
-	JLog.writetoSQLLogfile(json_d["apino"], dbtype)
 
 	return ret
 end
