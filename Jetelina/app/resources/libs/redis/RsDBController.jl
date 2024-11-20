@@ -4,7 +4,7 @@ module: RsDBController
 Author: Ono keiji
 
 Description:
-	DB controller for PostgreSQL
+	DB controller for Redis
 
 functions
 	open_connection() open connection to the DB.

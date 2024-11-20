@@ -4,7 +4,7 @@ module: MonDBController
 Author: Ono keiji
 
 Description:
-	DB controller for PostgreSQL
+	DB controller for MongoDB
 
 functions
 	open_connection() open connection to the DB.
@@ -22,7 +22,7 @@ functions
 module MonDBController
 
 using Genie, Genie.Renderer, Genie.Renderer.Json
-using CSV, Redis, DataFrames, IterTools, Tables, Dates
+using CSV, Mongoc, DataFrames, IterTools, Tables, Dates
 using Jetelina.JFiles, Jetelina.JLog, Jetelina.InitApiSqlListManager.ApiSqlListManager, Jetelina.JMessage, Jetelina.JSession
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
@@ -40,28 +40,37 @@ function open_connection()
 	connection parameters are set by global variables.
 
 # Arguments
-- return: Redis.Connection object
+- return: Mongoc.Client object
 """
 function open_connection()
-    rhost = string(j_config.JC["redis_host"])
-    rport = parse(Int, j_config.JC["redis_port"])
-    rdb = parse(Int, j_config.JC["redis_dbname"])
-    rpassword = string(j_config.JC["redis_password"])
+    host = string(j_config.JC["mongodb_host"])
+    port = parse(Int, j_config.JC["mongodb_port"])
+    db = parse(Int, j_config.JC["mongodb_dbname"])
+    user = parse(Int, j_config.JC["mongodb_user"])
+    password = string(j_config.JC["mongodb_password"])
 
-    return conn = Redis.RedisConnection(host="$rhost", port=rport, password="$rpassword", db=rdb)
-    #return conn = Redis.RedisConnection()
+    connectionstr::String = ""
+
+    if user == "" || password == ""
+        connectionstr = """mongodb://$host:$port"""
+    else
+        connectionstr = """mongodb://$user:$password@$host/?authSource=admin"""
+    end
+
+    client = Mongoc.Client(connectionstr)
+    return client[db] 
 end
 
 """
-function close_connection(conn::Redis.Connection)
+function close_connection(conn::Mongoc.Client)
 
 	close the DB connection
 
 # Arguments
-- `conn:Redis.Connection`: Redis.Connection object
+- `conn:Mongoc.Client`: Mongoc.Client object
 """
-function close_connection(conn::Redis.RedisConnection)
-    Redis.disconnect(conn)
+function close_connection(conn::Mongoc.Client)
+    Mongoc.disconnect(conn)
 end
 """
 function dataInsertFromCSV(fname::String)
