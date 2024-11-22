@@ -8,7 +8,7 @@ Description:
 
 functions
 	open_connection() open connection to the DB.
-	close_connection(conn::Redis.Connection)  close the DB connection
+	close_connection()  close the DB connection, but attention...
 	dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
 	getKeyList(s::String) get all key name
 	executeApi(json_d::Dict,target_api::DataFrame) execute API order by json data
@@ -62,15 +62,18 @@ function open_connection()
 end
 
 """
-function close_connection(conn::Mongoc.Client)
+function close_connection()
 
-	close the DB connection
+	Attention:
+        this function is for preventing of misunderstanding.
+        Mongoc module does not have a disconnect function, because the Client() has the function in it.
+        Indeed there is finalizer() in Client() to disconnect the connection automatically when the connection has been focused out.
+        this is very smart behavior but easy to misunderstand in how to disconnect, I think. Sometimes a programer likes to make clear its logic no matter what implicit definitions.
+        therefore this close_connection() keeps alive in case you would feel unsafe, but not working.
 
-# Arguments
-- `conn:Mongoc.Client`: Mongoc.Client object
 """
-function close_connection(conn::Mongoc.Client)
-    Mongoc.disconnect(conn)
+function close_connection()
+    # empty :p
 end
 """
 function dataInsertFromCSV(fname::String)
