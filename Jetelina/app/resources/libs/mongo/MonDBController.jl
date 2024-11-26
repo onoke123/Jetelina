@@ -9,7 +9,7 @@ Description:
 functions
 	open_connection() open connection to the DB.
 	close_connection()  close the DB connection, but attention...
-	dataInsertFromCSV(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
+	dataInsertFromJson(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
 	getKeyList(s::String) get all key name
 	executeApi(json_d::Dict,target_api::DataFrame) execute API order by json data
 	_executeApi(apino::String, sql_str::String) execute API with creating SQL sentence,this is a private function that is called by executeApi()
@@ -31,7 +31,7 @@ JMessage.showModuleInCompiling(@__MODULE__)
 include("MonDataTypeList.jl")
 include("MonSQLSentenceManager.jl")
 
-export open_connection, close_connection, dataInsertFromCSV, getKeyList, executeApi, prepareDbEnvironment
+export open_connection, close_connection, dataInsertFromJson, getKeyList, executeApi, prepareDbEnvironment
 
 """
 function open_connection()
@@ -45,8 +45,8 @@ function open_connection()
 function open_connection()
     host = string(j_config.JC["mongodb_host"])
     port = parse(Int, j_config.JC["mongodb_port"])
-    db = parse(Int, j_config.JC["mongodb_dbname"])
-    user = parse(Int, j_config.JC["mongodb_user"])
+    db = string(j_config.JC["mongodb_dbname"])
+    user = string(j_config.JC["mongodb_user"])
     password = string(j_config.JC["mongodb_password"])
 
     connectionstr::String = ""
@@ -76,63 +76,63 @@ function close_connection()
     # empty :p
 end
 """
-function dataInsertFromCSV(fname::String)
+function dataInsertFromJson(fname::String)
 
-	insert csv file data ordered by 'fname' into table. the table name is the csv file name.
+	insert json file data ordered by 'fname' into collection.
 
-    Attention:
-        not coding yet, maybe near future, ignore this function.
+    Caution:
+        regurate 1 collection , max 64 index(mean 64 json data) in this version.
+        no check at size e.g. BSON size(max16mb). rely on user, this time. :)
 
 # Arguments
-- `fname: String`: csv file name
+- `fname: String`: json file name
 - return: boolean: true -> success, false -> get fail
 """
-function dataInsertFromCSV(fname::String)
-    #    @info "fname " fname
+function dataInsertFromJson(fname::String)
+    result::Bool = false
     ret = ""
-    #	redisdbname = "default" # this is temporary dummy name, indeed it's ok what a name
     jmsg::String = string("compliment me!")
-    #    tablename_arr::Vector{String} = []
+    jcollection::String = "jetelina-collection"
 
-    df = DataFrame(CSV.File(fname))
-    rename!(lowercase, df)
-    #    push!(tablename_arr, redisdbname)
+    database = open_connection()
+    collection = database[jcollection]
 
-    if (0 < nrow(df))
-        #===
-                Tips:
-                    to make matching with ApiSql..writeToList(), the secound parameter is to be 'key_arr' and
-                    it is contained the key name instead of table name in RDBMS.
-            ===#
-        for i ∈ 1:nrow(df)
-            key_arr::Vector{String} = []
-            df.key[i] = lowercase(df.key[i])
-            #===
-                Caution:
-                    in fact, insert_str is enough only one, but in the loop because of 
-                    using 'apino'
-            ===#
+    # いっぺんに処理する方法
+    #bsons = Mongoc.read_bson_from_json(fname)
+    #result = append!(collection,bsons)
+
+    # 一つづつ処理する方法
+    jdata = Mongoc.BSONJSONReader(fname)
+    for bson in jdata
+        # data insert
+        result = push!(collection,bson)
+        if result
+            # bson毎にapiを作る
             insert_str = MonSQLSentenceManager.createApiInsertSentence()
             if (insert_str != "")
-                ApiSqlListManager.writeTolist(insert_str, "", key_arr, "redis")
+                ApiSqlListManager.writeTolist(insert_str, "", key_arr, "mongo")
             end
 
             push!(key_arr, df.key[i])
             # update (set)
-            update_str = MonSQLSentenceManager.createApiUpdateSentence(df.key[i])
+            update_str = MonSQLSentenceManager.createApiUpdateSentence()
             if (update_str != "")
                 if (set(df.key[i], df.value[i])[1])
-                    ApiSqlListManager.writeTolist(update_str, "", key_arr, "redis")
+                    ApiSqlListManager.writeTolist(update_str, "", key_arr, "mongo")
                 end
             end
 
             # select (get)
-            select_str = MonSQLSentenceManager.createApiSelectSentence(df.key[i])
+            select_str = MonSQLSentenceManager.createApiSelectSentence()
             if (select_str != "")
-                ApiSqlListManager.writeTolist(select_str, "", key_arr, "redis")
+                ApiSqlListManager.writeTolist(select_str, "", key_arr, "mongo")
             end
+        else
+            break;
         end
+    end
 
+    if result            
         ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
     else
         ret = json(Dict("result" => false, "filename" => "$fname", "message from Jetelina" => "no way"))
