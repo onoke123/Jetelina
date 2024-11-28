@@ -8,6 +8,7 @@ Description:
 
 functions
 	open_connection() open connection to the DB.
+    open_collection(jcollection::String) open "collection" to the DB.
 	close_connection()  close the DB connection, but attention...
 	dataInsertFromJson(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
 	getKeyList(s::String) get all key name
@@ -31,7 +32,7 @@ JMessage.showModuleInCompiling(@__MODULE__)
 include("MonDataTypeList.jl")
 include("MonSQLSentenceManager.jl")
 
-export open_connection, close_connection, dataInsertFromJson, getKeyList, executeApi, prepareDbEnvironment
+export open_connection, open_collection, close_connection, dataInsertFromJson, getKeyList, executeApi, prepareDbEnvironment
 
 """
 function open_connection()
@@ -60,7 +61,24 @@ function open_connection()
     client = Mongoc.Client(connectionstr)
     return client[db] 
 end
+"""
+function open_collection(jcollection::String)
 
+	open "collection" to the DB.
+    this function is for setting "collection" in Mongoc.Client.
+
+# Arguments
+- `jcollection: String`: Monogdb collection name
+- return: Mongoc.Client with setting collection
+"""
+function open_collection(jcollection::String)
+    if isnothing(jcollection) || length(jcollection) == 0
+        jcollection = string(j_config.JC["mongodb_collection"])
+    end
+
+    database = open_connection()
+    return database[jcollection]
+end
 """
 function close_connection()
 
@@ -92,10 +110,14 @@ function dataInsertFromJson(fname::String)
     result::Bool = false
     ret = ""
     jmsg::String = string("compliment me!")
-    jcollection::String = "jetelina-collection"
 
-    database = open_connection()
-    collection = database[jcollection]
+    #===
+        Tips:
+            should set the parameter in open_collection() in order to change the collection.
+            but the collection is fixed in the earliest version.
+            will may need to modify parameters in dataInsertFromJson() as well if would be changed by ordering.  
+    ===#    
+    collection = open_collection("")
 
     # いっぺんに処理する方法
     #bsons = Mongoc.read_bson_from_json(fname)

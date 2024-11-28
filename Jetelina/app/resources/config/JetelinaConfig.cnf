@@ -171,6 +171,8 @@ mongodb_host = 127.0.0.1
 mongodb_port = 27017
 @jdic mongodb_dbname:"mongodb database name","mongodb db name","monbodb dbname"
 mongodb_dbname = jetelina
+@jdic mongodb_collection:"mongodb collection name","mongodb collection
+mongodb_collection = jetelina-collection
 @jdic mongodb_user:"mongodb user","mongodb login"
 mongodb_user =  
 @jdic mongodb_password:"mongodb password","mongodb in redis"
