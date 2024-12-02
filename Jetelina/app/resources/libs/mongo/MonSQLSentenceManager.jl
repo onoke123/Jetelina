@@ -23,13 +23,13 @@ JMessage.showModuleInCompiling(@__MODULE__)
 export keyDuplicationCheck, createApiInsertSentence, createApiSelectSentence
 
 """
-function keyDuplicationCheck(nsql::String)
+function keyDuplicationCheck(str::String)
 
-	confirm duplication, if 'key' exists in JC["sqllistfile"].
+	confirm duplication, if 'str' exists in JC["sqllistfile"].
 	but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
 
 # Arguments
-- `key::String`: sql sentence
+- `str::String`: something json key data
 - return::Bool : exist -> ture
 				 not exist -> false
 """
@@ -53,36 +53,40 @@ end
 """
 function createApiInsertSentence()
 
-	create redis general set sentence.
+	create MongoDb general insert sentence.
+	this function always inserts a new collection, therefore no need to check for duplication in the sql list, maybe.
 
 # Arguments
 - return: String: 
 """
 function createApiInsertSentence()
-	ret::String = ""
-	str =  """set::"""
-	if(!keyDuplicationCheck(str))
-		ret = str
-	end
+#	ret::String = ""
+
+	ret::String =  """<set your json with an unique 'j_table'>"""
+
+#	if(!keyDuplicationCheck(str))
+#		ret = str
+#	end
 
 	return ret
 end
 """
-function createApiUpdateSentence(key)
+function createApiUpdateSentence(str::String)
 
-	create redis set sentence.
-	this sentence is for updating an existence data
+	create mongodb update sentence.
+	this function always works for an unique collection, therefore no need to check for duplication in the sql list, maybe.
 
 # Arguments
-- `key::String`: key name
+- `str::String`: json string
 - return: String: 
 """
-function createApiUpdateSentence(key)
-	ret::String = ""
-	str =  """set:$key:{value}"""
-	if(!keyDuplicationCheck(str))
-		ret = str
-	end
+function createApiUpdateSentence(str::String)
+#	ret::String = ""
+	ret::String =  """{\$set:$str}"""
+
+#	if(!keyDuplicationCheck(str))
+#		ret = str
+#	end
 
 	return ret
 end

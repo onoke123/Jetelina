@@ -7,7 +7,7 @@ Description:
 	DB controller for Redis
 
 functions
-	keyDuplicationCheck(nsql::String, subq::String)  confirm duplication, if 'nsql' exists in JC["sqllistfile"].but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
+	keyDuplicationCheck(key::String)  confirm duplication, if 'key' exists in JC["sqllistfile"].but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
 	createApiInsertSentence() create redis general set sentence.
 	createApiUpdateSentence(key) create redis set sentence.this sentence is for updating an existence data.
 	createApiSelectSentence(key) create redis get sentence.
