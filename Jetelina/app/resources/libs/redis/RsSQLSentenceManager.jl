@@ -20,20 +20,20 @@ using Jetelina.InitApiSqlListManager.ApiSqlListManager, Jetelina.JMessage
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export keyDuplicationCheck, createApiInsertSentence, createApiSelectSentence
+export keyDuplicationCheck, createApiInsertSentence, createApiUpdateSentence, createApiSelectSentence
 
 """
-function keyDuplicationCheck(nsql::String)
+function keyDuplicationCheck(key::String)
 
 	confirm duplication, if 'key' exists in JC["sqllistfile"].
 	but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
 
 # Arguments
-- `key::String`: sql sentence
+- `key::String`: key name
 - return::Bool : exist -> ture
 				 not exist -> false
 """
-function keyDuplicationCheck(str::String)
+function keyDuplicationCheck(key::String)
 	ret::Bool = false
 	#===
 		Tips:
@@ -42,7 +42,7 @@ function keyDuplicationCheck(str::String)
 	===#			
 	if 0 < nrow(ApiSqlListManager.Df_JetelinaSqlList)
 		df = ApiSqlListManager.Df_JetelinaSqlList
-		ex = filter(:sql => s -> s == str, df)
+		ex = filter(:sql => s -> s == key, df)
 		if(0<nrow(ex))
 			ret = true
 		end

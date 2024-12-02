@@ -7,10 +7,10 @@ Description:
 	DB controller for Redis
 
 functions
-	keyDuplicationCheck(nsql::String, subq::String)  confirm duplication, if 'nsql' exists in JC["sqllistfile"].but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
-	createApiInsertSentence() create redis general set sentence.
-	createApiUpdateSentence(key) create redis set sentence.this sentence is for updating an existence data.
-	createApiSelectSentence(key) create redis get sentence.
+	keyDuplicationCheck(str::String)  confirm duplication, if 'str' exists in JC["sqllistfile"].but checking is in Df_JetelinaSqlList, not the real file, because of execution speed. 
+	createApiInsertSentence() create MongoDB general set sentence.
+	createApiUpdateSentence(str::String) create MongoDB update sentence.
+	createApiSelectSentence(str::String) create MongoDB find sentence.
 """
 module MonSQLSentenceManager
 
@@ -20,7 +20,7 @@ using Jetelina.InitApiSqlListManager.ApiSqlListManager, Jetelina.JMessage
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export keyDuplicationCheck, createApiInsertSentence, createApiSelectSentence
+export keyDuplicationCheck, createApiInsertSentence, createApiUpdateSentence, createApiSelectSentence
 
 """
 function keyDuplicationCheck(str::String)
@@ -91,20 +91,24 @@ function createApiUpdateSentence(str::String)
 	return ret
 end
 """
-function createApiSelectSentence(key)
+function createApiSelectSentence(str::String)
 
-	create redis get sentence.
+	create MongoDB find sentence.
+	'find' is fit on Mongo,but use 'select' word to make match with other DB's API.
+	this function always works for an unique collection, therefore no need to check for duplication in the sql list, maybe.
 
 # Arguments
-- `key::String`: key name
+- `str::String`: json string
 - return: String
 """
-function createApiSelectSentence(key)
-	ret::String = ""
-	str =  """get:$key"""
-	if(!keyDuplicationCheck(str))
-		ret = str
-	end
+function createApiSelectSentence(str::String)
+#	ret::String = ""
+
+	ret::String =  """$str"""
+
+#	if(!keyDuplicationCheck(str))
+#		ret = str
+#	end
 
 	return ret
 end

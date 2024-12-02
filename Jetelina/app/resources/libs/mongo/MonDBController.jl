@@ -10,8 +10,9 @@ functions
 	open_connection() open connection to the DB.
     open_collection(jcollection::String) open "collection" to the DB.
 	close_connection()  close the DB connection, but attention...
-	dataInsertFromJson(fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
-	getKeyList(s::String) get all key name
+	dataInsertFromJson(fname::String, collectionname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
+
+    getKeyList(s::String) get all key name
 	executeApi(json_d::Dict,target_api::DataFrame) execute API order by json data
 	_executeApi(apino::String, sql_str::String) execute API with creating SQL sentence,this is a private function that is called by executeApi()
     set(k,v) set 'k'='v' in name=value style in redis
@@ -104,9 +105,10 @@ function dataInsertFromJson(fname::String)
 
 # Arguments
 - `fname: String`: json file name
+- `collectionname: String`: ordered collection name
 - return: boolean: true -> success, false -> get fail
 """
-function dataInsertFromJson(fname::String)
+function dataInsertFromJson(fname::String, collectionname::String)
     result::Bool = false
     ret = ""
     jmsg::String = string("compliment me!")
@@ -117,7 +119,7 @@ function dataInsertFromJson(fname::String)
             but the collection is fixed in the earliest version.
             will may need to modify parameters in dataInsertFromJson() as well if would be changed by ordering.  
     ===#    
-    collection = open_collection("")
+    collection = open_collection(collectionname)
 
     # いっぺんに処理する方法
     #bsons = Mongoc.read_bson_from_json(fname)
@@ -132,22 +134,26 @@ function dataInsertFromJson(fname::String)
             # bson毎にapiを作る
             insert_str = MonSQLSentenceManager.createApiInsertSentence()
             if (insert_str != "")
-                ApiSqlListManager.writeTolist(insert_str, "", key_arr, "mongo")
+                ApiSqlListManager.writeTolist(insert_str, "", "", "mongodb")
             end
 
-            push!(key_arr, df.key[i])
+            #===
+                Tips:
+                    update and select(find) works with a plane json format data that is provided by an user.
+                    therefore an argument in each functions(createApi...) are to be empty.
+            ===#
             # update (set)
-            update_str = MonSQLSentenceManager.createApiUpdateSentence()
+            update_str = MonSQLSentenceManager.createApiUpdateSentence("")
             if (update_str != "")
                 if (set(df.key[i], df.value[i])[1])
-                    ApiSqlListManager.writeTolist(update_str, "", key_arr, "mongo")
+                    ApiSqlListManager.writeTolist(update_str, "", "", "mongodb")
                 end
             end
 
-            # select (get)
-            select_str = MonSQLSentenceManager.createApiSelectSentence()
+            # select (find)
+            select_str = MonSQLSentenceManager.createApiSelectSentence("")
             if (select_str != "")
-                ApiSqlListManager.writeTolist(select_str, "", key_arr, "mongo")
+                ApiSqlListManager.writeTolist(select_str, "", "", "mongodb")
             end
         else
             break;
