@@ -15,10 +15,12 @@ functions
     getCollectionList(jcollection::String,s::String) get all 'document' in 'jcollection'.
 	executeApi(json_d::Dict,target_api::DataFrame) execute API order by json data
 	_executeApi(apino::String, sql_str::String) execute API with creating SQL sentence,this is a private function that is called by executeApi()
+
     set(k,v) set 'k'='v' in name=value style in redis
     get(k) get value data in redis in order to match name 'k'
     matchingScan(i,k) scan, indeed searching, data to find matching from 'i' cursor position with 'k' string
     simpleScan(i,n) scan, indeed searching, data from 'i' cursor position order by 'n' counts.
+
     prepareDbEnvironment(mode::String) database connection checking, and initializing database if needed
 """
 #===
@@ -432,8 +434,8 @@ function prepareDbEnvironment()
 function prepareDbEnvironment(mode::String)
     ret::Bool = false
     try
-        conn::Redis.RedisConnection = open_connection()
-        close_connection(conn)
+        open_connection()
+        close_connection() # dummy :p
         return true, ""
     catch err
         errnum = JLog.getLogHash()
