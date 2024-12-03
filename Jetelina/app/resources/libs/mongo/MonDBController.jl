@@ -12,7 +12,7 @@ functions
 	close_connection()  close the DB connection, but attention...
 	dataInsertFromJson(fname::String, collectionname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
 
-    getKeyList(s::String) get all key name
+    getCollectionList(jcollection::String,s::String) get all 'document' in 'jcollection'.
 	executeApi(json_d::Dict,target_api::DataFrame) execute API order by json data
 	_executeApi(apino::String, sql_str::String) execute API with creating SQL sentence,this is a private function that is called by executeApi()
     set(k,v) set 'k'='v' in name=value style in redis
@@ -21,6 +21,16 @@ functions
     simpleScan(i,n) scan, indeed searching, data from 'i' cursor position order by 'n' counts.
     prepareDbEnvironment(mode::String) database connection checking, and initializing database if needed
 """
+#===
+        Tips:
+            words against RDBMS
+
+              |   RDBMS   |  MongoDB  |
+              | database  | database  |
+              | table     | collection|
+              | row       | document  |
+              | column    | field     |
+===#
 module MonDBController
 
 using Genie, Genie.Renderer, Genie.Renderer.Json
@@ -33,7 +43,7 @@ JMessage.showModuleInCompiling(@__MODULE__)
 include("MonDataTypeList.jl")
 include("MonSQLSentenceManager.jl")
 
-export open_connection, open_collection, close_connection, dataInsertFromJson, getKeyList, executeApi, prepareDbEnvironment
+export open_connection, open_collection, close_connection, dataInsertFromJson, getCollectionList, executeApi, prepareDbEnvironment
 
 """
 function open_connection()
@@ -60,7 +70,7 @@ function open_connection()
     end
 
     client = Mongoc.Client(connectionstr)
-    return client[db] 
+    return client[db]
 end
 """
 function open_collection(jcollection::String)
@@ -118,7 +128,7 @@ function dataInsertFromJson(fname::String, collectionname::String)
             should set the parameter in open_collection() in order to change the collection.
             but the collection is fixed in the earliest version.
             will may need to modify parameters in dataInsertFromJson() as well if would be changed by ordering.  
-    ===#    
+    ===#
     collection = open_collection(collectionname)
 
     # いっぺんに処理する方法
@@ -129,7 +139,7 @@ function dataInsertFromJson(fname::String, collectionname::String)
     jdata = Mongoc.BSONJSONReader(fname)
     for bson in jdata
         # data insert
-        result = push!(collection,bson)
+        result = push!(collection, bson)
         if result
             # bson毎にapiを作る
             insert_str = MonSQLSentenceManager.createApiInsertSentence()
@@ -156,11 +166,11 @@ function dataInsertFromJson(fname::String, collectionname::String)
                 ApiSqlListManager.writeTolist(select_str, "", "", "mongodb")
             end
         else
-            break;
+            break
         end
     end
 
-    if result            
+    if result
         ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
     else
         ret = json(Dict("result" => false, "filename" => "$fname", "message from Jetelina" => "no way"))
@@ -169,44 +179,32 @@ function dataInsertFromJson(fname::String, collectionname::String)
     return ret
 end
 """
-function getKeyList(s::String)
+function getCollectionList(jcollection::String, s::String)
 
-    Caution:
-        return json using 'tablename' instead of 'keys' because of matching I/F in js function.
-
-	get all keys name
+    get all 'document' in 'jcollection'.
 
 # Arguments
+- `jcollection:String`: collection name
 - `s:String`: 'json' -> required JSON form to return
 			'dataframe' -> required DataFrames form to return
-- return: table list in json or DataFrame
-
+- return: document list
 """
-function getKeyList(s::String)
-    i::Int = 0
-    n::Int = 10000
-    keysArr::Array = []
-    valueArr::Array = []
+function getCollectionList(jcollection::String, s::String)
     jmsg::String = string("compliment me!")
+    keyword::String = "j_table"
+    docArr::Array = []
 
-    keys = simpleScan(i, n)
-    if (keys[1] == 0)
-        for i ∈ 1:length(keys[2])
-            #===
-                Tips:
-                    they said keys[2][i] is string type.
-            ===#
-            if keys[2][i] != ""
-                push!(valueArr, keys[2][i])
-            end
-        end
+    documents = open_collection(jcollection)
 
-        df = DataFrame(keysArr=valueArr)
-        if s == "json"
-            return json(Dict("result" => true, "Jetelina" => copy.(eachrow(reverse(df))), "message from Jetelina" => jmsg))
-        elseif s == "dataframe"
-            return df
-        end
+    for j_table in documents
+        push!(docArr, j_table[keyword])
+    end
+
+    df = DataFrame(j_table=docArr)
+    if s == "json"
+        return json(Dict("result" => true, "Jetelina" => copy.(eachrow(reverse(df))), "message from Jetelina" => jmsg))
+    elseif s == "dataframe"
+        return df
     end
 end
 """
@@ -250,14 +248,14 @@ function _executeApi(json_d::Dict, dfRedis::DataFrame)
         # get 
         p = split(dfRedis[:, :sql][1], ':') # dfRedis[:,:sql][1] -> get:<key>
         r = get(p[2])
-        if(r[1])
+        if (r[1])
             v = r[2]
             df = DataFrame(key=p[2], value=v)
             ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
         else
             err = "Oops got error something, oh my"
             errnum = r[2]
-            ret = json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg"=>"$err","errnum"=>"$errnum"))
+            ret = json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "$err", "errnum" => "$errnum"))
         end
     elseif startswith(apino, "ju")
         v = json_d["key"]
@@ -270,7 +268,7 @@ function _executeApi(json_d::Dict, dfRedis::DataFrame)
             else
                 k = p[2]
                 errnum = r[2]
-                ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "failed set $v in $k, sorry","errnum"=>"$errnum"))
+                ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "failed set $v in $k, sorry", "errnum" => "$errnum"))
             end
         else
             ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "failed set in $k because no value, look carefully more."))
@@ -278,8 +276,8 @@ function _executeApi(json_d::Dict, dfRedis::DataFrame)
     elseif startswith(apino, "ji")
         ret_u::Tuple = (Bool, String)
         ret_s::Tuple = (Bool, String)
-#        ret_u::String = ""
-#        ret_s::String = ""
+        #        ret_u::String = ""
+        #        ret_s::String = ""
         k = lowercase(json_d["key1"])
         v = json_d["key2"]
         # set
@@ -325,7 +323,7 @@ function _executeApi(json_d::Dict, dfRedis::DataFrame)
             k = p[1]
             v = p[2]
             errnum = r[2]
-            ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "failed set $v in $k sorry","errnum"=>"$errnum"))
+            ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "failed set $v in $k sorry", "errnum" => "$errnum"))
         end
     end
 
