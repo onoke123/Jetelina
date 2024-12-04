@@ -13,13 +13,9 @@ functions
 	dataInsertFromJson(fname::String, collectionname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
 
     getCollectionList(jcollection::String,s::String) get all 'document' in 'jcollection'.
-	executeApi(json_d::Dict,target_api::DataFrame) execute API order by json data
-	_executeApi(apino::String, sql_str::String) execute API with creating SQL sentence,this is a private function that is called by executeApi()
+	executeApi(jcollection::String,json_d::Dict,target_api::DataFrame) execute API order by json data
 
-    set(k,v) set 'k'='v' in name=value style in redis
-    get(k) get value data in redis in order to match name 'k'
-    matchingScan(i,k) scan, indeed searching, data to find matching from 'i' cursor position with 'k' string
-    simpleScan(i,n) scan, indeed searching, data from 'i' cursor position order by 'n' counts.
+    
 
     prepareDbEnvironment(mode::String) database connection checking, and initializing database if needed
 """
@@ -143,6 +139,23 @@ function dataInsertFromJson(fname::String, collectionname::String)
         # data insert
         result = push!(collection, bson)
         if result
+            # create api 
+            _createApis()
+        else
+            break
+        end
+    end
+
+    if result
+        ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
+    else
+        ret = json(Dict("result" => false, "filename" => "$fname", "message from Jetelina" => "no way"))
+    end
+
+    return ret
+end
+
+function _createApis()
             # bson毎にapiを作る
             insert_str = MonSQLSentenceManager.createApiInsertSentence()
             if (insert_str != "")
@@ -157,9 +170,7 @@ function dataInsertFromJson(fname::String, collectionname::String)
             # update (set)
             update_str = MonSQLSentenceManager.createApiUpdateSentence("")
             if (update_str != "")
-                if (set(df.key[i], df.value[i])[1])
                     ApiSqlListManager.writeTolist(update_str, "", "", "mongodb")
-                end
             end
 
             # select (find)
@@ -167,18 +178,6 @@ function dataInsertFromJson(fname::String, collectionname::String)
             if (select_str != "")
                 ApiSqlListManager.writeTolist(select_str, "", "", "mongodb")
             end
-        else
-            break
-        end
-    end
-
-    if result
-        ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
-    else
-        ret = json(Dict("result" => false, "filename" => "$fname", "message from Jetelina" => "no way"))
-    end
-
-    return ret
 end
 """
 function getCollectionList(jcollection::String, s::String)
@@ -217,97 +216,95 @@ function executeApi(json_d::Dict,target_api::DataFrame)
 	determine the target then executs it in _executeApi()
 
 # Arguments
+- `jcollection:String`: collection name
 - `json_d::Dict`:  json raw data, uncertain data type        
 - `target_api::DataFrame`: a part of api/sql DataFrame data        
 - return: insert/update/delete -> true/false
 		select               -> json format data
 		error                -> false
 """
-function executeApi(json_d::Dict, target_api::DataFrame)
-    return _executeApi(json_d, target_api)
+function executeApi(j_collection::String,json_d::Dict, target_api::DataFrame)
+    return _executeApi(j_collection,json_d, target_api)
 end
 """
-function _executeApi(apino::String, dfRedis::DataFrame)
+function _executeApi(j_collection::String, apino::String, target_api::DataFrame)
 
 	execute API with creating SQL sentence
 	this is a private function that is called by executeApi()
 
 # Arguments
+- `jcollection:String`: collection name
 - `apino::String`:  apino
-- `dfRedis::DataFrame`: target redis api dataframe        
+- `target_api::DataFrame`: target redis api dataframe        
 - return: insert/update/delete -> true/false
 		select               -> json format data
 		error                -> false
 """
-function _executeApi(json_d::Dict, dfRedis::DataFrame)
+function _executeApi(json_d::Dict, target_api::DataFrame)
     apino = json_d["apino"]
     #    @info "redis exe " apino 
     #    println(dfRedis)
     ret = ""
     jmsg::String = string("compliment me!")
 
+    collection = open_collection("")
+    bson = Mongoc.BSON(jsond_d)
+
     if startswith(apino, "js")
-        # get 
-        p = split(dfRedis[:, :sql][1], ':') # dfRedis[:,:sql][1] -> get:<key>
-        r = get(p[2])
-        if (r[1])
-            v = r[2]
-            df = DataFrame(key=p[2], value=v)
-            ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
+        # find
+        finddata_bson::Array = []
+        finddata_json::Array = []
+        doc = Mongoc.find(collection,bson)
+        if isnothing(doc)
+            for d in doc
+                push!(finddata_bson,d)
+            end
+        end
+
+        if 0<length(finddata_bson)
+            for d in finddata_bson
+                jd = Mongoc.as_json(finddata_bson)
+                push!(finddata_json,jd)
+            end
+        end
+
+        if 0<length(finddata_json)
+            ret = json(Dict("result" => true, "Jetelina" => [finddata_json], "message from Jetelina" => jmsg))
         else
-            err = "Oops got error something, oh my"
-            errnum = r[2]
-            ret = json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "$err", "errnum" => "$errnum"))
+            ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "not found"))
         end
     elseif startswith(apino, "ju")
-        v = json_d["key"]
-        if !isnothing(v)
-            p = split(dfRedis[:, :sql][1], ':') # dfRedis[:,:sql][1] -> get:<key>
-            r = set(p[2], v)
-            #                @info "redis set " p[2] v r
-            if (r[1])
-                ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
-            else
-                k = p[2]
-                errnum = r[2]
-                ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "failed set $v in $k, sorry", "errnum" => "$errnum"))
-            end
+        ud_j = json["update"]
+        ud_t = json["tagete"]
+        target_bson = Mongoc.BSON(ud_t)
+        finddata_bson = Mongoc.find_one(collection,target_bson)
+        ud_j = Mongoc.BSON("""{"\$set": $ud_t}""")
+        ret = Mongoc.update_one(collection, finddata_bson, ud_j)
+        if 0<ret["modifiedCount"]
+            ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
         else
-            ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "failed set in $k because no value, look carefully more."))
+            # what happend?
         end
     elseif startswith(apino, "ji")
-        ret_u::Tuple = (Bool, String)
-        ret_s::Tuple = (Bool, String)
-        #        ret_u::String = ""
-        #        ret_s::String = ""
-        k = lowercase(json_d["key1"])
-        v = json_d["key2"]
-        # set
-        r = set(k, v)
-        if (r[1])
-            #===
-                Attention:
-                    'ji***' is for registring a new key/value data.
-                    therefore need to create a new api 'ju***' and 'js***' at here.
-            ===#
-            update_str = MonSQLSentenceManager.createApiUpdateSentence(k)
-            if (update_str != "")
-                key_arr::Vector{String} = []
-                push!(key_arr, k)
-                ret_u = ApiSqlListManager.writeTolist(update_str, "", key_arr, "redis")
+        if isnothing(Mongoc.find_one(collection,bson))
+            # new document
+            push!(collection,bson)
+        else
+            # duplication, then nothing to do
+        end
 
-                select_str = MonSQLSentenceManager.createApiSelectSentence(k)
-                if (select_str != "")
-                    ret_s = ApiSqlListManager.writeTolist(select_str, "", key_arr, "redis")
-                end
-            end
+        #===
+            Tips:
+                after data insertion, check it once then create APIs sentences.
+                because the result of push!() is too difficult to judge the succession.
 
-            #===
-                Caution:
-                    i was wondering it was ok without looking at the result of writeTolist().
-                    but maybe they would be succeed.
-                    it was not a lottery, but confidence. :)
-            ===#
+        # create new apis
+
+        _createApis(j_table)
+        ===#
+
+
+#===
             if ret_u[1] && ret_s[1]
                 apino_u = ret_u[2]
                 apino_s = ret_s[2]
@@ -327,99 +324,15 @@ function _executeApi(json_d::Dict, dfRedis::DataFrame)
             errnum = r[2]
             ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "failed set $v in $k sorry", "errnum" => "$errnum"))
         end
+===#
     end
 
     return ret
 end
-"""
-function set(k,v)
 
-	set 'k'='v' in name=value style in redis
 
-# Arguments
-- `k:String`: name
-- `v:Any`: value
-- return: tuple(boolean,string):  success -> (true,""), fail -> (false,error number)
-"""
-function set(k, v)
-    conn = open_connection()
-    try
-        Redis.set(conn, k, v)
-        return true, ""
-    catch err
-        errnum = JLog.getLogHash()
-        JLog.writetoLogfile("[errnum:$errnum] MonDBController.set() error: $err")
-        return false, errnum
-    finally
-        close_connection(conn)
-    end
-end
-"""
-function get(k)
 
-	get value data in redis in order to match name 'k'
 
-# Arguments
-- `k:String`: target matching name
-- return: tuple(boolean,String): success->(true, value in redis in matching key name) false -> (false, error number)
-"""
-function get(k)
-    conn = open_connection()
-    try
-        v = Redis.get(conn, k)
-        return true, v
-    catch err
-        errnum = JLog.getLogHash()
-        JLog.writetoLogfile("[errnum:$errnum] MonDBController.get() error: $err")
-        return false, errnum
-    finally
-        close_connection(conn)
-    end
-end
-"""
-function matchingScan(i,k)
-
-	scan, indeed searching, data to find matching from 'i' cursor position with 'k' string
-
-# Arguments
-- `i:Int`: cursor position number, default 0
-- `k:String`: target scan string
-- return: Tuple(number,AbstractString Vector):  matching key name array in redis
-"""
-function matchingScan(i, k)
-    conn = open_connection()
-    try
-        v = Redis.scan(conn, i, "match", string(k, '*'))
-        return v
-    catch err
-        JLog.writetoLogfile("MonDBController.matchingScan() error: $err")
-        return false
-    finally
-        close_connection(conn)
-    end
-end
-"""
-function simpleScan(i,n)
-
-	scan, indeed searching, data from 'i' cursor position order by 'n' counts.
-
-# Arguments
-- `i:Int`: cursor position number, default 0
-- `n:Int`: scanning number at once
-- return: Tuple(number,AbstractString Vector):  key name array in redis
-"""
-function simpleScan(i, n)
-    conn = open_connection()
-    try
-        v = Redis.scan(conn, i, :count, n)
-        return v
-    catch err
-        JLog.writetoLogfile("MonDBController.simpleScan() error: $err")
-        return false
-    finally
-        close_connection(conn)
-    end
-end
 """
 function prepareDbEnvironment()
 
