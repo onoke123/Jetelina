@@ -181,11 +181,12 @@
 # database switching
 @jdic what-db-use-now-cmd:"database now", "current database","current db","current data base"
 @jdic func-db-switch-cmd:"change database","change data base","change db","switch database","switch data base","switch db"
-@jdic func-select-db-msg:"which database?","what database?","postgresql, mysql or redis?"
+@jdic func-select-db-msg:"which database?","what database?","postgresql, mysql or redis, no way mongodb?"
 @jdic func-determine-db-msg:"do you wanna '{Q}' ?","switch to '{Q}' ?"
 @jdic func-use-postgresql-cmd:"postgresql","postgres","postgre"
 @jdic func-use-mysql-cmd:"mysql"
 @jdic func-use-redis-cmd:"redis"
+@jdic func-use-mongodb-cmd:"mongodb"
 
 #
 #  account management

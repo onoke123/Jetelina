@@ -325,6 +325,11 @@ const getdata = (o, t) => {
                                 } else {
                                     $("#databaselist span[name='redis']").hide();
                                 }
+                                if (v["mongodb"] == true) {
+                                    $("#databaselist span[name='mongodb']").show();
+                                } else {
+                                    $("#databaselist span[name='mongodb']").hide();
+                                }
                             }
 
                             let tagid = "";
@@ -587,6 +592,8 @@ const postAjaxData = (url, data) => {
                             tdb = "mysql";
                         } else if (result.target == "redis_work") {
                             tdb = "redis";
+                        } else if (result.target == "mongodb_work") {
+                            tdb = "mongodb";
                         }
 
                         if (tdb != "") {
@@ -678,6 +685,8 @@ const postAjaxData = (url, data) => {
                         dbconfname = "my_work";
                     } else if (preferent.db == "redis") {
                         dbconfname = "redis_work";
+                    } else if (preferent.db == "mongodb") {
+                        dbconfname = "mongodb_work";
                     }
 
                     let data = `{"${dbconfname}":"true"}`;

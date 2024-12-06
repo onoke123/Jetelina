@@ -10,7 +10,7 @@ functions
 	open_connection() open connection to the DB.
 	open_collection(jcollection::String) open "collection" to the DB.
 	close_connection()  close the DB connection, but attention...
-	dataInsertFromJson(fname::String, collectionname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
+	dataInsertFromJson(collectionname::String, fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
 	getDocumentList(jcollection::String,s::String) get all 'document' in 'jcollection'.
 	executeApi(json_d::Dict,df_api::DataFrame) execute API order by json data
 	prepareDbEnvironment(mode::String) database connection checking, and initializing database if needed
@@ -99,7 +99,7 @@ function close_connection()
 	# empty :p
 end
 """
-function dataInsertFromJson(fname::String)
+function dataInsertFromJson(collectionname::String, fname::String)
 
 	insert json file data ordered by 'fname' into collection.
 
@@ -108,11 +108,11 @@ function dataInsertFromJson(fname::String)
 		no check at size e.g. BSON size(max16mb). rely on user, this time. :)
 
 # Arguments
-- `fname: String`: json file name
 - `collectionname: String`: ordered collection name
+- `fname: String`: json file name
 - return: boolean: true -> success, false -> get fail
 """
-function dataInsertFromJson(fname::String, collectionname::String)
+function dataInsertFromJson(collectionname::String, fname::String)
 	ret = ""
 	jmsg::String = string("compliment me!")
 

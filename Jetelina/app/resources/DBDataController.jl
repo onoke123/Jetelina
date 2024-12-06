@@ -119,6 +119,14 @@ function dataInsertFromCSV(csvfname::String)
 	elseif j_config.JC["dbtype"] == "redis"
 		# Case in Redis
 		return RsDBController.dataInsertFromCSV(csvfname)
+	elseif j_config.JC["dbtype"] == "mongodb"
+		# Case in MongoDB
+		#===
+			Attention:
+				the first argument should be set collection name, but being blank so far,
+				because MonDBController is an experimental implementation yet.
+		===#
+		return MonDBController.dataInsertFromJson("",csvfname)
 	end
 end
 """
@@ -148,6 +156,14 @@ function getTableList(s::String)
 				getKeyList() returns the registered keys in redis.
 		===#
 		RsDBController.getKeyList(s)
+	elseif j_config.JC["dbtype"] == "mongodb"
+		# Case in MongoDB
+		#===
+			Attention:
+				the first argument should be set collection name, but being blank so far,
+				because MonDBController is an experimental implementation yet.
+		===#
+		MonDBController.getDocumentList("",s)
 	end
 end
 """
@@ -298,6 +314,8 @@ function executeApi(json_d::Dict)
 				# Case in Redis
 				stats = @timed ret = RsDBController.executeApi(json_d, target_api)
 			elseif dbtype == "oracle"
+			elseif dbtype == "mongodb"
+				stats = @timed ret = MonDBController.executeApi(json_d, target_api)				
 			end
 
 			# write execution sql to log file
@@ -307,7 +325,6 @@ function executeApi(json_d::Dict)
 	else
 		# not found SQL list 
 	end
-
 
 	return ret
 end
@@ -578,6 +595,8 @@ function prepareDbEnvironment(db::String,mode::String)
 		ret = MyDBController.prepareDbEnvironment(mode)
 	elseif db == "redis"
 		ret = RsDBController.prepareDbEnvironment(mode)
+	elseif db == "mongodb"
+		ret = MonDBController.prepareDbEnvironment(mode)
 	end
 
 	return ret

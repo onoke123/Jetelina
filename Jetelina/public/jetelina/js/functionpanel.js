@@ -1199,6 +1199,9 @@ const functionPanelFunctions = (ut) => {
     } else if (cmd == "" && inScenarioChk(ut, 'func-use-redis-cmd')) {
       cmd = "switchdb";
       usedb = "redis";
+    } else if (cmd == "" && inScenarioChk(ut, 'func-use-mongodb-cmd')) {
+      cmd = "switchdb";
+      usedb = "mongodb";
     } else if (cmd == "" && $.inArray("switchdb", cmdCandidates) != -1) {
       cmd = "switchdb";
     }
