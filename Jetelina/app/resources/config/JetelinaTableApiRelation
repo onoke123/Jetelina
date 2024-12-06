@@ -12,3 +12,4 @@ jd11:ftest2:postgresql
 ji12:ftest:mysql
 ju13:ftest:mysql
 jd14:ftest:mysql
+15:,mongo_sample1:mongodb

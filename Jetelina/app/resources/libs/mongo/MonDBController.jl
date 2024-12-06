@@ -11,12 +11,8 @@ functions
 	open_collection(jcollection::String) open "collection" to the DB.
 	close_connection()  close the DB connection, but attention...
 	dataInsertFromJson(fname::String, collectionname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
-
-	getCollectionList(jcollection::String,s::String) get all 'document' in 'jcollection'.
-	executeApi(jcollection::String,json_d::Dict,target_api::DataFrame) execute API order by json data
-
-	
-
+	getDocumentList(jcollection::String,s::String) get all 'document' in 'jcollection'.
+	executeApi(json_d::Dict,df_api::DataFrame) execute API order by json data
 	prepareDbEnvironment(mode::String) database connection checking, and initializing database if needed
 """
 #===
@@ -41,7 +37,7 @@ JMessage.showModuleInCompiling(@__MODULE__)
 include("MonDataTypeList.jl")
 include("MonSQLSentenceManager.jl")
 
-export open_connection, open_collection, close_connection, dataInsertFromJson, getCollectionList, executeApi, prepareDbEnvironment
+export open_connection, open_collection, close_connection, dataInsertFromJson, getDocumentList, executeApi, prepareDbEnvironment
 
 """
 function open_connection()
@@ -117,7 +113,6 @@ function dataInsertFromJson(fname::String)
 - return: boolean: true -> success, false -> get fail
 """
 function dataInsertFromJson(fname::String, collectionname::String)
-	result::Bool = false
 	ret = ""
 	jmsg::String = string("compliment me!")
 
@@ -138,18 +133,14 @@ function dataInsertFromJson(fname::String, collectionname::String)
 	for bson in jdata
 		# data insert
 		result = push!(collection, bson)
-		if result
+		if !isnothing(result)
 			# create api 
 			_createApis(collectionname, bson["j_table"])
+            ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
 		else
+            ret = json(Dict("result" => false, "filename" => "$fname", "message from Jetelina" => "no way"))
 			break
 		end
-	end
-
-	if result
-		ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
-	else
-		ret = json(Dict("result" => false, "filename" => "$fname", "message from Jetelina" => "no way"))
 	end
 
 	return ret
@@ -179,7 +170,7 @@ function _createApis(collectionname::String, j_table::String)
 	end
 
 	if !isnothing(j_table)
-		subquery = string(sql, ",", j_table)
+		subquery = string(subquery, ",", j_table)
 		push!(tablename_arr, j_table)
 	else
 		subquery = string(sql, ",", "")
@@ -212,7 +203,7 @@ function _createApis(collectionname::String, j_table::String)
 	return ret_i, ret_u, ret_s
 end
 """
-function getCollectionList(jcollection::String, s::String)
+function getDocumentList(jcollection::String, s::String)
 
 	get all 'document' in 'jcollection'.
 
@@ -222,7 +213,7 @@ function getCollectionList(jcollection::String, s::String)
 			'dataframe' -> required DataFrames form to return
 - return: document list
 """
-function getCollectionList(jcollection::String, s::String)
+function getDocumentList(jcollection::String, s::String)
 	jmsg::String = string("compliment me!")
 	keyword::String = "j_table"
 	docArr::Array = []
@@ -241,7 +232,7 @@ function getCollectionList(jcollection::String, s::String)
 	end
 end
 """
-function executeApi(json_d::Dict,target_api::DataFrame)
+function executeApi(json_d::Dict,df_api::DataFrame)
 
 	execute API order by json data
 	this function is a parent function that calls _executeApi()
@@ -249,35 +240,33 @@ function executeApi(json_d::Dict,target_api::DataFrame)
 
 # Arguments
 - `json_d::Dict`:  json raw data, uncertain data type        
-- `target_api::DataFrame`: a part of api/sql DataFrame data        
+- `df_api::DataFrame`: a part of api/sql DataFrame data        
 - return: insert/update/delete -> true/false
 		select               -> json format data
 		error                -> false
 """
-function executeApi(json_d::Dict, target_api::DataFrame)
-	return _executeApi(json_d, target_api)
+function executeApi(json_d::Dict, df_api::DataFrame)
+	return _executeApi(json_d, df_api)
 end
 """
-function _executeApi(apino::String, target_api::DataFrame)
+function _executeApi(apino::String, df_api::DataFrame)
 
 	execute API with creating SQL sentence
 	this is a private function that is called by executeApi()
 
 # Arguments
 - `apino::String`:  apino
-- `target_api::DataFrame`: target redis api dataframe        
+- `df_api::DataFrame`: target mongodb api dataframe        
 - return: insert/update/delete -> true/false
 		select               -> json format data
 		error                -> false
 """
-function _executeApi(json_d::Dict, target_api::DataFrame)
+function _executeApi(json_d::Dict, df_api::DataFrame)
 	apino = json_d["apino"]
-	#    @info "redis exe " apino 
-	#    println(dfRedis)
 	ret = ""
 	jmsg::String = string("compliment me!")
 
-	alternative_subquery = target_api[!, :subquery]
+	alternative_subquery = df_api[!, :subquery]
 	sub = split(alternative_subquery)
 	collectionname = sub[1]
 	j_table = sub[2]        # this 'j_table' is unique in each documents
