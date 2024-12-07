@@ -14,3 +14,8 @@ ji12,"insert into ftest (ftest_name,ftest_sex,ftest_age,ftest_ave,jetelina_delet
 ju13,"update ftest set ftest_name='{ftest_name}',ftest_sex='{ftest_sex}',ftest_age={ftest_age},ftest_ave={ftest_ave}","where ftest_jt_id={jt_id}","mysql"
 jd14,"update ftest set jetelina_delete_flg=1","where ftest_jt_id={jt_id}","mysql"
 15,"<set your json with an unique 'j_table'>",",mongo_sample1","mongodb"
+16,"{$set:}",",mongo_sample1","mongodb"
+17,"<set your json with an unique 'j_table'>",",mongo_sample2","mongodb"
+18,"{$set:}",",mongo_sample2","mongodb"
+19,"<set your json with an unique 'j_table'>",",mongo_sample3","mongodb"
+20,"{$set:}",",mongo_sample3","mongodb"

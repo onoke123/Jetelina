@@ -572,6 +572,10 @@ function prepareDbEnvironment()
 		available = j_config.JC["redis_work"]
 		db_config = "redis_work"
 		df = DataFrame("redis_host"=>j_config.JC["redis_host"],"redis_port"=>j_config.JC["redis_port"],"redis_password"=>j_config.JC["redis_password"],"redis_dbname"=>j_config.JC["redis_dbname"])
+	elseif db == "mongodb"
+		available = j_config.JC["mongodb_work"]
+		db_config = "mongodb_work"
+		df = DataFrame("mongodb_host"=>j_config.JC["mongodb_host"],"mongodb_port"=>j_config.JC["mongodb_port"],"mongodb_dbname"=>j_config.JC["mongodb_dbname"],"mongodb_collection"=>j_config.JC["mongodb_collection"],"mongodb_user"=>j_config.JC["mongodb_user"],"mongodb_password"=>j_config.JC["mongodb_password"])
 	end
 
 	ret =  DBDataController.prepareDbEnvironment(db,mode)

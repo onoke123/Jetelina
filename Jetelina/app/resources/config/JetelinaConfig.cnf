@@ -164,18 +164,18 @@ redis_password =
 
 # MongoDB setting
 @jdic mongodb_work:"mongodb run","mongodb availability","start mongodb","mongodb start"
-mongodb_work = false
+mongodb_work = true
 @jdic monogodb_host:"monogodb host"
 mongodb_host = 127.0.0.1
 @jdic redis_port:"monogodb port"
 mongodb_port = 27017
 @jdic mongodb_dbname:"mongodb database name","mongodb db name","monbodb dbname"
 mongodb_dbname = jetelina
-@jdic mongodb_collection:"mongodb collection name","mongodb collection
+@jdic mongodb_collection:"mongodb collection name","mongodb collection"
 mongodb_collection = jetelina-collection
 @jdic mongodb_user:"mongodb user","mongodb login"
 mongodb_user =  
-@jdic mongodb_password:"mongodb password","mongodb in redis"
+@jdic mongodb_password:"mongodb password","password in mongodb"
 mongodb_password =
 
 # Oracle setting
