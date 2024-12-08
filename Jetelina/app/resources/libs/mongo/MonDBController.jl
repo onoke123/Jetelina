@@ -149,6 +149,7 @@ end
 function _createApis(collectionname::String, j_table::String)
 	ret_i::Tuple = (Bool, String)
 	ret_u::Tuple = (Bool, String)
+    ret_d::Tuple = (Bool, String)
 	ret_s::Tuple = (Bool, String)
 	dbname::String = "mongodb"
 	#===
@@ -194,13 +195,19 @@ function _createApis(collectionname::String, j_table::String)
 		ret_u = ApiSqlListManager.writeTolist(update_str, subquery, tablename_arr, dbname)
 	end
 
-	# select (find)
+	# delete
+	delete_str = MonSQLSentenceManager.createApiDeleteSentence(j_table)
+	if (delete_str != "")
+		ret_d = ApiSqlListManager.writeTolist(delete_str, subquery, tablename_arr, dbname)
+	end
+
+    # select (find)
 	select_str = MonSQLSentenceManager.createApiSelectSentence("")
 	if (select_str != "")
 		ret_s = ApiSqlListManager.writeTolist(select_str, subquery, tablename_arr, dbname)
 	end
 
-	return ret_i, ret_u, ret_s
+	return ret_i, ret_u, ret_d, ret_s
 end
 """
 function getDocumentList(jcollection::String, s::String)
@@ -329,10 +336,13 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 			Tips:
 				after data insertion, check it once then create APIs sentences.
 				because the result of push!() is too difficult to judge the succession.
+
+            Caution:
+                "insert" and "delete" apis are created only in uploading file, thus ret_i and ret_d do not be used in below.
 		===#
 
 		# create new apis
-		(ret_i, ret_u, ret_s) = _createApis(collectionname, json_d["j_table"])
+		(ret_i, ret_u, ret_d, ret_s) = _createApis(collectionname, json_d["j_table"])
 
 		if ret_u[1] && ret_s[1]
 			apino_u = ret_u[2]

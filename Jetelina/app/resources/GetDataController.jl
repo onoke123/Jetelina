@@ -192,7 +192,8 @@ function getWorkingDBList()
 	postgres = j_config.JC["pg_work"]
 	mysql    = j_config.JC["my_work"]
 	redis    = j_config.JC["redis_work"]
-	df = DataFrame("postgres"=>postgres,"mysql"=>mysql,"redis"=>redis)
+	mongodb  = j_config.JC["mongodb_work"]
+	df = DataFrame("postgres"=>postgres,"mysql"=>mysql,"redis"=>redis, "mongodb"=>mongodb)
 	return json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
 end
 end

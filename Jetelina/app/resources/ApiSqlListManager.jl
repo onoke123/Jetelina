@@ -141,16 +141,53 @@ function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String
     				insert/update/select are for RDBMS
     				set/get are for Redis
     		===#
-    if startswith(sql, "insert") || (startswith(sql, "set") && (sql == "set::"))
-        suffix = "ji"
-    elseif startswith(sql, "update") && contains(sql, "jetelina_delete_flg=1")
-        suffix = "jd"
-    elseif startswith(sql, "update") || (startswith(sql, "set") && (sql != "set::"))
-        suffix = "ju"
-    elseif startswith(sql, "select") || startswith(sql, "get")
-        suffix = "js"
+    if db == "postgresql" || db == "mysql"
+        #===
+        if startswith(sql, "insert") || (startswith(sql, "set") && (sql == "set::"))
+            suffix = "ji"
+        elseif startswith(sql, "update") && contains(sql, "jetelina_delete_flg=1")
+            suffix = "jd"
+        elseif startswith(sql, "update") || (startswith(sql, "set") && (sql != "set::"))
+            suffix = "ju"
+        elseif startswith(sql, "select") || startswith(sql, "get")
+            suffix = "js"
+        end
+        ===#
+        if startswith(sql, "insert")
+            suffix = "ji"
+        elseif startswith(sql, "update") && contains(sql, "jetelina_delete_flg=1")
+            suffix = "jd"
+        elseif startswith(sql, "update")
+            suffix = "ju"
+        elseif startswith(sql, "select")
+            suffix = "js"
+        end
+    elseif db == "redis"
+        if (startswith(sql, "set") && (sql == "set::"))
+            suffix = "ji"
+        elseif startswith(sql, "update") && contains(sql, "jetelina_delete_flg=1")
+            #===
+                Caution:
+                    in fact, there is no 'jd' api in redis
+            ===#
+            suffix = "jd"
+        elseif (startswith(sql, "set") && (sql != "set::"))
+            suffix = "ju"
+        elseif startswith(sql, "get")
+            suffix = "js"
+        end
+    elseif db == "mongodb"
+        if startswith(sql, "<set your json ")
+            suffix = "ji"
+        elseif startswith(sql, """{\$delete:""")
+            suffix = "jd"
+        elseif startswith(sql, """{\$set:""")
+            suffix = "ju"
+        else
+            suffix = "js"
+        end
     end
-
+    
     seq_no = getApiSequenceNumber()
     sqlsentence = """$suffix$seq_no,\"$sql\",\"$subquery\",\"$db\""""
 

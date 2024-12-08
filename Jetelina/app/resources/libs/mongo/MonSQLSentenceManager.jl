@@ -91,6 +91,18 @@ function createApiUpdateSentence(str::String)
 	return ret
 end
 """
+function createApiDeleteSentence(str::String)
+
+	create document delete sentence.
+
+# Arguments
+- `str::String`: document name
+- return: Tuple: (sql delete sentence, sub query sentence)
+"""
+function createApiDeleteSentence(str::String)
+	return """{\$delete:$str}"""
+end
+"""
 function createApiSelectSentence(str::String)
 
 	create MongoDB find sentence.
