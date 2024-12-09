@@ -130,12 +130,14 @@ function dataInsertFromJson(collectionname::String, fname::String)
 
 	# 一つづつ処理する方法
 	jdata = Mongoc.BSONJSONReader(fname)
+	insertapi::Bool = true
 	for bson in jdata
 		# data insert
 		result = push!(collection, bson)
 		if !isnothing(result)
 			# create api 
-			_createApis(collectionname, bson["j_table"])
+			_createApis(collectionname, bson["j_table"], insertapi)
+			insertapi = false
             ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
 		else
             ret = json(Dict("result" => false, "filename" => "$fname", "message from Jetelina" => "no way"))
@@ -146,7 +148,7 @@ function dataInsertFromJson(collectionname::String, fname::String)
 	return ret
 end
 
-function _createApis(collectionname::String, j_table::String)
+function _createApis(collectionname::String, j_table::String, insertapi::Bool)
 	ret_i::Tuple = (Bool, String)
 	ret_u::Tuple = (Bool, String)
     ret_d::Tuple = (Bool, String)
@@ -178,12 +180,22 @@ function _createApis(collectionname::String, j_table::String)
 		push!(tablename_arr, "")
 	end
 
-	# bson毎にapiを作る
-	insert_str = MonSQLSentenceManager.createApiInsertSentence()
-	if (insert_str != "")
-		ret_i = ApiSqlListManager.writeTolist(insert_str, subquery, tablename_arr, dbname)
-	end
+	# create api in each bson
+	#===
+	insert
+		Tips:
+			insert api "ji" is only one for each database.
+			because this "ji" is for inserting a document.
 
+		Caution:
+			but in this version has been applied a fixed database.
+	===#
+	if insertapi
+		insert_str = MonSQLSentenceManager.createApiInsertSentence()
+		if (insert_str != "") && ( ApiSqlListManager.sqlDuplicationCheck(insert_str,"",dbname)[1] == false )
+			ret_i = ApiSqlListManager.writeTolist(insert_str, subquery, tablename_arr, dbname)
+		end
+	end
 	#===
 		Tips:
 			update and select(find) works with a plane json format data that is provided by an user.
@@ -342,7 +354,7 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 		===#
 
 		# create new apis
-		(ret_i, ret_u, ret_d, ret_s) = _createApis(collectionname, json_d["j_table"])
+		(ret_i, ret_u, ret_d, ret_s) = _createApis(collectionname, json_d["j_table"], false)
 
 		if ret_u[1] && ret_s[1]
 			apino_u = ret_u[2]

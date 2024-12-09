@@ -123,10 +123,10 @@ function dataInsertFromCSV(csvfname::String)
 		# Case in MongoDB
 		#===
 			Attention:
-				the first argument should be set collection name, but being blank so far,
+				the first argument should be set collection name, but being fixed collection in the conf file
 				because MonDBController is an experimental implementation yet.
 		===#
-		return MonDBController.dataInsertFromJson("",csvfname)
+		return MonDBController.dataInsertFromJson(string(j_config.JC["mongodb_collection"]),csvfname)
 	end
 end
 """

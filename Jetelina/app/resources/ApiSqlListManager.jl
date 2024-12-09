@@ -492,8 +492,18 @@ function sqlDuplicationCheck(nsql::String, subq::String, dbtype::String)
         df = subset(ApiSqlListManager.Df_JetelinaSqlList, :db => ByRow(==(dbtype)), skipmissing = true)
 
         for i ∈ 1:nrow(df)
-            if df[!, :sql][i] == nsql && coalesce(df[!, :subquery][i],"") == subq
-                return true, df[!, :apino][i]
+            if dbtype != "mongodb"
+                if df[!, :sql][i] == nsql && coalesce(df[!, :subquery][i],"") == subq
+                    return true, df[!, :apino][i]
+                end
+            else
+                #===
+                    Tips:
+                        only one 'ji*' api for mongodb
+                ===#
+                if startswith("ji",df[!,:apino][i])
+                    return true, df[!,:apino][i]
+                end
             end
         end
     end
