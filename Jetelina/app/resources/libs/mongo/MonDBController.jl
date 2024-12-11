@@ -184,8 +184,9 @@ function _createApis(collectionname::String, j_table::String, insertapi::Bool)
 	#===
 	insert
 		Tips:
-			insert api "ji" is only one for each database.
+			insert api "ji" is only one for each collection.
 			because this "ji" is for inserting a document.
+			__onlyonejiinonecollection() is for checking "ji" duplication as strictly private function.
 
 		Caution:
 			but in this version has been applied a fixed database.
