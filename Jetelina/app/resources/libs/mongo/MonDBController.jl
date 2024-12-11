@@ -180,6 +180,30 @@ function _createApis(collectionname::String, j_table::String, insertapi::Bool)
 		push!(tablename_arr, "")
 	end
 
+	#===
+		Tips:
+			this __only...() function is checking for existing "ji" yet in Df_JetelinaSqlList DataFrame.
+			subset() can hires 2 args for execution "and" logic, in this case, one is ":db" the other is ":subquery".
+			but this "and" logic is critical in case of initial entry. i mean there is no mongodb apis yet.
+			therefore take 2 steps as below.
+			
+			ref. https://dataframes.juliadata.org/stable/lib/functions/#DataFrames.subset
+	===#
+	function __onlyonejiinonecollection()
+#		df = subset(ApiSqlListManager.Df_JetelinaSqlList, :db => ByRow(==(dbname)), :subquery=>ByRow(contains(collectionname)), skipmissing = true)
+		df = subset(ApiSqlListManager.Df_JetelinaSqlList, :db => ByRow(==(dbname)), skipmissing = true)
+		if 0<nrow(df)
+			dfc = subset(df, :subquery=>ByRow(contains(collectionname)), skipmissing = true)
+			for i ∈ 1:nrow(dfc)
+				if startswith("ji",dfc[!,:apino][i])
+					return true, dfc[!,:apino][i]
+				end
+			end
+		end
+
+		return false
+	end
+
 	# create api in each bson
 	#===
 	insert
@@ -193,7 +217,8 @@ function _createApis(collectionname::String, j_table::String, insertapi::Bool)
 	===#
 	if insertapi
 		insert_str = MonSQLSentenceManager.createApiInsertSentence()
-		if (insert_str != "") && ( ApiSqlListManager.sqlDuplicationCheck(insert_str,"",dbname)[1] == false )
+#		if (insert_str != "") && ( ApiSqlListManager.sqlDuplicationCheck(insert_str,"",dbname)[1] == false )
+		if (insert_str != "") && ( __onlyonejiinonecollection() == false )
 			ret_i = ApiSqlListManager.writeTolist(insert_str, subquery, tablename_arr, dbname)
 		end
 	end
