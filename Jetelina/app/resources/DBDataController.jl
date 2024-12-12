@@ -244,6 +244,14 @@ function getColumns(tableName::String)
 				redis does not have columns.
 				the keys are getting in getTableList().
 		===#
+	elseif j_config.JC["dbtype"] == "mongodb"
+		# Case in MongoDB
+		#===
+			Caution: 
+				the first argument is for "collection name", but does not be set it in this version.
+				this "tableName" is the "collection name" indeed.
+		===#
+		MonDBController.getKeys("",tableName)
 	end
 end
 """

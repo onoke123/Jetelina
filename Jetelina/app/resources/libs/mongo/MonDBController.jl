@@ -186,7 +186,7 @@ function _createApis(collectionname::String, j_table::String, insertapi::Bool)
 			subset() can hires 2 args for execution "and" logic, in this case, one is ":db" the other is ":subquery".
 			but this "and" logic is critical in case of initial entry. i mean there is no mongodb apis yet.
 			therefore take 2 steps as below.
-			
+
 			ref. https://dataframes.juliadata.org/stable/lib/functions/#DataFrames.subset
 	===#
 	function __onlyonejiinonecollection()
@@ -275,6 +275,44 @@ function getDocumentList(jcollection::String, s::String)
 	elseif s == "dataframe"
 		return df
 	end
+end
+"""
+function getKeys(jcollection::String, j_table::String)
+
+	get all 'key' in 'jcollection'.
+
+# Arguments
+- `jcollection:String`: collection name
+- `j_table:String`    : "j_table" name in the collection. this is the unique key.
+- `s:String`: 'json' -> required JSON form to return
+			'dataframe' -> required DataFrames form to return
+- return: document list
+"""
+function getKeys(jcollection::String, j_table::String)
+	keyarr::Array = []
+    jmsg::String = string("compliment me!")
+
+	if isnothing(jcollection) || length(jcollection) == 0
+		jcollection = string(j_config.JC["mongodb_collection"])
+	end
+
+	jbsons = open_collection(jcollection)
+	if 0<length(jbsons)
+		jb = Mongoc.find_one(jbsons,Mongoc.BSON("""{ "j_table":"$j_table"}"""))
+		if 0<length(jb)
+			for (k,v) in jb
+				push!(keyarr,k)
+			end
+		end
+	end
+
+	if 0<length(keyarr)
+        ret = json(Dict("result" => true, "tablename" => "$j_table", "Jetelina" => keyarr, "message from Jetelina" => jmsg))
+	else
+        ret = json(Dict("result" => false, "tablename" => "$j_table", "Jetelina" => "[{}]"))
+	end
+
+	return ret
 end
 """
 function executeApi(json_d::Dict,df_api::DataFrame)
