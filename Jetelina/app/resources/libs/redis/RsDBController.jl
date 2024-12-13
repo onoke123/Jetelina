@@ -85,6 +85,7 @@ function dataInsertFromCSV(fname::String)
     df = DataFrame(CSV.File(fname))
     rename!(lowercase, df)
     #    push!(tablename_arr, redisdbname)
+    dbname::String = "redis"
 
     if (0 < nrow(df))
         #===

@@ -290,6 +290,7 @@ function getKeys(jcollection::String, j_table::String)
 """
 function getKeys(jcollection::String, j_table::String)
 	keyarr::Array = []
+	valuearr::Array = []
     jmsg::String = string("compliment me!")
 
 	if isnothing(jcollection) || length(jcollection) == 0
@@ -301,13 +302,14 @@ function getKeys(jcollection::String, j_table::String)
 		jb = Mongoc.find_one(jbsons,Mongoc.BSON("""{ "j_table":"$j_table"}"""))
 		if 0<length(jb)
 			for (k,v) in jb
-				push!(keyarr,k)
+				push!(valuearr,k)
 			end
 		end
 	end
 
-	if 0<length(keyarr)
-        ret = json(Dict("result" => true, "tablename" => "$j_table", "Jetelina" => keyarr, "message from Jetelina" => jmsg))
+	if 0<length(valuearr)
+        df = DataFrame(keyarr=valuearr)
+        ret = json(Dict("result" => true, "tablename" => "$j_table", "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
 	else
         ret = json(Dict("result" => false, "tablename" => "$j_table", "Jetelina" => "[{}]"))
 	end

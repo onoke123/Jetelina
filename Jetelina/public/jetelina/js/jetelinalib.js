@@ -265,15 +265,27 @@ const getdata = (o, t) => {
                                             str += `<span class="table">${value}</span>`;
                                         }
                                     } else if (t == 1) {
+                                        /*
+                                            Tips:
+                                                the reason why is watching db type because the return form and meaning is different between them.
+                                                except mongodb are pair with key and value, and value is displayed as tool tip.in this case the value would be a sample data.
+                                                in case of mongodb returns only keys, because it would be whole collection if it retuend values as well. :p
+                                        */
                                         // jetelina_delete_flg should not show in the column list
                                         if (name != "jetelina_delete_flg") {
-                                            /*
-                                                Tips:
-                                                    may ${name} is be long, because it is combined "<table name>_<column_name>" in uploading csv file.
-                                                    in Ver.1, selected table name has same color, may it has unique color later, then these column has each color and 
-                                                    could be shorten the display name, who knows. :)
-                                            */
-                                            str += `<span class="item" d=${value} colname=${targetTable}.${name}><p>${targetTable}.${name}</p></span>`;
+                                            if (loginuser.dbtype != "mongodb") {
+                                                // case in Postgresql/Mysql/Redis
+                                                /*
+                                                    Tips:
+                                                        may ${name} is be long, because it is combined "<table name>_<column_name>" in uploading csv file.
+                                                        in Ver.1, selected table name has same color, may it has unique color later, then these column has each color and 
+                                                        could be shorten the display name, who knows. :)
+                                                */
+                                                str += `<span class="item" d=${value} colname=${targetTable}.${name}><p>${targetTable}.${name}</p></span>`;
+                                            } else {
+                                                // case in mongodb
+                                                str += `<span class="item" d="non" colname=${targetTable}.${value}><p>${targetTable}.${value}</p></span>`;
+                                            }
                                         }
                                     }
                                 });
@@ -398,10 +410,10 @@ const getAjaxData = (url) => {
             let m = "";
             // go data parse
             const dataurls = scenario['analyzed-data-collect-url'];
-/*            if(url == dataurls[4]){
-                setGraphData(result, "access");
-            }
-*/
+            /*            if(url == dataurls[4]){
+                            setGraphData(result, "access");
+                        }
+            */
             if (checkResult(result)) {
                 if (url == dataurls[3]) {
                     /*

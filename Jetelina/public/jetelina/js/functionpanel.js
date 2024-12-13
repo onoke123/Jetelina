@@ -867,9 +867,10 @@ const getColumn = (tablename) => {
     let pd = {};
     pd["tablename"] = $.trim(tablename);
     let dd = JSON.stringify(pd);
+    url = scenario["function-post-url"][11]
 
     $.ajax({
-      url: "/getcolumns",
+      url: url,
       type: "post",
       data: dd,
       contentType: 'application/json',

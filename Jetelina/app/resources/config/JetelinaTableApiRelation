@@ -19,3 +19,10 @@ ju18:jetelina-collection,mongo_sample2:mongodb
 jd19:jetelina-collection,mongo_sample2:mongodb
 ju20:jetelina-collection,mongo_sample3:mongodb
 jd21:jetelina-collection,mongo_sample3:mongodb
+ji22::redis
+ju23:a:redis
+js24:a:redis
+ju25:b:redis
+js26:b:redis
+ju27:c:redis
+js28:c:redis
