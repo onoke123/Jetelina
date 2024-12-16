@@ -284,7 +284,9 @@ const getdata = (o, t) => {
                                                 str += `<span class="item" d=${value} colname=${targetTable}.${name}><p>${targetTable}.${name}</p></span>`;
                                             } else {
                                                 // case in mongodb
-                                                str += `<span class="item" d="non" colname=${targetTable}.${value}><p>${targetTable}.${value}</p></span>`;
+                                                if($.inArray(value,["_id","j_table"]) == -1){
+                                                    str += `<span class="item" d="non" colname=${targetTable}.${value}><p>${targetTable}.${value}</p></span>`;
+                                                }
                                             }
                                         }
                                     }

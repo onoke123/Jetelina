@@ -906,7 +906,8 @@ const getColumn = (tablename) => {
  * delete a column from selected item list on the display  
  */
 const removeColumn = (p) => {
-  $(`${COLUMNSPANEL} .item, ${CONTAINERPANEL} .item`).not('.selectedItem').remove(`:contains(${p}_)`);
+//  $(`${COLUMNSPANEL} .item, ${CONTAINERPANEL} .item`).not('.selectedItem').remove(`:contains(${p}_)`);
+  $(`${COLUMNSPANEL} .item, ${CONTAINERPANEL} .item`).not('.selectedItem').remove(`:contains(${p}.)`);
 }
 /**
  * @function dropThisTable
