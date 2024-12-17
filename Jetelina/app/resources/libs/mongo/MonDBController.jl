@@ -240,7 +240,7 @@ function _createApis(collectionname::String, j_table::String, insertapi::Bool)
 	end
 
     # select (find)
-	select_str = MonSQLSentenceManager.createApiSelectSentence("")
+	select_str = MonSQLSentenceManager.createApiSelectSentence(j_table)
 	if (select_str != "")
 		ret_s = ApiSqlListManager.writeTolist(select_str, subquery, tablename_arr, dbname)
 	end

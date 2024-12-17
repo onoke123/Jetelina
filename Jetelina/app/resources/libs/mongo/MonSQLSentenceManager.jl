@@ -116,12 +116,15 @@ function createApiSelectSentence(str::String)
 function createApiSelectSentence(str::String)
 #	ret::String = ""
 
-	ret::String =  """$str"""
+	ret::String =  """{""j_table"":""$str""}"""
 
 #	if(!keyDuplicationCheck(str))
 #		ret = str
 #	end
 
 	return ret
+end
+
+function createApiSelectSentence(json_d::Dict, mode::String)
 end
 end

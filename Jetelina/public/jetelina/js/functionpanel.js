@@ -70,12 +70,20 @@ $(document).on({
   mouseenter: function (e) {
     let moveLeft = -10;
     let moveDown = -10;
+    let tooltipmsg = "";
 
-    $("#pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
+    $("div#pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
 
-    let d = $(this).attr("d");
+    if (loginuser.dbtype != "mongodb") {
+      let d = $(this).attr("d");
+      tooltipmsg = `e.g. ${d}`;
+    }else{
+      let kao = ["＼(^o^)／","(*˘︶˘*).｡.:*♡","(^o^)","(*^^*)",":-)"];
+      tooltipmsg = `no in mongo ${kao[getRandomNumber(kao.length)]}`;
+    }
 
-    $('div#pop-up').text(`e.g. ${d}`).show();
+    $('div#pop-up').text(tooltipmsg).show();
+
   },
   mouseleave: function () {
     $('div#pop-up').hide();
@@ -642,9 +650,9 @@ const setApiIF_In = (t, s) => {
         isCurry = s_subquery.indexOf('{');
       }
 
-      if(subquery_str != ""){
+      if (subquery_str != "") {
         ret = `{"apino": \"${t}\","subquery":\"[${subquery_str}]\"}`;
-      }else{
+      } else {
         ret = `{"apino":\"${t}\"}`;
       }
     } else {
@@ -906,7 +914,7 @@ const getColumn = (tablename) => {
  * delete a column from selected item list on the display  
  */
 const removeColumn = (p) => {
-//  $(`${COLUMNSPANEL} .item, ${CONTAINERPANEL} .item`).not('.selectedItem').remove(`:contains(${p}_)`);
+  //  $(`${COLUMNSPANEL} .item, ${CONTAINERPANEL} .item`).not('.selectedItem').remove(`:contains(${p}_)`);
   $(`${COLUMNSPANEL} .item, ${CONTAINERPANEL} .item`).not('.selectedItem').remove(`:contains(${p}.)`);
 }
 /**
@@ -1044,7 +1052,7 @@ const postSelectedColumns = (mode) => {
           $(GENELICPANEL).hide();
         }
 
-        m = chooseMsg('func-newapino-msg',`is ${result.apino}`, 'r');
+        m = chooseMsg('func-newapino-msg', `is ${result.apino}`, 'r');
         $(CHATBOXYOURTELL).text(m);
         $(".yourText").mouseover();
       } else {
@@ -1063,7 +1071,7 @@ const postSelectedColumns = (mode) => {
     } else {
       m = chooseMsg('fail-msg', '', '');
       if (result.resembled != null && 0 < result.resembled.length) {
-        m = chooseMsg('func-duplicateapi-msg',`${result.resembled}`,'a');
+        m = chooseMsg('func-duplicateapi-msg', `${result.resembled}`, 'a');
       }
     }
 
@@ -1571,10 +1579,10 @@ const functionPanelFunctions = (ut) => {
           the secound post is ut!=cmd for execution of postion, maybe.
       */
       let subquerysentence = $(GENELICPANELINPUT).val();
-      if(subquerysentence != null ){
+      if (subquerysentence != null) {
         subquerysentence = $.trim(subquerysentence);
-      }else{
-        m = chooseMsg('starting-4-msg','','');
+      } else {
+        m = chooseMsg('starting-4-msg', '', '');
         break;
       }
 
@@ -1593,7 +1601,7 @@ const functionPanelFunctions = (ut) => {
               m = chooseMsg('func-postcolumn-where-indispensable-msg', "", "");
               let p = subquerysentence.length;
               $(GENELICPANELINPUT).focus().get(0).setSelectionRange(p, p)
-                    }
+            }
           } else {
             postSelectedColumns("");
           }
@@ -1603,14 +1611,14 @@ const functionPanelFunctions = (ut) => {
               Tips:
                 sub..length<6 meaning is 'where' is mandatory in multi tables;
             */
-            if (subquerysentence.length < 6 || subquerysentence.indexOf("where") <0 || subquerysentence == IGNORE) {
+            if (subquerysentence.length < 6 || subquerysentence.indexOf("where") < 0 || subquerysentence == IGNORE) {
               m = chooseMsg('func-postcolumn-where-indispensable-msg', "", "");
               let p = subquerysentence.length;
               $(GENELICPANELINPUT).focus().get(0).setSelectionRange(p, p)
-            }else{
+            } else {
               m = chooseMsg('func-postcolumn-available-msg', "", "");
             }
-          }else{
+          } else {
             m = chooseMsg('func-postcolumn-available-msg', "", "");
           }
         }
@@ -1716,7 +1724,7 @@ const functionPanelFunctions = (ut) => {
       refreshTableList();
       showPreciousPanel(false);
       showConfigPanel(false);
-    m = chooseMsg('refreshing-msg', '', '');
+      m = chooseMsg('refreshing-msg', '', '');
       break;
     case 'subquery': //open subquery panel
       showApiTestPanel(false);
@@ -1748,7 +1756,7 @@ const functionPanelFunctions = (ut) => {
         }
 
         if (preferent.apiparams_count < preferent.apitestparams.length) {
-          m = chooseMsg('func-api-test-set-params-msg',`${preferent.apitestparams[preferent.apiparams_count]}`,'r');
+          m = chooseMsg('func-api-test-set-params-msg', `${preferent.apitestparams[preferent.apiparams_count]}`, 'r');
         } else if (inScenarioChk(ut, 'func-api-test-execute-cmd')) {
           apiTestAjax();
           m = chooseMsg('inprogress-msg', '', '');
@@ -1853,16 +1861,18 @@ const containsMultiTables = () => {
  */
 const showGenelicPanel = (b) => {
   if (b) {
-    /*
-      in the case of showing table list, this field is for expecting 'Sub Query'
-    */
-    $(GENELICPANELTEXT).text("Sub Query:");
+    if (loginuser.dbtype != "mongodb") {
+      /*
+        in the case of showing table list, this field is for expecting 'Sub Query'
+      */
+      $(GENELICPANELTEXT).text("Sub Query:");
 
-    if($.trim($(GENELICPANELINPUT).val())<6){
-      $(GENELICPANELINPUT).val("where ");
+      if ($.trim($(GENELICPANELINPUT).val()) < 6) {
+        $(GENELICPANELINPUT).val("where ");
+      }
+
+      $(GENELICPANEL).show();
     }
-
-    $(GENELICPANEL).show();
   } else {
     $(GENELICPANEL).hide();
     $(GENELICPANELINPUT).val("");

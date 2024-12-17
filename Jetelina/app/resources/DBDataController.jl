@@ -545,6 +545,9 @@ function createApiSelectSentence(json_d::Dict, mode::String)
 		# Case in MySQL
 		ret = MySQLSentenceManager.createApiSelectSentence(json_d, mode)
 	elseif j_config.JC["dbtype"] == "oracle"
+	elseif j_config.JC["dbtype"] == "mongodb"
+		# Case in MongoDB
+		ret = MonSQLSentenceManager.createApiSelectSentence(json_d, mode)
 	end
 
 	if mode == "pre"
@@ -560,6 +563,9 @@ function createApiSelectSentence(json_d::Dict, mode::String)
 			# Case in MySQL
 			ret = MyDBController.doSelect(ret, "pre")
 		elseif j_config.JC["dbtype"] == "oracle"
+		elseif j_config.JC["dbtype"] == "mongodb"
+			# Case in MongoDB
+			ret = MonDBController.doSelect(ret,"pre")
 		end
 	end
 
