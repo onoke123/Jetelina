@@ -177,11 +177,11 @@ function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String
             suffix = "js"
         end
     elseif db == "mongodb"
-        if startswith(sql, "<set your json ")
+        if startswith(sql, "{insert")
             suffix = "ji"
-        elseif startswith(sql, """{\$delete:""")
+        elseif startswith(sql, "{delete")
             suffix = "jd"
-        elseif startswith(sql, """{\$set:""")
+        elseif startswith(sql, "{update")
             suffix = "ju"
         else
             suffix = "js"

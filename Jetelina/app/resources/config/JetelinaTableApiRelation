@@ -12,13 +12,6 @@ jd11:ftest2:postgresql
 ji12:ftest:mysql
 ju13:ftest:mysql
 jd14:ftest:mysql
-ji15:jetelina-collection,mongo_sample1:mongodb
-ju16:jetelina-collection,mongo_sample1:mongodb
-jd17:jetelina-collection,mongo_sample1:mongodb
-ju18:jetelina-collection,mongo_sample2:mongodb
-jd19:jetelina-collection,mongo_sample2:mongodb
-ju20:jetelina-collection,mongo_sample3:mongodb
-jd21:jetelina-collection,mongo_sample3:mongodb
 ji22::redis
 ju23:a:redis
 js24:a:redis
@@ -26,7 +19,7 @@ ju25:b:redis
 js26:b:redis
 ju27:c:redis
 js28:c:redis
-ji29:jetelina-collection,mongo_sample1:mongodb
+ji29:jetelina-collection:mongodb
 ju30:jetelina-collection,mongo_sample1:mongodb
 jd31:jetelina-collection,mongo_sample1:mongodb
 js32:jetelina-collection,mongo_sample1:mongodb

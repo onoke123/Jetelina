@@ -219,7 +219,13 @@ function _createApis(collectionname::String, j_table::String, insertapi::Bool)
 		insert_str = MonSQLSentenceManager.createApiInsertSentence()
 #		if (insert_str != "") && ( ApiSqlListManager.sqlDuplicationCheck(insert_str,"",dbname)[1] == false )
 		if (insert_str != "") && ( __onlyonejiinonecollection() == false )
-			ret_i = ApiSqlListManager.writeTolist(insert_str, subquery, tablename_arr, dbname)
+			#===
+				Tips:
+					this "col" is just for matiching to the third argument in .writeTolist()
+			===#
+			col::Vector{String} = []
+			push!(col,collectionname)
+			ret_i = ApiSqlListManager.writeTolist(insert_str, collectionname, col, dbname)
 		end
 	end
 	#===

@@ -14,7 +14,7 @@ functions
 """
 module MonSQLSentenceManager
 
-using DataFrames, StatsBase
+using DataFrames, StatsBase, JSON
 using Genie, Genie.Requests, Genie.Renderer.Json
 using Jetelina.InitApiSqlListManager.ApiSqlListManager, Jetelina.JMessage
 
@@ -60,13 +60,7 @@ function createApiInsertSentence()
 - return: String: 
 """
 function createApiInsertSentence()
-#	ret::String = ""
-
-	ret::String =  """<set your json with an unique 'j_table'>"""
-
-#	if(!keyDuplicationCheck(str))
-#		ret = str
-#	end
+	ret::String =  "{insert}"
 
 	return ret
 end
@@ -81,12 +75,7 @@ function createApiUpdateSentence(str::String)
 - return: String: 
 """
 function createApiUpdateSentence(str::String)
-#	ret::String = ""
-	ret::String =  """{\$set:$str}"""
-
-#	if(!keyDuplicationCheck(str))
-#		ret = str
-#	end
+	ret::String =  "{update}"
 
 	return ret
 end
@@ -100,7 +89,7 @@ function createApiDeleteSentence(str::String)
 - return: Tuple: (sql delete sentence, sub query sentence)
 """
 function createApiDeleteSentence(str::String)
-	return """{\$delete:$str}"""
+	return "{delete}"
 end
 """
 function createApiSelectSentence(str::String)
@@ -114,17 +103,45 @@ function createApiSelectSentence(str::String)
 - return: String
 """
 function createApiSelectSentence(str::String)
-#	ret::String = ""
-
-	ret::String =  """{""j_table"":""$str""}"""
-
-#	if(!keyDuplicationCheck(str))
-#		ret = str
-#	end
+	ret::String =  "{find}"
 
 	return ret
 end
 
-function createApiSelectSentence(json_d::Dict, mode::String)
+function createApiSelectSentenceByselectedKeys(json_d::Dict, mode::String)
+    item_d = json_d["item"]
+	collection::Array = []
+	keys::Array = []
+
+	dic = Dict()
+
+    for i ∈ 1:length(item_d)
+        t = split(item_d[i], ".")
+		
+		if haskey(dic, t[1]) == false
+			dic[t[1]] = []
+		end
+
+		push!(dic[t[1]],t[2])
+	end
+
+	if mode != "pre"
+		# finde文を組み立ててJetelinaSqlListに書き込む
+		# ApiSqlListManager.sqlDuplicationCheck()
+		if 0<length(dic)
+			tablename_arr::Vector{String} = []
+			findStr = JSON.json(Dict(k => v for (k,v) in dic))
+			@info typeof(findStr) findStr
+			ret = ApiSqlListManager.writeTolist(findStr, "", tablename_arr, "mongodb")
+			if ret[1]
+                return json(Dict("result" => true, "apino" => ret[2]))
+			else
+				return ret[1]
+			end
+		end
+
+	else
+		# find文を組み立てて返す
+	end
 end
 end

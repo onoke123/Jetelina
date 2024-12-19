@@ -659,7 +659,7 @@ const setApiIF_In = (t, s) => {
       ret = `{"apino":\"${t}\"}`;
     }
   } else if (ta.startsWith("ji")) {
-    if (loginuser.dbtype != "redis") {
+    if ($.inArray(loginuser.dbtype,["redis","mongodb"]) == -1) {
       /*
         insert
           a,b,... in insert into table values(a,b,...) 
@@ -667,11 +667,14 @@ const setApiIF_In = (t, s) => {
       let i_sql = s.sql.split("values(");
       i_sql[1] = i_sql[1].slice(0, i_sql[1].length - 1).replaceAll('\'', '').replaceAll('{', '').replaceAll('}', '');
       ret = buildJetelinaJsonForm(ta, i_sql[1]);
-    } else {
+    } else if(loginuser.dbtype == "redis"){
       let i_sql = s.sql.split(":");
       ret = `{"apino":\"${t}\","key1":"{your key data}","key2":"{your value data}"}`;
       preferent.apitestparams.push("your key data");
       preferent.apitestparams.push("your value data");
+    }else if(loginuser.dbtype == "mongodb"){
+      let i_sql = s.sql;
+      ret = `{"apino":\"${t}\",\"${i_sql}\"}`;
     }
   } else if (ta.startsWith("ju") || ta.startsWith("jd")) {
     if (loginuser.dbtype != "redis") {

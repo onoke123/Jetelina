@@ -547,7 +547,7 @@ function createApiSelectSentence(json_d::Dict, mode::String)
 	elseif j_config.JC["dbtype"] == "oracle"
 	elseif j_config.JC["dbtype"] == "mongodb"
 		# Case in MongoDB
-		ret = MonSQLSentenceManager.createApiSelectSentence(json_d, mode)
+		ret = MonSQLSentenceManager.createApiSelectSentenceByselectedKeys(json_d, mode)
 	end
 
 	if mode == "pre"
