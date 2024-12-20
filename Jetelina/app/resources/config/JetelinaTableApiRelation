@@ -29,3 +29,5 @@ js35:jetelina-collection,mongo_sample2:mongodb
 ju36:jetelina-collection,mongo_sample3:mongodb
 jd37:jetelina-collection,mongo_sample3:mongodb
 js38:jetelina-collection,mongo_sample3:mongodb
+js41:jetelina-collection,mongo_sample1:mongodb
+js42:jetelina-collection,mongo_sample2,mongo_sample3:mongodb

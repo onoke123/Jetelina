@@ -185,6 +185,7 @@ function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String
             suffix = "ju"
         else
             suffix = "js"
+            sql = replace.(sql,"\""=>"\"\"")
         end
     end
     
@@ -203,6 +204,7 @@ function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String
                 println(f, string(j_config.JC["file_column_apino"], ',', j_config.JC["file_column_sql"], ',', j_config.JC["file_column_subquery"]), ',', j_config.JC["file_column_db"])
             end
 
+#            CSV.write(f, Tables.table([sqlsentence]); append=true)
             println(f, sqlsentence)
         end
     catch err

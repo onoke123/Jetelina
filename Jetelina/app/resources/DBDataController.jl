@@ -547,6 +547,14 @@ function createApiSelectSentence(json_d::Dict, mode::String)
 	elseif j_config.JC["dbtype"] == "oracle"
 	elseif j_config.JC["dbtype"] == "mongodb"
 		# Case in MongoDB
+		#===
+			Tips:
+				expect "collection" in it basically, but this early version does not have it. 
+		===#
+		if haskey(json_d, "collection") == false
+			json_d["collection"] = j_config.JC["mongodb_collection"]
+		end
+	
 		ret = MonSQLSentenceManager.createApiSelectSentenceByselectedKeys(json_d, mode)
 	end
 

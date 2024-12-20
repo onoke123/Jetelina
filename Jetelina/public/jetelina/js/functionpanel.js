@@ -1837,22 +1837,30 @@ const functionPanelFunctions = (ut) => {
  * Judge demanding 'where sentence' before post to the server
  */
 const containsMultiTables = () => {
-  if (0 < selectedItemsArr.length) {
-    let tables = [];
-    $.each(selectedItemsArr, function (i, v) {
-      if (0 < v.length && v.indexOf('.') != -1) {
-        let p = v.split('.');
-        if ($.inArray(p[0], tables) === -1) {
-          tables.push(p[0]);
+  if (loginuser.dbtype != "mongodb"){
+    if (0 < selectedItemsArr.length) {
+      let tables = [];
+      $.each(selectedItemsArr, function (i, v) {
+        if (0 < v.length && v.indexOf('.') != -1) {
+          let p = v.split('.');
+          if ($.inArray(p[0], tables) === -1) {
+            tables.push(p[0]);
+          }
         }
-      }
-    });
+      });
 
-    if (1 < tables.length) {
-      return true;
-    } else {
-      return false;
+      if (1 < tables.length) {
+        return true;
+      } else {
+        return false;
+      }
     }
+  }else{
+    /*
+      Tips:
+        always false in case mongodb
+    */
+    return false
   }
 }
 /**
