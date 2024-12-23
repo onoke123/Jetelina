@@ -680,7 +680,7 @@ const setApiIF_In = (t, s) => {
       preferent.apitestparams.push("your value data");
     }else if(loginuser.dbtype == "mongodb"){
 //      let i_sql = s.sql;
-      let i_sql = "<span class='jetelina_suggestion'><p>Attention: this is for the new document in this collection. set your own new json form data here.</p></span>";
+      let i_sql = "<span class='jetelina_suggestion'><p>Attention: this is for inserting your new document in this collection. set your own new json form data here.</p></span>";
       ret = `{"apino":\"${t}\",\"${i_sql}\"}`;
     }
   } else if (ta.startsWith("ju") || ta.startsWith("jd")) {
@@ -763,7 +763,7 @@ const setApiIF_Out = (t, s) => {
 const setApiIF_Sql = (s) => {
   let ret = "";
 
-  if (loginuser.dbtype != "redis"){
+  if ($.inArray(loginuser.dbtype,["redis","mongodb"]) == -1) {
     // possibly s.subquery is null. 'ignore' -> no sub query
     if (s.subquery != null && s.subquery != IGNORE) {
       ret = `${s.sql} ${s.subquery};`;
@@ -776,13 +776,29 @@ const setApiIF_Sql = (s) => {
       ret = ret.replaceAll(`,{${reject_jetelina_delete_flg}}`, '').replaceAll(`,${reject_jetelina_delete_flg}`, '');
     }
   } else {
-    let d = s.sql.split(":");
-    if (s.apino.startsWith("ji")) {
-      ret = `${d[0]} {your key data} {your value data}`;
-    } else if (s.apino.startsWith("ju")) {
-      ret = `${d[0]} ${d[1]} {your value data}`;
-    } else if (s.apino.startsWith("js")) {
-      ret = `${d[0]} ${d[1]}`;
+    if(loginuser.dbtype == "redis"){
+      let d = s.sql.split(":");
+      if (s.apino.startsWith("ji")) {
+        ret = `${d[0]} {your key data} {your value data}`;
+      } else if (s.apino.startsWith("ju")) {
+        ret = `${d[0]} ${d[1]} {your value data}`;
+      } else if (s.apino.startsWith("js")) {
+        ret = `${d[0]} ${d[1]}`;
+      }
+    }else if(loginuser.dbtype == "mongodb"){
+      if(s.apino.startsWith("ji")){
+        ret = "<span class='jetelina_suggestion'><p>Simply inserting</p></span>";
+      }else if(s.apino.startsWith("ju")){
+        ret = "<span class='jetelina_suggestion'><p>Find your ordered keys, then update them with your ordered values. Append them to the document if could not find it.</p></span>";
+      }else if(s.apino.startsWith("jd")){
+        ret = "<span class='jetelina_suggestion'><p>Delete this document permanently.</p></span>";
+      }else if(s.apino.startsWith("js")){
+        if(-1<s.sql.indexOf("{find}")){
+          ret = "<span class='jetelina_suggestion'><p>Find your whole document data</p></span>";
+        }else{
+          ret = "<span class='jetelina_suggestion'><p>Find your ordered values of keys.</p></span>"
+        }
+      }
     }
   }
 
