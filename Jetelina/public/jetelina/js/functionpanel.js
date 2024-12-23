@@ -622,41 +622,47 @@ const setApiIF_In = (t, s) => {
   preferent.apitestparams = [];
 
   if (ta.startsWith("js")) {
-    //select. 'ignore' -> no sub query
-    if (s.subquery != null && 0 < s.subquery.length && s.subquery != IGNORE) {
-      let s_subquery = s.subquery;
-      let subquery_str = "";
-      let isCurry = s_subquery.indexOf('{');
-      while (-1 < isCurry) {
-        if (0 < subquery_str.length) {
-          subquery_str += ',';
-        }
-
-        let sp = s_subquery.indexOf('{');
-        let ep = s_subquery.indexOf('}');
-        if (sp != -1 && ep != -1) {
-          let cd = s_subquery.substring(sp + 1, ep);
-          subquery_str += `'${cd}': `;
-          if (s_subquery[sp - 1] == "\'") {
-            subquery_str += `'{${cd}}'`;
-          } else {
-            subquery_str += `{${cd}}`;
+    if(loginuser.dbtype != "mongodb"){
+      //select. 'ignore' -> no sub query
+      if (s.subquery != null && 0 < s.subquery.length && s.subquery != IGNORE) {
+        let s_subquery = s.subquery;
+        let subquery_str = "";
+        let isCurry = s_subquery.indexOf('{');
+        while (-1 < isCurry) {
+          if (0 < subquery_str.length) {
+            subquery_str += ',';
           }
 
-          preferent.apitestparams.push(cd);
-          s_subquery = s_subquery.substring(ep + 1, s_subquery.length);
+          let sp = s_subquery.indexOf('{');
+          let ep = s_subquery.indexOf('}');
+          if (sp != -1 && ep != -1) {
+            let cd = s_subquery.substring(sp + 1, ep);
+            subquery_str += `'${cd}': `;
+            if (s_subquery[sp - 1] == "\'") {
+              subquery_str += `'{${cd}}'`;
+            } else {
+              subquery_str += `{${cd}}`;
+            }
+
+            preferent.apitestparams.push(cd);
+            s_subquery = s_subquery.substring(ep + 1, s_subquery.length);
+          }
+
+          isCurry = s_subquery.indexOf('{');
         }
 
-        isCurry = s_subquery.indexOf('{');
-      }
-
-      if (subquery_str != "") {
-        ret = `{"apino": \"${t}\","subquery":\"[${subquery_str}]\"}`;
+        if (subquery_str != "") {
+          ret = `{"apino": \"${t}\","subquery":\"[${subquery_str}]\"}`;
+        } else {
+          ret = `{"apino":\"${t}\"}`;
+        }
       } else {
         ret = `{"apino":\"${t}\"}`;
       }
-    } else {
-      ret = `{"apino":\"${t}\"}`;
+    }else{
+      // in case mongodb
+      let s_msg = "<span class='jetelina_suggestion'><p>Attention: this is for fetching this document in this collection.</p></span>";
+      ret = `{"apino":\"${t}\"}<br><br>${s_msg}`;  
     }
   } else if (ta.startsWith("ji")) {
     if ($.inArray(loginuser.dbtype,["redis","mongodb"]) == -1) {
@@ -673,12 +679,13 @@ const setApiIF_In = (t, s) => {
       preferent.apitestparams.push("your key data");
       preferent.apitestparams.push("your value data");
     }else if(loginuser.dbtype == "mongodb"){
-      let i_sql = s.sql;
+//      let i_sql = s.sql;
+      let i_sql = "<span class='jetelina_suggestion'><p>Attention: this is for the new document in this collection. set your own new json form data here.</p></span>";
       ret = `{"apino":\"${t}\",\"${i_sql}\"}`;
     }
   } else if (ta.startsWith("ju") || ta.startsWith("jd")) {
-    if (loginuser.dbtype != "redis") {
-      /*
+    if ($.inArray(loginuser.dbtype,["redis","mongodb"]) == -1) {
+        /*
         update and delete(the true color is update)
           a=d_a,b=d_b... in update table set a=d_a,b=d_b..... 
       */
@@ -691,10 +698,20 @@ const setApiIF_In = (t, s) => {
       */
       preferent.apitestparams.push("jt_id");
       ret = ret.slice(0, ret.length - 1) + `,\"subquery\":\"{jt_id}\"` + ret.slice(ret.length - 1, ret.length);
-    } else {
-      let u_sql = s.sql.split(":");
+    } else if(loginuser.dbtype == "redis"){
+//      let u_sql = s.sql.split(":");
       ret = `{"apino":\"${t}\","key":"{your value data}"}`;
       preferent.apitestparams.push("your value data");
+    }else if(loginuser.dbtype == "mongodb"){
+      if(ta.startsWith("ju")){
+  //      let u_sql = s.sql.split(":");
+        let u_sql = "<span class='jetelina_suggestion'><p>Attention: set key:value data you wanna update here</p></span>";
+        ret = `{"apino":\"${t}\",\"${u_sql}\"}`;
+        preferent.apitestparams.push("your value data");
+      }else if(ta.startsWith("jd")){
+        let d_msg = "<span class='jetelina_suggestion'><p>Caution: this is for deleting this document in this collection.</p></span>";
+        ret = `{"apino":\"${t}\"}<br><br>${d_msg}`;  
+      }
     }
   } else {
     // who knows
@@ -716,7 +733,7 @@ const setApiIF_Out = (t, s) => {
   let ta = t.toLowerCase();
 
   if (ta.startsWith("js")) {
-    if (loginuser.dbtype != "redis") {
+    if ($.inArray(loginuser.dbtype,["redis","mongodb"]) == -1) {
       let pb = s.sql.split("select");
       let pf = pb[1].split("from");
       // there is the items in pf[0]
@@ -746,7 +763,7 @@ const setApiIF_Out = (t, s) => {
 const setApiIF_Sql = (s) => {
   let ret = "";
 
-  if (loginuser.dbtype != "redis") {
+  if (loginuser.dbtype != "redis"){
     // possibly s.subquery is null. 'ignore' -> no sub query
     if (s.subquery != null && s.subquery != IGNORE) {
       ret = `${s.sql} ${s.subquery};`;
