@@ -357,30 +357,47 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 	ret = ""
 	jmsg::String = string("compliment me!")
 
-	alternative_subquery = df_api[!, :subquery]
-	sub = split(alternative_subquery)
-	collectionname = sub[1]
+	alternative_subquery = df_api[!, :subquery][1]
+	sub = split(alternative_subquery,",")
+	collectionname = string(sub[1])
 	j_table = sub[2]        # this 'j_table' is unique in each documents
 	collection = open_collection(collectionname)
-	bson = Mongoc.BSON(jsond_d)
+	documents = collect(collection)
+@info documents
+	bson = Mongoc.BSON()
 
 	if startswith(apino, "js")
 		# find
 		finddata_bson::Array = []
 		finddata_json::Array = []
-		doc = Mongoc.find(collection, bson)
-		if isnothing(doc)
-			for d in doc
-				push!(finddata_bson, d)
-			end
+
+		if df_api[!,:sql][1] == "{find}"
+			# simply find the document
+			findstr = """{\"j_table\":\"$j_table\"}"""
+			bson = Mongoc.BSON(findstr)
+			@info findstr
+			@info bson
+		else
+			# something ordered
 		end
 
-		if 0 < length(finddata_bson)
-			for d in finddata_bson
-				jd = Mongoc.as_json(finddata_bson)
+		doc = Mongoc.find(collection, bson)
+#		@info doc typeof(doc)
+		if isnothing(doc) == false
+			@info "here"
+			for d in doc
+				jd = Mongoc.as_json(d)
+#				jd = Mongoc.as_json(doc)
 				push!(finddata_json, jd)
 			end
 		end
+
+#			for d in finddata_bson
+#				jd = Mongoc.as_json(d)
+#				jd = Mongoc.as_json(doc)
+#				push!(finddata_json, jd)
+#			end
+#		end
 
 		if 0 < length(finddata_json)
 			ret = json(Dict("result" => true, "Jetelina" => [finddata_json], "message from Jetelina" => jmsg))
