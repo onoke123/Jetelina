@@ -370,11 +370,7 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 		finddata_bson::Array = []
 		finddata_json::Array = []
 
-		if df_api[!,:sql][1] == "{find}"
-			# simply find the document
-#			findstr = """{\"j_table\":\"$j_table\"}"""
-#			bson = Mongoc.BSON(findstr)
-		else
+		if df_api[!,:sql][1] != "{find}"
 			# something ordered
 		end
 
@@ -396,28 +392,46 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 			Tips:
 				'update' is applied to a specific document as an unique determined 'j_table'. 
 		===#
-		target_bson = Mongoc.BSON("""{"j_table":"$j_table"}""")
+#		target_bson = Mongoc.BSON("""{"j_table":"$j_table"}""")
 
 		for (k,v) in json_d
 			if k != "apino"
 				udstr::String = ""
 				p = string(eltype(v))
 				if p != "Char" 
+					#===
+						Tips:
+							in case: Integer, Float, Boolean....
+					===#
 					udstr = "{\"$k\": $v}"
 				else
+					#===
+						Tips:
+							in case: String, Date
+					===#
 					udstr = "{\"$k\": \"$v\"}"
 				end
 
 				updata = Mongoc.BSON("""{"\$set": $udstr}""")
-				ret = Mongoc.update_one(collection, target_bson, updata)
+				ret = Mongoc.update_one(collection, bson, updata)
 			end
 		end
 
-		if 0 < ret["modifiedCount"]
+		@info ret
+		if 0 < ret["matchedCount"]
 			ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
 		else
 			# what happend?
 			@info "failed in update " ret
+		end
+	elseif startswith(apino, "jd")
+		ret = Mongoc.delete_one(collection, bson)
+		@info ret
+		if 0 < ret["deletedCount"]
+			ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
+		else
+			# what happend?
+			@info "failed in delete " ret
 		end
 	elseif startswith(apino, "ji")
 		if isnothing(Mongoc.find_one(collection, bson))
