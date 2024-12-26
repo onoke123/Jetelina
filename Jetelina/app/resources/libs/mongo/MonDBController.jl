@@ -361,10 +361,9 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 	sub = split(alternative_subquery,",")
 	collectionname = string(sub[1])
 	j_table = sub[2]        # this 'j_table' is unique in each documents
+	findstr = """{\"j_table\":\"$j_table\"}"""
+	bson = Mongoc.BSON(findstr)
 	collection = open_collection(collectionname)
-	documents = collect(collection)
-@info documents
-	bson = Mongoc.BSON()
 
 	if startswith(apino, "js")
 		# find
@@ -373,31 +372,19 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 
 		if df_api[!,:sql][1] == "{find}"
 			# simply find the document
-			findstr = """{\"j_table\":\"$j_table\"}"""
-			bson = Mongoc.BSON(findstr)
-			@info findstr
-			@info bson
+#			findstr = """{\"j_table\":\"$j_table\"}"""
+#			bson = Mongoc.BSON(findstr)
 		else
 			# something ordered
 		end
 
 		doc = Mongoc.find(collection, bson)
-#		@info doc typeof(doc)
 		if isnothing(doc) == false
-			@info "here"
 			for d in doc
 				jd = Mongoc.as_json(d)
-#				jd = Mongoc.as_json(doc)
 				push!(finddata_json, jd)
 			end
 		end
-
-#			for d in finddata_bson
-#				jd = Mongoc.as_json(d)
-#				jd = Mongoc.as_json(doc)
-#				push!(finddata_json, jd)
-#			end
-#		end
 
 		if 0 < length(finddata_json)
 			ret = json(Dict("result" => true, "Jetelina" => [finddata_json], "message from Jetelina" => jmsg))
@@ -409,16 +396,23 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 			Tips:
 				'update' is applied to a specific document as an unique determined 'j_table'. 
 		===#
-		ud_p = json["presentdata"]
-		ud_n = json["newdata"]
-
-		@info "update presentdata string is " ud_p
-		@info "update newdata string is " ud_n
-
 		target_bson = Mongoc.BSON("""{"j_table":"$j_table"}""")
-		finddata_bson = Mongoc.find_one(collection, target_bson)
-		updata = Mongoc.BSON("""{"\$set": $ud_n}""")
-		ret = Mongoc.update_one(collection, finddata_bson, updata)
+
+		for (k,v) in json_d
+			if k != "apino"
+				udstr::String = ""
+				p = string(eltype(v))
+				if p != "Char" 
+					udstr = "{\"$k\": $v}"
+				else
+					udstr = "{\"$k\": \"$v\"}"
+				end
+
+				updata = Mongoc.BSON("""{"\$set": $udstr}""")
+				ret = Mongoc.update_one(collection, target_bson, updata)
+			end
+		end
+
 		if 0 < ret["modifiedCount"]
 			ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
 		else
