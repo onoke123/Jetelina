@@ -681,7 +681,7 @@ const setApiIF_In = (t, s) => {
     }else if(loginuser.dbtype == "mongodb"){
 //      let i_sql = s.sql;
       let i_sql = "<span class='jetelina_suggestion'><p>Attention: this is for inserting your new document in this collection. set your own new json form data here.</p></span>";
-      ret = `{"apino":\"${t}\",\"${i_sql}\"}`;
+      ret = `{"apino":\"${t}\","newdata":\"${i_sql}\"}`;
     }
   } else if (ta.startsWith("ju") || ta.startsWith("jd")) {
     if ($.inArray(loginuser.dbtype,["redis","mongodb"]) == -1) {

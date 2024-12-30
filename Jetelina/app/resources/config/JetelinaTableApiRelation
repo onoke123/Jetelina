@@ -26,8 +26,9 @@ js32:jetelina-collection,mongo_sample1:mongodb
 ju33:jetelina-collection,mongo_sample2:mongodb
 jd34:jetelina-collection,mongo_sample2:mongodb
 js35:jetelina-collection,mongo_sample2:mongodb
-ju36:jetelina-collection,mongo_sample3:mongodb
-jd37:jetelina-collection,mongo_sample3:mongodb
-js38:jetelina-collection,mongo_sample3:mongodb
 js41:jetelina-collection,mongo_sample1:mongodb
-js42:jetelina-collection,mongo_sample2,mongo_sample3:mongodb
+ji43:jetelina-collection:mongodb
+ju44:jetelina-collection,mongo_sample1:mongodb
+js45:jetelina-collection,mongo_sample1:mongodb
+ju46:jetelina-collection,mongo_sample2:mongodb
+js47:jetelina-collection,mongo_sample2:mongodb

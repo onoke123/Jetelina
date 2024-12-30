@@ -11,6 +11,7 @@ functions
 	open_collection(jcollection::String) open "collection" to the DB.
 	close_connection()  close the DB connection, but attention...
 	dataInsertFromJson(collectionname::String, fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
+	dropTable(jcollection::String, ableName::Vector) delete the documents. this function name is not showing the real action, but to match with other libs.
 	getDocumentList(jcollection::String,s::String) get all 'document' in 'jcollection'.
 	executeApi(json_d::Dict,df_api::DataFrame) execute API order by json data
 	prepareDbEnvironment(mode::String) database connection checking, and initializing database if needed
@@ -37,7 +38,7 @@ JMessage.showModuleInCompiling(@__MODULE__)
 include("MonDataTypeList.jl")
 include("MonSQLSentenceManager.jl")
 
-export open_connection, open_collection, close_connection, dataInsertFromJson, getDocumentList, executeApi, prepareDbEnvironment
+export open_connection, open_collection, close_connection, dataInsertFromJson, dropTable, getDocumentList, executeApi, prepareDbEnvironment
 
 """
 function open_connection()
@@ -124,11 +125,11 @@ function dataInsertFromJson(collectionname::String, fname::String)
 	===#
 	collection = open_collection(collectionname)
 
-	# いっぺんに処理する方法
+	# do it all at once
 	#bsons = Mongoc.read_bson_from_json(fname)
 	#result = append!(collection,bsons)
 
-	# 一つづつ処理する方法
+	# do it one by one
 	jdata = Mongoc.BSONJSONReader(fname)
 	insertapi::Bool = true
 	for bson in jdata
@@ -151,7 +152,7 @@ end
 function _createApis(collectionname::String, j_table::String, insertapi::Bool)
 	ret_i::Tuple = (Bool, String)
 	ret_u::Tuple = (Bool, String)
-    ret_d::Tuple = (Bool, String)
+#    ret_d::Tuple = (Bool, String)
 	ret_s::Tuple = (Bool, String)
 	dbname::String = "mongodb"
 	#===
@@ -239,19 +240,60 @@ function _createApis(collectionname::String, j_table::String, insertapi::Bool)
 		ret_u = ApiSqlListManager.writeTolist(update_str, subquery, tablename_arr, dbname)
 	end
 
-	# delete
+	#===
+		Caution: delete is not in MongoDB APIs
+
 	delete_str = MonSQLSentenceManager.createApiDeleteSentence(j_table)
 	if (delete_str != "")
 		ret_d = ApiSqlListManager.writeTolist(delete_str, subquery, tablename_arr, dbname)
 	end
-
+	===#
     # select (find)
 	select_str = MonSQLSentenceManager.createApiSelectSentence(j_table)
 	if (select_str != "")
 		ret_s = ApiSqlListManager.writeTolist(select_str, subquery, tablename_arr, dbname)
 	end
 
-	return ret_i, ret_u, ret_d, ret_s
+#	return ret_i, ret_u, ret_d, ret_s
+	return ret_i, ret_u, ret_s
+end
+"""
+function dropTable(jcollection::String, ableName::Vector)
+
+	delete the documents. this function name is not showing the real action, but to match with other libs.
+
+# Arguments
+- `jcollection:String`: collection name
+- `tableName: Vector`: ordered tables name
+- return: tuple (boolean: true -> success/false -> get fail, JSON)
+"""
+function dropTable(jcollection::String, tableName::Vector)
+    ret = ""
+    jmsg::String = string("compliment me!")
+    rettables::String = join(tableName, ",") # ["a","b"] -> "a,b" oh ＼(^o^)／
+
+	documents = open_collection(jcollection)
+
+	try
+        for j_table in tableName
+            # drop the tableName
+			selector = Mongoc.BSON("j_table"=>j_table)
+			Mongoc.delete_one(documents,selector)
+        end
+
+        ret = json(Dict("result" => true, "tablename" => "$rettables", "message from Jetelina" => jmsg))
+
+        # write to operationhistoryfile
+        JLog.writetoOperationHistoryfile(string("delete ", rettables, " documents"))
+    catch err
+        errnum = JLog.getLogHash()
+        ret = json(Dict("result" => false, "tablename" => "$rettables", "errmsg" => "$err", "errnum"=>"$errnum"))
+        JLog.writetoLogfile("[errnum:$errnum] MonDBController.dropTable() with $rettables error : $err")
+        return false, ret
+    finally
+    end
+
+    return true, ret
 end
 """
 function getDocumentList(jcollection::String, s::String)
@@ -355,12 +397,19 @@ function _executeApi(apino::String, df_api::DataFrame)
 function _executeApi(json_d::Dict, df_api::DataFrame)
 	apino = json_d["apino"]
 	ret = ""
+	j_table::String = ""
+	collectionname::String = ""
 	jmsg::String = string("compliment me!")
 
 	alternative_subquery = df_api[!, :subquery][1]
-	sub = split(alternative_subquery,",")
-	collectionname = string(sub[1])
-	j_table = sub[2]        # this 'j_table' is unique in each documents
+	if !startswith(apino,"ji")
+		sub = split(alternative_subquery,",")
+		collectionname = string(sub[1])
+		j_table = string(sub[2])        # this 'j_table' is unique in each documents
+	else
+		collectionname = alternative_subquery;
+	end
+
 	findstr = """{\"j_table\":\"$j_table\"}"""
 	bson = Mongoc.BSON(findstr)
 	collection = open_collection(collectionname)
@@ -392,8 +441,6 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 			Tips:
 				'update' is applied to a specific document as an unique determined 'j_table'. 
 		===#
-#		target_bson = Mongoc.BSON("""{"j_table":"$j_table"}""")
-
 		for (k,v) in json_d
 			if k != "apino"
 				udstr::String = ""
@@ -417,7 +464,6 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 			end
 		end
 
-		@info ret
 		if 0 < ret["matchedCount"]
 			ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
 		else
@@ -426,7 +472,6 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 		end
 	elseif startswith(apino, "jd")
 		ret = Mongoc.delete_one(collection, bson)
-		@info ret
 		if 0 < ret["deletedCount"]
 			ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
 		else
@@ -436,7 +481,10 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 	elseif startswith(apino, "ji")
 		if isnothing(Mongoc.find_one(collection, bson))
 			# new document
-			push!(collection, bson)
+			newdata = json_d["newdata"]
+			insertbson = Mongoc.BSON(newdata)
+			push!(collection, insertbson)
+			j_table = insertbson["j_table"]
 		else
 			# duplication, then nothing to do
 		end
@@ -451,7 +499,8 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 		===#
 
 		# create new apis
-		(ret_i, ret_u, ret_d, ret_s) = _createApis(collectionname, json_d["j_table"], false)
+#		(ret_i, ret_u, ret_d, ret_s) = _createApis(collectionname, j_table, false)
+		(ret_i, ret_u, ret_s) = _createApis(collectionname, j_table, false)
 
 		if ret_u[1] && ret_s[1]
 			apino_u = ret_u[2]

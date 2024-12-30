@@ -200,6 +200,13 @@ function dropTable(tableName::Vector, stichwort::String)
 			# Case in MySQL
 			ret = MyDBController.dropTable(tableName)
 		elseif j_config.JC["dbtype"] == "oracle"
+		elseif j_config.JC["dbtype"] == "mongodb"
+		#===
+			Attention:
+				the first argument should be set collection name, but being blank so far,
+				because MonDBController is an experimental implementation yet.
+		===#
+		ret = MonDBController.dropTable("",tableName)
 		end
 
 		if stichret && ret[1]
