@@ -11,6 +11,7 @@ functions
 	open_collection(jcollection::String) open "collection" to the DB.
 	close_connection()  close the DB connection, but attention...
 	dataInsertFromJson(collectionname::String, fname::String) insert csv file data ordered by 'fname' into table. the table name is the csv file name.
+	documentDuplicationChk(collection::Mongoc.Collection, bson::Mongoc.BSON) check for existing document.
 	dropTable(jcollection::String, ableName::Vector) delete the documents. this function name is not showing the real action, but to match with other libs.
 	getDocumentList(jcollection::String,s::String) get all 'document' in 'jcollection'.
 	executeApi(json_d::Dict,df_api::DataFrame) execute API order by json data
@@ -117,6 +118,9 @@ function dataInsertFromJson(collectionname::String, fname::String)
 	ret = ""
 	jmsg::String = string("compliment me!")
 
+	if isnothing(collectionname) || length(collectionname) == 0
+		collectionname = string(j_config.JC["mongodb_collection"])
+	end
 	#===
 		Tips:
 			should set the parameter in open_collection() in order to change the collection.
@@ -133,22 +137,46 @@ function dataInsertFromJson(collectionname::String, fname::String)
 	jdata = Mongoc.BSONJSONReader(fname)
 	insertapi::Bool = true
 	for bson in jdata
-		# data insert
-		result = push!(collection, bson)
-		if !isnothing(result)
-			# create api 
-			_createApis(collectionname, bson["j_table"], insertapi)
-			insertapi = false
-            ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
-		else
-            ret = json(Dict("result" => false, "filename" => "$fname", "message from Jetelina" => "no way"))
-			break
+		if documentDuplicationChk(collection, bson) == false
+			# data insert
+			result = push!(collection, bson)
+			if !isnothing(result)
+				# create api 
+				_createApis(collectionname, bson["j_table"], insertapi)
+				insertapi = false
+				ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
+			else
+				ret = json(Dict("result" => false, "filename" => "$fname", "message from Jetelina" => "no way"))
+				break
+			end
 		end
 	end
 
 	return ret
 end
+"""
+function documentDuplicationChk(collection::Mongoc.Collection, bson::Mongoc.BSON)
 
+	check for existing document.
+
+# Arguments
+- `collection: Mongoc.Collection`: ordered Collection
+- `bson: Mongoc.BSON`: target document
+- return: boolean: true -> not exist, false -> is already
+"""
+function documentDuplicationChk(collection::Mongoc.Collection, bson::Mongoc.BSON)
+	ret::Bool = false
+
+#	j_table = bson["j_table"]
+#	bson = Mongoc.find_one(collection,Mongoc.BSON("""{ "j_table":"$j_table"}"""))
+	jb = Mongoc.find_one(collection,bson)
+	@info jb
+	if !isnothing(jb)
+		ret = true
+	end
+
+	return ret
+end
 function _createApis(collectionname::String, j_table::String, insertapi::Bool)
 	ret_i::Tuple = (Bool, String)
 	ret_u::Tuple = (Bool, String)
@@ -275,15 +303,20 @@ function dropTable(jcollection::String, tableName::Vector)
 	documents = open_collection(jcollection)
 
 	try
+		r = Mongoc.BSON()
         for j_table in tableName
             # drop the tableName
 			selector = Mongoc.BSON("j_table"=>j_table)
-			Mongoc.delete_one(documents,selector)
+			r = Mongoc.delete_one(documents,selector)
         end
 
-        ret = json(Dict("result" => true, "tablename" => "$rettables", "message from Jetelina" => jmsg))
+		if 0<r["deletedCount"]
+	        ret = json(Dict("result" => true, "tablename" => "$rettables", "message from Jetelina" => jmsg))
+		else
+	        ret = json(Dict("result" => true, "tablename" => "$rettables", "message from Jetelina" => "not found"))
+		end
 
-        # write to operationhistoryfile
+		# write to operationhistoryfile
         JLog.writetoOperationHistoryfile(string("delete ", rettables, " documents"))
     catch err
         errnum = JLog.getLogHash()
