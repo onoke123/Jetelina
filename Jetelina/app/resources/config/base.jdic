@@ -6,6 +6,7 @@
 
 # post urls for function panel 
 @jdic function-post-url:"/updateuserdata","/jetelinawords","/getconfigdata","/changeconfigdata","/createapi","/testapi","/chkaccount","/userregist","/getrelatedlist","/switchdb","/ispath","/getcolumns"
+@jdic function-post-fileupload-url:"/postcsvfile"
 
 # this post url is as same as the WebAPI is provided to user
 @jdic function-apitest-usr:"/apiactions"
@@ -131,7 +132,7 @@
 @jdic func-selecteditem-cancel-cmd:"cancel","remove","reject","withdraw"
 @jdic func-selecteditem-all-cancel-cmd:"cancel all","all cancel","remove all","all remove","reject all","all reject","withdraw all","all withdraw"
 @jdic func-cleanup-cmd:"refresh","cleanup","clean","reset"
-@jdic func-tabledrop-cmd:"drop","drop table","table drop","tabledrop","droptable"
+@jdic func-tabledrop-cmd:"drop","drop table","table drop","tabledrop","droptable","delete document","document delete"
 @jdic func-tabledrop-msg:"Which table do you want to drop?","correct order is 'droptable <table name>' and so on"
 @jdic func-tabledrop-ng-msg:"Hey open the table list first!","Huum?","Check it first","Watch it"
 
@@ -157,6 +158,7 @@
 @jdic func-fileupload-msg:"File?"
 @jdic func-fileupload-upload-msg:"you've selected '{Q}'. then hit 'upload' ..or 'cancel'."
 @jdic func-csv-format-error-msg:"CSV format is not good, see the error message","Unacceptable CSV format, see the error message,"
+@jdic function-duplication-erro-msg:"Looks like getting data duplication, see the error message."
 @jdic func-postcolumn-where-option-msg:"Wanna set the 'Where' sentence? This is an option."
 @jdic func-postcolumn-where-indispensable-msg:"Set the 'Where' sentence. This is an indispensable."
 @jdic func-postcolumn-available-msg:"Now you can hit 'post' ..or 'cancel'","Do post them by 'post' ..or 'cancel'","Type 'post' now ..or 'cancel'"

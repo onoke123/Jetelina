@@ -127,6 +127,7 @@ const checkResult = (o) => {
     const response = "responseJSON";// common json response data key name
     const errMsg = "errmsg"; // this is the protocol in jl file
     const errorStr = "error";// this is the protocol in jl file
+    const messageFromJetelina = "message from Jetelina";// the result was 'false', but not big error. wanna say something to you from Jeteina
 
     if (o != null) {
         /*
@@ -139,6 +140,7 @@ const checkResult = (o) => {
             let em = "";
             let errmsg;
             let error;
+            let jetelinamsg;
 
             if (o.errnum != null) {
                 preferent.errnum = o.errnum;
@@ -153,9 +155,11 @@ const checkResult = (o) => {
             if (o[response] != null) {
                 errmsg = o[response][errMsg];
                 error = o[response][errorStr];
+                jetelinamsg = o[response][messageFromJetelina];
             } else {
                 errmsg = o.errmsg;
                 error = o.error;
+                jetelinamsg = o[messageFromJetelina];
             }
 
             if (errmsg != null && 0 < errmsg.length) {
@@ -176,6 +180,8 @@ const checkResult = (o) => {
                         because "error" is raw error message
                 */
                 em = chooseMsg("common-ajax-error-msg", error, "a");
+            } else if (jetelinamsg != null && 0 < messageFromJetelina.length) {
+                em = jetelinamsg.substr(0, msglength);
             }
 
             if (em != "") {
@@ -185,7 +191,6 @@ const checkResult = (o) => {
 
             ret = false;
         } else {
-            //            $(SOMETHINGMSGPANELMSG).text("");
             showSomethingMsgPanel(false);
             /*
                 Tips:
@@ -284,7 +289,7 @@ const getdata = (o, t) => {
                                                 str += `<span class="item" d=${value} colname=${targetTable}.${name}><p>${targetTable}.${name}</p></span>`;
                                             } else {
                                                 // case in mongodb
-                                                if($.inArray(value,["_id","j_table"]) == -1){
+                                                if ($.inArray(value, ["_id", "j_table"]) == -1) {
                                                     str += `<span class="item" d="non" colname=${targetTable}.${value}><p>${targetTable}.${value}</p></span>`;
                                                 }
                                             }

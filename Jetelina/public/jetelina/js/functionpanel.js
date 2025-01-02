@@ -77,8 +77,8 @@ $(document).on({
     if (loginuser.dbtype != "mongodb") {
       let d = $(this).attr("d");
       tooltipmsg = `e.g. ${d}`;
-    }else{
-      let kao = ["＼(^o^)／","(*˘︶˘*).｡.:*♡","(^o^)","(*^^*)",":-)"];
+    } else {
+      let kao = ["＼(^o^)／", "(*˘︶˘*).｡.:*♡", "(^o^)", "(*^^*)", ":-)"];
       tooltipmsg = `no in mongo ${kao[getRandomNumber(kao.length)]}`;
     }
 
@@ -336,9 +336,10 @@ const fileupload = () => {
 
   const uploadFilename = $(UPFILE).prop("files")[0].name;
   const tablename = uploadFilename.split(".")[0];
+  const url = scenario["function-post-fileupload-url"][0];
 
   $.ajax({
-    url: "/postcsvfile",
+    url: url,
     type: "post",
     data: fd,
     cache: false,
@@ -353,19 +354,18 @@ const fileupload = () => {
     }
   }).done(function (result, textStatus, jqXHR) {
     if (checkResult(result)) {
-      // clean up
-      $(UPFILE).val("");
-      $("#upbtn").prop("disabled", false);
-      $(`${MYFORM} label span`).text("Upload CSV File");
-
       //refresh table list 
       cleanupRelatedList(true);
       typingControll(chooseMsg('refreshing-msg', '', ''));
 
       chatKeyDown(scenario["func-show-table-list-cmd"][0]);
     } else {
-      // csv file format error
-      typingControll(chooseMsg('func-csv-format-error-msg', "", ""));
+      if (loginuser.dbtype != "mongodb") {
+        // csv file format error
+        typingControll(chooseMsg('func-csv-format-error-msg', "", ""));
+      } else {
+        typingControll(chooseMsg('function-duplication-erro-msg', "", ""))
+      }
     }
   }).fail(function (result) {
     checkResult(result);
@@ -377,6 +377,11 @@ const fileupload = () => {
     inprogress = false;
     $(FILEUP).removeClass("genelic_panel");
     rejectCancelableCmdList(FILESELECTOROPEN);
+    // always clean up
+    $(UPFILE).val("");
+    $("#upbtn").prop("disabled", false);
+    $(`${MYFORM} label span`).text("Upload CSV File");
+
     return true;
   });
 }
@@ -622,7 +627,7 @@ const setApiIF_In = (t, s) => {
   preferent.apitestparams = [];
 
   if (ta.startsWith("js")) {
-    if(loginuser.dbtype != "mongodb"){
+    if (loginuser.dbtype != "mongodb") {
       //select. 'ignore' -> no sub query
       if (s.subquery != null && 0 < s.subquery.length && s.subquery != IGNORE) {
         let s_subquery = s.subquery;
@@ -659,13 +664,13 @@ const setApiIF_In = (t, s) => {
       } else {
         ret = `{"apino":\"${t}\"}`;
       }
-    }else{
+    } else {
       // in case mongodb
       let s_msg = "<span class='jetelina_suggestion'><p>Attention: this is for fetching this document in this collection.</p></span>";
-      ret = `{"apino":\"${t}\"}<br><br>${s_msg}`;  
+      ret = `{"apino":\"${t}\"}<br><br>${s_msg}`;
     }
   } else if (ta.startsWith("ji")) {
-    if ($.inArray(loginuser.dbtype,["redis","mongodb"]) == -1) {
+    if ($.inArray(loginuser.dbtype, ["redis", "mongodb"]) == -1) {
       /*
         insert
           a,b,... in insert into table values(a,b,...) 
@@ -673,22 +678,22 @@ const setApiIF_In = (t, s) => {
       let i_sql = s.sql.split("values(");
       i_sql[1] = i_sql[1].slice(0, i_sql[1].length - 1).replaceAll('\'', '').replaceAll('{', '').replaceAll('}', '');
       ret = buildJetelinaJsonForm(ta, i_sql[1]);
-    } else if(loginuser.dbtype == "redis"){
+    } else if (loginuser.dbtype == "redis") {
       let i_sql = s.sql.split(":");
       ret = `{"apino":\"${t}\","key1":"{your key data}","key2":"{your value data}"}`;
       preferent.apitestparams.push("your key data");
       preferent.apitestparams.push("your value data");
-    }else if(loginuser.dbtype == "mongodb"){
-//      let i_sql = s.sql;
+    } else if (loginuser.dbtype == "mongodb") {
+      //      let i_sql = s.sql;
       let i_sql = "<span class='jetelina_suggestion'><p>Attention: this is for inserting your new document in this collection. set your own new json form data here.</p></span>";
       ret = `{"apino":\"${t}\","newdata":\"${i_sql}\"}`;
     }
   } else if (ta.startsWith("ju") || ta.startsWith("jd")) {
-    if ($.inArray(loginuser.dbtype,["redis","mongodb"]) == -1) {
-        /*
-        update and delete(the true color is update)
-          a=d_a,b=d_b... in update table set a=d_a,b=d_b..... 
-      */
+    if ($.inArray(loginuser.dbtype, ["redis", "mongodb"]) == -1) {
+      /*
+      update and delete(the true color is update)
+        a=d_a,b=d_b... in update table set a=d_a,b=d_b..... 
+    */
       let u_sql = s.sql.split("set");
       ret = buildJetelinaJsonForm(ta, u_sql[1]);
       /*
@@ -698,19 +703,19 @@ const setApiIF_In = (t, s) => {
       */
       preferent.apitestparams.push("jt_id");
       ret = ret.slice(0, ret.length - 1) + `,\"subquery\":\"{jt_id}\"` + ret.slice(ret.length - 1, ret.length);
-    } else if(loginuser.dbtype == "redis"){
-//      let u_sql = s.sql.split(":");
+    } else if (loginuser.dbtype == "redis") {
+      //      let u_sql = s.sql.split(":");
       ret = `{"apino":\"${t}\","key":"{your value data}"}`;
       preferent.apitestparams.push("your value data");
-    }else if(loginuser.dbtype == "mongodb"){
-      if(ta.startsWith("ju")){
-  //      let u_sql = s.sql.split(":");
+    } else if (loginuser.dbtype == "mongodb") {
+      if (ta.startsWith("ju")) {
+        //      let u_sql = s.sql.split(":");
         let u_sql = "<span class='jetelina_suggestion'><p>Attention: set key:value data you wanna update here</p></span>";
         ret = `{"apino":\"${t}\",\"${u_sql}\"}`;
         preferent.apitestparams.push("your value data");
-      }else if(ta.startsWith("jd")){
+      } else if (ta.startsWith("jd")) {
         let d_msg = "<span class='jetelina_suggestion'><p>Caution: this is for deleting this document in this collection.</p></span>";
-        ret = `{"apino":\"${t}\"}<br><br>${d_msg}`;  
+        ret = `{"apino":\"${t}\"}<br><br>${d_msg}`;
       }
     }
   } else {
@@ -733,7 +738,7 @@ const setApiIF_Out = (t, s) => {
   let ta = t.toLowerCase();
 
   if (ta.startsWith("js")) {
-    if ($.inArray(loginuser.dbtype,["redis","mongodb"]) == -1) {
+    if ($.inArray(loginuser.dbtype, ["redis", "mongodb"]) == -1) {
       let pb = s.sql.split("select");
       let pf = pb[1].split("from");
       // there is the items in pf[0]
@@ -763,7 +768,7 @@ const setApiIF_Out = (t, s) => {
 const setApiIF_Sql = (s) => {
   let ret = "";
 
-  if ($.inArray(loginuser.dbtype,["redis","mongodb"]) == -1) {
+  if ($.inArray(loginuser.dbtype, ["redis", "mongodb"]) == -1) {
     // possibly s.subquery is null. 'ignore' -> no sub query
     if (s.subquery != null && s.subquery != IGNORE) {
       ret = `${s.sql} ${s.subquery};`;
@@ -776,7 +781,7 @@ const setApiIF_Sql = (s) => {
       ret = ret.replaceAll(`,{${reject_jetelina_delete_flg}}`, '').replaceAll(`,${reject_jetelina_delete_flg}`, '');
     }
   } else {
-    if(loginuser.dbtype == "redis"){
+    if (loginuser.dbtype == "redis") {
       let d = s.sql.split(":");
       if (s.apino.startsWith("ji")) {
         ret = `${d[0]} {your key data} {your value data}`;
@@ -785,17 +790,17 @@ const setApiIF_Sql = (s) => {
       } else if (s.apino.startsWith("js")) {
         ret = `${d[0]} ${d[1]}`;
       }
-    }else if(loginuser.dbtype == "mongodb"){
-      if(s.apino.startsWith("ji")){
+    } else if (loginuser.dbtype == "mongodb") {
+      if (s.apino.startsWith("ji")) {
         ret = "<span class='jetelina_suggestion'><p>Simply inserting</p></span>";
-      }else if(s.apino.startsWith("ju")){
+      } else if (s.apino.startsWith("ju")) {
         ret = "<span class='jetelina_suggestion'><p>Find your ordered keys, then update them with your ordered values. Append them to the document if could not find it.</p></span>";
-      }else if(s.apino.startsWith("jd")){
+      } else if (s.apino.startsWith("jd")) {
         ret = "<span class='jetelina_suggestion'><p>Delete this document permanently.</p></span>";
-      }else if(s.apino.startsWith("js")){
-        if(-1<s.sql.indexOf("{find}")){
+      } else if (s.apino.startsWith("js")) {
+        if (-1 < s.sql.indexOf("{find}")) {
           ret = "<span class='jetelina_suggestion'><p>Find your whole document data</p></span>";
-        }else{
+        } else {
           ret = "<span class='jetelina_suggestion'><p>Find your ordered values of keys.</p></span>"
         }
       }
@@ -1870,7 +1875,7 @@ const functionPanelFunctions = (ut) => {
  * Judge demanding 'where sentence' before post to the server
  */
 const containsMultiTables = () => {
-  if (loginuser.dbtype != "mongodb"){
+  if (loginuser.dbtype != "mongodb") {
     if (0 < selectedItemsArr.length) {
       let tables = [];
       $.each(selectedItemsArr, function (i, v) {
@@ -1888,7 +1893,7 @@ const containsMultiTables = () => {
         return false;
       }
     }
-  }else{
+  } else {
     /*
       Tips:
         always false in case mongodb
@@ -2153,6 +2158,8 @@ const setLeftPanelTitle = () => {
   title = "Table List";
   if (loginuser.dbtype == "redis") {
     title = "Keys List";
+  }else if(loginuser.dbtype == "mongodb"){
+    title = "Document List";
   }
 
   $(LeftPanelTitle).text(title);

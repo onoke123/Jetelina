@@ -1,6 +1,7 @@
 let scenario = []; let config = [];
 scenario["analyzed-data-collect-url"]=["/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getsqlaccessdata"];
 scenario["function-post-url"]=["/updateuserdata","/jetelinawords","/getconfigdata","/changeconfigdata","/createapi","/testapi","/chkaccount","/userregist","/getrelatedlist","/switchdb","/ispath","/getcolumns"];
+scenario["function-post-fileupload-url"]=["/postcsvfile"];
 scenario["function-apitest-usr"]=["/apiactions"];
 scenario["function-search-log-errnum"]=["/searcherror"];
 scenario["function-get-url"]=["/getapilist","/getalldbtable","/getconfigchangehistory","/goodbyenow","/getdbsavailability"];
@@ -84,6 +85,7 @@ scenario["func-fileupload-cmd"]=["upload","fileup","fileupload","up","csv up"];
 scenario["func-fileupload-msg"]=["File?"];
 scenario["func-fileupload-upload-msg"]=["you've selected '{Q}'. then hit 'upload' ..or 'cancel'."];
 scenario["func-csv-format-error-msg"]=["CSV format is not good, see the error message","Unacceptable CSV format, see the error message,"];
+scenario["function-duplication-erro-msg"]=["Looks like getting data duplication, see the error message"];
 scenario["func-postcolumn-where-option-msg"]=["Wanna set the 'Where' sentence? This is an option."];
 scenario["func-postcolumn-where-indispensable-msg"]=["Set the 'Where' sentence. This is an indispensable."];
 scenario["func-postcolumn-available-msg"]=["Now you can hit 'post' ..or 'cancel'","Do post them by 'post' ..or 'cancel'","Type 'post' now ..or 'cancel'"];

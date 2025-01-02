@@ -115,7 +115,7 @@ function dataInsertFromJson(collectionname::String, fname::String)
 - return: boolean: true -> success, false -> get fail
 """
 function dataInsertFromJson(collectionname::String, fname::String)
-	ret = ""
+	ret::Bool = true
 	jmsg::String = string("compliment me!")
 
 	if isnothing(collectionname) || length(collectionname) == 0
@@ -136,23 +136,23 @@ function dataInsertFromJson(collectionname::String, fname::String)
 	# do it one by one
 	jdata = Mongoc.BSONJSONReader(fname)
 	insertapi::Bool = true
+	insertDataCount::Int = 0
+
 	for bson in jdata
 		if documentDuplicationChk(collection, bson) == false
+			insertDataCount += 1
 			# data insert
-			result = push!(collection, bson)
-			if !isnothing(result)
-				# create api 
-				_createApis(collectionname, bson["j_table"], insertapi)
-				insertapi = false
-				ret = json(Dict("result" => true, "filename" => "$fname", "message from Jetelina" => jmsg))
-			else
-				ret = json(Dict("result" => false, "filename" => "$fname", "message from Jetelina" => "no way"))
-				break
-			end
+			push!(collection, bson)
+			_createApis(collectionname, bson["j_table"], insertapi)			
 		end
 	end
 
-	return ret
+	if insertDataCount == 0
+		ret = false
+		jmsg = "may these 'j_table' are duplicated, check them."
+	end
+
+	return json(Dict("result" => ret, "filename" => "$fname", "message from Jetelina" => jmsg))
 end
 """
 function documentDuplicationChk(collection::Mongoc.Collection, bson::Mongoc.BSON)
@@ -170,7 +170,6 @@ function documentDuplicationChk(collection::Mongoc.Collection, bson::Mongoc.BSON
 #	j_table = bson["j_table"]
 #	bson = Mongoc.find_one(collection,Mongoc.BSON("""{ "j_table":"$j_table"}"""))
 	jb = Mongoc.find_one(collection,bson)
-	@info jb
 	if !isnothing(jb)
 		ret = true
 	end
