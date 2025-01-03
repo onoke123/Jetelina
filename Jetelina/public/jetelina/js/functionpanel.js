@@ -1275,7 +1275,15 @@ const functionPanelFunctions = (ut) => {
         let sanArr = san.split("js");
 
         if (ut.indexOf(san) != -1 || ut.indexOf(sanArr[1]) != -1 || !isSelectedItem()) {
-          preferent.original_apiin_str = $(`${COLUMNSPANEL} [name='apiin']`).text();
+          /*
+            Tips:
+              html() is used in pref..original_apiin_str to fetch the origin,
+              because 'apiin' field has been added '<span class="jetelina_suggestion">' line 
+              in there in MongoDB. And other point, eg. #1368, #2200, were changed too.
+              did not change pref..original_apiout_str, but maybe you can change it to html() as well,
+              if you felt wireeee in it. :P
+          */
+          preferent.original_apiin_str = $(`${COLUMNSPANEL} [name='apiin']`).html();
           preferent.original_apiout_str = $(`${COLUMNSPANEL} [name='apiout']`).text();
           showApiTestPanel(false);
           cmd = "apitest";
@@ -1357,9 +1365,9 @@ const functionPanelFunctions = (ut) => {
 
     if (cmd != "cancel" && inCancelableCmdList(["apitest"])) {
       let p = `{${preferent.apitestparams[preferent.apiparams_count]}}`;
-      let inp = $(`${COLUMNSPANEL} [name='apiin']`).text();
+      let inp = $(`${COLUMNSPANEL} [name='apiin']`).html();
       let reps = inp.replace(p, original_chatbox_input_text);
-      $(`${COLUMNSPANEL} [name='apiin']`).addClass("attentionapiinout").text(reps);
+      $(`${COLUMNSPANEL} [name='apiin']`).addClass("attentionapiinout").html(reps);
       cmd = "apitest";
     }
   }
@@ -2189,7 +2197,7 @@ const isSelectedItem = () => {
  */
 const resetApiTestProcedure = () => {
   if (inCancelableCmdList(["apitest"])) {
-    $(`${COLUMNSPANEL} [name='apiin']`).removeClass("attentionapiinout").text(preferent.original_apiin_str);
+    $(`${COLUMNSPANEL} [name='apiin']`).removeClass("attentionapiinout").html(preferent.original_apiin_str);
     $(`${COLUMNSPANEL} [name='apiout']`).removeClass("attentionapiinout").text(preferent.original_apiout_str);
     rejectCancelableCmdList("apitest");
   }
