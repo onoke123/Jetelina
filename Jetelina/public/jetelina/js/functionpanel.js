@@ -685,8 +685,9 @@ const setApiIF_In = (t, s) => {
       preferent.apitestparams.push("your value data");
     } else if (loginuser.dbtype == "mongodb") {
       //      let i_sql = s.sql;
-      let i_sql = "<span class='jetelina_suggestion'><p>Attention: this is for inserting your new document in this collection. set your own new json form data here.</p></span>";
-      ret = `{"apino":\"${t}\","newdata":\"${i_sql}\"}`;
+      let i_sql = "<span class='jetelina_suggestion'><p>Attention: this is for inserting your new document in this collection. set your own new json form data in '{your json data}'.</p></span>";
+//      ret = `{"apino":\"${t}\","newdata":\"${i_sql}\"}`;
+      ret = `{"apino":\"${t}\","your new document":"{your json data}"}<br><br>${i_sql}`;
     }
   } else if (ta.startsWith("ju") || ta.startsWith("jd")) {
     if ($.inArray(loginuser.dbtype, ["redis", "mongodb"]) == -1) {
@@ -711,7 +712,9 @@ const setApiIF_In = (t, s) => {
       if (ta.startsWith("ju")) {
         //      let u_sql = s.sql.split(":");
         let u_sql = "<span class='jetelina_suggestion'><p>Attention: set key:value data you wanna update here</p></span>";
-        ret = `{"apino":\"${t}\",\"${u_sql}\"}`;
+//        ret = `{"apino":\"${t}\",\"${u_sql}\"}`;
+        ret = `{"apino":\"${t}\","{your key data}":"{your value data}"}<br><br>${u_sql}`;
+        preferent.apitestparams.push("your key data");
         preferent.apitestparams.push("your value data");
       } else if (ta.startsWith("jd")) {
         let d_msg = "<span class='jetelina_suggestion'><p>Caution: this is for deleting this document in this collection.</p></span>";
@@ -1374,7 +1377,7 @@ const functionPanelFunctions = (ut) => {
         7.cancel: cancel all selected columns
         8.cleanup: cleanup column/selecteditem field
         9.subquery: open subquery panel
-        10.preapitest: api test before registring
+        10.preapitest: api test before registering
         11.apitest: exist api test mode
         12.switchdb: switchng using database
         default: non
