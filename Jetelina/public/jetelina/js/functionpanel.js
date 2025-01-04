@@ -623,6 +623,10 @@ const setApiIF_In = (t, s) => {
     Tips:
       for api test, each json parameter's name are contained in this array.
       pushing is executed in buildJetelinaJsonForm() mostly, except somes e.g. case in redis
+
+      in case of MongoDB, there is a suggestion comment in each 'IN' field, and these are enclosed with '</div><div>',
+      because of preventing send these comments with their post data. i mean '</div><div>' is mandatory.
+
   */
   preferent.apitestparams = [];
 
@@ -667,7 +671,7 @@ const setApiIF_In = (t, s) => {
     } else {
       // in case mongodb
       let s_msg = "<span class='jetelina_suggestion'><p>Attention: this is for fetching this document in this collection.</p></span>";
-      ret = `{"apino":\"${t}\"}<br><br>${s_msg}`;
+      ret = `{"apino":\"${t}\"}</div><div><br>${s_msg}`;
     }
   } else if (ta.startsWith("ji")) {
     if ($.inArray(loginuser.dbtype, ["redis", "mongodb"]) == -1) {
@@ -684,10 +688,9 @@ const setApiIF_In = (t, s) => {
       preferent.apitestparams.push("your key data");
       preferent.apitestparams.push("your value data");
     } else if (loginuser.dbtype == "mongodb") {
-      //      let i_sql = s.sql;
       let i_sql = "<span class='jetelina_suggestion'><p>Attention: this is for inserting your new document in this collection. set your own new json form data in '{your json data}'.</p></span>";
-//      ret = `{"apino":\"${t}\","newdata":\"${i_sql}\"}`;
-      ret = `{"apino":\"${t}\","your new document":"{your json data}"}<br><br>${i_sql}`;
+      ret = `{"apino":\"${t}\","newdata":{your json data}}</div><div><br>${i_sql}`;
+      preferent.apitestparams.push("your json data");
     }
   } else if (ta.startsWith("ju") || ta.startsWith("jd")) {
     if ($.inArray(loginuser.dbtype, ["redis", "mongodb"]) == -1) {
@@ -705,20 +708,18 @@ const setApiIF_In = (t, s) => {
       preferent.apitestparams.push("jt_id");
       ret = ret.slice(0, ret.length - 1) + `,\"subquery\":\"{jt_id}\"` + ret.slice(ret.length - 1, ret.length);
     } else if (loginuser.dbtype == "redis") {
-      //      let u_sql = s.sql.split(":");
       ret = `{"apino":\"${t}\","key":"{your value data}"}`;
       preferent.apitestparams.push("your value data");
     } else if (loginuser.dbtype == "mongodb") {
       if (ta.startsWith("ju")) {
-        //      let u_sql = s.sql.split(":");
         let u_sql = "<span class='jetelina_suggestion'><p>Attention: set key:value data you wanna update here</p></span>";
-//        ret = `{"apino":\"${t}\",\"${u_sql}\"}`;
-        ret = `{"apino":\"${t}\","{your key data}":"{your value data}"}<br><br>${u_sql}`;
+        ret = `{"apino":\"${t}\","{your key data}":"{your value data}"}</div><div><br>${u_sql}`;
         preferent.apitestparams.push("your key data");
         preferent.apitestparams.push("your value data");
       } else if (ta.startsWith("jd")) {
-        let d_msg = "<span class='jetelina_suggestion'><p>Caution: this is for deleting this document in this collection.</p></span>";
-        ret = `{"apino":\"${t}\"}<br><br>${d_msg}`;
+        // no 'jd*' api in mongodb. the below are legacy.:p
+//        let d_msg = "<span class='jetelina_suggestion'><p>Caution: this is for deleting this document in this collection.</p></span>";
+//        ret = `{"apino":\"${t}\"}<br><br>${d_msg}`;
       }
     }
   } else {

@@ -30,7 +30,7 @@ functions
 module MonDBController
 
 using Genie, Genie.Renderer, Genie.Renderer.Json
-using CSV, Mongoc, DataFrames, IterTools, Tables, Dates
+using CSV, Mongoc, DataFrames, IterTools, Tables, Dates, JSON3
 using Jetelina.JFiles, Jetelina.JLog, Jetelina.InitApiSqlListManager.ApiSqlListManager, Jetelina.JMessage, Jetelina.JSession
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
@@ -439,114 +439,126 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 		collectionname = string(sub[1])
 		j_table = string(sub[2])        # this 'j_table' is unique in each documents
 	else
+		json_d_string = JSON3.write(json_d["newdata"])
+		j_table = Mongoc.BSON(json_d_string)["j_table"]
 		collectionname = alternative_subquery;
 	end
 
-	findstr = """{\"j_table\":\"$j_table\"}"""
-	bson = Mongoc.BSON(findstr)
-	collection = open_collection(collectionname)
+	if j_table != "" && !isnothing(j_table) && !ismissing(j_table) 
+		findstr = """{\"j_table\":\"$j_table\"}"""
+		bson = Mongoc.BSON(findstr)
+		collection = open_collection(collectionname)
 
-	if startswith(apino, "js")
-		# find
-		finddata_bson::Array = []
-		finddata_json::Array = []
+		if startswith(apino, "js")
+			# find
+			finddata_bson::Array = []
+			finddata_json::Array = []
 
-		if df_api[!,:sql][1] != "{find}"
-			# something ordered
-		end
-
-		doc = Mongoc.find(collection, bson)
-		if isnothing(doc) == false
-			for d in doc
-				jd = Mongoc.as_json(d)
-				push!(finddata_json, jd)
+			if df_api[!,:sql][1] != "{find}"
+				# something ordered
 			end
-		end
 
-		if 0 < length(finddata_json)
-			ret = json(Dict("result" => true, "Jetelina" => [finddata_json], "message from Jetelina" => jmsg))
-		else
-			ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "not found"))
-		end
-	elseif startswith(apino, "ju")
-		#===
-			Tips:
-				'update' is applied to a specific document as an unique determined 'j_table'. 
-		===#
-		for (k,v) in json_d
-			if k != "apino"
-				udstr::String = ""
-				p = string(eltype(v))
-				if p != "Char" 
-					#===
-						Tips:
-							in case: Integer, Float, Boolean....
-					===#
-					udstr = "{\"$k\": $v}"
-				else
-					#===
-						Tips:
-							in case: String, Date
-					===#
-					udstr = "{\"$k\": \"$v\"}"
+			doc = Mongoc.find(collection, bson)
+			if isnothing(doc) == false
+				for d in doc
+					jd = Mongoc.as_json(d)
+					push!(finddata_json, jd)
 				end
+			end
 
-				updata = Mongoc.BSON("""{"\$set": $udstr}""")
-				ret = Mongoc.update_one(collection, bson, updata)
+			if 0 < length(finddata_json)
+				ret = json(Dict("result" => true, "Jetelina" => [finddata_json], "message from Jetelina" => jmsg))
+			else
+				ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => "not found"))
+			end
+		elseif startswith(apino, "ju")
+			#===
+				Tips:
+					'update' is applied to a specific document as an unique determined 'j_table'. 
+			===#
+			for (k,v) in json_d
+				if k != "apino"
+					udstr::String = ""
+					p = string(eltype(v))
+					if p != "Char" 
+						#===
+							Tips:
+								in case: Integer, Float, Boolean....
+						===#
+						udstr = "{\"$k\": $v}"
+					else
+						#===
+							Tips:
+								in case: String, Date
+						===#
+						udstr = "{\"$k\": \"$v\"}"
+					end
+
+					updata = Mongoc.BSON("""{"\$set": $udstr}""")
+					ret = Mongoc.update_one(collection, bson, updata)
+				end
+			end
+
+			if 0 < ret["matchedCount"]
+				ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
+			else
+				# what happend?
+				@info "failed in update " ret
+			end
+		elseif startswith(apino, "jd")
+			ret = Mongoc.delete_one(collection, bson)
+			if 0 < ret["deletedCount"]
+				ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
+			else
+				# what happend?
+				@info "failed in delete " ret
+			end
+		elseif startswith(apino, "ji")
+			ret = false
+			if isnothing(Mongoc.find_one(collection, bson))
+				# new document
+				newdata = JSON3.write(json_d["newdata"])
+				insertbson = Mongoc.BSON(newdata)
+				push!(collection, insertbson)
+				j_table = insertbson["j_table"]
+				ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
+
+				#===
+					Tips:
+						after data insertion, check it once then create APIs sentences.
+						because the result of push!() is too difficult to judge the succession.
+
+					Caution:
+						"insert" and "delete" apis are created only in uploading file, thus ret_i and ret_d do not be used in below.
+				===#
+
+				# create new apis
+				#===
+				(ret_i, ret_u, ret_s) = _createApis(collectionname, j_table, false)
+
+				if ret_u[1] && ret_s[1]
+					apino_u = ret_u[2]
+					apino_s = ret_s[2]
+					ret = json(Dict("result" => true, "Jetelina" => "[{}]", "apino" => ["$apino_u", "$apino_s"], "message from Jetelina" => jmsg))
+				elseif ret_u[1]
+					apino_u = ret_u[2]
+					jmsg = "only update api has been created, select api is why?"
+					ret = json(Dict("result" => true, "Jetelina" => "[{}]", "apino" => ["$apino_u", ""], "message from Jetelina" => jmsg))
+				elseif ret_s[1]
+					apino_s = ret_s[2]
+					jmsg = "only select api has been created, update api is why?"
+					ret = json(Dict("result" => true, "Jetelina" => "[{}]", "apino" => ["", "$apino_s"], "message from Jetelina" => jmsg))
+				end
+				===#
+			else
+				# duplication, then nothing to do
+				jmsg = "your ordered '$j_table' is already in there"
+				ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
 			end
 		end
-
-		if 0 < ret["matchedCount"]
-			ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
-		else
-			# what happend?
-			@info "failed in update " ret
-		end
-	elseif startswith(apino, "jd")
-		ret = Mongoc.delete_one(collection, bson)
-		if 0 < ret["deletedCount"]
-			ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
-		else
-			# what happend?
-			@info "failed in delete " ret
-		end
-	elseif startswith(apino, "ji")
-		if isnothing(Mongoc.find_one(collection, bson))
-			# new document
-			newdata = json_d["newdata"]
-			insertbson = Mongoc.BSON(newdata)
-			push!(collection, insertbson)
-			j_table = insertbson["j_table"]
-		else
-			# duplication, then nothing to do
-		end
-
-		#===
-			Tips:
-				after data insertion, check it once then create APIs sentences.
-				because the result of push!() is too difficult to judge the succession.
-
-            Caution:
-                "insert" and "delete" apis are created only in uploading file, thus ret_i and ret_d do not be used in below.
-		===#
-
-		# create new apis
-#		(ret_i, ret_u, ret_d, ret_s) = _createApis(collectionname, j_table, false)
-		(ret_i, ret_u, ret_s) = _createApis(collectionname, j_table, false)
-
-		if ret_u[1] && ret_s[1]
-			apino_u = ret_u[2]
-			apino_s = ret_s[2]
-			ret = json(Dict("result" => true, "Jetelina" => "[{}]", "apino" => ["$apino_u", "$apino_s"], "message from Jetelina" => jmsg))
-		elseif ret_u[1]
-			apino_u = ret_u[2]
-			jmsg = "only update api has been created, select api is why?"
-			ret = json(Dict("result" => true, "Jetelina" => "[{}]", "apino" => ["$apino_u", ""], "message from Jetelina" => jmsg))
-		elseif ret_s[1]
-			apino_s = ret_s[2]
-			jmsg = "only select api has been created, update api is why?"
-			ret = json(Dict("result" => true, "Jetelina" => "[{}]", "apino" => ["", "$apino_s"], "message from Jetelina" => jmsg))
-		end
+	else
+		jmsg = "need an unique 'j_table', check it."
+		ret = json(Dict("result" => false, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
 	end
 
 	return ret
