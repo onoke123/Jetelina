@@ -23,3 +23,15 @@ ju32:jetelina-collection,mon_sample2:mongodb
 js33:jetelina-collection,mon_sample2:mongodb
 ju34:jetelina-collection,mon_sample3:mongodb
 js35:jetelina-collection,mon_sample3:mongodb
+ju36:jetelina-collection,mon_ins1:mongodb
+js37:jetelina-collection,mon_ins1:mongodb
+ju38:jetelina-collection,mon_ins2:mongodb
+js39:jetelina-collection,mon_ins2:mongodb
+ju40:d:redis
+js41:d:redis
+ju44:jetelina-collection,mon_ins3:mongodb
+js45:jetelina-collection,mon_ins3:mongodb
+ju46:e:redis
+js47:e:redis
+ju48:jetelina-collection,mon_ins4:mongodb
+js49:jetelina-collection,mon_ins4:mongodb

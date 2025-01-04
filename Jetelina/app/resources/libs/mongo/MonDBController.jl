@@ -439,7 +439,7 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 		collectionname = string(sub[1])
 		j_table = string(sub[2])        # this 'j_table' is unique in each documents
 	else
-		json_d_string = JSON3.write(json_d["newdata"])
+		json_d_string = JSON3.write(json_d["new document"])
 		j_table = Mongoc.BSON(json_d_string)["j_table"]
 		collectionname = alternative_subquery;
 	end
@@ -517,8 +517,8 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 			ret = false
 			if isnothing(Mongoc.find_one(collection, bson))
 				# new document
-				newdata = JSON3.write(json_d["newdata"])
-				insertbson = Mongoc.BSON(newdata)
+				newdoc = JSON3.write(json_d["new document"])
+				insertbson = Mongoc.BSON(newdoc)
 				push!(collection, insertbson)
 				j_table = insertbson["j_table"]
 				ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
@@ -533,7 +533,6 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 				===#
 
 				# create new apis
-				#===
 				(ret_i, ret_u, ret_s) = _createApis(collectionname, j_table, false)
 
 				if ret_u[1] && ret_s[1]
@@ -549,7 +548,6 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 					jmsg = "only select api has been created, update api is why?"
 					ret = json(Dict("result" => true, "Jetelina" => "[{}]", "apino" => ["", "$apino_s"], "message from Jetelina" => jmsg))
 				end
-				===#
 			else
 				# duplication, then nothing to do
 				jmsg = "your ordered '$j_table' is already in there"

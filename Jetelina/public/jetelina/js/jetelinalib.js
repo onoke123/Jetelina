@@ -1970,7 +1970,7 @@ const apiTestAjax = () => {
     }).done(function (result, textStatus, jqXHR) {
         let m = chooseMsg('func-api-test-done-msg', '', '');
         if (checkResult(result)) {
-            if (loginuser.dbtype != "redis") {
+            if ($.inArray(loginuser.dbtype,["redis","mongodb"]) == -1) {
                 let ret = JSON.stringify(result);
                 $(`${COLUMNSPANEL} [name='apiout']`).addClass("attentionapiinout").text(ret);
             } else {

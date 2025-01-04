@@ -689,7 +689,7 @@ const setApiIF_In = (t, s) => {
       preferent.apitestparams.push("your value data");
     } else if (loginuser.dbtype == "mongodb") {
       let i_sql = "<span class='jetelina_suggestion'><p>Attention: this is for inserting your new document in this collection. set your own new json form data in '{your json data}'.</p></span>";
-      ret = `{"apino":\"${t}\","newdata":{your json data}}</div><div><br>${i_sql}`;
+      ret = `{"apino":\"${t}\","new document":{your json data}}</div><div><br>${i_sql}`;
       preferent.apitestparams.push("your json data");
     }
   } else if (ta.startsWith("ju") || ta.startsWith("jd")) {
