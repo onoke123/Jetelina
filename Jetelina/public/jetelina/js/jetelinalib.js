@@ -44,7 +44,8 @@
       searchLogAjax() ajax function for searching 'errnum' in the log file
       showConfigPanel(b) "#config_panel" show or hide
       showPreciousPanel(b) "#jetelina_teach_you_smg" show or hide
- */
+      jsonFromCheck(s) check for json form in mongodb
+*/
 const JETELINACHATTELL = `${JETELINAPANEL} [name='jetelina_tell']`;
 const SOMETHINGMSGPANEL = "#something_msg";
 const SOMETHINGMSGPANELMSG = `${SOMETHINGMSGPANEL} [name='jetelina_message']`;
@@ -2085,4 +2086,23 @@ const showPreciousPanel = (b) => {
         $(`${PRECIOUSWORDPANEL} [name='precious_word']`).text("");
         $(PRECIOUSWORDPANEL).hide();
     }
+}
+/**
+ * @function jsonFromCheck
+ * @param {string} json form
+ * @returns {boolean} true: correct json form   false: bad json form
+ *  
+ * check for json form in mongodb
+ */
+const jsonFromCheck = (s) =>{
+    try{
+        js = JSON.parse(s);
+        if(js["j_table"] == null){
+            return false;
+        }
+    }catch(e){
+        return false;
+    }
+
+    return true;
 }

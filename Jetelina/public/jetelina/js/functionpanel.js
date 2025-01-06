@@ -1367,8 +1367,37 @@ const functionPanelFunctions = (ut) => {
     if (cmd != "cancel" && inCancelableCmdList(["apitest"])) {
       let p = `{${preferent.apitestparams[preferent.apiparams_count]}}`;
       let inp = $(`${COLUMNSPANEL} [name='apiin']`).html();
-      let reps = inp.replace(p, original_chatbox_input_text);
-      $(`${COLUMNSPANEL} [name='apiin']`).addClass("attentionapiinout").html(reps);
+      let reps = "";
+      let chatin = original_chatbox_input_text;
+      let jform = true;
+
+      if(loginuser.dbtype == "mongodb"){
+        /*
+          Tips:
+            preferent.jsonokflg is be 'null' in canceling. ref #1799
+        */
+        if(preferent.jsonokflg == null){
+          preferent.jsonokflg = false;
+        }
+
+        if($.inArray(ut,scenario["func-api-test-cmd"]) == -1){
+          if(!preferent.jsonokflg){
+            if(!jsonFromCheck(chatin)){
+              // bad json form
+              jform = false;
+              return "hum, simply it does not fit on json form, or may 'j_table' is not in there";
+            }else{
+              preferent.jsonokflg = true;
+            } 
+          }      
+        }
+      }
+      
+      if(jform){
+        reps = inp.replace(p, chatin);
+        $(`${COLUMNSPANEL} [name='apiin']`).addClass("attentionapiinout").html(reps);
+      }
+
       cmd = "apitest";
     }
   }
@@ -1762,6 +1791,14 @@ const functionPanelFunctions = (ut) => {
         }
 
         preferent.apiparams_count = null;
+        /*
+          Tips:
+            in case mongodb, this .jsonokflg has been set after passing jsonFormChekc()
+            this .jsonokflg should be null by canceling.
+        */
+        if(preferent.jsonokflg != null){
+          preferent.jsonokflg = null;
+        }
       } else {
         showPreciousPanel(false);
         showConfigPanel(false);

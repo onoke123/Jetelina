@@ -35,3 +35,5 @@ ju46:e:redis
 js47:e:redis
 ju48:jetelina-collection,mon_ins4:mongodb
 js49:jetelina-collection,mon_ins4:mongodb
+ju50:jetelina-collection,mon_ins5:mongodb
+js51:jetelina-collection,mon_ins5:mongodb
