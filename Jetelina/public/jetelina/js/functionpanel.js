@@ -41,6 +41,7 @@
       setLeftPanelTitle() set to the title in the left panel
       isSelectedItem() check exsisting a selected item in the container panel
       resetApiTestProcedure reset something about apitest/preapitest
+      getSelectedApino() get opened 'apino' in preferent.original_apiin_str
  */
 let selectedItemsArr = [];
 let cmdCandidates = [];// ordered commands for checking duplication 
@@ -684,13 +685,13 @@ const setApiIF_In = (t, s) => {
       ret = buildJetelinaJsonForm(ta, i_sql[1]);
     } else if (loginuser.dbtype == "redis") {
       let i_sql = s.sql.split(":");
-      ret = `{"apino":\"${t}\","key1":"{your key data}","key2":"{your value data}"}`;
+      ret = `{"apino":\"${t}\","key1":\"{${redis_mongodb_api_ji_key_str}}\","key2":\"{${redis_mongodb_api_ji_val_str}}\"}`;
       preferent.apitestparams.push("your key data");
       preferent.apitestparams.push("your value data");
     } else if (loginuser.dbtype == "mongodb") {
-      let i_sql = "<span class='jetelina_suggestion'><p>Attention: this is for inserting your new document in this collection. set your own new json form data in '{your json data}'.</p></span>";
-      ret = `{"apino":\"${t}\","new document":{your json data}}</div><div><br>${i_sql}`;
-      preferent.apitestparams.push("your json data");
+      let i_sql = `<span class='jetelina_suggestion'><p>Attention: this is for inserting your new document in this collection. set your own new json form data in '${mongodb_api_ji_json_str}'.</p></span>`;
+      ret = `{"apino":\"${t}\","new document":{${mongodb_api_ji_json_str}}}</div><div><br>${i_sql}`;
+      preferent.apitestparams.push(mongodb_api_ji_json_str);
     }
   } else if (ta.startsWith("ju") || ta.startsWith("jd")) {
     if ($.inArray(loginuser.dbtype, ["redis", "mongodb"]) == -1) {
@@ -713,7 +714,7 @@ const setApiIF_In = (t, s) => {
     } else if (loginuser.dbtype == "mongodb") {
       if (ta.startsWith("ju")) {
         let u_sql = "<span class='jetelina_suggestion'><p>Attention: set key:value data you wanna update here</p></span>";
-        ret = `{"apino":\"${t}\","{your key data}":"{your value data}"}</div><div><br>${u_sql}`;
+        ret = `{"apino":\"${t}\",\"{${redis_mongodb_api_ji_key_str}}\":\"{${redis_mongodb_api_ji_val_str}}\"}</div><div><br>${u_sql}`;
         preferent.apitestparams.push("your key data");
         preferent.apitestparams.push("your value data");
       } else if (ta.startsWith("jd")) {
@@ -788,9 +789,9 @@ const setApiIF_Sql = (s) => {
     if (loginuser.dbtype == "redis") {
       let d = s.sql.split(":");
       if (s.apino.startsWith("ji")) {
-        ret = `${d[0]} {your key data} {your value data}`;
+        ret = `${d[0]} {${redis_mongodb_api_ji_key_str}} {${redis_mongodb_api_ji_val_str}}`;
       } else if (s.apino.startsWith("ju")) {
-        ret = `${d[0]} ${d[1]} {your value data}`;
+        ret = `${d[0]} ${d[1]} {${redis_mongodb_api_ji_val_str}}`;
       } else if (s.apino.startsWith("js")) {
         ret = `${d[0]} ${d[1]}`;
       }
@@ -1381,7 +1382,7 @@ const functionPanelFunctions = (ut) => {
         }
 
         if($.inArray(ut,scenario["func-api-test-cmd"]) == -1){
-          if(!preferent.jsonokflg){
+          if(p == `{${mongodb_api_ji_json_str}}` && !preferent.jsonokflg){
             if(!jsonFromCheck(chatin)){
               // bad json form
               jform = false;
@@ -1846,6 +1847,8 @@ const functionPanelFunctions = (ut) => {
         }
 
         if (preferent.apiparams_count < preferent.apitestparams.length) {
+          // heyheyhey
+          showSomethingMsgPanel(true);
           m = chooseMsg('func-api-test-set-params-msg', `${preferent.apitestparams[preferent.apiparams_count]}`, 'r');
         } else if (inScenarioChk(ut, 'func-api-test-execute-cmd')) {
           apiTestAjax();
@@ -2243,6 +2246,23 @@ const resetApiTestProcedure = () => {
   if (inCancelableCmdList(["preapitest"])) {
     rejectCancelableCmdList("preapitest");
   }
+}
+/**
+ * @function getSelectedApino
+ * @return {string} apino or ""
+ * 
+ * get opened 'apino' in preferent.original_apiin_str
+ * 
+ */
+const getSelectedApino = () =>{
+  let ret = "";
+
+  if(preferent.original_apiin_str != null && preferent.original_apiin_str != ""){
+    let p = JSON.parse(preferent.original_apiin_str);
+    ret = p["apino"];
+  }
+
+  return ret;
 }
 
 $(GENELICPANELINPUT).blur(function () {

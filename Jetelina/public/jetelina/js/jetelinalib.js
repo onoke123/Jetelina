@@ -75,6 +75,9 @@ const LOCALPARAM = "login2jetelina"; // local strage parameter
 const CONFIGPANEL = "#config_panel ";
 const CONFIGPANELLIST = `${CONFIGPANEL} [name='config_list']`;
 const PRECIOUSWORDPANEL = "#jetelina_teach_you_smg";//showing something precious word by Jetelina
+const redis_mongodb_api_ji_key_str = "your key data";// display as key parameter in 'ji*' and 'ju*' api in case redis, mongodb
+const redis_mongodb_api_ji_val_str = "your value data";// display as value parameter in 'ji*' and 'ju*' api in case redis, mongodb
+const mongodb_api_ji_json_str = "your json data";// display as json parameter in 'ji* api in case mongodb
 
 let typingTimeoutID;
 let whatJetelinaTold = ""; // what jetelina was telling in just previous time 
