@@ -1847,8 +1847,17 @@ const functionPanelFunctions = (ut) => {
         }
 
         if (preferent.apiparams_count < preferent.apitestparams.length) {
-          // heyheyhey
-          showSomethingMsgPanel(true);
+          /*
+            Tips:
+              show an attention how to describe JSON data in the chatbox in the message panel.
+              it's a very friendly suggestion by Jetelina. :) 
+          */
+          if($.inArray(mongodb_api_ji_json_str,preferent.apitestparams) != -1){
+            let jsonsuggestion = "<h3>this is my suggestion how to set your json data in my chatbox</h3>　1.enclose with '{}'<br>　2.must set an unique document name of 'j_table'<br>then an typical expected form is<br>　{\"j_table\":\"unique name\",......}<br><br>you see?";
+            $(SOMETHINGMSGPANELMSG).html(jsonsuggestion);
+            showSomethingMsgPanel(true);
+          }
+
           m = chooseMsg('func-api-test-set-params-msg', `${preferent.apitestparams[preferent.apiparams_count]}`, 'r');
         } else if (inScenarioChk(ut, 'func-api-test-execute-cmd')) {
           apiTestAjax();
