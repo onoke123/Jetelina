@@ -221,6 +221,7 @@ const checkResult = (o) => {
  *                     3->conifguration changing history
  *                     4->api(sql) test before registring 
  *                     5->indicate available db 
+ *                     6->operation history
  *  @returns {object} only in the case of t=3, conifguration changing history object
  *
  *  resolve the json object into each data
@@ -352,6 +353,18 @@ const getdata = (o, t) => {
                                     $("#databaselist span[name='mongodb']").show();
                                 } else {
                                     $("#databaselist span[name='mongodb']").hide();
+                                }
+                            } else if (t == 6) {
+                                if (v.date != null) {
+                                    configChangeHistoryStr += `[${v.date}] `;
+                                }
+
+                                if (v.operation != null) {
+                                    configChangeHistoryStr += `${v.operation} `;
+                                }
+                                
+                                if (v.name != null) {
+                                    configChangeHistoryStr += ` by ${v.name}<br>`;
                                 }
                             }
 
@@ -525,6 +538,9 @@ const getAjaxData = (url) => {
                     } else if (url == geturl[4]) {
                         // available dbs
                         getdata(result, 5)
+                    } else if (url == geturl[5]) {
+                        // operation history
+                        getdata(result, 6);
                     }
 
                     m = 'success-msg';
@@ -1366,7 +1382,9 @@ const chatKeyDown = (cmd) => {
                                 m = chooseMsg("config-update-plural-message", "", "");
                             }
                         } else if (inScenarioChk(ut, 'get-config-change-history-cmd')) {
-                            getAjaxData(scenario['function-get-url'][2]);
+                            getAjaxData(scenario["function-get-url"][2]);
+                        }else if(inScenarioChk(ut, 'get-operation-history-cmd')){
+                            getAjaxData(scenario["function-get-url"][5]);
                         }
 
                         // user management

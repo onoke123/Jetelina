@@ -696,9 +696,9 @@ const setApiIF_In = (t, s) => {
   } else if (ta.startsWith("ju") || ta.startsWith("jd")) {
     if ($.inArray(loginuser.dbtype, ["redis", "mongodb"]) == -1) {
       /*
-      update and delete(the true color is update)
-        a=d_a,b=d_b... in update table set a=d_a,b=d_b..... 
-    */
+        update and delete(the true color is update)
+          a=d_a,b=d_b... in update table set a=d_a,b=d_b..... 
+      */
       let u_sql = s.sql.split("set");
       ret = buildJetelinaJsonForm(ta, u_sql[1]);
       /*
@@ -713,14 +713,13 @@ const setApiIF_In = (t, s) => {
       preferent.apitestparams.push("your value data");
     } else if (loginuser.dbtype == "mongodb") {
       if (ta.startsWith("ju")) {
-        let u_sql = "<span class='jetelina_suggestion'><p>Attention: set key:value data you wanna update here</p></span>";
-        ret = `{"apino":\"${t}\",\"{${redis_mongodb_api_ji_key_str}}\":\"{${redis_mongodb_api_ji_val_str}}\"}</div><div><br>${u_sql}`;
+        let u_msg = "<span class='jetelina_suggestion'><p>Attention: set key:value data you wanna update here</p></span>";
+        ret = `{"apino":\"${t}\",\"{${redis_mongodb_api_ji_key_str}}\":\"{${redis_mongodb_api_ji_val_str}}\"}</div><div><br>${u_msg}`;
         preferent.apitestparams.push("your key data");
         preferent.apitestparams.push("your value data");
       } else if (ta.startsWith("jd")) {
-        // no 'jd*' api in mongodb. the below are legacy.:p
-//        let d_msg = "<span class='jetelina_suggestion'><p>Caution: this is for deleting this document in this collection.</p></span>";
-//        ret = `{"apino":\"${t}\"}<br><br>${d_msg}`;
+        let d_msg = "<span class='jetelina_suggestion'><p>Caution: this is for deleting this document in this collection.</p></span>";
+        ret = `{"apino":\"${t}\"}</div><div><br>${d_msg}`;
       }
     }
   } else {

@@ -611,13 +611,8 @@ function dropTable(tableName::Vector)
     try
         for i in eachindex(tableName)
             # drop the tableName
-#            drop_table_str = string("drop table ", tableName[i],";drop sequence ", tableName[i], "_id_sequence")
             drop_table_str = string("drop table ", tableName[i],";")
-            # delete the related data from jetelina_table_manager
-            #delete_data_str = string("delete from jetelina_table_manager where table_name = '", tableName[i], "'")
-
             execute(conn, drop_table_str)
-            #execute(conn, delete_data_str)
         end
 
         ret = json(Dict("result" => true, "tablename" => "$rettables", "message from Jetelina" => jmsg))

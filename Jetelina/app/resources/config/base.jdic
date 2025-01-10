@@ -15,7 +15,7 @@
 @jdic function-search-log-errnum:"/searcherror"
 
 # get urls for function panel 
-@jdic function-get-url:"/getapilist","/getalldbtable","/getconfigchangehistory","/goodbyenow","/getdbsavailability"
+@jdic function-get-url:"/getapilist","/getalldbtable","/getconfigchangehistory","/goodbyenow","/getdbsavailability","/getoperationhistory"
 
 # null 
 @jdic null-msg:"",""
@@ -95,6 +95,7 @@
 @jdic config-show-cmd:"show parameter","show me configuration","show server parameter","change parameter","parameter change","configuration change","change configuration","update configuration","configuration update","update parameter","parameter update","config change","change config","update config","config update"
 @jdic config-update-msg:"type '{Q}' for updating ..or 'cancel'"
 @jdic get-config-change-history-cmd:"configuration history", "change history","update history"
+@jdic get-operation-history-cmd:"operation history","operation log","who did","who has done"
 
 #open table list
 @jdic func-show-table-list-cmd:"open table list","show me table","show table","table list","tables","tablelist","tableslist"

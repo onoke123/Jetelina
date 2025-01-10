@@ -179,7 +179,7 @@ end
 function _createApis(collectionname::String, j_table::String, insertapi::Bool)
 	ret_i::Tuple = (Bool, String)
 	ret_u::Tuple = (Bool, String)
-#    ret_d::Tuple = (Bool, String)
+    ret_d::Tuple = (Bool, String)
 	ret_s::Tuple = (Bool, String)
 	dbname::String = "mongodb"
 	#===
@@ -267,22 +267,19 @@ function _createApis(collectionname::String, j_table::String, insertapi::Bool)
 		ret_u = ApiSqlListManager.writeTolist(update_str, subquery, tablename_arr, dbname)
 	end
 
-	#===
-		Caution: delete is not in MongoDB APIs
-
 	delete_str = MonSQLSentenceManager.createApiDeleteSentence(j_table)
 	if (delete_str != "")
 		ret_d = ApiSqlListManager.writeTolist(delete_str, subquery, tablename_arr, dbname)
 	end
-	===#
-    # select (find)
+
+	# select (find)
 	select_str = MonSQLSentenceManager.createApiSelectSentence(j_table)
 	if (select_str != "")
 		ret_s = ApiSqlListManager.writeTolist(select_str, subquery, tablename_arr, dbname)
 	end
 
-#	return ret_i, ret_u, ret_d, ret_s
-	return ret_i, ret_u, ret_s
+	return ret_i, ret_u, ret_d, ret_s
+#	return ret_i, ret_u, ret_s
 end
 """
 function dropTable(jcollection::String, ableName::Vector)
@@ -533,9 +530,9 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 				===#
 
 				# create new apis
-				(ret_i, ret_u, ret_s) = _createApis(collectionname, j_table, false)
+				(ret_i, ret_u, ret_d, ret_s) = _createApis(collectionname, j_table, false)
 
-				if ret_u[1] && ret_s[1]
+				if ret_u[1] && ret_s[1] && ret_d[1]
 					apino_u = ret_u[2]
 					apino_s = ret_s[2]
 					ret = json(Dict("result" => true, "Jetelina" => "[{}]", "apino" => ["$apino_u", "$apino_s"], "message from Jetelina" => jmsg))

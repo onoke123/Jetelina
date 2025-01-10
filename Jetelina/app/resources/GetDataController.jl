@@ -16,6 +16,7 @@ functions
 	checkExistImproveApiFile()  get JC["improvesuggestionfile"] data file name. this file contains an improving suggestion data of a target api. 
 	getApiList()  get registering api list in json style.api list is refered in Df_JetelinaSqlList.
 	getConfigHistory() get configuration change history in json style.
+	getOperationHistory() get operation history in json style.
 	getWorkingDBList() get db list that is working.
 """
 module GetDataController
@@ -26,7 +27,7 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export logout, getTableList, getTableCombiVsAccessRelationData, getPerformanceRealData, getPerformanceTestData, checkExistImproveApiFile, getApiList, getConfigHistory, getWorkingDBList
+export logout, getTableList, getTableCombiVsAccessRelationData, getPerformanceRealData, getPerformanceTestData, checkExistImproveApiFile, getApiList, getConfigHistory, getOperationHistory, getWorkingDBList
 
 """
 function logout()
@@ -164,19 +165,56 @@ function getConfigHistory()
 """
 function getConfigHistory()
 	f = JFiles.getFileNameFromLogPath(j_config.JC["config_change_history_file"])
-
+	readlinecount::Int = j_config.JC["configchangehistoryreadlinecount"]
 	if isfile(f)
 		ret = "{\"Jetelina\":["
+		linecount::Int = 0
 
 		try
 			for line in Iterators.reverse(eachline(f))
-					ret = string(ret,line,",")
+				linecount += 1	
+				ret = string(ret,line,",")
+				if readlinecount < linecount
+					break
+				end
 			end
 
 			ret = strip(ret,',')
 			return string(ret,"],\"result\":true}")
 		catch err
 			@error "ConfigManager.getConfigHistory() error: $err"
+			return false
+		end
+	else
+		return false
+	end
+end
+"""
+function getOperationHistory()
+
+	get operation history in json style.
+"""
+function getOperationHistory()
+	f = JFiles.getFileNameFromLogPath(j_config.JC["operationhistoryfile"])
+	readlinecount::Int = j_config.JC["operationhistoryreadlinecount"]
+
+	if isfile(f)
+		ret = "{\"Jetelina\":["
+		linecount::Int = 0
+
+		try
+			for line in Iterators.reverse(eachline(f))
+					linecount += 1
+					ret = string(ret,line,",")
+					if readlinecount<linecount
+						break
+					end
+			end
+
+			ret = strip(ret,',')
+			return string(ret,"],\"result\":true}")
+		catch err
+			@error "ConfigManager.getOperationHistory() error: $err"
 			return false
 		end
 	else

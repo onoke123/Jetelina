@@ -159,7 +159,11 @@ function writetoOperationHistoryfile(operationstr::String)
         thefirstflg = false
     end
 
-	log_str = string(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"), ",\"", operationstr, "\",", sessiondata[1], ",", sessiondata[2])
+	hd = Dates.format(now(), "yyyy-mm-dd HH:MM:SS")
+	whosename = sessiondata[1]
+	whoseid   = sessiondata[2]
+	log_str = """{"date":"$hd","operation":"$operationstr","name":$whosename,"userid":$whoseid}"""
+#	log_str = string(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"), ",\"", operationstr, "\",", sessiondata[1], ",", sessiondata[2])
 
 	try
 		if ispath(operationfile)

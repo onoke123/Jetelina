@@ -70,6 +70,9 @@ operationhistoryfile = JetelinaOperationHistory.log
 @jdic operationhistoryfilesize:"history length","hisotry file size","history size"
 operationhistoryfilesize = 10
 
+@jdic operationhistoryreadlinecount:"history line count"
+operationhistoryreadlinecount = 100
+
 #
 # column title of sqllogfile/sqllistfile/experimentalsqllistfile
 # these column titles are unchangeable
@@ -219,3 +222,6 @@ analyze_interval = 48
 #   the file size is not limited therefore it would not be big, it should be set and also its rotating time if it would be a big file. 
 #
 config_change_history_file = config_history.log
+
+@jdic configchangehistoryreadlinecount:"config change history line count", "config histroy line","config history count"
+configchangehistoryreadlinecount = 100

@@ -343,7 +343,7 @@ function deleteApiFromList(apis:Vector)
 	delete api by ordering from JC["sqllistfile"] and JC["tableapifile"] file, then refresh the DataFrame.
 	
 # Arguments
-- `tablename::Vector`: target tables name
+- `apis::Vector`: target apis name
 - return: boolean: true -> all done ,  false -> something failed
 """
 function deleteApiFromList(apis::Vector)

@@ -126,7 +126,7 @@ function dataInsertFromCSV(csvfname::String)
 				the first argument should be set collection name, but being fixed collection in the conf file
 				because MonDBController is an experimental implementation yet.
 		===#
-		return MonDBController.dataInsertFromJson(string(j_config.JC["mongodb_collection"]),csvfname)
+		return MonDBController.dataInsertFromJson(string(j_config.JC["mongodb_collection"]), csvfname)
 	end
 end
 """
@@ -163,7 +163,7 @@ function getTableList(s::String)
 				the first argument should be set collection name, but being blank so far,
 				because MonDBController is an experimental implementation yet.
 		===#
-		MonDBController.getDocumentList("",s)
+		MonDBController.getDocumentList("", s)
 	end
 end
 """
@@ -201,15 +201,15 @@ function dropTable(tableName::Vector, stichwort::String)
 			ret = MyDBController.dropTable(tableName)
 		elseif j_config.JC["dbtype"] == "oracle"
 		elseif j_config.JC["dbtype"] == "mongodb"
-		#===
-			Attention:
-				the first argument should be set collection name, but being blank so far,
-				because MonDBController is an experimental implementation yet.
-		===#
-		ret = MonDBController.dropTable("",tableName)
+			#===
+				Attention:
+					the first argument should be set collection name, but being blank so far,
+					because MonDBController is an experimental implementation yet.
+			===#
+			ret = MonDBController.dropTable("", tableName)
 		end
 
-		if stichret && ret[1]
+		if ret[1]
 			# update SQL list
 			ApiSqlListManager.deleteTableFromlist(tableName)
 		end
@@ -221,10 +221,10 @@ function dropTable(tableName::Vector, stichwort::String)
 				something error happened
 					json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err"))
 		==#
-		return ret[2]	
+		return ret[2]
 	else
 		jmg = "Hum, wrong pass phrase, was it? type 'cancel' then try it again."
-		return json(Dict("result" => false,  "errmsg" => "$jmg"))
+		return json(Dict("result" => false, "errmsg" => "$jmg"))
 	end
 
 end
@@ -258,7 +258,7 @@ function getColumns(tableName::String)
 				the first argument is for "collection name", but does not be set it in this version.
 				this "tableName" is the "collection name" indeed.
 		===#
-		MonDBController.getKeys("",tableName)
+		MonDBController.getKeys("", tableName)
 	end
 end
 """
@@ -330,7 +330,7 @@ function executeApi(json_d::Dict)
 				stats = @timed ret = RsDBController.executeApi(json_d, target_api)
 			elseif dbtype == "oracle"
 			elseif dbtype == "mongodb"
-				stats = @timed ret = MonDBController.executeApi(json_d, target_api)				
+				stats = @timed ret = MonDBController.executeApi(json_d, target_api)
 			end
 
 			# write execution sql to log file
@@ -561,7 +561,7 @@ function createApiSelectSentence(json_d::Dict, mode::String)
 		if haskey(json_d, "collection") == false
 			json_d["collection"] = j_config.JC["mongodb_collection"]
 		end
-	
+
 		ret = MonSQLSentenceManager.createApiSelectSentenceByselectedKeys(json_d, mode)
 	end
 
@@ -580,7 +580,7 @@ function createApiSelectSentence(json_d::Dict, mode::String)
 		elseif j_config.JC["dbtype"] == "oracle"
 		elseif j_config.JC["dbtype"] == "mongodb"
 			# Case in MongoDB
-			ret = MonDBController.doSelect(ret,"pre")
+			ret = MonDBController.doSelect(ret, "pre")
 		end
 	end
 
@@ -615,7 +615,7 @@ function prepareDbEnvironment(db::String,mode::String)
 - `mode::String`: 'init' -> initialize, others -> connection check
 - return: success -> true, fail -> false
 """
-function prepareDbEnvironment(db::String,mode::String)
+function prepareDbEnvironment(db::String, mode::String)
 	ret = ""
 
 	if db == "postgresql"
