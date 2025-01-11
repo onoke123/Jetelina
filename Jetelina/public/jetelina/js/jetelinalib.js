@@ -400,7 +400,7 @@ const getdata = (o, t) => {
                 }
             });
 
-            if (t == 3) {
+            if (t == 3 || t == 6) {
                 $(SOMETHINGMSGPANEL).addClass("config_history");
                 $(SOMETHINGMSGPANELMSG).addClass("config_history_text").append(configChangeHistoryStr);
                 showSomethingMsgPanel(true);
