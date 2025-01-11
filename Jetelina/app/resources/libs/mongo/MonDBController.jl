@@ -143,7 +143,8 @@ function dataInsertFromJson(collectionname::String, fname::String)
 			insertDataCount += 1
 			# data insert
 			push!(collection, bson)
-			_createApis(collectionname, bson["j_table"], insertapi)			
+			_createApis(collectionname, bson["j_table"], insertapi)
+			insertapi = false
 		end
 	end
 

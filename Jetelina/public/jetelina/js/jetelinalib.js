@@ -362,7 +362,7 @@ const getdata = (o, t) => {
                                 if (v.operation != null) {
                                     configChangeHistoryStr += `${v.operation} `;
                                 }
-                                
+
                                 if (v.name != null) {
                                     configChangeHistoryStr += ` by ${v.name}<br>`;
                                 }
@@ -431,6 +431,15 @@ const getAjaxData = (url) => {
                 return ret;
             }
         }).done(function (result, textStatus, jqXHR) {
+            /*
+                Tips:
+                    this 'result' gets 'syntax error {object Object} in json form' error sometimes,
+                    because unmatch specific, maybe, who knows, therefore convert to a correct json object 
+                    by using .sstringify() -> .parse()    :p
+            */
+            result = JSON.stringify(result);
+            result = JSON.parse(result);
+
             let m = "";
             // go data parse
             const dataurls = scenario['analyzed-data-collect-url'];
