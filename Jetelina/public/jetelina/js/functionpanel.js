@@ -34,7 +34,7 @@
       deleteThisApi() Ajax function for deleting the target api from api list doc.
       whichCommandsInOrders(s) match with user input in cmdCandidates
       cleanupRelatedList(b) clear screen in api_container panel and/or relatedDataList object
-      displayTablesAndApis() display table list and api list
+      refreshdisplayTablesAndApis() refresh table list and api list
       refreshApiList() refresh displaying of api list
       refreshTableList() refresh displaying of table list
       tidyupcmdCandidates(targetcmd) reject 'targetcmd' from cmdCandidates
@@ -959,8 +959,13 @@ const getColumn = (tablename) => {
  * delete a column from selected item list on the display  
  */
 const removeColumn = (p) => {
-  //  $(`${COLUMNSPANEL} .item, ${CONTAINERPANEL} .item`).not('.selectedItem').remove(`:contains(${p}_)`);
-  $(`${COLUMNSPANEL} .item, ${CONTAINERPANEL} .item`).not('.selectedItem').remove(`:contains(${p}.)`);
+  if(p != null){
+    // selected remove
+    $(`${COLUMNSPANEL} .item, ${CONTAINERPANEL} .item`).not('.selectedItem').remove(`:contains(${p}.)`);
+  }else{
+    // all remove
+    $(`${COLUMNSPANEL} .item, ${CONTAINERPANEL} .item`).not('.selectedItem').remove();
+  }
 }
 /**
  * @function dropThisTable
@@ -1004,8 +1009,7 @@ const dropThisTable = (tables) => {
       showGenelicPanel(false);
       rejectCancelableCmdList(TABLEAPIDELETE);
       preferent.cmd = "";
-      refreshApiList();
-      refreshTableList();
+      refreshdisplayTablesAndApis();
       m = chooseMsg('refreshing-msg', '', '');
     } else {
       m = result["message from Jetelina"];
@@ -1088,8 +1092,7 @@ const postSelectedColumns = (mode) => {
           rejectCancelableCmdList(SELECTITEM);
           rejectCancelableCmdList("post");
           cleanUp("items");
-          refreshApiList();
-          refreshTableList();
+          refreshdisplayTablesAndApis();
           m = chooseMsg('refreshing-msg', '', '');
         }
 
@@ -1462,7 +1465,7 @@ const functionPanelFunctions = (ut) => {
       delete preferent.apilist;
 
       cleanupRelatedList(false);
-      displayTablesAndApis();
+      refreshdisplayTablesAndApis();
 
       m = IGNORE;
       break;
@@ -1810,8 +1813,7 @@ const functionPanelFunctions = (ut) => {
       cleanupItems4Switching();
       deleteSelectedItems();
       cleanupContainers();
-      refreshApiList();
-      refreshTableList();
+      refreshdisplayTablesAndApis();
       showPreciousPanel(false);
       showConfigPanel(false);
       m = chooseMsg('refreshing-msg', '', '');
@@ -2093,8 +2095,7 @@ const deleteThisApi = (apis) => {
       showGenelicPanel(false);
       rejectCancelableCmdList(TABLEAPIDELETE);
       preferent.cmd = "";
-      refreshApiList();
-      refreshTableList();
+      refreshdisplayTablesAndApis();
       m = chooseMsg('refreshing-msg', '', '');
     } else {
       m = result["message from Jetelina"];
@@ -2164,12 +2165,12 @@ const cleanupRelatedList = (b) => {
   }
 }
 /**
- * @function displayTablesAndApis
+ * @function refreshdisplayTablesAndApis
  * 
- * display table list and api list
+ * refresh table list and api list
  * 
  */
-const displayTablesAndApis = () => {
+const refreshdisplayTablesAndApis = () => {
   refreshApiList();
   refreshTableList();
 }

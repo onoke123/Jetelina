@@ -168,9 +168,9 @@ function documentDuplicationChk(collection::Mongoc.Collection, bson::Mongoc.BSON
 function documentDuplicationChk(collection::Mongoc.Collection, bson::Mongoc.BSON)
 	ret::Bool = false
 
-#	j_table = bson["j_table"]
-#	bson = Mongoc.find_one(collection,Mongoc.BSON("""{ "j_table":"$j_table"}"""))
-	jb = Mongoc.find_one(collection,bson)
+	#	j_table = bson["j_table"]
+	#	bson = Mongoc.find_one(collection,Mongoc.BSON("""{ "j_table":"$j_table"}"""))
+	jb = Mongoc.find_one(collection, bson)
 	if !isnothing(jb)
 		ret = true
 	end
@@ -180,7 +180,7 @@ end
 function _createApis(collectionname::String, j_table::String, insertapi::Bool)
 	ret_i::Tuple = (Bool, String)
 	ret_u::Tuple = (Bool, String)
-    ret_d::Tuple = (Bool, String)
+	ret_d::Tuple = (Bool, String)
 	ret_s::Tuple = (Bool, String)
 	dbname::String = "mongodb"
 	#===
@@ -219,13 +219,13 @@ function _createApis(collectionname::String, j_table::String, insertapi::Bool)
 			ref. https://dataframes.juliadata.org/stable/lib/functions/#DataFrames.subset
 	===#
 	function __onlyonejiinonecollection()
-#		df = subset(ApiSqlListManager.Df_JetelinaSqlList, :db => ByRow(==(dbname)), :subquery=>ByRow(contains(collectionname)), skipmissing = true)
+		#		df = subset(ApiSqlListManager.Df_JetelinaSqlList, :db => ByRow(==(dbname)), :subquery=>ByRow(contains(collectionname)), skipmissing = true)
 		df = subset(ApiSqlListManager.Df_JetelinaSqlList, :db => ByRow(==(dbname)), skipmissing = true)
-		if 0<nrow(df)
-			dfc = subset(df, :subquery=>ByRow(contains(collectionname)), skipmissing = true)
+		if 0 < nrow(df)
+			dfc = subset(df, :subquery => ByRow(contains(collectionname)), skipmissing = true)
 			for i ∈ 1:nrow(dfc)
-				if startswith("ji",dfc[!,:apino][i])
-					return true, dfc[!,:apino][i]
+				if startswith("ji", dfc[!, :apino][i])
+					return true, dfc[!, :apino][i]
 				end
 			end
 		end
@@ -246,14 +246,14 @@ function _createApis(collectionname::String, j_table::String, insertapi::Bool)
 	===#
 	if insertapi
 		insert_str = MonSQLSentenceManager.createApiInsertSentence()
-#		if (insert_str != "") && ( ApiSqlListManager.sqlDuplicationCheck(insert_str,"",dbname)[1] == false )
-		if (insert_str != "") && ( __onlyonejiinonecollection() == false )
+		#		if (insert_str != "") && ( ApiSqlListManager.sqlDuplicationCheck(insert_str,"",dbname)[1] == false )
+		if (insert_str != "") && (__onlyonejiinonecollection() == false)
 			#===
 				Tips:
 					this "col" is just for matiching to the third argument in .writeTolist()
 			===#
 			col::Vector{String} = []
-			push!(col,collectionname)
+			push!(col, collectionname)
 			ret_i = ApiSqlListManager.writeTolist(insert_str, collectionname, col, dbname)
 		end
 	end
@@ -280,7 +280,7 @@ function _createApis(collectionname::String, j_table::String, insertapi::Bool)
 	end
 
 	return ret_i, ret_u, ret_d, ret_s
-#	return ret_i, ret_u, ret_s
+	#	return ret_i, ret_u, ret_s
 end
 """
 function dropTable(jcollection::String, ableName::Vector)
@@ -293,37 +293,37 @@ function dropTable(jcollection::String, ableName::Vector)
 - return: tuple (boolean: true -> success/false -> get fail, JSON)
 """
 function dropTable(jcollection::String, tableName::Vector)
-    ret = ""
-    jmsg::String = string("compliment me!")
-    rettables::String = join(tableName, ",") # ["a","b"] -> "a,b" oh ＼(^o^)／
+	ret = ""
+	jmsg::String = string("compliment me!")
+	rettables::String = join(tableName, ",") # ["a","b"] -> "a,b" oh ＼(^o^)／
 
 	documents = open_collection(jcollection)
 
 	try
 		r = Mongoc.BSON()
-        for j_table in tableName
-            # drop the tableName
-			selector = Mongoc.BSON("j_table"=>j_table)
-			r = Mongoc.delete_one(documents,selector)
-        end
+		for j_table in tableName
+			# drop the tableName
+			selector = Mongoc.BSON("j_table" => j_table)
+			r = Mongoc.delete_one(documents, selector)
+		end
 
-		if 0<r["deletedCount"]
-	        ret = json(Dict("result" => true, "tablename" => "$rettables", "message from Jetelina" => jmsg))
+		if 0 < r["deletedCount"]
+			ret = json(Dict("result" => true, "tablename" => "$rettables", "message from Jetelina" => jmsg))
 		else
-	        ret = json(Dict("result" => true, "tablename" => "$rettables", "message from Jetelina" => "not found"))
+			ret = json(Dict("result" => true, "tablename" => "$rettables", "message from Jetelina" => "not found"))
 		end
 
 		# write to operationhistoryfile
-        JLog.writetoOperationHistoryfile(string("delete ", rettables, " documents"))
-    catch err
-        errnum = JLog.getLogHash()
-        ret = json(Dict("result" => false, "tablename" => "$rettables", "errmsg" => "$err", "errnum"=>"$errnum"))
-        JLog.writetoLogfile("[errnum:$errnum] MonDBController.dropTable() with $rettables error : $err")
-        return false, ret
-    finally
-    end
+		JLog.writetoOperationHistoryfile(string("delete ", rettables, " documents"))
+	catch err
+		errnum = JLog.getLogHash()
+		ret = json(Dict("result" => false, "tablename" => "$rettables", "errmsg" => "$err", "errnum" => "$errnum"))
+		JLog.writetoLogfile("[errnum:$errnum] MonDBController.dropTable() with $rettables error : $err")
+		return false, ret
+	finally
+	end
 
-    return true, ret
+	return true, ret
 end
 """
 function getDocumentList(jcollection::String, s::String)
@@ -369,27 +369,27 @@ function getKeys(jcollection::String, j_table::String)
 function getKeys(jcollection::String, j_table::String)
 	keyarr::Array = []
 	valuearr::Array = []
-    jmsg::String = string("compliment me!")
+	jmsg::String = string("compliment me!")
 
 	if isnothing(jcollection) || length(jcollection) == 0
 		jcollection = string(j_config.JC["mongodb_collection"])
 	end
 
 	jbsons = open_collection(jcollection)
-	if 0<length(jbsons)
-		jb = Mongoc.find_one(jbsons,Mongoc.BSON("""{ "j_table":"$j_table"}"""))
-		if 0<length(jb)
-			for (k,v) in jb
-				push!(valuearr,k)
+	if 0 < length(jbsons)
+		jb = Mongoc.find_one(jbsons, Mongoc.BSON("""{ "j_table":"$j_table"}"""))
+		if 0 < length(jb)
+			for (k, v) in jb
+				push!(valuearr, k)
 			end
 		end
 	end
 
-	if 0<length(valuearr)
-        df = DataFrame(keyarr=valuearr)
-        ret = json(Dict("result" => true, "tablename" => "$j_table", "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
+	if 0 < length(valuearr)
+		df = DataFrame(keyarr = valuearr)
+		ret = json(Dict("result" => true, "tablename" => "$j_table", "Jetelina" => copy.(eachrow(df)), "message from Jetelina" => jmsg))
 	else
-        ret = json(Dict("result" => false, "tablename" => "$j_table", "Jetelina" => "[{}]"))
+		ret = json(Dict("result" => false, "tablename" => "$j_table", "Jetelina" => "[{}]"))
 	end
 
 	return ret
@@ -432,17 +432,17 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 	jmsg::String = string("compliment me!")
 
 	alternative_subquery = df_api[!, :subquery][1]
-	if !startswith(apino,"ji")
-		sub = split(alternative_subquery,",")
+	if !startswith(apino, "ji")
+		sub = split(alternative_subquery, ",")
 		collectionname = string(sub[1])
 		j_table = string(sub[2])        # this 'j_table' is unique in each documents
 	else
 		json_d_string = JSON3.write(json_d["new document"])
 		j_table = Mongoc.BSON(json_d_string)["j_table"]
-		collectionname = alternative_subquery;
+		collectionname = alternative_subquery
 	end
 
-	if j_table != "" && !isnothing(j_table) && !ismissing(j_table) 
+	if j_table != "" && !isnothing(j_table) && !ismissing(j_table)
 		findstr = """{\"j_table\":\"$j_table\"}"""
 		bson = Mongoc.BSON(findstr)
 		collection = open_collection(collectionname)
@@ -452,7 +452,7 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 			finddata_bson::Array = []
 			finddata_json::Array = []
 
-			if df_api[!,:sql][1] != "{find}"
+			if df_api[!, :sql][1] != "{find}"
 				# something ordered
 			end
 
@@ -474,11 +474,11 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 				Tips:
 					'update' is applied to a specific document as an unique determined 'j_table'. 
 			===#
-			for (k,v) in json_d
+			for (k, v) in json_d
 				if k != "apino"
 					udstr::String = ""
 					p = string(eltype(v))
-					if p != "Char" 
+					if p != "Char"
 						#===
 							Tips:
 								in case: Integer, Float, Boolean....
@@ -507,6 +507,9 @@ function _executeApi(json_d::Dict, df_api::DataFrame)
 			ret = Mongoc.delete_one(collection, bson)
 			if 0 < ret["deletedCount"]
 				ret = json(Dict("result" => true, "Jetelina" => "[{}]", "message from Jetelina" => jmsg))
+				# update SQL list
+				tables::Vector = [j_table]
+				ApiSqlListManager.deleteTableFromlist(tables)
 			else
 				# what happend?
 				@info "failed in delete " ret

@@ -718,7 +718,7 @@ const postAjaxData = (url, data) => {
                 } else if (url == posturls[9]) {
                     // switching database
                     // do not expect any returns, but refresh table and api list
-                    displayTablesAndApis();
+                    refreshdisplayTablesAndApis();
                 } else if (url == posturls[10]) {
                     showConfigPanel(false);
                     /*
@@ -2016,13 +2016,25 @@ const apiTestAjax = () => {
                     }
                     $(CHATBOXYOURTELL).text(m);
                     $(".yourText").mouseover();
-                    refreshApiList();
-                    refreshTableList();
+                    refreshdisplayTablesAndApis();
                 }
 
                 let ret = JSON.stringify(result);
                 $(`${COLUMNSPANEL} [name='apiout']`).addClass("attentionapiinout").text(ret);
 
+                /*
+                    Tips:
+                        mongodb special.
+                        only mongodb's 'ji' and 'jd' apis have a chance to add and delete into its collection.
+                        therefore should be refreshed both the doc and api list if be executed these apis.
+                */
+                if(loginuser.dbtype == "mongodb"){
+                    let p = JSON.parse(data);
+                    if(p.apino.startsWith("jd")){
+                        removeColumn();
+                        refreshdisplayTablesAndApis();
+                    }
+                }
             }
         } else {
             resetApiTestProcedure();
