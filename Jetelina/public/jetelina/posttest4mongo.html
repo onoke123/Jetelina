@@ -11,6 +11,8 @@
         <br>
         <button onclick="getAjaxData('u')">update</button>
         <br>
+        <button onclick="getAjaxData('d')">delete</button>
+        <br>
         <div id="apitest">
 			<div name="api-test-msg">
 			</div>
@@ -31,14 +33,16 @@
         let pd = {};
         
         if(s=="s"){
-            pd["apino"] = "js31";
+            pd["apino"] = "js89";
         }else if(s=="u"){
-           pd["apino"] = "ju30";
-           pd["mum"] = 123;
+           pd["apino"] = "ju87";
+           pd["num"] = 123456;
         }else if(s=="i"){
-            pd["apino"] = "ji29";           
-            let insjsonstr = "{\"j_table\":\"web_ins2\",\"num\":990,\"str\":\"by web api\"}";
+            pd["apino"] = "ji62";           
+            let insjsonstr = "{\"j_table\":\"web_ins3\",\"num\":990,\"str\":\"by web api\"}";
             pd["new document"] = JSON.parse(insjsonstr);
+        }else if(s=="d"){
+            pd["apino"] = "jd88";
         }
 
         let dd = JSON.stringify(pd);
@@ -64,7 +68,7 @@
                 }
             });
 
-            }else if(-1<$.inArray(s,['i','u'])){
+            }else if(-1<$.inArray(s,['i','u','d'])){
                 let msg = result["message from Jetelina"]
                 $("#result").append(`<p class="">${msg}</p>`);
             }

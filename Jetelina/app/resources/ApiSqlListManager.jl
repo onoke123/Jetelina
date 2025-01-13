@@ -225,8 +225,17 @@ function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String
     # update DataFrame
     readSqlList2DataFrame()
 
-    # write to operationhistoryfile
-    JLog.writetoOperationHistoryfile(string("create api", ",", suffix, seq_no))
+    #===
+        Caution:
+            .writetoOperationHistoryfile() requests the session data in it, 
+            but mongodb has the document insertion webapi that creates the related apis,
+            of course there is no issue in the case of executing on Jetelina console, but via webapi,
+            therefore, now, to be exception it, tbh do not wanna change .writetoO...() now. :p
+    ===#
+    if db != "mongodb"
+        # write to operationhistoryfile
+        JLog.writetoOperationHistoryfile(string("create api", ",", suffix, seq_no))
+    end
 
     return true, string(suffix, seq_no)
 end
