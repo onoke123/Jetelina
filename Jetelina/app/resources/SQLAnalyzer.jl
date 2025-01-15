@@ -10,7 +10,7 @@ functions
 	main() this function set as for kicking createAna..() from outer function.
 	createAnalyzedJsonFile() create json file for result of sql execution speed analyze data.
 	extractColumnsFromSql(s::String)  pick up columns data from 's'.
-	collectSqlAccessNumbers(df::DataFrame)  collect each sql access numbers then write out it to JC["sqlaccesscountfile"] file in JSON form for showing its graph in condition panel.
+	collectSqlAccessNumbers(df::DataFrame)  collect each sql access numbers then write out it to JC["apiaccesscountfile"] file in JSON form for showing its graph in condition panel.
 	experimentalCreateView(df::DataFrame)  create view tables for test and execute all sql sentences for analyzing.
 	createView(df::DataFrame)  create view table from a sql sentence that has multi tables and hight use in the running db.
 	dropTestDB(conn)  drop testdb. doubtfull. :-p
@@ -359,14 +359,14 @@ end
 """
 function collectSqlAccessNumbers(df::DataFrame)
 
-	collect each sql access numbers then write out it to JC["sqlaccesscountfile"] file in JSON form for showing its graph in condition panel.
+	collect each sql access numbers then write out it to JC["apiaccesscountfile"] file in JSON form for showing its graph in condition panel.
 
 # Arguments
 - `df::DataFrame`: target dataframe data
 """
 function collectSqlAccessNumbers(df::DataFrame)
 	this_df = copy(df)
-	sqlaccessnumberfile = JFiles.getFileNameFromLogPath(j_config.JC["sqlaccesscountfile"])
+	sqlaccessnumberfile = JFiles.getFileNameFromLogPath(j_config.JC["apiaccesscountfile"])
 	# delete this file if it exists, because this file is always fresh.
 	rm(sqlaccessnumberfile, force = true)
 

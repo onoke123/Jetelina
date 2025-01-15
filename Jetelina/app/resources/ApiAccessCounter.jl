@@ -8,7 +8,7 @@ Description:
 	
 functions
 	main() this function set as for kicking createAna..() from outer function.
-	collectSqlAccessNumbers() 	collect each api(sql) access numbers.
+	collectApiAccessNumbers() 	collect each api(sql) access numbers.
 	createAnalyzedJsonFile(df::DataFrame)  create json file for result of sql execution speed analyze data.
 	stopanalyzer() manual stopper for repeating analyzring
 """
@@ -26,7 +26,7 @@ procflg = Ref(true) # analyze process progressable -> true, stop/error -> false
 """
 function main()
 
-	wrap function for executing collectSqlAccessNumbers() that is the real analyzing function.
+	wrap function for executing collectApiAccessNumbers() that is the real analyzing function.
 	this function set as for kicking createAna..() from outer function.
 """
 function main()
@@ -36,7 +36,7 @@ function main()
 		JLog.writetoLogfile(string("ApiAccessCounter.main() start with : ",j_config.JC["analyze_interval"]," hr interval"))
 
 		task = @async while procflg[]
-			collectSqlAccessNumbers()
+			collectApiAccessNumbers()
 			sleep(interval)
 		end
 	else
@@ -46,20 +46,20 @@ function main()
 	end
 end
 """
-function collectSqlAccessNumbers()
+function collectApiAccessNumbers()
 
 	collect each api(sql) access numbers.
 
 # Arguments
 """
-function collectSqlAccessNumbers()
+function collectApiAccessNumbers()
 	#===
 		Tips:
 			read sql.log file
 				log/sql.log 
                     ex. 
                         time,apino,exectime,db
-                        2024-11-05 10:46:33,js4,postgresql
+                        2024-11-05 10:46:33,js4,0.00123,postgresql
                                    ・
                                    ・
 	===#
@@ -67,7 +67,7 @@ function collectSqlAccessNumbers()
 	if !isfile(sqllogfile)
         procflg[] = false
         errmsg::String = """oh my, there is no log file: $sqllogfile"""
-        JLog.writetoLogfile("ApiAccessCounter.collectSqlAccessNumbers() error: $errmsg")
+        JLog.writetoLogfile("ApiAccessCounter.collectApiAccessNumbers() error: $errmsg")
         return
 	end
 
@@ -80,26 +80,51 @@ function collectSqlAccessNumbers()
 	df = CSV.read(sqllogfile, DataFrame, limit = maxrow)
 	#===
 		Tips:
-			get uniqeness 'apino'
+			start to collect data for creating analyzing files.
+			1. api access number
+			2. database access number
+			3. api execution speed   mean/max/min
 	===#
-	u = unique(df[:, :apino])
-#	sql_df = DataFrame(apino = String[], sql = String[], combination = Vector{String}[], access_numbers = Float64[])
-	sql_df = DataFrame(apino = String[], access_numbers = Float64[])
+	#===
+		Tips:
+			get uniqeness 'apino' for '1'
+	===#
+	u_api = unique(df[:, :apino])
+	part_df = DataFrame(apino = String[], access_numbers = Int[])
 
-	u_size = length(u)
-	if 0 < u_size
-		for i ∈ 1:u_size
+	u_api_size = length(u_api)
+	if 0 < u_api_size
+		for i ∈ 1:u_api_size
 			ac = 0
-			# collect access numbers for each unique SQL. make "access_numbers"
-			dd = filter(:apino => x -> x == u[i], df)
+			# collect access numbers for each unique API. make "access_numbers"
+			dd = filter(:apino => x -> x == u_api[i], df)
 			ac = nrow(dd)
 			# move it to here becase it has changed each column name to each sql name.
-#			push!(sql_df, [u[i], df[:, :sql][i], table_arr, ac])
-			push!(sql_df, [u[i], ac])
+			push!(part_df, [u_api[i], ac])
 		end
 
-        createAnalyzedJsonFile(sql_df)
+        createAnalyzedJsonFile(part_df, JFiles.getFileNameFromLogPath(j_config.JC["apiaccesscountfile"]),1)
 	end
+	#===
+		Tips:
+			get uniqeness 'db' for '2'
+	===#
+	u_db = unique(df[:, :db])
+	part_df = DataFrame(database = String[], access_numbers = Int[])
+	u_db_size = length(u_db)
+	if 0 < u_db_size
+		for i ∈ 1:u_db_size
+			ac = 0
+			# collect access numbers for each unique API. make "access_numbers"
+			dd = filter(:db => x -> x == u_db[i], df)
+			ac = nrow(dd)
+			# move it to here becase it has changed each column name to each sql name.
+			push!(part_df, [u_db[i], ac])
+		end
+
+        createAnalyzedJsonFile(part_df, JFiles.getFileNameFromLogPath(j_config.JC["dbaccesscountfile"]),2)
+	end
+
 end
 """
 function createAnalyzedJsonFile(df::DataFrame)
@@ -108,16 +133,22 @@ function createAnalyzedJsonFile(df::DataFrame)
 
 # Arguments
 - `df::DataFrame`: target dataframe data
+- `jsonfile::String`: be operated json file name
+- `type::Int`: type of analyzing, 1->api access number, 2->db access number, 3->api speed
 """
-function createAnalyzedJsonFile(df::DataFrame)
+function createAnalyzedJsonFile(df::DataFrame, jsonfile::String, type::Int)
 	this_df = copy(df)
-	sqlaccessnumberfile = JFiles.getFileNameFromLogPath(j_config.JC["sqlaccesscountfile"])
-	# delete this file if it exists, because this file is always fresh.
-	rm(sqlaccessnumberfile, force = true)
+	date = Dates.today()
+	if type == 1
+		select!(this_df, :apino, :access_numbers)
+	elseif type == 2
+		select!(this_df, :database, :access_numbers)
+	elseif type == 3
+		select!(this_df, :apino, :mean, :max, :min)
+	end
 
-	select!(this_df, :apino, :access_numbers)
-	open(sqlaccessnumberfile, "w") do f
-		println(f, JSON.json(Dict("result" => true, "Jetelina" => copy.(eachrow(this_df)))))
+	open(jsonfile, "a+") do f
+		println(f, JSON.json(Dict("result" => true, "date" => date, "Jetelina" => copy.(eachrow(this_df)))))
 	end
 end
 """

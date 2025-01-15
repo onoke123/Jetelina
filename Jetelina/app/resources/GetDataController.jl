@@ -9,7 +9,7 @@ Description:
 functions
 	logout() logout procedure. update jetelina_user_table.logoutdate.
 	getTableList() calling DBDataController.getTableList() with json mode. the return is json form naturally.
-	getSqlAccessData() get JC["sqlaccesscountfile"] data file name. this file  contains access cound data in each sql due to sql.txt log file.
+	getSqlAccessData() get JC["apiaccesscountfile"] data file name. this file  contains access cound data in each sql due to sql.txt log file.
 	getTableCombiVsAccessRelationData()  get JC["tablecombinationfile"] data file name. this file is analyzed data for table combination.
 	getPerformanceRealData()  get JC["sqlperformancefile"] data file name. this file is analyzed data for real sql execution speed.
 	getPerformanceTestData()  get JC["sqlperformancefile"] data file name but it is '.test' suffix. this file is analyzed data for sql execution speed on test db.
@@ -62,13 +62,13 @@ end
 """
 function getSqlAccessData()
 
-	get JC["sqlaccesscountfile"] data file name. this file  contains access numbers data in each sql due to sql.txt log file.
+	get JC["apiaccesscountfile"] data file name. this file  contains access numbers data in each sql due to sql.txt log file.
 
 # Arguments
-- return: JC["sqlaccesscountfile"] file name with its path
+- return: JC["apiaccesscountfile"] file name with its path
 """
 function getSqlAccessData()
-	f = JFiles.getFileNameFromLogPath(j_config.JC["sqlaccesscountfile"])
+	f = JFiles.getFileNameFromLogPath(j_config.JC["apiaccesscountfile"])
 	if isfile(f)
 		return readchomp(f)
 	else
