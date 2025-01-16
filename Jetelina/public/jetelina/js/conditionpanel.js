@@ -12,6 +12,7 @@
       isVisiblePerformanceTest() checking "#performance_test" is visible or not
       conditionPanelFunctions(ut)  Exectute some functions ordered by user chat input message
       setGraphData(o,type)  set data to a graph of creating by plot.js. data and 'type' are passed by getAjaxData() in jetelinalib.js 
+      showApiAccessNumbersList(apiaccesslistdata)  show api access number data in DataTable 
       viewPerformanceGraph(apino, data, type)  show 'performance graph'
       viewCombinationGraph(bname, bno, ct, ac)  show the 'combination graph'
 */
@@ -21,10 +22,10 @@
  *  open and visible "#function_panel"
  */
 const openConditionPanel = () => {
-    if( isVisibleFunctionPanel() ){
-//        $(FUNCTIONPANEL).hide();
+    if (isVisibleFunctionPanel()) {
+        //        $(FUNCTIONPANEL).hide();
     }
-    
+
     $(CONDITIONPANEL).show().animate({
         width: window.innerWidth * 0.8,
         height: window.innerHeight * 0.8,
@@ -36,8 +37,8 @@ const openConditionPanel = () => {
     /*
         check for existing Jetelina's suggestion
     */
-//    getAjaxData(dataurls[3]);
-//    conditionPanelFunctions("graph");
+    //    getAjaxData(dataurls[3]);
+    //    conditionPanelFunctions("graph");
     getAjaxData(dataurls[4]);
 }
 /**
@@ -46,56 +47,56 @@ const openConditionPanel = () => {
  * 
  * checking "#api_access_numbers" is visible or not
  */
-const isVisibleApiAccessNumbers = () =>{
+const isVisibleApiAccessNumbers = () => {
     let ret = false;
-    if ($("#api_access_numbers").is(":visible")){
-      ret = true;
+    if ($("#api_access_numbers").is(":visible")) {
+        ret = true;
     }
-  
+
     return ret;
-  }
+}
 /**
  * @function isVisibleAccessCombination
  * @returns {boolean}  true -> visible, false -> invisible
  * 
  * checking "#plot" is visible or not
  */
-const isVisibleAccessCombination = () =>{
+const isVisibleAccessCombination = () => {
     let ret = false;
-    if ($(CHARTPANEL).is(":visible")){
-      ret = true;
+    if ($(CHARTPANEL).is(":visible")) {
+        ret = true;
     }
-  
+
     return ret;
-  }
+}
 /**
  * @function isVisiblePerformanceReal
  * @returns {boolean}  true -> visible, false -> invisible
  * 
  * checking "#performance_real" is visible or not
  */
-const isVisiblePerformanceReal = () =>{
+const isVisiblePerformanceReal = () => {
     let ret = false;
-    if ($("#performance_real").is(":visible")){
-      ret = true;
+    if ($("#performance_real").is(":visible")) {
+        ret = true;
     }
-  
+
     return ret;
-  }
+}
 /**
  * @function isVisiblePerformanceTest
  * @returns {boolean}  true -> visible, false -> invisible
  * 
  * checking "#performance_test" is visible or not
  */
-const isVisiblePerformanceTest = () =>{
+const isVisiblePerformanceTest = () => {
     let ret = false;
-    if ($("#performance_test").is(":visible")){
-      ret = true;
+    if ($("#performance_test").is(":visible")) {
+        ret = true;
     }
-  
+
     return ret;
-  }
+}
 /**
  * @function conditionPanelFunctions
  * @param {string} ut  chat message by user 
@@ -110,96 +111,96 @@ const conditionPanelFunctions = (ut) => {
         presentaction.push('cond');
     }
 
-//    if (inScenarioChk(ut,'function_panel-cmd')) {
-//        delete preferent;
-//        delete presentaction;
-//        stage = 'lets_do_something';
-//        chatKeyDown(ut);
-//    } else {
-        // use the prior command if it were
-        let cmd = getPreferentPropertie('cmd');
+    //    if (inScenarioChk(ut,'function_panel-cmd')) {
+    //        delete preferent;
+    //        delete presentaction;
+    //        stage = 'lets_do_something';
+    //        chatKeyDown(ut);
+    //    } else {
+    // use the prior command if it were
+    let cmd = getPreferentPropertie('cmd');
 
-        if (cmd == null || cmd.length <= 0) {
-            if( inScenarioChk(ut,'cond-graph-show-cmd')){
-                cmd = "graph";
-            }else if( inScenarioChk(ut,'cond-sql-performance-graph-show-cmd')){
-                if(isSuggestion){
-                    cmd = "performance";
-                }else{
-                    cmd = "no_suggestion";
-                }
-            }else if( inScenarioChk(ut,'confirmation-sentences-cmd') && isSuggestion ){
+    if (cmd == null || cmd.length <= 0) {
+        if (inScenarioChk(ut, 'cond-graph-show-cmd')) {
+            cmd = "graph";
+        } else if (inScenarioChk(ut, 'cond-sql-performance-graph-show-cmd')) {
+            if (isSuggestion) {
                 cmd = "performance";
+            } else {
+                cmd = "no_suggestion";
             }
+        } else if (inScenarioChk(ut, 'confirmation-sentences-cmd') && isSuggestion) {
+            cmd = "performance";
         }
+    }
 
-        /*
-            Tips:
-                cmd
-                    'graph': show 'api access numbers' graph
-                    'performance: show the result of analyzing sql exection on test db.
-                                  this cmd can execute in the case of being a suggestion.
-        */
-        if(-1<$.inArray(cmd,['graph','performance'])){
-            openConditionPanel();
-        }
+    /*
+        Tips:
+            cmd
+                'graph': show 'api access numbers' graph
+                'performance: show the result of analyzing sql exection on test db.
+                              this cmd can execute in the case of being a suggestion.
+    */
+    if (-1 < $.inArray(cmd, ['graph', 'performance'])) {
+        openConditionPanel();
+    }
 
-        switch (cmd) {
-            case 'graph':
-                if(isVisiblePerformanceReal()){
-                    $("#performance_real").hide();
-                }
+    switch (cmd) {
+        case 'graph':
+            if (isVisiblePerformanceReal()) {
+                $("#performance_real").hide();
+            }
 
-                if(isVisiblePerformanceTest()){
-                    $("#performance_test").hide();
-                }
+            if (isVisiblePerformanceTest()) {
+                $("#performance_test").hide();
+            }
 
-                if(isVisibleAccessCombination()){
-                    $(CHARTPANEL).hide();
-                }
+            if (isVisibleAccessCombination()) {
+                $(CHARTPANEL).hide();
+            }
 
-                showSomethingMsgPanel(false);
+            showSomethingMsgPanel(false);
 
-                $("#api_access_numbers").show().draggable().animate({
-                    top: "20%",
-                    left: "20%"
-                }, ANIMATEDURATION).draggable('disable');
+            $("#api_access_numbers").show().draggable().animate({
+                top: "20%",
+                left: "20%"
+            }, ANIMATEDURATION).draggable('disable');
 
-                m = chooseMsg('cond-graph-show-msg', "", "");
-                break;
-            case 'performance':
-                if(isVisibleApiAccessNumbers()){
-                    $("#api_access_numbers").hide();
-                }
+            m = chooseMsg('cond-graph-show-msg', "", "");
+            break;
+        case 'performance':
+            if (isVisibleApiAccessNumbers()) {
+                $("#api_access_numbers").hide();
+            }
 
-                if(isVisiblePerformanceReal()){
-                    $("#performance_real").hide();
-                }        
-                /*
-                    Tips:
-                        below graphs performance is as same as 'case:graph'.
-                */
-               /*
-                $(CHARTPANEL).show().animate({
-                    top: "5%",
-                    left: "-5%"
-                }, ANIMATEDURATION);
-                */
-                $("#performance_test").show().draggable().animate({
-                    top: "20%", //-50%",
-                    left: "20%" //"50%"
-                }, ANIMATEDURATION).draggable('disable');
+            if (isVisiblePerformanceReal()) {
+                $("#performance_real").hide();
+            }
+            /*
+                Tips:
+                    below graphs performance is as same as 'case:graph'.
+            */
+            /*
+             $(CHARTPANEL).show().animate({
+                 top: "5%",
+                 left: "-5%"
+             }, ANIMATEDURATION);
+             */
+            $("#performance_test").show().draggable().animate({
+                top: "20%", //-50%",
+                left: "20%" //"50%"
+            }, ANIMATEDURATION).draggable('disable');
 
-                showSomethingMsgPanel(true);
-                m = chooseMsg('cond-graph-show-msg', "", "");
-                break;
-            case 'no_suggestion':
-                m = chooseMsg('cond-no-suggestion-msg', "", "");
-                break;
-            default:
-                break;
-        }
-//    }
+            showSomethingMsgPanel(true);
+            m = chooseMsg('cond-graph-show-msg', "", "");
+            break;
+        case 'no_suggestion':
+            m = chooseMsg('cond-no-suggestion-msg', "", "");
+            break;
+        default:
+            break;
+    }
+    //    }
 
     return m;
 }
@@ -238,7 +239,7 @@ const setGraphData = (o, type) => {
                 // access vs combination
                 let apino = [];
                 let access_count = [];
-
+                let apiaccesslistdata = [];
                 let base_table_no = [];
                 let combination_table = [];
                 /* performance
@@ -251,27 +252,23 @@ const setGraphData = (o, type) => {
                 $.each(o[key], function (k, v) {
                     if (v != null) {
                         $.each(v, function (name, value) {
-                            if(name=="Jetelina"){ // in array field
+                            if (name == "Jetelina") { // in array field
                                 $.each(value, function (na, va) {
-                                    if(va != null){
-                                        if( type == "ac"){
+                                    if (va != null) {
+                                        if (type == "ac") {
                                             /*
                                                 Tips:
                                                     access numbers in each api  -> list figure
                                             */
-                                            $.each(va,function(nn,vv){
-                                                if (nn == "apino") {
-                                                    apino.push(vv);
-                                                }else if(nn == "access_numbers"){
-                                                    access_count.push(vv);        
-                                                }
-                                            });
-                                        }else if(type == "db" ){
+                                            if (va != null) {
+                                                apiaccesslistdata.push(`["${va.apino}",${va.access_numbers},"${va.database}"]`);
+                                            }
+                                        } else if (type == "db") {
                                             /*
                                                 Tips:
                                                     access numbers in each database -> pie chart
                                             */
-                                        }else if(type == "sp"){
+                                        } else if (type == "sp") {
                                             /*
                                                 Tips:
                                                     access numbers / execution speed in each api -> 3D scatter plot
@@ -279,27 +276,26 @@ const setGraphData = (o, type) => {
                                         }
                                     }
                                 });
-                            }else if(name="date"){
+                            } else if (name = "date") {
 
                             }
                         });
                     }
                 });
 
-                if( type == "ac"){
+                if (type == "ac") {
                     // list
-                    console.log("apino: ", apino);
-                    console.log("access..: ", access_count);
-                }else{
+                    showApiAccessNumbersList(apiaccesslistdata);
+                } else {
                     // ploty graph
                     /*
                         Tips:
                         adjusting the plot.js execution time because it is depend on clients environment
                     */
                     setTimeout(function () {
-                        if (type == "db"){
+                        if (type == "db") {
                             viewPerformanceGraph(apino, access_count, type);
-                        }else if (type == "sp"){
+                        } else if (type == "sp") {
                             viewPerformanceGraph(apino, mean, type);
                         }
                     }, 1000);
@@ -309,6 +305,15 @@ const setGraphData = (o, type) => {
     }
 
     return ret;
+}
+/**
+ * @function showApiAccessNumbersList
+ * @param {Array} apiaccesslistdata
+ * 
+ * show api access number data in DataTable 
+ */
+const showApiAccessNumbersList = (apiaccesslistdata) =>{
+    console.log("list: ", apiaccesslistdata);
 }
 /**
  * @function viewPerformanceGraph
@@ -321,7 +326,7 @@ const setGraphData = (o, type) => {
 const viewPerformanceGraph = (apino, d, type) => {
     let data;
 
-    if (type == "real" || type == "access"){
+    if (type == "real" || type == "access") {
         data = [
             {
                 opacity: 0.5,
@@ -335,53 +340,53 @@ const viewPerformanceGraph = (apino, d, type) => {
                     size: 20
                 }
             }
-        ];    
-    }else{
-        let real_data = 
-            {
-                opacity: 0.5,
-                type: 'scatter',
-                text: apino,
-                x: apino,
-                y: realPerformanceData,
-                mode: 'markers',
-                name: 'real sql',
-                marker: {
-                    color: 'rgb(255,255,255)',
-                    size: 20
-                }
-            };
-        
+        ];
+    } else {
+        let real_data =
+        {
+            opacity: 0.5,
+            type: 'scatter',
+            text: apino,
+            x: apino,
+            y: realPerformanceData,
+            mode: 'markers',
+            name: 'real sql',
+            marker: {
+                color: 'rgb(255,255,255)',
+                size: 20
+            }
+        };
 
-        let test_data = 
-            {
-                opacity: 0.5,
-                type: 'scatter',
-                text: apino,
-                x: apino,
-                y: d,
-                mode: 'markers',
-                name: 'test sql',
-                marker: {
-                    color: 'rgb(255,0,0)',
-                    size: 20
-                }
-            };
-        
 
-        data = [real_data,test_data];
+        let test_data =
+        {
+            opacity: 0.5,
+            type: 'scatter',
+            text: apino,
+            x: apino,
+            y: d,
+            mode: 'markers',
+            name: 'test sql',
+            marker: {
+                color: 'rgb(255,0,0)',
+                size: 20
+            }
+        };
+
+
+        data = [real_data, test_data];
     }
 
 
     let paper_bgc = 'rgb(112,128,144)';
     let font_col = 'rgb(255,255,255)';
-    if( type == 'test'){
+    if (type == 'test') {
         paper_bgc = 'rgb(0,129,104)';//'rgb(240,230,140)'
-//        font_col = 'rgb(255,0,0)';
+        //        font_col = 'rgb(255,0,0)';
     }
 
     let title = "exection speed";
-    if (type == "access"){
+    if (type == "access") {
         title = "access numbers";
     }
 
@@ -406,9 +411,9 @@ const viewPerformanceGraph = (apino, d, type) => {
         }
     };
 
-    if (type == "access"){
+    if (type == "access") {
         $("#api_access_numbers").show();
-//        Plotly.newPlot('api_access_numbers_graph', data, layout);
+        //        Plotly.newPlot('api_access_numbers_graph', data, layout);
         Plotly.react('api_access_numbers_graph', data, layout);
     } else if (type == "real") {
         Plotly.newPlot('performance_real_graph', data, layout);
