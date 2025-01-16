@@ -90,8 +90,8 @@ function collectApiAccessNumbers()
 			get uniqeness 'apino' for '1' & '3'
 	===#
 	u_api = unique(df[:, :apino])
-	part_df = DataFrame(apino = String[], access_numbers = Int[])
-	part_df_speed = DataFrame(apino = String[], mean = Float64[], max = Float64[], min = Float64[])
+	part_df = DataFrame(apino = String[], access_numbers = Int[], database = String[])
+	part_df_speed = DataFrame(apino = String[], mean = Float64[], max = Float64[], min = Float64[], database = String[])
 
 	u_api_size = length(u_api)
 	if 0 < u_api_size
@@ -100,12 +100,13 @@ function collectApiAccessNumbers()
 			# collect access numbers for each unique API. make "access_numbers"
 			dd = filter(:apino => x -> x == u_api[i], df)
 			ac = nrow(dd)
+			db = dd[:,:db][1]
 			speedMax = maximum(dd[:,:exectime])
 			speedMin = minimum(dd[:,:exectime])
 			speedMean = mean(dd[:,:exectime])
 			# move it to here becase it has changed each column name to each sql name.
-			push!(part_df, [u_api[i], ac])
-			push!(part_df_speed,[u_api[i],speedMean,speedMax,speedMin])
+			push!(part_df, [u_api[i], ac, db])
+			push!(part_df_speed,[u_api[i],speedMean,speedMax,speedMin,db])
 		end
 
         createAnalyzedJsonFile(part_df, JFiles.getFileNameFromLogPath(j_config.JC["apiaccesscountfile"]),1)
@@ -145,11 +146,11 @@ function createAnalyzedJsonFile(df::DataFrame, jsonfile::String, type::Int)
 	this_df = copy(df)
 	date = Dates.today()
 	if type == 1
-		select!(this_df, :apino, :access_numbers)
+		select!(this_df, :apino, :access_numbers, :database)
 	elseif type == 2
 		select!(this_df, :database, :access_numbers)
 	elseif type == 3
-		select!(this_df, :apino, :mean, :max, :min)
+		select!(this_df, :apino, :mean, :max, :min, :database)
 	end
 
 	open(jsonfile, "a+") do f

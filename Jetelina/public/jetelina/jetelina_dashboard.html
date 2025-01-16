@@ -77,27 +77,6 @@
 			</div>
 	</pre>
 	</div>
-	<!--
-            condition panel
-    -->
-	<div id="condition_panel" class="functionpanel-parts commonpanel squarepanel" hidden>
-		<div id="plot" style="width:50%;height:50%" hidden>
-			<div><text style="size:a3;color:lightgreen;">Access vs Combination</text></div>
-			<div id="plot_graph"></div>
-		</div>
-		<div id="api_access_numbers" style="width:50%;height:50%" hidden>
-			<div><text style="size:a3;color:white;">API Access Numbers</text></div>
-			<div id="api_access_numbers_graph"></div>
-		</div>
-		<div id="performance_real" style="width:50%;height:50%" hidden>
-			<div><text style="size:a3;color:white;">SQL Execution Time (sec)</text></div>
-			<div id="performance_real_graph"></div>
-		</div>
-		<div id="performance_test" style="width:30%;height:30%" hidden>
-			<div><text style="size:a3;color:red;">TEST SQL Execution Time (sec)</text></div>
-			<div id="performance_test_graph"></div>
-		</div>
-	</div>
 	<!-- 
 			function panel
 	-->
@@ -156,12 +135,39 @@
 			</div>
 		</div>
 	</div>
+	<!--
+            condition panel
+    -->
+	<div id="condition_panel" class="functionpanel-parts commonpanel squarepanel" hidden>
+		<div id="plot" style="width:50%;height:50%" hidden>
+			<div><text style="size:a3;color:lightgreen;">Access vs Combination</text></div>
+			<div id="plot_graph"></div>
+		</div>
+		<div id="api_access_numbers" style="width:50%;height:50%" hidden>
+			<div><text style="size:a3;color:white;">API Access Numbers</text></div>
+			<div id="api_access_numbers_graph"></div>
+		</div>
+		<div id="performance_real" style="width:50%;height:50%" hidden>
+			<div><text style="size:a3;color:white;">SQL Execution Time (sec)</text></div>
+			<div id="performance_real_graph"></div>
+		</div>
+		<div id="performance_test" style="width:30%;height:30%" hidden>
+			<div><text style="size:a3;color:red;">TEST SQL Execution Time (sec)</text></div>
+			<div id="performance_test_graph"></div>
+		</div>
+	</div>
+	<!--
+			configuration panel
+	-->
 	<div id="config_panel" style="width:30%;height:30%;top:30%;left:40%;" class="commonpanel squarepanel genelic_panel msg_scroll" hidden>
 		<label>Server Configuration</label>
 		<br><br>
 		<div name="config_list">
 		</div>
 	</div>
+	<!--
+			something message panels
+	-->
 	<div id="jetelina_teach_you_smg" class="commonpanel squarepanel genelic_panel jetelina_teach_you" hidden>
 		<div name="precious_word" style="text-align: left;" class="box_text"></div>		
 	</div>
@@ -172,6 +178,9 @@
 			<input type="text" name="something_input" class="user-input" autocomplete="off"></input>
 		</div>
 	</div>
+	<!--
+			available dataase icons panel
+	-->
 	<div id="databaselist" class="commonpanel dblist" hidden>
 		<span name="postgresql" class="databasename" hidden>
 			<img src="jetelina/img/postgresql.png" style="width:60px;height:40px;">

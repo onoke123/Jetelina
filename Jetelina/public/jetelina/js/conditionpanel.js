@@ -215,9 +215,14 @@ let realPerformanceData;
 /**
  * @function setGraphData
  * @param {object} o   json object data
- * @param {string} type  'ac'-> access vs combination  'real'->real performance 'access'->sql access numbers 'test'->test performance    this is ordered in jetelinalib.js
- * @return {boolean} true->exists 'Access vs Combination data'  false-> not exists it
+ * @param {string} type  'ac'-> access numbers in each api  'db'-> access numbers in each database  'sp" -> access nubmers and execution speed in each api
+ * @return {boolean} true -> exists 'Access vs Combination data'  false-> not exists it
  * set data to a graph of creating by plot.js. data and 'type' are passed by getAjaxData() in jetelinalib.js  
+ * 
+ * Attention:
+ *    this function expects the json data form alike
+ *      - api access numbers
+ *      {"Jetelina:[{"Jetelina":[{"apino":"js4","access_numbers":1},{"apino":"js24","access_numbers":1},...],"date":"2025-01-15","result":true},{"Jetelina":[{......}]},...],"result":true}
  */
 const setGraphData = (o, type) => {
     let ret = false;
@@ -229,63 +234,76 @@ const setGraphData = (o, type) => {
     if (o != null) {
         Object.keys(o).forEach(function (key) {
             // because a value of ’Jetelina’ is an object   name=>key value=>o[key]
-            if (key == "Jetelina" && o[key].length > 0) {
+            if (key == "Jetelina" && o[key].length > 0) { // first json "Jetelina" name field
                 // access vs combination
-                let base_table_name = [];
+                let apino = [];
+                let access_count = [];
+
                 let base_table_no = [];
                 let combination_table = [];
-                let access_count = [];
                 /* performance
                     apino,max,min,mean -> apino, use only 'mean' data
                 */
-                let apino = [];
-                let mean = [];
+                let apispeed_mean = [];
+                let apispeed_max = [];
+                let apispeed_min = [];
 
                 $.each(o[key], function (k, v) {
                     if (v != null) {
                         $.each(v, function (name, value) {
-                            if (name == "apino") {
-                                apino.push(value);
-                            } else if (name == combination) {
-                                base_table_no.push(value[0]);// original table no -> x axis
-                                let pn = 0;
-                                if (2 < value.length) {
-                                    let cbn = 0;
-                                    for (let i = 2; i < value.length; i++) {
-                                        cbn += value[i];
+                            if(name=="Jetelina"){ // in array field
+                                $.each(value, function (na, va) {
+                                    if(va != null){
+                                        if( type == "ac"){
+                                            /*
+                                                Tips:
+                                                    access numbers in each api  -> list figure
+                                            */
+                                            $.each(va,function(nn,vv){
+                                                if (nn == "apino") {
+                                                    apino.push(vv);
+                                                }else if(nn == "access_numbers"){
+                                                    access_count.push(vv);        
+                                                }
+                                            });
+                                        }else if(type == "db" ){
+                                            /*
+                                                Tips:
+                                                    access numbers in each database -> pie chart
+                                            */
+                                        }else if(type == "sp"){
+                                            /*
+                                                Tips:
+                                                    access numbers / execution speed in each api -> 3D scatter plot
+                                            */
+                                        }
                                     }
+                                });
+                            }else if(name="date"){
 
-                                    pn = cbn;
-                                } else if (value.length == 2) {
-                                    pn = value[1];
-                                }
-
-                                combination_table.push(pn);// table combination no -> y axis
-                                ret = true; // meaning of exisiting combination_table is there is the data of 'Access vs Combination'.                                     
-                            } else if (name == access_numbers) {
-                                access_count.push(value);// table access normarize no -> z axis
-                            } else if (name == mean) {
-                                mean.push(value);
                             }
                         });
                     }
                 });
 
-                /*
-                    Tips:
-                      adjusting the plot.js execution time because it is depend on clients environment
-                */
-                setTimeout(function () {
-                    if (type == "ac") {
-                        viewCombinationGraph(apino, base_table_no, combination_table, access_count);
-                    } else if (type == "access"){
-                        console.log("apino, access...., type", type, apino, access_count);
-                        viewPerformanceGraph(apino, access_count, type);
-                    }else{
-                        viewPerformanceGraph(apino, mean, type);
-                    }
-                }, 1000);
-
+                if( type == "ac"){
+                    // list
+                    console.log("apino: ", apino);
+                    console.log("access..: ", access_count);
+                }else{
+                    // ploty graph
+                    /*
+                        Tips:
+                        adjusting the plot.js execution time because it is depend on clients environment
+                    */
+                    setTimeout(function () {
+                        if (type == "db"){
+                            viewPerformanceGraph(apino, access_count, type);
+                        }else if (type == "sp"){
+                            viewPerformanceGraph(apino, mean, type);
+                        }
+                    }, 1000);
+                }
             }
         });
     }

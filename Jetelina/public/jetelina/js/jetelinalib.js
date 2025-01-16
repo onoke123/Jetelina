@@ -479,16 +479,16 @@ const getAjaxData = (url) => {
                     let type = "";
                     if (url == dataurls[0]) {
                         // access vs combination
-                        type = "ac";
+                        //type = "ac";
                     } else if (url == dataurls[1]) {
                         // real performance. execute sql on the DB. considering needs or not, 2023/11/25
-                        type = "real";
+                        //type = "real";
                     } else if (url == dataurls[2]) {
                         // test performance. execute sql on test DB
-                        type = "test";
+                        //type = "test";
                     } else if (url == dataurls[4]) {
-                        // sql access
-                        type = "access";
+                        // api access
+                        type = "ac";
                     }
                     /*
                         Tips:
@@ -1239,7 +1239,7 @@ const chatKeyDown = (cmd) => {
                         if (m.length == 0 || m == IGNORE) {
                             // if 'ut' is a command for driving condition
                             // this routine is for ver3 :)
-                            //m = conditionPanelFunctions(ut);
+                            m = conditionPanelFunctions(ut);
                         }
                     }
 
