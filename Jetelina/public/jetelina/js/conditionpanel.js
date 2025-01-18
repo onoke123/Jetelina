@@ -6,6 +6,7 @@
     This js lib works with dashboard.js and jetelinalib.js for the Condition Panel.
     
     Functions:
+      openConditionPanel(b) visible or hide "#condition_panel"
       isVisibleAccessCombination() checking "#plot" is visible or not
       isVisibleApiAccessNumbers() checking "#api_access_numbers" is visible or not
       isVisiblePerformanceReal() checking "#performance_real" is visible or not
@@ -17,29 +18,30 @@
       viewCombinationGraph(bname, bno, ct, ac)  show the 'combination graph'
 */
 /**
- *  @function openFunctionPanel
+ *  @function openConditionPanel
+ *  @param {boolean} true -> visible false -> hide
  * 
- *  open and visible "#function_panel"
+ *  visible or hide "#condition_panel"
  */
-const openConditionPanel = () => {
-    if (isVisibleFunctionPanel()) {
-        //        $(FUNCTIONPANEL).hide();
+const openConditionPanel = (b) => {
+    if(b){
+        $(CONDITIONPANEL).show().animate({
+            width: window.innerWidth * 0.8,
+            height: window.innerHeight * 0.8,
+            top: "10%",
+            left: "10%"
+        }, ANIMATEDURATION);
+
+        const dataurls = scenario['analyzed-data-collect-url'];
+        /*
+            check for existing Jetelina's suggestion
+        */
+        //    getAjaxData(dataurls[3]);
+        //    conditionPanelFunctions("graph");
+        getAjaxData(dataurls[4]);
+    }else{
+        $(CONDITIONPANEL).hide();
     }
-
-    $(CONDITIONPANEL).show().animate({
-        width: window.innerWidth * 0.8,
-        height: window.innerHeight * 0.8,
-        top: "10%",
-        left: "10%"
-    }, ANIMATEDURATION);
-
-    const dataurls = scenario['analyzed-data-collect-url'];
-    /*
-        check for existing Jetelina's suggestion
-    */
-    //    getAjaxData(dataurls[3]);
-    //    conditionPanelFunctions("graph");
-    getAjaxData(dataurls[4]);
 }
 /**
  * @function isVisibleApiAccessNumbers
@@ -142,7 +144,7 @@ const conditionPanelFunctions = (ut) => {
                               this cmd can execute in the case of being a suggestion.
     */
     if (-1 < $.inArray(cmd, ['graph', 'performance'])) {
-        openConditionPanel();
+        openConditionPanel(true);
     }
 
     switch (cmd) {
@@ -261,7 +263,7 @@ const setGraphData = (o, type) => {
                                                     access numbers in each api  -> list figure
                                             */
                                             if (va != null) {
-                                                apiaccesslistdata.push(`["${va.apino}",${va.access_numbers},"${va.database}"]`);
+                                                apiaccesslistdata.push([va.apino,va.access_numbers,va.database]);
                                             }
                                         } else if (type == "db") {
                                             /*
@@ -313,7 +315,38 @@ const setGraphData = (o, type) => {
  * show api access number data in DataTable 
  */
 const showApiAccessNumbersList = (apiaccesslistdata) =>{
-    console.log("list: ", apiaccesslistdata);
+
+    let tableoptions = {
+        "paging":true,
+        "info":false,
+        "searching":true,
+        "order":[1,'desc'],
+        "pagingType": "simple",
+        "data": apiaccesslistdata
+    }
+
+    $("#app").DataTable(tableoptions);
+
+}
+const apiAccessNumberListController = (cmd) =>{
+    let t = $("#app").DataTable();
+
+    if(-1<cmd.indexOf("next")){
+        t.page("next").draw(false);
+    }else if(-1<cmd.indexOf("previous") || -1<cmd.indexOf("prev")){
+        t.page("previous").draw(false);
+    }else if(-1<cmd.indexOf("last") || -1<cmd.indexOf("end") || -1<cmd.indexOf("tail")){
+        t.page("last").draw(false);
+    }else if(-1<cmd.indexOf("first") || -1<cmd.indexOf("head")){
+        t.page("first").draw(false);
+    }
+
+    if (inScenarioChk(cmd, "general-thanks-cmd")) {
+        openConditionPanel(false);
+        t.destroy();
+        return chooseMsg('general-thanks-msg',loginuser.lastname,"c");
+    }
+    return "hey hey hey";
 }
 /**
  * @function viewPerformanceGraph

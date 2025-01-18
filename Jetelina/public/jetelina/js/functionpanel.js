@@ -101,7 +101,7 @@ $(document).on({
  * hide "#condition_panel" at the same time if it is visible
  */
 const openFunctionPanel = () => {
-  if (inVisibleConditionPanel()) {
+  if (isVisibleConditionPanel()) {
     $(CONDITIONPANEL).hide();
   }
 

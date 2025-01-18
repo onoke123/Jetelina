@@ -27,7 +27,7 @@
       inScenarioChk(s,sc,type) check if user input string is in the ordered scenario
       countCandidates(s,sc,type) count config/scenario candidates
       isVisibleFunctionPanel() check the function panel is visible or not
-      inVisibleConditionPanel() check the condition panel is visible or not
+      isVisibleConditionPanel() check the condition panel is visible or not
       isVisibleSomethingMsgPanel() checking "#something_msg" is visible or not
       showSomethingInputField(b,type) "#something_input_field" show or hide
       showSomethingMsgPanel(b) "#something_msg" show or hide
@@ -1159,285 +1159,289 @@ const chatKeyDown = (cmd) => {
                 $(CHATBOXYOURTELL).text(ut);
             }
 
-            /*
-                switch 1:between 'before login' and 'at login'
-                       login:at login
-                       login_success: after login
-                       lets_do_something: the stage after 'login_success'
-                       default:before login
-            */
-            switch (stage) {
-                case 1:
-                    if (inScenarioChk(ut, 'greeting-1-cmd')) {
-                        /* say 'nice' if a user said 'fine' */
-                        m = chooseMsg('greeting-1a-msg', "", "");
-                    } else if (inScenarioChk(ut, 'greeting-2-cmd')) {
-                        /* reply something your mood if a uer asks you 'how about you' */
-                        m = chooseMsg('greeting-2-msg', "", "");
-                    } else {
-                        /* lead to login with 'can I ask your name?' */
-                        m = chooseMsg("starting-2-msg", "", "");
-                        stage = 'login';
-                    }
+            if (isVisibleConditionPanel()) {
+                // hijack every command if showing analyzing data
+                m = apiAccessNumberListController(ut);
+            } else {
+                /*
+                    switch 1:between 'before login' and 'at login'
+                           login:at login
+                           login_success: after login
+                           lets_do_something: the stage after 'login_success'
+                           default:before login
+                */
+                switch (stage) {
+                    case 1:
+                        if (inScenarioChk(ut, 'greeting-1-cmd')) {
+                            /* say 'nice' if a user said 'fine' */
+                            m = chooseMsg('greeting-1a-msg', "", "");
+                        } else if (inScenarioChk(ut, 'greeting-2-cmd')) {
+                            /* reply something your mood if a uer asks you 'how about you' */
+                            m = chooseMsg('greeting-2-msg', "", "");
+                        } else {
+                            /* lead to login with 'can I ask your name?' */
+                            m = chooseMsg("starting-2-msg", "", "");
+                            stage = 'login';
+                        }
 
-                    break;
-                case 'login':
-                    /*
-                        Tips:
-                            in the case of the first login for setting Jetelina env.
-                            "it's me" or "it is me" are effective.
-                            but it will be diseffect after executing the setting.
-                    */
-                    if (ut.indexOf("it's me") == -1 && ut.indexOf("it is me") == -1) {
-                        authAjax(ut);
-                        m = IGNORE;
-                    } else {
+                        break;
+                    case 'login':
                         /*
-                            this is the first login to Jetelina.
-                            must go to the initialization process.
-
-                            the process is defined in initialprocess.js
-                            and do not get out by the normal logout because of session data.
+                            Tips:
+                                in the case of the first login for setting Jetelina env.
+                                "it's me" or "it is me" are effective.
+                                but it will be diseffect after executing the setting.
                         */
-
-                        $(JETELINAPANEL).hide();
-                        jetelinaInitialize();
-                    }
-
-                    break;
-                case 'login_success':
-                    /*
-                        Attention:
-                            in previous version, this case had a meaning, however it has be lost 
-                            in this version.
-                            but wanna say something to the login user before starting the working.
-                            switch to the function panel with chatKeyDown("show tables"), indeed this string
-                            is determind in the scenario 'func-show-table-list-cmd', then redirect to
-                            'lets_do_somthing', meanwhile 'starting-6-msg' is displayed.
-                    */
-                    stage = 'lets_do_something';
-
-                    chatKeyDown("show tables");
-                    m = chooseMsg("starting-6-msg", "", "");
-
-                    break;
-                case 'lets_do_something':
-                    // hidden thanks for favicon
-                    isVisibleFavicon(false);
-                    m = "";
-                    // chatbox moves to below
-                    const panelTop = window.innerHeight - 110;
-                    $(JETELINAPANEL).animate({
-                        height: "70px",
-                        top: "85%", //`${panelTop}px`,
-                        left: "5%" //"210px"
-                    }, ANIMATEDURATION);
-
-                    if (!inScenarioChk(ut, 'config-show-cmd') && (presentaction.cmd != CONFIGCHANGE)) {
-                        // if 'ut' is a command for driving function
-                        m = functionPanelFunctions(ut);
-                        if (m.length == 0 || m == IGNORE) {
-                            // if 'ut' is a command for driving condition
-                            // this routine is for ver3 :)
-                            m = conditionPanelFunctions(ut);
-                        }
-                    }
-
-                    /*
-                        Attention:
-                            only "admin" roll can operate configuration and user account.
-                            do not worry, it is checked in Jetelina by posting data even if the roll were hacked. 
-                    */
-                    if ((m.length == 0 || m == IGNORE) && loginuser.roll == "admin") {
-                        let multi = 0;
-                        let multiscript = [];
-                        // configuration parameter updating
-                        if (inScenarioChk(ut, 'common-cancel-cmd') && inCancelableCmdList([CONFIGCHANGE, USERMANAGE])) {
-                            preferent.cmd = null;
-                            presentaction = {};
-                            rejectCancelableCmdList(CONFIGCHANGE);
-                            rejectCancelableCmdList(USERMANAGE);
-                            showSomethingInputField(false);
-                            showSomethingMsgPanel(false);
-                            m = chooseMsg("cancel-msg", "", "");
-                        }
-
-                        // configuration management ①->②
-                        // ②the parameter searching in config[]
-                        if (presentaction.cmd != null && presentaction.cmd == CONFIGCHANGE) {
+                        if (ut.indexOf("it's me") == -1 && ut.indexOf("it is me") == -1) {
+                            authAjax(ut);
+                            m = IGNORE;
+                        } else {
                             /*
-                                Tips:
-                                    after displaying the ordered parameter, the update procedure is canceled by 'thank you'. 
+                                this is the first login to Jetelina.
+                                must go to the initialization process.
+    
+                                the process is defined in initialprocess.js
+                                and do not get out by the normal logout because of session data.
                             */
-                            if (inScenarioChk(ut, "general-thanks-cmd")) {
-                                typingControll(chooseMsg('general-thanks-msg', loginuser.lastname, "c"));
+
+                            $(JETELINAPANEL).hide();
+                            jetelinaInitialize();
+                        }
+
+                        break;
+                    case 'login_success':
+                        /*
+                            Attention:
+                                in previous version, this case had a meaning, however it has be lost 
+                                in this version.
+                                but wanna say something to the login user before starting the working.
+                                switch to the function panel with chatKeyDown("show tables"), indeed this string
+                                is determind in the scenario 'func-show-table-list-cmd', then redirect to
+                                'lets_do_somthing', meanwhile 'starting-6-msg' is displayed.
+                        */
+                        stage = 'lets_do_something';
+
+                        chatKeyDown("show tables");
+                        m = chooseMsg("starting-6-msg", "", "");
+
+                        break;
+                    case 'lets_do_something':
+                        // hidden thanks for favicon
+                        isVisibleFavicon(false);
+                        m = "";
+                        // chatbox moves to below
+                        const panelTop = window.innerHeight - 110;
+                        $(JETELINAPANEL).animate({
+                            height: "70px",
+                            top: "85%", //`${panelTop}px`,
+                            left: "5%" //"210px"
+                        }, ANIMATEDURATION);
+
+                        if (!inScenarioChk(ut, 'config-show-cmd') && (presentaction.cmd != CONFIGCHANGE)) {
+                            // if 'ut' is a command for driving function
+                            m = functionPanelFunctions(ut);
+                            if (m.length == 0 || m == IGNORE) {
+                                // if 'ut' is a command for driving condition
+                                // this routine is for ver3 :)
+                                m = conditionPanelFunctions(ut);
+                            }
+                        }
+
+                        /*
+                            Attention:
+                                only "admin" roll can operate configuration and user account.
+                                do not worry, it is checked in Jetelina by posting data even if the roll were hacked. 
+                        */
+                        if ((m.length == 0 || m == IGNORE) && loginuser.roll == "admin") {
+                            let multi = 0;
+                            let multiscript = [];
+                            // configuration parameter updating
+                            if (inScenarioChk(ut, 'common-cancel-cmd') && inCancelableCmdList([CONFIGCHANGE, USERMANAGE])) {
+                                preferent.cmd = null;
+                                presentaction = {};
+                                rejectCancelableCmdList(CONFIGCHANGE);
+                                rejectCancelableCmdList(USERMANAGE);
+                                showSomethingInputField(false);
                                 showSomethingMsgPanel(false);
-                                showConfigPanel(false);
-                                showPreciousPanel(false);
-                                if (inCancelableCmdList([CONFIGCHANGE])) {
-                                    rejectCancelableCmdList(CONFIGCHANGE);
-                                    presentaction = {};
-                                    return;
-                                }
+                                m = chooseMsg("cancel-msg", "", "");
                             }
 
-                            for (zzz in config) {
+                            // configuration management ①->②
+                            // ②the parameter searching in config[]
+                            if (presentaction.cmd != null && presentaction.cmd == CONFIGCHANGE) {
                                 /*
                                     Tips:
-                                        in the case of vague inputing, may have multi candidates.
-                                        but after showing them to user, may the right one inputing.
-                                        the first 'if' is maybe not hit, but secondly inputing may kit it.
+                                        after displaying the ordered parameter, the update procedure is canceled by 'thank you'. 
                                 */
-                                if (ut == zzz) {
-                                    /*
-                                        Tips:
-                                            there is possilbility someting in multiscript[] yet.
-                                            needs to clear it before pushing the right one.
-                                    */
-                                    multiscript = [];
-                                    multiscript.push(zzz);
-                                    break;
-                                } else {
-                                    if (inScenarioChk(ut, zzz, 'config')) {
-                                        let r = countCandidates(ut, zzz, 'config');
-                                        multi += r[0];
-                                        multiscript.push(zzz);
+                                if (inScenarioChk(ut, "general-thanks-cmd")) {
+                                    typingControll(chooseMsg('general-thanks-msg', loginuser.lastname, "c"));
+                                    showSomethingMsgPanel(false);
+                                    showConfigPanel(false);
+                                    showPreciousPanel(false);
+                                    if (inCancelableCmdList([CONFIGCHANGE])) {
+                                        rejectCancelableCmdList(CONFIGCHANGE);
+                                        presentaction = {};
+                                        return;
                                     }
                                 }
-                            }
 
-                            // right message should be displayed if there were any candidates.
-                            let configMsg = "";
-                            if (1 < multi) {
-                                // pick candidates up
-                                m = chooseMsg('multi-candidates-msg', "", "");// this 'm' is displayed in chatbox
-                                let multimsg = chooseMsg("config-update-plural-candidates-message", "", "");// this 'multimsg' is displayed in SOMETHINGMSGPANEL
-                                for (i = 0; i < multi; i++) {
-                                    multimsg += `'${multiscript[i]}',`;
-                                }
-
-                                configMsg = multimsg;
-                            } else {
-                                // here you are, this,.... and so on
-                                if (m.length == 0) {
-                                    m = chooseMsg("starting-6a-msg", "", "");
-                                }
-
-                                if (multiscript[0] != null && multiscript[0] != undefined) {
-                                    presentaction.config_name = multiscript[0];
-                                    let data = `{"param":"${multiscript[0]}"}`;
-                                    postAjaxData(scenario["function-post-url"][2], data);
-                                }
-                            }
-
-                            if (0 < configMsg.length) {
-                                $(SOMETHINGMSGPANELMSG).text(configMsg);
-                                showSomethingMsgPanel(true);
-                            }
-
-                            if (presentaction.config_name != null) {
-                                if ($(SOMETHINGINPUT).is(":visible")) {
-                                    if (inScenarioChk(ut, 'common-post-cmd')) {
-                                        let new_param = $(SOMETHINGINPUT).val();
-                                        if (0 < new_param.length) {
-                                            /*
-                                                Tips:
-                                                    loginuser attribute must be changed if the config param were 'dbtype'.
-                                                    presentaction.dbtype is a kind of temporary object data to be set into
-                                                    loginuser.dbtype that is switched in postAjaxData().
-                                            */
-                                            if (presentaction.config_name == "dbtype") {
-                                                presentaction.dbtype = new_param;
-                                            }
-
-                                            if ($(CONFIGPANEL).is(":visible")) {
-                                                $(`${CONFIGPANELLIST} span`).filter(".configparams_key").each(function () {
-                                                    let p = $(this);
-                                                    let key = p.text();
-
-                                                    if (0 < key.length && key.endsWith(":")) {
-                                                        key = key.slice(0, -1);
-                                                    }
-
-                                                    if (key == presentaction.config_name) {
-                                                        let k = p.attr("name");
-                                                        let v = "v" + k.substr(1);
-                                                        $(`${CONFIGPANELLIST} span[name='${v}']`).text(new_param);
-                                                        return;
-                                                    }
-                                                });
-                                            }
-
-                                            let data = `{"${presentaction.config_name}":"${new_param}"}`;
-                                            postAjaxData(scenario["function-post-url"][3], data);
-                                        } else {
-                                            m = chooseMsg("config-update-alert-message", "", "");;
+                                for (zzz in config) {
+                                    /*
+                                        Tips:
+                                            in the case of vague inputing, may have multi candidates.
+                                            but after showing them to user, may the right one inputing.
+                                            the first 'if' is maybe not hit, but secondly inputing may kit it.
+                                    */
+                                    if (ut == zzz) {
+                                        /*
+                                            Tips:
+                                                there is possilbility someting in multiscript[] yet.
+                                                needs to clear it before pushing the right one.
+                                        */
+                                        multiscript = [];
+                                        multiscript.push(zzz);
+                                        break;
+                                    } else {
+                                        if (inScenarioChk(ut, zzz, 'config')) {
+                                            let r = countCandidates(ut, zzz, 'config');
+                                            multi += r[0];
+                                            multiscript.push(zzz);
                                         }
                                     }
                                 }
-                            } else {
-                                m = chooseMsg("config-update-error-message", "", "");
-                            }
-                        }
 
-                        /* ①come here first, anyhow */
-                        if (inScenarioChk(ut, 'config-show-cmd')) {
-                            presentaction.cmd = CONFIGCHANGE;
-                            cancelableCmdList.push(presentaction.cmd);
-                            if (presentaction.config_name != null && presentaction.config_data != null) {
-                                showSomethingInputField(true, 0);
-                                m = chooseMsg("config-update-simple-message", "", "");
-                            } else {
-                                m = chooseMsg("config-update-plural-message", "", "");
-                            }
-                        } else if (inScenarioChk(ut, 'get-config-change-history-cmd')) {
-                            getAjaxData(scenario["function-get-url"][2]);
-                        }else if(inScenarioChk(ut, 'get-operation-history-cmd')){
-                            getAjaxData(scenario["function-get-url"][5]);
-                        }
+                                // right message should be displayed if there were any candidates.
+                                let configMsg = "";
+                                if (1 < multi) {
+                                    // pick candidates up
+                                    m = chooseMsg('multi-candidates-msg', "", "");// this 'm' is displayed in chatbox
+                                    let multimsg = chooseMsg("config-update-plural-candidates-message", "", "");// this 'multimsg' is displayed in SOMETHINGMSGPANEL
+                                    for (i = 0; i < multi; i++) {
+                                        multimsg += `'${multiscript[i]}',`;
+                                    }
 
-                        // user management
-                        if ((presentaction.cmd != null && presentaction.cmd == USERMANAGE) || inScenarioChk(ut, 'user-manage-show-profile')) {
-                            m = accountManager(ut);
-                        } else if (inScenarioChk(ut, 'user-manage-add')) {
-                            presentaction.cmd = USERMANAGE;
-                            cancelableCmdList.push(presentaction.cmd);
-                            m = accountManager(ut);
-                        }
-                    } else {
-                        // do not have an authority
-                        if (inScenarioChk(ut, 'user-manage-add') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-delete') || inScenarioChk(ut, 'config-show-cmd')) {
-                            m = chooseMsg("no-authority-js-msg", "", "");
+                                    configMsg = multimsg;
+                                } else {
+                                    // here you are, this,.... and so on
+                                    if (m.length == 0) {
+                                        m = chooseMsg("starting-6a-msg", "", "");
+                                    }
+
+                                    if (multiscript[0] != null && multiscript[0] != undefined) {
+                                        presentaction.config_name = multiscript[0];
+                                        let data = `{"param":"${multiscript[0]}"}`;
+                                        postAjaxData(scenario["function-post-url"][2], data);
+                                    }
+                                }
+
+                                if (0 < configMsg.length) {
+                                    $(SOMETHINGMSGPANELMSG).text(configMsg);
+                                    showSomethingMsgPanel(true);
+                                }
+
+                                if (presentaction.config_name != null) {
+                                    if ($(SOMETHINGINPUT).is(":visible")) {
+                                        if (inScenarioChk(ut, 'common-post-cmd')) {
+                                            let new_param = $(SOMETHINGINPUT).val();
+                                            if (0 < new_param.length) {
+                                                /*
+                                                    Tips:
+                                                        loginuser attribute must be changed if the config param were 'dbtype'.
+                                                        presentaction.dbtype is a kind of temporary object data to be set into
+                                                        loginuser.dbtype that is switched in postAjaxData().
+                                                */
+                                                if (presentaction.config_name == "dbtype") {
+                                                    presentaction.dbtype = new_param;
+                                                }
+
+                                                if ($(CONFIGPANEL).is(":visible")) {
+                                                    $(`${CONFIGPANELLIST} span`).filter(".configparams_key").each(function () {
+                                                        let p = $(this);
+                                                        let key = p.text();
+
+                                                        if (0 < key.length && key.endsWith(":")) {
+                                                            key = key.slice(0, -1);
+                                                        }
+
+                                                        if (key == presentaction.config_name) {
+                                                            let k = p.attr("name");
+                                                            let v = "v" + k.substr(1);
+                                                            $(`${CONFIGPANELLIST} span[name='${v}']`).text(new_param);
+                                                            return;
+                                                        }
+                                                    });
+                                                }
+
+                                                let data = `{"${presentaction.config_name}":"${new_param}"}`;
+                                                postAjaxData(scenario["function-post-url"][3], data);
+                                            } else {
+                                                m = chooseMsg("config-update-alert-message", "", "");;
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    m = chooseMsg("config-update-error-message", "", "");
+                                }
+                            }
+
+                            /* ①come here first, anyhow */
+                            if (inScenarioChk(ut, 'config-show-cmd')) {
+                                presentaction.cmd = CONFIGCHANGE;
+                                cancelableCmdList.push(presentaction.cmd);
+                                if (presentaction.config_name != null && presentaction.config_data != null) {
+                                    showSomethingInputField(true, 0);
+                                    m = chooseMsg("config-update-simple-message", "", "");
+                                } else {
+                                    m = chooseMsg("config-update-plural-message", "", "");
+                                }
+                            } else if (inScenarioChk(ut, 'get-config-change-history-cmd')) {
+                                getAjaxData(scenario["function-get-url"][2]);
+                            } else if (inScenarioChk(ut, 'get-operation-history-cmd')) {
+                                getAjaxData(scenario["function-get-url"][5]);
+                            }
+
+                            // user management
+                            if ((presentaction.cmd != null && presentaction.cmd == USERMANAGE) || inScenarioChk(ut, 'user-manage-show-profile')) {
+                                m = accountManager(ut);
+                            } else if (inScenarioChk(ut, 'user-manage-add')) {
+                                presentaction.cmd = USERMANAGE;
+                                cancelableCmdList.push(presentaction.cmd);
+                                m = accountManager(ut);
+                            }
                         } else {
-                            // normal reply e.g "next?"
+                            // do not have an authority
+                            if (inScenarioChk(ut, 'user-manage-add') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-delete') || inScenarioChk(ut, 'config-show-cmd')) {
+                                m = chooseMsg("no-authority-js-msg", "", "");
+                            } else {
+                                // normal reply e.g "next?"
+                            }
                         }
-                    }
 
-                    break;
-                default:
-                    if (ut == "reload") {
-                        location.reload();
-                    }
-
-                    if (logouttimerId) {
-                        clearTimeout(logouttimerId);
-                    }
-
-                    if (inScenarioChk(ut, "greeting-0r-cmd")) {
-                        // greeting
-                        m = chooseMsg("greeting-1-msg", "", "");
-                        stage = 1;/* into the login stage */
-                    } else {
-                        if (!logoutflg && m.length == 0) {
-                            m = chooseMsg("starting-3-msg", "", "");
-                        } else if (!logoutflg && 0 < m.length) {
-                            m = chooseMsg('greeting-ask-msg', '', '');
+                        break;
+                    default:
+                        if (ut == "reload") {
+                            location.reload();
                         }
-                    }
 
-                    break;
+                        if (logouttimerId) {
+                            clearTimeout(logouttimerId);
+                        }
+
+                        if (inScenarioChk(ut, "greeting-0r-cmd")) {
+                            // greeting
+                            m = chooseMsg("greeting-1-msg", "", "");
+                            stage = 1;/* into the login stage */
+                        } else {
+                            if (!logoutflg && m.length == 0) {
+                                m = chooseMsg("starting-3-msg", "", "");
+                            } else if (!logoutflg && 0 < m.length) {
+                                m = chooseMsg('greeting-ask-msg', '', '');
+                            }
+                        }
+
+                        break;
+                }
             }
-
             // simple ask about using database type
             if (inScenarioChk(ut, 'what-db-use-now-cmd')) {
                 if (loginuser.dbtype != null) {
@@ -1727,12 +1731,12 @@ const isVisibleFunctionPanel = () => {
     return ret;
 }
 /**
-* @function inVisibleConditionPanel
+* @function isVisibleConditionPanel
 * @returns {boolean}  true -> visible, false -> invisible
 * 
 * checking "#condition_panel" is visible or not
 */
-const inVisibleConditionPanel = () => {
+const isVisibleConditionPanel = () => {
     let ret = false;
     if ($(CONDITIONPANEL).is(":visible")) {
         ret = true;
@@ -2001,7 +2005,7 @@ const apiTestAjax = () => {
     }).done(function (result, textStatus, jqXHR) {
         let m = chooseMsg('func-api-test-done-msg', '', '');
         if (checkResult(result)) {
-            if ($.inArray(loginuser.dbtype,["redis","mongodb"]) == -1) {
+            if ($.inArray(loginuser.dbtype, ["redis", "mongodb"]) == -1) {
                 let ret = JSON.stringify(result);
                 $(`${COLUMNSPANEL} [name='apiout']`).addClass("attentionapiinout").text(ret);
             } else {
@@ -2028,9 +2032,9 @@ const apiTestAjax = () => {
                         only mongodb's 'ji' and 'jd' apis have a chance to add and delete into its collection.
                         therefore should be refreshed both the doc and api list if be executed these apis.
                 */
-                if(loginuser.dbtype == "mongodb"){
+                if (loginuser.dbtype == "mongodb") {
                     let p = JSON.parse(data);
-                    if(p.apino.startsWith("jd")){
+                    if (p.apino.startsWith("jd")) {
                         removeColumn();
                         refreshdisplayTablesAndApis();
                     }
@@ -2136,13 +2140,13 @@ const showPreciousPanel = (b) => {
  *  
  * check for json form in mongodb
  */
-const jsonFromCheck = (s) =>{
-    try{
+const jsonFromCheck = (s) => {
+    try {
         js = JSON.parse(s);
-        if(js["j_table"] == null){
+        if (js["j_table"] == null) {
             return false;
         }
-    }catch(e){
+    } catch (e) {
         return false;
     }
 

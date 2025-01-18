@@ -6,10 +6,12 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
 	<link rel="stylesheet" href="jetelina/css/dashboard.css">
 	<link rel="stylesheet" href="jetelina/css/tablelist.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.min.css">
 
 	<script type="text/javascript" src="js/genie/jquery.min.js"></script>
 	<script type="text/javascript" src="js/jquery-ui-1.13.2/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="js/plotly-2.26.0.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="https://cdn.datatables.net/2.2.1/js/dataTables.min.js"></script>
 
 	<link rel="icon" href="jetelina/img/jetelina.ico">
 	<title>Jetelina</title>
@@ -145,7 +147,17 @@
 		</div>
 		<div id="api_access_numbers" style="width:50%;height:50%" hidden>
 			<div><text style="size:a3;color:white;">API Access Numbers</text></div>
-			<div id="api_access_numbers_graph"></div>
+			<div id="api_access_numbers_graph">
+				<table id="app" style="color: aliceblue;">
+					<thead>
+						<tr>
+							<th>apino</th>
+							<th>access numbers</th>
+							<th>data base</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
 		</div>
 		<div id="performance_real" style="width:50%;height:50%" hidden>
 			<div><text style="size:a3;color:white;">SQL Execution Time (sec)</text></div>

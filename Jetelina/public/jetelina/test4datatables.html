@@ -1,0 +1,52 @@
+<html>
+    <head>
+        <script type="text/javascript" src="../js/genie/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/2.2.1/js/dataTables.min.js"></script>
+        <!--script type="text/javascript" src="https://cdn.datatables.net/select/1.6.2/js/dataTables.select.min.js"></script-->
+        <link rel="stylesheet" href="css/dashboard.css">
+        <!--link type="text/css" rel="stylesheet" href="css/tablelist.css"-->
+        <link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.min.css">
+        <!--link rel="stylesheet" href="https://cdn.datatables.net/select/1.6.2/css/select.dataTables.min.css"-->
+    </head>
+    <body>
+        <div style="width: 40%;">
+        <table id="app" style="color: aliceblue;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>City</th>
+                    <th>Age</th>
+                </tr>
+            </thead>
+        </table>
+        </div>
+    </body>
+</html>
+<script type="text/javascript">
+    let tabledata = [
+        [1,"taro","tokyo",12],
+        [2,"jiro","osaka",30],
+        [3,"jiro","osaka",30],
+        [4,"jiro","osaka",30],
+        [5,"jiro","osaka",30],
+        [6,"jiro","osaka",30],
+        [7,"jiro","osaka",30],
+        [8,"jiro","osaka",30],
+        [9,"jiro","osaka",30],
+        [10,"jiro","osaka",30],
+        [11,"jiro","osaka",30],
+        [12,"jiro","osaka",30]
+    ];
+
+    let tableoptions = {
+        "paging":true,
+        "info":false,
+        "searching":true,
+        "order":[3,'desc'],
+        "pagingType": "simple",
+        "data": tabledata
+    }
+
+    $("#app").DataTable(tableoptions);
+</script>
