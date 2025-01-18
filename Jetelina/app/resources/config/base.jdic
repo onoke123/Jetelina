@@ -106,6 +106,12 @@
 ###@jdic 6cond:"Let me your command, if you need"
 @jdic cond-graph-show-msg:"here you are","tatta laan"
 
+# Api Access numbers list controll
+@jdic cond-apiaccessnumberslist-prev-cmd:"prev"
+@jdic cond-apiaccessnumberslist-next-cmd:"next"
+@jdic cond-apiaccessnumberslist-first-cmd:"first","head"
+@jdic cond-apiaccessnumberslist-last-cmd:"last","end","tail"
+
 # Access vs Combination graph 
 @jdic cond-graph-show-cmd:"access numbers","access number","analyzed","report","graph"
 

@@ -330,23 +330,31 @@ const showApiAccessNumbersList = (apiaccesslistdata) =>{
 }
 const apiAccessNumberListController = (cmd) =>{
     let t = $("#app").DataTable();
+    let ret = "";
 
-    if(-1<cmd.indexOf("next")){
+    if(inScenarioChk(cmd,'cond-apiaccessnumberslist-next-cmd')){
         t.page("next").draw(false);
-    }else if(-1<cmd.indexOf("previous") || -1<cmd.indexOf("prev")){
+    }else if(inScenarioChk(cmd,'cond-apiaccessnumberslist-prev-cmd')){
         t.page("previous").draw(false);
-    }else if(-1<cmd.indexOf("last") || -1<cmd.indexOf("end") || -1<cmd.indexOf("tail")){
+    }else if(inScenarioChk(cmd,'cond-apiaccessnumberslist-last-cmd')){
         t.page("last").draw(false);
-    }else if(-1<cmd.indexOf("first") || -1<cmd.indexOf("head")){
+    }else if(inScenarioChk(cmd,'cond-apiaccessnumberslist-first-cmd')){
         t.page("first").draw(false);
+    }else{
+        ret = chooseMsg('waiting-next-msg','','');
     }
 
     if (inScenarioChk(cmd, "general-thanks-cmd")) {
         openConditionPanel(false);
         t.destroy();
-        return chooseMsg('general-thanks-msg',loginuser.lastname,"c");
+        ret = chooseMsg('general-thanks-msg',loginuser.lastname,"c");
     }
-    return "hey hey hey";
+
+    if(!inScenarioChk(ret,'waiting-next-msg')&&!inScenarioChk(ret,'general-thanks-msg')){
+        ret = chooseMsg('cond-graph-show-msg','','');
+    }
+
+    return ret; 
 }
 /**
  * @function viewPerformanceGraph
