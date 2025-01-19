@@ -13,7 +13,7 @@
       isVisiblePerformanceTest() checking "#performance_test" is visible or not
       conditionPanelFunctions(ut)  Exectute some functions ordered by user chat input message
       setGraphData(o,type)  set data to a graph of creating by plot.js. data and 'type' are passed by getAjaxData() in jetelinalib.js 
-      showApiAccessNumbersList(apiaccesslistdata)  show api access number data in DataTable 
+      showApiAccessNumbersList()  show api access number data in DataTable 
       viewPerformanceGraph(apino, data, type)  show 'performance graph'
       viewCombinationGraph(bname, bno, ct, ac)  show the 'combination graph'
 */
@@ -241,7 +241,7 @@ const setGraphData = (o, type) => {
                 // access vs combination
                 let apino = [];
                 let access_count = [];
-                let apiaccesslistdata = [];
+                preferent.apiaccesslistdata = [];
                 let base_table_no = [];
                 let combination_table = [];
                 /* performance
@@ -263,7 +263,7 @@ const setGraphData = (o, type) => {
                                                     access numbers in each api  -> list figure
                                             */
                                             if (va != null) {
-                                                apiaccesslistdata.push([va.apino,va.access_numbers,va.database]);
+                                                preferent.apiaccesslistdata.push([va.apino,va.access_numbers,va.database]);
                                             }
                                         } else if (type == "db") {
                                             /*
@@ -287,7 +287,7 @@ const setGraphData = (o, type) => {
 
                 if (type == "ac") {
                     // list
-                    showApiAccessNumbersList(apiaccesslistdata);
+                    showApiAccessNumbersList();
                 } else {
                     // ploty graph
                     /*
@@ -310,11 +310,10 @@ const setGraphData = (o, type) => {
 }
 /**
  * @function showApiAccessNumbersList
- * @param {Array} apiaccesslistdata
  * 
  * show api access number data in DataTable 
  */
-const showApiAccessNumbersList = (apiaccesslistdata) =>{
+const showApiAccessNumbersList = () =>{
 
     let tableoptions = {
         "paging":true,
@@ -322,7 +321,7 @@ const showApiAccessNumbersList = (apiaccesslistdata) =>{
         "searching":true,
         "order":[1,'desc'],
         "pagingType": "simple",
-        "data": apiaccesslistdata
+        "data": preferent.apiaccesslistdata
     }
 
     $("#app").DataTable(tableoptions);
@@ -340,6 +339,16 @@ const apiAccessNumberListController = (cmd) =>{
         t.page("last").draw(false);
     }else if(inScenarioChk(cmd,'cond-apiaccessnumberslist-first-cmd')){
         t.page("first").draw(false);
+    }else if(inScenarioChk(cmd,'cond-apiaccessnumberslist-search-cmd')){
+        let sar = cmd.split(" ");
+        for( let i=0; i<sar.length; i++){
+            if(sar[i].match(/^ji|^js|^ju|^jd/)){
+                t.search(sar[i]).draw(false);
+            }
+        }
+    }else if(inScenarioChk(cmd,'cond-apiaccessnumberslist-again-cmd')){
+        t.destroy();
+        showApiAccessNumbersList();
     }else{
         ret = chooseMsg('waiting-next-msg','','');
     }

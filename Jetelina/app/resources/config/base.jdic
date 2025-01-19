@@ -111,6 +111,8 @@
 @jdic cond-apiaccessnumberslist-next-cmd:"next"
 @jdic cond-apiaccessnumberslist-first-cmd:"first","head"
 @jdic cond-apiaccessnumberslist-last-cmd:"last","end","tail"
+@jdic cond-apiaccessnumberslist-search-cmd":"search"
+@jdic cond-apiaccessnumberslist-again-cmd":"all"
 
 # Access vs Combination graph 
 @jdic cond-graph-show-cmd:"access numbers","access number","analyzed","report","graph"
