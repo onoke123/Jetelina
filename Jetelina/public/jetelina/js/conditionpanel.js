@@ -14,9 +14,11 @@
       conditionPanelFunctions(ut)  Exectute some functions ordered by user chat input message
       setGraphData(o,type)  set data to a graph of creating by plot.js. data and 'type' are passed by getAjaxData() in jetelinalib.js 
       showApiAccessNumbersList()  show api access number data in DataTable 
+      apiAccessNumbersListController(cmd) api access numbers list controller. paging and search api order by chat box
       viewPerformanceGraph(apino, data, type)  show 'performance graph'
       viewCombinationGraph(bname, bno, ct, ac)  show the 'combination graph'
 */
+const APIACCESSNUMBERSLIST = "#api_access_numbers_list";
 /**
  *  @function openConditionPanel
  *  @param {boolean} true -> visible false -> hide
@@ -324,11 +326,17 @@ const showApiAccessNumbersList = () =>{
         "data": preferent.apiaccesslistdata
     }
 
-    $("#app").DataTable(tableoptions);
-
+    $(APIACCESSNUMBERSLIST).DataTable(tableoptions);
 }
-const apiAccessNumberListController = (cmd) =>{
-    let t = $("#app").DataTable();
+/**
+ * @function apiAccessNumbersListController
+ * @param {string} cmd   typed string in jetelina chat box 
+ * @returns {string} something message
+ * 
+ * api access numbers list controller. paging and search api order by chat box
+ */
+const apiAccessNumbersListController = (cmd) =>{
+    let t = $(APIACCESSNUMBERSLIST).DataTable();
     let ret = "";
 
     if(inScenarioChk(cmd,'cond-apiaccessnumberslist-next-cmd')){

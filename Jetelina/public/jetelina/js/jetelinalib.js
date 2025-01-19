@@ -1161,7 +1161,7 @@ const chatKeyDown = (cmd) => {
 
             if (isVisibleConditionPanel()) {
                 // hijack every command if showing analyzing data
-                m = apiAccessNumberListController(ut);
+                m = apiAccessNumbersListController(ut);
             } else {
                 /*
                     switch 1:between 'before login' and 'at login'
