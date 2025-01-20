@@ -114,6 +114,7 @@ route( "/getcsvdata", FileUploadController.read )
 route("/gettablecombivsaccessrelationdata",GetDataController.getTableCombiVsAccessRelationData)
 # gets sql performance data in condition panel
 route("/getapiaccessdata",GetDataController.getApiAccessData)
+route("/getdbaccessdata",GetDataController.getDBAccessData)
 route("/getperformancedata_real",GetDataController.getPerformanceRealData)
 route("/getperformancedata_test",GetDataController.getPerformanceTestData)
 route("/chkexistimprapifile",GetDataController.checkExistImproveApiFile)

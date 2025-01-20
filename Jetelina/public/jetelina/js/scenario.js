@@ -1,5 +1,5 @@
 let scenario = []; let config = [];
-scenario["analyzed-data-collect-url"]=["/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getapiaccessdata"];
+scenario["analyzed-data-collect-url"]=["/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getapiaccessdata","/getdbaccessdata"];
 scenario["function-post-url"]=["/updateuserdata","/jetelinawords","/getconfigdata","/changeconfigdata","/createapi","/testapi","/chkaccount","/userregist","/getrelatedlist","/switchdb","/ispath","/getcolumns"];
 scenario["function-post-fileupload-url"]=["/postcsvfile"];
 scenario["function-apitest-usr"]=["/apiactions"];
@@ -56,7 +56,8 @@ scenario["cond-apiaccessnumberslist-first-cmd"]=["first","head"];
 scenario["cond-apiaccessnumberslist-last-cmd"]=["last","end","tail"];
 scenario["cond-apiaccessnumberslist-search-cmd"]=["search"];
 scenario["cond-apiaccessnumberslist-again-cmd"]=["all"];
-scenario["cond-graph-show-cmd"]=["access numbers","access number","analyzed","report","graph"];
+scenario["cond-api-access-numbers-list-show-cmd"]=["api access"];
+scenario["cond-db-access-numbers-chart-show-cmd"]=["db access"];
 scenario["cond-sql-performance-graph-show-cmd"]=["your suggestion","suggest","improved performance"];
 scenario["cond-performance-improve-msg"]=["There is an improving suggestion.","Do you wanna know my great idea?","Attention please. I have an idea."];
 scenario["cond-no-suggestion-msg"]=["I do not have any suggestions so far.","No suggestions","I do not give it to you.","Hey, Nothing at all"];

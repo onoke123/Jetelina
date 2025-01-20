@@ -10,6 +10,7 @@ functions
 	logout() logout procedure. update jetelina_user_table.logoutdate.
 	getTableList() calling DBDataController.getTableList() with json mode. the return is json form naturally.
 	getApiAccessData() get JC["apiaccesscountfile"] data file name. this file  contains access cound data in each sql due to sql.txt log file.
+	getDBAccessData() get JC["dbaccesscountfile"] data file name. this file  contains access numbers data in each database due to sql.txt log file.
 	getTableCombiVsAccessRelationData()  get JC["tablecombinationfile"] data file name. this file is analyzed data for table combination.
 	getPerformanceRealData()  get JC["sqlperformancefile"] data file name. this file is analyzed data for real sql execution speed.
 	getPerformanceTestData()  get JC["sqlperformancefile"] data file name but it is '.test' suffix. this file is analyzed data for sql execution speed on test db.
@@ -94,6 +95,43 @@ function getApiAccessData()
 		return false
 	end
 end
+
+"""
+function getDBAccessData()
+
+	get JC["dbaccesscountfile"] data file name. this file  contains access numbers data in each database due to sql.txt log file.
+
+# Arguments
+- return: JC["dbaccesscountfile"] file name with its path
+"""
+function getDBAccessData()
+	f = JFiles.getFileNameFromLogPath(j_config.JC["dbaccesscountfile"])
+
+	if isfile(f)
+		ret = "{\"Jetelina\":["
+
+		try
+			for line in Iterators.reverse(eachline(f))
+				ret = string(ret,line,",")
+			end
+
+			ret = strip(ret,',')
+			return string(ret,"],\"result\":true}")
+		catch err
+			@error "ConfigManager.getDBAccessData() error: $err"
+			return false
+		end
+	else
+		return false
+	end
+
+	if isfile(f)
+		return readchomp(f)
+	else
+		return false
+	end
+end
+
 """
 function getTableCombiVsAccessRelationData()
 

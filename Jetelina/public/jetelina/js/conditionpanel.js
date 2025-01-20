@@ -6,7 +6,7 @@
     This js lib works with dashboard.js and jetelinalib.js for the Condition Panel.
     
     Functions:
-      openConditionPanel(b) visible or hide "#condition_panel"
+      openConditionPanel(b,type) visible or hide "#condition_panel"
       isVisibleAccessCombination() checking "#plot" is visible or not
       isVisibleApiAccessNumbers() checking "#api_access_numbers" is visible or not
       isVisiblePerformanceReal() checking "#performance_real" is visible or not
@@ -19,13 +19,15 @@
       viewCombinationGraph(bname, bno, ct, ac)  show the 'combination graph'
 */
 const APIACCESSNUMBERSLIST = "#api_access_numbers_list";
+const APIACCESSNUMBERSCOMMAND = "apiaccessnumbers";
+const DBACCESSNUMBERSCOMMAND = "dbaccessnumbers";
 /**
  *  @function openConditionPanel
  *  @param {boolean} true -> visible false -> hide
  * 
  *  visible or hide "#condition_panel"
  */
-const openConditionPanel = (b) => {
+const openConditionPanel = (b,type) => {
     if(b){
         $(CONDITIONPANEL).show().animate({
             width: window.innerWidth * 0.8,
@@ -40,7 +42,11 @@ const openConditionPanel = (b) => {
         */
         //    getAjaxData(dataurls[3]);
         //    conditionPanelFunctions("graph");
-        getAjaxData(dataurls[4]);
+        if(type == APIACCESSNUMBERSCOMMAND){
+            getAjaxData(dataurls[4]);
+        }else if(type == DBACCESSNUMBERSCOMMAND){
+            getAjaxData(dataurls[5]);
+        }
     }else{
         $(CONDITIONPANEL).hide();
     }
@@ -125,8 +131,12 @@ const conditionPanelFunctions = (ut) => {
     let cmd = getPreferentPropertie('cmd');
 
     if (cmd == null || cmd.length <= 0) {
-        if (inScenarioChk(ut, 'cond-graph-show-cmd')) {
-            cmd = "graph";
+        if (inScenarioChk(ut, 'cond-api-access-numbers-list-show-cmd')) {
+            cmd = APIACCESSNUMBERSCOMMAND;
+        }else if(inScenarioChk(ut,'cond-db-access-numbers-chart-show-cmd')){
+            cmd = DBACCESSNUMBERSCOMMAND;
+        }
+        /*
         } else if (inScenarioChk(ut, 'cond-sql-performance-graph-show-cmd')) {
             if (isSuggestion) {
                 cmd = "performance";
@@ -136,6 +146,7 @@ const conditionPanelFunctions = (ut) => {
         } else if (inScenarioChk(ut, 'confirmation-sentences-cmd') && isSuggestion) {
             cmd = "performance";
         }
+        */
     }
 
     /*
@@ -145,12 +156,13 @@ const conditionPanelFunctions = (ut) => {
                 'performance: show the result of analyzing sql exection on test db.
                               this cmd can execute in the case of being a suggestion.
     */
-    if (-1 < $.inArray(cmd, ['graph', 'performance'])) {
-        openConditionPanel(true);
+    if (-1 < $.inArray(cmd, [APIACCESSNUMBERSCOMMAND, DBACCESSNUMBERSCOMMAND])) {
+        openConditionPanel(true,cmd);
     }
 
     switch (cmd) {
-        case 'graph':
+        case APIACCESSNUMBERSCOMMAND:
+            /*
             if (isVisiblePerformanceReal()) {
                 $("#performance_real").hide();
             }
@@ -162,6 +174,7 @@ const conditionPanelFunctions = (ut) => {
             if (isVisibleAccessCombination()) {
                 $(CHARTPANEL).hide();
             }
+            */
 
             showSomethingMsgPanel(false);
 
@@ -172,6 +185,18 @@ const conditionPanelFunctions = (ut) => {
 
             m = chooseMsg('cond-graph-show-msg', "", "");
             break;
+        case DBACCESSNUMBERSCOMMAND:
+            showSomethingMsgPanel(false);
+
+            $(CHARTPANEL).show().animate({
+                top: "5%",
+                left: "-5%"
+            }, ANIMATEDURATION);
+
+            m = chooseMsg('cond-graph-show-msg', "", "");
+
+            break;
+        /*
         case 'performance':
             if (isVisibleApiAccessNumbers()) {
                 $("#api_access_numbers").hide();
@@ -180,16 +205,11 @@ const conditionPanelFunctions = (ut) => {
             if (isVisiblePerformanceReal()) {
                 $("#performance_real").hide();
             }
-            /*
-                Tips:
-                    below graphs performance is as same as 'case:graph'.
-            */
-            /*
-             $(CHARTPANEL).show().animate({
+
+            $(CHARTPANEL).show().animate({
                  top: "5%",
                  left: "-5%"
              }, ANIMATEDURATION);
-             */
             $("#performance_test").show().draggable().animate({
                 top: "20%", //-50%",
                 left: "20%" //"50%"
@@ -201,6 +221,7 @@ const conditionPanelFunctions = (ut) => {
         case 'no_suggestion':
             m = chooseMsg('cond-no-suggestion-msg', "", "");
             break;
+        */
         default:
             break;
     }
@@ -243,6 +264,12 @@ const setGraphData = (o, type) => {
                 // access vs combination
                 let apino = [];
                 let access_count = [];
+                let dbaccessnumbers_chart_values = [];
+                let dbaccessnumbers_chart_labels = [];
+                /*
+                    Tips:
+                        api access data list has possibility to redraw sometimes, therefore the data should be holded.
+                */
                 preferent.apiaccesslistdata = [];
                 let base_table_no = [];
                 let combination_table = [];
@@ -272,6 +299,10 @@ const setGraphData = (o, type) => {
                                                 Tips:
                                                     access numbers in each database -> pie chart
                                             */
+                                            if(va != null){
+                                                dbaccessnumbers_chart_labels.push(va.database);
+                                                dbaccessnumbers_chart_values.push(va.access_numbers);
+                                            }
                                         } else if (type == "sp") {
                                             /*
                                                 Tips:
@@ -298,7 +329,9 @@ const setGraphData = (o, type) => {
                     */
                     setTimeout(function () {
                         if (type == "db") {
-                            viewPerformanceGraph(apino, access_count, type);
+                            let d = [dbaccessnumbers_chart_labels,dbaccessnumbers_chart_values];
+                            viewPlotlyChart(d,type);
+                            //viewPerformanceGraph(apino, access_count, type);
                         } else if (type == "sp") {
                             viewPerformanceGraph(apino, mean, type);
                         }
@@ -362,7 +395,7 @@ const apiAccessNumbersListController = (cmd) =>{
     }
 
     if (inScenarioChk(cmd, "general-thanks-cmd")) {
-        openConditionPanel(false);
+        openConditionPanel(false,cmd);
         t.destroy();
         ret = chooseMsg('general-thanks-msg',loginuser.lastname,"c");
     }
@@ -373,6 +406,88 @@ const apiAccessNumbersListController = (cmd) =>{
 
     return ret; 
 }
+/**
+ * @function viewPlotlyChart
+ * @param {Float64Array} d  array of any data 
+ * @param {string} type  'db'-> database access numbers
+ *
+ * show plotly chart 
+ */
+const viewPlotlyChart = (basedata, type) =>{
+    let data;
+    let layout;
+
+    if (type == "db") {
+        data = [
+            {
+                labels: basedata[0],
+                values: basedata[1],
+                type: 'pie'
+            }
+        ];
+
+        layout = {
+            height: 400,
+            width:500
+        };
+    } else {
+        let real_data =
+        {
+            opacity: 0.5,
+            type: 'scatter',
+            text: apino,
+            x: apino,
+            y: realPerformanceData,
+            mode: 'markers',
+            name: 'real sql',
+            marker: {
+                color: 'rgb(255,255,255)',
+                size: 20
+            }
+        };
+    }
+
+/*
+    let paper_bgc = 'rgb(112,128,144)';
+    let font_col = 'rgb(255,255,255)';
+    if (type == 'test') {
+        paper_bgc = 'rgb(0,129,104)';//'rgb(240,230,140)'
+        //        font_col = 'rgb(255,0,0)';
+    }
+
+    let title = "exection speed";
+    if (type == "access") {
+        title = "access numbers";
+    }
+
+    let layout = {
+        plot_bgcolor: 'rgb(0,0,0)',
+        paper_bgcolor: paper_bgc,
+        xaxis: {
+            backgroundcolor: 'rgb(255,0,0)',
+            showbackground: false,
+            gridcolor: 'rgb(0,153,153)',
+            color: font_col,
+            size: 20,
+            title: 'api no'
+        },
+        yaxis: {
+            backgroundcolor: 'rgb(255,0,0)',
+            showbackground: false,
+            gridcolor: 'rgb(0,153,153)',
+            color: font_col,
+            size: 20,
+            title: title
+        }
+    };
+*/
+    if (type == "db") {
+        Plotly.react('db_access_numbers_chart', data, layout);
+    } else {
+        Plotly.newPlot('performance_test_graph', data, layout);
+    }
+}
+
 /**
  * @function viewPerformanceGraph
  * @param {string} apino 

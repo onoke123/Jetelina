@@ -489,6 +489,9 @@ const getAjaxData = (url) => {
                     } else if (url == dataurls[4]) {
                         // api access
                         type = "ac";
+                    }else if(url == dataurls[5]){
+                        // db access
+                        type = "db";
                     }
                     /*
                         Tips:

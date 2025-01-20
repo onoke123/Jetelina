@@ -2,7 +2,7 @@
 # special configuration parameter 
 #
 # urls for condition panel 
-@jdic analyzed-data-collect-url:"/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getapiaccessdata"
+@jdic analyzed-data-collect-url:"/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getapiaccessdata","/getdbaccessdata"
 
 # post urls for function panel 
 @jdic function-post-url:"/updateuserdata","/jetelinawords","/getconfigdata","/changeconfigdata","/createapi","/testapi","/chkaccount","/userregist","/getrelatedlist","/switchdb","/ispath","/getcolumns"
@@ -111,11 +111,12 @@
 @jdic cond-apiaccessnumberslist-next-cmd:"next"
 @jdic cond-apiaccessnumberslist-first-cmd:"first","head"
 @jdic cond-apiaccessnumberslist-last-cmd:"last","end","tail"
-@jdic cond-apiaccessnumberslist-search-cmd":"search"
-@jdic cond-apiaccessnumberslist-again-cmd":"all"
+@jdic cond-apiaccessnumberslist-search-cmd:"search"
+@jdic cond-apiaccessnumberslist-again-cmd:"all"
 
-# Access vs Combination graph 
-@jdic cond-graph-show-cmd:"access numbers","access number","analyzed","report","graph"
+# Access Numbers list/chart 
+@jdic cond-api-access-numbers-list-show-cmd:"api access"
+@jdic cond-db-access-numbers-chart-show-cmd:"db access"
 
 # SQL Execution Time graph
 @jdic cond-sql-performance-graph-show-cmd:"your suggestion","suggest","improved performance"
