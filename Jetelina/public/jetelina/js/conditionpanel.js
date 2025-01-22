@@ -177,22 +177,25 @@ const conditionPanelFunctions = (ut) => {
             */
 
             showSomethingMsgPanel(false);
-
+            $("#api_access_numbers").show().draggable();
+                /*
             $("#api_access_numbers").show().draggable().animate({
                 top: "20%",
                 left: "20%"
             }, ANIMATEDURATION).draggable('disable');
-
-            m = chooseMsg('cond-graph-show-msg', "", "");
-            break;
-        case DBACCESSNUMBERSCOMMAND:
+*/
+//            m = chooseMsg('cond-graph-show-msg', "", "");
+//            break;
+//        case DBACCESSNUMBERSCOMMAND:
             showSomethingMsgPanel(false);
 
+            $(CHARTPANEL).show().draggable();
+                /*
             $(CHARTPANEL).show().animate({
                 top: "5%",
                 left: "-5%"
             }, ANIMATEDURATION);
-
+        */
             m = chooseMsg('cond-graph-show-msg', "", "");
 
             break;

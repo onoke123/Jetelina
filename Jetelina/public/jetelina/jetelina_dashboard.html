@@ -140,12 +140,8 @@
 	<!--
             condition panel
     -->
-	<div id="condition_panel" class="functionpanel-parts commonpanel squarepanel" hidden>
-		<div id="plot" style="width:50%;height:50%" hidden>
-			<div><text style="size:a3;color:lightgreen;">Access vs Combination</text></div>
-			<div id="plot_graph"></div>
-		</div>
-		<div id="api_access_numbers" style="width:50%;height:50%" hidden>
+	<div id="condition_panel" class="functionpanel-parts commonpanel squarepanel" style="display:inline-block;" hidden>
+		<div id="api_access_numbers" style="width:50%;height:50%;top:5%" class="functionpanel-parts commonpanel squarepanel" hidden>
 			<div><text style="size:a3;color:white;">API Access Numbers</text></div>
 			<div id="api_access_numbers_graph">
 				<table id="api_access_numbers_list" style="color: aliceblue;">
@@ -159,6 +155,11 @@
 				</table>
 			</div>
 		</div>
+		<div id="plot" style="width:50%;height:50%;top:50%" class="functionpanel-parts commonpanel squarepanel" hidden>
+			<div><text style="size:a3;color:lightgreen;">Rate of DataBase access numbers</text></div>
+			<div id="plot_graph"></div>
+		</div>
+
 		<div id="performance_real" style="width:50%;height:50%" hidden>
 			<div><text style="size:a3;color:white;">SQL Execution Time (sec)</text></div>
 			<div id="performance_real_graph"></div>
