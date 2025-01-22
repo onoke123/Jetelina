@@ -428,7 +428,14 @@ const viewPlotlyChart = (basedata, type) =>{
 
         layout = {
             height: 400,
-            width:500
+            width:500,
+            font:{
+                color:' #f1ef46',
+                style: 'italic',
+                size: 10,
+                shadow: '0 0 10px rgb(193, 206, 194), 0 0 15px #f1ef46'
+            },
+            paper_bgcolor: 'rgba(109, 98, 226, 0.15)'
         };
     } else {
         let real_data =
@@ -482,7 +489,8 @@ const viewPlotlyChart = (basedata, type) =>{
     };
 */
     if (type == "db") {
-        Plotly.react('db_access_numbers_chart', data, layout);
+//        Plotly.react('db_access_numbers_chart', data, layout);
+        Plotly.react('plot_graph', data, layout);
     } else {
         Plotly.newPlot('performance_test_graph', data, layout);
     }
