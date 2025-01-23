@@ -12,7 +12,7 @@ const ANIMATEDSCROLLING = 2000;// message scrolling duration in box
 const IGNORE = "ignore"; // when jetelina message is nothing
 const JETELINAPANEL ="#jetelina_panel"; 
 const FUNCTIONPANEL = "#function_panel";
-const CONDITIONPANEL = "#condition_panel";
+//const STATSPANEL = "#condition_panel";
 const CONTAINERPANEL = "#container";
 const RELATEDTABLESAPIS = "#right_panel";
 const COLUMNSPANEL = "#columns";
@@ -61,11 +61,11 @@ $(window).load(function () {
   /**
    *   manipulate condition panel
    */
-  $(CONDITIONPANEL).hide().draggable();
+//  $(STATSPANEL).hide().draggable();
   $(CHARTPANEL).mouseover(function () {
-    $(CONDITIONPANEL).draggable("disable");
+//    $(STATSPANEL).draggable("disable");
   }).mouseout(function () {
-    $(CONDITIONPANEL).draggable("enable");
+//    $(STATSPANEL).draggable("enable");
   });
   /**
    * switch active/inactive panel by focusting

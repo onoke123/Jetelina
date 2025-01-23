@@ -6,12 +6,12 @@
     This js lib works with dashboard.js and jetelinalib.js for the Condition Panel.
     
     Functions:
-      openConditionPanel(b,type) visible or hide "#condition_panel"
+      openStatsPanel(b,type) visible or hide "#condition_panel"
       isVisibleAccessCombination() checking "#plot" is visible or not
       isVisibleApiAccessNumbers() checking "#api_access_numbers" is visible or not
       isVisiblePerformanceReal() checking "#performance_real" is visible or not
       isVisiblePerformanceTest() checking "#performance_test" is visible or not
-      conditionPanelFunctions(ut)  Exectute some functions ordered by user chat input message
+      statsPanelFunctions(ut)  Exectute some functions ordered by user chat input message
       setGraphData(o,type)  set data to a graph of creating by plot.js. data and 'type' are passed by getAjaxData() in jetelinalib.js 
       showApiAccessNumbersList()  show api access number data in DataTable 
       apiAccessNumbersListController(cmd) api access numbers list controller. paging and search api order by chat box
@@ -22,33 +22,33 @@ const APIACCESSNUMBERSLIST = "#api_access_numbers_list";
 const APIACCESSNUMBERSCOMMAND = "apiaccessnumbers";
 const DBACCESSNUMBERSCOMMAND = "dbaccessnumbers";
 /**
- *  @function openConditionPanel
+ *  @function openStatsPanel
  *  @param {boolean} true -> visible false -> hide
  * 
  *  visible or hide "#condition_panel"
  */
-const openConditionPanel = (b,type) => {
+const openStatsPanel = (b,type) => {
     if(b){
-        $(CONDITIONPANEL).show().animate({
+/*        $(STATSPANEL).show().animate({
             width: window.innerWidth * 0.8,
             height: window.innerHeight * 0.8,
             top: "10%",
             left: "10%"
         }, ANIMATEDURATION);
-
+*/
         const dataurls = scenario['analyzed-data-collect-url'];
         /*
             check for existing Jetelina's suggestion
         */
         //    getAjaxData(dataurls[3]);
-        //    conditionPanelFunctions("graph");
+        //    statsPanelFunctions("graph");
         if(type == APIACCESSNUMBERSCOMMAND){
             getAjaxData(dataurls[4]);
         }else if(type == DBACCESSNUMBERSCOMMAND){
             getAjaxData(dataurls[5]);
         }
     }else{
-        $(CONDITIONPANEL).hide();
+//        $(STATSPANEL).hide();
     }
 }
 /**
@@ -108,13 +108,13 @@ const isVisiblePerformanceTest = () => {
     return ret;
 }
 /**
- * @function conditionPanelFunctions
+ * @function statsPanelFunctions
  * @param {string} ut  chat message by user 
  * @returns {string}  answer chat message by Jetelina
  * 
  * Exectute some functions ordered by user chat input message
  */
-const conditionPanelFunctions = (ut) => {
+const statsPanelFunctions = (ut) => {
     let m = IGNORE;
 
     if (presentaction == null || presentaction.length == 0) {
@@ -157,7 +157,7 @@ const conditionPanelFunctions = (ut) => {
                               this cmd can execute in the case of being a suggestion.
     */
     if (-1 < $.inArray(cmd, [APIACCESSNUMBERSCOMMAND, DBACCESSNUMBERSCOMMAND])) {
-        openConditionPanel(true,cmd);
+        openStatsPanel(true,cmd);
     }
 
     switch (cmd) {
@@ -398,7 +398,7 @@ const apiAccessNumbersListController = (cmd) =>{
     }
 
     if (inScenarioChk(cmd, "general-thanks-cmd")) {
-        openConditionPanel(false,cmd);
+        openStatsPanel(false,cmd);
         t.destroy();
         ret = chooseMsg('general-thanks-msg',loginuser.lastname,"c");
     }

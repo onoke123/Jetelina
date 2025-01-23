@@ -101,8 +101,8 @@ $(document).on({
  * hide "#condition_panel" at the same time if it is visible
  */
 const openFunctionPanel = () => {
-  if (isVisibleConditionPanel()) {
-    $(CONDITIONPANEL).hide();
+  if (isVisibleStatsPanel()) {
+//    $(STATSPANEL).hide();
   }
 
   $(FUNCTIONPANEL).show().animate({
@@ -322,7 +322,7 @@ const cleanupContainers = (s) => {
     $(`${CONTAINERPANEL} span, ${COLUMNSPANEL} span`).filter(".apisql").remove();
   } else {
     showGenelicPanel(false);
-    $(`${CONTAINERPANEL} span,${CONDITIONPANEL} span`).remove();
+//    $(`${CONTAINERPANEL} span,${STATSPANEL} span`).remove();
   }
 }
 /**

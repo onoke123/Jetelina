@@ -2,7 +2,7 @@
     JS library for Jetelina common library
     @author Ono Keiji
 
-    This js lib works with dashboard.js, functionpanel.js and conditionpanel.js.
+    This js lib works with dashboard.js, functionpanel.js and statspanel.js.
     
 
     Functions list:
@@ -27,7 +27,7 @@
       inScenarioChk(s,sc,type) check if user input string is in the ordered scenario
       countCandidates(s,sc,type) count config/scenario candidates
       isVisibleFunctionPanel() check the function panel is visible or not
-      isVisibleConditionPanel() check the condition panel is visible or not
+      isVisibleStatsPanel() check the condition panel is visible or not
       isVisibleSomethingMsgPanel() checking "#something_msg" is visible or not
       showSomethingInputField(b,type) "#something_input_field" show or hide
       showSomethingMsgPanel(b) "#something_msg" show or hide
@@ -496,7 +496,7 @@ const getAjaxData = (url) => {
                     /*
                         Tips:
                             drow graphic in condition panel.
-                            this setGraphDta() function is defined in conditionpanel.js.
+                            this setGraphDta() function is defined in statspanel.js.
                     */
                     let acVscom = setGraphData(result, type);
 
@@ -1162,7 +1162,7 @@ const chatKeyDown = (cmd) => {
                 $(CHATBOXYOURTELL).text(ut);
             }
 
-            if (isVisibleConditionPanel()) {
+            if (isVisibleStatsPanel()) {
                 // hijack every command if showing analyzing data
                 m = apiAccessNumbersListController(ut);
             } else {
@@ -1246,7 +1246,7 @@ const chatKeyDown = (cmd) => {
                             if (m.length == 0 || m == IGNORE) {
                                 // if 'ut' is a command for driving condition
                                 // this routine is for ver3 :)
-                                m = conditionPanelFunctions(ut);
+                                m = statsPanelFunctions(ut);
                             }
                         }
 
@@ -1541,7 +1541,7 @@ const logout = () => {
     }, ANIMATEDURATION);
 
     $(FUNCTIONPANEL).hide();
-    $(CONDITIONPANEL).hide();
+//    $(STATSPANEL).hide();
     $(GENELICPANEL).hide();
     $(GENELICPANELINPUT).val('');
     $(SOMETHINGINPUT).val('');
@@ -1734,16 +1734,16 @@ const isVisibleFunctionPanel = () => {
     return ret;
 }
 /**
-* @function isVisibleConditionPanel
+* @function isVisibleStatsPanel
 * @returns {boolean}  true -> visible, false -> invisible
 * 
 * checking "#condition_panel" is visible or not
 */
-const isVisibleConditionPanel = () => {
+const isVisibleStatsPanel = () => {
     let ret = false;
-    if ($(CONDITIONPANEL).is(":visible")) {
-        ret = true;
-    }
+//    if ($(STATSPANEL).is(":visible")) {
+//        ret = true;
+//    }
 
     return ret;
 }
