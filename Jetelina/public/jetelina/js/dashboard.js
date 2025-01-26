@@ -12,12 +12,13 @@ const ANIMATEDSCROLLING = 2000;// message scrolling duration in box
 const IGNORE = "ignore"; // when jetelina message is nothing
 const JETELINAPANEL ="#jetelina_panel"; 
 const FUNCTIONPANEL = "#function_panel";
-//const STATSPANEL = "#condition_panel";
 const CONTAINERPANEL = "#container";
 const RELATEDTABLESAPIS = "#right_panel";
 const COLUMNSPANEL = "#columns";
 const JETELINACHATBOX = `${JETELINAPANEL} [name='chat_input']`;
 const CHARTPANEL = "#plot";
+const APIACCESSNUMBERS = "#api_access_numbers";
+
 let stage = 0;// action stage number ex. 1:before login  'login':at login
 let preferent = {};// contains precedence commands. ex. droptable, deliteApi...
 let presentaction = {};// contains the present function, mode etc  ex. functionpanel -> table

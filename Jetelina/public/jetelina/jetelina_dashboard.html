@@ -19,14 +19,16 @@
 
 <body>
 	<div id="thxfavicon">
-		<text style="color:lightgreen">thank you for the favicon by </text><a href="https://www.freepik.com/" target="_blank" rel="noreferrer noopener">freepik</a>
+		<text style="color:lightgreen">thank you for the favicon by </text><a href="https://www.freepik.com/"
+			target="_blank" rel="noreferrer noopener">freepik</a>
 	</div>
 	<!--
 		Jetelina initialize page. only one time using, maybe. :)
 	-->
-	<div id="initialize" style="left:20%;top:20%;" class="functionpanel-parts commonpanel box_text initializepanel" hidden>
-			<div name="initialalert" class="initial_alert_text"></div>
-			<pre>
+	<div id="initialize" style="left:20%;top:20%;" class="functionpanel-parts commonpanel box_text initializepanel"
+		hidden>
+		<div name="initialalert" class="initial_alert_text"></div>
+		<pre>
 			Welcome to Jetelina.
 			
 			You dive into the new web development world. I bet this provide you incredible comfortable environment.
@@ -96,14 +98,16 @@
 			</form>
 		</div>
 
-		<div id="left_panel" style="width:16%;height:80%" class="functionpanel-parts commonpanel squarepanel right_left_panel_scroll">
+		<div id="left_panel" style="width:16%;height:80%"
+			class="functionpanel-parts commonpanel squarepanel right_left_panel_scroll">
 			<label id="table_list_title">Table List</label>
 			<br><br>
 			<div id="table_container"></div>
 			<!--div id="api_container" hidden></div-->
 		</div>
 
-		<div id="right_panel" style="width:16%;height:81%" class="functionpanel-parts commonpanel squarepanel right_left_panel_scroll">
+		<div id="right_panel" style="width:16%;height:81%"
+			class="functionpanel-parts commonpanel squarepanel right_left_panel_scroll">
 			<label id="api_list_title">API List</label>
 			<br><br>
 			<div id="api_container"></div>
@@ -120,17 +124,18 @@
 			<text></text>
 		</div>
 		<!-- selected columns list area -->
-		<div id="container" style="width:59%;height:16%"
-			class="functionpanel-parts commonpanel squarepanel itempanel">
+		<div id="container" style="width:59%;height:16%" class="functionpanel-parts commonpanel squarepanel itempanel">
 			<div id="genelic_panel" hidden>
 				<text name="genelic_text" class="box_text"></text>
 				<textarea name="genelic_input" class="user-input"></textarea>
 				<!--input type="text" name="genelic_input" class="user-input"></input-->
-				<p class="jetelina_subquery_note">writing the sub query is on your own responsibility. I'll check it simply.:)</p>
+				<p class="jetelina_subquery_note">writing the sub query is on your own responsibility. I'll check it
+					simply.:)</p>
 			</div>
 		</div>
 		<!-- desplya the API test result area-->
-		<div id="apitest" style="width:60%;height:15%;top:80%;left:20%;" class="functionpanel-parts commonpanel squarepanel" hidden>
+		<div id="apitest" style="width:60%;height:15%;top:80%;left:20%;"
+			class="functionpanel-parts commonpanel squarepanel" hidden>
 			<div name="api-test-msg">
 			</div>
 			<div name="api-test-data" style="height: 50%;" class="msg_scroll">
@@ -140,40 +145,38 @@
 	<!--
             condition panel
     -->
-	<div id="condition_panel" class="functionpanel-parts commonpanel squarepanel" style="display:inline-block;" hidden>
+	<div id="api_access_numbers" style="top:20%;left:10%" class="functionpanel-parts commonpanel squarepanel" hidden>
+		<div><text style="size:a3;color:white;">API Access Numbers</text></div>
+		<div id="api_access_numbers_graph">
+			<table id="api_access_numbers_list" style="color: aliceblue;">
+				<thead>
+					<tr>
+						<th>apino</th>
+						<th>access numbers</th>
+						<th>data base</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
 	</div>
-		<div id="api_access_numbers" style="width:50%;height:50%;top:5%" class="functionpanel-parts commonpanel squarepanel" hidden>
-			<div><text style="size:a3;color:white;">API Access Numbers</text></div>
-			<div id="api_access_numbers_graph">
-				<table id="api_access_numbers_list" style="color: aliceblue;">
-					<thead>
-						<tr>
-							<th>apino</th>
-							<th>access numbers</th>
-							<th>data base</th>
-						</tr>
-					</thead>
-				</table>
-			</div>
-		</div>
-		<div id="plot" style="width:50%;height:50%;top:50%" class="functionpanel-parts commonpanel squarepanel" hidden>
-			<div><text style="size:a3;color:lightgreen;">Rate of DataBase access numbers</text></div>
-			<div id="plot_graph"></div>
-		</div>
+	<div id="plot" style="top:20%;left:50%" class="functionpanel-parts commonpanel squarepanel" hidden>
+		<div><text style="size:a3;color:lightgreen;">Rate of DataBase access numbers</text></div>
+		<div id="plot_graph"></div>
+	</div>
 
-		<div id="performance_real" style="width:50%;height:50%" hidden>
-			<div><text style="size:a3;color:white;">SQL Execution Time (sec)</text></div>
-			<div id="performance_real_graph"></div>
-		</div>
-		<div id="performance_test" style="width:30%;height:30%" hidden>
-			<div><text style="size:a3;color:red;">TEST SQL Execution Time (sec)</text></div>
-			<div id="performance_test_graph"></div>
-		</div>
-	<!--/div-->
+	<div id="performance_real" style="width:50%;height:50%" hidden>
+		<div><text style="size:a3;color:white;">SQL Execution Time (sec)</text></div>
+		<div id="performance_real_graph"></div>
+	</div>
+	<div id="performance_test" style="width:30%;height:30%" hidden>
+		<div><text style="size:a3;color:red;">TEST SQL Execution Time (sec)</text></div>
+		<div id="performance_test_graph"></div>
+	</div>
 	<!--
 			configuration panel
 	-->
-	<div id="config_panel" style="width:30%;height:30%;top:30%;left:40%;" class="commonpanel squarepanel genelic_panel msg_scroll" hidden>
+	<div id="config_panel" style="width:30%;height:30%;top:30%;left:40%;"
+		class="commonpanel squarepanel genelic_panel msg_scroll" hidden>
 		<label>Server Configuration</label>
 		<br><br>
 		<div name="config_list">
@@ -183,7 +186,7 @@
 			something message panels
 	-->
 	<div id="jetelina_teach_you_smg" class="commonpanel squarepanel genelic_panel jetelina_teach_you" hidden>
-		<div name="precious_word" style="text-align: left;" class="box_text"></div>		
+		<div name="precious_word" style="text-align: left;" class="box_text"></div>
 	</div>
 	<div id="something_msg" class="commonpanel squarepanel genelic_panel something_msg_def msg_scroll" hidden>
 		<text name="jetelina_message" class="jetelina_message"></text>
@@ -217,7 +220,8 @@
 			This is my current skills.<br>
 			<table name="page1" style="margin:auto;text-align:left;">
 				<tr>
-					<td><pre>
+					<td>
+						<pre>
 	Hi, I am Jetelina that is your helper to create database tables and WebAPIs that are related with the created database.
 	The databases that I can manage so far are PostgreSql, MySql and Redis. Redis is experimental implementation for me, BECAUSE
 	I do not know its use cases yet, indeed. :p
@@ -236,15 +240,19 @@
 		Oops, I must tell you something before you use me.
 		You command me every your order through our chatbox. Some functions are able to be used by a mouse, but INDEED you will know
 		typing is enough to us. Mouse manipulation is old fashion. JUST talk to me. :)
-					</pre></td>
+					</pre>
+					</td>
 				</tr>
 				<tr>
-					<td style="color: antiquewhite;"><pre>
+					<td style="color: antiquewhite;">
+						<pre>
 	These are a little bit details, but you can see more detail in jetelina.org site.
-					</pre></td>
+					</pre>
+					</td>
 				</tr>
 				<tr>
-					<td><pre>
+					<td>
+						<pre>
 	■Adding using data base
 		You maybe will want to use additional database, I mean PostgreSql + Redis, MySql + Redis, PostgreSql + MySql + Redis.
 		This is my proudly skill. :)
@@ -256,17 +264,19 @@
 		your account in my chatbox.
 		After you enter in me, you can logout whenever by typing 'logout',,'exit','bye' and so on, but I
 		am pleasure if you type 'have a nice day'.
-					</pre></td>
+					</pre>
+					</td>
 				</tr>
 				<tr>
 					<td style="text-align:center;">
-						Page <a href="#" onclick="page(2)">2</a> <a href="#" onclick="page(3)">3</a> 
+						Page <a href="#" onclick="page(2)">2</a> <a href="#" onclick="page(3)">3</a>
 					</td>
 				</tr>
 			</table>
 			<table name="page2" style="margin:auto;text-align:left;" hidden>
 				<tr>
-					<td><pre>
+					<td>
+						<pre>
 	■Upload csv file
 		Your uploading csv file is to be a origin of created database table.
 		The created table is displayed after uploading it.
@@ -281,10 +291,12 @@
 	Attention, the headers (name,sex..) are to be column name, thus you can not use '-' and so on, these are not 
 	allowed to use in there depend on a database. In fact, the column name will be named with the file name + header name,
 	for example, ftest_name, ftest_sex... in above example. Because I wish every columns are uniquness.
-					</pre></td>
+					</pre>
+					</td>
 				</tr>
 				<tr>
-					<td><pre>
+					<td>
+						<pre>
 	■WebAPIs
 		Some WebAPIs are created automatically by creating a table, I mean uploading csv file.
 		These are displayed on the right side panel. They have a meaning full name,
@@ -310,28 +322,30 @@
 		6. the test result is displayed as same as the 'OUT' I/F format, check it
 		7. to create api, simply type 'create api', 
 					</pre>
-					<pre style="color: rgb(230, 89, 8);">
+						<pre style="color: rgb(230, 89, 8);">
 			BUT ATTENTION, .... to be the next page :)   		
-					</pre></td>
+					</pre>
+					</td>
 				</tr>
 				<tr>
 					<td style="text-align:center;">
-						Page <a href="#" onclick="page(1)">1</a> <a href="#" onclick="page(3)">3</a> 
+						Page <a href="#" onclick="page(1)">1</a> <a href="#" onclick="page(3)">3</a>
 					</td>
 				</tr>
 			</table>
 			<table name="page3" style="margin:auto;text-align:left;" hidden>
-					<tr>
-						<td><pre>
+				<tr>
+					<td>
+						<pre>
 							</pre>
-							<pre style="color: rgb(230, 89, 8);">
+						<pre style="color: rgb(230, 89, 8);">
 		in the case of you set the subquery, its variable parameter must enclosed with '{}', and the rule is following the database 
 		I mean, if you tested the api with 'where ftest.ftest_age < 30', and you wanna '30' to be a variable parameter, you must change it {age},
 				where ftest.ftest_age < 30    →    where ftest.ftest_age < {age}     ← CAUTION: {age} because 'age' is integer
 			in the case of character, for example 'name'
 				where ftest.ftest_name = 'AAA' →  where ftest.ftest_name = '{name}'     ← CAUTION: '{name}' because 'name' is character
 							</pre>
-							<pre>
+						<pre>
 		To test the created API,
 			1. select API's name by typing ..... as same as above 1
 			2. type 'test api' or 'check api' and so on
@@ -339,10 +353,12 @@
 			4. I say to you "..type 'boom'..." or something after all params are set, then you type it
 			5. the result is displayed in 'OUT' I/F, confirm it
 			6. finally you say 'thank you', 'great'... to me, OK? :)
-							</pre></td>
-					</tr>
-					<tr>
-						<td><pre>
+							</pre>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<pre>
 	■Managing database table and WebAPIs
 		You may wonder how to drop a table and delete api, it's very simple as same as every manipulations.
 		1. type 'drop table ftest','ftest' is the table name, and 'delete api js100', 'js100' is the api name
@@ -357,13 +373,14 @@
 
 		
 		Hey, that all. You see what db are you use present on my upper screen.
-						</pre></td>
-					</tr>
-					<tr>
-						<td style="text-align:center;">
-							Page <a href="#" onclick="page(1)">1</a> <a href="#" onclick="page(2)">2</a> 
-						</td>
-					</tr>
+						</pre>
+					</td>
+				</tr>
+				<tr>
+					<td style="text-align:center;">
+						Page <a href="#" onclick="page(1)">1</a> <a href="#" onclick="page(2)">2</a>
+					</td>
+				</tr>
 			</table>
 		</div>
 	</div>
@@ -399,13 +416,14 @@
 <script type="text/javascript" src="jetelina/js/statspanel.js"></script>
 <script type="text/javascript" src="jetelina/js/accountpanel.js"></script>
 <script>
-	const page = (n) =>{
-		switch (n){
-		case 1: $("#guidance [name='page1']").show();$("#guidance [name='page2'],[name='page3']").hide(); break;
-		case 2: $("#guidance [name='page2']").show();$("#guidance [name='page1'],[name='page3']").hide(); break;
-		case 3: $("#guidance [name='page3']").show();$("#guidance [name='page1'],[name='page2']").hide(); break;
-		default:break;
+	const page = (n) => {
+		switch (n) {
+			case 1: $("#guidance [name='page1']").show(); $("#guidance [name='page2'],[name='page3']").hide(); break;
+			case 2: $("#guidance [name='page2']").show(); $("#guidance [name='page1'],[name='page3']").hide(); break;
+			case 3: $("#guidance [name='page3']").show(); $("#guidance [name='page1'],[name='page2']").hide(); break;
+			default: break;
 		}
 	}
 </script>
+
 </html>

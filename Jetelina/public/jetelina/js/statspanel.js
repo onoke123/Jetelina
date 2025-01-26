@@ -6,9 +6,9 @@
     This js lib works with dashboard.js and jetelinalib.js for the Condition Panel.
     
     Functions:
-      openStatsPanel(b,type) visible or hide "#condition_panel"
-      isVisibleAccessCombination() checking "#plot" is visible or not
-      isVisibleApiAccessNumbers() checking "#api_access_numbers" is visible or not
+      openStatsPanel(b,type) visible or hide "APIACCESSNUMBERS" an "#plot"
+      isVisibleChartPanel() checking "#plot" is visible or not
+      isVisibleApiAccessNumbers() checking "APIACCESSNUMBERS" is visible or not
       isVisiblePerformanceReal() checking "#performance_real" is visible or not
       isVisiblePerformanceTest() checking "#performance_test" is visible or not
       statsPanelFunctions(ut)  Exectute some functions ordered by user chat input message
@@ -25,53 +25,46 @@ const DBACCESSNUMBERSCOMMAND = "dbaccessnumbers";
  *  @function openStatsPanel
  *  @param {boolean} true -> visible false -> hide
  * 
- *  visible or hide "#condition_panel"
+ *  visible or hide "APIACCESSNUMBERS" and "#plot"
  */
-const openStatsPanel = (b,type) => {
-    if(b){
-/*        $(STATSPANEL).show().animate({
-            width: window.innerWidth * 0.8,
-            height: window.innerHeight * 0.8,
-            top: "10%",
-            left: "10%"
-        }, ANIMATEDURATION);
-*/
+const openStatsPanel = (b, type) => {
+    if (b) {
         const dataurls = scenario['analyzed-data-collect-url'];
         /*
             check for existing Jetelina's suggestion
         */
-        //    getAjaxData(dataurls[3]);
-        //    statsPanelFunctions("graph");
-        if(type == APIACCESSNUMBERSCOMMAND){
+        if (type == APIACCESSNUMBERSCOMMAND) {
             getAjaxData(dataurls[4]);
-        }else if(type == DBACCESSNUMBERSCOMMAND){
+        } else if (type == DBACCESSNUMBERSCOMMAND) {
             getAjaxData(dataurls[5]);
         }
-    }else{
-//        $(STATSPANEL).hide();
+    } else {
+        hideApiAccessNumbersList();
+        //$(APIACCESSNUMBERS).hide();
+        $(CHARTPANEL).hide();
     }
 }
 /**
  * @function isVisibleApiAccessNumbers
  * @returns {boolean}  true -> visible, false -> invisible
  * 
- * checking "#api_access_numbers" is visible or not
+ * checking "APIACCESSNUMBERS" is visible or not
  */
 const isVisibleApiAccessNumbers = () => {
     let ret = false;
-    if ($("#api_access_numbers").is(":visible")) {
+    if ($(APIACCESSNUMBERS).is(":visible")) {
         ret = true;
     }
 
     return ret;
 }
 /**
- * @function isVisibleAccessCombination
+ * @function isVisibleChartPanel
  * @returns {boolean}  true -> visible, false -> invisible
  * 
  * checking "#plot" is visible or not
  */
-const isVisibleAccessCombination = () => {
+const isVisibleChartPanel = () => {
     let ret = false;
     if ($(CHARTPANEL).is(":visible")) {
         ret = true;
@@ -133,7 +126,7 @@ const statsPanelFunctions = (ut) => {
     if (cmd == null || cmd.length <= 0) {
         if (inScenarioChk(ut, 'cond-api-access-numbers-list-show-cmd')) {
             cmd = APIACCESSNUMBERSCOMMAND;
-        }else if(inScenarioChk(ut,'cond-db-access-numbers-chart-show-cmd')){
+        } else if (inScenarioChk(ut, 'cond-db-access-numbers-chart-show-cmd')) {
             cmd = DBACCESSNUMBERSCOMMAND;
         }
         /*
@@ -157,52 +150,26 @@ const statsPanelFunctions = (ut) => {
                               this cmd can execute in the case of being a suggestion.
     */
     if (-1 < $.inArray(cmd, [APIACCESSNUMBERSCOMMAND, DBACCESSNUMBERSCOMMAND])) {
-        openStatsPanel(true,cmd);
+        openStatsPanel(true, cmd);
     }
 
     switch (cmd) {
         case APIACCESSNUMBERSCOMMAND:
-            /*
-            if (isVisiblePerformanceReal()) {
-                $("#performance_real").hide();
-            }
-
-            if (isVisiblePerformanceTest()) {
-                $("#performance_test").hide();
-            }
-
-            if (isVisibleAccessCombination()) {
-                $(CHARTPANEL).hide();
-            }
-            */
-
             showSomethingMsgPanel(false);
-            $("#api_access_numbers").show().draggable();
-                /*
-            $("#api_access_numbers").show().draggable().animate({
-                top: "20%",
-                left: "20%"
-            }, ANIMATEDURATION).draggable('disable');
-*/
-//            m = chooseMsg('cond-graph-show-msg', "", "");
-//            break;
-//        case DBACCESSNUMBERSCOMMAND:
-            showSomethingMsgPanel(false);
+            $(APIACCESSNUMBERS).show().draggable();
 
-            $(CHARTPANEL).show().draggable();
-                /*
-            $(CHARTPANEL).show().animate({
-                top: "5%",
-                left: "-5%"
-            }, ANIMATEDURATION);
-        */
             m = chooseMsg('cond-graph-show-msg', "", "");
+            break;
+        case DBACCESSNUMBERSCOMMAND:
+            showSomethingMsgPanel(false);
+            $(CHARTPANEL).show().draggable();
 
+            m = chooseMsg('cond-graph-show-msg', "", "");
             break;
         /*
         case 'performance':
             if (isVisibleApiAccessNumbers()) {
-                $("#api_access_numbers").hide();
+                $(APIACCESSNUMBERS).hide();
             }
 
             if (isVisiblePerformanceReal()) {
@@ -295,14 +262,14 @@ const setGraphData = (o, type) => {
                                                     access numbers in each api  -> list figure
                                             */
                                             if (va != null) {
-                                                preferent.apiaccesslistdata.push([va.apino,va.access_numbers,va.database]);
+                                                preferent.apiaccesslistdata.push([va.apino, va.access_numbers, va.database]);
                                             }
                                         } else if (type == "db") {
                                             /*
                                                 Tips:
                                                     access numbers in each database -> pie chart
                                             */
-                                            if(va != null){
+                                            if (va != null) {
                                                 dbaccessnumbers_chart_labels.push(va.database);
                                                 dbaccessnumbers_chart_values.push(va.access_numbers);
                                             }
@@ -332,8 +299,8 @@ const setGraphData = (o, type) => {
                     */
                     setTimeout(function () {
                         if (type == "db") {
-                            let d = [dbaccessnumbers_chart_labels,dbaccessnumbers_chart_values];
-                            viewPlotlyChart(d,type);
+                            let d = [dbaccessnumbers_chart_labels, dbaccessnumbers_chart_values];
+                            viewPlotlyChart(d, type);
                             //viewPerformanceGraph(apino, access_count, type);
                         } else if (type == "sp") {
                             viewPerformanceGraph(apino, mean, type);
@@ -351,18 +318,27 @@ const setGraphData = (o, type) => {
  * 
  * show api access number data in DataTable 
  */
-const showApiAccessNumbersList = () =>{
+const showApiAccessNumbersList = () => {
 
     let tableoptions = {
-        "paging":true,
-        "info":false,
-        "searching":true,
-        "order":[1,'desc'],
+        "paging": true,
+        "info": false,
+        "searching": true,
+        "order": [1, 'desc'],
         "pagingType": "simple",
         "data": preferent.apiaccesslistdata
     }
 
     $(APIACCESSNUMBERSLIST).DataTable(tableoptions);
+}
+/**
+ * @function hideApiAccessNumbersList
+ * 
+ * hide APIACCESSNUMBERS and destroy the DataTable()
+ */
+const hideApiAccessNumbersList = () =>{
+    $(APIACCESSNUMBERS).hide();
+    $(APIACCESSNUMBERSLIST).DataTable().destroy();
 }
 /**
  * @function apiAccessNumbersListController
@@ -371,43 +347,37 @@ const showApiAccessNumbersList = () =>{
  * 
  * api access numbers list controller. paging and search api order by chat box
  */
-const apiAccessNumbersListController = (cmd) =>{
+const apiAccessNumbersListController = (cmd) => {
     let t = $(APIACCESSNUMBERSLIST).DataTable();
     let ret = "";
 
-    if(inScenarioChk(cmd,'cond-apiaccessnumberslist-next-cmd')){
+    if (inScenarioChk(cmd, 'cond-apiaccessnumberslist-next-cmd')) {
         t.page("next").draw(false);
-    }else if(inScenarioChk(cmd,'cond-apiaccessnumberslist-prev-cmd')){
+    } else if (inScenarioChk(cmd, 'cond-apiaccessnumberslist-prev-cmd')) {
         t.page("previous").draw(false);
-    }else if(inScenarioChk(cmd,'cond-apiaccessnumberslist-last-cmd')){
+    } else if (inScenarioChk(cmd, 'cond-apiaccessnumberslist-last-cmd')) {
         t.page("last").draw(false);
-    }else if(inScenarioChk(cmd,'cond-apiaccessnumberslist-first-cmd')){
+    } else if (inScenarioChk(cmd, 'cond-apiaccessnumberslist-first-cmd')) {
         t.page("first").draw(false);
-    }else if(inScenarioChk(cmd,'cond-apiaccessnumberslist-search-cmd')){
+    } else if (inScenarioChk(cmd, 'cond-apiaccessnumberslist-search-cmd')) {
         let sar = cmd.split(" ");
-        for( let i=0; i<sar.length; i++){
-            if(sar[i].match(/^ji|^js|^ju|^jd/)){
+        for (let i = 0; i < sar.length; i++) {
+            if (sar[i].match(/^ji|^js|^ju|^jd/)) {
                 t.search(sar[i]).draw(false);
             }
         }
-    }else if(inScenarioChk(cmd,'cond-apiaccessnumberslist-again-cmd')){
+    } else if (inScenarioChk(cmd, 'cond-apiaccessnumberslist-again-cmd')) {
         t.destroy();
         showApiAccessNumbersList();
-    }else{
-        ret = chooseMsg('waiting-next-msg','','');
+    } else {
+        ret = chooseMsg('waiting-next-msg', '', '');
     }
 
-    if (inScenarioChk(cmd, "general-thanks-cmd")) {
-        openStatsPanel(false,cmd);
-        t.destroy();
-        ret = chooseMsg('general-thanks-msg',loginuser.lastname,"c");
+    if (!inScenarioChk(ret, 'waiting-next-msg')) {
+        ret = chooseMsg('cond-graph-show-msg', '', '');
     }
 
-    if(!inScenarioChk(ret,'waiting-next-msg')&&!inScenarioChk(ret,'general-thanks-msg')){
-        ret = chooseMsg('cond-graph-show-msg','','');
-    }
-
-    return ret; 
+    return ret;
 }
 /**
  * @function viewPlotlyChart
@@ -416,7 +386,7 @@ const apiAccessNumbersListController = (cmd) =>{
  *
  * show plotly chart 
  */
-const viewPlotlyChart = (basedata, type) =>{
+const viewPlotlyChart = (basedata, type) => {
     let data;
     let layout;
 
@@ -431,9 +401,9 @@ const viewPlotlyChart = (basedata, type) =>{
 
         layout = {
             height: 400,
-            width:500,
-            font:{
-                color:' #f1ef46',
+            width: 500,
+            font: {
+                color: ' #f1ef46',
                 style: 'italic',
                 size: 10,
                 shadow: '0 0 10px rgb(193, 206, 194), 0 0 15px #f1ef46'
@@ -457,42 +427,42 @@ const viewPlotlyChart = (basedata, type) =>{
         };
     }
 
-/*
-    let paper_bgc = 'rgb(112,128,144)';
-    let font_col = 'rgb(255,255,255)';
-    if (type == 'test') {
-        paper_bgc = 'rgb(0,129,104)';//'rgb(240,230,140)'
-        //        font_col = 'rgb(255,0,0)';
-    }
-
-    let title = "exection speed";
-    if (type == "access") {
-        title = "access numbers";
-    }
-
-    let layout = {
-        plot_bgcolor: 'rgb(0,0,0)',
-        paper_bgcolor: paper_bgc,
-        xaxis: {
-            backgroundcolor: 'rgb(255,0,0)',
-            showbackground: false,
-            gridcolor: 'rgb(0,153,153)',
-            color: font_col,
-            size: 20,
-            title: 'api no'
-        },
-        yaxis: {
-            backgroundcolor: 'rgb(255,0,0)',
-            showbackground: false,
-            gridcolor: 'rgb(0,153,153)',
-            color: font_col,
-            size: 20,
-            title: title
+    /*
+        let paper_bgc = 'rgb(112,128,144)';
+        let font_col = 'rgb(255,255,255)';
+        if (type == 'test') {
+            paper_bgc = 'rgb(0,129,104)';//'rgb(240,230,140)'
+            //        font_col = 'rgb(255,0,0)';
         }
-    };
-*/
+    
+        let title = "exection speed";
+        if (type == "access") {
+            title = "access numbers";
+        }
+    
+        let layout = {
+            plot_bgcolor: 'rgb(0,0,0)',
+            paper_bgcolor: paper_bgc,
+            xaxis: {
+                backgroundcolor: 'rgb(255,0,0)',
+                showbackground: false,
+                gridcolor: 'rgb(0,153,153)',
+                color: font_col,
+                size: 20,
+                title: 'api no'
+            },
+            yaxis: {
+                backgroundcolor: 'rgb(255,0,0)',
+                showbackground: false,
+                gridcolor: 'rgb(0,153,153)',
+                color: font_col,
+                size: 20,
+                title: title
+            }
+        };
+    */
     if (type == "db") {
-//        Plotly.react('db_access_numbers_chart', data, layout);
+        //        Plotly.react('db_access_numbers_chart', data, layout);
         Plotly.react('plot_graph', data, layout);
     } else {
         Plotly.newPlot('performance_test_graph', data, layout);
@@ -596,7 +566,7 @@ const viewPerformanceGraph = (apino, d, type) => {
     };
 
     if (type == "access") {
-        $("#api_access_numbers").show();
+        $(APIACCESSNUMBERS).show();
         //        Plotly.newPlot('api_access_numbers_graph', data, layout);
         Plotly.react('api_access_numbers_graph', data, layout);
     } else if (type == "real") {
