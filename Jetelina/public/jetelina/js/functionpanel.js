@@ -1244,23 +1244,25 @@ const functionPanelFunctions = (ut) => {
     }
 
     // db switching
-    if (cmd == "" && inScenarioChk(ut, 'func-db-switch-cmd')) {
-      cmd = "switchdb";
-      usedb = "";
-    } else if (cmd == "" && inScenarioChk(ut, 'func-use-postgresql-cmd')) {
-      cmd = "switchdb";
-      usedb = "postgresql";
-    } else if (cmd == "" && inScenarioChk(ut, 'func-use-mysql-cmd')) {
-      cmd = "switchdb";
-      usedb = "mysql";
-    } else if (cmd == "" && inScenarioChk(ut, 'func-use-redis-cmd')) {
-      cmd = "switchdb";
-      usedb = "redis";
-    } else if (cmd == "" && inScenarioChk(ut, 'func-use-mongodb-cmd')) {
-      cmd = "switchdb";
-      usedb = "mongodb";
-    } else if (cmd == "" && $.inArray("switchdb", cmdCandidates) != -1) {
-      cmd = "switchdb";
+    if(!isVisibleApiAccessNumbersList()){
+      if (cmd == "" && inScenarioChk(ut, 'func-db-switch-cmd')) {
+        cmd = "switchdb";
+        usedb = "";
+      } else if (cmd == "" && inScenarioChk(ut, 'func-use-postgresql-cmd')) {
+        cmd = "switchdb";
+        usedb = "postgresql";
+      } else if (cmd == "" && inScenarioChk(ut, 'func-use-mysql-cmd')) {
+        cmd = "switchdb";
+        usedb = "mysql";
+      } else if (cmd == "" && inScenarioChk(ut, 'func-use-redis-cmd')) {
+        cmd = "switchdb";
+        usedb = "redis";
+      } else if (cmd == "" && inScenarioChk(ut, 'func-use-mongodb-cmd')) {
+        cmd = "switchdb";
+        usedb = "mongodb";
+      } else if (cmd == "" && $.inArray("switchdb", cmdCandidates) != -1) {
+        cmd = "switchdb";
+      }
     }
 
     if (cmd == "" && inScenarioChk(ut, 'common-post-cmd') ||

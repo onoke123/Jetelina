@@ -362,7 +362,12 @@ const apiAccessNumbersListController = (cmd) => {
     } else if (inScenarioChk(cmd, 'cond-apiaccessnumberslist-search-cmd')) {
         let sar = cmd.split(" ");
         for (let i = 0; i < sar.length; i++) {
-            if (sar[i].match(/^ji|^js|^ju|^jd/)) {
+            /*
+                Tips:
+                    this searching in DataTable works with both the api name and database name.
+                    unfortunately, this code should be rewritten if new database were added.  :p
+            */
+            if (sar[i].match(/^ji|^js|^ju|^jd|^postgre|^mysq|^redi|^mongo/)) {
                 t.search(sar[i]).draw(false);
             }
         }
