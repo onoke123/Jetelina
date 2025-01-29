@@ -210,6 +210,13 @@ paging = 100
 @jdic reading_max_lines:"read line numbers for analyzing","analyzing lines","analyzing line numbers","analyzing line number"
 reading_max_lines = 1000
 
+# 
+# maxmum lines to read "JetelinaApiAccess", "JetelinaDBAccess"
+# this number points to yearly
+# the number changing is banned by using Jetelina chatting, that why no '@jdic'.
+#
+json_max_lines = 365
+
 #
 # sql analyze execute interval 
 #   this param is used in SQLAnalyzer.jl for repeat analyzing processing
