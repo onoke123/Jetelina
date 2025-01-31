@@ -50,6 +50,11 @@ scenario["get-operation-history-cmd"]=["operation history","operation log","who 
 scenario["func-show-table-list-cmd"]=["open table list","show me table","show table","table list","tables","tablelist","tableslist"];
 scenario["func-show-api-list-cmd"]=["open api","show me api","api list","apis list","apis","apilist"];
 scenario["cond-graph-show-msg"]=["here you are","tatta laan"];
+scenario["guidance-control-prev-cmd"] = ["prev"];
+scenario["guidance-control-next-cmd"] = ["next"];
+scenario["guidance-control-first-cmd"] = ["first","head"];
+scenario["guidance-control-last-cmd"] = ["last","end","tail"];
+
 scenario["cond-apiaccessnumberslist-prev-cmd"]=["prev"];
 scenario["cond-apiaccessnumberslist-next-cmd"]=["next"];
 scenario["cond-apiaccessnumberslist-first-cmd"]=["first","head"];

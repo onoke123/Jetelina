@@ -45,6 +45,8 @@
       showConfigPanel(b) "#config_panel" show or hide
       showPreciousPanel(b) "#jetelina_teach_you_smg" show or hide
       jsonFromCheck(s) check for json form in mongodb
+      guidancePageController(n) move the guidance page order by 'n' 
+      jetelinaPanelPositionController(b) JETELINAPANEL position change 
 */
 const JETELINACHATTELL = `${JETELINAPANEL} [name='jetelina_tell']`;
 const SOMETHINGMSGPANEL = "#something_msg";
@@ -1081,6 +1083,37 @@ const chatKeyDown = (cmd) => {
         ut = cmd.toLowerCase();
     }
 
+    /*
+        Tips:
+            "guidance"
+    */
+    if ($(GUIDANCE).is(":visible") && !inScenarioChk(ut, "general-thanks-cmd")) {
+        let currentPage = 3;
+        let movetoPage = 1;
+        if ($(`${GUIDANCE} [name='page1']`).is(":visible")) {
+            currentPage = 1;
+        } else if ($(`${GUIDANCE} [name='page2']`).is(":visible")) {
+            currentPage = 2;
+        }
+
+        if (inScenarioChk(ut, "guidance-control-next-cmd")) {
+            if (currentPage < 3) {
+                movetoPage = currentPage + 1;
+            }
+        } else if (inScenarioChk(ut, "guidance-control-prev-cmd")) {
+            if (1 < currentPage) {
+                movetoPage = currentPage - 1;
+            }
+        } else if (inScenarioChk(ut, "guidance-control-first-cmd")) {
+        } else if (inScenarioChk(ut, "guidance-control-last-cmd")) {
+            movetoPage = 3;
+        }
+
+        m = guidancePageController(movetoPage);
+    }
+
+
+
     let logoutflg = false;
 
     if (ut != null && 0 < ut.length) {
@@ -1163,15 +1196,15 @@ const chatKeyDown = (cmd) => {
             }
 
             if (isVisibleApiAccessNumbersList() || isVisibleChartPanel()) {
-                if(inScenarioChk(ut,"cond-db-access-numbers-chart-hide-cmd")){
-                    $(CHARTPANEL).hide();            
-                }else if(inScenarioChk(ut,"cond-api-access-numbers-list-hide-cmd")){
+                if (inScenarioChk(ut, "cond-db-access-numbers-chart-hide-cmd")) {
+                    $(CHARTPANEL).hide();
+                } else if (inScenarioChk(ut, "cond-api-access-numbers-list-hide-cmd")) {
                     hideApiAccessNumbersList();
-//                    $(APIACCESSNUMBERS).hide();
-//                    $(APIACCESSNUMBERSLIST).DataTable().destroy();
-                }else  if (inScenarioChk(ut, "general-thanks-cmd")) {
+                    //                    $(APIACCESSNUMBERS).hide();
+                    //                    $(APIACCESSNUMBERSLIST).DataTable().destroy();
+                } else if (inScenarioChk(ut, "general-thanks-cmd")) {
                     openStatsPanel(false, ut);
-//                    $(APIACCESSNUMBERSLIST).DataTable().destroy();
+                    //                    $(APIACCESSNUMBERSLIST).DataTable().destroy();
                     ret = chooseMsg('general-thanks-msg', loginuser.lastname, "c");
                 } else {
                     if (isVisibleApiAccessNumbersList() && !inScenarioChk(ut, 'cond-db-access-numbers-chart-show-cmd')) {
@@ -1248,13 +1281,7 @@ const chatKeyDown = (cmd) => {
                     isVisibleFavicon(false);
                     m = "";
                     // chatbox moves to below
-                    const panelTop = window.innerHeight - 110;
-                    $(JETELINAPANEL).animate({
-                        height: "70px",
-                        top: "85%", //`${panelTop}px`,
-                        left: "5%" //"210px"
-                    }, ANIMATEDURATION);
-
+                    jetelinaPanelPositionController(false);
                     if (!inScenarioChk(ut, 'config-show-cmd') && (presentaction.cmd != CONFIGCHANGE)) {
                         // if 'ut' is a command for driving function
                         m = functionPanelFunctions(ut);
@@ -1449,7 +1476,7 @@ const chatKeyDown = (cmd) => {
                         // greeting
                         m = chooseMsg("greeting-1-msg", "", "");
                         stage = 1;/* into the login stage */
-                    } else {
+                    } else { console.log(m);
                         if (!logoutflg && m.length == 0) {
                             m = chooseMsg("starting-3-msg", "", "");
                         } else if (!logoutflg && 0 < m.length) {
@@ -1548,13 +1575,7 @@ const logoutChk = (s) => {
  * logout
  */
 const logout = () => {
-    $(JETELINAPANEL).animate({
-        width: "400px",
-        height: "100px",
-        top: "40%",
-        left: "40%"
-    }, ANIMATEDURATION);
-
+    jetelinaPanelPositionController(true);
     $(FUNCTIONPANEL).hide();
     //    $(STATSPANEL).hide();
     $(GENELICPANEL).hide();
@@ -1564,7 +1585,8 @@ const logout = () => {
     hideApiAccessNumbersList();
     $("#performance_real").hide();
     $("#performance_test").hide();
-    $("#command_list").hide();
+    $(COMMANDLIST).hide();
+    $(GUIDANCE).hide();
     showSomethingMsgPanel(false);
     showConfigPanel(false);
     showPreciousPanel(false);
@@ -1642,15 +1664,16 @@ const showManualCommandList = (s) => {
     let showflg = true;
 
     if (inScenarioChk(s, 'guidance-cmd')) {
-        tagid = 'guidance';
+        tagid = GUIDANCE;
     } else if (inScenarioChk(s, 'command_list-cmd')) {
-        tagid = 'command_list';
+        tagid = COMMANDLIST;
     } else {
         showflg = false;
     }
 
     if (showflg) {
-        $(`#${tagid}`).show().animate({
+        jetelinaPanelPositionController(false);
+        $(`${tagid}`).show().animate({
             width: window.innerWidth * 0.8,
             height: window.innerHeight * 0.8,
             top: "10%",
@@ -1659,9 +1682,12 @@ const showManualCommandList = (s) => {
 
         ret = chooseMsg("starting-6a-msg", "", "");
     } else {
-        $("#guidance").hide();
-        $("#command_list").hide();
+        $(GUIDANCE).hide();
+        $(COMMANDLIST).hide();
         ret = chooseMsg('waiting-next-msg', "", "");
+        if(loginuser.user_id == null){
+            jetelinaPanelPositionController(true);
+        }
     }
 
     return ret;
@@ -2169,4 +2195,44 @@ const jsonFromCheck = (s) => {
     }
 
     return true;
+}
+/**
+ * @function guidancePageController
+ * @param {integer} n: page number
+ * 
+ * move the guidance page order by 'n' 
+ */
+const guidancePageController = (n) => {
+    switch (n) {
+        case 1: $(`${GUIDANCE} [name='page2'],[name='page3']`).hide(); $(`${GUIDANCE} [name='page1']`).show(); break;
+        case 2: $(`${GUIDANCE} [name='page1'],[name='page3']`).hide(); $(`${GUIDANCE} [name='page2']`).show(); break;
+        case 3: $(`${GUIDANCE} [name='page1'],[name='page2']`).hide(); $(`${GUIDANCE} [name='page3']`).show(); break;
+        default: break;
+    }
+
+    return "here you are";
+}
+/**
+ * @function jetelinaPanelPositionController
+ * @param {boolean} b: true -> position center false -> position below
+ * 
+ * JETELINAPANEL position change 
+ */
+const jetelinaPanelPositionController = (b) =>{
+    if(b){
+        // move to center
+        $(JETELINAPANEL).animate({
+            width: "400px",
+            height: "100px",
+            top: "40%",
+            left: "40%"
+        }, ANIMATEDURATION);    
+       }else{
+        // move to below
+        $(JETELINAPANEL).animate({
+            height: "70px",
+            top: "85%", //`${panelTop}px`,
+            left: "5%" //"210px"
+        }, ANIMATEDURATION);
+    }
 }

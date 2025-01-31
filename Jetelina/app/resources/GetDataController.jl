@@ -70,7 +70,7 @@ function getApiAccessData()
 """
 function getApiAccessData()
 	f = JFiles.getFileNameFromLogPath(j_config.JC["apiaccesscountfile"])
-	max_f_lines = j_config.JC["json_max_lines"]
+	max_f_lines::Int = j_config.JC["json_max_lines"]
 
 	if isfile(f)
 		ret = "{\"Jetelina\":["
@@ -112,7 +112,7 @@ function getDBAccessData()
 """
 function getDBAccessData()
 	f = JFiles.getFileNameFromLogPath(j_config.JC["dbaccesscountfile"])
-	max_f_lines = j_config.JC["json_max_lines"]
+	max_f_lines::Int = j_config.JC["json_max_lines"]
 
 	if isfile(f)
 		ret = "{\"Jetelina\":["
