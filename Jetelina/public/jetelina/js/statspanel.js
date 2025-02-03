@@ -249,10 +249,15 @@ const setGraphData = (o, type) => {
                 let apispeed_mean = [];
                 let apispeed_max = [];
                 let apispeed_min = [];
+                let datadate = [];
 
                 $.each(o[key], function (k, v) {
                     if (v != null) {
                         $.each(v, function (name, value) {
+                            if (name == "date") {
+                                datadate.push(value);
+                            }
+
                             if (name == "Jetelina") { // in array field
                                 $.each(value, function (na, va) {
                                     if (va != null) {
@@ -263,17 +268,17 @@ const setGraphData = (o, type) => {
                                                     access numbers in each api  -> list figure
                                             */
                                             if (va != null) {
-                                                if(0<preferent.apiaccesslistdata.length){
+                                                if (0 < preferent.apiaccesslistdata.length) {
                                                     let ald = preferent.apiaccesslistdata;
-                                                    for(let i=0;i<ald.length; i++){
-                                                        if(ald[i][0] == va.apino){
+                                                    for (let i = 0; i < ald.length; i++) {
+                                                        if (ald[i][0] == va.apino) {
                                                             ald[i][1] += va.access_numbers;
                                                             existflg = true;
                                                         }
                                                     }
                                                 }
 
-                                                if(!existflg){
+                                                if (!existflg) {
                                                     preferent.apiaccesslistdata.push([va.apino, va.access_numbers, va.database]);
                                                 }
                                             }
@@ -284,18 +289,18 @@ const setGraphData = (o, type) => {
                                             */
                                             if (va != null) {
                                                 let existflg = false;
-                                                if(0<dbaccessnumbers_chart_labels.length){
+                                                if (0 < dbaccessnumbers_chart_labels.length) {
                                                     let dbcl = dbaccessnumbers_chart_labels;
                                                     let dbcv = dbaccessnumbers_chart_values;
-                                                    for(let i=0; i<dbcl.length;i++){
-                                                        if(dbcl[i] == va.database){
+                                                    for (let i = 0; i < dbcl.length; i++) {
+                                                        if (dbcl[i] == va.database) {
                                                             dbcv[i] += va.access_numbers;
                                                             existflg = true;
                                                         }
                                                     }
                                                 }
 
-                                                if(!existflg){
+                                                if (!existflg) {
                                                     dbaccessnumbers_chart_labels.push(va.database);
                                                     dbaccessnumbers_chart_values.push(va.access_numbers);
                                                 }
@@ -315,11 +320,27 @@ const setGraphData = (o, type) => {
                     }
                 });
 
+                /*
+                    Tips:
+                        showing the data of start date and end date.
+                        .toLocalDateString('sv-SE') returns 'yyyy-mm-dd' format, it's convenient to use here. 
+                */
+                let datadate2 = [];
+                for (let i = 0; i < datadate.length; i++) {
+                    let d = new Date(datadate[i]);
+                    datadate2.push(d);
+                }
+
+                let startdate = new Date(Math.min(...datadate2)).toLocaleDateString('sv-SE');
+                let enddate = new Date(Math.max(...datadate2)).toLocaleDateString('sv-SE');
+
                 if (type == "ac") {
                     // list
+                    $(`${APIACCESSNUMBERS} [name='between']`).text(`${startdate} - ${enddate}`);
                     showApiAccessNumbersList();
                 } else {
                     // ploty graph
+                    $(`${CHARTPANEL} [name='between']`).text(`${startdate} - ${enddate}`);
                     /*
                         Tips:
                         adjusting the plot.js execution time because it is depend on clients environment
@@ -363,7 +384,7 @@ const showApiAccessNumbersList = () => {
  * 
  * hide APIACCESSNUMBERS and destroy the DataTable()
  */
-const hideApiAccessNumbersList = () =>{
+const hideApiAccessNumbersList = () => {
     $(APIACCESSNUMBERS).hide();
     $(APIACCESSNUMBERSLIST).DataTable().destroy();
 }
