@@ -1479,7 +1479,7 @@ const chatKeyDown = (cmd) => {
                     } else { console.log(m);
                         if (!logoutflg && m.length == 0) {
                             m = chooseMsg("starting-3-msg", "", "");
-                        } else if (!logoutflg && 0 < m.length) {
+                        } else if (!logoutflg && 0 < m.length && !$(GUIDANCE).is(":visible")) {
                             m = chooseMsg('greeting-ask-msg', '', '');
                         }
                     }
@@ -2210,7 +2210,7 @@ const guidancePageController = (n) => {
         default: break;
     }
 
-    return "here you are";
+    return chooseMsg('cond-graph-show-msg','','');
 }
 /**
  * @function jetelinaPanelPositionController

@@ -257,12 +257,25 @@ const setGraphData = (o, type) => {
                                 $.each(value, function (na, va) {
                                     if (va != null) {
                                         if (type == "ac") {
+                                            let existflg = false;
                                             /*
                                                 Tips:
                                                     access numbers in each api  -> list figure
                                             */
                                             if (va != null) {
-                                                preferent.apiaccesslistdata.push([va.apino, va.access_numbers, va.database]);
+                                                if(0<preferent.apiaccesslistdata.length){
+                                                    let ald = preferent.apiaccesslistdata;
+                                                    for(let i=0;i<ald.length; i++){
+                                                        if(ald[i][0] == va.apino){
+                                                            ald[i][1] += va.access_numbers;
+                                                            existflg = true;
+                                                        }
+                                                    }
+                                                }
+
+                                                if(!existflg){
+                                                    preferent.apiaccesslistdata.push([va.apino, va.access_numbers, va.database]);
+                                                }
                                             }
                                         } else if (type == "db") {
                                             /*
@@ -270,8 +283,22 @@ const setGraphData = (o, type) => {
                                                     access numbers in each database -> pie chart
                                             */
                                             if (va != null) {
-                                                dbaccessnumbers_chart_labels.push(va.database);
-                                                dbaccessnumbers_chart_values.push(va.access_numbers);
+                                                let existflg = false;
+                                                if(0<dbaccessnumbers_chart_labels.length){
+                                                    let dbcl = dbaccessnumbers_chart_labels;
+                                                    let dbcv = dbaccessnumbers_chart_values;
+                                                    for(let i=0; i<dbcl.length;i++){
+                                                        if(dbcl[i] == va.database){
+                                                            dbcv[i] += va.access_numbers;
+                                                            existflg = true;
+                                                        }
+                                                    }
+                                                }
+
+                                                if(!existflg){
+                                                    dbaccessnumbers_chart_labels.push(va.database);
+                                                    dbaccessnumbers_chart_values.push(va.access_numbers);
+                                                }
                                             }
                                         } else if (type == "sp") {
                                             /*
