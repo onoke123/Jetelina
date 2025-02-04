@@ -323,7 +323,6 @@ const setGraphData = (o, type) => {
                 /*
                     Tips:
                         showing the data of start date and end date.
-                        .toLocalDateString('sv-SE') returns 'yyyy-mm-dd' format, it's convenient to use here. 
                 */
                 let datadate2 = [];
                 for (let i = 0; i < datadate.length; i++) {
@@ -331,8 +330,9 @@ const setGraphData = (o, type) => {
                     datadate2.push(d);
                 }
 
-                let startdate = new Date(Math.min(...datadate2)).toLocaleDateString('sv-SE');
-                let enddate = new Date(Math.max(...datadate2)).toLocaleDateString('sv-SE');
+                let startdateEnddate = determindDateStart2End(datadate2);
+                let startdate = startdateEnddate[0];
+                let enddate = startdateEnddate[1];
 
                 if (type == "ac") {
                     // list

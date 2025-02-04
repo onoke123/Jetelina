@@ -47,6 +47,7 @@
       jsonFromCheck(s) check for json form in mongodb
       guidancePageController(n) move the guidance page order by 'n' 
       jetelinaPanelPositionController(b) JETELINAPANEL position change 
+      determindDateStart2End(dates) pick the min date and max date within query date array
 */
 const JETELINACHATTELL = `${JETELINAPANEL} [name='jetelina_tell']`;
 const SOMETHINGMSGPANEL = "#something_msg";
@@ -1476,7 +1477,7 @@ const chatKeyDown = (cmd) => {
                         // greeting
                         m = chooseMsg("greeting-1-msg", "", "");
                         stage = 1;/* into the login stage */
-                    } else { console.log(m);
+                    } else {
                         if (!logoutflg && m.length == 0) {
                             m = chooseMsg("starting-3-msg", "", "");
                         } else if (!logoutflg && 0 < m.length && !$(GUIDANCE).is(":visible")) {
@@ -2235,4 +2236,26 @@ const jetelinaPanelPositionController = (b) =>{
             left: "5%" //"210px"
         }, ANIMATEDURATION);
     }
+}
+/**
+ * @function determindDateStart2End
+ * @param {Array} dates: array of date data.  ex. ['2025-02-03','2025-01-01'....]
+ * @return {Array} : [min date, max date]
+ * 
+ * pick the min date and max date within query date array
+ * 
+ * Caution:
+ *   .toLocalDateString('sv-SE') returns 'yyyy-mm-dd' format, it's convenient to use here. 
+ */
+const determindDateStart2End = (dates) =>{
+    let ret = [];
+
+    if(0<dates.length){
+        let mind = new Date(Math.min(...dates)).toLocaleDateString('sv-SE');
+        let maxd = new Date(Math.max(...dates)).toLocaleDateString('sv-SE');
+
+        ret = [mind,maxd];
+    }
+
+    return ret;
 }
