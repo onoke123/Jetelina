@@ -22,6 +22,7 @@
 #      improvesuggestionfile: suggestion file name due to execute test db
 #      operationhistoryfile: table/api create/delete history log file
 #      operationhistoryfilesize: MB order ex. 10MB -> 10
+#      apiperformancedatapath: container path name of each api execution speed files
 @jdic version:"version"
 version = 3.0
 
@@ -74,6 +75,9 @@ operationhistoryfilesize = 10
 
 @jdic operationhistoryreadlinecount:"history line count"
 operationhistoryreadlinecount = 100
+
+@jdic apiperformancedatapath:"api performance file path"
+apiperformancedatapath = apiperformancefiles
 
 #
 # column title of sqllogfile/sqllistfile/experimentalsqllistfile
