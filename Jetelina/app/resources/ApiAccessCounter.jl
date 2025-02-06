@@ -79,16 +79,16 @@ function collectApiAccessNumbers()
     maxrow::Int = j_config.JC["reading_max_lines"]
     df = CSV.read(sqllogfile, DataFrame, limit=maxrow)
     #===
-    		Tips:
-    			start to collect data for creating analyzing files.
-    			1. api access number
-    			2. database access number
-    			3. api execution speed   mean/max/min
-    	===#
+    	Tips:
+    		start to collect data for creating analyzing files.
+    		1. api access number
+    		2. database access number
+    		3. api execution speed   mean/max/min and standard deviation
+    ===#
     #===
-    		Tips:
-    			get uniqeness 'apino' for '1' & '3'
-    	===#
+    	Tips:
+   			get uniqeness 'apino' for '1' & '3'
+   	===#
     u_api = unique(df[:, :apino])
     part_df = DataFrame(apino=String[], access_numbers=Int[], database=String[])
     part_df_speed = DataFrame(apino=String[], mean=Float64[], max=Float64[], min=Float64[], database=String[])
@@ -114,9 +114,9 @@ function collectApiAccessNumbers()
         createApiSpeedFile(part_df_speed)
     end
     #===
-    		Tips:
-    			get uniqeness 'db' for '2'
-    	===#
+    	Tips:
+    		get uniqeness 'db' for '2'
+    ===#
     u_db = unique(df[:, :db])
     part_df = DataFrame(database=String[], access_numbers=Int[])
     u_db_size = length(u_db)
@@ -167,8 +167,8 @@ function createApiSpeedFile(df::DataFrame)
 - `df::DataFrame`: target dataframe data
 """
 function createApiSpeedFile(df::DataFrame)
-    apfs = joinpath(@__DIR__,JFiles.getFileNameFromLogPath(j_config.JC["apiperformancedatapath"]))
-    date = Dates.today()
+    apfs::String = joinpath(@__DIR__,JFiles.getFileNameFromLogPath(j_config.JC["apiperformancedatapath"]))
+    date::Date = Dates.today()
 
     if !isdir(apfs)
         mkpath(apfs)
@@ -178,18 +178,32 @@ function createApiSpeedFile(df::DataFrame)
         fname = joinpath(apfs, string(df[!, :apino][i]))
         try
             # write the api performance to the file
-            thefirstflg = true
+            thefirstflg::Bool = true
+			stdflg::Bool = true
+
             if !isfile(fname)
                 thefirstflg = false
             end
 
-            open(fname, "a+") do f
-                if !thefirstflg
-                    println(f, string(date, ",", j_config.JC["file_column_mean"], ',', j_config.JC["file_column_max"]), ',', j_config.JC["file_column_min"])
-                end
+			if thefirstflg
+				stdflg = collectApiStandardDeviation(fname, df[!,:mean][i])
+			end
+			#===
+				Tips:
+					before append the data to the file, check the mean data is in its standared division.
+					collectApiStandardDeviation() returns true/false, true meaning is normal execution speed, false is should be a
+			===#
+			if stdflg
+				open(fname, "a+") do f
+					if !thefirstflg
+						println(f, string("date", ",", j_config.JC["file_column_mean"], ',', j_config.JC["file_column_max"]), ',', j_config.JC["file_column_min"], ",", "std")
+					end
 
-                println(f, string(date, ",", df[!, :mean][i], ",", df[!, :max][i], ",", df[!, :min][i]))
-            end
+					println(f, string(date, ",", df[!, :mean][i], ",", df[!, :max][i], ",", df[!, :min][i], ",", stdflg))
+				end
+
+				_createStdFile(fname)
+			end
         catch err
             procflg[] = false
             println(err)
@@ -198,8 +212,58 @@ function createApiSpeedFile(df::DataFrame)
         finally
         end
     end
-
 end
+
+	function _createStdFile(fname)
+		stdfname::String = string(fname,"_std")
+		maxrow::Int = j_config.JC["json_max_lines"]
+		apidf = CSV.read(fname, DataFrame, limit=maxrow)
+		stdparams = []
+		for i in 1:nrow(apidf)
+			push!(stdparams,apidf[!,:mean][i])
+		end
+
+		totalSpeedMean = mean(apidf[!, :mean])
+
+		stddata::Float64 = 0.0
+		if 1<length(stdparams)
+			stddata = std(stdparams)
+		else
+			stddata = stdparams[1]
+		end
+
+		open(stdfname,"w+") do f
+			println(f,string(totalSpeedMean,",",stddata))
+		end
+	end
+
+
+function collectApiStandardDeviation(fname,meanSpeed)
+	stdjudge::Bool = true
+	stdfname::String = string(fname,"_std")
+
+	if isfile(stdfname)
+		# compare meanSpeed with std
+		df = CSV.read(stdfname, DataFrame, header=false)
+#		@info stdfname df nrow(df)
+		if 0<nrow(df)
+			#@info df[!,:1][1] df[!,:2][1]
+			mn = df[!,:1][1]
+			sn = df[!,:2][1]
+				if (mn-sn) < meanSpeed < (mn+sn)
+					@info stdfname "nice"
+				else
+#					@info "oh"
+				end
+		end
+		# update stdfname if meanSpeed is acceptable
+		# create suggession file and return stdfname=false
+	else
+		# create new std file with this mean data
+	end
+
+	return stdjudge
+end 
 """
 function stopanalyzer()
 
