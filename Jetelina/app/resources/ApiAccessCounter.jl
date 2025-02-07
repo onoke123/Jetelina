@@ -133,7 +133,7 @@ function collectApiAccessNumbers()
     end
 end
 """
-function createAnalyzedJsonFile(df::DataFrame)
+function createAnalyzedJsonFile(df::DataFrame, jsonfile::String, type::Int)
 
 	create json file for result of sql execution speed analyze data.
 
@@ -149,8 +149,6 @@ function createAnalyzedJsonFile(df::DataFrame, jsonfile::String, type::Int)
         select!(this_df, :apino, :access_numbers, :database)
     elseif type == 2
         select!(this_df, :database, :access_numbers)
-        #	elseif type == 3
-        #		select!(this_df, :apino, :mean, :max, :min, :database)
     end
 
     open(jsonfile, "a+") do f
@@ -168,7 +166,6 @@ function createApiSpeedFile(df::DataFrame)
 function createApiSpeedFile(df::DataFrame)
     apfs::String = joinpath(@__DIR__, JFiles.getFileNameFromLogPath(j_config.JC["apiperformancedatapath"]))
     date::Date = Dates.today()
-
 	#===
 		function _checkApiStandardDeviation
 			checking the api execution speed 'mean' is in its standard deviation
@@ -192,13 +189,11 @@ function createApiSpeedFile(df::DataFrame)
 			if 0 < nrow(df)
 				mn = stddf[!, :1][1]
 				sn = stddf[!, :2][1]
-				if meanSpeed<(mn - (sn * σ)) || (mn + (sn * σ))<meanSpeed
-					stdjudge = false
-				end
-
-				if !stdjudge
-					@info stdjudge fname meanSpeed (mn-sn*σ) (mn+sn*σ)
-				end 
+                if sn != 0.0
+                    if meanSpeed<(mn - (sn * σ)) || (mn + (sn * σ))<meanSpeed
+                        stdjudge = false
+                    end
+                end
 			end
 		end
 	
@@ -217,11 +212,8 @@ function createApiSpeedFile(df::DataFrame)
 		stdparams = []
 	
 		for i in 1:nrow(apidf)
-			if apidf[!,:std][i]
-				if !apidf[!,:std][i]
-					@info fname i "std is false"
-				end
-				push!(stdparams, apidf[!, :mean][i])
+			if apidf[i,:std]
+				push!(stdparams, apidf[i, :mean])
 			end
 		end
 	
@@ -234,8 +226,8 @@ function createApiSpeedFile(df::DataFrame)
 			stddata = stdparams[1]
 		end
 	
-		open(stdfname, "w+") do f
-			println(f, string(totalSpeedMean, ",", stddata))
+		open(stdfname, "w+") do ff
+			println(ff, string(totalSpeedMean, ",", stddata))
 		end
 	end
 	#===
@@ -244,10 +236,10 @@ function createApiSpeedFile(df::DataFrame)
 		# Arguments
 		- `apino::String`: target api no
 	===#
-    function _createSuggestionFile(sugdf::DataFrame)
+    function _createSuggestionFile(sugdf)
         sugfname::String = joinpath(@__DIR__, JFiles.getFileNameFromLogPath(j_config.JC["improvesuggestionfile"]))
-        open(sugfname,"a+") do f
-            println(f, JSON.json(Dict("type" => "[deprecated api]", "date" => date, "Jetelina" => copy.(eachrow(sugdf)))))
+        open(sugfname,"a+") do ff
+            println(ff, JSON.json(Dict("type" => "[deprecated api]", "date" => date, "Jetelina" => copy(sugdf))))
         end
     end
     #
@@ -258,7 +250,8 @@ function createApiSpeedFile(df::DataFrame)
     end
 
     for i ∈ 1:nrow(df)
-        fname = joinpath(apfs, string(df[!, :apino][i]))
+        fname = joinpath(apfs, string(df[i, :apino]))
+
         try
             # write the api performance to the file
             thefirstflg::Bool = true
@@ -275,14 +268,14 @@ function createApiSpeedFile(df::DataFrame)
 					but the data is appended to the file anyhow.
 					then create its standared deviation file if _checkApiStandardDeviation() retuned true.
    			===#
-			stdflg = _checkApiStandardDeviation(fname, df[!, :mean][i])
+			stdflg = _checkApiStandardDeviation(fname, df[i, :mean])
 
             open(fname, "a+") do f
                 if !thefirstflg
                     println(f, string("date", ",", j_config.JC["file_column_mean"], ',', j_config.JC["file_column_max"]), ',', j_config.JC["file_column_min"], ",", "std")
                 end
 
-                println(f, string(date, ",", df[!, :mean][i], ",", df[!, :max][i], ",", df[!, :min][i], ",", stdflg))
+                println(f, string(date, ",", df[i, :mean], ",", df[i, :max], ",", df[i, :min], ",", stdflg))
             end
 
             if stdflg
@@ -290,7 +283,7 @@ function createApiSpeedFile(df::DataFrame)
                 _createStdFile(fname)
             else
                 # create suggestion file for raising alert to an user
-                _createSuggestionFile(df[i])
+                _createSuggestionFile(df[i,:])
             end
         catch err
             procflg[] = false
