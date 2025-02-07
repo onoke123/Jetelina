@@ -87,8 +87,8 @@ function collectApiAccessNumbers()
     ===#
     #===
     	Tips:
-   			get uniqeness 'apino' for '1' & '3'
-   	===#
+    		get uniqeness 'apino' for '1' & '3'
+    ===#
     u_api = unique(df[:, :apino])
     part_df = DataFrame(apino=String[], access_numbers=Int[], database=String[])
     part_df_speed = DataFrame(apino=String[], mean=Float64[], max=Float64[], min=Float64[], database=String[])
@@ -110,7 +110,6 @@ function collectApiAccessNumbers()
         end
 
         createAnalyzedJsonFile(part_df, JFiles.getFileNameFromLogPath(j_config.JC["apiaccesscountfile"]), 1)
-        #createAnalyzedJsonFile(part_df_speed, JFiles.getFileNameFromLogPath(j_config.JC["apispeedfile"]),3)
         createApiSpeedFile(part_df_speed)
     end
     #===
@@ -167,43 +166,115 @@ function createApiSpeedFile(df::DataFrame)
 - `df::DataFrame`: target dataframe data
 """
 function createApiSpeedFile(df::DataFrame)
-    apfs::String = joinpath(@__DIR__,JFiles.getFileNameFromLogPath(j_config.JC["apiperformancedatapath"]))
+    apfs::String = joinpath(@__DIR__, JFiles.getFileNameFromLogPath(j_config.JC["apiperformancedatapath"]))
     date::Date = Dates.today()
 
+	#===
+		function _checkApiStandardDeviation
+			checking the api execution speed 'mean' is in its standard deviation
+		# Arguments
+		- `fname::String`: target api's file name
+		- `meanSpeed::Float64`: api execution speed 'mean'
+		- return::Bool: true -> meanSpeed is in 2σ of the standard deviation, false -> is not in there: meaning deprecated 
+	===#
+	function _checkApiStandardDeviation(fname, meanSpeed)
+		stdjudge::Bool = true
+		stdfname::String = string(fname, "_std")
+		#===
+			Tips:
+				this σ is fixed with '2', that's mean '2σ' is hired in here.
+		===#
+		σ::Int = j_config.JC["sigma"]
+	
+		if isfile(stdfname)
+			# compare meanSpeed with std
+			stddf = CSV.read(stdfname, DataFrame, header=false)
+			if 0 < nrow(df)
+				mn = stddf[!, :1][1]
+				sn = stddf[!, :2][1]
+				if meanSpeed<(mn - (sn * σ)) || (mn + (sn * σ))<meanSpeed
+					stdjudge = false
+				end
+
+				if !stdjudge
+					@info stdjudge fname meanSpeed (mn-sn*σ) (mn+sn*σ)
+				end 
+			end
+		end
+	
+		return stdjudge
+	end
+	#===
+		function _createStdFile		
+			create and update api's standard deviation data file
+		# Arguments
+		- `fname::String`: target api's file name
+	===#
+	function _createStdFile(fname)
+		stdfname::String = string(fname, "_std")
+		maxrow::Int = j_config.JC["json_max_lines"]
+		apidf = CSV.read(fname, DataFrame, limit=maxrow)
+		stdparams = []
+	
+		for i in 1:nrow(apidf)
+			if apidf[!,:std][i]
+				if !apidf[!,:std][i]
+					@info fname i "std is false"
+				end
+				push!(stdparams, apidf[!, :mean][i])
+			end
+		end
+	
+		totalSpeedMean = mean(apidf[!, :mean])
+	
+		stddata::Float64 = 0.0
+		if 1 < length(stdparams)
+			stddata = std(stdparams)
+		else
+			stddata = stdparams[1]
+		end
+	
+		open(stdfname, "w+") do f
+			println(f, string(totalSpeedMean, ",", stddata))
+		end
+	end
+		
     if !isdir(apfs)
         mkpath(apfs)
     end
 
+	
     for i ∈ 1:nrow(df)
         fname = joinpath(apfs, string(df[!, :apino][i]))
         try
             # write the api performance to the file
             thefirstflg::Bool = true
-			stdflg::Bool = true
+            stdflg::Bool = true
 
             if !isfile(fname)
                 thefirstflg = false
             end
 
-			if thefirstflg
-				stdflg = collectApiStandardDeviation(fname, df[!,:mean][i])
-			end
-			#===
-				Tips:
-					before append the data to the file, check the mean data is in its standared division.
-					collectApiStandardDeviation() returns true/false, true meaning is normal execution speed, false is should be a
-			===#
-			if stdflg
-				open(fname, "a+") do f
-					if !thefirstflg
-						println(f, string("date", ",", j_config.JC["file_column_mean"], ',', j_config.JC["file_column_max"]), ',', j_config.JC["file_column_min"], ",", "std")
-					end
+            #===
+   				Tips:
+   					before append the data to the file, check the mean data is in its standared deviation.
+   					_checkApiStandardDeviation() returns true/false, true meaning is normal execution speed, false is should raise an alert.
+					but the data is appended to the file anyhow.
+					then create its standared deviation file if _checkApiStandardDeviation() retuned true.
+   			===#
+			stdflg = _checkApiStandardDeviation(fname, df[!, :mean][i])
 
-					println(f, string(date, ",", df[!, :mean][i], ",", df[!, :max][i], ",", df[!, :min][i], ",", stdflg))
-				end
+            open(fname, "a+") do f
+                if !thefirstflg
+                    println(f, string("date", ",", j_config.JC["file_column_mean"], ',', j_config.JC["file_column_max"]), ',', j_config.JC["file_column_min"], ",", "std")
+                end
 
-				_createStdFile(fname)
-			end
+                println(f, string(date, ",", df[!, :mean][i], ",", df[!, :max][i], ",", df[!, :min][i], ",", stdflg))
+            end
+
+            if stdflg 
+                _createStdFile(fname)
+            end
         catch err
             procflg[] = false
             println(err)
@@ -213,57 +284,6 @@ function createApiSpeedFile(df::DataFrame)
         end
     end
 end
-
-	function _createStdFile(fname)
-		stdfname::String = string(fname,"_std")
-		maxrow::Int = j_config.JC["json_max_lines"]
-		apidf = CSV.read(fname, DataFrame, limit=maxrow)
-		stdparams = []
-		for i in 1:nrow(apidf)
-			push!(stdparams,apidf[!,:mean][i])
-		end
-
-		totalSpeedMean = mean(apidf[!, :mean])
-
-		stddata::Float64 = 0.0
-		if 1<length(stdparams)
-			stddata = std(stdparams)
-		else
-			stddata = stdparams[1]
-		end
-
-		open(stdfname,"w+") do f
-			println(f,string(totalSpeedMean,",",stddata))
-		end
-	end
-
-
-function collectApiStandardDeviation(fname,meanSpeed)
-	stdjudge::Bool = true
-	stdfname::String = string(fname,"_std")
-
-	if isfile(stdfname)
-		# compare meanSpeed with std
-		df = CSV.read(stdfname, DataFrame, header=false)
-#		@info stdfname df nrow(df)
-		if 0<nrow(df)
-			#@info df[!,:1][1] df[!,:2][1]
-			mn = df[!,:1][1]
-			sn = df[!,:2][1]
-				if (mn-sn) < meanSpeed < (mn+sn)
-					@info stdfname "nice"
-				else
-#					@info "oh"
-				end
-		end
-		# update stdfname if meanSpeed is acceptable
-		# create suggession file and return stdfname=false
-	else
-		# create new std file with this mean data
-	end
-
-	return stdjudge
-end 
 """
 function stopanalyzer()
 

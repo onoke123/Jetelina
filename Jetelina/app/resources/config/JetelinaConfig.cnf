@@ -58,7 +58,6 @@ tablecombinationfile = JetelinaTableCombiVsAccessRelation.json
 sqllistfile = JetelinaSqlList
 apiaccesscountfile = JetelinaApiAccess
 dbaccesscountfile = JetelinaDBAccess
-apispeedfile = JetelinaApiSpeed
 sqlperformancefile = JetelinaSqlPerformance
 tableapifile = JetelinaTableApiRelation
 experimentsqllistfile = JetelinaExperimentSqlList
@@ -215,11 +214,18 @@ paging = 100
 reading_max_lines = 1000
 
 # 
-# maxmum lines to read "JetelinaApiAccess", "JetelinaDBAccess"
+# maxmum lines to read "JetelinaApiAccess", "JetelinaDBAccess", and use for reading daily api execution speed data to calc its standard deviation
 # this number points to yearly
 # the number changing is banned by using Jetelina chatting, that why no '@jdic'.
 #
 json_max_lines = 365
+
+#
+# σ times for judgement of standard deviation
+# basically hiring '2σ' for raising attention a deprecation of api execution speed to user
+# the number changing is banned by using Jetelina chatting, that why no '@jdic'.
+#
+sigma = 2
 
 #
 # sql analyze execute interval 
