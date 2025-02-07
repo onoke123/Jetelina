@@ -238,12 +238,25 @@ function createApiSpeedFile(df::DataFrame)
 			println(f, string(totalSpeedMean, ",", stddata))
 		end
 	end
-		
+	#===
+		function _createSuggestionFile		
+			create suggestion file for raising an alert to an user
+		# Arguments
+		- `apino::String`: target api no
+	===#
+    function _createSuggestionFile(sugdf::DataFrame)
+        sugfname::String = joinpath(@__DIR__, JFiles.getFileNameFromLogPath(j_config.JC["improvesuggestionfile"]))
+        open(sugfname,"a+") do f
+            println(f, JSON.json(Dict("type" => "[deprecated api]", "date" => date, "Jetelina" => copy.(eachrow(sugdf)))))
+        end
+    end
+    #
+    #  from here is this function workin'
+    #
     if !isdir(apfs)
         mkpath(apfs)
     end
 
-	
     for i ∈ 1:nrow(df)
         fname = joinpath(apfs, string(df[!, :apino][i]))
         try
@@ -272,8 +285,12 @@ function createApiSpeedFile(df::DataFrame)
                 println(f, string(date, ",", df[!, :mean][i], ",", df[!, :max][i], ",", df[!, :min][i], ",", stdflg))
             end
 
-            if stdflg 
+            if stdflg
+                # update the standard deviation file 
                 _createStdFile(fname)
+            else
+                # create suggestion file for raising alert to an user
+                _createSuggestionFile(df[i])
             end
         catch err
             procflg[] = false
