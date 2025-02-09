@@ -239,7 +239,7 @@ function createApiSpeedFile(df::DataFrame)
     function _createSuggestionFile(sugdf)
         sugfname::String = joinpath(@__DIR__, JFiles.getFileNameFromLogPath(j_config.JC["improvesuggestionfile"]))
         open(sugfname,"a+") do ff
-            println(ff, JSON.json(Dict("type" => "[deprecated api]", "date" => date, "Jetelina" => copy(sugdf))))
+            println(ff, JSON.json(Dict("result" => true, "type" => "[deprecated api]", "date" => date, "Jetelina" => copy(sugdf))))
         end
     end
     #

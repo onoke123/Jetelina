@@ -48,6 +48,7 @@
       guidancePageController(n) move the guidance page order by 'n' 
       jetelinaPanelPositionController(b) JETELINAPANEL position change 
       determindDateStart2End(dates) pick the min date and max date within query date array
+      changeChatGirlImage(imgtype) switching chat box image.
 */
 const JETELINACHATTELL = `${JETELINAPANEL} [name='jetelina_tell']`;
 const SOMETHINGMSGPANEL = "#something_msg";
@@ -198,7 +199,7 @@ const checkResult = (o) => {
 
             ret = false;
         } else {
-            showSomethingMsgPanel(false);
+//            showSomethingMsgPanel(false);
             /*
                 Tips:
                     in the case of a configuration parameter is called, set null all for 
@@ -462,13 +463,13 @@ const getAjaxData = (url) => {
                         isSuggestion = true;
                         // set my suggestion
                         $(SOMETHINGMSGPANELMSG).addClass("jetelina_suggestion");
-                        $(SOMETHINGMSGPANELMSG).text(`${result.Jetelina.apino}:${result.Jetelina.suggestion}`);
+                        $(SOMETHINGMSGPANELMSG).text(`${result.type}: ${result.Jetelina.apino} is workin' on ${result.Jetelina.database}`);
                         // relation access & combination
-                        getAjaxData(dataurls[0]);
+                        //getAjaxData(dataurls[0]);
                         // simply sql speed
-                        getAjaxData(dataurls[1]);
+                        //getAjaxData(dataurls[1]);
                         // sql speed on test db
-                        getAjaxData(dataurls[2]);
+                        //getAjaxData(dataurls[2]);
                     }
 
                     /*
@@ -510,9 +511,11 @@ const getAjaxData = (url) => {
                                 the below message is for it.
                                 but abandon any 'suggestion" in Ver.1
                         */
-                        typingControll(chooseMsg("cond-performance-improve-msg", "", ""));
+                       changeChatGirlImage("concern");
+                       showSomethingMsgPanel(true);
+                       m = "cond-performance-improve-msg";
                     } else {
-                        typingControll(chooseMsg("success-msg", "", ""));
+                       m = "success-msg";
                     }
                 } else {
                     /*
@@ -1273,6 +1276,9 @@ const chatKeyDown = (cmd) => {
                     */
                     stage = 'lets_do_something';
 
+                    // confirm the suggestion file existing
+                    getAjaxData(scenario["analyzed-data-collect-url"][3]);
+
                     chatKeyDown("show tables");
                     m = chooseMsg("starting-6-msg", "", "");
 
@@ -1577,6 +1583,7 @@ const logoutChk = (s) => {
  */
 const logout = () => {
     jetelinaPanelPositionController(true);
+    changeChatGirlImage("chat");
     $(FUNCTIONPANEL).hide();
     //    $(STATSPANEL).hide();
     $(GENELICPANEL).hide();
@@ -2258,4 +2265,22 @@ const determindDateStart2End = (dates) =>{
     }
 
     return ret;
+}
+/**
+ * @function changeChatGirlImage
+ * @param {String} imgtype: switching image
+ * 
+ * switching chat box image.
+ * 
+ */
+const changeChatGirlImage = (imgtype) =>{
+    let imgtag = $(`${JETELINAPANEL} [name='chat_girl_image']`);
+    let chatimg = "jetelina/img/jetelina-chat.png";
+    let concernimg = "jetelina/img/jetelina-concern.png";
+
+    if(imgtype == "concern"){
+        imgtag.attr('src',concernimg);
+    }else if(imgtype == "chat"){
+        imgtag.attr('src',chatimg);
+    }
 }
