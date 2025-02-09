@@ -344,3 +344,13 @@ textarea.user-input{
     color: #f1ef46;
     text-align: left;
   }
+
+  .chatImg {
+    position:absolute;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    -webkit-transition: .4s ease-in;
+    transition: .4s ease-in;
+    width: 30px;
+    height: 31px;
+  }

@@ -2279,8 +2279,10 @@ const changeChatGirlImage = (imgtype) =>{
     let concernimg = "jetelina/img/jetelina-concern.png";
 
     if(imgtype == "concern"){
-        imgtag.attr('src',concernimg);
+        imgtag.show();
+//        imgtag.attr('src',concernimg);
     }else if(imgtype == "chat"){
-        imgtag.attr('src',chatimg);
+        imgtag.hide();
+//        imgtag.attr('src',chatimg);
     }
 }
