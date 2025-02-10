@@ -371,19 +371,14 @@ const getdata = (o, t) => {
                                     configChangeHistoryStr += ` by ${v.name}<br>`;
                                 }
                             } else if (t == 7) {
-                                let sugstr = "";
-                                $.each(o[key],function(kk,vv){
-                                    console.log(kk, " -> ", vv);
-                                    console.log(vv.Jetelina);
-                                    for(let n in vv.Jetelina){
-                                        console.log(n," = > ", vv.Jetelina[n]);
-                                        let oj = vv.Jetelina[n].Jetelina;
-                                        console.log(oj);
-//                                        sugstr += oj.type + " " + oj.apino + " out of " + oj.outof
-
+                                preferent.suggestion = "";
+                                $.each(v, function (name, value) {
+                                    if (name == "Jetelina") {
+                                        $.each(value, function (na, va) {
+                                            preferent.suggestion += v.date + "　" + va.type + "　" + va.apino + "　exec time is out of " + va.sigma + "σ" + "<br>";
+                                        });
                                     }
-                               });
-                               console.log("sugstr: ", sugstr);
+                                });
                             }
 
                             let tagid = "";
@@ -478,8 +473,8 @@ const getAjaxData = (url) => {
                         isSuggestion = true;
                         // set my suggestion
                         $(SOMETHINGMSGPANELMSG).addClass("jetelina_suggestion");
-                        getdata(result,7);
-//                        $(SOMETHINGMSGPANELMSG).text(sugstr);
+                        getdata(result, 7);
+                        //                        $(SOMETHINGMSGPANELMSG).text(sugstr);
 
                         //                      if (isSuggestion) {
                         /*
@@ -1905,6 +1900,13 @@ const showSomethingMsgPanel = (b) => {
                     sm.animate({ scrollTop: (sm.scrollTop() == 0 ? sm.height() : 0) }, 4000);
                 }, ANIMATEDSCROLLING);
         */
+        /*
+            Tips:
+                in the case of existing 'suggesion' data and displaying 'concern' Jetelina, 'suggestion' has priority in the message panel.
+        */
+        if ((preferent.suggestion != null && 0 < preferent.suggestion.length) && $(`${JETELINAPANEL} [name='chat_girl_image']`).is(":visible")) {
+            $(SOMETHINGMSGPANELMSG).append(preferent.suggestion);
+        }
     } else {
         // these classes are for configuration changing history message
         sm.removeClass("config_history");
