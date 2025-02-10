@@ -370,6 +370,20 @@ const getdata = (o, t) => {
                                 if (v.name != null) {
                                     configChangeHistoryStr += ` by ${v.name}<br>`;
                                 }
+                            } else if (t == 7) {
+                                let sugstr = "";
+                                $.each(o[key],function(kk,vv){
+                                    console.log(kk, " -> ", vv);
+                                    console.log(vv.Jetelina);
+                                    for(let n in vv.Jetelina){
+                                        console.log(n," = > ", vv.Jetelina[n]);
+                                        let oj = vv.Jetelina[n].Jetelina;
+                                        console.log(oj);
+//                                        sugstr += oj.type + " " + oj.apino + " out of " + oj.outof
+
+                                    }
+                               });
+                               console.log("sugstr: ", sugstr);
                             }
 
                             let tagid = "";
@@ -464,7 +478,8 @@ const getAjaxData = (url) => {
                         isSuggestion = true;
                         // set my suggestion
                         $(SOMETHINGMSGPANELMSG).addClass("jetelina_suggestion");
-                        $(SOMETHINGMSGPANELMSG).text(result);
+                        getdata(result,7);
+//                        $(SOMETHINGMSGPANELMSG).text(sugstr);
 
                         //                      if (isSuggestion) {
                         /*
