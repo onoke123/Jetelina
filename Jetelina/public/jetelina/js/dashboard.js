@@ -25,7 +25,7 @@ let stage = 0;// action stage number ex. 1:before login  'login':at login
 let preferent = {};// contains precedence commands. ex. droptable, deliteApi...
 let presentaction = {};// contains the present function, mode etc  ex. functionpanel -> table
 let cancelableCmdList = [];// candidate list for cancelable commands, cancelable 'presentaction' is listed in here  
-let isSuggestion = false; // set this to 'true' in getAjaxData() if there were Jetelina's suggestion
+//let isSuggestion = false; // set this to 'true' in getAjaxData() if there were Jetelina's suggestion
 let timerId;// interval timer of the idling comment in the opening screen。uses in jetelinalib.js burabura()
 let logouttimerId;// interval timer of transfering logout to opening scree, use in jetelinalib.js chatKeyDown()
 let inprogress=false;// true -> ajax function is in progress , false -> is not i progress. set in $.ajax({xhr:})

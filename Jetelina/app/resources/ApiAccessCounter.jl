@@ -166,22 +166,21 @@ function createApiSpeedFile(df::DataFrame)
 function createApiSpeedFile(df::DataFrame)
     apfs::String = joinpath(@__DIR__, JFiles.getFileNameFromLogPath(j_config.JC["apiperformancedatapath"]))
     date::Date = Dates.today()
+    stdoutdata::Array = []
+
 	#===
 		function _checkApiStandardDeviation
 			checking the api execution speed 'mean' is in its standard deviation
 		# Arguments
 		- `fname::String`: target api's file name
 		- `meanSpeed::Float64`: api execution speed 'mean'
-		- return::Bool: true -> meanSpeed is in 2σ of the standard deviation, false -> is not in there: meaning deprecated 
+		- `return::Taple(Bool,Int)`: true -> meanSpeed is in σ〜3σ of the standard deviation, false -> is not in there: meaning deprecated
+                                     0 -> in case of true 1,2,3 -> in case of false and out of σ,2σ,3σ  
 	===#
 	function _checkApiStandardDeviation(fname, meanSpeed)
 		stdjudge::Bool = true
 		stdfname::String = string(fname, "_std")
-		#===
-			Tips:
-				this σ is fixed with '2', that's mean '2σ' is hired in here.
-		===#
-		σ::Int = j_config.JC["sigma"]
+		σ::Int = 0
 	
 		if isfile(stdfname)
 			# compare meanSpeed with std
@@ -190,14 +189,21 @@ function createApiSpeedFile(df::DataFrame)
 				mn = stddf[!, :1][1]
 				sn = stddf[!, :2][1]
                 if sn != 0.0
-                    if meanSpeed<(mn - (sn * σ)) || (mn + (sn * σ))<meanSpeed
+                    if meanSpeed<(mn - (sn)) || (mn + (sn))<meanSpeed
                         stdjudge = false
+                        σ = 1
+                    elseif meanSpeed<(mn - (2*sn)) || (mn + (2*sn))<meanSpeed
+                        stdjudge = false
+                        σ = 2
+                    elseif meanSpeed<(mn - (3*sn)) || (mn + (3*sn))<meanSpeed
+                        stdjudge = false
+                        σ = 3
                     end
                 end
 			end
 		end
 	
-		return stdjudge
+		return stdjudge, σ
 	end
 	#===
 		function _createStdFile		
@@ -230,18 +236,7 @@ function createApiSpeedFile(df::DataFrame)
 			println(ff, string(totalSpeedMean, ",", stddata))
 		end
 	end
-	#===
-		function _createSuggestionFile		
-			create suggestion file for raising an alert to an user
-		# Arguments
-		- `apino::String`: target api no
-	===#
-    function _createSuggestionFile(sugdf)
-        sugfname::String = joinpath(@__DIR__, JFiles.getFileNameFromLogPath(j_config.JC["improvesuggestionfile"]))
-        open(sugfname,"a+") do ff
-            println(ff, JSON.json(Dict("result" => true, "type" => "[deprecated api]", "date" => date, "Jetelina" => copy(sugdf))))
-        end
-    end
+
     #
     #  from here is this function workin'
     #
@@ -268,7 +263,7 @@ function createApiSpeedFile(df::DataFrame)
 					but the data is appended to the file anyhow.
 					then create its standared deviation file if _checkApiStandardDeviation() retuned true.
    			===#
-			stdflg = _checkApiStandardDeviation(fname, df[i, :mean])
+			stdflg, sigma = _checkApiStandardDeviation(fname, df[i, :mean])
 
             open(fname, "a+") do f
                 if !thefirstflg
@@ -283,7 +278,8 @@ function createApiSpeedFile(df::DataFrame)
                 _createStdFile(fname)
             else
                 # create suggestion file for raising alert to an user
-                _createSuggestionFile(df[i,:])
+                sugstr = JSON.json(Dict("type" => "[deprecated api]", "outof" => sigma, "Jetelina" => copy(df[i,:])))
+                push!(stdoutdata,[sugstr])
             end
         catch err
             procflg[] = false
@@ -291,6 +287,13 @@ function createApiSpeedFile(df::DataFrame)
             JLog.writetoLogfile("ApiAccessCounter.createApiSpeedFile() error: $err")
             return
         finally
+        end
+    end
+
+    if 0<length(stdoutdata)
+        sugfname::String = joinpath(@__DIR__, JFiles.getFileNameFromLogPath(j_config.JC["improvesuggestionfile"]))
+        open(sugfname,"a+") do ff
+            println(ff, JSON.json(Dict("result" => true, "date" => date, "Jetelina" => copy(stdoutdata))))
         end
     end
 end

@@ -221,13 +221,6 @@ reading_max_lines = 1000
 json_max_lines = 365
 
 #
-# σ times for judgement of standard deviation
-# basically hiring '2σ' for raising attention a deprecation of api execution speed to user
-# the number changing is banned by using Jetelina chatting, that why no '@jdic'.
-#
-sigma = 2
-
-#
 # sql analyze execute interval 
 #   this param is used in SQLAnalyzer.jl for repeat analyzing processing
 #   this number is be hour unit  ex. 10hr interval -> 10 

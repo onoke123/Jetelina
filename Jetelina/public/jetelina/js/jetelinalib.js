@@ -199,7 +199,7 @@ const checkResult = (o) => {
 
             ret = false;
         } else {
-//            showSomethingMsgPanel(false);
+            //            showSomethingMsgPanel(false);
             /*
                 Tips:
                     in the case of a configuration parameter is called, set null all for 
@@ -443,6 +443,7 @@ const getAjaxData = (url) => {
             */
             result = JSON.stringify(result);
             result = JSON.parse(result);
+            //            isSuggestion = false;
 
             let m = "";
             // go data parse
@@ -463,7 +464,23 @@ const getAjaxData = (url) => {
                         isSuggestion = true;
                         // set my suggestion
                         $(SOMETHINGMSGPANELMSG).addClass("jetelina_suggestion");
-                        $(SOMETHINGMSGPANELMSG).text(`${result.type}: ${result.Jetelina.apino} is workin' on ${result.Jetelina.database}`);
+                        $(SOMETHINGMSGPANELMSG).text(result);
+
+                        //                      if (isSuggestion) {
+                        /*
+                            Tips:
+                                isSuggestion = true, the meaning of the file existing is Jetelina wanna put inform you something 'improving suggestion'.
+                                the below message is for it.
+                                but abandon any 'suggestion" in Ver.1
+                        */
+                        changeChatGirlImage("concern");
+                        showSomethingMsgPanel(true);
+                        m = "cond-performance-improve-msg";
+                        //                       } else {
+                        //                           m = "success-msg";
+                        //}
+                        //                        $(SOMETHINGMSGPANELMSG).text(`${result.type}: STD out of σ = ${result.outof} ${result.Jetelina.apino} is workin' on ${result.Jetelina.database}`);
+
                         // relation access & combination
                         //getAjaxData(dataurls[0]);
                         // simply sql speed
@@ -477,7 +494,7 @@ const getAjaxData = (url) => {
                             dataurls[4] is for sql access count data.
                             this data always is executed.
                     */
-                    getAjaxData(dataurls[4]);
+                    //                    getAjaxData(dataurls[4]);
 
                 } else if (inScenarioChk(url, 'analyzed-data-collect-url')) {
                     let type = "";
@@ -503,20 +520,20 @@ const getAjaxData = (url) => {
                             this setGraphDta() function is defined in statspanel.js.
                     */
                     let acVscom = setGraphData(result, type);
-
-                    if (isSuggestion) {
-                        /*
-                            Tips:
-                                isSuggestion = true, the meaning of the file existing is Jetelina wanna put inform you something 'improving suggestion'.
-                                the below message is for it.
-                                but abandon any 'suggestion" in Ver.1
-                        */
-                       changeChatGirlImage("concern");
-                       showSomethingMsgPanel(true);
-                       m = "cond-performance-improve-msg";
-                    } else {
-                       m = "success-msg";
-                    }
+                    /*
+                                        if (isSuggestion) {
+                                            
+                                                Tips:
+                                                    isSuggestion = true, the meaning of the file existing is Jetelina wanna put inform you something 'improving suggestion'.
+                                                    the below message is for it.
+                                                    but abandon any 'suggestion" in Ver.1
+                                            
+                                           changeChatGirlImage("concern");
+                                           showSomethingMsgPanel(true);
+                                           m = "cond-performance-improve-msg";
+                                        } else {
+                                           m = "success-msg";
+                                        } */
                 } else {
                     /*
                         Attention:
@@ -572,7 +589,7 @@ const getAjaxData = (url) => {
         }).fail(function (result) {
             checkResult(result);
             cmdCandidates = [];
-            console.error("getAjaxData() fail");
+            console.error("getAjaxData() fail: ", url);
             typingControll(chooseMsg("fail-msg", "", ""));
         }).always(function () {
             // release it for allowing to input new command in the chatbox 
@@ -1693,7 +1710,7 @@ const showManualCommandList = (s) => {
         $(GUIDANCE).hide();
         $(COMMANDLIST).hide();
         ret = chooseMsg('waiting-next-msg', "", "");
-        if(loginuser.user_id == null){
+        if (loginuser.user_id == null) {
             jetelinaPanelPositionController(true);
         }
     }
@@ -2218,7 +2235,7 @@ const guidancePageController = (n) => {
         default: break;
     }
 
-    return chooseMsg('cond-graph-show-msg','','');
+    return chooseMsg('cond-graph-show-msg', '', '');
 }
 /**
  * @function jetelinaPanelPositionController
@@ -2226,16 +2243,16 @@ const guidancePageController = (n) => {
  * 
  * JETELINAPANEL position change 
  */
-const jetelinaPanelPositionController = (b) =>{
-    if(b){
+const jetelinaPanelPositionController = (b) => {
+    if (b) {
         // move to center
         $(JETELINAPANEL).animate({
             width: "400px",
             height: "100px",
             top: "40%",
             left: "40%"
-        }, ANIMATEDURATION);    
-       }else{
+        }, ANIMATEDURATION);
+    } else {
         // move to below
         $(JETELINAPANEL).animate({
             height: "70px",
@@ -2254,14 +2271,14 @@ const jetelinaPanelPositionController = (b) =>{
  * Caution:
  *   .toLocalDateString('sv-SE') returns 'yyyy-mm-dd' format, it's convenient to use here. 
  */
-const determindDateStart2End = (dates) =>{
+const determindDateStart2End = (dates) => {
     let ret = [];
 
-    if(0<dates.length){
+    if (0 < dates.length) {
         let mind = new Date(Math.min(...dates)).toLocaleDateString('sv-SE');
         let maxd = new Date(Math.max(...dates)).toLocaleDateString('sv-SE');
 
-        ret = [mind,maxd];
+        ret = [mind, maxd];
     }
 
     return ret;
@@ -2273,16 +2290,16 @@ const determindDateStart2End = (dates) =>{
  * switching chat box image.
  * 
  */
-const changeChatGirlImage = (imgtype) =>{
+const changeChatGirlImage = (imgtype) => {
     let imgtag = $(`${JETELINAPANEL} [name='chat_girl_image']`);
     let chatimg = "jetelina/img/jetelina-chat.png";
     let concernimg = "jetelina/img/jetelina-concern.png";
 
-    if(imgtype == "concern"){
+    if (imgtype == "concern") {
         imgtag.show();
-//        imgtag.attr('src',concernimg);
-    }else if(imgtype == "chat"){
+        //        imgtag.attr('src',concernimg);
+    } else if (imgtype == "chat") {
         imgtag.hide();
-//        imgtag.attr('src',chatimg);
+        //        imgtag.attr('src',chatimg);
     }
 }

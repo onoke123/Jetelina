@@ -36,20 +36,20 @@ function logout()
 	logout procedure. update jetelina_user_table.logoutdate.
 """
 function logout()
-	uid = JSession.get()[2]
-	key1 = "logoutdate"
-	key2 = "last_dbtype"
-	value = "now()"
+    uid = JSession.get()[2]
+    key1 = "logoutdate"
+    key2 = "last_dbtype"
+    value = "now()"
 
-	if !isnothing(uid)
-		DBDataController.updateUserInfo(uid, key2, JSession.getDBType())
-		ret = DBDataController.updateUserData(uid, key1, value)
-	end
+    if !isnothing(uid)
+        DBDataController.updateUserInfo(uid, key2, JSession.getDBType())
+        ret = DBDataController.updateUserData(uid, key1, value)
+    end
 
-	# session data clear
-	JSession.clear()
+    # session data clear
+    JSession.clear()
 
-	return ret
+    return ret
 end
 """
 function getTableList()
@@ -58,7 +58,7 @@ function getTableList()
 	the return is json form naturally.
 """
 function getTableList()
-	DBDataController.getTableList("json")
+    DBDataController.getTableList("json")
 end
 """
 function getApiAccessData()
@@ -69,37 +69,32 @@ function getApiAccessData()
 - return: JC["apiaccesscountfile"] file name with its path
 """
 function getApiAccessData()
-	f = JFiles.getFileNameFromLogPath(j_config.JC["apiaccesscountfile"])
-	max_f_lines::Int = j_config.JC["json_max_lines"]
+    f = JFiles.getFileNameFromLogPath(j_config.JC["apiaccesscountfile"])
+    max_f_lines::Int = j_config.JC["json_max_lines"]
 
-	if isfile(f)
-		ret = "{\"Jetelina\":["
-		linecount::Int = 0
+    if isfile(f)
+        ret = "{\"Jetelina\":["
+        linecount::Int = 0
 
-		try
-			for line in Iterators.reverse(eachline(f))
-				linecount += 1
-				ret = string(ret,line,",")
-				if max_f_lines < linecount
-					break
-				end
-			end
+        try
+            for line in eachline(f)
+                #			for line in Iterators.reverse(eachline(f))
+                linecount += 1
+                ret = string(ret, line, ",")
+                if max_f_lines < linecount
+                    break
+                end
+            end
 
-			ret = strip(ret,',')
-			return string(ret,"],\"result\":true}")
-		catch err
-			@error "ConfigManager.getApiAccessData() error: $err"
-			return false
-		end
-	else
-		return false
-	end
-
-	if isfile(f)
-		return readchomp(f)
-	else
-		return false
-	end
+            ret = strip(ret, ',')
+            return string(ret, "],\"result\":true}")
+        catch err
+            @error "ConfigManager.getApiAccessData() error: $err"
+            return false
+        end
+    else
+        return false
+    end
 end
 
 """
@@ -111,37 +106,32 @@ function getDBAccessData()
 - return: JC["dbaccesscountfile"] file name with its path
 """
 function getDBAccessData()
-	f = JFiles.getFileNameFromLogPath(j_config.JC["dbaccesscountfile"])
-	max_f_lines::Int = j_config.JC["json_max_lines"]
+    f = JFiles.getFileNameFromLogPath(j_config.JC["dbaccesscountfile"])
+    max_f_lines::Int = j_config.JC["json_max_lines"]
 
-	if isfile(f)
-		ret = "{\"Jetelina\":["
-		linecount::Int = 0
+    if isfile(f)
+        ret = "{\"Jetelina\":["
+        linecount::Int = 0
 
-		try
-			for line in Iterators.reverse(eachline(f))
-				linecount += 1
-				ret = string(ret,line,",")
-				if max_f_lines < linecount
-					break
-				end
-			end
+        try
+            for line in eachline(f)
+                #			for line in Iterators.reverse(eachline(f))
+                linecount += 1
+                ret = string(ret, line, ",")
+                if max_f_lines < linecount
+                    break
+                end
+            end
 
-			ret = strip(ret,',')
-			return string(ret,"],\"result\":true}")
-		catch err
-			@error "ConfigManager.getDBAccessData() error: $err"
-			return false
-		end
-	else
-		return false
-	end
-
-	if isfile(f)
-		return readchomp(f)
-	else
-		return false
-	end
+            ret = strip(ret, ',')
+            return string(ret, "],\"result\":true}")
+        catch err
+            @error "ConfigManager.getDBAccessData() error: $err"
+            return false
+        end
+    else
+        return false
+    end
 end
 
 """
@@ -153,12 +143,12 @@ function getTableCombiVsAccessRelationData()
 - return: JC["tablecombinationfile"] file name with its path
 """
 function getTableCombiVsAccessRelationData()
-	f = JFiles.getFileNameFromLogPath(j_config.JC["tablecombinationfile"])
-	if isfile(f)
-		return readchomp(f)
-	else
-		return false
-	end
+    f = JFiles.getFileNameFromLogPath(j_config.JC["tablecombinationfile"])
+    if isfile(f)
+        return readchomp(f)
+    else
+        return false
+    end
 end
 """
 function getPerformanceRealData()
@@ -169,12 +159,12 @@ function getPerformanceRealData()
 - return: JC["sqlperformancefile"] of json style with its path
 """
 function getPerformanceRealData()
-	f = JFiles.getFileNameFromLogPath(string(j_config.JC["sqlperformancefile"], ".json"))
-	if isfile(f)
-		return readchomp(f)
-	else
-		return false
-	end
+    f = JFiles.getFileNameFromLogPath(string(j_config.JC["sqlperformancefile"], ".json"))
+    if isfile(f)
+        return readchomp(f)
+    else
+        return false
+    end
 end
 """
 function getPerformanceTestData()
@@ -185,12 +175,12 @@ function getPerformanceTestData()
 - return: JC["sqlperformancefile"] of json style with its path
 """
 function getPerformanceTestData()
-	f = JFiles.getFileNameFromLogPath(string(j_config.JC["sqlperformancefile"], ".test.json"))
-	if isfile(f)
-		return readchomp(f)
-	else
-		return false
-	end
+    f = JFiles.getFileNameFromLogPath(string(j_config.JC["sqlperformancefile"], ".test.json"))
+    if isfile(f)
+        return readchomp(f)
+    else
+        return false
+    end
 end
 """
 function checkExistImproveApiFile()
@@ -201,12 +191,24 @@ function checkExistImproveApiFile()
 - return: JC["improvesuggestionfile"] file name with its path    
 """
 function checkExistImproveApiFile()
-	f = JFiles.getFileNameFromLogPath(j_config.JC["improvesuggestionfile"])
-	if isfile(f)
-		return readchomp(f)
-	else
-		return false
-	end
+    f = JFiles.getFileNameFromLogPath(j_config.JC["improvesuggestionfile"])
+    if isfile(f)
+        ret = "{\"Jetelina\":["
+
+        try
+            for line in eachline(f)
+                ret = string(ret, line, ",")
+            end
+
+            ret = strip(ret, ',')
+            return string(ret, "],\"result\":true}")
+        catch err
+            @error "ConfigManager.checkExistImproveApiFile() error: $err"
+            return false
+        end
+    else
+        return false
+    end
 end
 """
 function getApiList()
@@ -215,17 +217,17 @@ function getApiList()
 	api list is refered in Df_JetelinaSqlList.
 """
 function getApiList()
-	#===
-		Tips:
-			ApiSql...readSql...()[1] contains true/false.
-			ApiSql...readSql...()[2] contains dataframe list if [] is true, in the case of false is nothing.
-	===#
-	if 0 < nrow(ApiSqlListManager.Df_JetelinaSqlList)
-		return json(Dict("result" => true, "Jetelina" => copy.(eachrow(reverse(ApiSqlListManager.Df_JetelinaSqlList)))))
-	else
-		# not found SQL list
-		return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "Oops! there is no api list data"))
-	end
+    #===
+    		Tips:
+    			ApiSql...readSql...()[1] contains true/false.
+    			ApiSql...readSql...()[2] contains dataframe list if [] is true, in the case of false is nothing.
+    	===#
+    if 0 < nrow(ApiSqlListManager.Df_JetelinaSqlList)
+        return json(Dict("result" => true, "Jetelina" => copy.(eachrow(reverse(ApiSqlListManager.Df_JetelinaSqlList)))))
+    else
+        # not found SQL list
+        return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "Oops! there is no api list data"))
+    end
 end
 """
 function getConfigHistory()
@@ -233,30 +235,30 @@ function getConfigHistory()
 	get configuration change history in json style.
 """
 function getConfigHistory()
-	f = JFiles.getFileNameFromLogPath(j_config.JC["config_change_history_file"])
-	readlinecount::Int = j_config.JC["configchangehistoryreadlinecount"]
-	if isfile(f)
-		ret = "{\"Jetelina\":["
-		linecount::Int = 0
+    f = JFiles.getFileNameFromLogPath(j_config.JC["config_change_history_file"])
+    readlinecount::Int = j_config.JC["configchangehistoryreadlinecount"]
+    if isfile(f)
+        ret = "{\"Jetelina\":["
+        linecount::Int = 0
 
-		try
-			for line in Iterators.reverse(eachline(f))
-				linecount += 1	
-				ret = string(ret,line,",")
-				if readlinecount < linecount
-					break
-				end
-			end
+        try
+            for line in Iterators.reverse(eachline(f))
+                linecount += 1
+                ret = string(ret, line, ",")
+                if readlinecount < linecount
+                    break
+                end
+            end
 
-			ret = strip(ret,',')
-			return string(ret,"],\"result\":true}")
-		catch err
-			@error "ConfigManager.getConfigHistory() error: $err"
-			return false
-		end
-	else
-		return false
-	end
+            ret = strip(ret, ',')
+            return string(ret, "],\"result\":true}")
+        catch err
+            @error "ConfigManager.getConfigHistory() error: $err"
+            return false
+        end
+    else
+        return false
+    end
 end
 """
 function getOperationHistory()
@@ -264,31 +266,31 @@ function getOperationHistory()
 	get operation history in json style.
 """
 function getOperationHistory()
-	f = JFiles.getFileNameFromLogPath(j_config.JC["operationhistoryfile"])
-	readlinecount::Int = j_config.JC["operationhistoryreadlinecount"]
+    f = JFiles.getFileNameFromLogPath(j_config.JC["operationhistoryfile"])
+    readlinecount::Int = j_config.JC["operationhistoryreadlinecount"]
 
-	if isfile(f)
-		ret = "{\"Jetelina\":["
-		linecount::Int = 0
+    if isfile(f)
+        ret = "{\"Jetelina\":["
+        linecount::Int = 0
 
-		try
-			for line in Iterators.reverse(eachline(f))
-					linecount += 1
-					ret = string(ret,line,",")
-					if readlinecount<linecount
-						break
-					end
-			end
+        try
+            for line in Iterators.reverse(eachline(f))
+                linecount += 1
+                ret = string(ret, line, ",")
+                if readlinecount < linecount
+                    break
+                end
+            end
 
-			ret = strip(ret,',')
-			return string(ret,"],\"result\":true}")
-		catch err
-			@error "ConfigManager.getOperationHistory() error: $err"
-			return false
-		end
-	else
-		return false
-	end
+            ret = strip(ret, ',')
+            return string(ret, "],\"result\":true}")
+        catch err
+            @error "ConfigManager.getOperationHistory() error: $err"
+            return false
+        end
+    else
+        return false
+    end
 end
 """
 function getWorkingDBList()
@@ -296,11 +298,13 @@ function getWorkingDBList()
 	get db list that is working.
 """
 function getWorkingDBList()
-	postgres = j_config.JC["pg_work"]
-	mysql    = j_config.JC["my_work"]
-	redis    = j_config.JC["redis_work"]
-	mongodb  = j_config.JC["mongodb_work"]
-	df = DataFrame("postgres"=>postgres,"mysql"=>mysql,"redis"=>redis, "mongodb"=>mongodb)
-	return json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
+    postgres = j_config.JC["pg_work"]
+    mysql = j_config.JC["my_work"]
+    redis = j_config.JC["redis_work"]
+    mongodb = j_config.JC["mongodb_work"]
+
+    df = DataFrame("postgres" => postgres, "mysql" => mysql, "redis" => redis, "mongodb" => mongodb)
+    return json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
 end
+
 end
