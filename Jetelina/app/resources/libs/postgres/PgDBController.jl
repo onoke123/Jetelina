@@ -762,7 +762,7 @@ end
 function doSelect(sql::String,mode::String)
 
 	execute select data by ordering sql sentence, but get sql execution time of ordered sql if 'mode' is 'measure'.
-	'mode=mesure' is for the condition panel feture.
+	'mode=mesure' is for the stats panel feture.
 
 	Attention: 2024/3/20
 		mode="run" does not be used indeed, because this doSelect() is called when measuring its performance.

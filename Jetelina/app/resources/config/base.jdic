@@ -1,8 +1,8 @@
 #
 # special configuration parameter 
 #
-# urls for condition panel 
-@jdic analyzed-data-collect-url:"/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getapiaccessdata","/getdbaccessdata"
+# urls for stats panel 
+@jdic analyzed-data-collect-url:"/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getapiaccessdata","/getdbaccessdata", "/getapiexecspeed"
 
 # post urls for function panel 
 @jdic function-post-url:"/updateuserdata","/jetelinawords","/getconfigdata","/changeconfigdata","/createapi","/testapi","/chkaccount","/userregist","/getrelatedlist","/switchdb","/ispath","/getcolumns"
@@ -108,29 +108,29 @@
 @jdic func-show-api-list-cmd:"open api","show me api","api list","apis list","apis","apilist"
 
 ###@jdic 6cond:"Let me your command, if you need"
-@jdic cond-graph-show-msg:"here you are","tatta laan"
+@jdic stats-graph-show-msg:"here you are","tatta laan"
 
 # Api Access numbers list controll
-@jdic cond-apiaccessnumberslist-prev-cmd:"prev"
-@jdic cond-apiaccessnumberslist-next-cmd:"next"
-@jdic cond-apiaccessnumberslist-first-cmd:"first","head"
-@jdic cond-apiaccessnumberslist-last-cmd:"last","end","tail"
-@jdic cond-apiaccessnumberslist-search-cmd:"search"
-@jdic cond-apiaccessnumberslist-again-cmd:"all"
+@jdic stats-apiaccessnumberslist-prev-cmd:"prev"
+@jdic stats-apiaccessnumberslist-next-cmd:"next"
+@jdic stats-apiaccessnumberslist-first-cmd:"first","head"
+@jdic stats-apiaccessnumberslist-last-cmd:"last","end","tail"
+@jdic stats-apiaccessnumberslist-search-cmd:"search"
+@jdic stats-apiaccessnumberslist-again-cmd:"all"
 
 # Access Numbers list/chart 
-@jdic cond-api-access-numbers-list-show-cmd:"show api access","display api access"
-@jdic cond-api-access-numbers-list-hide-cmd:"for api access","hide api access"
-@jdic cond-api-exec-speed-show-cmd:"show api speed","show api speed of","display api speed","display api speed of"
-@jdic cond-api-exec-speed-hide-cmd:"for api speed","hide api speed"
-@jdic cond-db-access-numbers-chart-show-cmd:"show db access","display db access"
-@jdic cond-db-access-numbers-chart-hide-cmd:"for db access","hide db access"
+@jdic stats-api-access-numbers-list-show-cmd:"show api access","display api access"
+@jdic stats-api-access-numbers-list-hide-cmd:"for api access","hide api access"
+@jdic stats-api-exec-speed-show-cmd:"show api speed","show api speed of","display api speed","display api speed of"
+@jdic stats-api-exec-speed-hide-cmd:"for api speed","hide api speed"
+@jdic stats-db-access-numbers-chart-show-cmd:"show db access","display db access"
+@jdic stats-db-access-numbers-chart-hide-cmd:"for db access","hide db access"
 
 # SQL Execution Time graph
-@jdic cond-sql-performance-graph-show-cmd:"your suggestion","suggest","improved performance"
+@jdic stats-sql-performance-graph-show-cmd:"your suggestion","suggest","improved performance"
 
-@jdic cond-performance-improve-msg:"There is an improving suggestion.","Do you wanna know my great idea?","Attention please. I have an idea."
-@jdic cond-no-suggestion-msg:"I do not have any suggestions so far.","No suggestions","I do not give it to you.","Hey, Nothing at all"
+@jdic stats-performance-improve-msg:"There is an improving suggestion.","Do you wanna know my great idea?","Attention please. I have an idea."
+@jdic stats-no-suggestion-msg:"I do not have any suggestions so far.","No suggestions","I do not give it to you.","Hey, Nothing at all"
 
 @jdic starting-6a-msg:"OK, here you are","Hey ho","This"
 @jdic starting-6b-msg:"Command me, if you need"

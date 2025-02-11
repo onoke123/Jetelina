@@ -10,7 +10,7 @@ functions
 	main() this function set as for kicking createAna..() from outer function.
 	createAnalyzedJsonFile() create json file for result of sql execution speed analyze data.
 	extractColumnsFromSql(s::String)  pick up columns data from 's'.
-	collectSqlAccessNumbers(df::DataFrame)  collect each sql access numbers then write out it to JC["apiaccesscountfile"] file in JSON form for showing its graph in condition panel.
+	collectSqlAccessNumbers(df::DataFrame)  collect each sql access numbers then write out it to JC["apiaccesscountfile"] file in JSON form for showing its graph in stats panel.
 	experimentalCreateView(df::DataFrame)  create view tables for test and execute all sql sentences for analyzing.
 	createView(df::DataFrame)  create view table from a sql sentence that has multi tables and hight use in the running db.
 	dropTestDB(conn)  drop testdb. doubtfull. :-p
@@ -135,8 +135,8 @@ function createAnalyzedJsonFile()
 				js22    select ....  ['ftest4','ftest2']      5
 				js30    select ....  ['ftest2']              10
 
-			hire js22 because it is the highest access numbers among higher combination number(js10,js22) to create a client view graph 'condition panel'.
-			js30 may does not need to be created in 'condition panel' so that it is the best number but it has low combination number. 
+			hire js22 because it is the highest access numbers among higher combination number(js10,js22) to create a client view graph 'stats panel'.
+			js30 may does not need to be created in 'stats panel' so that it is the best number but it has low combination number. 
 	===#
 	sql_df = DataFrame(apino = String[], sql = String[], combination = Vector{String}[], access_numbers = Float64[])
 
@@ -232,7 +232,7 @@ function createAnalyzedJsonFile()
 
 		#==
 			step3:
-				first of all, collect each sql access numbers for showing it on condition panel. 
+				first of all, collect each sql access numbers for showing it on stats panel. 
 		==#
 		collectSqlAccessNumbers(sql_df)
 
@@ -359,7 +359,7 @@ end
 """
 function collectSqlAccessNumbers(df::DataFrame)
 
-	collect each sql access numbers then write out it to JC["apiaccesscountfile"] file in JSON form for showing its graph in condition panel.
+	collect each sql access numbers then write out it to JC["apiaccesscountfile"] file in JSON form for showing its graph in stats panel.
 
 # Arguments
 - `df::DataFrame`: target dataframe data
@@ -390,7 +390,7 @@ function experimentalCreateView(df::DataFrame)
 			1.ready test db
 			2.copy all table in running to test db, but not all line
 			3.execute 'create view' in order to sql sentence, the api are changed order by it
-			4.execute all api in create view in 3 on test db, and compare with the latest data. then write them out to 'report file' for viewing condition panel
+			4.execute all api in create view in 3 on test db, and compare with the latest data. then write them out to 'report file' for viewing stats panel
 			5.do not forget to delete the test db after analyzing
 	===#
 

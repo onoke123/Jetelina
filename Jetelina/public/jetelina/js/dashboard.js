@@ -63,7 +63,7 @@ $(window).load(function () {
    */
   $(FUNCTIONPANEL).hide().draggable();
   /**
-   *   manipulate condition panel
+   *   manipulate stats panel
    */
 //  $(STATSPANEL).hide().draggable();
 //  $(CHARTPANEL).mouseover(function () {

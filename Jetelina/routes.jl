@@ -105,20 +105,20 @@ route( "/getcsvdata", FileUploadController.read )
 
 #===
 
-  ■Condition panel features
-    urls for using in condition panel.
+  ■stats features
+    urls for using in stats functions.
     handle analyzed data to draw 2D and/or 3D graphic, and gives suggestion to 
 
 ===#
-# gets 'table combination vs access' relation data in condition panel
+# gets 'table combination vs access' relation data in stats panel
 route("/gettablecombivsaccessrelationdata",GetDataController.getTableCombiVsAccessRelationData)
-# gets sql performance data in condition panel
+# gets sql performance data in stats panel
 route("/getapiaccessdata",GetDataController.getApiAccessData)
 route("/getdbaccessdata",GetDataController.getDBAccessData)
 route("/getperformancedata_real",GetDataController.getPerformanceRealData)
 route("/getperformancedata_test",GetDataController.getPerformanceTestData)
 route("/chkexistimprapifile",GetDataController.checkExistImproveApiFile)
-
+route("/getapiexecspeed", PostDataController.getApiExecutionSpeed, method = POST)
 #===
 
   ■Configuration features

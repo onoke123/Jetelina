@@ -27,7 +27,7 @@
       inScenarioChk(s,sc,type) check if user input string is in the ordered scenario
       countCandidates(s,sc,type) count config/scenario candidates
       isVisibleFunctionPanel() check the function panel is visible or not
-      isVisibleApiAccessNumbersList() check the condition panel is visible or not
+      isVisibleApiAccessNumbersList() check the stats panel is visible or not
       isVisibleSomethingMsgPanel() checking "#something_msg" is visible or not
       showSomethingInputField(b,type) "#something_input_field" show or hide
       showSomethingMsgPanel(b) "#something_msg" show or hide
@@ -481,7 +481,7 @@ const getAjaxData = (url) => {
                         */
                         changeChatGirlImage("concern");
                         showSomethingMsgPanel(true);
-                        m = "cond-performance-improve-msg";
+                        m = "stats-performance-improve-msg";
 
                         /*
                             deprecated procedures but who knows never revival.
@@ -521,7 +521,7 @@ const getAjaxData = (url) => {
                     }
                     /*
                         Tips:
-                            drow graphic in condition panel.
+                            drow graphic in stats panel.
                             this setGraphDta() function is defined in statspanel.js.
                     */
                     let acVscom = setGraphData(result, type);
@@ -535,7 +535,7 @@ const getAjaxData = (url) => {
                                             
                                            changeChatGirlImage("concern");
                                            showSomethingMsgPanel(true);
-                                           m = "cond-performance-improve-msg";
+                                           m = "stats-performance-improve-msg";
                                         } else {
                                            m = "success-msg";
                                         } */
@@ -1222,9 +1222,9 @@ const chatKeyDown = (cmd) => {
             }
 
             if (isVisibleApiAccessNumbersList() || isVisibleChartPanel()) {
-                if (inScenarioChk(ut, "cond-db-access-numbers-chart-hide-cmd")) {
+                if (inScenarioChk(ut, "stats-db-access-numbers-chart-hide-cmd")) {
                     $(PIECHARTPANEL).hide();
-                } else if (inScenarioChk(ut, "cond-api-access-numbers-list-hide-cmd")) {
+                } else if (inScenarioChk(ut, "stats-api-access-numbers-list-hide-cmd")) {
                     hideApiAccessNumbersList();
                     //                    $(APIACCESSNUMBERS).hide();
                     //                    $(APIACCESSNUMBERSLIST).DataTable().destroy();
@@ -1233,7 +1233,7 @@ const chatKeyDown = (cmd) => {
                     //                    $(APIACCESSNUMBERSLIST).DataTable().destroy();
                     ret = chooseMsg('general-thanks-msg', loginuser.lastname, "c");
                 } else {
-                    if (isVisibleApiAccessNumbersList() && !inScenarioChk(ut, 'cond-db-access-numbers-chart-show-cmd')) {
+                    if (isVisibleApiAccessNumbersList() && !inScenarioChk(ut, 'stats-db-access-numbers-chart-show-cmd')) {
                         // hijack every command if showing analyzing data
                         m = apiAccessNumbersListController(ut);
                     }
@@ -2247,7 +2247,7 @@ const guidancePageController = (n) => {
         default: break;
     }
 
-    return chooseMsg('cond-graph-show-msg', '', '');
+    return chooseMsg('stats-graph-show-msg', '', '');
 }
 /**
  * @function jetelinaPanelPositionController

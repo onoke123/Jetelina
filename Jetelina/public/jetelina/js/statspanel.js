@@ -127,15 +127,15 @@ const statsPanelFunctions = (ut) => {
     let cmd = getPreferentPropertie('cmd');
 
     if (cmd == null || cmd.length <= 0) {
-        if (inScenarioChk(ut, 'cond-api-access-numbers-list-show-cmd')) {
+        if (inScenarioChk(ut, 'stats-api-access-numbers-list-show-cmd')) {
             cmd = APIACCESSNUMBERSCOMMAND;
-        } else if (inScenarioChk(ut, 'cond-db-access-numbers-chart-show-cmd')) {
+        } else if (inScenarioChk(ut, 'stats-db-access-numbers-chart-show-cmd')) {
             cmd = DBACCESSNUMBERSCOMMAND;
-        } else if (inScenarioChk(ut,'cond-api-exec-speed-show-cmd')){
+        } else if (inScenarioChk(ut,'stats-api-exec-speed-show-cmd')){
             cmd = APIEXECUTIONSPEEDCOMMAND;
         }
         /*
-        } else if (inScenarioChk(ut, 'cond-sql-performance-graph-show-cmd')) {
+        } else if (inScenarioChk(ut, 'stats-sql-performance-graph-show-cmd')) {
             if (isSuggestion) {
                 cmd = "performance";
             } else {
@@ -163,13 +163,13 @@ const statsPanelFunctions = (ut) => {
             showSomethingMsgPanel(false);
             $(APIACCESSNUMBERS).show().draggable();
 
-            m = chooseMsg('cond-graph-show-msg', "", "");
+            m = chooseMsg('stats-graph-show-msg', "", "");
             break;
         case DBACCESSNUMBERSCOMMAND:
             showSomethingMsgPanel(false);
             $(PIECHARTPANEL).show().draggable();
 
-            m = chooseMsg('cond-graph-show-msg', "", "");
+            m = chooseMsg('stats-graph-show-msg', "", "");
             break;
         case APIEXECUTIONSPEEDCOMMAND:
             showSomethingMsgPanel(false);
@@ -195,10 +195,10 @@ const statsPanelFunctions = (ut) => {
             }, ANIMATEDURATION).draggable('disable');
 
             showSomethingMsgPanel(true);
-            m = chooseMsg('cond-graph-show-msg', "", "");
+            m = chooseMsg('stats-graph-show-msg', "", "");
             break;
         case 'no_suggestion':
-            m = chooseMsg('cond-no-suggestion-msg', "", "");
+            m = chooseMsg('stats-no-suggestion-msg', "", "");
             break;
         */
         default:
@@ -408,15 +408,15 @@ const apiAccessNumbersListController = (cmd) => {
     let t = $(APIACCESSNUMBERSLIST).DataTable();
     let ret = "";
 
-    if (inScenarioChk(cmd, 'cond-apiaccessnumberslist-next-cmd')) {
+    if (inScenarioChk(cmd, 'stats-apiaccessnumberslist-next-cmd')) {
         t.page("next").draw(false);
-    } else if (inScenarioChk(cmd, 'cond-apiaccessnumberslist-prev-cmd')) {
+    } else if (inScenarioChk(cmd, 'stats-apiaccessnumberslist-prev-cmd')) {
         t.page("previous").draw(false);
-    } else if (inScenarioChk(cmd, 'cond-apiaccessnumberslist-last-cmd')) {
+    } else if (inScenarioChk(cmd, 'stats-apiaccessnumberslist-last-cmd')) {
         t.page("last").draw(false);
-    } else if (inScenarioChk(cmd, 'cond-apiaccessnumberslist-first-cmd')) {
+    } else if (inScenarioChk(cmd, 'stats-apiaccessnumberslist-first-cmd')) {
         t.page("first").draw(false);
-    } else if (inScenarioChk(cmd, 'cond-apiaccessnumberslist-search-cmd')) {
+    } else if (inScenarioChk(cmd, 'stats-apiaccessnumberslist-search-cmd')) {
         let sar = cmd.split(" ");
         for (let i = 0; i < sar.length; i++) {
             /*
@@ -428,7 +428,7 @@ const apiAccessNumbersListController = (cmd) => {
                 t.search(sar[i]).draw(false);
             }
         }
-    } else if (inScenarioChk(cmd, 'cond-apiaccessnumberslist-again-cmd')) {
+    } else if (inScenarioChk(cmd, 'stats-apiaccessnumberslist-again-cmd')) {
         t.destroy();
         showApiAccessNumbersList();
     } else {
@@ -436,7 +436,7 @@ const apiAccessNumbersListController = (cmd) => {
     }
 
     if (!inScenarioChk(ret, 'waiting-next-msg')) {
-        ret = chooseMsg('cond-graph-show-msg', '', '');
+        ret = chooseMsg('stats-graph-show-msg', '', '');
     }
 
     return ret;

@@ -28,6 +28,7 @@ functions
 	getRelatedTableApi() get the list of relational with 'table' or 'api'
 	searchErrorLog() searching orderd log as 'errnum' in log file
 	prepareDbEnvironment() database connection checking, and initializing database if needed
+	getApiExecutionSpeed()	get api execution speed data.
 """
 module PostDataController
 
@@ -38,7 +39,7 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 JMessage.showModuleInCompiling(@__MODULE__)
 
 export initialDb, initialUser, getConfigData, handleApipostdata, createApi, getColumns, deleteTable, userRegist, login, getUserInfoKeys, refUserAttribute, refUserInfo, updateUserInfo,
-	updateUserData, updateUserLoginData, deleteUserAccount, deleteApi, configParamUpdate, searchErrorLog, prepareDbEnvironment
+	updateUserData, updateUserLoginData, deleteUserAccount, deleteApi, configParamUpdate, searchErrorLog, prepareDbEnvironment, getApiExecutionSpeed
 
 """
 	function initialDb() 
@@ -596,6 +597,37 @@ function prepareDbEnvironment()
 		err = """Ooops, failed at checkin' the connection, may need to update the connection parameters. <start>type 'show parameter'<st>which ... -> type to point parameter like 'my_password'<st>type 'change parameter'<st>set your new data for updating<end>then try again. rely on me :)"""
 		return json(Dict("result" => false, "Jetelina" =>  copy.(eachrow(df)), "preciousmsg" => "$err"))
 	end
+end
+"""
+function getApiExecutionSpeed(apino)
+
+	get api execution speed data.
+
+# Arguments
+- `apino::String`: target api name
+- return: json: contains the list data
+"""
+function getApiExecutionSpeed()
+	apino::String = jsonpayload("apino")
+    fname::String = joinpath(@__DIR__, JFiles.getFileNameFromLogPath(j_config.JC["apiperformancedatapath"]),apino)
+    maxrow::Int = j_config.JC["json_max_lines"]
+    ret = ""
+
+    if isfile(fname)
+		df = CSV.read(fname, DataFrame, limit=maxrow)
+        unique!(df,:date)
+        linecount::Int = 0
+
+        if( 0<nrow(df))
+            ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
+        else
+            ret = json(Dict("result" => true, "Jetelina" => "[{}]", "target" => key, "message from Jetelina" => "the data is not yet"))
+        end
+    else
+        ret = json(Dict("result" => true, "Jetelina" => "[{}]", "target" => key, "message from Jetelina" => "the data is not yet"))
+    end
+
+    return ret
 end
 
 end
