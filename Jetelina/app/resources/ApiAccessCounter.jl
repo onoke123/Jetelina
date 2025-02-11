@@ -50,8 +50,6 @@ end
 function collectApiAccessNumbers()
 
 	collect each api(sql) access numbers.
-
-# Arguments
 """
 function collectApiAccessNumbers()
     #===
@@ -281,8 +279,6 @@ function createApiSpeedFile(df::DataFrame)
                 _createStdFile(fname)
             else
                 # create suggestion file for raising alert to an user
-                #sugstr = JSON.json(Dict("type" => "[deprecated api]", "outof" => sigma, "Jetelina" => copy(df[i,:])))
-                #push!(stdoutdata,[sugstr])
                 push!(suggestion_df,["[deprecated api]",df[i,:apino],df[i,:mean],sigma,df[i,:database]])
             end
         catch err
@@ -297,7 +293,6 @@ function createApiSpeedFile(df::DataFrame)
     if 0<nrow(suggestion_df)
         sugfname::String = joinpath(@__DIR__, JFiles.getFileNameFromLogPath(j_config.JC["improvesuggestionfile"]))
         open(sugfname,"a+") do ff
-#            println(ff, JSON.json(Dict("result" => true, "date" => date, "Jetelina" => copy(stdoutdata))))
             println(ff, JSON.json(Dict("result" => true, "date" => date, "Jetelina" => copy.(eachrow(suggestion_df)))))
         end
     end

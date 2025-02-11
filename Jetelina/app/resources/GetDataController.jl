@@ -19,16 +19,17 @@ functions
 	getConfigHistory() get configuration change history in json style.
 	getOperationHistory() get operation history in json style.
 	getWorkingDBList() get db list that is working.
+    getApiExecutionSpeed(apino)	get api execution speed data.
 """
 module GetDataController
 
-using Genie, Genie.Requests, Genie.Renderer.Json, DataFrames
+using Genie, Genie.Requests, Genie.Renderer.Json, DataFrames, CSV
 using Jetelina.JFiles, Jetelina.InitApiSqlListManager.ApiSqlListManager, Jetelina.DBDataController, Jetelina.JMessage, Jetelina.JSession
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-export logout, getTableList, getTableCombiVsAccessRelationData, getPerformanceRealData, getPerformanceTestData, checkExistImproveApiFile, getApiList, getConfigHistory, getOperationHistory, getWorkingDBList
+export logout, getTableList, getTableCombiVsAccessRelationData, getPerformanceRealData, getPerformanceTestData, checkExistImproveApiFile, getApiList, getConfigHistory, getOperationHistory, getWorkingDBList, getApiExecutionSpeed
 
 """
 function logout()
@@ -305,6 +306,36 @@ function getWorkingDBList()
 
     df = DataFrame("postgres" => postgres, "mysql" => mysql, "redis" => redis, "mongodb" => mongodb)
     return json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
+end
+"""
+function getApiExecutionSpeed(apino)
+
+	get api execution speed data.
+
+# Arguments
+- `apino::String`: target api name
+- return: json: contains the list data
+"""
+function getApiExecutionSpeed(apino::String)
+    fname::String = joinpath(@__DIR__, JFiles.getFileNameFromLogPath(j_config.JC["apiperformancedatapath"]),apino)
+    maxrow::Int = j_config.JC["json_max_lines"]
+    ret = ""
+
+    if isfile(fname)
+		df = CSV.read(fname, DataFrame, limit=maxrow)
+        unique!(df,:date)
+        linecount::Int = 0
+
+        if( 0<nrow(df))
+            ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
+        else
+            ret = json(Dict("result" => true, "Jetelina" => "[{}]", "target" => key, "message from Jetelina" => "the data is not yet"))
+        end
+    else
+        ret = json(Dict("result" => true, "Jetelina" => "[{}]", "target" => key, "message from Jetelina" => "the data is not yet"))
+    end
+
+    return ret
 end
 
 end

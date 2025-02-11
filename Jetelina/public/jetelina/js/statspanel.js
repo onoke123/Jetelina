@@ -6,8 +6,8 @@
     This js lib works with dashboard.js and jetelinalib.js for the Condition Panel.
     
     Functions:
-      openStatsPanel(b,type) visible or hide "APIACCESSNUMBERS" an "#plot"
-      isVisibleChartPanel() checking "#plot" is visible or not
+      openStatsPanel(b,type) visible or hide "APIACCESSNUMBERS" an "#piechart"
+      isVisibleChartPanel() checking "#piechart" is visible or not
       isVisibleApiAccessNumbers() checking "APIACCESSNUMBERS" is visible or not
       isVisiblePerformanceReal() checking "#performance_real" is visible or not
       isVisiblePerformanceTest() checking "#performance_test" is visible or not
@@ -21,11 +21,12 @@
 const APIACCESSNUMBERSLIST = "#api_access_numbers_list";
 const APIACCESSNUMBERSCOMMAND = "apiaccessnumbers";
 const DBACCESSNUMBERSCOMMAND = "dbaccessnumbers";
+const APIEXECUTIONSPEEDCOMMAND = "apiexecutionspeed";
 /**
  *  @function openStatsPanel
  *  @param {boolean} true -> visible false -> hide
  * 
- *  visible or hide "APIACCESSNUMBERS" and "#plot"
+ *  visible or hide "APIACCESSNUMBERS" and "#piechart"
  */
 const openStatsPanel = (b, type) => {
     if (b) {
@@ -37,11 +38,13 @@ const openStatsPanel = (b, type) => {
             getAjaxData(dataurls[4]);
         } else if (type == DBACCESSNUMBERSCOMMAND) {
             getAjaxData(dataurls[5]);
+        } else if (type == APIEXECUTIONSPEEDCOMMAND){
+            getAjaxData(dataurls);
         }
     } else {
         hideApiAccessNumbersList();
         //$(APIACCESSNUMBERS).hide();
-        $(CHARTPANEL).hide();
+        $(PIECHARTPANEL).hide();
     }
 }
 /**
@@ -62,11 +65,11 @@ const isVisibleApiAccessNumbers = () => {
  * @function isVisibleChartPanel
  * @returns {boolean}  true -> visible, false -> invisible
  * 
- * checking "#plot" is visible or not
+ * checking "#piechart" is visible or not
  */
 const isVisibleChartPanel = () => {
     let ret = false;
-    if ($(CHARTPANEL).is(":visible")) {
+    if ($(PIECHARTPANEL).is(":visible")) {
         ret = true;
     }
 
@@ -128,6 +131,8 @@ const statsPanelFunctions = (ut) => {
             cmd = APIACCESSNUMBERSCOMMAND;
         } else if (inScenarioChk(ut, 'cond-db-access-numbers-chart-show-cmd')) {
             cmd = DBACCESSNUMBERSCOMMAND;
+        } else if (inScenarioChk(ut,'cond-api-exec-speed-show-cmd')){
+            cmd = APIEXECUTIONSPEEDCOMMAND;
         }
         /*
         } else if (inScenarioChk(ut, 'cond-sql-performance-graph-show-cmd')) {
@@ -149,7 +154,7 @@ const statsPanelFunctions = (ut) => {
                 'performance: show the result of analyzing sql exection on test db.
                               this cmd can execute in the case of being a suggestion.
     */
-    if (-1 < $.inArray(cmd, [APIACCESSNUMBERSCOMMAND, DBACCESSNUMBERSCOMMAND])) {
+    if (-1 < $.inArray(cmd, [APIACCESSNUMBERSCOMMAND, DBACCESSNUMBERSCOMMAND,APIEXECUTIONSPEEDCOMMAND])) {
         openStatsPanel(true, cmd);
     }
 
@@ -162,9 +167,13 @@ const statsPanelFunctions = (ut) => {
             break;
         case DBACCESSNUMBERSCOMMAND:
             showSomethingMsgPanel(false);
-            $(CHARTPANEL).show().draggable();
+            $(PIECHARTPANEL).show().draggable();
 
             m = chooseMsg('cond-graph-show-msg', "", "");
+            break;
+        case APIEXECUTIONSPEEDCOMMAND:
+            showSomethingMsgPanel(false);
+
             break;
         /*
         case 'performance':
@@ -176,7 +185,7 @@ const statsPanelFunctions = (ut) => {
                 $("#performance_real").hide();
             }
 
-            $(CHARTPANEL).show().animate({
+            $(PIECHARTPANEL).show().animate({
                  top: "5%",
                  left: "-5%"
              }, ANIMATEDURATION);
@@ -308,7 +317,7 @@ const setGraphData = (o, type) => {
                                         } else if (type == "sp") {
                                             /*
                                                 Tips:
-                                                    access numbers / execution speed in each api -> 3D scatter plot
+                                                    access numbers / execution speed in each api -> 3D scatter piechart
                                             */
                                         }
                                     }
@@ -340,7 +349,7 @@ const setGraphData = (o, type) => {
                     showApiAccessNumbersList();
                 } else {
                     // ploty graph
-                    $(`${CHARTPANEL} [name='between']`).text(`${startdate} - ${enddate}`);
+                    $(`${PIECHARTPANEL} [name='between']`).text(`${startdate} - ${enddate}`);
                     /*
                         Tips:
                         adjusting the plot.js execution time because it is depend on clients environment
@@ -516,7 +525,7 @@ const viewPlotlyChart = (basedata, type) => {
     */
     if (type == "db") {
         //        Plotly.react('db_access_numbers_chart', data, layout);
-        Plotly.react('plot_graph', data, layout);
+        Plotly.react('piechart_graph', data, layout);
     } else {
         Plotly.newPlot('performance_test_graph', data, layout);
     }
@@ -678,5 +687,5 @@ const viewCombinationGraph = (bname, bno, ct, ac) => {
         }
     };
 
-    Plotly.newPlot('plot_graph', data, layout);
+    Plotly.newPlot('piechart_graph', data, layout);
 }

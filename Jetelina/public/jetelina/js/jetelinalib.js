@@ -452,7 +452,6 @@ const getAjaxData = (url) => {
             */
             result = JSON.stringify(result);
             result = JSON.parse(result);
-            //            isSuggestion = false;
 
             let m = "";
             // go data parse
@@ -474,9 +473,6 @@ const getAjaxData = (url) => {
                         // set my suggestion
                         $(SOMETHINGMSGPANELMSG).addClass("jetelina_suggestion");
                         getdata(result, 7);
-                        //                        $(SOMETHINGMSGPANELMSG).text(sugstr);
-
-                        //                      if (isSuggestion) {
                         /*
                             Tips:
                                 isSuggestion = true, the meaning of the file existing is Jetelina wanna put inform you something 'improving suggestion'.
@@ -486,11 +482,10 @@ const getAjaxData = (url) => {
                         changeChatGirlImage("concern");
                         showSomethingMsgPanel(true);
                         m = "cond-performance-improve-msg";
-                        //                       } else {
-                        //                           m = "success-msg";
-                        //}
-                        //                        $(SOMETHINGMSGPANELMSG).text(`${result.type}: STD out of σ = ${result.outof} ${result.Jetelina.apino} is workin' on ${result.Jetelina.database}`);
 
+                        /*
+                            deprecated procedures but who knows never revival.
+                        */
                         // relation access & combination
                         //getAjaxData(dataurls[0]);
                         // simply sql speed
@@ -1228,7 +1223,7 @@ const chatKeyDown = (cmd) => {
 
             if (isVisibleApiAccessNumbersList() || isVisibleChartPanel()) {
                 if (inScenarioChk(ut, "cond-db-access-numbers-chart-hide-cmd")) {
-                    $(CHARTPANEL).hide();
+                    $(PIECHARTPANEL).hide();
                 } else if (inScenarioChk(ut, "cond-api-access-numbers-list-hide-cmd")) {
                     hideApiAccessNumbersList();
                     //                    $(APIACCESSNUMBERS).hide();
@@ -1616,7 +1611,7 @@ const logout = () => {
     $(GENELICPANEL).hide();
     $(GENELICPANELINPUT).val('');
     $(SOMETHINGINPUT).val('');
-    $(CHARTPANEL).hide();
+    $(PIECHARTPANEL).hide();
     hideApiAccessNumbersList();
     $("#performance_real").hide();
     $("#performance_test").hide();

@@ -18,8 +18,9 @@ const CONTAINERPANEL = "#container";
 const RELATEDTABLESAPIS = "#right_panel";
 const COLUMNSPANEL = "#columns";
 const JETELINACHATBOX = `${JETELINAPANEL} [name='chat_input']`;
-const CHARTPANEL = "#plot";
+const PIECHARTPANEL = "#piechart";
 const APIACCESSNUMBERS = "#api_access_numbers";
+const LINECHARTPANEL = "#apispeedchart";
 
 let stage = 0;// action stage number ex. 1:before login  'login':at login
 let preferent = {};// contains precedence commands. ex. droptable, deliteApi...
@@ -65,11 +66,11 @@ $(window).load(function () {
    *   manipulate condition panel
    */
 //  $(STATSPANEL).hide().draggable();
-  $(CHARTPANEL).mouseover(function () {
+//  $(CHARTPANEL).mouseover(function () {
 //    $(STATSPANEL).draggable("disable");
-  }).mouseout(function () {
+//  }).mouseout(function () {
 //    $(STATSPANEL).draggable("enable");
-  });
+//  });
   /**
    * switch active/inactive panel by focusting
    */

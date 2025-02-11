@@ -121,6 +121,8 @@
 # Access Numbers list/chart 
 @jdic cond-api-access-numbers-list-show-cmd:"show api access","display api access"
 @jdic cond-api-access-numbers-list-hide-cmd:"for api access","hide api access"
+@jdic cond-api-exec-speed-show-cmd:"show api speed","show api speed of","display api speed","display api speed of"
+@jdic cond-api-exec-speed-hide-cmd:"for api speed","hide api speed"
 @jdic cond-db-access-numbers-chart-show-cmd:"show db access","display db access"
 @jdic cond-db-access-numbers-chart-hide-cmd:"for db access","hide db access"
 

@@ -425,6 +425,7 @@ function deleteApi()
 	stichwort = jsonpayload("pass")
 	jmsg::String = string("compliment me!")
 	retapis::String = join(apis,",") # ["a","b"] -> "a,b" oh ＼(^o^)／
+	ret = ""
 
 	if DBDataController.refStichWort(stichwort)
 		if( ApiSqlListManager.deleteApiFromList(apis) )
@@ -435,6 +436,8 @@ function deleteApi()
 	else
 		ret = json(Dict("result" => false, "message from Jetelina" => "wrong pass phrase"))
 	end
+
+	return ret
 end
 """
 function configParamUpdate()

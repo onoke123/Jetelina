@@ -159,9 +159,15 @@
 			</table>
 		</div>
 	</div>
-	<div id="plot" style="top:20%;left:50%" class="functionpanel-parts commonpanel squarepanel" hidden>
+	<!-- pie chart of each database access rate data -->
+	<div id="piechart" style="top:20%;left:50%" class="functionpanel-parts commonpanel squarepanel" hidden>
 		<div><text style="font-size: large;color:lightgreen;">Rate of DataBase access numbers　</text><text style="font-size:small;color:lightgreen;"name="between"></text></div>
-		<div id="plot_graph"></div>
+		<div id="piechart_graph"></div>
+	</div>
+	<!-- line chart of an api execution speed data -->
+	<div id="apispeedchart" style="top:30%;left:60%" class="functionpanel-parts commonpanel squarepanel" hidden>
+		<div><text style="font-size: large;color:lightgreen;">Execution Speed of　</text><text name="apino" style="font-size:large;color:lightgreen;"></text><text style="font-size:small;color:lightgreen;" name="between"></text></div>
+		<div id="apispeed_graph"></div>
 	</div>
 
 	<div id="performance_real" style="width:50%;height:50%" hidden>
