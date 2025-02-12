@@ -22,7 +22,7 @@ functions
 """
 module GetDataController
 
-using Genie, Genie.Requests, Genie.Renderer.Json, DataFrames, CSV
+using Genie, Genie.Requests, Genie.Renderer.Json, DataFrames
 using Jetelina.JFiles, Jetelina.InitApiSqlListManager.ApiSqlListManager, Jetelina.DBDataController, Jetelina.JMessage, Jetelina.JSession
 import Jetelina.InitConfigManager.ConfigManager as j_config
 

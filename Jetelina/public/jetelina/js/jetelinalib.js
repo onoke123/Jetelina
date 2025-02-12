@@ -525,20 +525,6 @@ const getAjaxData = (url) => {
                             this setGraphDta() function is defined in statspanel.js.
                     */
                     let acVscom = setGraphData(result, type);
-                    /*
-                                        if (isSuggestion) {
-                                            
-                                                Tips:
-                                                    isSuggestion = true, the meaning of the file existing is Jetelina wanna put inform you something 'improving suggestion'.
-                                                    the below message is for it.
-                                                    but abandon any 'suggestion" in Ver.1
-                                            
-                                           changeChatGirlImage("concern");
-                                           showSomethingMsgPanel(true);
-                                           m = "stats-performance-improve-msg";
-                                        } else {
-                                           m = "success-msg";
-                                        } */
                 } else {
                     /*
                         Attention:
@@ -770,6 +756,13 @@ const postAjaxData = (url, data) => {
 
                     let data = `{"${dbconfname}":"true"}`;
                     postAjaxData(scenario["function-post-url"][3], data);
+                } else if (url == scenario['analyzed-data-collect-url'][6]){
+                    /*
+                        Tips:
+                            drow graphic in stats panel.
+                            this setGraphDta() function is defined in statspanel.js.
+                    */
+                    let acVscom = setGraphData(result, "as");
                 }
 
                 if (specialmsg == "") {
@@ -1233,7 +1226,7 @@ const chatKeyDown = (cmd) => {
                     //                    $(APIACCESSNUMBERSLIST).DataTable().destroy();
                     ret = chooseMsg('general-thanks-msg', loginuser.lastname, "c");
                 } else {
-                    if (isVisibleApiAccessNumbersList() && !inScenarioChk(ut, 'stats-db-access-numbers-chart-show-cmd')) {
+                    if (isVisibleApiAccessNumbersList() && !inScenarioChk(ut, 'stats-db-access-numbers-chart-show-cmd') && !inScenarioChk(ut,'stats-api-exec-speed-show-cmd')) {
                         // hijack every command if showing analyzing data
                         m = apiAccessNumbersListController(ut);
                     }

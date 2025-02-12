@@ -39,7 +39,8 @@ const openStatsPanel = (b, type) => {
         } else if (type == DBACCESSNUMBERSCOMMAND) {
             getAjaxData(dataurls[5]);
         } else if (type == APIEXECUTIONSPEEDCOMMAND){
-            getAjaxData(dataurls);
+            let data = `{"apino":"jd50"}`;
+            postAjaxData(dataurls[6],data);
         }
     } else {
         hideApiAccessNumbersList();
@@ -162,18 +163,17 @@ const statsPanelFunctions = (ut) => {
         case APIACCESSNUMBERSCOMMAND:
             showSomethingMsgPanel(false);
             $(APIACCESSNUMBERS).show().draggable();
-
             m = chooseMsg('stats-graph-show-msg', "", "");
             break;
         case DBACCESSNUMBERSCOMMAND:
             showSomethingMsgPanel(false);
             $(PIECHARTPANEL).show().draggable();
-
             m = chooseMsg('stats-graph-show-msg', "", "");
             break;
         case APIEXECUTIONSPEEDCOMMAND:
             showSomethingMsgPanel(false);
-
+            $(LINECHARTPANEL).show().draggable();
+            m = chooseMsg('stats-graph-show-msg', "", "");
             break;
         /*
         case 'performance':
@@ -262,70 +262,89 @@ const setGraphData = (o, type) => {
 
                 $.each(o[key], function (k, v) {
                     if (v != null) {
-                        $.each(v, function (name, value) {
-                            if (name == "date") {
-                                datadate.push(value);
-                            }
+                        if($.inArray(type,["ac","db"]) != -1){
+                            $.each(v, function (name, value) {
+                                if (name == "date") {
+                                    datadate.push(value);
+                                }
 
-                            if (name == "Jetelina") { // in array field
-                                $.each(value, function (na, va) {
-                                    if (va != null) {
-                                        if (type == "ac") {
-                                            let existflg = false;
-                                            /*
-                                                Tips:
-                                                    access numbers in each api  -> list figure
-                                            */
-                                            if (va != null) {
-                                                if (0 < preferent.apiaccesslistdata.length) {
-                                                    let ald = preferent.apiaccesslistdata;
-                                                    for (let i = 0; i < ald.length; i++) {
-                                                        if (ald[i][0] == va.apino) {
-                                                            ald[i][1] += va.access_numbers;
-                                                            existflg = true;
-                                                        }
-                                                    }
-                                                }
-
-                                                if (!existflg) {
-                                                    preferent.apiaccesslistdata.push([va.apino, va.access_numbers, va.database]);
-                                                }
-                                            }
-                                        } else if (type == "db") {
-                                            /*
-                                                Tips:
-                                                    access numbers in each database -> pie chart
-                                            */
-                                            if (va != null) {
+                                if (name == "Jetelina") { // in array field
+                                    $.each(value, function (na, va) {
+                                        if (va != null) {
+                                            if (type == "ac") {
                                                 let existflg = false;
-                                                if (0 < dbaccessnumbers_chart_labels.length) {
-                                                    let dbcl = dbaccessnumbers_chart_labels;
-                                                    let dbcv = dbaccessnumbers_chart_values;
-                                                    for (let i = 0; i < dbcl.length; i++) {
-                                                        if (dbcl[i] == va.database) {
-                                                            dbcv[i] += va.access_numbers;
-                                                            existflg = true;
+                                                /*
+                                                    Tips:
+                                                        access numbers in each api  -> list figure
+                                                */
+                                                if (va != null) {
+                                                    if (0 < preferent.apiaccesslistdata.length) {
+                                                        let ald = preferent.apiaccesslistdata;
+                                                        for (let i = 0; i < ald.length; i++) {
+                                                            if (ald[i][0] == va.apino) {
+                                                                ald[i][1] += va.access_numbers;
+                                                                existflg = true;
+                                                            }
                                                         }
                                                     }
-                                                }
 
-                                                if (!existflg) {
-                                                    dbaccessnumbers_chart_labels.push(va.database);
-                                                    dbaccessnumbers_chart_values.push(va.access_numbers);
+                                                    if (!existflg) {
+                                                        preferent.apiaccesslistdata.push([va.apino, va.access_numbers, va.database]);
+                                                    }
                                                 }
+                                            } else if (type == "db") {
+                                                /*
+                                                    Tips:
+                                                        access numbers in each database -> pie chart
+                                                */
+                                                if (va != null) {
+                                                    let existflg = false;
+                                                    if (0 < dbaccessnumbers_chart_labels.length) {
+                                                        let dbcl = dbaccessnumbers_chart_labels;
+                                                        let dbcv = dbaccessnumbers_chart_values;
+                                                        for (let i = 0; i < dbcl.length; i++) {
+                                                            if (dbcl[i] == va.database) {
+                                                                dbcv[i] += va.access_numbers;
+                                                                existflg = true;
+                                                            }
+                                                        }
+                                                    }
+
+                                                    if (!existflg) {
+                                                        dbaccessnumbers_chart_labels.push(va.database);
+                                                        dbaccessnumbers_chart_values.push(va.access_numbers);
+                                                    }
+                                                }
+                                            } else if (type == "sp") {
+                                                /*
+                                                    Tips:
+                                                        access numbers / execution speed in each api -> 3D scatter piechart
+                                                */
                                             }
-                                        } else if (type == "sp") {
-                                            /*
-                                                Tips:
-                                                    access numbers / execution speed in each api -> 3D scatter piechart
-                                            */
                                         }
-                                    }
-                                });
-                            } else if (name = "date") {
+                                    });
+                                } else if (name = "date") {
 
-                            }
-                        });
+                                }
+                            });
+                        }else if (type == "as"){
+                            /*
+                                Tips:
+                                    an api speed -> 2D line chart 
+                            */
+                            $.each(v, function (name,value) {
+                                console.log(name, " -> " , value);
+                                if(name == "date"){
+                                    datadate.push(value);
+                                }else if(name=="mean"){
+                                    apispeed_mean.push(value);
+                                }else if(name=="max"){
+                                    apispeed_max.push(value);
+                                }else if(name=="min"){
+                                    apispeed_min.push(value);
+                                }
+                            });
+                        }
                     }
                 });
 
@@ -358,9 +377,11 @@ const setGraphData = (o, type) => {
                         if (type == "db") {
                             let d = [dbaccessnumbers_chart_labels, dbaccessnumbers_chart_values];
                             viewPlotlyChart(d, type);
-                            //viewPerformanceGraph(apino, access_count, type);
                         } else if (type == "sp") {
                             viewPerformanceGraph(apino, mean, type);
+                        } else if(type == "as"){
+                            let d = [datadate, apispeed_mean, apispeed_mean, apispeed_min];
+                            viewPlotlyChart(d, type);
                         }
                     }, 1000);
                 }
@@ -472,6 +493,42 @@ const viewPlotlyChart = (basedata, type) => {
             },
             paper_bgcolor: 'rgba(109, 98, 226, 0.15)'
         };
+    }else if (type == "as"){
+        data = [
+            {
+                type: 'scatter',
+                x: basedata[0],
+                y: basedata[1],
+                mode: 'markers',
+                marker: {
+                    color: 'rgb(255,255,255)',
+                    size: 20
+                }
+            }
+        ];
+
+        let layout = {
+            plot_bgcolor: 'rgb(0,0,0)',
+            paper_bgcolor: 'rgb(0,129,104)',
+            xaxis: {
+                backgroundcolor: 'rgb(255,0,0)',
+                showbackground: false,
+                gridcolor: 'rgb(0,153,153)',
+                color: 'rgb(255,255,255)',
+                size: 20,
+                title: 'api speed'
+            },
+            yaxis: {
+                backgroundcolor: 'rgb(255,0,0)',
+                showbackground: false,
+                gridcolor: 'rgb(0,153,153)',
+                color: 'rgb(255,255,255)',
+                size: 20,
+                title: 'date'
+            }
+        };
+    
+        Plotly.react('apispeed_graph', data, layout);
     } else {
         let real_data =
         {
