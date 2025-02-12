@@ -1605,6 +1605,7 @@ const logout = () => {
     $(GENELICPANELINPUT).val('');
     $(SOMETHINGINPUT).val('');
     $(PIECHARTPANEL).hide();
+    $(LINECHARTPANEL).hide();
     hideApiAccessNumbersList();
     $("#performance_real").hide();
     $("#performance_test").hide();

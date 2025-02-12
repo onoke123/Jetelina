@@ -333,7 +333,6 @@ const setGraphData = (o, type) => {
                                     an api speed -> 2D line chart 
                             */
                             $.each(v, function (name,value) {
-                                console.log(name, " -> " , value);
                                 if(name == "date"){
                                     datadate.push(value);
                                 }else if(name=="mean"){
@@ -380,7 +379,7 @@ const setGraphData = (o, type) => {
                         } else if (type == "sp") {
                             viewPerformanceGraph(apino, mean, type);
                         } else if(type == "as"){
-                            let d = [datadate, apispeed_mean, apispeed_mean, apispeed_min];
+                            let d = [datadate, apispeed_mean, apispeed_max, apispeed_min];
                             viewPlotlyChart(d, type);
                         }
                     }, 1000);
@@ -494,29 +493,53 @@ const viewPlotlyChart = (basedata, type) => {
             paper_bgcolor: 'rgba(109, 98, 226, 0.15)'
         };
     }else if (type == "as"){
-        data = [
-            {
+        let smean = {
                 type: 'scatter',
+                name: 'mean',
                 x: basedata[0],
                 y: basedata[1],
-                mode: 'markers',
                 marker: {
                     color: 'rgb(255,255,255)',
-                    size: 20
+                    size: 10
                 }
-            }
-        ];
+            };
+
+        let smax = {
+                type: 'scatter',
+                name: 'max',
+                x: basedata[0],
+                y: basedata[2],
+                marker: {
+                    color: 'rgb(212, 8, 8)',
+                    size: 10
+                }
+            };
+
+            let smin = {
+                type: 'scatter',
+                name: 'min',
+                x: basedata[0],
+                y: basedata[3],
+                marker: {
+                    color: 'rgb(39, 95, 214)',
+                    size: 10
+                }
+            };
+
+        let data = [smean, smax, smin];
 
         let layout = {
-            plot_bgcolor: 'rgb(0,0,0)',
-            paper_bgcolor: 'rgb(0,129,104)',
+            height: 400,
+            width: 500,
+            plot_bgcolor: 'rgba(109, 98, 226, 0.15)',
+            paper_bgcolor: 'rgba(109, 98, 226, 0.15)',
             xaxis: {
                 backgroundcolor: 'rgb(255,0,0)',
                 showbackground: false,
                 gridcolor: 'rgb(0,153,153)',
                 color: 'rgb(255,255,255)',
                 size: 20,
-                title: 'api speed'
+                title: 'date'
             },
             yaxis: {
                 backgroundcolor: 'rgb(255,0,0)',
@@ -524,7 +547,13 @@ const viewPlotlyChart = (basedata, type) => {
                 gridcolor: 'rgb(0,153,153)',
                 color: 'rgb(255,255,255)',
                 size: 20,
-                title: 'date'
+                title: 'execution speed'
+            },
+            legend: {
+                font:{
+                    color: 'rgb(255,255,255)',
+                    size: 10,
+                }
             }
         };
     
