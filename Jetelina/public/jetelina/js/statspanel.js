@@ -22,6 +22,9 @@ const APIACCESSNUMBERSLIST = "#api_access_numbers_list";
 const APIACCESSNUMBERSCOMMAND = "apiaccessnumbers";
 const DBACCESSNUMBERSCOMMAND = "dbaccessnumbers";
 const APIEXECUTIONSPEEDCOMMAND = "apiexecutionspeed";
+const APIACCESPANEL = $("#api_access_numbers");
+const DBACCESSPANEL = $("#piechart");
+const APISPEEDPANEL = $("#apispeedchart");
 /**
  *  @function openStatsPanel
  *  @param {boolean} true -> visible false -> hide
@@ -35,12 +38,18 @@ const openStatsPanel = (b, type) => {
             check for existing Jetelina's suggestion
         */
         if (type == APIACCESSNUMBERSCOMMAND) {
-            getAjaxData(dataurls[4]);
+            if(!APIACCESPANEL.is(":visible")){
+                getAjaxData(dataurls[4]);
+            }
         } else if (type == DBACCESSNUMBERSCOMMAND) {
-            getAjaxData(dataurls[5]);
+            if(!DBACCESSPANEL.is(":visible")){
+                getAjaxData(dataurls[5]);
+            }
         } else if (type == APIEXECUTIONSPEEDCOMMAND){
-            let data = `{"apino":"jd50"}`;
-            postAjaxData(dataurls[6],data);
+            if(!APISPEEDPANEL.is(":visible")){
+                let data = `{"apino":"jd50"}`;
+                postAjaxData(dataurls[6],data);
+            }
         }
     } else {
         hideApiAccessNumbersList();
@@ -159,20 +168,44 @@ const statsPanelFunctions = (ut) => {
         openStatsPanel(true, cmd);
     }
 
+    let zindexTop = 30;
+    let zindexMid = 20;
+    let zindexBot = 10;
     switch (cmd) {
         case APIACCESSNUMBERSCOMMAND:
             showSomethingMsgPanel(false);
-            $(APIACCESSNUMBERS).show().draggable();
+            if(!APIACCESPANEL.is(":visible")){
+                $(APIACCESSNUMBERS).show().draggable();
+            }else{
+                APIACCESPANEL.css("z-index",zindexTop);
+                DBACCESSPANEL.css("z-index",zindexMid);
+                APISPEEDPANEL.css("z-index",zindexBot);
+            }
+
             m = chooseMsg('stats-graph-show-msg', "", "");
             break;
         case DBACCESSNUMBERSCOMMAND:
             showSomethingMsgPanel(false);
-            $(PIECHARTPANEL).show().draggable();
+            if(!DBACCESSPANEL.is(":visible")){
+                $(PIECHARTPANEL).show().draggable();
+            }else{
+                DBACCESSPANEL.css("z-index",zindexTop);
+                APIACCESPANEL.css("z-index",zindexMid);
+                APISPEEDPANEL.css("z-index",zindexBot);
+            }
+
             m = chooseMsg('stats-graph-show-msg', "", "");
             break;
         case APIEXECUTIONSPEEDCOMMAND:
             showSomethingMsgPanel(false);
-            $(LINECHARTPANEL).show().draggable();
+            if(!APISPEEDPANEL.is(":visible")){
+                $(LINECHARTPANEL).show().draggable();
+            }else{
+                APISPEEDPANEL.css("z-index",zindexTop);
+                APIACCESPANEL.css("z-index",zindexMid);
+                DBACCESSPANEL.css("z-index",zindexBot);
+            }
+
             m = chooseMsg('stats-graph-show-msg', "", "");
             break;
         /*
