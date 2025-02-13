@@ -59,6 +59,7 @@ scenario["stats-apiaccessnumberslist-next-cmd"]=["next"];
 scenario["stats-apiaccessnumberslist-first-cmd"]=["first","head"];
 scenario["stats-apiaccessnumberslist-last-cmd"]=["last","end","tail"];
 scenario["stats-apiaccessnumberslist-search-cmd"]=["search"];
+scenario["stats-apiaccessnumberslist-search-clear-cmd"] = ["search clear"];
 scenario["stats-apiaccessnumberslist-again-cmd"]=["all"];
 scenario["stats-api-access-numbers-list-show-cmd"]=["show api access","display api access"];
 scenario["stats-api-access-numbers-list-hide-cmd"]=["for api access","hide api access"];
@@ -68,7 +69,6 @@ scenario["stats-db-access-numbers-chart-show-cmd"]=["show db access","display db
 scenario["stats-db-access-numbers-chart-hide-cmd"]=["for db access","hide db access"];
 scenario["stats-all-graph-show-cmd"] = ["show all stats","show all graph","display all stats","display all graph","show every stat","display every graph"];
 scenario["stats-all-graph-hide-cmd"] = ["hide all stats","hide every graph"];
-
 scenario["stats-sql-performance-graph-show-cmd"]=["your suggestion","suggest","improved performance"];
 scenario["stats-performance-improve-msg"]=["There is an improving suggestion.","Do you wanna know my great idea?","Attention please. I have an idea."];
 scenario["stats-no-suggestion-msg"]=["I do not have any suggestions so far.","No suggestions","I do not give it to you.","Hey, Nothing at all"];

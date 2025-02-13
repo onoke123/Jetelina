@@ -66,9 +66,11 @@ const openStatsPanel = (s, b, type) => {
                     }
                 }
 
-                let data = `{"apino":"${apino}"}`;
-                postAjaxData(dataurls[6], data);
-                $(`${LINECHARTPANEL} [name='apino']`).text(apino);
+                if (apino != "") {
+                    let data = `{"apino":"${apino}"}`;
+                    postAjaxData(dataurls[6], data);
+                    $(`${LINECHARTPANEL} [name='apino']`).text(apino);
+                }
             }
         }
     } else {
@@ -424,6 +426,8 @@ const apiAccessNumbersListController = (cmd) => {
         t.page("last").draw(false);
     } else if (inScenarioChk(cmd, 'stats-apiaccessnumberslist-first-cmd')) {
         t.page("first").draw(false);
+    } else if (inScenarioChk(cmd, 'stats-apiaccessnumberslist-search-clear-cmd')) {
+        t.search("").draw(false);
     } else if (inScenarioChk(cmd, 'stats-apiaccessnumberslist-search-cmd')) {
         let sar = cmd.split(" ");
         for (let i = 0; i < sar.length; i++) {

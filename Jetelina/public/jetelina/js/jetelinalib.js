@@ -1230,6 +1230,10 @@ const chatKeyDown = (cmd) => {
                     ret = chooseMsg('general-thanks-msg', loginuser.lastname, "c");
                 } else {
                     // hijack every command if showing and getting forcus on the api access numbers panel
+                    if(!isVisibleChartPanel() && !isVisibleApiSpeedPanel()){
+                        activePanel(APIACCESPANEL);
+                    }
+                    
                     if (isactivePanel(APIACCESPANEL)) {
                         m = apiAccessNumbersListController(ut);
                     }

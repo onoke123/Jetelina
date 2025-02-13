@@ -116,6 +116,7 @@
 @jdic stats-apiaccessnumberslist-first-cmd:"first","head"
 @jdic stats-apiaccessnumberslist-last-cmd:"last","end","tail"
 @jdic stats-apiaccessnumberslist-search-cmd:"search"
+@jdic stats-apiaccessnumberslist-search-clear-cmd:"search clear"
 @jdic stats-apiaccessnumberslist-again-cmd:"all"
 
 # Access Numbers list/chart 
