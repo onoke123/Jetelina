@@ -27,7 +27,7 @@
 const APIACCESSNUMBERSLIST = "#api_access_numbers_list";
 const APIACCESPANELTAGID = "#api_access_numbers";
 const DBACCESSPANELTAGID = "#piechart";
-const APISPEEDPANELTAGID = "#apispeedchart";  
+const APISPEEDPANELTAGID = "#apispeedchart";
 const APIACCESPANEL = $(APIACCESPANELTAGID);
 const DBACCESSPANEL = $(DBACCESSPANELTAGID);
 const APISPEEDPANEL = $(APISPEEDPANELTAGID);
@@ -41,7 +41,7 @@ const APIEXECUTIONSPEEDCOMMAND = "apiexecutionspeed";
  * 
  *  visible or hide "APIACCESSNUMBERS" and "#piechart"
  */
-const openStatsPanel = (b, type) => {
+const openStatsPanel = (s, b, type) => {
     if (b) {
         const dataurls = scenario['analyzed-data-collect-url'];
         /*
@@ -56,9 +56,19 @@ const openStatsPanel = (b, type) => {
                 getAjaxData(dataurls[5]);
             }
         } else if (type == APIEXECUTIONSPEEDCOMMAND) {
-            if (!APISPEEDPANEL.is(":visible")) {
-                let data = `{"apino":"jd50"}`;
+            let p = s.split(" ");
+            if (0 < p.length) {
+                let apino = "";
+                for (let i in p) {
+                    if (p[i].match(/^ji\d+|^ju\d+|^jd\d+|^js\d+/)) {
+                        apino = p[i];
+                        break;
+                    }
+                }
+
+                let data = `{"apino":"${apino}"}`;
                 postAjaxData(dataurls[6], data);
+                $(`${LINECHARTPANEL} [name='apino']`).text(apino);
             }
         }
     } else {
@@ -173,7 +183,7 @@ const statsPanelFunctions = (ut) => {
 
     if (-1 < $.inArray(cmd, [APIACCESSNUMBERSCOMMAND, DBACCESSNUMBERSCOMMAND, APIEXECUTIONSPEEDCOMMAND])) {
         showSomethingMsgPanel(false);
-        openStatsPanel(true, cmd); // execut getAjaxData()
+        openStatsPanel(ut, true, cmd); // execut getAjaxData()
         if (!$(panel).is(":visible")) {
             $(graphp).show().draggable();
         }
@@ -537,6 +547,7 @@ const viewPlotlyChart = (basedata, type) => {
             }
         };
 
+        Plotly.purge('apispeed_graph');
         Plotly.react('apispeed_graph', data, layout);
     } else {
         /*
