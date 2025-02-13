@@ -756,7 +756,7 @@ const postAjaxData = (url, data) => {
 
                     let data = `{"${dbconfname}":"true"}`;
                     postAjaxData(scenario["function-post-url"][3], data);
-                } else if (url == scenario['analyzed-data-collect-url'][6]){
+                } else if (url == scenario['analyzed-data-collect-url'][6]) {
                     /*
                         Tips:
                             drow graphic in stats panel.
@@ -1214,20 +1214,23 @@ const chatKeyDown = (cmd) => {
                 $(CHATBOXYOURTELL).text(ut);
             }
 
-            if (isVisibleApiAccessNumbersList() || isVisibleChartPanel()) {
+            if (isVisibleApiAccessNumbersList() || isVisibleChartPanel() || isVisibleApiSpeedPanel()) {
                 if (inScenarioChk(ut, "stats-db-access-numbers-chart-hide-cmd")) {
                     $(PIECHARTPANEL).hide();
+                }else if (inScenarioChk(ut,'stats-api-exec-speed-hide-cmd')){
+                    $(LINECHARTPANEL).hide();
                 } else if (inScenarioChk(ut, "stats-api-access-numbers-list-hide-cmd")) {
                     hideApiAccessNumbersList();
-                    //                    $(APIACCESSNUMBERS).hide();
-                    //                    $(APIACCESSNUMBERSLIST).DataTable().destroy();
+                } else if(inScenarioChk(ut,'stats-all-graph-hide-cmd')){
+                    $(PIECHARTPANEL).hide();
+                    $(LINECHARTPANEL).hide();
+                    hideApiAccessNumbersList();
                 } else if (inScenarioChk(ut, "general-thanks-cmd")) {
                     openStatsPanel(false, ut);
-                    //                    $(APIACCESSNUMBERSLIST).DataTable().destroy();
                     ret = chooseMsg('general-thanks-msg', loginuser.lastname, "c");
                 } else {
-                    if (isVisibleApiAccessNumbersList() && !inScenarioChk(ut, 'stats-db-access-numbers-chart-show-cmd') && !inScenarioChk(ut,'stats-api-exec-speed-show-cmd')) {
-                        // hijack every command if showing analyzing data
+                    // hijack every command if showing and getting forcus on the api access numbers panel
+                    if (isactivePanel(APIACCESPANEL)) {
                         m = apiAccessNumbersListController(ut);
                     }
                 }

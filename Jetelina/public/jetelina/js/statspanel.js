@@ -7,24 +7,34 @@
     
     Functions:
       openStatsPanel(b,type) visible or hide "APIACCESSNUMBERS" an "#piechart"
-      isVisibleChartPanel() checking "#piechart" is visible or not
       isVisibleApiAccessNumbers() checking "APIACCESSNUMBERS" is visible or not
-      isVisiblePerformanceReal() checking "#performance_real" is visible or not
-      isVisiblePerformanceTest() checking "#performance_test" is visible or not
+      isVisibleChartPanel() checking "#piechart" is visible or not
+      isVisibleApiSpeedPanel() checking "#apispeedchart" is visible or not
+      *isVisiblePerformanceReal() checking "#performance_real" is visible or not
+      *isVisiblePerformanceTest() checking "#performance_test" is visible or not
       statsPanelFunctions(ut)  Exectute some functions ordered by user chat input message
       setGraphData(o,type)  set data to a graph of creating by plot.js. data and 'type' are passed by getAjaxData() in jetelinalib.js 
       showApiAccessNumbersList()  show api access number data in DataTable 
+      hideApiAccessNumbersList() hide APIACCESSNUMBERS and destroy the DataTable()
       apiAccessNumbersListController(cmd) api access numbers list controller. paging and search api order by chat box
-      viewPerformanceGraph(apino, data, type)  show 'performance graph'
-      viewCombinationGraph(bname, bno, ct, ac)  show the 'combination graph'
+      viewPlotlyChart(basedata, type) show plotly chart 
+      *viewPerformanceGraph(apino, data, type)  show 'performance graph'
+      *viewCombinationGraph(bname, bno, ct, ac)  show the 'combination graph'
+      statsGraphPanelControl(p) control the 'p' panel to bring up and focusing
+
+    Attenction: '*' functions are for experimental
 */
 const APIACCESSNUMBERSLIST = "#api_access_numbers_list";
+const APIACCESPANELTAGID = "#api_access_numbers";
+const DBACCESSPANELTAGID = "#piechart";
+const APISPEEDPANELTAGID = "#apispeedchart";  
+const APIACCESPANEL = $(APIACCESPANELTAGID);
+const DBACCESSPANEL = $(DBACCESSPANELTAGID);
+const APISPEEDPANEL = $(APISPEEDPANELTAGID);
 const APIACCESSNUMBERSCOMMAND = "apiaccessnumbers";
 const DBACCESSNUMBERSCOMMAND = "dbaccessnumbers";
 const APIEXECUTIONSPEEDCOMMAND = "apiexecutionspeed";
-const APIACCESPANEL = $("#api_access_numbers");
-const DBACCESSPANEL = $("#piechart");
-const APISPEEDPANEL = $("#apispeedchart");
+
 /**
  *  @function openStatsPanel
  *  @param {boolean} true -> visible false -> hide
@@ -38,17 +48,17 @@ const openStatsPanel = (b, type) => {
             check for existing Jetelina's suggestion
         */
         if (type == APIACCESSNUMBERSCOMMAND) {
-            if(!APIACCESPANEL.is(":visible")){
+            if (!APIACCESPANEL.is(":visible")) {
                 getAjaxData(dataurls[4]);
             }
         } else if (type == DBACCESSNUMBERSCOMMAND) {
-            if(!DBACCESSPANEL.is(":visible")){
+            if (!DBACCESSPANEL.is(":visible")) {
                 getAjaxData(dataurls[5]);
             }
-        } else if (type == APIEXECUTIONSPEEDCOMMAND){
-            if(!APISPEEDPANEL.is(":visible")){
+        } else if (type == APIEXECUTIONSPEEDCOMMAND) {
+            if (!APISPEEDPANEL.is(":visible")) {
                 let data = `{"apino":"jd50"}`;
-                postAjaxData(dataurls[6],data);
+                postAjaxData(dataurls[6], data);
             }
         }
     } else {
@@ -80,6 +90,20 @@ const isVisibleApiAccessNumbers = () => {
 const isVisibleChartPanel = () => {
     let ret = false;
     if ($(PIECHARTPANEL).is(":visible")) {
+        ret = true;
+    }
+
+    return ret;
+}
+/**
+ * @function isVisibleApiSpeedPanel
+ * @returns {boolean}  true -> visible, false -> invisible
+ * 
+ * checking "#apispeedchart" is visible or not
+ */
+const isVisibleApiSpeedPanel = () => {
+    let ret = false;
+    if ($(LINECHARTPANEL).is(":visible")) {
         ret = true;
     }
 
@@ -127,117 +151,36 @@ const statsPanelFunctions = (ut) => {
         presentaction.push('cond');
     }
 
-    //    if (inScenarioChk(ut,'function_panel-cmd')) {
-    //        delete preferent;
-    //        delete presentaction;
-    //        stage = 'lets_do_something';
-    //        chatKeyDown(ut);
-    //    } else {
     // use the prior command if it were
     let cmd = getPreferentPropertie('cmd');
-
+    let panel = "";
+    let graphp = "";
     if (cmd == null || cmd.length <= 0) {
         if (inScenarioChk(ut, 'stats-api-access-numbers-list-show-cmd')) {
             cmd = APIACCESSNUMBERSCOMMAND;
+            panel = APIACCESPANEL;
+            graphp = APIACCESSNUMBERS;
         } else if (inScenarioChk(ut, 'stats-db-access-numbers-chart-show-cmd')) {
             cmd = DBACCESSNUMBERSCOMMAND;
-        } else if (inScenarioChk(ut,'stats-api-exec-speed-show-cmd')){
+            panel = DBACCESSPANEL;
+            graphp = PIECHARTPANEL;
+        } else if (inScenarioChk(ut, 'stats-api-exec-speed-show-cmd')) {
             cmd = APIEXECUTIONSPEEDCOMMAND;
+            panel = APISPEEDPANEL;
+            graphp = LINECHARTPANEL;
         }
-        /*
-        } else if (inScenarioChk(ut, 'stats-sql-performance-graph-show-cmd')) {
-            if (isSuggestion) {
-                cmd = "performance";
-            } else {
-                cmd = "no_suggestion";
-            }
-        } else if (inScenarioChk(ut, 'confirmation-sentences-cmd') && isSuggestion) {
-            cmd = "performance";
+    }
+
+    if (-1 < $.inArray(cmd, [APIACCESSNUMBERSCOMMAND, DBACCESSNUMBERSCOMMAND, APIEXECUTIONSPEEDCOMMAND])) {
+        showSomethingMsgPanel(false);
+        openStatsPanel(true, cmd); // execut getAjaxData()
+        if (!$(panel).is(":visible")) {
+            $(graphp).show().draggable();
         }
-        */
+
+        statsGraphPanelControl(panel);
+        m = chooseMsg('stats-graph-show-msg', "", "");
     }
-
-    /*
-        Tips:
-            cmd
-                'graph': show 'api access numbers' graph
-                'performance: show the result of analyzing sql exection on test db.
-                              this cmd can execute in the case of being a suggestion.
-    */
-    if (-1 < $.inArray(cmd, [APIACCESSNUMBERSCOMMAND, DBACCESSNUMBERSCOMMAND,APIEXECUTIONSPEEDCOMMAND])) {
-        openStatsPanel(true, cmd);
-    }
-
-    let zindexTop = 30;
-    let zindexMid = 20;
-    let zindexBot = 10;
-    switch (cmd) {
-        case APIACCESSNUMBERSCOMMAND:
-            showSomethingMsgPanel(false);
-            if(!APIACCESPANEL.is(":visible")){
-                $(APIACCESSNUMBERS).show().draggable();
-            }else{
-                APIACCESPANEL.css("z-index",zindexTop);
-                DBACCESSPANEL.css("z-index",zindexMid);
-                APISPEEDPANEL.css("z-index",zindexBot);
-            }
-
-            m = chooseMsg('stats-graph-show-msg', "", "");
-            break;
-        case DBACCESSNUMBERSCOMMAND:
-            showSomethingMsgPanel(false);
-            if(!DBACCESSPANEL.is(":visible")){
-                $(PIECHARTPANEL).show().draggable();
-            }else{
-                DBACCESSPANEL.css("z-index",zindexTop);
-                APIACCESPANEL.css("z-index",zindexMid);
-                APISPEEDPANEL.css("z-index",zindexBot);
-            }
-
-            m = chooseMsg('stats-graph-show-msg', "", "");
-            break;
-        case APIEXECUTIONSPEEDCOMMAND:
-            showSomethingMsgPanel(false);
-            if(!APISPEEDPANEL.is(":visible")){
-                $(LINECHARTPANEL).show().draggable();
-            }else{
-                APISPEEDPANEL.css("z-index",zindexTop);
-                APIACCESPANEL.css("z-index",zindexMid);
-                DBACCESSPANEL.css("z-index",zindexBot);
-            }
-
-            m = chooseMsg('stats-graph-show-msg', "", "");
-            break;
-        /*
-        case 'performance':
-            if (isVisibleApiAccessNumbers()) {
-                $(APIACCESSNUMBERS).hide();
-            }
-
-            if (isVisiblePerformanceReal()) {
-                $("#performance_real").hide();
-            }
-
-            $(PIECHARTPANEL).show().animate({
-                 top: "5%",
-                 left: "-5%"
-             }, ANIMATEDURATION);
-            $("#performance_test").show().draggable().animate({
-                top: "20%", //-50%",
-                left: "20%" //"50%"
-            }, ANIMATEDURATION).draggable('disable');
-
-            showSomethingMsgPanel(true);
-            m = chooseMsg('stats-graph-show-msg', "", "");
-            break;
-        case 'no_suggestion':
-            m = chooseMsg('stats-no-suggestion-msg', "", "");
-            break;
-        */
-        default:
-            break;
-    }
-    //    }
 
     return m;
 }
@@ -295,7 +238,7 @@ const setGraphData = (o, type) => {
 
                 $.each(o[key], function (k, v) {
                     if (v != null) {
-                        if($.inArray(type,["ac","db"]) != -1){
+                        if ($.inArray(type, ["ac", "db"]) != -1) {
                             $.each(v, function (name, value) {
                                 if (name == "date") {
                                     datadate.push(value);
@@ -360,19 +303,19 @@ const setGraphData = (o, type) => {
 
                                 }
                             });
-                        }else if (type == "as"){
+                        } else if (type == "as") {
                             /*
                                 Tips:
                                     an api speed -> 2D line chart 
                             */
-                            $.each(v, function (name,value) {
-                                if(name == "date"){
+                            $.each(v, function (name, value) {
+                                if (name == "date") {
                                     datadate.push(value);
-                                }else if(name=="mean"){
+                                } else if (name == "mean") {
                                     apispeed_mean.push(value);
-                                }else if(name=="max"){
+                                } else if (name == "max") {
                                     apispeed_max.push(value);
-                                }else if(name=="min"){
+                                } else if (name == "min") {
                                     apispeed_min.push(value);
                                 }
                             });
@@ -406,15 +349,17 @@ const setGraphData = (o, type) => {
                         adjusting the plot.js execution time because it is depend on clients environment
                     */
                     setTimeout(function () {
+                        let d = [];
                         if (type == "db") {
-                            let d = [dbaccessnumbers_chart_labels, dbaccessnumbers_chart_values];
-                            viewPlotlyChart(d, type);
-                        } else if (type == "sp") {
-                            viewPerformanceGraph(apino, mean, type);
-                        } else if(type == "as"){
-                            let d = [datadate, apispeed_mean, apispeed_max, apispeed_min];
-                            viewPlotlyChart(d, type);
+                            // database access numbers data
+                            d = [dbaccessnumbers_chart_labels, dbaccessnumbers_chart_values];
+                        } else if (type == "as") {
+                            // api execution speed data
+                            d = [datadate, apispeed_mean, apispeed_max, apispeed_min];
                         }
+
+                        // go to plotly, yey :)
+                        viewPlotlyChart(d, type);
                     }, 1000);
                 }
             }
@@ -525,39 +470,41 @@ const viewPlotlyChart = (basedata, type) => {
             },
             paper_bgcolor: 'rgba(109, 98, 226, 0.15)'
         };
-    }else if (type == "as"){
+
+        Plotly.react('piechart_graph', data, layout);
+    } else if (type == "as") {
         let smean = {
-                type: 'scatter',
-                name: 'mean',
-                x: basedata[0],
-                y: basedata[1],
-                marker: {
-                    color: 'rgb(255,255,255)',
-                    size: 10
-                }
-            };
+            type: 'scatter',
+            name: 'mean',
+            x: basedata[0],
+            y: basedata[1],
+            marker: {
+                color: 'rgb(255,255,255)',
+                size: 10
+            }
+        };
 
         let smax = {
-                type: 'scatter',
-                name: 'max',
-                x: basedata[0],
-                y: basedata[2],
-                marker: {
-                    color: 'rgb(212, 8, 8)',
-                    size: 10
-                }
-            };
+            type: 'scatter',
+            name: 'max',
+            x: basedata[0],
+            y: basedata[2],
+            marker: {
+                color: 'rgb(212, 8, 8)',
+                size: 10
+            }
+        };
 
-            let smin = {
-                type: 'scatter',
-                name: 'min',
-                x: basedata[0],
-                y: basedata[3],
-                marker: {
-                    color: 'rgb(39, 95, 214)',
-                    size: 10
-                }
-            };
+        let smin = {
+            type: 'scatter',
+            name: 'min',
+            x: basedata[0],
+            y: basedata[3],
+            marker: {
+                color: 'rgb(39, 95, 214)',
+                size: 10
+            }
+        };
 
         let data = [smean, smax, smin];
 
@@ -583,15 +530,16 @@ const viewPlotlyChart = (basedata, type) => {
                 title: 'execution speed'
             },
             legend: {
-                font:{
+                font: {
                     color: 'rgb(255,255,255)',
                     size: 10,
                 }
             }
         };
-    
+
         Plotly.react('apispeed_graph', data, layout);
     } else {
+        /*
         let real_data =
         {
             opacity: 0.5,
@@ -606,50 +554,11 @@ const viewPlotlyChart = (basedata, type) => {
                 size: 20
             }
         };
-    }
 
-    /*
-        let paper_bgc = 'rgb(112,128,144)';
-        let font_col = 'rgb(255,255,255)';
-        if (type == 'test') {
-            paper_bgc = 'rgb(0,129,104)';//'rgb(240,230,140)'
-            //        font_col = 'rgb(255,0,0)';
-        }
-    
-        let title = "exection speed";
-        if (type == "access") {
-            title = "access numbers";
-        }
-    
-        let layout = {
-            plot_bgcolor: 'rgb(0,0,0)',
-            paper_bgcolor: paper_bgc,
-            xaxis: {
-                backgroundcolor: 'rgb(255,0,0)',
-                showbackground: false,
-                gridcolor: 'rgb(0,153,153)',
-                color: font_col,
-                size: 20,
-                title: 'api no'
-            },
-            yaxis: {
-                backgroundcolor: 'rgb(255,0,0)',
-                showbackground: false,
-                gridcolor: 'rgb(0,153,153)',
-                color: font_col,
-                size: 20,
-                title: title
-            }
-        };
-    */
-    if (type == "db") {
-        //        Plotly.react('db_access_numbers_chart', data, layout);
-        Plotly.react('piechart_graph', data, layout);
-    } else {
         Plotly.newPlot('performance_test_graph', data, layout);
+        */
     }
 }
-
 /**
  * @function viewPerformanceGraph
  * @param {string} apino 
@@ -659,6 +568,7 @@ const viewPlotlyChart = (basedata, type) => {
  * show 'performance graph'
  */
 const viewPerformanceGraph = (apino, d, type) => {
+    /*
     let data;
 
     if (type == "real" || type == "access") {
@@ -748,13 +658,13 @@ const viewPerformanceGraph = (apino, d, type) => {
 
     if (type == "access") {
         $(APIACCESSNUMBERS).show();
-        //        Plotly.newPlot('api_access_numbers_graph', data, layout);
         Plotly.react('api_access_numbers_graph', data, layout);
     } else if (type == "real") {
         Plotly.newPlot('performance_real_graph', data, layout);
     } else {
         Plotly.newPlot('performance_test_graph', data, layout);
     }
+    */
 }
 /**
  * @function viewCombinationGraph
@@ -766,6 +676,7 @@ const viewPerformanceGraph = (apino, d, type) => {
  * show the 'combination graph' 
  */
 const viewCombinationGraph = (bname, bno, ct, ac) => {
+    /*
     var data = [
         {
             opacity: 0.5,
@@ -807,4 +718,28 @@ const viewCombinationGraph = (bname, bno, ct, ac) => {
     };
 
     Plotly.newPlot('piechart_graph', data, layout);
+    */
+}
+/**
+ * @function statsGraphPanelControl
+ * @param {string} p tag name
+ * 
+ * control the 'p' panel to bring up and focusing
+ *  
+ */
+const statsGraphPanelControl = (p) => {
+    let panels = [APIACCESPANEL, DBACCESSPANEL, APISPEEDPANEL];
+    let zindexTop = 30;
+    let zindexMid = 20;
+    let zindexBot = 10;
+
+    activePanel(p);
+    p.css("z-index", zindexTop);
+    for (let i in panels) {
+        if (p != panels[i]) {
+            inactivePanel(panels[i]);
+            panels[i].css("z-index", zindexMid);
+        }
+    }
+
 }
