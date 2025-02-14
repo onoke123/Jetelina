@@ -110,6 +110,9 @@
 ###@jdic 6cond:"Let me your command, if you need"
 @jdic stats-graph-show-msg:"here you are","tatta laan"
 
+# Checking the suggestions
+@jdic stats-check-suggestion-cmd:"reports","suggestions","alert"
+
 # Api Access numbers list controll
 @jdic stats-apiaccessnumberslist-prev-cmd:"prev"
 @jdic stats-apiaccessnumberslist-next-cmd:"next"

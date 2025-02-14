@@ -180,7 +180,11 @@ const statsPanelFunctions = (ut) => {
             cmd = APIEXECUTIONSPEEDCOMMAND;
             panel = APISPEEDPANEL;
             graphp = LINECHARTPANEL;
+        } else if (inScenarioChk(ut, 'stats-check-suggestion-cmd')) {
+            // confirm the suggestion file existing
+            getAjaxData(scenario["analyzed-data-collect-url"][3]);
         }
+
     }
 
     if (-1 < $.inArray(cmd, [APIACCESSNUMBERSCOMMAND, DBACCESSNUMBERSCOMMAND, APIEXECUTIONSPEEDCOMMAND])) {

@@ -948,6 +948,10 @@ const authAjax = (un) => {
 
                         stage = 'login_success';
 
+                        if(isVisibleSomethingMsgPanel()){
+                            showSomethingMsgPanel(false);
+                        }
+    
                         if (scenarioNumber != 'first-login-msg') {
                             m = chooseMsg(scenarioNumber, m, "a");
                         } else {
@@ -971,8 +975,8 @@ const authAjax = (un) => {
                 }
             });
         } else {
-            //            m = chooseMsg("fail-msg", "", "");
-            m = result["message from Jetelina"];
+            m = chooseMsg("not-registered-msg", "", "");
+            //m = result["message from Jetelina"];
         }
 
         typingControll(m);
@@ -1233,7 +1237,7 @@ const chatKeyDown = (cmd) => {
                     if(!isVisibleChartPanel() && !isVisibleApiSpeedPanel()){
                         activePanel(APIACCESPANEL);
                     }
-                    
+
                     if (isactivePanel(APIACCESPANEL)) {
                         m = apiAccessNumbersListController(ut);
                     }
@@ -1297,9 +1301,6 @@ const chatKeyDown = (cmd) => {
                             'lets_do_somthing', meanwhile 'starting-6-msg' is displayed.
                     */
                     stage = 'lets_do_something';
-
-                    // confirm the suggestion file existing
-                    getAjaxData(scenario["analyzed-data-collect-url"][3]);
 
                     chatKeyDown("show tables");
                     m = chooseMsg("starting-6-msg", "", "");

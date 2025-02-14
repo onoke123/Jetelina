@@ -53,6 +53,7 @@ scenario["get-config-change-history-cmd"]=["configuration history", "change hist
 scenario["get-operation-history-cmd"]=["operation history","operation log","who did","who has done"];
 scenario["func-show-table-list-cmd"]=["open table list","show me table","show table","table list","tables","tablelist","tableslist"];
 scenario["func-show-api-list-cmd"]=["open api","show me api","api list","apis list","apis","apilist"];
+scenario["stats-check-suggestion-cmd"] = ["reports","suggestions","alert"];
 scenario["stats-graph-show-msg"]=["here you are","tatta laan"];
 scenario["stats-apiaccessnumberslist-prev-cmd"]=["prev"];
 scenario["stats-apiaccessnumberslist-next-cmd"]=["next"];
