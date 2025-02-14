@@ -54,6 +54,8 @@ scenario["get-operation-history-cmd"]=["operation history","operation log","who 
 scenario["func-show-table-list-cmd"]=["open table list","show me table","show table","table list","tables","tablelist","tableslist"];
 scenario["func-show-api-list-cmd"]=["open api","show me api","api list","apis list","apis","apilist"];
 scenario["stats-check-suggestion-cmd"] = ["reports","suggestions","alert"];
+scenario["stats-hide-jetelina-concern-img-cmd"] = ["do not worry","don't worry","do not need to worry","don't need to worry","no problem","never mind"];
+
 scenario["stats-graph-show-msg"]=["here you are","tatta laan"];
 scenario["stats-apiaccessnumberslist-prev-cmd"]=["prev"];
 scenario["stats-apiaccessnumberslist-next-cmd"]=["next"];

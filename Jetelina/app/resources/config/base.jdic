@@ -112,6 +112,7 @@
 
 # Checking the suggestions
 @jdic stats-check-suggestion-cmd:"reports","suggestions","alert"
+@jdic stats-hide-jetelina-concern-img-cmd:"do not worry","don't worry","do not need to worry","don't need to worry","no problem","never mind"
 
 # Api Access numbers list controll
 @jdic stats-apiaccessnumberslist-prev-cmd:"prev"

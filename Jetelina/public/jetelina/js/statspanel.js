@@ -183,6 +183,12 @@ const statsPanelFunctions = (ut) => {
         } else if (inScenarioChk(ut, 'stats-check-suggestion-cmd')) {
             // confirm the suggestion file existing
             getAjaxData(scenario["analyzed-data-collect-url"][3]);
+        }else if(inScenarioChk(ut,'stats-hide-jetelina-concern-img-cmd')){
+            if(isVisibleSomethingMsgPanel()){
+                showSomethingMsgPanel(false);
+            }
+            
+            changeChatGirlImage("chat");
         }
 
     }
