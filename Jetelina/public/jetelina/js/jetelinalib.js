@@ -15,7 +15,6 @@
       authAjax(chunk) Authentication ajax call
       chooseMsg(i,m,p) select a message to show in chat box from js/senario.js 
       typing(i,m) show a chat message alike typing style 
-      chkUResponse(n, s) check if the user input message is what is expected in scenario[] or config[]
       chatKeyDown(cmd) behavior of hitting enter key in the chat box by user 
       openingMessage() Initial chat opening message
       burabura() idling message in the initial screen 
@@ -199,7 +198,6 @@ const checkResult = (o) => {
 
             ret = false;
         } else {
-            //            showSomethingMsgPanel(false);
             /*
                 Tips:
                     in the case of a configuration parameter is called, set null all for 
@@ -454,12 +452,8 @@ const getAjaxData = (url) => {
             result = JSON.parse(result);
 
             let m = "";
-            // go data parse
             const dataurls = scenario['analyzed-data-collect-url'];
-            /*            if(url == dataurls[4]){
-                            setGraphData(result, "access");
-                        }
-            */
+            // go data parse
             if (checkResult(result)) {
                 if (url == dataurls[3]) {
                     /*
@@ -493,14 +487,6 @@ const getAjaxData = (url) => {
                         // sql speed on test db
                         //getAjaxData(dataurls[2]);
                     }
-
-                    /*
-                        Tips:
-                            dataurls[4] is for sql access count data.
-                            this data always is executed.
-                    */
-                    //                    getAjaxData(dataurls[4]);
-
                 } else if (inScenarioChk(url, 'analyzed-data-collect-url')) {
                     let type = "";
                     if (url == dataurls[0]) {
@@ -718,7 +704,6 @@ const postAjaxData = (url, data) => {
                                 for (let i in newaddlist) {
                                     if ($(this).text() == newaddlist[i]) {
                                         if ($(this).hasClass("activeItem")) {
-                                            //                                            if (!$(this).hasClass("activeItem")) {
                                             $(this).removeClass("activeItem");
                                             $(this).addClass("activeandrelatedItem");
                                         } else {
@@ -948,10 +933,10 @@ const authAjax = (un) => {
 
                         stage = 'login_success';
 
-                        if(isVisibleSomethingMsgPanel()){
+                        if (isVisibleSomethingMsgPanel()) {
                             showSomethingMsgPanel(false);
                         }
-    
+
                         if (scenarioNumber != 'first-login-msg') {
                             m = chooseMsg(scenarioNumber, m, "a");
                         } else {
@@ -976,7 +961,6 @@ const authAjax = (un) => {
             });
         } else {
             m = chooseMsg("not-registered-msg", "", "");
-            //m = result["message from Jetelina"];
         }
 
         typingControll(m);
@@ -1050,32 +1034,6 @@ const typing = (i, m) => {
     typingTimeoutID = setTimeout(typing, t, ii, m);
 }
 /**
- * @function chkUResponse
- * @param {string} n  scenario array index
- * @param {string} s  user input character
- * @returns {boolean}  true -> as expected  false -> unexpected user response
- * 
- * check if the user input message is what is expected in scenario[] or config[]
- * deprecated
- */
-const chkUResponse = (n, s) => {
-    /*
-        Tips:
-            privent to display the opening messages are dublicated.
-            logouttimeId is set at logout process for returning to the inital screen in openingMessage().
-    */
-    if (logouttimerId) {
-        clearTimeout(logouttimerId);
-    }
-
-    if ((scenario[n] != null && scenario[n].includes(s)) ||
-        (config[n] != null && config[n].includes(s))) {
-        return true;
-    }
-
-    return false;
-}
-/**
  * function chatKeyDown
  * @param {string} cmd  something ordered string. ex. user key input, scenario[] command .... etc 
  * 
@@ -1111,31 +1069,8 @@ const chatKeyDown = (cmd) => {
             "guidance"
     */
     if ($(GUIDANCE).is(":visible") && !inScenarioChk(ut, "general-thanks-cmd")) {
-        let currentPage = 3;
-        let movetoPage = 1;
-        if ($(`${GUIDANCE} [name='page1']`).is(":visible")) {
-            currentPage = 1;
-        } else if ($(`${GUIDANCE} [name='page2']`).is(":visible")) {
-            currentPage = 2;
-        }
-
-        if (inScenarioChk(ut, "guidance-control-next-cmd")) {
-            if (currentPage < 3) {
-                movetoPage = currentPage + 1;
-            }
-        } else if (inScenarioChk(ut, "guidance-control-prev-cmd")) {
-            if (1 < currentPage) {
-                movetoPage = currentPage - 1;
-            }
-        } else if (inScenarioChk(ut, "guidance-control-first-cmd")) {
-        } else if (inScenarioChk(ut, "guidance-control-last-cmd")) {
-            movetoPage = 3;
-        }
-
-        m = guidancePageController(movetoPage);
+        m = guidancePageController(ut);
     }
-
-
 
     let logoutflg = false;
 
@@ -1221,11 +1156,11 @@ const chatKeyDown = (cmd) => {
             if (isVisibleApiAccessNumbersList() || isVisibleChartPanel() || isVisibleApiSpeedPanel()) {
                 if (inScenarioChk(ut, "stats-db-access-numbers-chart-hide-cmd")) {
                     $(PIECHARTPANEL).hide();
-                }else if (inScenarioChk(ut,'stats-api-exec-speed-hide-cmd')){
+                } else if (inScenarioChk(ut, 'stats-api-exec-speed-hide-cmd')) {
                     $(LINECHARTPANEL).hide();
                 } else if (inScenarioChk(ut, "stats-api-access-numbers-list-hide-cmd")) {
                     hideApiAccessNumbersList();
-                } else if(inScenarioChk(ut,'stats-all-graph-hide-cmd')){
+                } else if (inScenarioChk(ut, 'stats-all-graph-hide-cmd')) {
                     $(PIECHARTPANEL).hide();
                     $(LINECHARTPANEL).hide();
                     hideApiAccessNumbersList();
@@ -1234,7 +1169,7 @@ const chatKeyDown = (cmd) => {
                     ret = chooseMsg('general-thanks-msg', loginuser.lastname, "c");
                 } else {
                     // hijack every command if showing and getting forcus on the api access numbers panel
-                    if(!isVisibleChartPanel() && !isVisibleApiSpeedPanel()){
+                    if (!isVisibleChartPanel() && !isVisibleApiSpeedPanel()) {
                         activePanel(APIACCESPANEL);
                     }
 
@@ -1608,7 +1543,6 @@ const logout = () => {
     jetelinaPanelPositionController(true);
     changeChatGirlImage("chat");
     $(FUNCTIONPANEL).hide();
-    //    $(STATSPANEL).hide();
     $(GENELICPANEL).hide();
     $(GENELICPANELINPUT).val('');
     $(SOMETHINGINPUT).val('');
@@ -1891,7 +1825,7 @@ const showSomethingMsgPanel = (b) => {
             sm.draggable().show();
         }
         /*
-                here is for scrolling up the messages, but wonder if it required or not, then commented out, who knows.:O
+                here is for scrolling up the messages, but wondered if it required or not, then commented out, who knows.:O
         
                 messageScrollTimerID = setInterval(function () {
                     sm.animate({ scrollTop: (sm.scrollTop() == 0 ? sm.height() : 0) }, 4000);
@@ -2241,12 +2175,45 @@ const jsonFromCheck = (s) => {
  * 
  * move the guidance page order by 'n' 
  */
-const guidancePageController = (n) => {
-    switch (n) {
-        case 1: $(`${GUIDANCE} [name='page2'],[name='page3']`).hide(); $(`${GUIDANCE} [name='page1']`).show(); break;
-        case 2: $(`${GUIDANCE} [name='page1'],[name='page3']`).hide(); $(`${GUIDANCE} [name='page2']`).show(); break;
-        case 3: $(`${GUIDANCE} [name='page1'],[name='page2']`).hide(); $(`${GUIDANCE} [name='page3']`).show(); break;
-        default: break;
+const guidancePageController = (cmd) => {
+    let totalpagenumbers = $(`${GUIDANCE} table`).length;
+    let pn = "";
+    let currentPage = totalpagenumbers;
+    let movetoPage = 1;
+
+    for (let i = 1; i <= totalpagenumbers; i++) {
+        pn = $(`${GUIDANCE} table[name="page${i}"]`)
+        if (pn.is(":visible")) {
+            if (inScenarioChk(cmd, "guidance-control-next-cmd")) {
+                if (i < totalpagenumbers) {
+                    movetoPage = i + 1;
+                }
+            } else if (inScenarioChk(cmd, "guidance-control-prev-cmd")) {
+                if (1 < i) {
+                    movetoPage = i - 1;
+                }
+            } else if (inScenarioChk(cmd, "guidance-control-first-cmd")) {
+                movetoPage = 1;
+            } else if (inScenarioChk(cmd, "guidance-control-last-cmd")) {
+                movetoPage = totalpagenumbers;
+            } else if (inScenarioChk(cmd, "guidance-control-page-cmd")) {
+                let p = cmd.split("page");
+                if (0 < p.length < 3) {
+                    for (let ii in p) {
+                        if (p[ii].match(/\d/)) {
+                            movetoPage = Number(p[ii]);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!isNaN(movetoPage)) {
+                pn.hide();
+                $(`${GUIDANCE} table[name='page${movetoPage}']`).show();
+                break;
+            }
+        }
     }
 
     return chooseMsg('stats-graph-show-msg', '', '');

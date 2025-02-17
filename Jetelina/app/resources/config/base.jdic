@@ -27,6 +27,7 @@
 @jdic guidance-control-next-cmd:"next"
 @jdic guidance-control-first-cmd:"first","head"
 @jdic guidance-control-last-cmd:"last","end","tail"
+@jdic guidance-control-page-cmd:"page"
 @jdic command_list-cmd:"how can i","command","commands","commandlist","commandslist"
 @jdic waiting-next-msg:"then?","next please","Huh (p_-)","(・・? (・・? (・・? (・・? (・・? (・・? (・・?","＿|￣|○ il||li"
 

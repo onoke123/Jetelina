@@ -34,6 +34,13 @@ const APISPEEDPANEL = $(APISPEEDPANELTAGID);
 const APIACCESSNUMBERSCOMMAND = "apiaccessnumbers";
 const DBACCESSNUMBERSCOMMAND = "dbaccessnumbers";
 const APIEXECUTIONSPEEDCOMMAND = "apiexecutionspeed";
+/*
+    Tips:
+        the real sql execution performance data is stored in this parameter temporarily.
+        this stored real data is needed when the test data is rendered.
+        because the real data and test db performance data are packed in the same graph.
+ */
+let realPerformanceData;
 
 /**
  *  @function openStatsPanel
@@ -75,7 +82,6 @@ const openStatsPanel = (s, b, type) => {
         }
     } else {
         hideApiAccessNumbersList();
-        //$(APIACCESSNUMBERS).hide();
         $(PIECHARTPANEL).hide();
     }
 }
@@ -195,7 +201,7 @@ const statsPanelFunctions = (ut) => {
 
     if (-1 < $.inArray(cmd, [APIACCESSNUMBERSCOMMAND, DBACCESSNUMBERSCOMMAND, APIEXECUTIONSPEEDCOMMAND])) {
         showSomethingMsgPanel(false);
-        openStatsPanel(ut, true, cmd); // execut getAjaxData()
+        openStatsPanel(ut, true, cmd); // getAjaxData() is executed in this function
         if (!$(panel).is(":visible")) {
             $(graphp).show().draggable();
         }
@@ -206,15 +212,6 @@ const statsPanelFunctions = (ut) => {
 
     return m;
 }
-
-/*
-    Tips:
-        the real sql execution performance data is stored in this parameter temporarily.
-        this stored real data is needed when the test data is rendered.
-        because the real data and test db performance data are packed in the same graph.
- */
-let realPerformanceData;
-
 /**
  * @function setGraphData
  * @param {object} o   json object data
