@@ -223,72 +223,76 @@
 	-->
 	<div id="guidance" class="functionpanel-parts commonpanel squarepanel" hidden>
 		<div style="font-size: large;color:#a8ce49;width:80%;height:50%; font-size: large; font-family: sans-serif;">
-			This is my current skills.<br>
+			<p>This is my current skills.</p>
 			<table name="page1" style="margin:auto;text-align:left;">
 				<tr>
 					<td>
 						<pre>
 	Hi, I am Jetelina that is your helper to create database tables and WebAPIs that are related with the created database.
-	The databases that I can manage so far are PostgreSql, MySql and Redis. Redis is experimental implementation for me, BECAUSE
-	I do not know its use cases yet, indeed. :p
+	The databases that I can manage so far are PostgreSql, MySql, Redis and MongoDB.
+	You should visit my website <a href="https://jetelina.org" target="_blank">jetelina.org</a> if you wanna know my overview.
+	This guidance only introduces 'HOW TO USE ME' to you.
+	
+	The first of all, you can move to the X page with typing 'page X', e.g. 'page 2', but 'go to page 2 please' is more friendly to me. :)
+	And to out of this guidance, give me 'thx', 'thank you', etc.
 
-	The handling process that I recommend to you is,
-		1. you upload your csv data file to me
-		2. i create a data base table according to your uploading csv file
-		3. you open the created table
-		4. you select some columns that you wanna to be data of your WebAPI, this is to be the sql source code
-		5. pre-test the sql source code to make confirm
-		6. finally create WebAPI is related with the sql
-						
-		since 6, you can use the created new WebAPI in your web page/application, of course it can be tested on my palm.
-		Anyhow let's try it, do not worry I suggest you how to do it.
+	Oops, in the case of this is your first access to me, this is the login method.
+		Step 1. type 'hi' into my chatbox, we always start with a greeting, 'hello' is as well
+		Step 2. chat with me till i ask your name
+		Step 3. type your 'name' that is registered as your account when i finally ask you
+		Step 4. then we start to something together
+		Step 5. type 'exit','logout','bye'...etc to logout from me
 
-		Oops, I must tell you something before you use me.
-		You command me every your order through our chatbox. Some functions are able to be used by a mouse, but INDEED you will know
-		typing is enough to us. Mouse manipulation is old fashion. JUST talk to me. :)
+	These are the basic operations from starting to use a database to create a DBI then publish it,
+		2-1. how to use databases                                                   --- page 2
+		2-2. how to create tables by uploading a csv file                         --- page 2
+		2-3. how to manage a created table                                          --- page 2
+		2-4. how to create DBI from a create table and publish it as a WebAPI       --- page 2
+		2-5. can i test and check the DBI before publishing?                        --- page 2
+		2-6. how to switch databases, e.g. PostgreSQL to Redis                      --- page 2
+
+	Next, these are the intermediate operations about getting error reasons in your WebAPIs,
+		3-1. when and where you will see the error happened?
+		3-2. how to check the error meaning
+		3-3. can you fix the error?
+		
+	Ok, these are the advanced operations, but do not need any special account,
+		4-1. how to know your each WebAPIs daily access numbers
+		4-2. how to know your each databases total access numbers
+		4-3. how to know your each WebAPIs execution speed 
+
+	And these are another advanced operations you need privilege roll.To know you have it or not, type 'who am i' after logging to me,
+	you can operate the belows if you have 'admin' roll.
+		5-1. how to create new user
+		5-2. how to change a database parameters
+		5-3. how to change a parameter in me
+
+	OK, type the page number what you wanna to see.
 					</pre>
-					</td>
+				</td>
 				</tr>
 				<tr>
-					<td style="color: antiquewhite;">
-						<pre>
-	These are a little bit details, but you can see more detail in jetelina.org site.
-					</pre>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<pre>
-	■Adding using data base
-		You maybe will want to use additional database, I mean PostgreSql + Redis, MySql + Redis, PostgreSql + MySql + Redis.
-		This is my proudly skill. :)
-			1. to make use it, type 'i wanna use postgresql' and so on
-			2. I try to connect it, and display its connection parameters if i cannot reach it, plz set the collect parameters and try again
-
-	■Login/Logout
-		We always start with 'Hi','Hello' or some greetings. When you wanna login to me, you just type
-		your account in my chatbox.
-		After you enter in me, you can logout whenever by typing 'logout',,'exit','bye' and so on, but I
-		am pleasure if you type 'have a nice day'.
-					</pre>
-					</td>
-				</tr>
-				<tr>
-					<td style="text-align:center;">
-						Page <a href="#" onclick="page(2)">2</a> <a href="#" onclick="page(3)">3</a>
+					<td name="pages" style="text-align:center;">
 					</td>
 				</tr>
 			</table>
+	<!-------------------- PAGE 2 ---------------------------------------------------------------->
 			<table name="page2" style="margin:auto;text-align:left;" hidden>
 				<tr>
 					<td>
+						<span class="guidance">2-1. how to use databases</span>
+						<pre></pre>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<span class="guidance">2-2. how to create tables by uploading a csv file</span>
 						<pre>
-	■Upload csv file
-		Your uploading csv file is to be a origin of created database table.
-		The created table is displayed after uploading it.
-		The format is very common csv format,
-			e.g
-				ftest.csv   ← see in 'testdata' directory
+	Your uploading csv file is to be a origin of created database table.
+	The created table is displayed after uploading it.
+	The format is very common csv format,
+		e.g
+			ftest.csv   ← see in 'testdata' directory
 				name,sex,age,ave   ← be a table column name
 				AAA1,m,10,0.1      ← data
 				BBB2,f,20,0.2
@@ -297,48 +301,48 @@
 	Attention, the headers (name,sex..) are to be column name, thus you can not use '-' and so on, these are not 
 	allowed to use in there depend on a database. In fact, the column name will be named with the file name + header name,
 	for example, ftest_name, ftest_sex... in above example. Because I wish every columns are uniquness.
-					</pre>
+						</pre>
 					</td>
 				</tr>
 				<tr>
 					<td>
+						<span class="guidance">2-3. how to manage a created table</span>
 						<pre>
-	■WebAPIs
-		Some WebAPIs are created automatically by creating a table, I mean uploading csv file.
-		These are displayed on the right side panel. They have a meaning full name,
-						
+	Some WebAPIs are created automatically by creating a table, I mean uploading csv file.
+	These are displayed on the right side panel. They have a meaning full name,
+											
 		- created automatically
 			'ji': data insert api. I create it automatically by uploading your csv file.
 			'ju': data update api. Same above.
 			'jd': data delete api. Again.
-
+					
 		- you will create
 			'js': data select api. You created.
-
-		try to type its name, for example 'select ji12' or simply 'select 12', it is opened what it is.
-		You will see 'IN','OUT' and a sql sentence below. 'IN' and 'OUT' are the WebAPI's I/F, and the sql sentence is the execution in fact. 
-
+					
+	try to type its name, for example 'select ji12' or simply 'select 12', it is opened what it is.
+	You will see 'IN','OUT' and a sql sentence below. 'IN' and 'OUT' are the WebAPI's I/F, and the sql sentence is the execution in fact. 
+					
 	To create 'js' API, 
 		1. select table by typing its name, for example, 'select ftest'. 'ftest' is the table name, 'open ftest' can be done as well
 		2. select columns, they moves to below, for example 'select age', 'age' is the column. 'select all' is .. you know :)
 		3. you can cancel it by typing 'cancel' or 'reject' with the column name, for example 'cancel age, cancel all is 'cancel all'
 		4. type 'go subquery' or shortly 'go sub' to move subquery input area to set a subquery phrase if you need, 
-			   for example 'where ftest.ftest.age < 30'
+		   for example 'where ftest.ftest.age < 30'
 		5. to test these setting, you can type 'test api' or 'test sql'...., I execute the sql that is defined by selected items and the subquery
 		6. the test result is displayed as same as the 'OUT' I/F format, check it
 		7. to create api, simply type 'create api', 
-					</pre>
-						<pre style="color: rgb(230, 89, 8);">
-			BUT ATTENTION, .... to be the next page :)   		
-					</pre>
+							</pre>
+							<pre style="color: rgb(230, 89, 8);">
+	BUT ATTENTION, .... to be the next page :)   		
+							</pre>
 					</td>
 				</tr>
 				<tr>
-					<td style="text-align:center;">
-						Page <a href="#" onclick="page(1)">1</a> <a href="#" onclick="page(3)">3</a>
+					<td name="pages" style="text-align:center;">
 					</td>
 				</tr>
 			</table>
+	<!-------------------- PAGE 3 ---------------------------------------------------------------->
 			<table name="page3" style="margin:auto;text-align:left;" hidden>
 				<tr>
 					<td>

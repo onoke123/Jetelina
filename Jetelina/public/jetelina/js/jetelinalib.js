@@ -1619,19 +1619,19 @@ const instractionMode = (s) => {
 }
 /**
  * @function showManualCommandList
- * @param {string} s  user input data
+ * @param {string} cmd  user input data
  * 
  * show/hide manual and/or command list panel
  * 
  */
-const showManualCommandList = (s) => {
+const showManualCommandList = (cmd) => {
     let ret = IGNORE;
     let tagid1 = "";
     let showflg = true;
 
-    if (inScenarioChk(s, 'guidance-cmd')) {
+    if (inScenarioChk(cmd, 'guidance-cmd')) {
         tagid = GUIDANCE;
-    } else if (inScenarioChk(s, 'command_list-cmd')) {
+    } else if (inScenarioChk(cmd, 'command_list-cmd')) {
         tagid = COMMANDLIST;
     } else {
         showflg = false;
@@ -2171,19 +2171,20 @@ const jsonFromCheck = (s) => {
 }
 /**
  * @function guidancePageController
- * @param {integer} n: page number
+ * @param {String} cmd: user input in the chatbox
  * 
- * move the guidance page order by 'n' 
+ * move the guidance page 
  */
 const guidancePageController = (cmd) => {
     let totalpagenumbers = $(`${GUIDANCE} table`).length;
     let pn = "";
-    let currentPage = totalpagenumbers;
+    let currentPage = 1;
     let movetoPage = 1;
 
     for (let i = 1; i <= totalpagenumbers; i++) {
-        pn = $(`${GUIDANCE} table[name="page${i}"]`)
+        pn = $(`${GUIDANCE} table[name="page${i}"]`);
         if (pn.is(":visible")) {
+            currentPage = i;
             if (inScenarioChk(cmd, "guidance-control-next-cmd")) {
                 if (i < totalpagenumbers) {
                     movetoPage = i + 1;
@@ -2197,7 +2198,7 @@ const guidancePageController = (cmd) => {
             } else if (inScenarioChk(cmd, "guidance-control-last-cmd")) {
                 movetoPage = totalpagenumbers;
             } else if (inScenarioChk(cmd, "guidance-control-page-cmd")) {
-                let p = cmd.split("page");
+                let p = cmd.split(/(?:page)|(?: )/);
                 if (0 < p.length < 3) {
                     for (let ii in p) {
                         if (p[ii].match(/\d/)) {
@@ -2216,6 +2217,16 @@ const guidancePageController = (cmd) => {
         }
     }
 
+    // create page fotter
+    let pages = "Page ";
+    for( let i=1; i<=totalpagenumbers; i++){
+        if(i != currentPage){
+            pages += `<a href="#" onclick="page(${i})">${i}</a> `;
+        }
+    }
+
+    $(`${GUIDANCE} table[name="page${movetoPage}"] td[name="pages"]`).html(pages);
+    
     return chooseMsg('stats-graph-show-msg', '', '');
 }
 /**

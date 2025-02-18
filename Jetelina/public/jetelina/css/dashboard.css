@@ -354,3 +354,9 @@ textarea.user-input{
     width: 30px;
     height: 31px;
   }
+
+  .guidance {
+    font-size: larger;
+    font-style: italic;
+    color: aquamarine;
+  }
