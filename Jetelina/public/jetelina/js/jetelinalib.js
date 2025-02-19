@@ -22,7 +22,7 @@
       logout() logout
       getPreferentPropertie(p) get prior object if there were
       instractionMode(s) confirmation in adding a new scenario
-      showManualCommandList(s) show/hide manual and/or command list panel
+      showGuidance(b) show/hide GUIDANCE panel
       inScenarioChk(s,sc,type) check if user input string is in the ordered scenario
       countCandidates(s,sc,type) count config/scenario candidates
       isVisibleFunctionPanel() check the function panel is visible or not
@@ -1069,7 +1069,11 @@ const chatKeyDown = (cmd) => {
             "guidance"
     */
     if ($(GUIDANCE).is(":visible") && !inScenarioChk(ut, "general-thanks-cmd")) {
-        m = guidancePageController(ut);
+        if(inScenarioChk(ut,'guidance-goto-jetelinaorg')){
+            window.open(scenario["jetelina-web-site-url"][0],"_blank");
+        }else{
+            m = guidancePageController(ut);
+        }
     }
 
     let logoutflg = false;
@@ -1105,7 +1109,7 @@ const chatKeyDown = (cmd) => {
             $(JETELINACHATBOX).val("");
 
             // logout
-            if (logoutChk(ut)) {
+            if (loginuser.user_id != null && inScenarioChk(ut,'logout-cmd')) {
                 logout();
                 m = chooseMsg('afterlogout-msg', "", "");
                 logoutflg = true;
@@ -1115,10 +1119,19 @@ const chatKeyDown = (cmd) => {
                 Tips:
                     may, 'm' already has been set in logout process.
             */
-            if (m.length == 0) {
+//            if (m.length == 0) {
                 // check ordered the command list
-                m = showManualCommandList(ut);
-            }
+                if (inScenarioChk(ut, 'guidance-cmd')) {
+                    showGuidance(true);
+                    m = chooseMsg("starting-6a-msg", "", "");
+                }else if($(GUIDANCE).is(":visible") && inScenarioChk(ut,'general-thanks-cmd')){
+                    showGuidance(false);
+                    m = chooseMsg('waiting-next-msg', "", "");
+                    if (loginuser.user_id == null) {
+                        stage = 0;
+                    }            
+                }   
+//            }
 
             // check the instraction mode that is teaching 'words' to Jetelina or not
             // but deprecated in Ver.1
@@ -1196,8 +1209,10 @@ const chatKeyDown = (cmd) => {
                         m = chooseMsg('greeting-2-msg', "", "");
                     } else {
                         /* lead to login with 'can I ask your name?' */
-                        m = chooseMsg("starting-2-msg", "", "");
-                        stage = 'login';
+                        if(!$(GUIDANCE).is(":visible")){
+                            m = chooseMsg("starting-2-msg", "", "");
+                            stage = 'login';
+                        }
                     }
 
                     break;
@@ -1208,10 +1223,10 @@ const chatKeyDown = (cmd) => {
                             "it's me" or "it is me" are effective.
                             but it will be diseffect after executing the setting.
                     */
-                    if (ut.indexOf("it's me") == -1 && ut.indexOf("it is me") == -1) {
+                    if (!$(GUIDANCE).is(":visible") && $.inArray(ut,["it's me","it is me"]) == -1) {
                         authAjax(ut);
                         m = IGNORE;
-                    } else {
+                    } else if($.inArray(ut,["it's me","it is me"]) != -1){
                         /*
                             this is the first login to Jetelina.
                             must go to the initialization process.
@@ -1219,7 +1234,6 @@ const chatKeyDown = (cmd) => {
                             the process is defined in initialprocess.js
                             and do not get out by the normal logout because of session data.
                         */
-
                         $(JETELINAPANEL).hide();
                         jetelinaInitialize();
                     }
@@ -1618,45 +1632,28 @@ const instractionMode = (s) => {
     }
 }
 /**
- * @function showManualCommandList
- * @param {string} cmd  user input data
+ * @function showGuidance
+ * @param {boolean} b  true->show GUIDANCE false->hide GUIDANCE
  * 
- * show/hide manual and/or command list panel
+ * show/hide GUIDANCE panel
  * 
  */
-const showManualCommandList = (cmd) => {
-    let ret = IGNORE;
-    let tagid1 = "";
-    let showflg = true;
-
-    if (inScenarioChk(cmd, 'guidance-cmd')) {
-        tagid = GUIDANCE;
-    } else if (inScenarioChk(cmd, 'command_list-cmd')) {
-        tagid = COMMANDLIST;
-    } else {
-        showflg = false;
-    }
-
-    if (showflg) {
+const showGuidance = (b) => {
+    if (b) {
         jetelinaPanelPositionController(false);
-        $(`${tagid}`).show().animate({
+        $(GUIDANCE).show().animate({
             width: window.innerWidth * 0.8,
             height: window.innerHeight * 0.8,
             top: "10%",
             left: "10%"
         }, ANIMATEDURATION).draggable();
 
-        ret = chooseMsg("starting-6a-msg", "", "");
     } else {
         $(GUIDANCE).hide();
-        $(COMMANDLIST).hide();
-        ret = chooseMsg('waiting-next-msg', "", "");
-        if (loginuser.user_id == null) {
+        if(loginuser.user_id == null){
             jetelinaPanelPositionController(true);
         }
     }
-
-    return ret;
 }
 /**
  * @function inScenarioChk
@@ -2176,13 +2173,13 @@ const jsonFromCheck = (s) => {
  * move the guidance page 
  */
 const guidancePageController = (cmd) => {
-    let totalpagenumbers = $(`${GUIDANCE} table`).length;
+    let totalpagenumbers = $(`${GUIDANCE} div[name^="page"]`).length;
     let pn = "";
     let currentPage = 1;
     let movetoPage = 1;
 
     for (let i = 1; i <= totalpagenumbers; i++) {
-        pn = $(`${GUIDANCE} table[name="page${i}"]`);
+        pn = $(`${GUIDANCE} div[name="page${i}"]`);
         if (pn.is(":visible")) {
             currentPage = i;
             if (inScenarioChk(cmd, "guidance-control-next-cmd")) {
@@ -2211,7 +2208,7 @@ const guidancePageController = (cmd) => {
 
             if (!isNaN(movetoPage)) {
                 pn.hide();
-                $(`${GUIDANCE} table[name='page${movetoPage}']`).show();
+                $(`${GUIDANCE} div[name='page${movetoPage}']`).show();
                 break;
             }
         }
@@ -2225,7 +2222,7 @@ const guidancePageController = (cmd) => {
         }
     }
 
-    $(`${GUIDANCE} table[name="page${movetoPage}"] td[name="pages"]`).html(pages);
+    $(`${GUIDANCE} div[name="page${movetoPage}"] div[name="pnum"]`).html(pages);
     
     return chooseMsg('stats-graph-show-msg', '', '');
 }

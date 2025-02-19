@@ -28,6 +28,8 @@
 @jdic guidance-control-first-cmd:"first","head"
 @jdic guidance-control-last-cmd:"last","end","tail"
 @jdic guidance-control-page-cmd:"page"
+@jdic guidance-goto-jetelinaorg:"jetelina.org","jetelina site","web site of jetelina","your web site"
+@jdic jetelina-web-site-url:"https://jetelina.org"
 @jdic command_list-cmd:"how can i","command","commands","commandlist","commandslist"
 @jdic waiting-next-msg:"then?","next please","Huh (p_-)","(・・? (・・? (・・? (・・? (・・? (・・? (・・?","＿|￣|○ il||li"
 

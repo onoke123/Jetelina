@@ -224,10 +224,8 @@
 	<div id="guidance" class="functionpanel-parts commonpanel squarepanel" hidden>
 		<div style="font-size: large;color:#a8ce49;width:80%;height:50%; font-size: large; font-family: sans-serif;">
 			<p>This is my current skills.</p>
-			<table name="page1" style="margin:auto;text-align:left;">
-				<tr>
-					<td>
-						<pre>
+			<div name="page1" style="margin:auto;text-align:left;">
+				<pre>
 	Hi, I am Jetelina that is your helper to create database tables and WebAPIs that are related with the created database.
 	The databases that I can manage so far are PostgreSql, MySql, Redis and MongoDB.
 	You should visit my website <a href="https://jetelina.org" target="_blank">jetelina.org</a> if you wanna know my overview.
@@ -268,26 +266,15 @@
 		5-3. how to change a parameter in me
 
 	OK, type the page number what you wanna to see.
-					</pre>
-				</td>
-				</tr>
-				<tr>
-					<td name="pages" style="text-align:center;">
-					</td>
-				</tr>
-			</table>
+				</pre>
+			<div name="pnum" style="text-align: center;"></div>
+			</div>
 	<!-------------------- PAGE 2 ---------------------------------------------------------------->
-			<table name="page2" style="margin:auto;text-align:left;" hidden>
-				<tr>
-					<td>
-						<span class="guidance">2-1. how to use databases</span>
-						<pre></pre>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<span class="guidance">2-2. how to create tables by uploading a csv file</span>
-						<pre>
+			<div name="page2" style="margin:auto;text-align:left;" hidden>
+				<span class="guidance">2-1. how to use databases</span>
+				<pre></pre>
+				<span class="guidance">2-2. how to create tables by uploading a csv file</span>
+				<pre>
 	Your uploading csv file is to be a origin of created database table.
 	The created table is displayed after uploading it.
 	The format is very common csv format,
@@ -296,18 +283,14 @@
 				name,sex,age,ave   ← be a table column name
 				AAA1,m,10,0.1      ← data
 				BBB2,f,20,0.2
-						</pre>
-						<pre style="color: rgb(230, 89, 8);">
+				</pre>
+				<pre style="color: rgb(230, 89, 8);">
 	Attention, the headers (name,sex..) are to be column name, thus you can not use '-' and so on, these are not 
 	allowed to use in there depend on a database. In fact, the column name will be named with the file name + header name,
 	for example, ftest_name, ftest_sex... in above example. Because I wish every columns are uniquness.
-						</pre>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<span class="guidance">2-3. how to manage a created table</span>
-						<pre>
+				</pre>
+				<span class="guidance">2-3. how to manage a created table</span>
+				<pre>
 	Some WebAPIs are created automatically by creating a table, I mean uploading csv file.
 	These are displayed on the right side panel. They have a meaning full name,
 											
@@ -331,31 +314,22 @@
 		5. to test these setting, you can type 'test api' or 'test sql'...., I execute the sql that is defined by selected items and the subquery
 		6. the test result is displayed as same as the 'OUT' I/F format, check it
 		7. to create api, simply type 'create api', 
-							</pre>
-							<pre style="color: rgb(230, 89, 8);">
+				</pre>
+				<pre style="color: rgb(230, 89, 8);">
 	BUT ATTENTION, .... to be the next page :)   		
-							</pre>
-					</td>
-				</tr>
-				<tr>
-					<td name="pages" style="text-align:center;">
-					</td>
-				</tr>
-			</table>
+				</pre>
+				<div name="pnum" style="text-align:center;"></div>
+			</div>
 	<!-------------------- PAGE 3 ---------------------------------------------------------------->
-			<table name="page3" style="margin:auto;text-align:left;" hidden>
-				<tr>
-					<td>
-						<pre>
-							</pre>
-						<pre style="color: rgb(230, 89, 8);">
+			<div name="page3" style="margin:auto;text-align:left;" hidden>
+				<pre style="color: rgb(230, 89, 8);">
 		in the case of you set the subquery, its variable parameter must enclosed with '{}', and the rule is following the database 
 		I mean, if you tested the api with 'where ftest.ftest_age < 30', and you wanna '30' to be a variable parameter, you must change it {age},
 				where ftest.ftest_age < 30    →    where ftest.ftest_age < {age}     ← CAUTION: {age} because 'age' is integer
 			in the case of character, for example 'name'
 				where ftest.ftest_name = 'AAA' →  where ftest.ftest_name = '{name}'     ← CAUTION: '{name}' because 'name' is character
-							</pre>
-						<pre>
+				</pre>
+				<pre>
 		To test the created API,
 			1. select API's name by typing ..... as same as above 1
 			2. type 'test api' or 'check api' and so on
@@ -363,12 +337,8 @@
 			4. I say to you "..type 'boom'..." or something after all params are set, then you type it
 			5. the result is displayed in 'OUT' I/F, confirm it
 			6. finally you say 'thank you', 'great'... to me, OK? :)
-							</pre>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<pre>
+				</pre>
+				<pre>
 	■Managing database table and WebAPIs
 		You may wonder how to drop a table and delete api, it's very simple as same as every manipulations.
 		1. type 'drop table ftest','ftest' is the table name, and 'delete api js100', 'js100' is the api name
@@ -383,15 +353,9 @@
 
 		
 		Hey, that all. You see what db are you use present on my upper screen.
-						</pre>
-					</td>
-				</tr>
-				<tr>
-					<td style="text-align:center;">
-						Page <a href="#" onclick="page(1)">1</a> <a href="#" onclick="page(2)">2</a>
-					</td>
-				</tr>
-			</table>
+				</pre>
+				<div name="pnum" style="text-align:center;"></div>
+			</div>
 		</div>
 	</div>
 	<!--
