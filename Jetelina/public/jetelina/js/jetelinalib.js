@@ -1069,9 +1069,9 @@ const chatKeyDown = (cmd) => {
             "guidance"
     */
     if ($(GUIDANCE).is(":visible") && !inScenarioChk(ut, "general-thanks-cmd")) {
-        if(inScenarioChk(ut,'guidance-goto-jetelinaorg')){
-            window.open(scenario["jetelina-web-site-url"][0],"_blank");
-        }else{
+        if (inScenarioChk(ut, 'guidance-goto-jetelinaorg')) {
+            window.open(scenario["jetelina-web-site-url"][0], "_blank");
+        } else {
             m = guidancePageController(ut);
         }
     }
@@ -1109,7 +1109,7 @@ const chatKeyDown = (cmd) => {
             $(JETELINACHATBOX).val("");
 
             // logout
-            if (loginuser.user_id != null && inScenarioChk(ut,'logout-cmd')) {
+            if (loginuser.user_id != null && inScenarioChk(ut, 'logout-cmd')) {
                 logout();
                 m = chooseMsg('afterlogout-msg', "", "");
                 logoutflg = true;
@@ -1119,19 +1119,19 @@ const chatKeyDown = (cmd) => {
                 Tips:
                     may, 'm' already has been set in logout process.
             */
-//            if (m.length == 0) {
-                // check ordered the command list
-                if (inScenarioChk(ut, 'guidance-cmd')) {
-                    showGuidance(true);
-                    m = chooseMsg("starting-6a-msg", "", "");
-                }else if($(GUIDANCE).is(":visible") && inScenarioChk(ut,'general-thanks-cmd')){
-                    showGuidance(false);
-                    m = chooseMsg('waiting-next-msg', "", "");
-                    if (loginuser.user_id == null) {
-                        stage = 0;
-                    }            
-                }   
-//            }
+            //            if (m.length == 0) {
+            // check ordered the command list
+            if (inScenarioChk(ut, 'guidance-cmd')) {
+                showGuidance(true);
+                m = chooseMsg("starting-6a-msg", "", "");
+            } else if ($(GUIDANCE).is(":visible") && inScenarioChk(ut, 'general-thanks-cmd')) {
+                showGuidance(false);
+                m = chooseMsg('waiting-next-msg', "", "");
+                if (loginuser.user_id == null) {
+                    stage = 0;
+                }
+            }
+            //            }
 
             // check the instraction mode that is teaching 'words' to Jetelina or not
             // but deprecated in Ver.1
@@ -1209,7 +1209,7 @@ const chatKeyDown = (cmd) => {
                         m = chooseMsg('greeting-2-msg', "", "");
                     } else {
                         /* lead to login with 'can I ask your name?' */
-                        if(!$(GUIDANCE).is(":visible")){
+                        if (!$(GUIDANCE).is(":visible")) {
                             m = chooseMsg("starting-2-msg", "", "");
                             stage = 'login';
                         }
@@ -1223,10 +1223,10 @@ const chatKeyDown = (cmd) => {
                             "it's me" or "it is me" are effective.
                             but it will be diseffect after executing the setting.
                     */
-                    if (!$(GUIDANCE).is(":visible") && $.inArray(ut,["it's me","it is me"]) == -1) {
+                    if (!$(GUIDANCE).is(":visible") && $.inArray(ut, ["it's me", "it is me"]) == -1) {
                         authAjax(ut);
                         m = IGNORE;
-                    } else if($.inArray(ut,["it's me","it is me"]) != -1){
+                    } else if ($.inArray(ut, ["it's me", "it is me"]) != -1) {
                         /*
                             this is the first login to Jetelina.
                             must go to the initialization process.
@@ -1234,6 +1234,7 @@ const chatKeyDown = (cmd) => {
                             the process is defined in initialprocess.js
                             and do not get out by the normal logout because of session data.
                         */
+                        stage = 0;
                         $(JETELINAPANEL).hide();
                         jetelinaInitialize();
                     }
@@ -1648,9 +1649,10 @@ const showGuidance = (b) => {
             left: "10%"
         }, ANIMATEDURATION).draggable();
 
+        guidancefootnote(1);
     } else {
         $(GUIDANCE).hide();
-        if(loginuser.user_id == null){
+        if (loginuser.user_id == null) {
             jetelinaPanelPositionController(true);
         }
     }
@@ -2214,17 +2216,29 @@ const guidancePageController = (cmd) => {
         }
     }
 
+    guidancefootnote(movetoPage);
+
+    return chooseMsg('stats-graph-show-msg', '', '');
+}
+/**
+ * @function guidancefootnote
+ * 
+ * @param {integer} p move to pange number
+ * 
+ * set page numbers on the footnote of guidance panges
+ */
+const guidancefootnote = (p) => {
     // create page fotter
+    let totalpagenumbers = $(`${GUIDANCE} div[name^="page"]`).length;
     let pages = "Page ";
-    for( let i=1; i<=totalpagenumbers; i++){
-        if(i != currentPage){
+
+    for (let i = 1; i <= totalpagenumbers; i++) {
+        if (i != p) {
             pages += `<a href="#" onclick="page(${i})">${i}</a> `;
         }
     }
 
-    $(`${GUIDANCE} div[name="page${movetoPage}"] div[name="pnum"]`).html(pages);
-    
-    return chooseMsg('stats-graph-show-msg', '', '');
+    $(`${GUIDANCE} div[name="page${p}"] div[name="pnum"]`).html(pages);
 }
 /**
  * @function jetelinaPanelPositionController

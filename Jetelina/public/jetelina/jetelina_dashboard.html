@@ -235,19 +235,22 @@
 	And to out of this guidance, give me 'thx', 'thank you', etc.
 
 	Oops, in the case of this is your first access to me, this is the login method.
-		Step 1. type 'hi' into my chatbox, we always start with a greeting, 'hello' is as well
-		Step 2. chat with me till i ask your name
-		Step 3. type your 'name' that is registered as your account when i finally ask you
-		Step 4. then we start to something together
-		Step 5. type 'exit','logout','bye'...etc to logout from me
+		step 1. type 'hi' into my chatbox, we always start with a greeting, 'hello' is good as well
+		step 2. chat with me till i ask your name
+		step 3. type your 'name' that is registered as your account when i finally ask to you
+		        IMPORTANT: IF YOU ARE THE FIRST, 'it is me' is the acccount for initialization me. 
+		step 4. then we start to work something together
+		step 5. type 'exit','logout','bye'...etc to logout from me
 
 	These are the basic operations from starting to use a database to create a DBI then publish it,
-		2-1. how to use databases                                                   --- page 2
-		2-2. how to create tables by uploading a csv file                         --- page 2
-		2-3. how to manage a created table                                          --- page 2
-		2-4. how to create DBI from a create table and publish it as a WebAPI       --- page 2
-		2-5. can i test and check the DBI before publishing?                        --- page 2
-		2-6. how to switch databases, e.g. PostgreSQL to Redis                      --- page 2
+	in page 2
+		2-1. how to use databases
+		2-2. how to create tables by uploading a csv file
+	in page 3
+		3-1. how to manage a created table
+		2-4. how to create DBI from a create table and publish it as a WebAPI
+		2-5. can i test and check the DBI before publishing?
+		2-6. how to switch databases, e.g. PostgreSQL to Redis
 
 	Next, these are the intermediate operations about getting error reasons in your WebAPIs,
 		3-1. when and where you will see the error happened?
@@ -272,24 +275,52 @@
 	<!-------------------- PAGE 2 ---------------------------------------------------------------->
 			<div name="page2" style="margin:auto;text-align:left;" hidden>
 				<span class="guidance">2-1. how to use databases</span>
-				<pre></pre>
+				<pre>
+	You and I can handle PostgreSQL/MySQL/Redis/MongoDB. You type your database whichever, e.g 'use postgresql'.
+	Then the icon is highlighted. This is the signal of current working database.
+				</pre>
 				<span class="guidance">2-2. how to create tables by uploading a csv file</span>
 				<pre>
-	Your uploading csv file is to be a origin of created database table.
-	The created table is displayed after uploading it.
-	The format is very common csv format,
-		e.g
-			ftest.csv   ← see in 'testdata' directory
-				name,sex,age,ave   ← be a table column name
-				AAA1,m,10,0.1      ← data
-				BBB2,f,20,0.2
+	Every table in databases, in case NonSQLs are key or document, are created by uploading a csv file to me.
+	A csv file has some rules,
+	        (1) the file name is to be the table name
+			        e.g   ftest.csv  →  'ftest' table   
+			(2) inside the file: csv format with headers
+			        e.g   
+			           name,sex,age,ave   ← headers(be a table column name)
+		               AAA1,m,10,0.1      ← data
+		               BBB2,f,20,0.2
+			(3) unique id is put on each row data automatically
+			(4) the column data type is decided automatically
+			        e.g
+					   name:AAA1 is string   → 'name' column is to be varchar
+					   age :10 is integer    → 'age' column is to be integer
+					   ave :0.1 is real      → 'ave' column is to be double
+
+			thus, uploading a ftest.csv creates 
+			      table name: ftest
+				  table coluns are:
+				    | id | name | sex | age | ave |
+				    |  1 | AAA1 |  m  |  10 | 0.1 |
+				    |  2 | BBB2 |  f  |  20 | 0.2 |
+
+			ATTENTION: duplicated uploading is inserting them to the exist table, i mean,
+			| id | name | sex | age | ave |
+			|  1 | AAA1 |  m  |  10 | 0.1 |
+			|  2 | BBB2 |  f  |  20 | 0.2 |
+			|  3 | AAA1 |  m  |  10 | 0.1 |   ← inserted
+			|  4 | BBB2 |  f  |  20 | 0.2 |   ← inserted
 				</pre>
 				<pre style="color: rgb(230, 89, 8);">
 	Attention, the headers (name,sex..) are to be column name, thus you can not use '-' and so on, these are not 
 	allowed to use in there depend on a database. In fact, the column name will be named with the file name + header name,
 	for example, ftest_name, ftest_sex... in above example. Because I wish every columns are uniquness.
 				</pre>
-				<span class="guidance">2-3. how to manage a created table</span>
+				<div name="pnum" style="text-align:center;"></div>
+			</div>
+	<!-------------------- PAGE 3 ---------------------------------------------------------------->
+			<div name="page3" style="margin:auto;text-align:left;" hidden>
+				<span class="guidance">3-1. how to manage a created table</span>
 				<pre>
 	Some WebAPIs are created automatically by creating a table, I mean uploading csv file.
 	These are displayed on the right side panel. They have a meaning full name,
@@ -320,8 +351,8 @@
 				</pre>
 				<div name="pnum" style="text-align:center;"></div>
 			</div>
-	<!-------------------- PAGE 3 ---------------------------------------------------------------->
-			<div name="page3" style="margin:auto;text-align:left;" hidden>
+	<!-------------------- PAGE 4 ---------------------------------------------------------------->
+			<div name="page4" style="margin:auto;text-align:left;" hidden>
 				<pre style="color: rgb(230, 89, 8);">
 		in the case of you set the subquery, its variable parameter must enclosed with '{}', and the rule is following the database 
 		I mean, if you tested the api with 'where ftest.ftest_age < 30', and you wanna '30' to be a variable parameter, you must change it {age},
