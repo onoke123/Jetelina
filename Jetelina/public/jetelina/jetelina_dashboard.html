@@ -248,14 +248,17 @@
 		2-2. how to create tables by uploading a csv file
 	in page 3
 		3-1. how to manage a created table
-		2-4. how to create DBI from a create table and publish it as a WebAPI
-		2-5. can i test and check the DBI before publishing?
-		2-6. how to switch databases, e.g. PostgreSQL to Redis
+		3-2. how to create DBI from a create table and publish it as a WebAPI
+	in page 4
+		4-1. can i test and check the DBI before publishing?
+		4-2. how to switch databases, e.g. PostgreSQL to Redis
+		4-3. how to delete DBIs/APIs
 
 	Next, these are the intermediate operations about getting error reasons in your WebAPIs,
-		3-1. when and where you will see the error happened?
-		3-2. how to check the error meaning
-		3-3. can you fix the error?
+	in page 5
+		5-1. when and where you will see the error happened?
+		5-2. how to check the error meaning
+		5-3. can you fix the error?
 		
 	Ok, these are the advanced operations, but do not need any special account,
 		4-1. how to know your each WebAPIs daily access numbers
@@ -276,12 +279,13 @@
 			<div name="page2" style="margin:auto;text-align:left;" hidden>
 				<span class="guidance">2-1. how to use databases</span>
 				<pre>
-	You and I can handle PostgreSQL/MySQL/Redis/MongoDB. You type your database whichever, e.g 'use postgresql'.
-	Then the icon is highlighted. This is the signal of current working database.
+	You and I can handle PostgreSQL/MySQL/Redis/MongoDB. You type your database whichever, e.g 'use postgresql', then follow me.
+	After connecting to the database, the icon is highlighted. This is the signal of current working database.
 				</pre>
 				<span class="guidance">2-2. how to create tables by uploading a csv file</span>
 				<pre>
 	Every table in databases, in case NonSQLs are key or document, are created by uploading a csv file to me.
+	You type 'file open','upload file'...etc, then the file box is open, select your file, then follow me. 
 	A csv file has some rules,
 	        (1) the file name is to be the table name
 			        e.g   ftest.csv  →  'ftest' table   
@@ -290,8 +294,8 @@
 			           name,sex,age,ave   ← headers(be a table column name)
 		               AAA1,m,10,0.1      ← data
 		               BBB2,f,20,0.2
-			(3) unique id is put on each row data automatically
-			(4) the column data type is decided automatically
+			(3) an unique id is put on each row data automatically
+			(4) the column data type is decided automatically by me
 			        e.g
 					   name:AAA1 is string   → 'name' column is to be varchar
 					   age :10 is integer    → 'age' column is to be integer
@@ -305,11 +309,11 @@
 				    |  2 | BBB2 |  f  |  20 | 0.2 |
 
 			ATTENTION: duplicated uploading is inserting them to the exist table, i mean,
-			| id | name | sex | age | ave |
-			|  1 | AAA1 |  m  |  10 | 0.1 |
-			|  2 | BBB2 |  f  |  20 | 0.2 |
-			|  3 | AAA1 |  m  |  10 | 0.1 |   ← inserted
-			|  4 | BBB2 |  f  |  20 | 0.2 |   ← inserted
+			        | id | name | sex | age | ave |
+			        |  1 | AAA1 |  m  |  10 | 0.1 |
+			        |  2 | BBB2 |  f  |  20 | 0.2 |
+			        |  3 | AAA1 |  m  |  10 | 0.1 |   ← inserted
+			        |  4 | BBB2 |  f  |  20 | 0.2 |   ← inserted
 				</pre>
 				<pre style="color: rgb(230, 89, 8);">
 	Attention, the headers (name,sex..) are to be column name, thus you can not use '-' and so on, these are not 
@@ -322,8 +326,15 @@
 			<div name="page3" style="margin:auto;text-align:left;" hidden>
 				<span class="guidance">3-1. how to manage a created table</span>
 				<pre>
-	Some WebAPIs are created automatically by creating a table, I mean uploading csv file.
-	These are displayed on the right side panel. They have a meaning full name,
+	The created tables are shown in the left panel on me. 
+	        (1) 'select xxxx' or 'open xxxx' is for opening the xxxx table, then its columns are displayed in the center panel
+			(2) 'drop table xxxx' is for dropping 'xxxx' table, the associated DBIs/WebAPIs are also deleted synchronously
+			     CAUTION: this table droppping is parmanent deleting, i mean it is as same as 'drop table xxxx' in SQL
+				 </pre>
+				 <span class="guidance">3-2. how to create DBI from a create table and publish it as a WebAPI</span>
+				 <pre>
+	Some DBIs/WebAPIs are created automatically by creating a table, I mean when you upload a csv file to me.
+	These are displayed in the right side panel. They have a meaning full name,
 											
 		- created automatically
 			'ji': data insert api. I create it automatically by uploading your csv file.
@@ -331,20 +342,26 @@
 			'jd': data delete api. Again.
 					
 		- you will create
-			'js': data select api. You created.
+			'js': data select api. 
 					
-	try to type its name, for example 'select ji12' or simply 'select 12', it is opened what it is.
-	You will see 'IN','OUT' and a sql sentence below. 'IN' and 'OUT' are the WebAPI's I/F, and the sql sentence is the execution in fact. 
+	Try to type its name, e.g 'select ji12' or simply 'select 12', then you see 'IN','OUT' and a sql sentence, in case RDBMS, below. 
+	'IN' and 'OUT' are the WebAPI's I/F, and the sql sentence is the execution in fact. 
 					
 	To create 'js' API, 
-		1. select table by typing its name, for example, 'select ftest'. 'ftest' is the table name, 'open ftest' can be done as well
-		2. select columns, they moves to below, for example 'select age', 'age' is the column. 'select all' is .. you know :)
-		3. you can cancel it by typing 'cancel' or 'reject' with the column name, for example 'cancel age, cancel all is 'cancel all'
-		4. type 'go subquery' or shortly 'go sub' to move subquery input area to set a subquery phrase if you need, 
-		   for example 'where ftest.ftest.age < 30'
-		5. to test these setting, you can type 'test api' or 'test sql'...., I execute the sql that is defined by selected items and the subquery
-		6. the test result is displayed as same as the 'OUT' I/F format, check it
-		7. to create api, simply type 'create api', 
+		(1) open the table with 3-1(1)
+		(2) type the column name that is displayed in the center panel to select it
+		(3) to cancel the selected 'xxxx' column, type 'cancel xxxx' or 'reject xxxx', or 'cancel all' is for canceling all
+
+	(1)-(3) are enough if your new API stands on a very simple SQL. Go to (5) or (6).
+	But (4) is for setting a subquery if you need more complicated request.
+		(4) type 'go subquery' or shortly 'go sub' to describe a subquery sentence.
+		    the subquery panel arise then write your subquery phrase in there, e.g 'where ftest.ftest.age < 30'
+
+	I have very kindly a test procedure for your new API, this process is optional.
+		(5) type 'test api' or 'test sql'...., I execute the sql that is defined by selected items and the subquery.
+		    the result is displayed as json form in a new panel.
+
+		(6) to create api, simply type 'create api', then follow me. 
 				</pre>
 				<pre style="color: rgb(230, 89, 8);">
 	BUT ATTENTION, .... to be the next page :)   		
@@ -354,38 +371,42 @@
 	<!-------------------- PAGE 4 ---------------------------------------------------------------->
 			<div name="page4" style="margin:auto;text-align:left;" hidden>
 				<pre style="color: rgb(230, 89, 8);">
-		in the case of you set the subquery, its variable parameter must enclosed with '{}', and the rule is following the database 
-		I mean, if you tested the api with 'where ftest.ftest_age < 30', and you wanna '30' to be a variable parameter, you must change it {age},
-				where ftest.ftest_age < 30    →    where ftest.ftest_age < {age}     ← CAUTION: {age} because 'age' is integer
-			in the case of character, for example 'name'
-				where ftest.ftest_name = 'AAA' →  where ftest.ftest_name = '{name}'     ← CAUTION: '{name}' because 'name' is character
+	in the case of you set the subquery, its variable parameter must enclosed with '{}', and the rule is following the database 
+	I mean, if you tested the api with 'where ftest.ftest_age < 30', and you wanna '30' to be a variable parameter, you must change it {age},
+			where ftest.ftest_age < 30    →    where ftest.ftest_age < {age}     ← CAUTION: {age} because 'age' is integer
+		in the case of character, for example 'name'
+			where ftest.ftest_name = 'AAA' →  where ftest.ftest_name = '{name}'     ← CAUTION: '{name}' because 'name' is character
 				</pre>
+				<span class="guidance">4-1. can i test and check the DBI before publishing?</span>
 				<pre>
-		To test the created API,
-			1. select API's name by typing ..... as same as above 1
-			2. type 'test api' or 'check api' and so on
-			3. I ask you the input values due to 'IN' I/F, you set the values in out chatbox, then the inputs are replaced in 'IN', look at them
-			4. I say to you "..type 'boom'..." or something after all params are set, then you type it
-			5. the result is displayed in 'OUT' I/F, confirm it
-			6. finally you say 'thank you', 'great'... to me, OK? :)
+	Yes, you can do it. To test the created API,
+		(1) select API's name by typing ..... as same as above 1
+		(2) type 'test api' or 'check api' and so on
+		(3) I ask you the input values due to 'IN' I/F, you set the values in out chatbox, then the inputs are replaced in 'IN', look at them
+		(4) I say to you "..type 'boom'..." or something after all params are set, then you type it
+		(5) the result is displayed in 'OUT' I/F, confirm it
+		(6) finally you say 'thank you', 'great'... to me, OK? :)
 				</pre>
+				<span class="guidance">4-2. how to switch databases</span>
 				<pre>
-	■Managing database table and WebAPIs
-		You may wonder how to drop a table and delete api, it's very simple as same as every manipulations.
-		1. type 'drop table ftest','ftest' is the table name, and 'delete api js100', 'js100' is the api name
-		2. I ask you 'really?' or something, and ask you to let me know your pass phrase only the first time
-		3. I drop or delete them by confirming your phrase
-
-		You can only delete 'js' APIs, because it is created by you. Others, 'ji', 'ju','jd' are under my control. These APIs can be 
-		deleted by dropping the related table.
-			for example,
-			    in case, the 'ftest' table has some apis, 'ji100','jd101','ju102','js103','js104'
-				'js103' and 'js104' are deletable by you. 'ji100','jd101','ju102' are deletable by dropping 'ftest' table.
-
-		
-		Hey, that all. You see what db are you use present on my upper screen.
+	Toled this in 2-1(1), but again. Type 'use xxxx' or 'switch to xxxx'.... to change to 'xxxx' database.
+	    e.g  'use mysql'
+				</pre>
+				<span class="guidance">4-3. how to delete DBIs/APIs</span>
+				<pre>
+	You can only delete 'js' APIs, because it is created by you. Others, 'ji', 'ju','jd' are under my control. These APIs can be 
+	deleted by dropping the related table.
+		(1)	Type 'delete api js100' or 'reject api js100' ....., to delete 'js100' api. Multi deleting is 'delete api js100 js200'.
+		(2) The selected apis are changed its bgcolor, then follow me.			
 				</pre>
 				<div name="pnum" style="text-align:center;"></div>
+			</div>
+	<!-------------------- PAGE 5 ---------------------------------------------------------------->
+			<div name="page5" style="margin:auto;text-align:left;" hidden>
+				<span class="guidance">5-1. when and where you will see the error happened?</span>
+				<pre>
+					
+				</pre>
 			</div>
 		</div>
 	</div>
