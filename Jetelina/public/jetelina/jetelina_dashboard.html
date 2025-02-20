@@ -257,13 +257,13 @@
 	Next, these are the intermediate operations about getting error reasons in your WebAPIs,
 	in page 5
 		5-1. when and where you will see the error happened?
-		5-2. how to check the error meaning
-		5-3. can you fix the error?
+		5-2. can you fix the error?
 		
 	Ok, these are the advanced operations, but do not need any special account,
-		4-1. how to know your each WebAPIs daily access numbers
-		4-2. how to know your each databases total access numbers
-		4-3. how to know your each WebAPIs execution speed 
+	in page 6
+		6-1. how to know your each WebAPIs daily access numbers
+		6-2. how to know your each databases total access numbers
+		6-3. how to know your each WebAPIs execution speed 
 
 	And these are another advanced operations you need privilege roll.To know you have it or not, type 'who am i' after logging to me,
 	you can operate the belows if you have 'admin' roll.
@@ -405,9 +405,44 @@
 			<div name="page5" style="margin:auto;text-align:left;" hidden>
 				<span class="guidance">5-1. when and where you will see the error happened?</span>
 				<pre>
-					
+	I know sometimes happen something error, e.g creating tables/apis/api-test and so on.
+	The error messages are displayed if they were, and you can ask me.
+	Type 'open error', 'what happend' or 'detail please'....., when something happen but do not display it.
+	I inform you the reason as much as i possible.
 				</pre>
+				<span class="guidance">5-2. can you fix the error?</span>
+				<pre>
+	Depend on the reason. The most of the cases are cause of your APIs manipurations as I know.
+	You can resolve them by yourself due to my suggestions. Others.... may you can ask it to my web site. Good luck.
+				</pre>
+				<div name="pnum" style="text-align:center;"></div>
 			</div>
+	<!-------------------- PAGE 6 ---------------------------------------------------------------->
+			<div name="page6" style="margin:auto;text-align:left;" hidden>
+				<span class="guidance">6-1. how to know your each WebAPIs daily access numbers</span>
+				<pre>
+	I total up your DBIs/WebAPIs access numbers in daily.
+	Type 'show api access numbers' to open the list. Then you can move the page with typing 'next' to next page, 'previous' is for backing,
+	'last' or 'end' jump to the last page, 'head' or 'first' back to the top page.
+	You also can search an api 'xxxx' with typing 'search xxxx', and 'search clear' back to the list.
+				</pre>
+				<span class="guidance">6-2. how to know your each databases total access numbers</span>
+				<pre>
+	You may wanna know the share of your databases, i mean for example MySQL is used 60%, Redis is used 40%.
+	Type 'show db access' to open the rate as pie chart. This chart is yearly data.				
+				</pre>
+				<span class="guidance">6-3. how to know your each WebAPIs execution speed</span>
+				<pre>
+	You know I am watching your api execution peed, mean/max/min in daily.
+	Type 'show api speed of xxxx' to figure out api 'xxxx' data, e.g 'show api speed of js4'.
+	Basically 'flat' lines are ideal in each data. But sometimes happen the execution speed deprecation.
+	Type 'any alerts?' or 'any reports?' to see my REPORT in the execution speed problems. 
+	I report you if the mean speed is out of 1σ, 2σ and 3σ in standard deviation. 
+	That's all what I can do. I relay on you to fix the problems. Type 'do not worry', 'never mind'... to make me feel safe.
+				</pre>
+				<div name="pnum" style="text-align:center;"></div>
+			</div>
+
 		</div>
 	</div>
 	<!--
