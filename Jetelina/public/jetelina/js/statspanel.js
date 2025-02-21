@@ -14,6 +14,7 @@
       *isVisiblePerformanceTest() checking "#performance_test" is visible or not
       statsPanelFunctions(ut)  Exectute some functions ordered by user chat input message
       setGraphData(o,type)  set data to a graph of creating by plot.js. data and 'type' are passed by getAjaxData() in jetelinalib.js 
+      purgePlotlygraph(gtype) purge the Plotly graph
       showApiAccessNumbersList()  show api access number data in DataTable 
       hideApiAccessNumbersList() hide APIACCESSNUMBERS and destroy the DataTable()
       apiAccessNumbersListController(cmd) api access numbers list controller. paging and search api order by chat box
@@ -492,6 +493,11 @@ const viewPlotlyChart = (basedata, type) => {
             paper_bgcolor: 'rgba(109, 98, 226, 0.15)'
         };
 
+        /*
+            Tips:
+                don't purge the pie chart in V3 yet, because it may does not be repeated.
+                but should call purgePlotlygraph('db') alike 'as', if the time has come. 
+        */
         Plotly.react('piechart_graph', data, layout);
     } else if (type == "as") {
         let smean = {
@@ -558,7 +564,7 @@ const viewPlotlyChart = (basedata, type) => {
             }
         };
 
-        Plotly.purge('apispeed_graph');
+        purgePlotlygraph('as');
         Plotly.react('apispeed_graph', data, layout);
     } else {
         /*
@@ -580,6 +586,23 @@ const viewPlotlyChart = (basedata, type) => {
         Plotly.newPlot('performance_test_graph', data, layout);
         */
     }
+}
+/**
+ * @function purgePlotlygraph
+ * @param {string} graph type 'db' -> pie chart, other(but expect 'as') -> line chart
+ * 
+ * purge the Plotly graph
+ */
+const purgePlotlygraph = (gtype) =>{
+    let tagid = "";
+
+    if(gtype == 'db'){
+        tagid = 'piechart_graph';
+    }else{
+        tagid = 'apispeed_graph';
+    }
+
+    Plotly.purge(tagid);
 }
 /**
  * @function viewPerformanceGraph

@@ -510,7 +510,12 @@ const getAjaxData = (url) => {
                             drow graphic in stats panel.
                             this setGraphDta() function is defined in statspanel.js.
                     */
-                    let acVscom = setGraphData(result, type);
+                    if (typeof result.Jetelina != 'string') {
+                        let acVscom = setGraphData(result, type);
+                    } else {
+                        purgePlotlygraph(type);
+                        m = result["message from Jetelina"];
+                    }
                 } else {
                     /*
                         Attention:
@@ -747,7 +752,12 @@ const postAjaxData = (url, data) => {
                             drow graphic in stats panel.
                             this setGraphDta() function is defined in statspanel.js.
                     */
-                    let acVscom = setGraphData(result, "as");
+                    if (typeof result.Jetelina != 'string') {
+                        let acVscom = setGraphData(result, "as");
+                    } else {
+                        purgePlotlygraph('as');
+                        specialmsg = result["message from Jetelina"];
+                    }
                 }
 
                 if (specialmsg == "") {
@@ -781,7 +791,7 @@ const postAjaxData = (url, data) => {
         }).fail(function (result) {
             checkResult(result);
             cmdCandidates = [];
-            console.error("postAjaxData() fail");
+            console.error("postAjaxData() fail: ", url);
             typingControll(chooseMsg("fail-msg", "", ""));
         }).always(function () {
             // release it for allowing to input new command in the chatbox 

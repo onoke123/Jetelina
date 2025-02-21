@@ -621,10 +621,10 @@ function getApiExecutionSpeed()
         if( 0<nrow(df))
             ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
         else
-            ret = json(Dict("result" => true, "Jetelina" => "[{}]", "target" => key, "message from Jetelina" => "the data is not yet"))
+            ret = json(Dict("result" => true, "Jetelina" => "[{}]", "target" => apino, "message from Jetelina" => "the data is not yet"))
         end
     else
-        ret = json(Dict("result" => true, "Jetelina" => "[{}]", "target" => key, "message from Jetelina" => "the data is not yet"))
+        ret = json(Dict("result" => true, "Jetelina" => "[{}]", "target" => apino, "message from Jetelina" => "the data is not yet"))
     end
 
     return ret
