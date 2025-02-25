@@ -1080,7 +1080,7 @@ const chatKeyDown = (cmd) => {
             "guidance"
     */
     if ($(GUIDANCE).is(":visible") && !inScenarioChk(ut, "general-thanks-cmd")) {
-        if (inScenarioChk(ut, 'guidance-goto-jetelinaorg')) {
+        if (inScenarioChk(ut, 'guidance-goto-jetelinaorg-cmd')) {
             window.open(scenario["jetelina-web-site-url"][0], "_blank");
         } else {
             m = guidancePageController(ut);
@@ -1168,9 +1168,9 @@ const chatKeyDown = (cmd) => {
             /*
                 Tips:
                     indeed, this zoom procedure is discripted in dashboard.js, around #130 as .on().
-                    this code use it by asking 'what-did-i-say'. :)
+                    this code use it by asking 'what-did-i-say-cmd'. :)
             */
-            if (inScenarioChk(ut, 'what-did-i-say')) {
+            if (inScenarioChk(ut, 'what-did-i-say-cmd')) {
                 $(".yourText").mouseover();
             } else {
                 $(".yourText").mouseout();
@@ -1351,7 +1351,7 @@ const chatKeyDown = (cmd) => {
                             if (1 < multi) {
                                 // pick candidates up
                                 m = chooseMsg('multi-candidates-msg', "", "");// this 'm' is displayed in chatbox
-                                let multimsg = chooseMsg("config-update-plural-candidates-message", "", "");// this 'multimsg' is displayed in SOMETHINGMSGPANEL
+                                let multimsg = chooseMsg("config-update-plural-candidates-msg", "", "");// this 'multimsg' is displayed in SOMETHINGMSGPANEL
                                 for (i = 0; i < multi; i++) {
                                     multimsg += `'${multiscript[i]}',`;
                                 }
@@ -1411,12 +1411,12 @@ const chatKeyDown = (cmd) => {
                                             let data = `{"${presentaction.config_name}":"${new_param}"}`;
                                             postAjaxData(scenario["function-post-url"][3], data);
                                         } else {
-                                            m = chooseMsg("config-update-alert-message", "", "");;
+                                            m = chooseMsg("config-update-alert-msg", "", "");;
                                         }
                                     }
                                 }
                             } else {
-                                m = chooseMsg("config-update-error-message", "", "");
+                                m = chooseMsg("config-update-alert-config-update-error-msg", "", "");
                             }
                         }
 
@@ -1426,9 +1426,9 @@ const chatKeyDown = (cmd) => {
                             cancelableCmdList.push(presentaction.cmd);
                             if (presentaction.config_name != null && presentaction.config_data != null) {
                                 showSomethingInputField(true, 0);
-                                m = chooseMsg("config-update-simple-message", "", "");
+                                m = chooseMsg("config-update-simple-msg", "", "");
                             } else {
-                                m = chooseMsg("config-update-plural-message", "", "");
+                                m = chooseMsg("config-update-plural-msg", "", "");
                             }
                         } else if (inScenarioChk(ut, 'get-config-change-history-cmd')) {
                             getAjaxData(scenario["function-get-url"][2]);
@@ -1437,22 +1437,33 @@ const chatKeyDown = (cmd) => {
                         }
 
                         // user management
-                        if ((presentaction.cmd != null && presentaction.cmd == USERMANAGE) || inScenarioChk(ut, 'user-manage-show-profile')) {
+/*
+                        if ((presentaction.cmd != null && presentaction.cmd == USERMANAGE) || inScenarioChk(ut, 'user-manage-show-profile-cmd')) {
                             m = accountManager(ut);
-                        } else if (inScenarioChk(ut, 'user-manage-add')) {
+                        } else if (inScenarioChk(ut, 'user-manage-add-cmd')) {
                             presentaction.cmd = USERMANAGE;
                             cancelableCmdList.push(presentaction.cmd);
                             m = accountManager(ut);
                         }
+*/
                     } else {
                         // do not have an authority
-                        if (inScenarioChk(ut, 'user-manage-add') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-delete') || inScenarioChk(ut, 'config-show-cmd')) {
+                        if (inScenarioChk(ut, 'user-manage-add-cmd') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-delete') || inScenarioChk(ut, 'config-show-cmd')) {
                             m = chooseMsg("no-authority-js-msg", "", "");
                         } else {
                             // normal reply e.g "next?"
                         }
                     }
 
+                    // user management
+                    if ((presentaction.cmd != null && presentaction.cmd == USERMANAGE) || inScenarioChk(ut, 'user-manage-show-profile-cmd')) {
+                        m = accountManager(ut);
+                    } else if (inScenarioChk(ut, 'user-manage-add-cmd')) {
+                        presentaction.cmd = USERMANAGE;
+                        cancelableCmdList.push(presentaction.cmd);
+                        m = accountManager(ut);
+                    }
+                    
                     break;
                 default:
                     if (ut == "reload") {
@@ -1577,7 +1588,6 @@ const logout = () => {
     hideApiAccessNumbersList();
     $("#performance_real").hide();
     $("#performance_test").hide();
-    $(COMMANDLIST).hide();
     $(GUIDANCE).hide();
     showSomethingMsgPanel(false);
     showConfigPanel(false);
@@ -2014,7 +2024,7 @@ $("#databaselist").on("click", ".databasename", function () {
  * ajax function for executing API test.
  */
 const apiTestAjax = () => {
-    let url = scenario["function-apitest-usr"][0];
+    let url = scenario["function-apitest-url"][0];
     let data = $(`${COLUMNSPANEL} [name='apiin']`).text();
 
     $.ajax({
@@ -2093,7 +2103,7 @@ const apiTestAjax = () => {
  * ajax function for searching 'errnum' in the log file
  */
 const searchLogAjax = () => {
-    let url = scenario["function-search-log-errnum"][0];
+    let url = scenario["function-search-log-errnum-url"][0];
     let data = `{"errnum":"${preferent.errnum}"}`;
 
     $.ajax({

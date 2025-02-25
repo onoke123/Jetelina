@@ -20,7 +20,7 @@ const accountManager = (s) =>{
             'whatJetelinaTold' is contained Jetelina's message.
             by comparing this and expected scenario message, may could take an correct action. :)
     */
-    if(inScenarioChk(s,'user-manage-add') ||(presentaction.um == 'user-add') ){
+    if((inScenarioChk(s,'user-manage-add-cmd') ||(presentaction.um == 'user-add')) && loginuser.roll == "admin" ){
         // add new user/account
         if(presentaction.um == null){
             presentaction.um = 'user-add';
@@ -32,7 +32,7 @@ const accountManager = (s) =>{
         }
 
         ret = chooseMsg('user-manage-username-msg',"","");
-    }else if(inScenarioChk(s,'user-manage-show-profile')){
+    }else if(inScenarioChk(s,'user-manage-show-profile-cmd')){
         let prof = `"${loginuser.lastname} ${loginuser.firstname}" with "roll"=>"${loginuser.roll}", "id"=>"${loginuser.user_id}, "last logout"=>"${loginuser.logoutdate}", "total logins"=>"${loginuser.logincount}", "generation"=>"${loginuser.generation}"`;
         if(loginuser.nickname != null && 0<loginuser.nickname.length){
             prof = prof + `, and sometimes I call you "${loginuser.nickname}"`;
@@ -43,6 +43,7 @@ const accountManager = (s) =>{
         showSomethingMsgPanel(true);
         ret = IGNORE;
     }else{
+        ret = chooseMsg('no-authority-js-msg',"","");
     }
 
     return ret;
