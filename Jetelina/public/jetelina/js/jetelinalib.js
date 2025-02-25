@@ -44,6 +44,7 @@
       showConfigPanel(b) "#config_panel" show or hide
       showPreciousPanel(b) "#jetelina_teach_you_smg" show or hide
       jsonFromCheck(s) check for json form in mongodb
+      guidancePageFootLinkController(n) create cmd and call guidancePageController in case of clickcing the page link on the footer 
       guidancePageController(n) move the guidance page order by 'n' 
       jetelinaPanelPositionController(b) JETELINAPANEL position change 
       determindDateStart2End(dates) pick the min date and max date within query date array
@@ -1654,9 +1655,9 @@ const showGuidance = (b) => {
         jetelinaPanelPositionController(false);
         $(GUIDANCE).show().animate({
             width: window.innerWidth * 0.8,
-            height: window.innerHeight * 0.8,
-            top: "10%",
-            left: "10%"
+            height: window.innerHeight * 0.9,
+            top: "1%",
+            left: "5%"
         }, ANIMATEDURATION).draggable();
 
         guidancefootnote(1);
@@ -2177,6 +2178,17 @@ const jsonFromCheck = (s) => {
     }
 
     return true;
+}
+/**
+ * @function guidancePageFootLinkController
+ * @param {integer} n page number in the 'pnum'
+ * 
+ * create cmd and call guidancePageController in case of clickcing the page link on the footer 
+ */
+const guidancePageFootLinkController = (n) =>{
+    if (n != null ){
+        guidancePageController(`page ${n}`);        
+    }
 }
 /**
  * @function guidancePageController
