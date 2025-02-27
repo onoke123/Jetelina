@@ -370,7 +370,7 @@
 	<!-------------------- PAGE 4 ---------------------------------------------------------------->
 			<div name="page4" style="margin:auto;text-align:left;" hidden>
 				<pre style="color: rgb(230, 89, 8);">
-	in the case of you set the subquery, its variable parameter must enclosed with '{}', and the rule is following the database 
+	In the case of you set the subquery, its variable parameter must enclosed with '{}', and the rule is following the database 
 	I mean, if you tested the api with 'where ftest.ftest_age < 30', and you wanna '30' to be a variable parameter, you must change it {age},
 			where ftest.ftest_age < 30    →    where ftest.ftest_age < {age}     ← CAUTION: {age} because 'age' is integer
 		in the case of character, for example 'name'
@@ -449,14 +449,42 @@
 			</div>
 	<!-------------------- PAGE 7 ---------------------------------------------------------------->
 			<div name="page7" style="margin:auto;text-align:left;" hidden>
-	You need privilege roll to manage these operations.To know you have it or not, type 'who am i' or 'show my profile' after logging to me,
-	you can operate the belows if you have 'admin' roll.
+	<p>You need the privilege roll to manage these operations.To know you have it or not, type 'who am i' or 'show my profile' after logging to me,
+	you can operate the belows if you have 'admin' roll.</p>
 				<span class="guidance">7-1. how to create a new user</span>
 				<pre>
 	To create a new user, it is incredible simple.
+	        (1) type 'invite new user', 'add new user' or 'add user' .... something like that
+			(2) then i ask you the user name, then follow me
+	That's all. The user roll what it can on me is decided by your 'generation' and the user's experience.
+				</pre>
+				<pre style="color: rgb(230, 89, 8);">
+	IMPORTANT: What is 'generation'?
+	           The 'generation' is an unchangeable primitive number with an account, please refer my web site about the detail, 
+			   but let's say it simply as below.
+			   
+			    'generation 0' is 
+			                     accounts who were created in installing me on here,
+			                     available the functions: create&delete table/api, create a new user, change my configuration.
+			    'generation 0<' are 
+			                     accounts who were registered by 'generation 0', and 'generation 2' is ... you know, 
+			                     be able to do them after gaining a lot of experiences.
+
+			   Say again, 'generation 0' accounts are able to manage all functions, but 'generation 1-x' will be possible them 
+			   after gaining much of experiences on me.
+			   Other word, 'generation 1-x' accounts need to be trusted by me.
 				</pre>
 				<span class="guidance">7-2. how to change a database parameter</span>
 				<pre>
+	I know you are an expert if you wanted this.
+	I know the typical values of parameters on each databases and try to connect to them by your order as 'i wanna use xxxx', 'switch to xxxx'...
+	e.g 'i wanna use postgresql'.
+	I give 'success' message to you if the connection had been built, but in the case of unconnectable, I will show you the parameters list.
+	Then you can fit them with your own values,
+	        (1) in success: happy messages to you
+			(2) in fail: show the typical parameters list 
+			(3) change the parameter with typing 
+			(4) try to connect again with typing
 				</pre>
 				<span class="guidance">7-3. how to change a parameter in me</span>
 				<pre>
