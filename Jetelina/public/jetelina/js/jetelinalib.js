@@ -637,8 +637,11 @@ const postAjaxData = (url, data) => {
                     showSomethingMsgPanel(true);
                 } else if (url == posturls[3]) {
                     // configuration parameter change success then cleanup the "#something_msg"
-                    setDBFocus(presentaction.dbtype);
-                    loginuser.dbtype = presentaction.dbtype;
+                    if(presentaction.dbtype != null){
+                        setDBFocus(presentaction.dbtype);
+                        loginuser.dbtype = presentaction.dbtype;
+                    }
+                    
                     presentaction = {};
                     showSomethingInputField(false);
                     if (result.target != null && 0 < result.target.length) {
@@ -768,6 +771,10 @@ const postAjaxData = (url, data) => {
                 }
             } else {
                 if (url == posturls[10]) {
+                    /*
+                        Tips:
+                            This process, posturls[10] -> "/ispath", is used to only in the first time connection check for a database. 
+                    */
                     if ($(CONFIGPANEL).is(":visible")) {
                         $(`${CONFIGPANEL} span`).filter(".configparams_key, .configparams_val").remove();
                     }
