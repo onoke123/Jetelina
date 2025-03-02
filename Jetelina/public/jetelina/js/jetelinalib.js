@@ -637,11 +637,11 @@ const postAjaxData = (url, data) => {
                     showSomethingMsgPanel(true);
                 } else if (url == posturls[3]) {
                     // configuration parameter change success then cleanup the "#something_msg"
-                    if(presentaction.dbtype != null){
+                    if (presentaction.dbtype != null) {
                         setDBFocus(presentaction.dbtype);
                         loginuser.dbtype = presentaction.dbtype;
                     }
-                    
+
                     presentaction = {};
                     showSomethingInputField(false);
                     if (result.target != null && 0 < result.target.length) {
@@ -1204,7 +1204,8 @@ const chatKeyDown = (cmd) => {
                         activePanel(APIACCESPANEL);
                     }
 
-                    if (isactivePanel(APIACCESPANEL)) {
+                    //                    if (isactivePanel(APIACCESPANEL)) {
+                    if (!$(GUIDANCE).is(":visible") && isVisibleApiAccessNumbers()) {
                         m = apiAccessNumbersListController(ut);
                     }
                 }
@@ -1444,15 +1445,15 @@ const chatKeyDown = (cmd) => {
                         }
 
                         // user management
-/*
-                        if ((presentaction.cmd != null && presentaction.cmd == USERMANAGE) || inScenarioChk(ut, 'user-manage-show-profile-cmd')) {
-                            m = accountManager(ut);
-                        } else if (inScenarioChk(ut, 'user-manage-add-cmd')) {
-                            presentaction.cmd = USERMANAGE;
-                            cancelableCmdList.push(presentaction.cmd);
-                            m = accountManager(ut);
-                        }
-*/
+                        /*
+                                                if ((presentaction.cmd != null && presentaction.cmd == USERMANAGE) || inScenarioChk(ut, 'user-manage-show-profile-cmd')) {
+                                                    m = accountManager(ut);
+                                                } else if (inScenarioChk(ut, 'user-manage-add-cmd')) {
+                                                    presentaction.cmd = USERMANAGE;
+                                                    cancelableCmdList.push(presentaction.cmd);
+                                                    m = accountManager(ut);
+                                                }
+                        */
                     } else {
                         // do not have an authority
                         if (inScenarioChk(ut, 'user-manage-add-cmd') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-delete') || inScenarioChk(ut, 'config-show-cmd')) {
@@ -1470,7 +1471,7 @@ const chatKeyDown = (cmd) => {
                         cancelableCmdList.push(presentaction.cmd);
                         m = accountManager(ut);
                     }
-                    
+
                     break;
                 default:
                     if (ut == "reload") {
@@ -2202,9 +2203,9 @@ const jsonFromCheck = (s) => {
  * 
  * create cmd and call guidancePageController in case of clickcing the page link on the footer 
  */
-const guidancePageFootLinkController = (n) =>{
-    if (n != null ){
-        guidancePageController(`page ${n}`);        
+const guidancePageFootLinkController = (n) => {
+    if (n != null) {
+        guidancePageController(`page ${n}`);
     }
 }
 /**
@@ -2237,10 +2238,15 @@ const guidancePageController = (cmd) => {
                 movetoPage = totalpagenumbers;
             } else if (inScenarioChk(cmd, "guidance-control-page-cmd")) {
                 let p = cmd.split(/(?:page)|(?: )/);
-                if (0 < p.length < 3) {
+                movetoPage = currentPage;
+                if (0 < p.length && p.length < 3) {
                     for (let ii in p) {
                         if (p[ii].match(/\d/)) {
-                            movetoPage = Number(p[ii]);
+                            let pp = Number(p[ii]);
+                            if (0 < pp && pp <= totalpagenumbers) {
+                                movetoPage = pp;
+                            }
+
                             break;
                         }
                     }
