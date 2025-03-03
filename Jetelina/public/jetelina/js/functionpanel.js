@@ -498,6 +498,7 @@ const listClick = (p) => {
           if ($.inArray(v.textContent, relatedDataList[t]) != -1) {
             if (p.hasClass("activeandrelatedItem")) {
               p.removeClass("activeandrelatedItem");
+              p.addClass("relatedItem");
               p.addClass("activeItem");
             }
 
@@ -522,6 +523,12 @@ const listClick = (p) => {
 
           $(this).removeClass("relatedItem");
         });
+      }
+
+      if(p.hasClass("activeandrelatedItem")){
+        p.removeClass("activeandrelatedItem");
+        p.addClass("relatedItem");
+        p.addClass("activeItem");
       }
 
       p.toggleClass("activeItem");
@@ -1503,6 +1510,8 @@ const functionPanelFunctions = (ut) => {
       }
 
       for (let n = 0; n < t.length; n++) {
+        findflg = false;
+
         /*
           Tips:
             at the first, searching in the table list, then the api list if did not hit.
