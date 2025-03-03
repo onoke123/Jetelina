@@ -131,7 +131,7 @@ const openFunctionPanel = () => {
 
     $(RELATEDTABLESAPIS).draggable().animate({
       top: "10%",
-      left: "82%"
+      left: "81%"
     }, ANIMATEDURATION);
 
   }

@@ -1672,7 +1672,7 @@ const showGuidance = (b) => {
     if (b) {
         jetelinaPanelPositionController(false);
         $(GUIDANCE).show().animate({
-            width: window.innerWidth * 0.8,
+            width: window.innerWidth * 0.9,
             height: window.innerHeight * 0.9,
             top: "1%",
             left: "5%"
@@ -2239,7 +2239,7 @@ const guidancePageController = (cmd) => {
             } else if (inScenarioChk(cmd, "guidance-control-page-cmd")) {
                 let p = cmd.split(/(?:page)|(?: )/);
                 movetoPage = currentPage;
-                if (0 < p.length && p.length < 3) {
+                if (0 < p.length) {
                     for (let ii in p) {
                         if (p[ii].match(/\d/)) {
                             let pp = Number(p[ii]);
