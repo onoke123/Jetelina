@@ -117,7 +117,7 @@
 @jdic stats-hide-jetelina-concern-img-cmd:"do not worry","don't worry","do not need to worry","don't need to worry","no problem","never mind"
 
 # Api Access numbers list controll
-@jdic stats-apiaccessnumberslist-prev-cmd:"prev"
+@jdic stats-apiaccessnumberslist-prev-cmd:"prev","previous"
 @jdic stats-apiaccessnumberslist-next-cmd:"next"
 @jdic stats-apiaccessnumberslist-first-cmd:"first","head"
 @jdic stats-apiaccessnumberslist-last-cmd:"last","end","tail"
@@ -133,7 +133,7 @@
 @jdic stats-db-access-numbers-chart-show-cmd:"show db access","display db access","show database access","display database access","open database access"
 @jdic stats-db-access-numbers-chart-hide-cmd:"for db access","hide db access","close db access","hide database access","close database access"
 @jdic stats-all-graph-show-cmd:"show all stats","show all graph","display all stats","display all graph","show every stat","display every graph"
-@jdic stats-all-graph-hide-cmd:"hide all stats","hide every graph","clar all graphs","all graphs clear","every stats clear","clear every stats"
+@jdic stats-all-graph-hide-cmd:"hide all stats","hide every graph","clear all graphs","all graphs clear","every stats clear","clear every stats"
 
 # SQL Execution Time graph
 @jdic stats-sql-performance-graph-show-cmd:"your suggestion","suggest","improved performance"
