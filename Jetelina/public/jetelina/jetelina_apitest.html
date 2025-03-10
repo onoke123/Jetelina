@@ -29,18 +29,23 @@
     </div>
     <p></p>
     <div name="apino" style="color: aliceblue;">
-        <p name="apiname">Api Name(apino)<input type="text" name="apiname" size="10"></p>
+        <p name="apiname">Api Name(apino)<input type="text" name="apiname" class="keyvalin"></p>
     </div>
     <div name="params" style="color: aliceblue;">
-        <p name="p1">1: Key<input type="text" name="k" size="10"> Value<input type="text" name="v" size="10">
+        <p name="p1">1: Key<input type="text" name="k" class="keyvalin"> Value<input type="text" name="v"
+                class="keyvalin">
         </p>
-        <p name="p2">2: Key<input type="text" name="k" size="10"> Value<input type="text" name="v" size="10">
+        <p name="p2">2: Key<input type="text" name="k" class="keyvalin"> Value<input type="text" name="v"
+                class="keyvalin">
         </p>
-        <p name="p3">3: Key<input type="text" name="k" size="10"> Value<input type="text" name="v" size="10">
+        <p name="p3">3: Key<input type="text" name="k" class="keyvalin"> Value<input type="text" name="v"
+                class="keyvalin">
         </p>
-        <p name="p4">4: Key<input type="text" name="k" size="10"> Value<input type="text" name="v" size="10">
+        <p name="p4">4: Key<input type="text" name="k" class="keyvalin"> Value<input type="text" name="v"
+                class="keyvalin">
         </p>
-        <p name="p5">5: Key<input type="text" name="k" size="10"> Value<input type="text" name="v" size="10">
+        <p name="p5">5: Key<input type="text" name="k" class="keyvalin"> Value<input type="text" name="v"
+                class="keyvalin">
         </p>
     </div>
     <a href="#" onclick="morePara()" style="font-size: smaller;">more parameter field</a>
@@ -71,21 +76,40 @@
         background: #000;
     }
 
-    .inhbg {
+    input:read-only {
         background: gray;
+    }
+
+    .keyvalin {
+        outline: none;
+        border: none;
+        color: #fff;
+        size: 20;
+        background: #084d4d;
     }
 </style>
 <script type="text/javascript">
     let selecteddatabase = $("input[name='db']:checked").val();
     let apinumber = "";
-    let paranum = 5;
+    let paranum = 5; // default for the parameter filed number
 
-    $(document).on("change","div[name='apino'] p[name='apiname'] input[name='apiname'], input[name='db']:checked",function(e){
+    $(document).on("change", "div[name='apino'] p[name='apiname'] input[name='apiname'], input[name='db']:checked", function (e) {
+        // reset the parameter filed
         resetParams();
     });
 
+    $(document).on("change","input[name='k']",function(e){
+        if($(this).val().toLowerCase() == "subquery"){
+            // change the size for subquery
+            $(this).siblings().attr("size",100); 
+        }else{
+            // reset the sizse, defined in .keyvalin
+            $(this).siblings().attr("size",20); 
+        }
+    });
+
     $(document).on("focus", "div[name='params'] p[name='p1']", function (e) {
-        apinumber = $("div[name='apino'] p[name='apiname'] input[name='apiname']").val();
+        apinumber = $("div[name='apino'] p[name='apiname'] input[name='apiname']").val().toLowerCase();
 
         if (selecteddatabase == "redis") {
             /*
@@ -98,11 +122,11 @@
             if (apinumber.startsWith("ji")) {
                 hidestart_number = 3;
                 for (let i = 1; i < 3; i++) {
-                    $(`div p[name='p${i}'] input[name='k']`).val(`key${i}`).prop('readonly', true).addClass("inhbg");
+                    $(`div p[name='p${i}'] input[name='k']`).val(`key${i}`).prop('readonly', true);
                 }
             } else if (apinumber.startsWith("ju")) {
                 hidestart_number = 2;
-                $("div p[name='p1'] input[name='k']").val("key").prop('readonly', true).addClass("inhbg");
+                $("div p[name='p1'] input[name='k']").val("key").prop('readonly', true);
             } else if (apinumber.startsWith("js")) {
                 hidestart_number = 1;
             }
@@ -134,7 +158,7 @@
     const resetParams = () => {
         for (let i = 1; i <= paranum; i++) {
             $(`div p[name='p${i}']`).show();
-            $(`div p[name='p${i}'] input[name='k']`).val("").removeClass("inhbg");
+            $(`div p[name='p${i}'] input[name='k']`).val("").prop('readonly', false);
             $(`div p[name='p${i}'] input[name='v']`).val("");
         }
     }
@@ -146,7 +170,6 @@
     }
 
     const getAjaxData = () => {
-        //        let apinumber = $("div[name='apino'] p[name='apiname'] input[name='apiname']").val();
         if (apinumber == "") {
             let msg = "No Api Name";
             $("#result").append(`<p class="">${msg}</p>`);
@@ -158,8 +181,8 @@
         let key = [];
         let value = [];
         for (let ii = 0, i = 1; i <= paranum; i++) {
-            let k = $(`div p[name='p${i}'] input[name='k']`).val();
-            let v = $(`div p[name='p${i}'] input[name='v']`).val();
+            let k = $(`div p[name='p${i}'] input[name='k']`).val().toLowerCase();
+            let v = $(`div p[name='p${i}'] input[name='v']`).val().toLowerCase();
             if (k != "" && v != "") {
                 key[ii] = k;
                 value[ii++] = v;
