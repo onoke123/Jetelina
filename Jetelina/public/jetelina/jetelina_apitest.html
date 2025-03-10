@@ -17,25 +17,37 @@
         This page send these params to Jetelina in JSON form.<br>
         The result is shown in the 'Result' filed.<br>
         Feel free to try 'select' and 'update' apis, but take care in 'insert' and 'delete' apis.
+        <p></p>
+        See: <a href="https://jetelina.org/how-to-call-your-created-webapis/" target="_blank">How to call your created
+            webapis</a>
+        <p></p>
+    </div>
+    <div name="database" style="color: aliceblue; font-size: larger;">
+        <input type="radio" name="db" value="rdbms" checked>PostgreSQL/MySql
+        <input type="radio" name="db" value="redis">Redis
+        <input type="radio" name="db" value="mongodb">MongoDB
+    </div>
+    <p></p>
+    <div name="apino" style="color: aliceblue;">
+        <p name="apiname">Api Name(apino)<input type="text" name="apiname" size="10"></p>
     </div>
     <div name="params" style="color: aliceblue;">
-        <p name="apiname">Api Name<input type="text" name="apiname" size="10"></p>
-        <p name="p1">1: Key Name<input type="text" name="k" size="10"> Value Name<input type="text" name="v" size="10">
+        <p name="p1">1: Key<input type="text" name="k" size="10"> Value<input type="text" name="v" size="10">
         </p>
-        <p name="p2">2: Key Name<input type="text" name="k" size="10"> Value Name<input type="text" name="v" size="10">
+        <p name="p2">2: Key<input type="text" name="k" size="10"> Value<input type="text" name="v" size="10">
         </p>
-        <p name="p3">3: Key Name<input type="text" name="k" size="10"> Value Name<input type="text" name="v" size="10">
+        <p name="p3">3: Key<input type="text" name="k" size="10"> Value<input type="text" name="v" size="10">
         </p>
-        <p name="p4">4: Key Name<input type="text" name="k" size="10"> Value Name<input type="text" name="v" size="10">
+        <p name="p4">4: Key<input type="text" name="k" size="10"> Value<input type="text" name="v" size="10">
         </p>
-        <p name="p5">5: Key Name<input type="text" name="k" size="10"> Value Name<input type="text" name="v" size="10">
+        <p name="p5">5: Key<input type="text" name="k" size="10"> Value<input type="text" name="v" size="10">
         </p>
     </div>
     <a href="#" onclick="morePara()" style="font-size: smaller;">more parameter field</a>
     <p></p>
     <p></p>
     <div>
-        <button onclick="getAjaxData()">GO Test</button>
+        <button onclick="getAjaxData()">EXEC TEST</button>
     </div>
     <div id="apitest">
         <div name="api-test-msg">
@@ -54,21 +66,92 @@
 </body>
 
 </html>
+<style>
+    .defbg {
+        background: #000;
+    }
+
+    .inhbg {
+        background: gray;
+    }
+</style>
 <script type="text/javascript">
+    let selecteddatabase = $("input[name='db']:checked").val();
+    let apinumber = "";
     let paranum = 5;
+
+    $(document).on("change","div[name='apino'] p[name='apiname'] input[name='apiname'], input[name='db']:checked",function(e){
+        resetParams();
+    });
+
+    $(document).on("focus", "div[name='params'] p[name='p1']", function (e) {
+        apinumber = $("div[name='apino'] p[name='apiname'] input[name='apiname']").val();
+
+        if (selecteddatabase == "redis") {
+            /*
+                ji -> key name is defined as 'key1' and 'key2'
+                ju -> key name is defined as 'key'
+                js -> no params
+                jd -> ---
+            */
+            let hidestart_number = 2;
+            if (apinumber.startsWith("ji")) {
+                hidestart_number = 3;
+                for (let i = 1; i < 3; i++) {
+                    $(`div p[name='p${i}'] input[name='k']`).val(`key${i}`).prop('readonly', true).addClass("inhbg");
+                }
+            } else if (apinumber.startsWith("ju")) {
+                hidestart_number = 2;
+                $("div p[name='p1'] input[name='k']").val("key").prop('readonly', true).addClass("inhbg");
+            } else if (apinumber.startsWith("js")) {
+                hidestart_number = 1;
+            }
+
+            for (let i = hidestart_number; i <= paranum; i++) {
+                $(`div p[name='p${i}']`).hide();
+            }
+        } else if (selecteddatabase == "mongodb") {
+            /*
+                ji -> document 
+                js/jd -> no params
+                ju -> key/val
+            */
+        } else {
+            /*
+                ji/js/jd/ju -> key/val
+            */
+            for (let i = 1; i <= paranum; i++) {
+                $(`div p[name='p${i}']`).show();
+            }
+        }
+
+    });
+
+    $("div[name='database'] input[name='db']").on('click', function () {
+        selecteddatabase = $("input[name='db']:checked").val();
+    });
+
+    const resetParams = () => {
+        for (let i = 1; i <= paranum; i++) {
+            $(`div p[name='p${i}']`).show();
+            $(`div p[name='p${i}'] input[name='k']`).val("").removeClass("inhbg");
+            $(`div p[name='p${i}'] input[name='v']`).val("");
+        }
+    }
+
     const morePara = () => {
         paranum += 1;
-        let str = `<p name="p${paranum}">${paranum}: Key Name<input type="text" name="k" size="10"> Value Name<input type="text" name="v" size="10"></p>`;
+        let str = `<p name="p${paranum}">${paranum}: Key<input type="text" name="k" size="10"> Value<input type="text" name="v" size="10"></p>`;
         $(`p[name='p${paranum - 1}']`).after(str);
     }
 
     const getAjaxData = () => {
-        let apinumber = $("div p[name='apiname'] input[name='apiname']").val();
+        //        let apinumber = $("div[name='apino'] p[name='apiname'] input[name='apiname']").val();
         if (apinumber == "") {
             let msg = "No Api Name";
             $("#result").append(`<p class="">${msg}</p>`);
             return;
-        }else{
+        } else {
             $("#result p").remove();
         }
 
@@ -78,14 +161,13 @@
             let k = $(`div p[name='p${i}'] input[name='k']`).val();
             let v = $(`div p[name='p${i}'] input[name='v']`).val();
             if (k != "" && v != "") {
-                console.log(k, "->", v);
                 key[ii] = k;
                 value[ii++] = v;
             }
         }
 
         let jstr = `{"apino":"${apinumber}",`;
-        for (i in key) {
+        for (let i in key) {
             jstr += `"${key[i]}":"${value[i]}",`;
         }
 
