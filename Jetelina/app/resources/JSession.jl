@@ -49,7 +49,11 @@ function get()
 """
 function get()
 	s = session(params())
-	return s.data[:uname], s.data[:uid]
+	if !isnothing(s)
+		return s.data[:uname], s.data[:uid]
+	else
+		return nothing
+	end 
 end
 """
 function clear()

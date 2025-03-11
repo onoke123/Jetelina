@@ -62,10 +62,10 @@ function initialDb()
 			the secound param '0' is dummy. but it expectables in Postgres, but not Mysql, whichever the following
 			process use the first param 'myself', do not worry. :) 
 	===#
-	JSession.set("myself",1)
+	JSession.set("myself", 1)
 
 	ret = _configParamUpdate(param)
-	if DBDataController.prepareDbEnvironment(db,mode)[1]
+	if DBDataController.prepareDbEnvironment(db, mode)[1]
 		flg = true
 	end
 
@@ -97,17 +97,17 @@ function getConfigData()
 - return: json data including ordered a configuration if there were. ex. {"result":true,"logfile":"log.txt"}
 """
 function getConfigData()
-	d = jsonpayload("param")
-#	if !contains(d, "password")
+	if !isnothing(JSession.get())
+		d = jsonpayload("param")
+
 		if !isnothing(j_config.JC[d])
 			return json(Dict("result" => true, d => j_config.JC[d]))
 		else
 			return json(Dict("result" => false))
 		end
-#	else
-		# if "password" is required
-#		return json(Dict("result" => true, d => "keep it secret.(^^)v"))
-#	end
+	else
+		return json(Dict("result" => false))
+	end
 end
 
 """
@@ -134,18 +134,22 @@ function createApi()
 					   fail to append it to     -> false
 """
 function createApi()
-	mode = jsonpayload("mode")
-	#===
-		Tips:
-			expect mode is "" or "pre".
-			""->registration
-			"pre"->api test
-	===#
-	if isnothing(mode) || length(mode) == 0
-		mode = "ok"
-	end
+	if !isnothing(JSession.get())
+		mode = jsonpayload("mode")
+		#===
+			Tips:
+				expect mode is "" or "pre".
+				""->registration
+				"pre"->api test
+		===#
+		if isnothing(mode) || length(mode) == 0
+			mode = "ok"
+		end
 
-	return DBDataController.createApiSelectSentence(jsonpayload(), mode)
+		return DBDataController.createApiSelectSentence(jsonpayload(), mode)
+	else
+		return nothing
+	end
 end
 """
 function getColumns()
@@ -154,13 +158,17 @@ function getColumns()
 	ordered table name is posted as the name 'tablename' in jsonpayload().
 """
 function getColumns()
-	ret = ""
-	tableName = jsonpayload("tablename")
-	if !isnothing(tableName)
-		ret = DBDataController.getColumns(tableName)
-	end
+	if !isnothing(JSession.get())
+		ret = ""
+		tableName = jsonpayload("tablename")
+		if !isnothing(tableName)
+			ret = DBDataController.getColumns(tableName)
+		end
 
-	return ret
+		return ret
+	else
+		return nothing
+	end
 end
 """
 function deleteTable()
@@ -169,14 +177,18 @@ function deleteTable()
 	ordered table name is posted as the name 'tablename' in jsonpayload().
 """
 function deleteTable()
-	ret = ""
-	tableName::Vector = jsonpayload("tablename")
-	stichwort::String = jsonpayload("pass")
-	if !isnothing(tableName)
-		ret = DBDataController.dropTable(tableName,stichwort)
-	end
+	if !isnothing(JSession.get())
+		ret = ""
+		tableName::Vector = jsonpayload("tablename")
+		stichwort::String = jsonpayload("pass")
+		if !isnothing(tableName)
+			ret = DBDataController.dropTable(tableName, stichwort)
+		end
 
-	return ret
+		return ret
+	else
+		return nothing
+	end
 end
 """
 function userRegist()
@@ -187,13 +199,17 @@ function userRegist()
 - return::boolean: success->true  fail->false        
 """
 function userRegist()
-	ret = ""
-	username = jsonpayload("username")
-	if !isnothing(username)
-		ret = DBDataController.userRegist(username)
-	end
+	if !isnothing(JSession.get())
+		ret = ""
+		username = jsonpayload("username")
+		if !isnothing(username)
+			ret = DBDataController.userRegist(username)
+		end
 
-	return ret
+		return ret
+	else
+		return nothing
+	end
 end
 """
 function login()
@@ -221,11 +237,11 @@ function login()
 				j[1][5] -> logindate
 				j[1][6] -> logoutdate
 				j[1][7] -> generation
-									        so far
+											so far
 		===#
-		if !isnothing(j) && 0<length(j)
+		if !isnothing(j) && 0 < length(j)
 			if !isnothing(j[1][2]) && !isnothing(j[1][1])
-				JSession.set(j[1][2],j[1][1])
+				JSession.set(j[1][2], j[1][1])
 				#===
 					Tips:
 						set data base type that is used at the last login
@@ -366,13 +382,17 @@ function deleteUserAccount()
 - return: true/false in json form
 """
 function deleteUserAccount()
-	ret = ""
-	uid = jsonpayload("uid")
-	if !isnothing(uid)
-		ret = DBDataController.deleteUserAccount(uid)
-	end
+	if !isnothing(JSession.get())
+		ret = ""
+		uid = jsonpayload("uid")
+		if !isnothing(uid)
+			ret = DBDataController.deleteUserAccount(uid)
+		end
 
-	return ret
+		return ret
+	else
+		return nothing
+	end
 end
 """
 function _addJetelinaWords()
@@ -425,11 +445,11 @@ function deleteApi()
 	apis::Vector = jsonpayload("apino")
 	stichwort = jsonpayload("pass")
 	jmsg::String = string("compliment me!")
-	retapis::String = join(apis,",") # ["a","b"] -> "a,b" oh ＼(^o^)／
+	retapis::String = join(apis, ",") # ["a","b"] -> "a,b" oh ＼(^o^)／
 	ret = ""
 
 	if DBDataController.refStichWort(stichwort)
-		if( ApiSqlListManager.deleteApiFromList(apis) )
+		if (ApiSqlListManager.deleteApiFromList(apis))
 			ret = json(Dict("result" => true, "apiname" => "$retapis", "message from Jetelina" => jmsg))
 		else
 			ret = json(Dict("result" => false, "apiname" => "$retapis", "errmsg" => "Oh my, failed the deleting. Type 'show error' to show somethin' if you're lucky."))
@@ -474,14 +494,14 @@ function _configParamUpdate(param::Dict)
 			cpur = true
 		end
 
-		for (k,v) in param
+		for (k, v) in param
 			key = k
 			value = v
 			if k == "dbtype" && v == "mysql"
 				DBDataController.createJetelinaDatabaseinMysql()
 			end
 		end
-	
+
 
 		ret = json(Dict("result" => cpur, "Jetelina" => "[{}]", "target" => key, "message from Jetelina" => jmsg))
 	end
@@ -503,16 +523,16 @@ function getRelatedTableApi()
 	api::String = jsonpayload("api")
 	jmsg::String = string("compliment me!")
 
-	if 0<length(table)
+	if 0 < length(table)
 		searchKey = "table"
 		target = table
-	elseif 0<length(api)
+	elseif 0 < length(api)
 		searchKey = "api"
 		target = api
 	end
 
-	ret = ApiSqlListManager.getRelatedList(searchKey,target)
-	if( 0<length(ret) )
+	ret = ApiSqlListManager.getRelatedList(searchKey, target)
+	if (0 < length(ret))
 		json(Dict("result" => true, "target" => target, "list" => ret, "message from Jetelina" => jmsg))
 	else
 		json(Dict("result" => false, "target" => target, "list" => 0, "errmsg" => "Oh my, there is no initial APIs, guess somethi' had happend at uploading file, ah..... sorry"))
@@ -529,9 +549,9 @@ function switchDB()
 	db::String = jsonpayload("param")
 	jmsg::String = string("compliment me!")
 
-	if(!isnothing(db) && db != "")
+	if (!isnothing(db) && db != "")
 		JSession.setDBType(db)
-		j_config.JC["dbtype"] = db;
+		j_config.JC["dbtype"] = db
 	end
 
 	return json(Dict("result" => true, "message from Jetelina" => jmsg))
@@ -567,35 +587,56 @@ function prepareDbEnvironment()
 	if db == "postgresql"
 		available = j_config.JC["pg_work"]
 		db_config = "pg_work"
-		df = DataFrame("pg_host"=>j_config.JC["pg_host"],"pg_port"=>j_config.JC["pg_port"],"pg_user"=>j_config.JC["pg_user"],"pg_password"=>j_config.JC["pg_password"],"pg_dbname"=>j_config.JC["pg_dbname"],"pg_sslmode"=>j_config.JC["pg_sslmode"])
+		df = DataFrame(
+			"pg_host" => j_config.JC["pg_host"],
+			"pg_port" => j_config.JC["pg_port"],
+			"pg_user" => j_config.JC["pg_user"],
+			"pg_password" => j_config.JC["pg_password"],
+			"pg_dbname" => j_config.JC["pg_dbname"],
+			"pg_sslmode" => j_config.JC["pg_sslmode"],
+		)
 	elseif db == "mysql"
 		available = j_config.JC["my_work"]
 		db_config = "my_work"
-		df = DataFrame("my_host"=>j_config.JC["my_host"],"my_port"=>j_config.JC["my_port"],"my_user"=>j_config.JC["my_user"],"my_password"=>j_config.JC["my_password"],"my_dbname"=>j_config.JC["my_dbname"],"my_unix_socket"=>j_config.JC["my_unix_socket"])
+		df = DataFrame(
+			"my_host" => j_config.JC["my_host"],
+			"my_port" => j_config.JC["my_port"],
+			"my_user" => j_config.JC["my_user"],
+			"my_password" => j_config.JC["my_password"],
+			"my_dbname" => j_config.JC["my_dbname"],
+			"my_unix_socket" => j_config.JC["my_unix_socket"],
+		)
 	elseif db == "redis"
 		available = j_config.JC["redis_work"]
 		db_config = "redis_work"
-		df = DataFrame("redis_host"=>j_config.JC["redis_host"],"redis_port"=>j_config.JC["redis_port"],"redis_password"=>j_config.JC["redis_password"],"redis_dbname"=>j_config.JC["redis_dbname"])
+		df = DataFrame("redis_host" => j_config.JC["redis_host"], "redis_port" => j_config.JC["redis_port"], "redis_password" => j_config.JC["redis_password"], "redis_dbname" => j_config.JC["redis_dbname"])
 	elseif db == "mongodb"
 		available = j_config.JC["mongodb_work"]
 		db_config = "mongodb_work"
-		df = DataFrame("mongodb_host"=>j_config.JC["mongodb_host"],"mongodb_port"=>j_config.JC["mongodb_port"],"mongodb_dbname"=>j_config.JC["mongodb_dbname"],"mongodb_collection"=>j_config.JC["mongodb_collection"],"mongodb_user"=>j_config.JC["mongodb_user"],"mongodb_password"=>j_config.JC["mongodb_password"])
+		df = DataFrame(
+			"mongodb_host" => j_config.JC["mongodb_host"],
+			"mongodb_port" => j_config.JC["mongodb_port"],
+			"mongodb_dbname" => j_config.JC["mongodb_dbname"],
+			"mongodb_collection" => j_config.JC["mongodb_collection"],
+			"mongodb_user" => j_config.JC["mongodb_user"],
+			"mongodb_password" => j_config.JC["mongodb_password"],
+		)
 	end
 
-	ret =  DBDataController.prepareDbEnvironment(db,mode)
+	ret = DBDataController.prepareDbEnvironment(db, mode)
 	if ret[1]
 		if !available
 			# change config parameter
-			if j_config.configParamUpdate(Dict(db_config=>"true"))
-		        return json(Dict("result" => true, "Jetelina" => "[{}]"))
+			if j_config.configParamUpdate(Dict(db_config => "true"))
+				return json(Dict("result" => true, "Jetelina" => "[{}]"))
 			else
 				err = """Oh my, failed at updating configuration $db_config"""
-		        return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "$err"))
+				return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "$err"))
 			end
 		end
 	else
 		err = """Ooops, failed at checkin' the connection, may need to update the connection parameters. <start>type 'show parameter'<st>which ... -> type to point parameter like 'my_password'<st>type 'change parameter'<st>set your new data for updating<end>then try again. rely on me :)"""
-		return json(Dict("result" => false, "Jetelina" =>  copy.(eachrow(df)), "preciousmsg" => "$err"))
+		return json(Dict("result" => false, "Jetelina" => copy.(eachrow(df)), "preciousmsg" => "$err"))
 	end
 end
 """
@@ -609,25 +650,25 @@ function getApiExecutionSpeed(apino)
 """
 function getApiExecutionSpeed()
 	apino::String = jsonpayload("apino")
-    fname::String = joinpath(@__DIR__, JFiles.getFileNameFromLogPath(j_config.JC["apiperformancedatapath"]),apino)
-    maxrow::Int = j_config.JC["json_max_lines"]
-    ret = ""
+	fname::String = joinpath(@__DIR__, JFiles.getFileNameFromLogPath(j_config.JC["apiperformancedatapath"]), apino)
+	maxrow::Int = j_config.JC["json_max_lines"]
+	ret = ""
 
-    if isfile(fname)
-		df = CSV.read(fname, DataFrame, limit=maxrow)
-        unique!(df,:date)
-        linecount::Int = 0
+	if isfile(fname)
+		df = CSV.read(fname, DataFrame, limit = maxrow)
+		unique!(df, :date)
+		linecount::Int = 0
 
-        if( 0<nrow(df))
-            ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
-        else
-            ret = json(Dict("result" => true, "Jetelina" => "[{}]", "target" => apino, "message from Jetelina" => "the data is not yet"))
-        end
-    else
-        ret = json(Dict("result" => true, "Jetelina" => "[{}]", "target" => apino, "message from Jetelina" => "the data is not yet"))
-    end
+		if (0 < nrow(df))
+			ret = json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
+		else
+			ret = json(Dict("result" => true, "Jetelina" => "[{}]", "target" => apino, "message from Jetelina" => "the data is not yet"))
+		end
+	else
+		ret = json(Dict("result" => true, "Jetelina" => "[{}]", "target" => apino, "message from Jetelina" => "the data is not yet"))
+	end
 
-    return ret
+	return ret
 end
 
 end
