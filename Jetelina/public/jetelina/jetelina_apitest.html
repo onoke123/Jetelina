@@ -22,38 +22,72 @@
             webapis</a>
         <p></p>
     </div>
-    <div name="database" style="color: aliceblue; font-size: larger;">
-        <input type="radio" name="db" value="rdbms" checked>PostgreSQL/MySql
-        <input type="radio" name="db" value="redis">Redis
-        <input type="radio" name="db" value="mongodb">MongoDB
-    </div>
-    <p></p>
-    <div name="apino" style="color: aliceblue;">
-        <p name="apiname">Api Name(apino)<input type="text" name="apiname" class="keyvalin"></p>
-    </div>
-    <div name="params" style="color: aliceblue;">
-        <p name="p1">1: Key<input type="text" name="k" class="keyvalin"> Value<input type="text" name="v"
-                class="keyvalin">
-        </p>
-        <p name="p2">2: Key<input type="text" name="k" class="keyvalin"> Value<input type="text" name="v"
-                class="keyvalin">
-        </p>
-        <p name="p3">3: Key<input type="text" name="k" class="keyvalin"> Value<input type="text" name="v"
-                class="keyvalin">
-        </p>
-        <p name="p4">4: Key<input type="text" name="k" class="keyvalin"> Value<input type="text" name="v"
-                class="keyvalin">
-        </p>
-        <p name="p5">5: Key<input type="text" name="k" class="keyvalin"> Value<input type="text" name="v"
-                class="keyvalin">
-        </p>
-    </div>
-    <a href="#" onclick="morePara()" style="font-size: smaller;">more parameter field</a>
-    <p></p>
-    <p></p>
-    <div>
-        <button onclick="getAjaxData()">EXEC TEST</button>
-    </div>
+    <hr />
+    <table>
+        <tr>
+            <td valign="top">
+                <div style="color: aliceblue;">
+                    <p><text style="font-size: larger">for example</text><text style="font-size: smaller;"> see these
+                            'IN' on
+                            Jetelina</text></p>
+                    <p>'{}' data should be set your own data.</p>
+                    <ul>
+                        <li>simple</li>
+                        IN: {"apino":"js100"}<br>
+                        <text style="font-style: italic;">'Api Name' should be 'js100'</text><br>
+                        'Key' and 'Value' columns are kept as blank<br><br>
+                        <li>has some params</li>
+                        IN: {"apino":"js100","age":{age},"name":"{name}"}<br>
+                        <text style="font-style: italic;">'Key' should be 'age','name'</text><br>
+                        <text style="font-style: italic;">'Value' is '{age}','{name}' and it is set by your
+                            own</text><br><br>
+                        <li>has subquery sentence</li>
+                        IN: {"apino":"js100","subquery":"['age':{age}]"}<br>
+                        <text style="font-style: italic;">'Api Name' should be 'js100'</text><br>
+                        <text style="font-style: italic;">'Key' should be 'age'</text><br>
+                        <text style="font-style: italic;">'Value' is '{age}' and it is set by your own</text><br>
+                    </ul>
+                    Don't care the remaining blank columns.<br><br>
+
+                </div>
+            </td>
+            <td width="5%"></td>
+            <td valign="top">
+                <div name="database" style="color: aliceblue; font-size: larger;">
+                    <input type="radio" name="db" value="rdbms" checked>PostgreSQL/MySql
+                    <input type="radio" name="db" value="redis">Redis
+                    <input type="radio" name="db" value="mongodb">MongoDB
+                </div>
+                <p></p>
+                <div name="apino" style="color: aliceblue;">
+                    <p name="apiname">Api Name(apino)<input type="text" name="apiname" class="keyvalin"></p>
+                </div>
+                <div name="params" style="color: aliceblue;">
+                    <p name="p1">1: Key<input type="text" name="k" class="keyvalin"> Value<input type="text" name="v"
+                            class="keyvalin">
+                    </p>
+                    <p name="p2">2: Key<input type="text" name="k" class="keyvalin"> Value<input type="text" name="v"
+                            class="keyvalin">
+                    </p>
+                    <p name="p3">3: Key<input type="text" name="k" class="keyvalin"> Value<input type="text" name="v"
+                            class="keyvalin">
+                    </p>
+                    <p name="p4">4: Key<input type="text" name="k" class="keyvalin"> Value<input type="text" name="v"
+                            class="keyvalin">
+                    </p>
+                    <p name="p5">5: Key<input type="text" name="k" class="keyvalin"> Value<input type="text" name="v"
+                            class="keyvalin">
+                    </p>
+                </div>
+                <a href="#" onclick="morePara()" style="font-size: smaller;">more parameter field</a>
+                <p></p>
+                <p></p>
+                <div>
+                    <button onclick="getAjaxData()">EXEC TEST</button>
+                </div>
+            </td>
+        </tr>
+    </table>
     <div id="apitest">
         <div name="api-test-msg">
         </div>
@@ -65,6 +99,7 @@
         <text>Message From Jetelina</text>
         <text id="mfj"></text>
     </div>
+    <hr />
     <div id="result" class="functionpanel-parts commonpanel squarepanel" style="color: aliceblue;">
         <text>Result:</text>
     </div>
@@ -98,13 +133,13 @@
         resetParams();
     });
 
-    $(document).on("change","input[name='k']",function(e){
-        if($(this).val().toLowerCase() == "subquery"){
+    $(document).on("change", "input[name='k']", function (e) {
+        if ($(this).val().toLowerCase() == "subquery") {
             // change the size for subquery
-            $(this).siblings().attr("size",100); 
-        }else{
+            $(this).siblings().attr("size", 100);
+        } else {
             // reset the sizse, defined in .keyvalin
-            $(this).siblings().attr("size",20); 
+            $(this).siblings().attr("size", 20);
         }
     });
 
@@ -165,11 +200,12 @@
 
     const morePara = () => {
         paranum += 1;
-        let str = `<p name="p${paranum}">${paranum}: Key<input type="text" name="k" size="10"> Value<input type="text" name="v" size="10"></p>`;
+        let str = `<p name="p${paranum}">${paranum}: Key<input type="text" name="k" class="keyvalin"> Value<input type="text" name="v" class="keyvalin"></p>`;
         $(`p[name='p${paranum - 1}']`).after(str);
     }
 
     const getAjaxData = () => {
+        apinumber = $("div[name='apino'] p[name='apiname'] input[name='apiname']").val().toLowerCase();
         if (apinumber == "") {
             let msg = "No Api Name";
             $("#result").append(`<p class="">${msg}</p>`);
