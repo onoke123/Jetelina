@@ -62,6 +62,9 @@
                 <div name="apino" style="color: aliceblue;">
                     <p name="apiname">Api Name(apino)<input type="text" name="apiname" class="keyvalin"></p>
                 </div>
+                <div name="mongodbdocument" style="color: aliceblue;" hidden>
+                    <p name="mongodbdocument">Document Name<input type="text" name="mongodbdocument" class="keyvalin"></p>
+                </div>
                 <div name="params" style="color: aliceblue;">
                     <p name="p1">1: Key<input type="text" name="k" class="keyvalin"> Value<input type="text" name="v"
                             class="keyvalin">
@@ -95,12 +98,15 @@
         </div>
     </div>
 
-    <div>
+    <div style="color: aliceblue;">
         <text>Message From Jetelina</text>
         <text id="mfj"></text>
     </div>
     <hr />
-    <div id="result" class="functionpanel-parts commonpanel squarepanel" style="color: aliceblue;">
+    <div name="postdata" style="color: aliceblue;">
+        <text>Post Data:</text>
+    </div>
+    <div name="result" class="functionpanel-parts commonpanel squarepanel" style="color: aliceblue;">
         <text>Result:</text>
     </div>
 </body>
@@ -175,6 +181,15 @@
                 js/jd -> no params
                 ju -> key/val
             */
+           if(apinumber.startsWith("js") || apinumber.startsWith("jd")){
+                hidestart_number = 1;        
+           }else{
+                hidestart_number = paranum+1;
+           }
+
+           for (let i = hidestart_number; i <= paranum; i++) {
+                $(`div p[name='p${i}']`).hide();
+            }
         } else {
             /*
                 ji/js/jd/ju -> key/val
@@ -183,11 +198,15 @@
                 $(`div p[name='p${i}']`).show();
             }
         }
-
     });
 
     $("div[name='database'] input[name='db']").on('click', function () {
         selecteddatabase = $("input[name='db']:checked").val();
+        if(selecteddatabase != "mongodb"){
+            $("div[name='mongodbdocument']").hide();
+        }else{
+            $("div[name='mongodbdocument']").show();
+        }
     });
 
     const resetParams = () => {
@@ -208,10 +227,10 @@
         apinumber = $("div[name='apino'] p[name='apiname'] input[name='apiname']").val().toLowerCase();
         if (apinumber == "") {
             let msg = "No Api Name";
-            $("#result").append(`<p class="">${msg}</p>`);
+            $("div[name='result']").append(`<p class="">${msg}</p>`);
             return;
         } else {
-            $("#result p").remove();
+            $("div[name='result'] p").remove();
         }
 
         let key = [];
@@ -225,13 +244,22 @@
             }
         }
 
-        let jstr = `{"apino":"${apinumber}",`;
+        let jstr = "{";
+        if(selecteddatabase == "mongodb" && apinumber.startsWith("ji")){
+            let docname = $("div[name='mongodbdocument'] p[name='mongodbdocument'] input[name='mongodbdocument']").val();
+            jstr += `"j_table":"${docname}",`;
+        }else{
+            jstr += `"apino":"${apinumber}",`;
+        }
+
         for (let i in key) {
             jstr += `"${key[i]}":"${value[i]}",`;
         }
 
-        jstr = jstr.slice(0, -1) + "}";
-
+        jstr = jstr.slice(0, -1) + "}"; 
+        $("div[name='postdata'] p").remove();
+        $("div[name='postdata']").append(`<p name="postdata">${jstr}</p>`);
+        /*
         $.ajax({
             url: "/apiactions",
             type: "post",
@@ -246,17 +274,17 @@
                     if (key == "Jetelina") {
                         $.each(result[key], function (k, v) {
                             vv = JSON.stringify(v);
-                            $("#result").append(`<p class="">${vv}</p>`);
+                            $("div[name='result']").append(`<p class="">${vv}</p>`);
                         });
                     }
                 });
 
             } else if (-1 < $.inArray(s, ['ji', 'ju', 'jd'])) {
                 let msg = result["message from Jetelina"]
-                $("#result").append(`<p class="">${msg}</p>`);
+                $("div[name='result']").append(`<p class="">${msg}</p>`);
             }
         }).fail(function (result) {
         }).always(function (result) {
-        });
+        });*/
     }
 </script>
