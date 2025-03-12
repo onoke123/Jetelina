@@ -321,7 +321,7 @@ const cleanupContainers = (s) => {
     $(`${CONTAINERPANEL} span, ${COLUMNSPANEL} span`).filter(".apisql").remove();
   } else {
     showGenelicPanel(false);
-//    $(`${CONTAINERPANEL} span,${STATSPANEL} span`).remove();
+    //    $(`${CONTAINERPANEL} span,${STATSPANEL} span`).remove();
   }
 }
 /**
@@ -525,7 +525,7 @@ const listClick = (p) => {
         });
       }
 
-      if(p.hasClass("activeandrelatedItem")){
+      if (p.hasClass("activeandrelatedItem")) {
         p.removeClass("activeandrelatedItem");
         p.addClass("relatedItem");
         p.addClass("activeItem");
@@ -965,10 +965,10 @@ const getColumn = (tablename) => {
  * delete a column from selected item list on the display  
  */
 const removeColumn = (p) => {
-  if(p != null){
+  if (p != null) {
     // selected remove
     $(`${COLUMNSPANEL} .item, ${CONTAINERPANEL} .item`).not('.selectedItem').remove(`:contains(${p}.)`);
-  }else{
+  } else {
     // all remove
     $(`${COLUMNSPANEL} .item, ${CONTAINERPANEL} .item`).not('.selectedItem').remove();
   }
@@ -1251,7 +1251,7 @@ const functionPanelFunctions = (ut) => {
     }
 
     // db switching
-    if(!isVisibleApiAccessNumbersList()){
+    if (!isVisibleApiAccessNumbersList()) {
       if (cmd == "" && inScenarioChk(ut, 'func-db-switch-cmd')) {
         cmd = "switchdb";
         usedb = "";
@@ -1382,29 +1382,29 @@ const functionPanelFunctions = (ut) => {
       let chatin = original_chatbox_input_text;
       let jform = true;
 
-      if(loginuser.dbtype == "mongodb"){
+      if (loginuser.dbtype == "mongodb") {
         /*
           Tips:
             preferent.jsonokflg is be 'null' in canceling. ref #1799
         */
-        if(preferent.jsonokflg == null){
+        if (preferent.jsonokflg == null) {
           preferent.jsonokflg = false;
         }
 
-        if($.inArray(ut,scenario["func-api-test-cmd"]) == -1){
-          if(p == `{${mongodb_api_ji_json_str}}` && !preferent.jsonokflg){
-            if(!jsonFromCheck(chatin)){
+        if ($.inArray(ut, scenario["func-api-test-cmd"]) == -1) {
+          if (p == `{${mongodb_api_ji_json_str}}` && !preferent.jsonokflg) {
+            if (!jsonFromCheck(chatin)) {
               // bad json form
               jform = false;
               return "hum, simply it does not fit on json form, or may 'j_table' is not in there";
-            }else{
+            } else {
               preferent.jsonokflg = true;
-            } 
-          }      
+            }
+          }
         }
       }
-      
-      if(jform){
+
+      if (jform) {
         reps = inp.replace(p, chatin);
         $(`${COLUMNSPANEL} [name='apiin']`).addClass("attentionapiinout").html(reps);
       }
@@ -1809,7 +1809,7 @@ const functionPanelFunctions = (ut) => {
             in case mongodb, this .jsonokflg has been set after passing jsonFormChekc()
             this .jsonokflg should be null by canceling.
         */
-        if(preferent.jsonokflg != null){
+        if (preferent.jsonokflg != null) {
           preferent.jsonokflg = null;
         }
       } else {
@@ -1838,7 +1838,30 @@ const functionPanelFunctions = (ut) => {
         // API test mode before registering
         // before hitting this command, should desplay 'func-api-test-msg' in anywhere.
         if (checkGenelicInput($(GENELICPANELINPUT).val())) {
-          postSelectedColumns("pre");
+          if (loginuser.dbtype != "mongodb") {
+            postSelectedColumns("pre");
+          } else {
+            let apitestsuggestion = "<h3>Hey, inhibt this execution before creating this api</h3>you can do the existing api. now you follow me as <br>　1. create api by typing 'create api'<br>　2. select the new api<br>　3. then type 'test api'";
+            let p = $(`${APICONTAINER} span`);
+            let hasjs = false;
+            $.each(p, function (i, v) {
+              if ($(this).hasClass("relatedItem") || $(this).hasClass("activeandrelatedItem")) { console.log($(this).text());
+                if ($(this).text().startsWith("js")) {
+                  hasjs = true;
+                  return;
+                }
+              }
+            });
+
+            if(hasjs){
+              apitestsuggestion += "<br>but you already have it. look at brinking 'js' api.";
+            }else{
+              apitestsuggestion += "<br>you see";
+            }
+
+            $(SOMETHINGMSGPANELMSG).html(apitestsuggestion);
+            showSomethingMsgPanel(true);
+          }
         } else {
           m = chooseMsg('func-api-subquery-chk-error', '', '');
         }
@@ -1863,7 +1886,7 @@ const functionPanelFunctions = (ut) => {
               show an attention how to describe JSON data in the chatbox in the message panel.
               it's a very friendly suggestion by Jetelina. :) 
           */
-          if($.inArray(mongodb_api_ji_json_str,preferent.apitestparams) != -1){
+          if ($.inArray(mongodb_api_ji_json_str, preferent.apitestparams) != -1) {
             let jsonsuggestion = "<h3>this is my suggestion how to set your json data in my chatbox</h3>　1.enclose with '{}'<br>　2.must set an unique document name of 'j_table'<br>then an typical expected form is<br>　{\"j_table\":\"unique name\",......}<br><br>you see?";
             $(SOMETHINGMSGPANELMSG).html(jsonsuggestion);
             showSomethingMsgPanel(true);
@@ -2229,7 +2252,7 @@ const setLeftPanelTitle = () => {
   title = "Table List";
   if (loginuser.dbtype == "redis") {
     title = "Keys List";
-  }else if(loginuser.dbtype == "mongodb"){
+  } else if (loginuser.dbtype == "mongodb") {
     title = "Document List";
   }
 
@@ -2273,10 +2296,10 @@ const resetApiTestProcedure = () => {
  * get opened 'apino' in preferent.original_apiin_str
  * 
  */
-const getSelectedApino = () =>{
+const getSelectedApino = () => {
   let ret = "";
 
-  if(preferent.original_apiin_str != null && preferent.original_apiin_str != ""){
+  if (preferent.original_apiin_str != null && preferent.original_apiin_str != "") {
     let p = JSON.parse(preferent.original_apiin_str);
     ret = p["apino"];
   }
