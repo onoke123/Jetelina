@@ -99,8 +99,8 @@
     </div>
 
     <div style="color: aliceblue;">
-        <text>Message From Jetelina</text>
-        <text id="mfj"></text>
+        <text>Message From Jetelina:</text>
+        <text id="mfj" style="font-size: smaller;color: rgb(221, 106, 106);"></text>
     </div>
     <hr />
     <div name="postdata" style="color: aliceblue;">
@@ -231,6 +231,12 @@
             return;
         } else {
             $("div[name='result'] p").remove();
+            $("#mfj").text("");
+        }
+
+        if(selecteddatabase == "redis" && apinumber.startsWith("ji")){
+            $("#mfj").text("inhibit insertion to redis with this page, sorry, you shoud do it on me.");
+            return;
         }
 
         let key = [];
@@ -244,10 +250,10 @@
             }
         }
 
-        let jstr = "{";
+        let jstr = `{"apino":"${apinumber}",`;
         if(selecteddatabase == "mongodb" && apinumber.startsWith("ji")){
             let docname = $("div[name='mongodbdocument'] p[name='mongodbdocument'] input[name='mongodbdocument']").val();
-            jstr += `"j_table":"${docname}",`;
+            jstr += `"new document":{"j_table":"${docname}",`;
         }else{
             jstr += `"apino":"${apinumber}",`;
         }
@@ -257,9 +263,15 @@
         }
 
         jstr = jstr.slice(0, -1) + "}"; 
+
+        // special for mongodb inserting :)
+        if(selecteddatabase == "mongodb" && apinumber.startsWith("ji")){
+            jstr += "}";
+        }
+
         $("div[name='postdata'] p").remove();
         $("div[name='postdata']").append(`<p name="postdata">${jstr}</p>`);
-        /*
+        
         $.ajax({
             url: "/apiactions",
             type: "post",
@@ -284,7 +296,9 @@
                 $("div[name='result']").append(`<p class="">${msg}</p>`);
             }
         }).fail(function (result) {
+            let error = JSON.stringify(result);
+            $("#mfj").text(error);
         }).always(function (result) {
-        });*/
+        });
     }
 </script>
