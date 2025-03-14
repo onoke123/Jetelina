@@ -18,7 +18,7 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-const interval::Integer = 3600 # 1hr = 60*60
+const interval::Integer = 1200 # 20 min = 60*20
 procflg = Ref(true) # rotation process progressable -> true, stop/error -> false
 
 """

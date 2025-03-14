@@ -46,6 +46,7 @@
                         <text style="font-style: italic;">'Api Name' should be 'js100'</text><br>
                         <text style="font-style: italic;">'Key' should be 'age'</text><br>
                         <text style="font-style: italic;">'Value' is '{age}' and it is set by your own</text><br>
+                        <text style="font-style: italic;">same in case multi params</text><br>
                     </ul>
                     Don't care the remaining blank columns.<br><br>
 
@@ -106,7 +107,7 @@
     <div name="postdata" style="color: aliceblue;">
         <text>Post Data:</text>
     </div>
-    <div name="result" class="functionpanel-parts commonpanel squarepanel" style="color: aliceblue;">
+    <div name="result" style="color: aliceblue;">
         <text>Result:</text>
     </div>
 </body>
@@ -227,7 +228,7 @@
         apinumber = $("div[name='apino'] p[name='apiname'] input[name='apiname']").val().toLowerCase();
         if (apinumber == "") {
             let msg = "No Api Name";
-            $("div[name='result']").append(`<p class="">${msg}</p>`);
+            $("div[name='result']").append(`<p>${msg}</p>`);
             return;
         } else {
             $("div[name='result'] p").remove();
@@ -254,8 +255,6 @@
         if(selecteddatabase == "mongodb" && apinumber.startsWith("ji")){
             let docname = $("div[name='mongodbdocument'] p[name='mongodbdocument'] input[name='mongodbdocument']").val();
             jstr += `"new document":{"j_table":"${docname}",`;
-        }else{
-            jstr += `"apino":"${apinumber}",`;
         }
 
         for (let i in key) {
@@ -280,21 +279,26 @@
             dataType: "json"
         }).done(function (result, textStatus, jqXHR) {
             $(".re").remove();
+            if(result.result){
             let s = apinumber.slice(0, 2);
             if (-1 < $.inArray(s, ['js'])) {
                 Object.keys(result).forEach(function (key) {
                     if (key == "Jetelina") {
                         $.each(result[key], function (k, v) {
                             vv = JSON.stringify(v);
-                            $("div[name='result']").append(`<p class="">${vv}</p>`);
+                            $("div[name='result']").append(`<p>${vv}</p>`);
                         });
                     }
                 });
 
             } else if (-1 < $.inArray(s, ['ji', 'ju', 'jd'])) {
                 let msg = result["message from Jetelina"]
-                $("div[name='result']").append(`<p class="">${msg}</p>`);
+                $("div[name='result']").append(`<p>${msg}</p>`);
             }
+        }else{
+            let error = JSON.stringify(result.errmsg);
+            $("#mfj").text(error);
+        }
         }).fail(function (result) {
             let error = JSON.stringify(result);
             $("#mfj").text(error);
