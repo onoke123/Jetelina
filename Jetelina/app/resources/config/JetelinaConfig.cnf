@@ -51,6 +51,11 @@ logfile_rotation_open = 13:30
 logfile_rotation_close = 14:00
 
 #
+# the period days of data in reading 'JetelinaSuggestion.json' file
+#     10 days
+period_collect_data = 10
+
+#
 # analized data file names
 # these file names are unchangeable
 #

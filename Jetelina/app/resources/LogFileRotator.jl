@@ -7,7 +7,7 @@ Description:
     This module is for rotating Jetelina log files.
 	
 functions
-	main() wrap function for executing _exectuterotating() that is the real file rotating function.
+	main() wrap function for executing _executerotating() that is the real file rotating function.
 	stoprotating() manual stopper for log file totating repeat.
 """
 module LogFileRotator
@@ -24,7 +24,7 @@ procflg = Ref(true) # rotation process progressable -> true, stop/error -> false
 """
 function main()
 
-	wrap function for executing _exectuterotating() that is the real file rotating function.
+	wrap function for executing _executerotating() that is the real file rotating function.
 """
 function main()
 	ft = j_config.JC["logfile_rotation_open"]
@@ -32,7 +32,7 @@ function main()
 		 
 	task = @async while procflg[]
 		if ft < Dates.format(now(),"HH:MM") < tt
-			_exectuterotating()
+			_executerotating()
 			JLog.writetoLogfile(string("LogFileRotator.main() rotated log file in : ",Dates.format(now(), "yyyy-mm-dd-HH:MM")))
 			ApiAccessCounter.collectApiAccessNumbers()
 		end
@@ -41,11 +41,11 @@ function main()
 	end
 end
 """
-function _exectuterotating()
+function _executerotating()
 
 	execute log and sql log files
 """
-function _exectuterotating()
+function _executerotating()
 	logfile = JFiles.getFileNameFromLogPath(j_config.JC["logfile"])
 	sqllogfile = JFiles.getFileNameFromLogPath(j_config.JC["sqllogfile"])
 	_fileRotation(logfile)

@@ -216,6 +216,7 @@ function checkExistImproveApiFile()
 - return: JC["improvesuggestionfile"] file name with its path    
 """
 function checkExistImproveApiFile()
+	periodd::Int = j_config.JC["period_collect_data"]
 	ret = "{\"Jetelina\":["
 
 	#===
@@ -223,7 +224,7 @@ function checkExistImproveApiFile()
 			provide only 10 days data to the client.
 			may this '10' will be changeable, but it is fixed in ver3.0. guess enough. :)
 	===#
-	pastday::Date = floor(today(),Day) - Day(10)
+	pastday::Date = floor(today(),Day) - Day(periodd)
 	pastdaytime = Dates.date2epochdays(pastday)
 	nowadays::Date = Dates.today()
 	nowadaystime = Dates.date2epochdays(nowadays)
