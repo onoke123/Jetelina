@@ -141,7 +141,10 @@ function createApiSelectSentenceByselectedKeys(json_d::Dict, mode::String)
 	end
 
 	if mode != "pre"
-		# finde文を組み立ててJetelinaSqlListに書き込む
+		#==
+			Tips:
+				create 'finde' sentence then write it into JetelinaSqlList
+		===#
 		# ApiSqlListManager.sqlDuplicationCheck()
 		if 0<length(dic)
 			findStr = JSON.json(Dict(k => v for (k,v) in dic))

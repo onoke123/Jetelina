@@ -7,7 +7,7 @@ Description:
 	Counting Api access numbers from sql.log
 	
 functions
-	main() this function set as for kicking createAna..() from outer function.
+	* main() this function set as for kicking createAna..() from outer function.
 	collectApiAccessNumbers() 	collect each api(sql) access numbers.
 	createAnalyzedJsonFile(df::DataFrame)  create json file for result of sql execution speed analyze data.
     createApiSpeedFile(df::DataFrame) create csv file for each api performance data.
@@ -22,34 +22,42 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-procflg = Ref(true) # analyze process progressable -> true, stop/error -> false
+#procflg = Ref(true) # analyze process progressable -> true, stop/error -> false
 
 """
 function main()
 
 	wrap function for executing collectApiAccessNumbers() that is the real analyzing function.
 	this function set as for kicking createAna..() from outer function.
+
+    deprecated: because quiting async
+
 """
 function main()
-    interval::Integer = parse(Int, j_config.JC["analyze_interval"])
-    if isinteger(interval)
-        interval = interval * 60 * 60 # transfer hr -> sec
-        JLog.writetoLogfile(string("ApiAccessCounter.main() start with : ", j_config.JC["analyze_interval"], " hr interval"))
+#   interval::Integer = parse(Int, j_config.JC["analyze_interval"])
 
-        task = @async while procflg[]
-            collectApiAccessNumbers()
-            sleep(interval)
-        end
-    else
-        err = string(JC["analyze_interval"], " is not set in perfect")
-        println(err)
-        JLog.writetoLogfile("ApiAccessCounter.main() error: $err")
-    end
+#    if isinteger(interval)
+#        interval = interval * 60 * 60 # transfer hr -> sec
+#        JLog.writetoLogfile(string("ApiAccessCounter.main() start with : ", j_config.JC["analyze_interval"], " hr interval"))
+
+#        task = @async while procflg[]
+#            collectApiAccessNumbers()
+#            sleep(interval)
+#        end
+#    else
+#        err = string(JC["analyze_interval"], " is not set in perfect")
+#        println(err)
+#        JLog.writetoLogfile("ApiAccessCounter.main() error: $err")
+#    end
 end
 """
 function collectApiAccessNumbers()
 
 	collect each api(sql) access numbers.
+
+    Attention: 
+        this function is called in LogFileRotator.main() when log files have been rotated in daily
+
 """
 function collectApiAccessNumbers()
     #===
@@ -62,9 +70,9 @@ function collectApiAccessNumbers()
                                        ・
                                        ・
     	===#
-    sqllogfile = getFileNameFromLogPath(j_config.JC["sqllogfile"])
+    sqllogfile = getFileNameFromLogPath(string(j_config.JC["sqllogfile"],".",Dates.format(now(), "yyyy-mm-dd")))
     if !isfile(sqllogfile)
-        procflg[] = false
+#        procflg[] = false
         errmsg::String = """oh my, there is no log file: $sqllogfile"""
         JLog.writetoLogfile("ApiAccessCounter.collectApiAccessNumbers() error: $errmsg")
         return
@@ -129,6 +137,7 @@ function collectApiAccessNumbers()
         end
 
         createAnalyzedJsonFile(part_df, JFiles.getFileNameFromLogPath(j_config.JC["dbaccesscountfile"]), 2)
+        JLog.writetoLogfile(string("ApiAccessCounter.collectApiAccessNumbers() in : ",Dates.format(now(), "yyyy-mm-dd-HH:MM")))
     end
 end
 """
@@ -282,7 +291,7 @@ function createApiSpeedFile(df::DataFrame)
                 push!(suggestion_df,["[deprecated api]",df[i,:apino],df[i,:mean],sigma,df[i,:database]])
             end
         catch err
-            procflg[] = false
+#            procflg[] = false
             println(err)
             JLog.writetoLogfile("ApiAccessCounter.createApiSpeedFile() error: $err")
             return
@@ -303,7 +312,7 @@ function stopanalyzer()
 	manual stopper for analyzring repeat
 """
 function stopanalyzer()
-    procflg[] = false
+#    procflg[] = false
 end
 
 end

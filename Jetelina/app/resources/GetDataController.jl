@@ -22,7 +22,7 @@ functions
 """
 module GetDataController
 
-using Genie, Genie.Requests, Genie.Renderer.Json, DataFrames
+using Genie, Genie.Requests, Genie.Renderer.Json, DataFrames, Dates, JSON
 using Jetelina.JFiles, Jetelina.InitApiSqlListManager.ApiSqlListManager, Jetelina.DBDataController, Jetelina.JMessage, Jetelina.JSession
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
@@ -216,14 +216,32 @@ function checkExistImproveApiFile()
 - return: JC["improvesuggestionfile"] file name with its path    
 """
 function checkExistImproveApiFile()
+	ret = "{\"Jetelina\":["
+
+	#===
+		Tips:
+			provide only 10 days data to the client.
+			may this '10' will be changeable, but it is fixed in ver3.0. guess enough. :)
+	===#
+	pastday::Date = floor(today(),Day) - Day(10)
+	pastdaytime = Dates.date2epochdays(pastday)
+	nowadays::Date = Dates.today()
+	nowadaystime = Dates.date2epochdays(nowadays)
+
 	if !isnothing(JSession.get())
 		f = JFiles.getFileNameFromLogPath(j_config.JC["improvesuggestionfile"])
 		if isfile(f)
-			ret = "{\"Jetelina\":["
-
 			try
-				for line in eachline(f)
-					ret = string(ret, line, ",")
+				for line in Iterators.reverse(eachline(f))
+					jj = JSON.parse(line)
+					if !isnothing(jj["date"])
+						infdate::Date = Dates.Date(jj["date"])
+						infdatetime = Dates.date2epochdays(infdate)
+						
+						if pastdaytime <= infdatetime <= nowadaystime
+							ret = string(ret, line, ",")
+						end
+					end
 				end
 
 				ret = strip(ret, ',')
@@ -233,7 +251,7 @@ function checkExistImproveApiFile()
 				return false
 			end
 		else
-			return false
+			return string(ret,"{\"nothing\":\"everything fine\"}")
 		end
 	else
 		return false
@@ -253,13 +271,13 @@ function getApiList()
 					ApiSql...readSql...()[2] contains dataframe list if [] is true, in the case of false is nothing.
 		===#
 		if 0 < nrow(ApiSqlListManager.Df_JetelinaSqlList)
-			return json(Dict("result" => true, "Jetelina" => copy.(eachrow(reverse(ApiSqlListManager.Df_JetelinaSqlList)))))
+			return Genie.Renderer.Json.json(Dict("result" => true, "Jetelina" => copy.(eachrow(reverse(ApiSqlListManager.Df_JetelinaSqlList)))))
 		else
 			# not found SQL list
-			return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "Oops! there is no api list data"))
+			return Genie.Renderer.Json.json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "Oops! there is no api list data"))
 		end
 	else
-		return json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "Oops! there is no api list data"))
+		return Genie.Renderer.Json.json(Dict("result" => false, "Jetelina" => "[{}]", "errmsg" => "Oops! there is no api list data"))
 	end
 end
 """
@@ -346,9 +364,9 @@ function getWorkingDBList()
 		mongodb = j_config.JC["mongodb_work"]
 
 		df = DataFrame("postgres" => postgres, "mysql" => mysql, "redis" => redis, "mongodb" => mongodb)
-		return json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
+		return Genie.Renderer.Json.json(Dict("result" => true, "Jetelina" => copy.(eachrow(df))))
 	else
-		return json(Dict("result" => false, "Jetelina" => "[{}]"))
+		return Genie.Renderer.Json.json(Dict("result" => false, "Jetelina" => "[{}]"))
 	end
 end
 

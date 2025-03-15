@@ -13,7 +13,7 @@ functions
 module LogFileRotator
 
 using Dates
-using Jetelina.JMessage, Jetelina.JFiles, Jetelina.JLog 
+using Jetelina.JMessage, Jetelina.JFiles, Jetelina.JLog, Jetelina.ApiAccessCounter 
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
@@ -34,6 +34,7 @@ function main()
 		if ft < Dates.format(now(),"HH:MM") < tt
 			_exectuterotating()
 			JLog.writetoLogfile(string("LogFileRotator.main() rotated log file in : ",Dates.format(now(), "yyyy-mm-dd-HH:MM")))
+			ApiAccessCounter.collectApiAccessNumbers()
 		end
 
 		sleep(interval)
@@ -59,7 +60,8 @@ function _fileRotation(f::String)
 - `f::String`: file name
 """
 function _fileRotation(f::String)
-	b = string(f,".",Dates.format(now(), "yyyy-mm-dd-HH:MM"))
+#	b = string(f,".",Dates.format(now(), "yyyy-mm-dd-HH:MM"))
+	b = string(f,".",Dates.format(now(), "yyyy-mm-dd"))
 	if ispath(f)
 		mv(f,b)
 	end

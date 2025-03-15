@@ -225,6 +225,7 @@ const checkResult = (o) => {
  *                     4->api(sql) test before registring 
  *                     5->indicate available db 
  *                     6->operation history
+ *                     7->suggestion check
  *  @returns {object} only in the case of t=3, conifguration changing history object
  *
  *  resolve the json object into each data
@@ -370,12 +371,15 @@ const getdata = (o, t) => {
                                     configChangeHistoryStr += ` by ${v.name}<br>`;
                                 }
                             } else if (t == 7) {
-                                preferent.suggestion = "";
                                 $.each(v, function (name, value) {
                                     if (name == "Jetelina") {
-                                        $.each(value, function (na, va) {
-                                            preferent.suggestion += v.date + "　" + va.type + "　" + va.apino + "　exec time is out of " + va.sigma + "σ" + "<br>";
-                                        });
+                                        if (0 < value.length) {
+                                            $.each(value, function (na, va) {
+                                                preferent.suggestion += v.date + "　" + va.type + "　" + va.apino + "　exec time is out of " + va.sigma + "σ" + "<br>";
+                                            });
+                                        }
+                                    } else if (name == "nothing") {
+                                        isSuggestion = false;
                                     }
                                 });
                             }
@@ -465,6 +469,7 @@ const getAjaxData = (url) => {
                     if (result) {
                         // set suggestion existing flag to display my message
                         isSuggestion = true;
+                        preferent.suggestion = "";
                         // set my suggestion
                         $(SOMETHINGMSGPANELMSG).addClass("jetelina_suggestion");
                         getdata(result, 7);
@@ -474,9 +479,17 @@ const getAjaxData = (url) => {
                                 the below message is for it.
                                 but abandon any 'suggestion" in Ver.1
                         */
-                        changeChatGirlImage("concern");
+                        let iconface = "concern";
+                        if (!isSuggestion) {
+                            preferent.suggestion = chooseMsg("stats-check-safe-msg", '', '');
+                            iconface = "chat";
+                            m = "stats-performance-improve-msg";
+                        } else {
+                            m = "stats-check-safe-msg";
+                        }
+
+                        changeChatGirlImage(iconface);
                         showSomethingMsgPanel(true);
-                        m = "stats-performance-improve-msg";
 
                         /*
                             deprecated procedures but who knows never revival.
@@ -1863,7 +1876,8 @@ const showSomethingMsgPanel = (b) => {
             Tips:
                 in the case of existing 'suggesion' data and displaying 'concern' Jetelina, 'suggestion' has priority in the message panel.
         */
-        if ((preferent.suggestion != null && 0 < preferent.suggestion.length) && $(`${JETELINAPANEL} [name='chat_girl_image']`).is(":visible")) {
+        if ((preferent.suggestion != null && 0 < preferent.suggestion.length)) {
+            //            if ((preferent.suggestion != null && 0 < preferent.suggestion.length) && $(`${JETELINAPANEL} [name='chat_girl_image']`).is(":visible")) {
             $(SOMETHINGMSGPANELMSG).append(preferent.suggestion);
         }
     } else {

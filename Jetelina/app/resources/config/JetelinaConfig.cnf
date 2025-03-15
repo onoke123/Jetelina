@@ -45,10 +45,10 @@ sqllogfile = sql.log
 sqllogfilesize = 10
 
 @jdic logfile_rotation_open:"rotation start","rotation open"
-logfile_rotation_open = 00:00
+logfile_rotation_open = 13:30
 
 @jdic logfile_rotation_close:"rotation end","rotation close"
-logfile_rotation_close = 01:02
+logfile_rotation_close = 14:00
 
 #
 # analized data file names
@@ -224,8 +224,8 @@ json_max_lines = 365
 # sql analyze execute interval 
 #   this param is used in SQLAnalyzer.jl for repeat analyzing processing
 #   this number is be hour unit  ex. 10hr interval -> 10 
-@jdic analyze_interval:"analyze interval","analyzing interval"
-analyze_interval = 48
+#@jdic analyze_interval:"analyze interval","analyzing interval"
+#analyze_interval = 48
 
 #
 # configuration change history file

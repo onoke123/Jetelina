@@ -195,7 +195,8 @@ function _fileRotation(f::String)
 - `f::String`: file name
 """
 function _fileRotation(f::String)
-	b = string(f,".",Dates.format(now(), "yyyy-mm-dd-HH:MM"))
+#	b = string(f,".",Dates.format(now(), "yyyy-mm-dd-HH:MM"))
+	b = string(f,".",Dates.format(now(), "yyyy-mm-dd"))
 	mv(f,b)
 end
 """

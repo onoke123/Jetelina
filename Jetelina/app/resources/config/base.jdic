@@ -113,7 +113,8 @@
 @jdic stats-graph-show-msg:"here you are","tatta laan"
 
 # Checking the suggestions
-@jdic stats-check-suggestion-cmd:"reports","suggestions","alert"
+@jdic stats-check-suggestion-cmd:"report","suggestion","alert"
+@jdic stats-check-safe-msg:"no report","everything fine","feel so good"
 @jdic stats-hide-jetelina-concern-img-cmd:"do not worry","don't worry","do not need to worry","don't need to worry","no problem","never mind"
 
 # Api Access numbers list controll
@@ -138,7 +139,7 @@
 # SQL Execution Time graph
 @jdic stats-sql-performance-graph-show-cmd:"your suggestion","suggest","improved performance"
 
-@jdic stats-performance-improve-msg:"There is an improving suggestion.","Do you wanna know my great idea?","Attention please. I have an idea."
+@jdic stats-performance-improve-msg:"There is an improving suggestion.","Attention please. I have a message."
 @jdic stats-no-suggestion-msg:"I do not have any suggestions so far.","No suggestions","I do not give it to you.","Hey, Nothing at all"
 
 @jdic starting-6a-msg:"OK, here you are","Hey ho","This"
