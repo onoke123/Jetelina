@@ -37,3 +37,7 @@ js95,"{""web_ins2"":[""num"",""str"",""key0312""]}","jetelina-collection,web_ins
 ju99,"set:newkey1:{value}","","redis"
 ju100,"set:newkey2:{value}","","redis"
 js101,"select ftest.ftest_name,ftest.ftest_sex from ftest as ftest","where ftest.ftest_name='{name}' and ftest.ftest_sex = '{sex}'","mysql"
+ju102,"set:newkey3:{value}","","redis"
+js103,"get:newkey3","","redis"
+js108,"select ftest2.ftest2_jt_id,ftest2.ftest2_name,ftest2.ftest2_sex,ftest2.ftest2_age,ftest2.ftest2_ave from ftest2 as ftest2","where ftest2_age > {age} and ftest2_sex != '{sex}'","mysql"
+js109,"select ftest.ftest_jt_id,ftest.ftest_name,ftest.ftest_sex,ftest.ftest_age,ftest.ftest_ave from ftest as ftest","where ftest_ave > {ave}","mysql"

@@ -1,5 +1,5 @@
 let scenario = []; let config = [];
-scenario["analyzed-data-collect-url"]=["/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getapiaccessdata","/getdbaccessdata", "/getapiexecspeed"];
+scenario["analyzed-data-collect-url"]=["/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getapiaccessdata","/getdbaccessdata","/getapiexecspeed","/getsuggestiondata"];
 scenario["function-post-url"]=["/updateuserdata","/jetelinawords","/getconfigdata","/changeconfigdata","/createapi","/testapi","/chkaccount","/userregist","/getrelatedlist","/switchdb","/ispath","/getcolumns"];
 scenario["function-post-fileupload-url"]=["/postcsvfile"];
 scenario["function-apitest-url"]=["/apiactions"];

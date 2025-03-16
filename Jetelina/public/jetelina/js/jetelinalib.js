@@ -89,6 +89,7 @@ let relatedDataList = {}; // relation data to table/api has been contained here 
 let messageScrollTimerID; // '#someting_msg' auto scroll timer interval 
 let apitestScrollTimerID; // '#apitest' auto scroll timer interval
 let original_chatbox_input_text = ""; // original text in Jetelina chatbox.
+let isSuggestion = false; // existing the suggestion, true -> is, false -> is not
 /**
  * 
  * @function getScenarioFile
@@ -225,7 +226,8 @@ const checkResult = (o) => {
  *                     4->api(sql) test before registring 
  *                     5->indicate available db 
  *                     6->operation history
- *                     7->suggestion check
+ *                     7->fetch suggestion data
+ *                     8 ->checking existing suggestion 
  *  @returns {object} only in the case of t=3, conifguration changing history object
  *
  *  resolve the json object into each data
@@ -382,6 +384,12 @@ const getdata = (o, t) => {
                                         isSuggestion = false;
                                     }
                                 });
+                            } else if (t == 8) {
+                                $.each(v, function (name, value) {
+                                    if (name == "issuggestion") {
+                                        isSuggestion = value;
+                                    }
+                                });
                             }
 
                             let tagid = "";
@@ -460,10 +468,10 @@ const getAjaxData = (url) => {
             const dataurls = scenario['analyzed-data-collect-url'];
             // go data parse
             if (checkResult(result)) {
-                if (url == dataurls[3]) {
+                if (url == dataurls[7]) {
                     /*
                         Tips:
-                            dataurls[3] is for checking existing Jetelina's suggestion.
+                            dataurls[3] is for fetching Jetelina's suggestion.
                             resume below if the return were true,meaning exsit her one.
                     */
                     if (result) {
@@ -483,24 +491,42 @@ const getAjaxData = (url) => {
                         if (!isSuggestion) {
                             preferent.suggestion = chooseMsg("stats-check-safe-msg", '', '');
                             iconface = "chat";
-                            m = "stats-performance-improve-msg";
-                        } else {
                             m = "stats-check-safe-msg";
+                        } else {
+                            m = "stats-performance-improve-msg";
                         }
 
                         changeChatGirlImage(iconface);
                         showSomethingMsgPanel(true);
-
-                        /*
-                            deprecated procedures but who knows never revival.
-                        */
-                        // relation access & combination
-                        //getAjaxData(dataurls[0]);
-                        // simply sql speed
-                        //getAjaxData(dataurls[1]);
-                        // sql speed on test db
-                        //getAjaxData(dataurls[2]);
                     }
+                } else if (url == dataurls[3]) {
+                    /*
+                        Tips:
+                            dataurls[7] is for just checking existing Jetelina's suggestion.
+                            resume below if the return were true,meaning exsit her one.
+                    */
+                    if (result) {
+                        // set suggestion existing flag to display my message
+                        isSuggestion = true;
+                        getdata(result, 8);
+                        /*
+                            Tips:
+                                isSuggestion = true, the meaning of the file existing is Jetelina wanna put inform you something 'improving suggestion'.
+                                the below message is for it.
+                                but abandon any 'suggestion" in Ver.1
+                        */
+                        let iconface = "concern";
+                        if (!isSuggestion) {
+                            iconface = "chat";
+                            m = "success-msg";
+                        }else{
+                            m = 'stats-performance-improve-msg';
+                        }
+
+                        changeChatGirlImage(iconface);
+                    }
+
+
                 } else if (inScenarioChk(url, 'analyzed-data-collect-url')) {
                     let type = "";
                     if (url == dataurls[0]) {
@@ -1285,6 +1311,7 @@ const chatKeyDown = (cmd) => {
                     stage = 'lets_do_something';
 
                     chatKeyDown("show tables");
+                    getAjaxData(scenario["analyzed-data-collect-url"][3]);
                     m = chooseMsg("starting-6-msg", "", "");
 
                     break;

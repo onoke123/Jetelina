@@ -189,7 +189,7 @@ const statsPanelFunctions = (ut) => {
             graphp = LINECHARTPANEL;
         } else if (inScenarioChk(ut, 'stats-check-suggestion-cmd')) {
             // confirm the suggestion file existing
-            getAjaxData(scenario["analyzed-data-collect-url"][3]);
+            getAjaxData(scenario["analyzed-data-collect-url"][7]);
         }else if(inScenarioChk(ut,'stats-hide-jetelina-concern-img-cmd')){
             if(isVisibleSomethingMsgPanel()){
                 showSomethingMsgPanel(false);

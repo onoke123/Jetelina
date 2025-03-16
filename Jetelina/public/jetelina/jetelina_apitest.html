@@ -27,9 +27,10 @@
         <tr>
             <td valign="top">
                 <div style="color: aliceblue;">
-                    <p><text style="font-size: larger">for example</text><text style="font-size: smaller;"> see these
-                            'IN' on
-                            Jetelina</text></p>
+                    <p>
+                        <text style="font-size: larger">for example</text>
+                        <text style="font-size: smaller;">see these 'IN' in each 'API' on Jetelina</text>
+                    </p>
                     <p>'{}' data should be set your own data.</p>
                     <ul>
                         <li>simple</li>
@@ -41,12 +42,33 @@
                         <text style="font-style: italic;">'Key' should be 'age','name'</text><br>
                         <text style="font-style: italic;">'Value' is '{age}','{name}' and it is set by your
                             own</text><br><br>
-                        <li>has subquery sentence</li>
-                        IN: {"apino":"js100","subquery":"['age':{age}]"}<br>
-                        <text style="font-style: italic;">'Api Name' should be 'js100'</text><br>
-                        <text style="font-style: italic;">'Key' should be 'age'</text><br>
-                        <text style="font-style: italic;">'Value' is '{age}' and it is set by your own</text><br>
-                        <text style="font-style: italic;">same in case multi params</text><br>
+
+                        <li>CAUTION in PostgreSQL/MySql</li>
+                        <ol>
+                            <li>in case of <text
+                                    style="color: rgb(186, 202, 40); font-weight:bold; font-size: larger;">'ju'</text>
+                                or <text
+                                    style="color: rgb(186, 202, 40); font-weight:bold; font-size: larger;">'jd'</text>
+                                api that has a subquery sentence</li>
+                            <text style="font-size: larger;">IN:{"apino":"jd99","subquery":"{age}"}</text><br><br>
+                            <text style="font-style: italic;">'Api Name' should be 'jd99'</text><br>
+                            <text style="font-style: italic;">'Key' should be 'subquery', </text><br>
+                            <text style="font-style: italic;">'Value' is '{age}' and it is set by your own</text><br>
+                            <text style="font-style: italic;color:yellowgreen;">e.g 'Key'->'subquery'
+                                'Value'->32</text><br><br>
+
+                            <li>in case of <text
+                                    style="color: rgb(186, 202, 40); font-weight:bold; font-size: larger;">'js'</text>
+                                api that has a subquery sentecen</li>
+                            <text style="font-size: larger;">IN:{"apino":"js100","subquery":"['age':{age},'sex':'{sex}'']"}</text><br><br>
+                            <text style="font-style: italic;">'Api Name' should be 'js100'</text><br>
+                            <text style="font-style: italic;">'Key' should be 'subquery'</text><br>
+                            <text style="font-style: italic;">'Value' is "'age':{age},'sex':'{sex}'" and they are set by
+                                your own</text><br>
+                            <text style="font-style: italic;color:yellowgreen;">e.g 'Key'->'subquery'
+                                'Value'->'age':32,'sex':'male'</text><br>
+                        </ol>
+                        <br>
                     </ul>
                     Don't care the remaining blank columns.<br><br>
 
@@ -64,7 +86,8 @@
                     <p name="apiname">Api Name(apino)<input type="text" name="apiname" class="keyvalin"></p>
                 </div>
                 <div name="mongodbdocument" style="color: aliceblue;" hidden>
-                    <p name="mongodbdocument">Document Name<input type="text" name="mongodbdocument" class="keyvalin"></p>
+                    <p name="mongodbdocument">Document Name<input type="text" name="mongodbdocument" class="keyvalin">
+                    </p>
                 </div>
                 <div name="params" style="color: aliceblue;">
                     <p name="p1">1: Key<input type="text" name="k" class="keyvalin"> Value<input type="text" name="v"
@@ -105,10 +128,10 @@
     </div>
     <hr />
     <div name="postdata" style="color: aliceblue;">
-        <text>Post Data:</text>
+        <text>IN(post data):</text>
     </div>
     <div name="result" style="color: aliceblue;">
-        <text>Result:</text>
+        <text>OUT(result):</text>
     </div>
 </body>
 
@@ -162,10 +185,12 @@
             */
             let hidestart_number = 2;
             if (apinumber.startsWith("ji")) {
-                hidestart_number = 3;
-                for (let i = 1; i < 3; i++) {
-                    $(`div p[name='p${i}'] input[name='k']`).val(`key${i}`).prop('readonly', true);
-                }
+                $("#mfj").text("inhibit insertion to redis with this page, sorry, you shoud do it on me.");
+                return;
+                //                hidestart_number = 1;
+                //                for (let i = 1; i < 3; i++) {
+                //                    $(`div p[name='p${i}'] input[name='k']`).val(`key${i}`).prop('readonly', true);
+                //                }
             } else if (apinumber.startsWith("ju")) {
                 hidestart_number = 2;
                 $("div p[name='p1'] input[name='k']").val("key").prop('readonly', true);
@@ -182,13 +207,13 @@
                 js/jd -> no params
                 ju -> key/val
             */
-           if(apinumber.startsWith("js") || apinumber.startsWith("jd")){
-                hidestart_number = 1;        
-           }else{
-                hidestart_number = paranum+1;
-           }
+            if (apinumber.startsWith("js") || apinumber.startsWith("jd")) {
+                hidestart_number = 1;
+            } else {
+                hidestart_number = paranum + 1;
+            }
 
-           for (let i = hidestart_number; i <= paranum; i++) {
+            for (let i = hidestart_number; i <= paranum; i++) {
                 $(`div p[name='p${i}']`).hide();
             }
         } else {
@@ -203,18 +228,20 @@
 
     $("div[name='database'] input[name='db']").on('click', function () {
         selecteddatabase = $("input[name='db']:checked").val();
-        if(selecteddatabase != "mongodb"){
+        if (selecteddatabase != "mongodb") {
             $("div[name='mongodbdocument']").hide();
-        }else{
+        } else {
             $("div[name='mongodbdocument']").show();
         }
     });
 
     const resetParams = () => {
+        $("#mfj").text("");
+
         for (let i = 1; i <= paranum; i++) {
             $(`div p[name='p${i}']`).show();
-            $(`div p[name='p${i}'] input[name='k']`).val("").prop('readonly', false);
-            $(`div p[name='p${i}'] input[name='v']`).val("");
+            $(`div p[name='p${i}'] input[name='k']`).val("").prop('readonly', false).attr("size",20);
+            $(`div p[name='p${i}'] input[name='v']`).val("").attr("size",20);
         }
     }
 
@@ -235,7 +262,7 @@
             $("#mfj").text("");
         }
 
-        if(selecteddatabase == "redis" && apinumber.startsWith("ji")){
+        if (selecteddatabase == "redis" && apinumber.startsWith("ji")) {
             $("#mfj").text("inhibit insertion to redis with this page, sorry, you shoud do it on me.");
             return;
         }
@@ -252,7 +279,7 @@
         }
 
         let jstr = `{"apino":"${apinumber}",`;
-        if(selecteddatabase == "mongodb" && apinumber.startsWith("ji")){
+        if (selecteddatabase == "mongodb" && apinumber.startsWith("ji")) {
             let docname = $("div[name='mongodbdocument'] p[name='mongodbdocument'] input[name='mongodbdocument']").val();
             jstr += `"new document":{"j_table":"${docname}",`;
         }
@@ -261,16 +288,16 @@
             jstr += `"${key[i]}":"${value[i]}",`;
         }
 
-        jstr = jstr.slice(0, -1) + "}"; 
+        jstr = jstr.slice(0, -1) + "}";
 
         // special for mongodb inserting :)
-        if(selecteddatabase == "mongodb" && apinumber.startsWith("ji")){
+        if (selecteddatabase == "mongodb" && apinumber.startsWith("ji")) {
             jstr += "}";
         }
 
         $("div[name='postdata'] p").remove();
         $("div[name='postdata']").append(`<p name="postdata">${jstr}</p>`);
-        
+
         $.ajax({
             url: "/apiactions",
             type: "post",
@@ -279,26 +306,26 @@
             dataType: "json"
         }).done(function (result, textStatus, jqXHR) {
             $(".re").remove();
-            if(result.result){
-            let s = apinumber.slice(0, 2);
-            if (-1 < $.inArray(s, ['js'])) {
-                Object.keys(result).forEach(function (key) {
-                    if (key == "Jetelina") {
-                        $.each(result[key], function (k, v) {
-                            vv = JSON.stringify(v);
-                            $("div[name='result']").append(`<p>${vv}</p>`);
-                        });
-                    }
-                });
+            if (result.result) {
+                let s = apinumber.slice(0, 2);
+                if (-1 < $.inArray(s, ['js'])) {
+                    Object.keys(result).forEach(function (key) {
+                        if (key == "Jetelina") {
+                            $.each(result[key], function (k, v) {
+                                vv = JSON.stringify(v);
+                                $("div[name='result']").append(`<p>${vv}</p>`);
+                            });
+                        }
+                    });
 
-            } else if (-1 < $.inArray(s, ['ji', 'ju', 'jd'])) {
-                let msg = result["message from Jetelina"]
-                $("div[name='result']").append(`<p>${msg}</p>`);
+                } else if (-1 < $.inArray(s, ['ji', 'ju', 'jd'])) {
+                    let msg = result["message from Jetelina"]
+                    $("div[name='result']").append(`<p>${msg}</p>`);
+                }
+            } else {
+                let error = JSON.stringify(result.errmsg);
+                $("#mfj").text(error);
             }
-        }else{
-            let error = JSON.stringify(result.errmsg);
-            $("#mfj").text(error);
-        }
         }).fail(function (result) {
             let error = JSON.stringify(result);
             $("#mfj").text(error);

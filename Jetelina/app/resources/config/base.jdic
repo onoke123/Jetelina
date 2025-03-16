@@ -2,7 +2,7 @@
 # special configuration parameter 
 #
 # urls for stats panel 
-@jdic analyzed-data-collect-url:"/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getapiaccessdata","/getdbaccessdata", "/getapiexecspeed"
+@jdic analyzed-data-collect-url:"/gettablecombivsaccessrelationdata", "/getperformancedata_real", "/getperformancedata_test","/chkexistimprapifile","/getapiaccessdata","/getdbaccessdata","/getapiexecspeed","/getsuggestiondata"
 
 # post urls for function panel 
 @jdic function-post-url:"/updateuserdata","/jetelinawords","/getconfigdata","/changeconfigdata","/createapi","/testapi","/chkaccount","/userregist","/getrelatedlist","/switchdb","/ispath","/getcolumns"

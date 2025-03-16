@@ -207,17 +207,27 @@ function getPerformanceTestData()
 		return false
 	end
 end
+
+function checkExistImproveApiFile()
+	getImproveApiFile(false)
+end
+function getSuggestionData()
+	getImproveApiFile(true)
+end
 """
 function checkExistImproveApiFile()
 
 	get JC["improvesuggestionfile"] data file name. this file contains an improving suggestion data of a target api. 
 
 # Arguments
+- `flg::Bool`: activity. true -> fetch suggestion data, false -> just checking 
 - return: JC["improvesuggestionfile"] file name with its path    
 """
-function checkExistImproveApiFile()
+function getImproveApiFile(flg::Bool)
 	periodd::Int = j_config.JC["period_collect_data"]
 	ret = "{\"Jetelina\":["
+	rethead = ret
+	isdata::Bool = false;
 
 	#===
 		Tips:
@@ -245,17 +255,25 @@ function checkExistImproveApiFile()
 					end
 				end
 
+				isdata = true
 				ret = strip(ret, ',')
-				return string(ret, "],\"result\":true}")
+#				return string(ret, "],\"result\":true}")
 			catch err
 				@error "ConfigManager.checkExistImproveApiFile() error: $err"
 				return false
 			end
 		else
-			return string(ret,"{\"nothing\":\"everything fine\"}")
+#			return string(ret,"{\"nothing\":\"everything fine\"}")
+			ret = "{\"nothing\":\"everything fine\"}"
 		end
 	else
 		return false
+	end
+
+	if flg
+		return string(ret, "],\"result\":true}")
+	else
+		return string(rethead,"{\"issuggestion\":",isdata,"}],\"result\":true}")
 	end
 end
 """

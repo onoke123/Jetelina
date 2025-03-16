@@ -118,6 +118,8 @@ route("/getdbaccessdata",GetDataController.getDBAccessData)
 route("/getperformancedata_real",GetDataController.getPerformanceRealData)
 route("/getperformancedata_test",GetDataController.getPerformanceTestData)
 route("/chkexistimprapifile",GetDataController.checkExistImproveApiFile)
+route("/getsuggestiondata",GetDataController.getSuggestionData)
+
 route("/getapiexecspeed", PostDataController.getApiExecutionSpeed, method = POST)
 #===
 
