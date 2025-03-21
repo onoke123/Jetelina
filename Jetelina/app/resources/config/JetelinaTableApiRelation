@@ -40,3 +40,6 @@ ju102:newkey3:redis
 js103:newkey3:redis
 js108:ftest2:mysql
 js109:ftest:mysql
+ju110:jetelina-collection,newdoc1:mongodb
+jd111:jetelina-collection,newdoc1:mongodb
+js112:jetelina-collection,newdoc1:mongodb
