@@ -2,7 +2,7 @@
 module: PgDataTypeList
 
 Author: Ono keiji
-Version: 1.0
+
 Description:
 	determaine data type of PostgreSQL
 

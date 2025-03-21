@@ -3,11 +3,12 @@ build/*
 cache/*
 config/secrets.jl
 docs/build
-log/*
+log/
 sessions/*
 !*.gitkeep
-Manifest.toml
-test/*
+#Manifest.toml
+test/
+apiperformancefiles/
 
 # Vagrant
 .vagrant
@@ -27,6 +28,7 @@ Vagrantfile
 *.log.*
 JetelinaTableApiRelation*
 JetelinaSqlList*
+*.out
 
 # OS or Editor folders
 .DS_Store

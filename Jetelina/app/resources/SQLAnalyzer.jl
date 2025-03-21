@@ -1,22 +1,22 @@
 """
-	module: SQLAnalyzer
+module: SQLAnalyzer
 
-	Author: Ono keiji
-	Version: 1.0
-	Description:
-		Analyze execution speed of all SQL sentences. 
+Author: Ono keiji
+
+Description:
+	Analyze execution speed of all SQL sentences. 
 	
-	functions
-		main() this function set as for kicking createAna..() from outer function.
-		createAnalyzedJsonFile() create json file for result of sql execution speed analyze data.
-		extractColumnsFromSql(s::String)  pick up columns data from 's'.
-		collectSqlAccessNumbers(df::DataFrame)  collect each sql access numbers then write out it to JC["sqlaccesscountfile"] file in JSON form for showing its graph in condition panel.
-		experimentalCreateView(df::DataFrame)  create view tables for test and execute all sql sentences for analyzing.
-		createView(df::DataFrame)  create view table from a sql sentence that has multi tables and hight use in the running db.
-		dropTestDB(conn)  drop testdb. doubtfull. :-p
-		creatTestDB()    create testdb by using running db(JC["pg_dbname"]). only postgresql now. other db should be impremented later.
-		tableCopy(df::DataFrame) copy some data from the running db to the test db. the number of copy data are ordered in JC["selectlimit"].
-		function stopanalyzer() manual stopper for analyzring repeat
+functions
+	main() this function set as for kicking createAna..() from outer function.
+	createAnalyzedJsonFile() create json file for result of sql execution speed analyze data.
+	extractColumnsFromSql(s::String)  pick up columns data from 's'.
+	collectSqlAccessNumbers(df::DataFrame)  collect each sql access numbers then write out it to JC["apiaccesscountfile"] file in JSON form for showing its graph in stats panel.
+	experimentalCreateView(df::DataFrame)  create view tables for test and execute all sql sentences for analyzing.
+	createView(df::DataFrame)  create view table from a sql sentence that has multi tables and hight use in the running db.
+	dropTestDB(conn)  drop testdb. doubtfull. :-p
+	creatTestDB()    create testdb by using running db(JC["pg_dbname"]). only postgresql now. other db should be impremented later.
+	tableCopy(df::DataFrame) copy some data from the running db to the test db. the number of copy data are ordered in JC["selectlimit"].
+	stopanalyzer() manual stopper for repeating analyzring
 """
 module SQLAnalyzer
 
@@ -30,13 +30,13 @@ JMessage.showModuleInCompiling(@__MODULE__)
 procflg = Ref(true) # analyze process progressable -> true, stop/error -> false
 
 function __init__()
-	@info "=========SQLAnalyzer.jl init===========" j_config.JC["dbtype"]
+	@info "=========SQLAnalyzer.jl init==========="
 	include("DBDataController.jl")
 	if j_config.JC["dbtype"] == "postgresql"
 		include("libs/postgres/PgDBController.jl")
 		include("libs/postgres/PgTestDBController.jl")
 		include("libs/postgres/PgDataTypeList.jl")
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end
@@ -135,8 +135,8 @@ function createAnalyzedJsonFile()
 				js22    select ....  ['ftest4','ftest2']      5
 				js30    select ....  ['ftest2']              10
 
-			hire js22 because it is the highest access numbers among higher combination number(js10,js22) to create a client view graph 'condition panel'.
-			js30 may does not need to be created in 'condition panel' so that it is the best number but it has low combination number. 
+			hire js22 because it is the highest access numbers among higher combination number(js10,js22) to create a client view graph 'stats panel'.
+			js30 may does not need to be created in 'stats panel' so that it is the best number but it has low combination number. 
 	===#
 	sql_df = DataFrame(apino = String[], sql = String[], combination = Vector{String}[], access_numbers = Float64[])
 
@@ -232,7 +232,7 @@ function createAnalyzedJsonFile()
 
 		#==
 			step3:
-				first of all, collect each sql access numbers for showing it on condition panel. 
+				first of all, collect each sql access numbers for showing it on stats panel. 
 		==#
 		collectSqlAccessNumbers(sql_df)
 
@@ -359,14 +359,14 @@ end
 """
 function collectSqlAccessNumbers(df::DataFrame)
 
-	collect each sql access numbers then write out it to JC["sqlaccesscountfile"] file in JSON form for showing its graph in condition panel.
+	collect each sql access numbers then write out it to JC["apiaccesscountfile"] file in JSON form for showing its graph in stats panel.
 
 # Arguments
 - `df::DataFrame`: target dataframe data
 """
 function collectSqlAccessNumbers(df::DataFrame)
 	this_df = copy(df)
-	sqlaccessnumberfile = JFiles.getFileNameFromLogPath(j_config.JC["sqlaccesscountfile"])
+	sqlaccessnumberfile = JFiles.getFileNameFromLogPath(j_config.JC["apiaccesscountfile"])
 	# delete this file if it exists, because this file is always fresh.
 	rm(sqlaccessnumberfile, force = true)
 
@@ -390,7 +390,7 @@ function experimentalCreateView(df::DataFrame)
 			1.ready test db
 			2.copy all table in running to test db, but not all line
 			3.execute 'create view' in order to sql sentence, the api are changed order by it
-			4.execute all api in create view in 3 on test db, and compare with the latest data. then write them out to 'report file' for viewing condition panel
+			4.execute all api in create view in 3 on test db, and compare with the latest data. then write them out to 'report file' for viewing stats panel
 			5.do not forget to delete the test db after analyzing
 	===#
 
@@ -668,7 +668,7 @@ function creatTestDB()
 			PgDBController.close_connection(conn)
 		end
 
-	elseif j_config.JC["dbtype"] == "mariadb"
+	elseif j_config.JC["dbtype"] == "mysql"
 	elseif j_config.JC["dbtype"] == "oracle"
 	end
 end

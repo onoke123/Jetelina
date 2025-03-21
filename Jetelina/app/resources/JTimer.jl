@@ -1,9 +1,9 @@
 """
-	module: JTimer
+module: JTimer
 
-	Author: Ono keiji
-	Version: 1.0
-	Description:
+Author: Ono keiji
+
+Description:
         This module is a tricky program.
         Because Genie does not exectute __init__() as far as not execute include().
         We wanna kick __init__() to start some timer programs.

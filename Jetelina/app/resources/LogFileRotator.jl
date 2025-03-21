@@ -1,30 +1,30 @@
 """
-	module: LogFileRotator
+module: LogFileRotator
 
-	Author: Ono keiji
-	Version: 1.0
-	Description:
-        This module is for rotating Jetelina log files.
+Author: Ono keiji
+
+Description:
+    This module is for rotating Jetelina log files.
 	
-	functions
-			main() wrap function for executing _exectuterotating() that is the real file rotating function.
-			stoprotating() manual stopper for log file totating repeat.
+functions
+	main() wrap function for executing _executerotating() that is the real file rotating function.
+	stoprotating() manual stopper for log file totating repeat.
 """
 module LogFileRotator
 
 using Dates
-using Jetelina.JMessage, Jetelina.JFiles, Jetelina.JLog 
+using Jetelina.JMessage, Jetelina.JFiles, Jetelina.JLog, Jetelina.ApiAccessCounter 
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-const interval::Integer = 3600 # 1hr = 60*60
+const interval::Integer = 1200 # 20 min = 60*20
 procflg = Ref(true) # rotation process progressable -> true, stop/error -> false
 
 """
 function main()
 
-	wrap function for executing _exectuterotating() that is the real file rotating function.
+	wrap function for executing _executerotating() that is the real file rotating function.
 """
 function main()
 	ft = j_config.JC["logfile_rotation_open"]
@@ -32,19 +32,20 @@ function main()
 		 
 	task = @async while procflg[]
 		if ft < Dates.format(now(),"HH:MM") < tt
-			_exectuterotating()
+			_executerotating()
 			JLog.writetoLogfile(string("LogFileRotator.main() rotated log file in : ",Dates.format(now(), "yyyy-mm-dd-HH:MM")))
+			ApiAccessCounter.collectApiAccessNumbers()
 		end
 
 		sleep(interval)
 	end
 end
 """
-function _exectuterotating()
+function _executerotating()
 
 	execute log and sql log files
 """
-function _exectuterotating()
+function _executerotating()
 	logfile = JFiles.getFileNameFromLogPath(j_config.JC["logfile"])
 	sqllogfile = JFiles.getFileNameFromLogPath(j_config.JC["sqllogfile"])
 	_fileRotation(logfile)
@@ -59,7 +60,8 @@ function _fileRotation(f::String)
 - `f::String`: file name
 """
 function _fileRotation(f::String)
-	b = string(f,".",Dates.format(now(), "yyyy-mm-dd-HH:MM"))
+#	b = string(f,".",Dates.format(now(), "yyyy-mm-dd-HH:MM"))
+	b = string(f,".",Dates.format(now(), "yyyy-mm-dd"))
 	if ispath(f)
 		mv(f,b)
 	end
