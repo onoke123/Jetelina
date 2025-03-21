@@ -2,7 +2,7 @@
     JS library for Jetelina common library
     @author Ono Keiji
 
-    This js lib works with dashboard.js, functionpanel.js and conditionpanel.js.
+    This js lib works with dashboard.js, functionpanel.js and statspanel.js.
     
 
     Functions list:
@@ -15,7 +15,6 @@
       authAjax(chunk) Authentication ajax call
       chooseMsg(i,m,p) select a message to show in chat box from js/senario.js 
       typing(i,m) show a chat message alike typing style 
-      chkUResponse(n, s) check if the user input message is what is expected in scenario[] or config[]
       chatKeyDown(cmd) behavior of hitting enter key in the chat box by user 
       openingMessage() Initial chat opening message
       burabura() idling message in the initial screen 
@@ -23,11 +22,11 @@
       logout() logout
       getPreferentPropertie(p) get prior object if there were
       instractionMode(s) confirmation in adding a new scenario
-      showManualCommandList(s) show/hide manual and/or command list panel
+      showGuidance(b) show/hide GUIDANCE panel
       inScenarioChk(s,sc,type) check if user input string is in the ordered scenario
       countCandidates(s,sc,type) count config/scenario candidates
       isVisibleFunctionPanel() check the function panel is visible or not
-      inVisibleConditionPanel() check the condition panel is visible or not
+      isVisibleApiAccessNumbersList() check the stats panel is visible or not
       isVisibleSomethingMsgPanel() checking "#something_msg" is visible or not
       showSomethingInputField(b,type) "#something_input_field" show or hide
       showSomethingMsgPanel(b) "#something_msg" show or hide
@@ -44,7 +43,13 @@
       searchLogAjax() ajax function for searching 'errnum' in the log file
       showConfigPanel(b) "#config_panel" show or hide
       showPreciousPanel(b) "#jetelina_teach_you_smg" show or hide
- */
+      jsonFromCheck(s) check for json form in mongodb
+      guidancePageFootLinkController(n) create cmd and call guidancePageController in case of clickcing the page link on the footer 
+      guidancePageController(n) move the guidance page order by 'n' 
+      jetelinaPanelPositionController(b) JETELINAPANEL position change 
+      determindDateStart2End(dates) pick the min date and max date within query date array
+      changeChatGirlImage(imgtype) switching chat box image.
+*/
 const JETELINACHATTELL = `${JETELINAPANEL} [name='jetelina_tell']`;
 const SOMETHINGMSGPANEL = "#something_msg";
 const SOMETHINGMSGPANELMSG = `${SOMETHINGMSGPANEL} [name='jetelina_message']`;
@@ -74,6 +79,9 @@ const LOCALPARAM = "login2jetelina"; // local strage parameter
 const CONFIGPANEL = "#config_panel ";
 const CONFIGPANELLIST = `${CONFIGPANEL} [name='config_list']`;
 const PRECIOUSWORDPANEL = "#jetelina_teach_you_smg";//showing something precious word by Jetelina
+const redis_mongodb_api_ji_key_str = "your key data";// display as key parameter in 'ji*' and 'ju*' api in case redis, mongodb
+const redis_mongodb_api_ji_val_str = "your value data";// display as value parameter in 'ji*' and 'ju*' api in case redis, mongodb
+const mongodb_api_ji_json_str = "your json data";// display as json parameter in 'ji* api in case mongodb
 
 let typingTimeoutID;
 let whatJetelinaTold = ""; // what jetelina was telling in just previous time 
@@ -81,6 +89,7 @@ let relatedDataList = {}; // relation data to table/api has been contained here 
 let messageScrollTimerID; // '#someting_msg' auto scroll timer interval 
 let apitestScrollTimerID; // '#apitest' auto scroll timer interval
 let original_chatbox_input_text = ""; // original text in Jetelina chatbox.
+let isSuggestion = false; // existing the suggestion, true -> is, false -> is not
 /**
  * 
  * @function getScenarioFile
@@ -127,6 +136,7 @@ const checkResult = (o) => {
     const response = "responseJSON";// common json response data key name
     const errMsg = "errmsg"; // this is the protocol in jl file
     const errorStr = "error";// this is the protocol in jl file
+    const messageFromJetelina = "message from Jetelina";// the result was 'false', but not big error. wanna say something to you from Jeteina
 
     if (o != null) {
         /*
@@ -139,6 +149,7 @@ const checkResult = (o) => {
             let em = "";
             let errmsg;
             let error;
+            let jetelinamsg;
 
             if (o.errnum != null) {
                 preferent.errnum = o.errnum;
@@ -153,9 +164,11 @@ const checkResult = (o) => {
             if (o[response] != null) {
                 errmsg = o[response][errMsg];
                 error = o[response][errorStr];
+                jetelinamsg = o[response][messageFromJetelina];
             } else {
                 errmsg = o.errmsg;
                 error = o.error;
+                jetelinamsg = o[messageFromJetelina];
             }
 
             if (errmsg != null && 0 < errmsg.length) {
@@ -176,6 +189,8 @@ const checkResult = (o) => {
                         because "error" is raw error message
                 */
                 em = chooseMsg("common-ajax-error-msg", error, "a");
+            } else if (jetelinamsg != null && 0 < messageFromJetelina.length) {
+                em = jetelinamsg.substr(0, msglength);
             }
 
             if (em != "") {
@@ -185,8 +200,6 @@ const checkResult = (o) => {
 
             ret = false;
         } else {
-            //            $(SOMETHINGMSGPANELMSG).text("");
-            showSomethingMsgPanel(false);
             /*
                 Tips:
                     in the case of a configuration parameter is called, set null all for 
@@ -212,6 +225,9 @@ const checkResult = (o) => {
  *                     3->conifguration changing history
  *                     4->api(sql) test before registring 
  *                     5->indicate available db 
+ *                     6->operation history
+ *                     7->fetch suggestion data
+ *                     8 ->checking existing suggestion 
  *  @returns {object} only in the case of t=3, conifguration changing history object
  *
  *  resolve the json object into each data
@@ -265,15 +281,29 @@ const getdata = (o, t) => {
                                             str += `<span class="table">${value}</span>`;
                                         }
                                     } else if (t == 1) {
+                                        /*
+                                            Tips:
+                                                the reason why is watching db type because the return form and meaning is different between them.
+                                                except mongodb are pair with key and value, and value is displayed as tool tip.in this case the value would be a sample data.
+                                                in case of mongodb returns only keys, because it would be whole collection if it retuend values as well. :p
+                                        */
                                         // jetelina_delete_flg should not show in the column list
                                         if (name != "jetelina_delete_flg") {
-                                            /*
-                                                Tips:
-                                                    may ${name} is be long, because it is combined "<table name>_<column_name>" in uploading csv file.
-                                                    in Ver.1, selected table name has same color, may it has unique color later, then these column has each color and 
-                                                    could be shorten the display name, who knows. :)
-                                            */
-                                            str += `<span class="item" d=${value} colname=${targetTable}.${name}><p>${targetTable}.${name}</p></span>`;
+                                            if (loginuser.dbtype != "mongodb") {
+                                                // case in Postgresql/Mysql/Redis
+                                                /*
+                                                    Tips:
+                                                        may ${name} is be long, because it is combined "<table name>_<column_name>" in uploading csv file.
+                                                        in Ver.1, selected table name has same color, may it has unique color later, then these column has each color and 
+                                                        could be shorten the display name, who knows. :)
+                                                */
+                                                str += `<span class="item" d=${value} colname=${targetTable}.${name}><p>${targetTable}.${name}</p></span>`;
+                                            } else {
+                                                // case in mongodb
+                                                if ($.inArray(value, ["_id", "j_table"]) == -1) {
+                                                    str += `<span class="item" d="non" colname=${targetTable}.${value}><p>${targetTable}.${value}</p></span>`;
+                                                }
+                                            }
                                         }
                                     }
                                 });
@@ -325,6 +355,41 @@ const getdata = (o, t) => {
                                 } else {
                                     $("#databaselist span[name='redis']").hide();
                                 }
+                                if (v["mongodb"] == true) {
+                                    $("#databaselist span[name='mongodb']").show();
+                                } else {
+                                    $("#databaselist span[name='mongodb']").hide();
+                                }
+                            } else if (t == 6) {
+                                if (v.date != null) {
+                                    configChangeHistoryStr += `[${v.date}] `;
+                                }
+
+                                if (v.operation != null) {
+                                    configChangeHistoryStr += `${v.operation} `;
+                                }
+
+                                if (v.name != null) {
+                                    configChangeHistoryStr += ` by ${v.name}<br>`;
+                                }
+                            } else if (t == 7) {
+                                $.each(v, function (name, value) {
+                                    if (name == "Jetelina") {
+                                        if (0 < value.length) {
+                                            $.each(value, function (na, va) {
+                                                preferent.suggestion += v.date + "　" + va.type + "　" + va.apino + "　exec time is out of " + va.sigma + "σ" + "<br>";
+                                            });
+                                        }
+                                    } else if (name == "nothing") {
+                                        isSuggestion = false;
+                                    }
+                                });
+                            } else if (t == 8) {
+                                $.each(v, function (name, value) {
+                                    if (name == "issuggestion") {
+                                        isSuggestion = value;
+                                    }
+                                });
                             }
 
                             let tagid = "";
@@ -359,7 +424,7 @@ const getdata = (o, t) => {
                 }
             });
 
-            if (t == 3) {
+            if (t == 3 || t == 6) {
                 $(SOMETHINGMSGPANEL).addClass("config_history");
                 $(SOMETHINGMSGPANELMSG).addClass("config_history_text").append(configChangeHistoryStr);
                 showSomethingMsgPanel(true);
@@ -390,69 +455,106 @@ const getAjaxData = (url) => {
                 return ret;
             }
         }).done(function (result, textStatus, jqXHR) {
+            /*
+                Tips:
+                    this 'result' gets 'syntax error {object Object} in json form' error sometimes,
+                    because unmatch specific, maybe, who knows, therefore convert to a correct json object 
+                    by using .sstringify() -> .parse()    :p
+            */
+            result = JSON.stringify(result);
+            result = JSON.parse(result);
+
             let m = "";
-            // go data parse
             const dataurls = scenario['analyzed-data-collect-url'];
+            // go data parse
             if (checkResult(result)) {
-                if (url == dataurls[3]) {
+                if (url == dataurls[7]) {
                     /*
                         Tips:
-                            dataurls[3] is for checking existing Jetelina's suggestion.
+                            dataurls[3] is for fetching Jetelina's suggestion.
                             resume below if the return were true,meaning exsit her one.
                     */
                     if (result) {
                         // set suggestion existing flag to display my message
                         isSuggestion = true;
+                        preferent.suggestion = "";
                         // set my suggestion
                         $(SOMETHINGMSGPANELMSG).addClass("jetelina_suggestion");
-                        $(SOMETHINGMSGPANELMSG).text(`${result.Jetelina.apino}:${result.Jetelina.suggestion}`);
-                        // relation access & combination
-                        getAjaxData(dataurls[0]);
-                        // simply sql speed
-                        getAjaxData(dataurls[1]);
-                        // sql speed on test db
-                        getAjaxData(dataurls[2]);
-                    }
-
-                    /*
-                        Tips:
-                            dataurls[4] is for sql access count data.
-                            this data always is executed.
-                    */
-                    getAjaxData(dataurls[4]);
-
-                } else if (inScenarioChk(url, 'analyzed-data-collect-url')) {
-                    let type = "";
-                    if (url == dataurls[0]) {
-                        // access vs combination
-                        type = "ac";
-                    } else if (url == dataurls[1]) {
-                        // real performance. execute sql on the DB. considering needs or not, 2023/11/25
-                        type = "real";
-                    } else if (url == dataurls[2]) {
-                        // test performance. execute sql on test DB
-                        type = "test";
-                    } else if (url == dataurls[4]) {
-                        // sql access
-                        type = "access";
-                    }
-                    /*
-                        Tips:
-                            drow graphic in condition panel.
-                            this setGraphDta() function is defined in conditionpanel.js.
-                    */
-                    let acVscom = setGraphData(result, type);
-
-                    if (isSuggestion) {
+                        getdata(result, 7);
                         /*
                             Tips:
                                 isSuggestion = true, the meaning of the file existing is Jetelina wanna put inform you something 'improving suggestion'.
                                 the below message is for it.
                                 but abandon any 'suggestion" in Ver.1
                         */
-                        typingControll(chooseMsg("cond-performance-improve-msg", "", ""));
+                        let iconface = "concern";
+                        if (!isSuggestion) {
+                            preferent.suggestion = chooseMsg("stats-check-safe-msg", '', '');
+                            iconface = "chat";
+                            m = "stats-check-safe-msg";
+                        } else {
+                            m = "stats-performance-improve-msg";
+                        }
+
+                        changeChatGirlImage(iconface);
+                        showSomethingMsgPanel(true);
+                    }
+                } else if (url == dataurls[3]) {
+                    /*
+                        Tips:
+                            dataurls[7] is for just checking existing Jetelina's suggestion.
+                            resume below if the return were true,meaning exsit her one.
+                    */
+                    if (result) {
+                        // set suggestion existing flag to display my message
+                        isSuggestion = true;
+                        getdata(result, 8);
+                        /*
+                            Tips:
+                                isSuggestion = true, the meaning of the file existing is Jetelina wanna put inform you something 'improving suggestion'.
+                                the below message is for it.
+                                but abandon any 'suggestion" in Ver.1
+                        */
+                        let iconface = "concern";
+                        if (!isSuggestion) {
+                            iconface = "chat";
+                            m = "success-msg";
+                        }else{
+                            m = 'stats-performance-improve-msg';
+                        }
+
+                        changeChatGirlImage(iconface);
+                    }
+
+
+                } else if (inScenarioChk(url, 'analyzed-data-collect-url')) {
+                    let type = "";
+                    if (url == dataurls[0]) {
+                        // access vs combination
+                        //type = "ac";
+                    } else if (url == dataurls[1]) {
+                        // real performance. execute sql on the DB. considering needs or not, 2023/11/25
+                        //type = "real";
+                    } else if (url == dataurls[2]) {
+                        // test performance. execute sql on test DB
+                        //type = "test";
+                    } else if (url == dataurls[4]) {
+                        // api access
+                        type = "ac";
+                    } else if (url == dataurls[5]) {
+                        // db access
+                        type = "db";
+                    }
+                    /*
+                        Tips:
+                            drow graphic in stats panel.
+                            this setGraphDta() function is defined in statspanel.js.
+                    */
+                    if (typeof result.Jetelina != 'string') {
+                        let acVscom = setGraphData(result, type);
                     } else {
-                        typingControll(chooseMsg("success-msg", "", ""));
+                        purgePlotlygraph(type);
+                        m = result["message from Jetelina"];
                     }
                 } else {
                     /*
@@ -493,6 +595,9 @@ const getAjaxData = (url) => {
                     } else if (url == geturl[4]) {
                         // available dbs
                         getdata(result, 5)
+                    } else if (url == geturl[5]) {
+                        // operation history
+                        getdata(result, 6);
                     }
 
                     m = 'success-msg';
@@ -506,7 +611,7 @@ const getAjaxData = (url) => {
         }).fail(function (result) {
             checkResult(result);
             cmdCandidates = [];
-            console.error("getAjaxData() fail");
+            console.error("getAjaxData() fail: ", url);
             typingControll(chooseMsg("fail-msg", "", ""));
         }).always(function () {
             // release it for allowing to input new command in the chatbox 
@@ -571,8 +676,11 @@ const postAjaxData = (url, data) => {
                     showSomethingMsgPanel(true);
                 } else if (url == posturls[3]) {
                     // configuration parameter change success then cleanup the "#something_msg"
-                    setDBFocus(presentaction.dbtype);
-                    loginuser.dbtype = presentaction.dbtype;
+                    if (presentaction.dbtype != null) {
+                        setDBFocus(presentaction.dbtype);
+                        loginuser.dbtype = presentaction.dbtype;
+                    }
+
                     presentaction = {};
                     showSomethingInputField(false);
                     if (result.target != null && 0 < result.target.length) {
@@ -583,6 +691,8 @@ const postAjaxData = (url, data) => {
                             tdb = "mysql";
                         } else if (result.target == "redis_work") {
                             tdb = "redis";
+                        } else if (result.target == "mongodb_work") {
+                            tdb = "mongodb";
                         }
 
                         if (tdb != "") {
@@ -642,7 +752,6 @@ const postAjaxData = (url, data) => {
                                 for (let i in newaddlist) {
                                     if ($(this).text() == newaddlist[i]) {
                                         if ($(this).hasClass("activeItem")) {
-                                            //                                            if (!$(this).hasClass("activeItem")) {
                                             $(this).removeClass("activeItem");
                                             $(this).addClass("activeandrelatedItem");
                                         } else {
@@ -659,7 +768,7 @@ const postAjaxData = (url, data) => {
                 } else if (url == posturls[9]) {
                     // switching database
                     // do not expect any returns, but refresh table and api list
-                    displayTablesAndApis();
+                    refreshdisplayTablesAndApis();
                 } else if (url == posturls[10]) {
                     showConfigPanel(false);
                     /*
@@ -674,10 +783,24 @@ const postAjaxData = (url, data) => {
                         dbconfname = "my_work";
                     } else if (preferent.db == "redis") {
                         dbconfname = "redis_work";
+                    } else if (preferent.db == "mongodb") {
+                        dbconfname = "mongodb_work";
                     }
 
                     let data = `{"${dbconfname}":"true"}`;
                     postAjaxData(scenario["function-post-url"][3], data);
+                } else if (url == scenario['analyzed-data-collect-url'][6]) {
+                    /*
+                        Tips:
+                            drow graphic in stats panel.
+                            this setGraphDta() function is defined in statspanel.js.
+                    */
+                    if (typeof result.Jetelina != 'string') {
+                        let acVscom = setGraphData(result, "as");
+                    } else {
+                        purgePlotlygraph('as');
+                        specialmsg = result["message from Jetelina"];
+                    }
                 }
 
                 if (specialmsg == "") {
@@ -687,6 +810,10 @@ const postAjaxData = (url, data) => {
                 }
             } else {
                 if (url == posturls[10]) {
+                    /*
+                        Tips:
+                            This process, posturls[10] -> "/ispath", is used to only in the first time connection check for a database. 
+                    */
                     if ($(CONFIGPANEL).is(":visible")) {
                         $(`${CONFIGPANEL} span`).filter(".configparams_key, .configparams_val").remove();
                     }
@@ -711,7 +838,7 @@ const postAjaxData = (url, data) => {
         }).fail(function (result) {
             checkResult(result);
             cmdCandidates = [];
-            console.error("postAjaxData() fail");
+            console.error("postAjaxData() fail: ", url);
             typingControll(chooseMsg("fail-msg", "", ""));
         }).always(function () {
             // release it for allowing to input new command in the chatbox 
@@ -863,6 +990,10 @@ const authAjax = (un) => {
 
                         stage = 'login_success';
 
+                        if (isVisibleSomethingMsgPanel()) {
+                            showSomethingMsgPanel(false);
+                        }
+
                         if (scenarioNumber != 'first-login-msg') {
                             m = chooseMsg(scenarioNumber, m, "a");
                         } else {
@@ -886,8 +1017,7 @@ const authAjax = (un) => {
                 }
             });
         } else {
-            //            m = chooseMsg("fail-msg", "", "");
-            m = result["message from Jetelina"];
+            m = chooseMsg("not-registered-msg", "", "");
         }
 
         typingControll(m);
@@ -961,32 +1091,6 @@ const typing = (i, m) => {
     typingTimeoutID = setTimeout(typing, t, ii, m);
 }
 /**
- * @function chkUResponse
- * @param {string} n  scenario array index
- * @param {string} s  user input character
- * @returns {boolean}  true -> as expected  false -> unexpected user response
- * 
- * check if the user input message is what is expected in scenario[] or config[]
- * deprecated
- */
-const chkUResponse = (n, s) => {
-    /*
-        Tips:
-            privent to display the opening messages are dublicated.
-            logouttimeId is set at logout process for returning to the inital screen in openingMessage().
-    */
-    if (logouttimerId) {
-        clearTimeout(logouttimerId);
-    }
-
-    if ((scenario[n] != null && scenario[n].includes(s)) ||
-        (config[n] != null && config[n].includes(s))) {
-        return true;
-    }
-
-    return false;
-}
-/**
  * function chatKeyDown
  * @param {string} cmd  something ordered string. ex. user key input, scenario[] command .... etc 
  * 
@@ -1015,6 +1119,18 @@ const chatKeyDown = (cmd) => {
         ut = ut.replaceAll(',', ' ').replaceAll(':', ' ').replaceAll(';', ' ');
     } else {
         ut = cmd.toLowerCase();
+    }
+
+    /*
+        Tips:
+            "guidance"
+    */
+    if ($(GUIDANCE).is(":visible") && !inScenarioChk(ut, "general-thanks-cmd")) {
+        if (inScenarioChk(ut, 'guidance-goto-jetelinaorg-cmd')) {
+            window.open(scenario["jetelina-web-site-url"][0], "_blank");
+        } else {
+            m = guidancePageController(ut);
+        }
     }
 
     let logoutflg = false;
@@ -1050,7 +1166,7 @@ const chatKeyDown = (cmd) => {
             $(JETELINACHATBOX).val("");
 
             // logout
-            if (logoutChk(ut)) {
+            if (loginuser.user_id != null && inScenarioChk(ut, 'logout-cmd')) {
                 logout();
                 m = chooseMsg('afterlogout-msg', "", "");
                 logoutflg = true;
@@ -1060,10 +1176,19 @@ const chatKeyDown = (cmd) => {
                 Tips:
                     may, 'm' already has been set in logout process.
             */
-            if (m.length == 0) {
-                // check ordered the command list
-                m = showManualCommandList(ut);
+            //            if (m.length == 0) {
+            // check ordered the command list
+            if (inScenarioChk(ut, 'guidance-cmd')) {
+                showGuidance(true);
+                m = chooseMsg("starting-6a-msg", "", "");
+            } else if ($(GUIDANCE).is(":visible") && inScenarioChk(ut, 'general-thanks-cmd')) {
+                showGuidance(false);
+                m = chooseMsg('waiting-next-msg', "", "");
+                if (loginuser.user_id == null) {
+                    stage = 0;
+                }
             }
+            //            }
 
             // check the instraction mode that is teaching 'words' to Jetelina or not
             // but deprecated in Ver.1
@@ -1089,13 +1214,40 @@ const chatKeyDown = (cmd) => {
             /*
                 Tips:
                     indeed, this zoom procedure is discripted in dashboard.js, around #130 as .on().
-                    this code use it by asking 'what-did-i-say'. :)
+                    this code use it by asking 'what-did-i-say-cmd'. :)
             */
-            if (inScenarioChk(ut, 'what-did-i-say')) {
+            if (inScenarioChk(ut, 'what-did-i-say-cmd')) {
                 $(".yourText").mouseover();
             } else {
                 $(".yourText").mouseout();
                 $(CHATBOXYOURTELL).text(ut);
+            }
+
+            if (isVisibleApiAccessNumbersList() || isVisibleChartPanel() || isVisibleApiSpeedPanel()) {
+                if (inScenarioChk(ut, "stats-db-access-numbers-chart-hide-cmd")) {
+                    $(PIECHARTPANEL).hide();
+                } else if (inScenarioChk(ut, 'stats-api-exec-speed-hide-cmd')) {
+                    $(LINECHARTPANEL).hide();
+                } else if (inScenarioChk(ut, "stats-api-access-numbers-list-hide-cmd")) {
+                    hideApiAccessNumbersList();
+                } else if (inScenarioChk(ut, 'stats-all-graph-hide-cmd')) {
+                    $(PIECHARTPANEL).hide();
+                    $(LINECHARTPANEL).hide();
+                    hideApiAccessNumbersList();
+                } else if (inScenarioChk(ut, "general-thanks-cmd")) {
+                    openStatsPanel(false, ut);
+                    ret = chooseMsg('general-thanks-msg', loginuser.lastname, "c");
+                } else {
+                    // hijack every command if showing and getting forcus on the api access numbers panel
+                    if (!isVisibleChartPanel() && !isVisibleApiSpeedPanel()) {
+                        activePanel(APIACCESPANEL);
+                    }
+
+                    //                    if (isactivePanel(APIACCESPANEL)) {
+                    if (!$(GUIDANCE).is(":visible") && isVisibleApiAccessNumbers()) {
+                        m = apiAccessNumbersListController(ut);
+                    }
+                }
             }
 
             /*
@@ -1115,8 +1267,10 @@ const chatKeyDown = (cmd) => {
                         m = chooseMsg('greeting-2-msg', "", "");
                     } else {
                         /* lead to login with 'can I ask your name?' */
-                        m = chooseMsg("starting-2-msg", "", "");
-                        stage = 'login';
+                        if (!$(GUIDANCE).is(":visible")) {
+                            m = chooseMsg("starting-2-msg", "", "");
+                            stage = 'login';
+                        }
                     }
 
                     break;
@@ -1127,18 +1281,18 @@ const chatKeyDown = (cmd) => {
                             "it's me" or "it is me" are effective.
                             but it will be diseffect after executing the setting.
                     */
-                    if (ut.indexOf("it's me") == -1 && ut.indexOf("it is me") == -1) {
+                    if (!$(GUIDANCE).is(":visible") && $.inArray(ut, ["it's me", "it is me"]) == -1) {
                         authAjax(ut);
                         m = IGNORE;
-                    } else {
+                    } else if ($.inArray(ut, ["it's me", "it is me"]) != -1) {
                         /*
                             this is the first login to Jetelina.
                             must go to the initialization process.
-
+ 
                             the process is defined in initialprocess.js
                             and do not get out by the normal logout because of session data.
                         */
-
+                        stage = 0;
                         $(JETELINAPANEL).hide();
                         jetelinaInitialize();
                     }
@@ -1157,6 +1311,7 @@ const chatKeyDown = (cmd) => {
                     stage = 'lets_do_something';
 
                     chatKeyDown("show tables");
+                    getAjaxData(scenario["analyzed-data-collect-url"][3]);
                     m = chooseMsg("starting-6-msg", "", "");
 
                     break;
@@ -1165,20 +1320,14 @@ const chatKeyDown = (cmd) => {
                     isVisibleFavicon(false);
                     m = "";
                     // chatbox moves to below
-                    const panelTop = window.innerHeight - 110;
-                    $(JETELINAPANEL).animate({
-                        height: "70px",
-                        top: "85%", //`${panelTop}px`,
-                        left: "5%" //"210px"
-                    }, ANIMATEDURATION);
-
+                    jetelinaPanelPositionController(false);
                     if (!inScenarioChk(ut, 'config-show-cmd') && (presentaction.cmd != CONFIGCHANGE)) {
                         // if 'ut' is a command for driving function
                         m = functionPanelFunctions(ut);
                         if (m.length == 0 || m == IGNORE) {
                             // if 'ut' is a command for driving condition
                             // this routine is for ver3 :)
-                            //m = conditionPanelFunctions(ut);
+                            m = statsPanelFunctions(ut);
                         }
                     }
 
@@ -1250,7 +1399,7 @@ const chatKeyDown = (cmd) => {
                             if (1 < multi) {
                                 // pick candidates up
                                 m = chooseMsg('multi-candidates-msg', "", "");// this 'm' is displayed in chatbox
-                                let multimsg = chooseMsg("config-update-plural-candidates-message", "", "");// this 'multimsg' is displayed in SOMETHINGMSGPANEL
+                                let multimsg = chooseMsg("config-update-plural-candidates-msg", "", "");// this 'multimsg' is displayed in SOMETHINGMSGPANEL
                                 for (i = 0; i < multi; i++) {
                                     multimsg += `'${multiscript[i]}',`;
                                 }
@@ -1310,12 +1459,12 @@ const chatKeyDown = (cmd) => {
                                             let data = `{"${presentaction.config_name}":"${new_param}"}`;
                                             postAjaxData(scenario["function-post-url"][3], data);
                                         } else {
-                                            m = chooseMsg("config-update-alert-message", "", "");;
+                                            m = chooseMsg("config-update-alert-msg", "", "");;
                                         }
                                     }
                                 }
                             } else {
-                                m = chooseMsg("config-update-error-message", "", "");
+                                m = chooseMsg("config-update-alert-config-update-error-msg", "", "");
                             }
                         }
 
@@ -1325,29 +1474,42 @@ const chatKeyDown = (cmd) => {
                             cancelableCmdList.push(presentaction.cmd);
                             if (presentaction.config_name != null && presentaction.config_data != null) {
                                 showSomethingInputField(true, 0);
-                                m = chooseMsg("config-update-simple-message", "", "");
+                                m = chooseMsg("config-update-simple-msg", "", "");
                             } else {
-                                m = chooseMsg("config-update-plural-message", "", "");
+                                m = chooseMsg("config-update-plural-msg", "", "");
                             }
                         } else if (inScenarioChk(ut, 'get-config-change-history-cmd')) {
-                            getAjaxData(scenario['function-get-url'][2]);
+                            getAjaxData(scenario["function-get-url"][2]);
+                        } else if (inScenarioChk(ut, 'get-operation-history-cmd')) {
+                            getAjaxData(scenario["function-get-url"][5]);
                         }
 
                         // user management
-                        if ((presentaction.cmd != null && presentaction.cmd == USERMANAGE) || inScenarioChk(ut, 'user-manage-show-profile')) {
-                            m = accountManager(ut);
-                        } else if (inScenarioChk(ut, 'user-manage-add')) {
-                            presentaction.cmd = USERMANAGE;
-                            cancelableCmdList.push(presentaction.cmd);
-                            m = accountManager(ut);
-                        }
+                        /*
+                                                if ((presentaction.cmd != null && presentaction.cmd == USERMANAGE) || inScenarioChk(ut, 'user-manage-show-profile-cmd')) {
+                                                    m = accountManager(ut);
+                                                } else if (inScenarioChk(ut, 'user-manage-add-cmd')) {
+                                                    presentaction.cmd = USERMANAGE;
+                                                    cancelableCmdList.push(presentaction.cmd);
+                                                    m = accountManager(ut);
+                                                }
+                        */
                     } else {
                         // do not have an authority
-                        if (inScenarioChk(ut, 'user-manage-add') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-delete') || inScenarioChk(ut, 'config-show-cmd')) {
+                        if (inScenarioChk(ut, 'user-manage-add-cmd') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-delete') || inScenarioChk(ut, 'config-show-cmd')) {
                             m = chooseMsg("no-authority-js-msg", "", "");
                         } else {
                             // normal reply e.g "next?"
                         }
+                    }
+
+                    // user management
+                    if ((presentaction.cmd != null && presentaction.cmd == USERMANAGE) || inScenarioChk(ut, 'user-manage-show-profile-cmd')) {
+                        m = accountManager(ut);
+                    } else if (inScenarioChk(ut, 'user-manage-add-cmd')) {
+                        presentaction.cmd = USERMANAGE;
+                        cancelableCmdList.push(presentaction.cmd);
+                        m = accountManager(ut);
                     }
 
                     break;
@@ -1367,7 +1529,7 @@ const chatKeyDown = (cmd) => {
                     } else {
                         if (!logoutflg && m.length == 0) {
                             m = chooseMsg("starting-3-msg", "", "");
-                        } else if (!logoutflg && 0 < m.length) {
+                        } else if (!logoutflg && 0 < m.length && !$(GUIDANCE).is(":visible")) {
                             m = chooseMsg('greeting-ask-msg', '', '');
                         }
                     }
@@ -1463,23 +1625,18 @@ const logoutChk = (s) => {
  * logout
  */
 const logout = () => {
-    $(JETELINAPANEL).animate({
-        width: "400px",
-        height: "100px",
-        top: "40%",
-        left: "40%"
-    }, ANIMATEDURATION);
-
+    jetelinaPanelPositionController(true);
+    changeChatGirlImage("chat");
     $(FUNCTIONPANEL).hide();
-    $(CONDITIONPANEL).hide();
     $(GENELICPANEL).hide();
     $(GENELICPANELINPUT).val('');
     $(SOMETHINGINPUT).val('');
-    $(CHARTPANEL).hide();
-    $("#api_access").hide();
+    $(PIECHARTPANEL).hide();
+    $(LINECHARTPANEL).hide();
+    hideApiAccessNumbersList();
     $("#performance_real").hide();
     $("#performance_test").hide();
-    $("#command_list").hide();
+    $(GUIDANCE).hide();
     showSomethingMsgPanel(false);
     showConfigPanel(false);
     showPreciousPanel(false);
@@ -1545,41 +1702,29 @@ const instractionMode = (s) => {
     }
 }
 /**
- * @function showManualCommandList
- * @param {string} s  user input data
+ * @function showGuidance
+ * @param {boolean} b  true->show GUIDANCE false->hide GUIDANCE
  * 
- * show/hide manual and/or command list panel
+ * show/hide GUIDANCE panel
  * 
  */
-const showManualCommandList = (s) => {
-    let ret = IGNORE;
-    let tagid1 = "";
-    let showflg = true;
-
-    if (inScenarioChk(s, 'guidance-cmd')) {
-        tagid = 'guidance';
-    } else if (inScenarioChk(s, 'command_list-cmd')) {
-        tagid = 'command_list';
-    } else {
-        showflg = false;
-    }
-
-    if (showflg) {
-        $(`#${tagid}`).show().animate({
-            width: window.innerWidth * 0.8,
-            height: window.innerHeight * 0.8,
-            top: "10%",
-            left: "10%"
+const showGuidance = (b) => {
+    if (b) {
+        jetelinaPanelPositionController(false);
+        $(GUIDANCE).show().animate({
+            width: window.innerWidth * 0.9,
+            height: window.innerHeight * 0.9,
+            top: "1%",
+            left: "5%"
         }, ANIMATEDURATION).draggable();
 
-        ret = chooseMsg("starting-6a-msg", "", "");
+        guidancefootnote(1);
     } else {
-        $("#guidance").hide();
-        $("#command_list").hide();
-        ret = chooseMsg('waiting-next-msg', "", "");
+        $(GUIDANCE).hide();
+        if (loginuser.user_id == null) {
+            jetelinaPanelPositionController(true);
+        }
     }
-
-    return ret;
 }
 /**
  * @function inScenarioChk
@@ -1664,14 +1809,14 @@ const isVisibleFunctionPanel = () => {
     return ret;
 }
 /**
-* @function inVisibleConditionPanel
+* @function isVisibleApiAccessNumbersList
 * @returns {boolean}  true -> visible, false -> invisible
 * 
-* checking "#condition_panel" is visible or not
+* checking "APIACCESSNUMBERS" is visible or not
 */
-const inVisibleConditionPanel = () => {
+const isVisibleApiAccessNumbersList = () => {
     let ret = false;
-    if ($(CONDITIONPANEL).is(":visible")) {
+    if ($(APIACCESSNUMBERS).is(":visible")) {
         ret = true;
     }
 
@@ -1748,12 +1893,20 @@ const showSomethingMsgPanel = (b) => {
             sm.draggable().show();
         }
         /*
-                here is for scrolling up the messages, but wonder if it required or not, then commented out, who knows.:O
+                here is for scrolling up the messages, but wondered if it required or not, then commented out, who knows.:O
         
                 messageScrollTimerID = setInterval(function () {
                     sm.animate({ scrollTop: (sm.scrollTop() == 0 ? sm.height() : 0) }, 4000);
                 }, ANIMATEDSCROLLING);
         */
+        /*
+            Tips:
+                in the case of existing 'suggesion' data and displaying 'concern' Jetelina, 'suggestion' has priority in the message panel.
+        */
+        if ((preferent.suggestion != null && 0 < preferent.suggestion.length)) {
+            //            if ((preferent.suggestion != null && 0 < preferent.suggestion.length) && $(`${JETELINAPANEL} [name='chat_girl_image']`).is(":visible")) {
+            $(SOMETHINGMSGPANELMSG).append(preferent.suggestion);
+        }
     } else {
         // these classes are for configuration changing history message
         sm.removeClass("config_history");
@@ -1920,7 +2073,7 @@ $("#databaselist").on("click", ".databasename", function () {
  * ajax function for executing API test.
  */
 const apiTestAjax = () => {
-    let url = scenario["function-apitest-usr"][0];
+    let url = scenario["function-apitest-url"][0];
     let data = $(`${COLUMNSPANEL} [name='apiin']`).text();
 
     $.ajax({
@@ -1938,7 +2091,7 @@ const apiTestAjax = () => {
     }).done(function (result, textStatus, jqXHR) {
         let m = chooseMsg('func-api-test-done-msg', '', '');
         if (checkResult(result)) {
-            if (loginuser.dbtype != "redis") {
+            if ($.inArray(loginuser.dbtype, ["redis", "mongodb"]) == -1) {
                 let ret = JSON.stringify(result);
                 $(`${COLUMNSPANEL} [name='apiout']`).addClass("attentionapiinout").text(ret);
             } else {
@@ -1953,13 +2106,25 @@ const apiTestAjax = () => {
                     }
                     $(CHATBOXYOURTELL).text(m);
                     $(".yourText").mouseover();
-                    refreshApiList();
-                    refreshTableList();
+                    refreshdisplayTablesAndApis();
                 }
 
                 let ret = JSON.stringify(result);
                 $(`${COLUMNSPANEL} [name='apiout']`).addClass("attentionapiinout").text(ret);
 
+                /*
+                    Tips:
+                        mongodb special.
+                        only mongodb's 'ji' and 'jd' apis have a chance to add and delete into its collection.
+                        therefore should be refreshed both the doc and api list if be executed these apis.
+                */
+                if (loginuser.dbtype == "mongodb") {
+                    let p = JSON.parse(data);
+                    if (p.apino.startsWith("jd")) {
+                        removeColumn();
+                        refreshdisplayTablesAndApis();
+                    }
+                }
             }
         } else {
             resetApiTestProcedure();
@@ -1987,7 +2152,7 @@ const apiTestAjax = () => {
  * ajax function for searching 'errnum' in the log file
  */
 const searchLogAjax = () => {
-    let url = scenario["function-search-log-errnum"][0];
+    let url = scenario["function-search-log-errnum-url"][0];
     let data = `{"errnum":"${preferent.errnum}"}`;
 
     $.ajax({
@@ -2052,5 +2217,178 @@ const showPreciousPanel = (b) => {
         // delete all test results
         $(`${PRECIOUSWORDPANEL} [name='precious_word']`).text("");
         $(PRECIOUSWORDPANEL).hide();
+    }
+}
+/**
+ * @function jsonFromCheck
+ * @param {string} json form
+ * @returns {boolean} true: correct json form   false: bad json form
+ *  
+ * check for json form in mongodb
+ */
+const jsonFromCheck = (s) => {
+    try {
+        js = JSON.parse(s);
+        if (js["j_table"] == null) {
+            return false;
+        }
+    } catch (e) {
+        return false;
+    }
+
+    return true;
+}
+/**
+ * @function guidancePageFootLinkController
+ * @param {integer} n page number in the 'pnum'
+ * 
+ * create cmd and call guidancePageController in case of clickcing the page link on the footer 
+ */
+const guidancePageFootLinkController = (n) => {
+    if (n != null) {
+        guidancePageController(`page ${n}`);
+    }
+}
+/**
+ * @function guidancePageController
+ * @param {String} cmd: user input in the chatbox
+ * 
+ * move the guidance page 
+ */
+const guidancePageController = (cmd) => {
+    let totalpagenumbers = $(`${GUIDANCE} div[name^="page"]`).length;
+    let pn = "";
+    let currentPage = 1;
+    let movetoPage = 1;
+
+    for (let i = 1; i <= totalpagenumbers; i++) {
+        pn = $(`${GUIDANCE} div[name="page${i}"]`);
+        if (pn.is(":visible")) {
+            currentPage = i;
+            if (inScenarioChk(cmd, "guidance-control-next-cmd")) {
+                if (i < totalpagenumbers) {
+                    movetoPage = i + 1;
+                }
+            } else if (inScenarioChk(cmd, "guidance-control-prev-cmd")) {
+                if (1 < i) {
+                    movetoPage = i - 1;
+                }
+            } else if (inScenarioChk(cmd, "guidance-control-first-cmd")) {
+                movetoPage = 1;
+            } else if (inScenarioChk(cmd, "guidance-control-last-cmd")) {
+                movetoPage = totalpagenumbers;
+            } else if (inScenarioChk(cmd, "guidance-control-page-cmd")) {
+                let p = cmd.split(/(?:page)|(?: )/);
+                movetoPage = currentPage;
+                if (0 < p.length) {
+                    for (let ii in p) {
+                        if (p[ii].match(/\d/)) {
+                            let pp = Number(p[ii]);
+                            if (0 < pp && pp <= totalpagenumbers) {
+                                movetoPage = pp;
+                            }
+
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!isNaN(movetoPage)) {
+                pn.hide();
+                $(`${GUIDANCE} div[name='page${movetoPage}']`).show();
+                break;
+            }
+        }
+    }
+
+    guidancefootnote(movetoPage);
+
+    return chooseMsg('stats-graph-show-msg', '', '');
+}
+/**
+ * @function guidancefootnote
+ * 
+ * @param {integer} p move to pange number
+ * 
+ * set page numbers on the footnote of guidance panges
+ */
+const guidancefootnote = (p) => {
+    // create page fotter
+    let totalpagenumbers = $(`${GUIDANCE} div[name^="page"]`).length;
+    let pages = "Page ";
+
+    for (let i = 1; i <= totalpagenumbers; i++) {
+        if (i != p) {
+            pages += `<a href="#" onclick="page(${i})">${i}</a> `;
+        }
+    }
+
+    $(`${GUIDANCE} div[name="page${p}"] div[name="pnum"]`).html(pages);
+}
+/**
+ * @function jetelinaPanelPositionController
+ * @param {boolean} b: true -> position center false -> position below
+ * 
+ * JETELINAPANEL position change 
+ */
+const jetelinaPanelPositionController = (b) => {
+    if (b) {
+        // move to center
+        $(JETELINAPANEL).animate({
+            width: "400px",
+            height: "100px",
+            top: "40%",
+            left: "40%"
+        }, ANIMATEDURATION);
+    } else {
+        // move to below
+        $(JETELINAPANEL).animate({
+            height: "70px",
+            top: "85%", //`${panelTop}px`,
+            left: "5%" //"210px"
+        }, ANIMATEDURATION);
+    }
+}
+/**
+ * @function determindDateStart2End
+ * @param {Array} dates: array of date data.  ex. ['2025-02-03','2025-01-01'....]
+ * @return {Array} : [min date, max date]
+ * 
+ * pick the min date and max date within query date array
+ * 
+ * Caution:
+ *   .toLocalDateString('sv-SE') returns 'yyyy-mm-dd' format, it's convenient to use here. 
+ */
+const determindDateStart2End = (dates) => {
+    let ret = [];
+
+    if (0 < dates.length) {
+        let mind = new Date(Math.min(...dates)).toLocaleDateString('sv-SE');
+        let maxd = new Date(Math.max(...dates)).toLocaleDateString('sv-SE');
+
+        ret = [mind, maxd];
+    }
+
+    return ret;
+}
+/**
+ * @function changeChatGirlImage
+ * @param {String} imgtype: switching image
+ * 
+ * switching chat box image.
+ * 
+ */
+const changeChatGirlImage = (imgtype) => {
+    let imgtag = $(`${JETELINAPANEL} [name='chat_girl_image']`);
+    let chatimg = "jetelina/img/jetelina-chat.png";
+    let concernimg = "jetelina/img/jetelina-concern.png";
+
+    if (imgtype == "concern") {
+        imgtag.show();
+        //        imgtag.attr('src',concernimg);
+    } else if (imgtype == "chat") {
+        imgtag.hide();
+        //        imgtag.attr('src',chatimg);
     }
 }

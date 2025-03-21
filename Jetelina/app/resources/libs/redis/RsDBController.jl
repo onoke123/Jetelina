@@ -4,7 +4,7 @@ module: RsDBController
 Author: Ono keiji
 
 Description:
-	DB controller for PostgreSQL
+	DB controller for Redis
 
 functions
 	open_connection() open connection to the DB.
@@ -85,6 +85,7 @@ function dataInsertFromCSV(fname::String)
     df = DataFrame(CSV.File(fname))
     rename!(lowercase, df)
     #    push!(tablename_arr, redisdbname)
+    dbname::String = "redis"
 
     if (0 < nrow(df))
         #===
@@ -102,7 +103,7 @@ function dataInsertFromCSV(fname::String)
             ===#
             insert_str = RsSQLSentenceManager.createApiInsertSentence()
             if (insert_str != "")
-                ApiSqlListManager.writeTolist(insert_str, "", key_arr, "redis")
+                ApiSqlListManager.writeTolist(insert_str, "", key_arr, dbname)
             end
 
             push!(key_arr, df.key[i])
@@ -110,14 +111,14 @@ function dataInsertFromCSV(fname::String)
             update_str = RsSQLSentenceManager.createApiUpdateSentence(df.key[i])
             if (update_str != "")
                 if (set(df.key[i], df.value[i])[1])
-                    ApiSqlListManager.writeTolist(update_str, "", key_arr, "redis")
+                    ApiSqlListManager.writeTolist(update_str, "", key_arr, dbname)
                 end
             end
 
             # select (get)
             select_str = RsSQLSentenceManager.createApiSelectSentence(df.key[i])
             if (select_str != "")
-                ApiSqlListManager.writeTolist(select_str, "", key_arr, "redis")
+                ApiSqlListManager.writeTolist(select_str, "", key_arr, dbname)
             end
         end
 
@@ -205,6 +206,7 @@ function _executeApi(json_d::Dict, dfRedis::DataFrame)
     #    println(dfRedis)
     ret = ""
     jmsg::String = string("compliment me!")
+    dbname::String = "redis"
 
     if startswith(apino, "js")
         # get 
@@ -254,11 +256,11 @@ function _executeApi(json_d::Dict, dfRedis::DataFrame)
             if (update_str != "")
                 key_arr::Vector{String} = []
                 push!(key_arr, k)
-                ret_u = ApiSqlListManager.writeTolist(update_str, "", key_arr, "redis")
+                ret_u = ApiSqlListManager.writeTolist(update_str, "", key_arr, dbname)
 
                 select_str = RsSQLSentenceManager.createApiSelectSentence(k)
                 if (select_str != "")
-                    ret_s = ApiSqlListManager.writeTolist(select_str, "", key_arr, "redis")
+                    ret_s = ApiSqlListManager.writeTolist(select_str, "", key_arr, dbname)
                 end
             end
 

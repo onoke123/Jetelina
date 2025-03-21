@@ -3,11 +3,12 @@ build/*
 cache/*
 config/secrets.jl
 docs/build
-log/*
+log/
 sessions/*
 !*.gitkeep
 #Manifest.toml
-test/*
+test/
+apiperformancefiles/
 
 # Vagrant
 .vagrant

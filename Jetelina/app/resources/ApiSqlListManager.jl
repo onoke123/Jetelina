@@ -141,16 +141,54 @@ function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String
     				insert/update/select are for RDBMS
     				set/get are for Redis
     		===#
-    if startswith(sql, "insert") || (startswith(sql, "set") && (sql == "set::"))
-        suffix = "ji"
-    elseif startswith(sql, "update") && contains(sql, "jetelina_delete_flg=1")
-        suffix = "jd"
-    elseif startswith(sql, "update") || (startswith(sql, "set") && (sql != "set::"))
-        suffix = "ju"
-    elseif startswith(sql, "select") || startswith(sql, "get")
-        suffix = "js"
+    if db == "postgresql" || db == "mysql"
+        #===
+        if startswith(sql, "insert") || (startswith(sql, "set") && (sql == "set::"))
+            suffix = "ji"
+        elseif startswith(sql, "update") && contains(sql, "jetelina_delete_flg=1")
+            suffix = "jd"
+        elseif startswith(sql, "update") || (startswith(sql, "set") && (sql != "set::"))
+            suffix = "ju"
+        elseif startswith(sql, "select") || startswith(sql, "get")
+            suffix = "js"
+        end
+        ===#
+        if startswith(sql, "insert")
+            suffix = "ji"
+        elseif startswith(sql, "update") && contains(sql, "jetelina_delete_flg=1")
+            suffix = "jd"
+        elseif startswith(sql, "update")
+            suffix = "ju"
+        elseif startswith(sql, "select")
+            suffix = "js"
+        end
+    elseif db == "redis"
+        if (startswith(sql, "set") && (sql == "set::"))
+            suffix = "ji"
+        elseif startswith(sql, "update") && contains(sql, "jetelina_delete_flg=1")
+            #===
+                Caution:
+                    in fact, there is no 'jd' api in redis
+            ===#
+            suffix = "jd"
+        elseif (startswith(sql, "set") && (sql != "set::"))
+            suffix = "ju"
+        elseif startswith(sql, "get")
+            suffix = "js"
+        end
+    elseif db == "mongodb"
+        if startswith(sql, "{insert")
+            suffix = "ji"
+        elseif startswith(sql, "{delete")
+            suffix = "jd"
+        elseif startswith(sql, "{update")
+            suffix = "ju"
+        else
+            suffix = "js"
+            sql = replace.(sql,"\""=>"\"\"")
+        end
     end
-
+    
     seq_no = getApiSequenceNumber()
     sqlsentence = """$suffix$seq_no,\"$sql\",\"$subquery\",\"$db\""""
 
@@ -166,6 +204,7 @@ function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String
                 println(f, string(j_config.JC["file_column_apino"], ',', j_config.JC["file_column_sql"], ',', j_config.JC["file_column_subquery"]), ',', j_config.JC["file_column_db"])
             end
 
+#            CSV.write(f, Tables.table([sqlsentence]); append=true)
             println(f, sqlsentence)
         end
     catch err
@@ -186,8 +225,17 @@ function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String
     # update DataFrame
     readSqlList2DataFrame()
 
-    # write to operationhistoryfile
-    JLog.writetoOperationHistoryfile(string("create api", ",", suffix, seq_no))
+    #===
+        Caution:
+            .writetoOperationHistoryfile() requests the session data in it, 
+            but mongodb has the document insertion webapi that creates the related apis,
+            of course there is no issue in the case of executing on Jetelina console, but via webapi,
+            therefore, now, to be exception it, tbh do not wanna change .writetoO...() now. :p
+    ===#
+    if db != "mongodb"
+        # write to operationhistoryfile
+        JLog.writetoOperationHistoryfile(string("create api", ",", suffix, seq_no))
+    end
 
     return true, string(suffix, seq_no)
 end
@@ -304,7 +352,7 @@ function deleteApiFromList(apis:Vector)
 	delete api by ordering from JC["sqllistfile"] and JC["tableapifile"] file, then refresh the DataFrame.
 	
 # Arguments
-- `tablename::Vector`: target tables name
+- `apis::Vector`: target apis name
 - return: boolean: true -> all done ,  false -> something failed
 """
 function deleteApiFromList(apis::Vector)
@@ -455,8 +503,18 @@ function sqlDuplicationCheck(nsql::String, subq::String, dbtype::String)
         df = subset(ApiSqlListManager.Df_JetelinaSqlList, :db => ByRow(==(dbtype)), skipmissing = true)
 
         for i ∈ 1:nrow(df)
-            if df[!, :sql][i] == nsql && coalesce(df[!, :subquery][i],"") == subq
-                return true, df[!, :apino][i]
+            if dbtype != "mongodb"
+                if df[!, :sql][i] == nsql && coalesce(df[!, :subquery][i],"") == subq
+                    return true, df[!, :apino][i]
+                end
+            else
+                #===
+                    Tips:
+                        only one 'ji*' api for mongodb
+                ===#
+                if startswith("ji",df[!,:apino][i])
+                    return true, df[!,:apino][i]
+                end
             end
         end
     end

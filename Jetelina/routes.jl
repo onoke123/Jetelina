@@ -34,12 +34,12 @@ route("/initialuser", PostDataController.initialUser, method = POST )
 ===#
 route("/chkaccount", PostDataController.login, method = POST )
 route("/goodbyenow", GetDataController.logout )
-route("/getuserinfo", PostDataController.getUserInfoKeys, method = POST)
+#route("/getuserinfo", PostDataController.getUserInfoKeys, method = POST)
 route("/userregist", PostDataController.userRegist, method = POST)
 #route("/refuserattribute", PostDataController.refUserAttribute, method = POST)
-route("/refuserinfo", PostDataController.refUserInfo, method = POST)
-route("/updateuserinfo", PostDataController.updateUserInfo, method = POST)
-route("/updateuserdata", PostDataController.updateUserData, method = POST)
+#route("/refuserinfo", PostDataController.refUserInfo, method = POST)
+#route("/updateuserinfo", PostDataController.updateUserInfo, method = POST)
+#route("/updateuserdata", PostDataController.updateUserData, method = POST)
 #route("/updateuserlogindata", PostDataController.updateUserLoginData, method = POST)
 route("/deleteuser", PostDataController.deleteUserAccount, method = POST)
 
@@ -105,19 +105,22 @@ route( "/getcsvdata", FileUploadController.read )
 
 #===
 
-  ■Condition panel features
-    urls for using in condition panel.
+  ■stats features
+    urls for using in stats functions.
     handle analyzed data to draw 2D and/or 3D graphic, and gives suggestion to 
 
 ===#
-# gets 'table combination vs access' relation data in condition panel
+# gets 'table combination vs access' relation data in stats panel
 route("/gettablecombivsaccessrelationdata",GetDataController.getTableCombiVsAccessRelationData)
-# gets sql performance data in condition panel
-route("/getsqlaccessdata",GetDataController.getSqlAccessData)
+# gets sql performance data in stats panel
+route("/getapiaccessdata",GetDataController.getApiAccessData)
+route("/getdbaccessdata",GetDataController.getDBAccessData)
 route("/getperformancedata_real",GetDataController.getPerformanceRealData)
 route("/getperformancedata_test",GetDataController.getPerformanceTestData)
 route("/chkexistimprapifile",GetDataController.checkExistImproveApiFile)
+route("/getsuggestiondata",GetDataController.getSuggestionData)
 
+route("/getapiexecspeed", PostDataController.getApiExecutionSpeed, method = POST)
 #===
 
   ■Configuration features
@@ -127,3 +130,4 @@ route("/chkexistimprapifile",GetDataController.checkExistImproveApiFile)
 route("/getconfigdata", PostDataController.getConfigData, method = POST)
 route("/changeconfigdata", PostDataController.configParamUpdate, method = POST)
 route("/getconfigchangehistory", GetDataController.getConfigHistory)
+route("/getoperationhistory", GetDataController.getOperationHistory)

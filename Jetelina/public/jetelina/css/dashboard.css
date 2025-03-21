@@ -8,13 +8,11 @@ body {
   padding: 5px;
   width: auto;
   height: 15px;
-  border: 1px solid #2e6da4;
   background-color: #09859e;
   color: #eeeeee;
+  border: 1px solid #2e6da4;
   border-radius: 9999px;
-  display: inline-block;
   font-size: 12px;
-  border-radius: 9999px;
   cursor: pointer;
   margin:3px;
   overflow: hidden;
@@ -37,10 +35,10 @@ body {
   padding: 5px;
   width: 80px;
   height: 15px;
-  border: 1px solid #a4bf3b;
   background-color: #7dc37f;
   color: #2115cb;
   font-size: 12px;
+  border: 1px solid #a4bf3b;
   border-radius: 9999px;
   cursor: pointer;
   margin:3px;
@@ -151,7 +149,6 @@ body {
   font-style: italic;
   font-size: medium;
   text-shadow: 0 0 10px rgb(193, 206, 194), 0 0 15px #f1ef46;
-  ;
 }
 
 input.user-input {
@@ -346,4 +343,20 @@ textarea.user-input{
   .configparams_val {
     color: #f1ef46;
     text-align: left;
+  }
+
+  .chatImg {
+    position:absolute;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    -webkit-transition: .4s ease-in;
+    transition: .4s ease-in;
+    width: 30px;
+    height: 31px;
+  }
+
+  .guidance {
+    font-size: larger;
+    font-style: italic;
+    color: aquamarine;
   }

@@ -6,10 +6,12 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
 	<link rel="stylesheet" href="jetelina/css/dashboard.css">
 	<link rel="stylesheet" href="jetelina/css/tablelist.css">
+	<link rel="stylesheet" href="css/datatables/datatables.min.css">
 
 	<script type="text/javascript" src="js/genie/jquery.min.js"></script>
 	<script type="text/javascript" src="js/jquery-ui-1.13.2/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="js/plotly-2.26.0.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="js/datatables/datatables.min.js"></script>
 
 	<link rel="icon" href="jetelina/img/jetelina.ico">
 	<title>Jetelina</title>
@@ -17,14 +19,16 @@
 
 <body>
 	<div id="thxfavicon">
-		<text style="color:lightgreen">thank you for the favicon by </text><a href="https://www.freepik.com/" target="_blank" rel="noreferrer noopener">freepik</a>
+		<text style="color:lightgreen">thank you for the favicon by </text><a href="https://www.freepik.com/"
+			target="_blank" rel="noreferrer noopener">freepik</a>
 	</div>
 	<!--
 		Jetelina initialize page. only one time using, maybe. :)
 	-->
-	<div id="initialize" style="left:20%;top:20%;" class="functionpanel-parts commonpanel box_text initializepanel" hidden>
-			<div name="initialalert" class="initial_alert_text"></div>
-			<pre>
+	<div id="initialize" style="left:20%;top:20%;" class="functionpanel-parts commonpanel box_text initializepanel"
+		hidden>
+		<div name="initialalert" class="initial_alert_text"></div>
+		<pre>
 			Welcome to Jetelina.
 			
 			You dive into the new web development world. I bet this provide you incredible comfortable environment.
@@ -77,27 +81,6 @@
 			</div>
 	</pre>
 	</div>
-	<!--
-            condition panel
-    -->
-	<div id="condition_panel" class="functionpanel-parts commonpanel squarepanel" hidden>
-		<div id="plot" style="width:50%;height:50%" hidden>
-			<div><text style="size:a3;color:lightgreen;">Access vs Combination</text></div>
-			<div id="plot_graph"></div>
-		</div>
-		<div id="api_access_numbers" style="width:50%;height:50%" hidden>
-			<div><text style="size:a3;color:white;">API Access Numbers</text></div>
-			<div id="api_access_numbers_graph"></div>
-		</div>
-		<div id="performance_real" style="width:50%;height:50%" hidden>
-			<div><text style="size:a3;color:white;">SQL Execution Time (sec)</text></div>
-			<div id="performance_real_graph"></div>
-		</div>
-		<div id="performance_test" style="width:30%;height:30%" hidden>
-			<div><text style="size:a3;color:red;">TEST SQL Execution Time (sec)</text></div>
-			<div id="performance_test_graph"></div>
-		</div>
-	</div>
 	<!-- 
 			function panel
 	-->
@@ -109,20 +92,22 @@
                     if it's changed to other. 
                 -->
 				<label name="filelabel">
-					<input type="file" name="upfile" style="display: none;" accept=".csv"><span
+					<input type="file" name="upfile" style="display: none;" accept=".csv,.json"><span
 						style="font-size: 14px;">Upload CSV File</span>
 				</label>
 			</form>
 		</div>
 
-		<div id="left_panel" style="width:16%;height:80%" class="functionpanel-parts commonpanel squarepanel right_left_panel_scroll">
+		<div id="left_panel" style="width:16%;height:80%"
+			class="functionpanel-parts commonpanel squarepanel right_left_panel_scroll">
 			<label id="table_list_title">Table List</label>
 			<br><br>
 			<div id="table_container"></div>
 			<!--div id="api_container" hidden></div-->
 		</div>
 
-		<div id="right_panel" style="width:16%;height:81%" class="functionpanel-parts commonpanel squarepanel right_left_panel_scroll">
+		<div id="right_panel" style="width:16%;height:81%"
+			class="functionpanel-parts commonpanel squarepanel right_left_panel_scroll">
 			<label id="api_list_title">API List</label>
 			<br><br>
 			<div id="api_container"></div>
@@ -139,31 +124,75 @@
 			<text></text>
 		</div>
 		<!-- selected columns list area -->
-		<div id="container" style="width:59%;height:16%"
-			class="functionpanel-parts commonpanel squarepanel itempanel">
+		<div id="container" style="width:59%;height:16%" class="functionpanel-parts commonpanel squarepanel itempanel">
 			<div id="genelic_panel" hidden>
 				<text name="genelic_text" class="box_text"></text>
 				<textarea name="genelic_input" class="user-input"></textarea>
 				<!--input type="text" name="genelic_input" class="user-input"></input-->
-				<p class="jetelina_subquery_note">writing the sub query is on your own responsibility. I'll check it simply.:)</p>
+				<p class="jetelina_subquery_note">writing the sub query is on your own responsibility. I'll check it
+					simply.:)</p>
 			</div>
 		</div>
 		<!-- desplya the API test result area-->
-		<div id="apitest" style="width:60%;height:15%;top:80%;left:20%;" class="functionpanel-parts commonpanel squarepanel" hidden>
+		<div id="apitest" style="width:60%;height:15%;top:80%;left:20%;"
+			class="functionpanel-parts commonpanel squarepanel" hidden>
 			<div name="api-test-msg">
 			</div>
 			<div name="api-test-data" style="height: 50%;" class="msg_scroll">
 			</div>
 		</div>
 	</div>
-	<div id="config_panel" style="width:30%;height:30%;top:30%;left:40%;" class="commonpanel squarepanel genelic_panel msg_scroll" hidden>
+	<!--
+            stats panel
+    -->
+	<div id="api_access_numbers" style="top:20%;left:10%;position:fixed;z-index:10;" class="functionpanel-parts commonpanel squarepanel" hidden>
+		<div><text style="font-size: large;color:lightgreen;">API Access Numbers　</text><text style="font-size:small;color:lightgreen;"name="between"></text></div>
+		<div id="api_access_numbers_graph">
+			<table id="api_access_numbers_list" style="color:lightgreen;">
+				<thead>
+					<tr>
+						<th>apino</th>
+						<th>access numbers</th>
+						<th>data base</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+	</div>
+	<!-- pie chart of each database access rate data -->
+	<div id="piechart" style="top:20%;left:50%;position:fixed;z-index:20;" class="functionpanel-parts commonpanel squarepanel" hidden>
+		<div><text style="font-size: large;color:lightgreen;">Rate of DataBase access numbers　</text><text style="font-size:small;color:lightgreen;"name="between"></text></div>
+		<div id="piechart_graph"></div>
+	</div>
+	<!-- line chart of an api execution speed data -->
+	<div id="apispeedchart" style="top:30%;left:30%;position:fixed;z-index:30;" class="functionpanel-parts commonpanel squarepanel" hidden>
+		<div><text style="font-size: large;color:lightgreen;">Execution Speed of　</text><text name="apino" style="font-size:large;color:lightgreen;"></text><text style="font-size:small;color:lightgreen;" name="between"></text></div>
+		<div id="apispeed_graph"></div>
+	</div>
+
+	<div id="performance_real" style="width:50%;height:50%" hidden>
+		<div><text style="font-size: large;color:white;">SQL Execution Time (sec)</text></div>
+		<div id="performance_real_graph"></div>
+	</div>
+	<div id="performance_test" style="width:30%;height:30%" hidden>
+		<div><text style="font-size: large;color:red;">TEST SQL Execution Time (sec)</text></div>
+		<div id="performance_test_graph"></div>
+	</div>
+	<!--
+			configuration panel
+	-->
+	<div id="config_panel" style="width:30%;height:30%;top:30%;left:40%;"
+		class="commonpanel squarepanel genelic_panel msg_scroll" hidden>
 		<label>Server Configuration</label>
 		<br><br>
 		<div name="config_list">
 		</div>
 	</div>
+	<!--
+			something message panels
+	-->
 	<div id="jetelina_teach_you_smg" class="commonpanel squarepanel genelic_panel jetelina_teach_you" hidden>
-		<div name="precious_word" style="text-align: left;" class="box_text"></div>		
+		<div name="precious_word" style="text-align: left;" class="box_text"></div>
 	</div>
 	<div id="something_msg" class="commonpanel squarepanel genelic_panel something_msg_def msg_scroll" hidden>
 		<text name="jetelina_message" class="jetelina_message"></text>
@@ -172,6 +201,9 @@
 			<input type="text" name="something_input" class="user-input" autocomplete="off"></input>
 		</div>
 	</div>
+	<!--
+			available dataase icons panel
+	-->
 	<div id="databaselist" class="commonpanel dblist" hidden>
 		<span name="postgresql" class="databasename" hidden>
 			<img src="jetelina/img/postgresql.png" style="width:60px;height:40px;">
@@ -182,179 +214,319 @@
 		<span name="redis" class="databasename" hidden>
 			<img src="jetelina/img/redis.png" style="width:40px;height:40px;">
 		</span>
+		<span name="mongodb" class="databasename" hidden>
+			<img src="jetelina/img/mongodb.png" style="width:40px;height:40px;">
+		</span>
 	</div>
 	<!--
 		manual, another word 'help'
 	-->
-	<div id="guidance" class="functionpanel-parts commonpanel squarepanel" hidden>
-		<div style="size:a3;color:#a8ce49;width:80%;height:50%; font-size: large; font-family: sans-serif;">
-			This is my current skills.<br>
-			<table name="page1" style="margin:auto;text-align:left;">
-				<tr>
-					<td><pre>
-	Hi, I am Jetelina that is your helper to create database tables and WebAPIs that are related with the created database.
-	The databases that I can manage so far are PostgreSql, MySql and Redis. Redis is experimental implementation for me, BECAUSE
-	I do not know its use cases yet, indeed. :p
+	<div id="guidance" class="functionpanel-parts commonpanel squarepanel" style="z-index:100;" hidden>
+		<div style="font-size: large;color:#a8ce49;width:80%;height:50%; font-size: large; font-family: sans-serif;">
+			<div name="page1" style="margin:auto;text-align:left;">
+				<pre>
+	    Hi, I am Jetelina that is your helper to create database tables and WebAPIs that are related with the created database.
+	The databases that I can manage so far are PostgreSql, MySql, Redis and MongoDB.
+	You should visit my website <a href="https://jetelina.org" target="_blank">jetelina.org</a> if you wanna know my overview.Type 'go jetelina.org'.
+	This guidance only introduces 'HOW TO USE ME' to you.
+	    The first of all, you can move to the 'X' page with typing 'page X', e.g. 'page 2', but 'go to page 2 please' is more friendly to me. :)
+	'next' or 'previous' and 'go to the first/head' or 'go to the last/end' are available as well.
+	And to out of this guidance, give me 'thx', 'thank you', etc.
+	You may wonder about my reactions sometimes due to your typo. Check what did you type with 'what did i type?' or 'what did i say to you?',
+	also you can see them with puting your mouse cursor on the tiny font between my words and your input field in our chatbox.
 
-	The handling process that I recommend to you is,
-		1. you upload your csv data file to me
-		2. i create a data base table according to your uploading csv file
-		3. you open the created table
-		4. you select some columns that you wanna to be data of your WebAPI, this is to be the sql source code
-		5. pre-test the sql source code to make confirm
-		6. finally create WebAPI is related with the sql
-						
-		since 6, you can use the created new WebAPI in your web page/application, of course it can be tested on my palm.
-		Anyhow let's try it, do not worry I suggest you how to do it.
+	Oops, in the case of this is your first access to me, this is the login method.
+		step 1. type 'hi' into my chatbox, we always start with a greeting, 'hello' is good as well
+		step 2. chat with me till i ask your name
+		step 3. type your 'name' that is registered as your account when i finally ask to you
+				</pre>
+				<pre style="color: rgb(238, 234, 232);font-style: italic;font-size: smaller;">
+			IMPORTANT: IF YOU ARE THE FIRST, 'it is me' is the acccount for initialization me. 
+				</pre>
+				<pre>
+		step 4. then we start to work something together
+		step 5. type 'exit','logout','bye'...etc to logout from me
 
-		Oops, I must tell you something before you use me.
-		You command me every your order through our chatbox. Some functions are able to be used by a mouse, but INDEED you will know
-		typing is enough to us. Mouse manipulation is old fashion. JUST talk to me. :)
-					</pre></td>
-				</tr>
-				<tr>
-					<td style="color: antiquewhite;"><pre>
-	These are a little bit details, but you can see more detail in jetelina.org site.
-					</pre></td>
-				</tr>
-				<tr>
-					<td><pre>
-	■Adding using data base
-		You maybe will want to use additional database, I mean PostgreSql + Redis, MySql + Redis, PostgreSql + MySql + Redis.
-		This is my proudly skill. :)
-			1. to make use it, type 'i wanna use postgresql' and so on
-			2. I try to connect it, and display its connection parameters if i cannot reach it, plz set the collect parameters and try again
+	These are the basic operations from starting to use a database to create a DBI then publish it,
+	    in page 2
+		   2-1. how to use databases
+		   2-2. how to create tables by uploading a csv file
+	    in page 3
+		   3-1. how to manage a created table
+		   3-2. how to create DBI from a create table and publish it as a WebAPI
+	    in page 4
+		   4-1. can i check and test the DBI before publishing?
+		   4-2. how to switch databases, e.g. PostgreSQL to Redis
+		   4-3. how to delete the created DBIs/WebAPIs
+	Next, these are the intermediate operations about getting error reasons in your WebAPIs,
+	    in page 5
+		   5-1. when and where i will see the error happened?
+		   5-2. can i fix the error?
+	Ok, these are the advanced operations, but do not need any special account,
+	    in page 6
+		   6-1. how to know each WebAPIs daily access numbers
+		   6-2. how to know each databases total access numbers
+		   6-3. how to know each WebAPIs execution speed 
+	And these are another advanced operations you need privilege roll.To know you have it or not, type 'who am i' after logging to me,
+	you can operate the belows if you have 'admin' roll.
+	    in page 7
+  		   7-1. how to create a new user
+		   7-2. how to change a database parameter
+		   7-3. how to change my parameters
+	
+	                                                                              OK, type the page number what you wanna to see,'page x','next','previous'.... or 'thank you' to exit
+				</pre>
+			<div name="pnum" style="text-align: center;"></div>
+			</div>
+	<!-------------------- PAGE 2 ---------------------------------------------------------------->
+			<div name="page2" style="margin:auto;text-align:left;" hidden>
+				<span class="guidance">2-1. how to use databases</span>
+				<pre>
+	You and I can handle PostgreSQL/MySQL/Redis/MongoDB. You type your database whichever, e.g 'use postgresql', then follow me.
+	After connecting to the database, the icon is highlighted. This is the signal of current working database.
+				</pre>
+				<span class="guidance">2-2. how to create tables by uploading a csv file</span>
+				<pre>
+	Every table in databases, in case NonSQLs are key or document, are created by uploading a csv file to me.
+	You type 'file open','upload file'...etc, then the file box is open, select your file, then follow me. 
+	A csv file has some rules,
+			(1) the file name is to be the table name
+			        e.g   ftest.csv  →  'ftest' table   
+			(2) inside the file: csv format with headers
+			        e.g   
+			           name,sex,age,ave   ← headers(be a table column name)
+		               AAA1,m,10,0.1      ← data
+		               BBB2,f,20,0.2
+			(3) an unique id is put on each row data automatically
+			(4) the column data type is decided automatically by me
+			        e.g
+						name:AAA1 is string	→ 'name' column is to be varchar
+						age :10 is integer	→ 'age' column is to be integer
+						ave :0.1 is real	→ 'ave' column is to be double
 
-	■Login/Logout
-		We always start with 'Hi','Hello' or some greetings. When you wanna login to me, you just type
-		your account in my chatbox.
-		After you enter in me, you can logout whenever by typing 'logout',,'exit','bye' and so on, but I
-		am pleasure if you type 'have a nice day'.
-					</pre></td>
-				</tr>
-				<tr>
-					<td style="text-align:center;">
-						Page <a href="#" onclick="page(2)">2</a> <a href="#" onclick="page(3)">3</a> 
-					</td>
-				</tr>
-			</table>
-			<table name="page2" style="margin:auto;text-align:left;" hidden>
-				<tr>
-					<td><pre>
-	■Upload csv file
-		Your uploading csv file is to be a origin of created database table.
-		The created table is displayed after uploading it.
-		The format is very common csv format,
-			e.g
-				ftest.csv   ← see in 'testdata' directory
-				name,sex,age,ave   ← be a table column name
-				AAA1,m,10,0.1      ← data
-				BBB2,f,20,0.2
-						</pre>
-						<pre style="color: rgb(230, 89, 8);">
-	Attention, the headers (name,sex..) are to be column name, thus you can not use '-' and so on, these are not 
+	thus, uploading a ftest.csv creates 
+		table name: ftest
+		table coluns are:
+			| id | name |  sex  |  age  |  ave  |
+			|  1 | AAA1 |   m    |  10   |  0.1  |
+			|  2 | BBB2 |    f     |  20   |  0.2  |
+
+				</pre>
+				<pre style="color: rgb(228, 218, 89);font-style: italic; font-size: smaller;">
+	ATTENTION:
+	duplicated uploading is inserting them to the exist table, i mean,
+			| id | name |  sex  |  age  |  ave  |
+			|  1 | AAA1 |   m    |  10   |  0.1  |
+			|  2 | BBB2 |    f     |  20   |  0.2  |
+			|  3 | AAA1 |   m    |  10   |  0.1  |     ← inserted
+			|  4 | BBB2 |    f     |  20   |  0.2  |   ← inserted
+
+	the headers (name,sex..) are to be column name, thus you can not use '-' and so on, these are not 
 	allowed to use in there depend on a database. In fact, the column name will be named with the file name + header name,
 	for example, ftest_name, ftest_sex... in above example. Because I wish every columns are uniquness.
-					</pre></td>
-				</tr>
-				<tr>
-					<td><pre>
-	■WebAPIs
-		Some WebAPIs are created automatically by creating a table, I mean uploading csv file.
-		These are displayed on the right side panel. They have a meaning full name,
-						
+				</pre>
+				<div name="pnum" style="text-align:center;"></div>
+			</div>
+	<!-------------------- PAGE 3 ---------------------------------------------------------------->
+			<div name="page3" style="margin:auto;text-align:left;" hidden>
+				<span class="guidance">3-1. how to manage a created table</span>
+				<pre>
+	The created tables are shown in the left panel on me. 
+		(1) 'select xxxx' or 'open xxxx' is for opening the xxxx table, then its columns are displayed in the center panel
+		(2) 'drop table xxxx' is for dropping 'xxxx' table, the associated DBIs/WebAPIs are also deleted synchronously
+				</pre>
+				<pre style="color: rgb(230, 89, 8);font-style: italic;">
+	CAUTION: this table droppping is parmanent deleting, i mean it is as same as 'drop table xxxx' in SQL
+				 </pre>
+				 <span class="guidance">3-2. how to create DBI from a create table and publish it as a WebAPI</span>
+				 <pre>
+	Some DBIs/WebAPIs are created automatically by creating a table, I mean when you upload a csv file to me.
+	These are displayed in the right side panel. They have a meaning full name,
+											
 		- created automatically
 			'ji': data insert api. I create it automatically by uploading your csv file.
 			'ju': data update api. Same above.
 			'jd': data delete api. Again.
-
+					
 		- you will create
-			'js': data select api. You created.
-
-		try to type its name, for example 'select ji12' or simply 'select 12', it is opened what it is.
-		You will see 'IN','OUT' and a sql sentence below. 'IN' and 'OUT' are the WebAPI's I/F, and the sql sentence is the execution in fact. 
-
+			'js': data select api. 
+					
+	Try to type its name, e.g 'select ji12' or simply 'select 12', then you see 'IN','OUT' and a sql sentence, in case RDBMS, below. 
+	'IN' and 'OUT' are the WebAPI's I/F, and the sql sentence is the execution in fact. 
+					
 	To create 'js' API, 
-		1. select table by typing its name, for example, 'select ftest'. 'ftest' is the table name, 'open ftest' can be done as well
-		2. select columns, they moves to below, for example 'select age', 'age' is the column. 'select all' is .. you know :)
-		3. you can cancel it by typing 'cancel' or 'reject' with the column name, for example 'cancel age, cancel all is 'cancel all'
-		4. type 'go subquery' or shortly 'go sub' to move subquery input area to set a subquery phrase if you need, 
-			   for example 'where ftest.ftest.age < 30'
-		5. to test these setting, you can type 'test api' or 'test sql'...., I execute the sql that is defined by selected items and the subquery
-		6. the test result is displayed as same as the 'OUT' I/F format, check it
-		7. to create api, simply type 'create api', 
-					</pre>
-					<pre style="color: rgb(230, 89, 8);">
-			BUT ATTENTION, .... to be the next page :)   		
-					</pre></td>
-				</tr>
-				<tr>
-					<td style="text-align:center;">
-						Page <a href="#" onclick="page(1)">1</a> <a href="#" onclick="page(3)">3</a> 
-					</td>
-				</tr>
-			</table>
-			<table name="page3" style="margin:auto;text-align:left;" hidden>
-					<tr>
-						<td><pre>
-							</pre>
-							<pre style="color: rgb(230, 89, 8);">
-		in the case of you set the subquery, its variable parameter must enclosed with '{}', and the rule is following the database 
-		I mean, if you tested the api with 'where ftest.ftest_age < 30', and you wanna '30' to be a variable parameter, you must change it {age},
-				where ftest.ftest_age < 30    →    where ftest.ftest_age < {age}     ← CAUTION: {age} because 'age' is integer
-			in the case of character, for example 'name'
-				where ftest.ftest_name = 'AAA' →  where ftest.ftest_name = '{name}'     ← CAUTION: '{name}' because 'name' is character
-							</pre>
-							<pre>
-		To test the created API,
-			1. select API's name by typing ..... as same as above 1
-			2. type 'test api' or 'check api' and so on
-			3. I ask you the input values due to 'IN' I/F, you set the values in out chatbox, then the inputs are replaced in 'IN', look at them
-			4. I say to you "..type 'boom'..." or something after all params are set, then you type it
-			5. the result is displayed in 'OUT' I/F, confirm it
-			6. finally you say 'thank you', 'great'... to me, OK? :)
-							</pre></td>
-					</tr>
-					<tr>
-						<td><pre>
-	■Managing database table and WebAPIs
-		You may wonder how to drop a table and delete api, it's very simple as same as every manipulations.
-		1. type 'drop table ftest','ftest' is the table name, and 'delete api js100', 'js100' is the api name
-		2. I ask you 'really?' or something, and ask you to let me know your pass phrase only the first time
-		3. I drop or delete them by confirming your phrase
+		(1) open the table with 3-1(1)
+		(2) type the column name that is displayed in the center panel to select it
+		(3) to cancel the selected 'xxxx' column, type 'cancel xxxx' or 'reject xxxx', or 'cancel all' is for canceling all
 
-		You can only delete 'js' APIs, because it is created by you. Others, 'ji', 'ju','jd' are under my control. These APIs can be 
-		deleted by dropping the related table.
-			for example,
-			    in case, the 'ftest' table has some apis, 'ji100','jd101','ju102','js103','js104'
-				'js103' and 'js104' are deletable by you. 'ji100','jd101','ju102' are deletable by dropping 'ftest' table.
+	(1)-(3) are enough if your new API stands on a very simple SQL. Go to (5) or (6).
+	But below (4) is for setting a subquery if you need more complicated request.
 
-		
-		Hey, that all. You see what db are you use present on my upper screen.
-						</pre></td>
-					</tr>
-					<tr>
-						<td style="text-align:center;">
-							Page <a href="#" onclick="page(1)">1</a> <a href="#" onclick="page(2)">2</a> 
-						</td>
-					</tr>
-			</table>
-		</div>
-	</div>
-	<!--
-		command list, in other word 'help'
-	-->
-	<div id="command_list" class="functionpanel-parts commonpanel squarepanel" hidden>
-		<div style="size:a3;color:lightgreen;width:80%;height:50%;">
-			may jetelina.org site help you :)
+		(4) type 'go subquery' or shortly 'go sub' to describe a subquery sentence.
+		    the subquery panel arise then write your subquery phrase in there, e.g 'where ftest.ftest.age < 30'
+
+	I have very kindly a test procedure for your new API, this process is optional.
+
+		(5) type 'test api' or 'test sql'...., I execute the sql that is defined by selected items and the subquery.
+		    the result is displayed as json form in a new panel.
+		(6) to create api, simply type 'create api', then follow me. 
+				</pre>
+				<pre style="color: rgb(228, 218, 89);font-style: italic;font-size: smaller;">
+	ATTENTION:
+	In the case of you set the subquery, its variable parameter must enclosed with '{}', and the rule is following the database 
+	I mean, if you tested the api with 'where ftest.ftest_age < 30', and you wanna '30' to be a variable parameter, you must change it {age},
+			where ftest.ftest_age < 30    →    where ftest.ftest_age < {age}     ← CAUTION: {age} because 'age' is integer
+		in the case of character, for example 'name'
+			where ftest.ftest_name = 'AAA' →  where ftest.ftest_name = '{name}'     ← CAUTION: '{name}' because 'name' is character
+				</pre>
+				<div name="pnum" style="text-align:center;"></div>
+			</div>
+	<!-------------------- PAGE 4 ---------------------------------------------------------------->
+			<div name="page4" style="margin:auto;text-align:left;" hidden>
+				<span class="guidance">4-1. can i test and check the DBI before publishing?</span>
+				<pre>
+	Yes, you can do it. To test the created API,
+		(1) select API's name by typing ..... as same as above 1
+		(2) type 'test api' or 'check api' and so on
+		(3) I ask you the input values due to 'IN' I/F, you set the values in out chatbox, then the inputs are replaced in 'IN', look at them
+		(4) I say to you "..type 'boom'..." or something after all params are set, then you type it
+		(5) the result is displayed in 'OUT' I/F, confirm it
+		(6) finally you say 'thank you', 'great'... to me, OK? :)
+				</pre>
+				<span class="guidance">4-2. how to switch databases</span>
+				<pre>
+	Toled this in 2-1(1), but again. Type 'use xxxx' or 'switch to xxxx'.... to change to 'xxxx' database.
+	    e.g  'use mysql'
+				</pre>
+				<span class="guidance">4-3. how to delete the created DBIs/WebAPIs</span>
+				<pre>
+	You can only delete 'js' APIs, because it is created by you. Others, 'ji', 'ju','jd' are under my control. These APIs can be 
+	deleted by dropping the related table.
+		(1)	Type 'delete api js100' or 'reject api js100' ....., to delete 'js100' api. Multi deleting is 'delete api js100 js200'.
+		(2) The selected apis are changed its bgcolor, then follow me.			
+				</pre>
+				<div name="pnum" style="text-align:center;"></div>
+			</div>
+	<!-------------------- PAGE 5 ---------------------------------------------------------------->
+			<div name="page5" style="margin:auto;text-align:left;" hidden>
+				<span class="guidance">5-1. when and where i will see the error happened?</span>
+				<pre>
+	I know sometimes happen something error, e.g creating tables/apis/api-test and so on.
+	The error messages are displayed if they were, and you can ask me.
+	Type 'open error', 'what happend' or 'detail please'....., when something happen but do not display it.
+	I inform you the reason as much as i possible.
+				</pre>
+				<span class="guidance">5-2. can i fix the error?</span>
+				<pre>
+	Depend on the reason. The most of the cases are cause of your APIs manipurations as I know.
+	You can resolve them by yourself due to my suggestions. Others.... may you can ask it to my web site. Good luck.
+				</pre>
+				<div name="pnum" style="text-align:center;"></div>
+			</div>
+	<!-------------------- PAGE 6 ---------------------------------------------------------------->
+			<div name="page6" style="margin:auto;text-align:left;" hidden>
+				<span class="guidance">6-1. how to know each WebAPIs daily access numbers</span>
+				<pre>
+	I total up your DBIs/WebAPIs access numbers in daily.
+		(1) type 'show api access numbers' to open the list
+		(2) then you can move the page with typing 
+			'next' to next page
+			'previous' is for backing,
+			'last' or 'end' jump to the last page
+			'head' or 'first' back to the top page
+		(3)	type 'search xxxx', e.g 'search js100', to search an api 'xxxx' 
+		(4) type 'search clear' back to the list.
+				</pre>
+				<span class="guidance">6-2. how to know each databases total access numbers</span>
+				<pre>
+	You may wanna know the share of your databases, i mean for example MySQL is used 60%, Redis is used 40%.
+		(1) type 'show db access' to open the rate as pie chart. This chart is yearly data.				
+				</pre>
+				<span class="guidance">6-3. how to know each WebAPIs execution speed</span>
+				<pre>
+	You know I am watching your api execution peed, mean/max/min in daily.
+
+		(1) type 'show api speed of xxxx' to figure out api 'xxxx' data, e.g 'show api speed of js4'.
+	
+	Basically 'flat' lines are ideal in each data. But sometimes happen the execution speed deprecating.
+
+		(1a) type 'any alerts?' or 'any reports?' to see my REPORT in the execution speed problems. 
+
+	I report you if the mean speed is out of 1σ, 2σ and 3σ in standard deviation. 
+	That's all what I can do. I relay on you to fix the problems.
+	And if you do not care about them, 
+
+		(1b) type 'do not worry', 'never mind'... to make me feel safe.
+				</pre>
+				<div name="pnum" style="text-align:center;"></div>
+			</div>
+	<!-------------------- PAGE 7 ---------------------------------------------------------------->
+			<div name="page7" style="margin:auto;text-align:left;" hidden>
+	<p>You need the privilege roll to manage these operations.To know you have it or not, type 'who am i' or 'show my profile' after logging to me,
+	you can operate the belows if you have 'admin' roll.</p>
+				<span class="guidance">7-1. how to create a new user</span>
+				<pre>
+	To create a new user, it is incredible simple.
+		(1) type 'invite new user', 'add new user' or 'add user' .... something like that
+		(2) then i ask you the user name, then follow me
+	That's all. The user roll what it can on me is decided by your 'generation' and the user's experience.
+				</pre>
+				<pre style="color: rgb(238, 234, 232);font-style: italic;font-size: smaller;">
+	IMPORTANT: What is 'generation'?
+			   The 'generation' is an unchangeable primitive number with an account, please refer my web site about the detail, 
+			   but let's say it simply as below.
+			   
+			    'generation 0' is 
+			                     accounts who were created in installing me on here,
+			                     available the functions: create&delete table/api, create a new user, change my configuration.
+			    'generation 0<' are 
+			                     accounts who were registered by 'generation 0', and 'generation 2' is ... you know, 
+			                     be able to do them after gaining a lot of experiences.
+
+			   Say again, 'generation 0' accounts are able to manage all functions, but 'generation 1-x' will be possible them 
+			   after gaining much of experiences on me.
+			   Other word, 'generation 1-x' accounts need to be trusted by me.
+				</pre>
+				<span class="guidance">7-2. how to change a database parameter</span>
+				<pre>
+	I bet you are an expert in databases if you wanted to try this.
+	The typical values of parameters on each databases are already set in me and try to connect to databases with these parameters 
+	due to your order as 'i wanna use xxxx', 'switch to xxxx'..., e.g 'i wanna use postgresql'.
+	I give 'success' message to you if the connection had been built, but in the case of unconnectable, I will show you the error message.
+	Then you can fix the error with your own values,
+		(1) in success: happy messages to you
+		(2) in fail: show the reason why 
+		(3) change the parameter with typing 
+		(4) try to connect again with typing
+				</pre>
+				<pre style="color: rgb(230, 89, 8);font-style: italic;">
+	CAUTION: I do not expect to change any parameters in runing, these were set in very first time to use it. Therefore I keep staying in
+	         bothersome changing it in Ver.3. You should refer how to do it in my website. 
+				</pre>
+				<span class="guidance">7-3. how to change my parameters</span>
+				<pre>
+	You may wanna change my original parameters to your favorits.
+	There are two way to make it,
+		(1) rewrite my configuration file by your hand
+		(2) change it in the chatbox
+
+	Naturally (1) is available because I am a program, but as you know demending restart the server if you changed me.
+	The way of (2) is recommendable because the changing will be seamless, i mean you do not need to restart me at all, but this operation
+	has	a little bit risks on you. Thus I strong recomend you to visit to my website and refer how to do it. 
+				</pre>
+				<div name="pnum" style="text-align:center;"></div>
+			</div>
 		</div>
 	</div>
 	<!--
         Jetelina chat panel
     -->
-	<div id="jetelina_panel" class="commonpanel squarepanel" style="width:30%;height:7%;top:40%;left:40%">
+	<div id="jetelina_panel" class="commonpanel squarepanel" style="width:30%;height:7%;top:40%;left:40%;z-index: 110;">
+		<span style="position:absolute;left:2%;">
+			<img name="chat_girl_image" src="jetelina/img/jetelina-concern.png" class="chatImg" hidden>
+		</span>
 		<text name="jetelina_tell" class="box_text"></text>
-		<div>
+	<div>
 			&nbsp;
 		</div>
 		<div>
@@ -370,16 +542,12 @@
 <script type="text/javascript" src="jetelina/js/jetelinalib.js"></script>
 <script type="text/javascript" src="jetelina/js/initialprocess.js"></script>
 <script type="text/javascript" src="jetelina/js/functionpanel.js"></script>
-<script type="text/javascript" src="jetelina/js/conditionpanel.js"></script>
+<script type="text/javascript" src="jetelina/js/statspanel.js"></script>
 <script type="text/javascript" src="jetelina/js/accountpanel.js"></script>
 <script>
-	const page = (n) =>{ console.log("n is ", n);
-		switch (n){
-		case 1: $("#guidance [name='page1']").show();$("#guidance [name='page2'],[name='page3']").hide(); break;
-		case 2: $("#guidance [name='page2']").show();$("#guidance [name='page1'],[name='page3']").hide(); break;
-		case 3: $("#guidance [name='page3']").show();$("#guidance [name='page1'],[name='page2']").hide(); break;
-		default:break;
-		}
+	const page = (n) => {
+		guidancePageFootLinkController(n);
 	}
 </script>
+
 </html>

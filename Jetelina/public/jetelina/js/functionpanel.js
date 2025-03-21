@@ -34,13 +34,14 @@
       deleteThisApi() Ajax function for deleting the target api from api list doc.
       whichCommandsInOrders(s) match with user input in cmdCandidates
       cleanupRelatedList(b) clear screen in api_container panel and/or relatedDataList object
-      displayTablesAndApis() display table list and api list
+      refreshdisplayTablesAndApis() refresh table list and api list
       refreshApiList() refresh displaying of api list
       refreshTableList() refresh displaying of table list
       tidyupcmdCandidates(targetcmd) reject 'targetcmd' from cmdCandidates
       setLeftPanelTitle() set to the title in the left panel
       isSelectedItem() check exsisting a selected item in the container panel
       resetApiTestProcedure reset something about apitest/preapitest
+      getSelectedApino() get opened 'apino' in preferent.original_apiin_str
  */
 let selectedItemsArr = [];
 let cmdCandidates = [];// ordered commands for checking duplication 
@@ -70,12 +71,20 @@ $(document).on({
   mouseenter: function (e) {
     let moveLeft = -10;
     let moveDown = -10;
+    let tooltipmsg = "";
 
-    $("#pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
+    $("div#pop-up").css('top', e.pageY + moveDown).css('left', e.pageX + moveLeft);
 
-    let d = $(this).attr("d");
+    if (loginuser.dbtype != "mongodb") {
+      let d = $(this).attr("d");
+      tooltipmsg = `e.g. ${d}`;
+    } else {
+      let kao = ["＼(^o^)／", "(*˘︶˘*).｡.:*♡", "(^o^)", "(*^^*)", ":-)"];
+      tooltipmsg = `no in mongo ${kao[getRandomNumber(kao.length)]}`;
+    }
 
-    $('div#pop-up').text(`e.g. ${d}`).show();
+    $('div#pop-up').text(tooltipmsg).show();
+
   },
   mouseleave: function () {
     $('div#pop-up').hide();
@@ -92,8 +101,7 @@ $(document).on({
  * hide "#condition_panel" at the same time if it is visible
  */
 const openFunctionPanel = () => {
-  if (inVisibleConditionPanel()) {
-    $(CONDITIONPANEL).hide();
+  if (isVisibleApiAccessNumbersList()) {
   }
 
   $(FUNCTIONPANEL).show().animate({
@@ -123,7 +131,7 @@ const openFunctionPanel = () => {
 
     $(RELATEDTABLESAPIS).draggable().animate({
       top: "10%",
-      left: "82%"
+      left: "81%"
     }, ANIMATEDURATION);
 
   }
@@ -313,7 +321,7 @@ const cleanupContainers = (s) => {
     $(`${CONTAINERPANEL} span, ${COLUMNSPANEL} span`).filter(".apisql").remove();
   } else {
     showGenelicPanel(false);
-    $(`${CONTAINERPANEL} span,${CONDITIONPANEL} span`).remove();
+    //    $(`${CONTAINERPANEL} span,${STATSPANEL} span`).remove();
   }
 }
 /**
@@ -328,9 +336,10 @@ const fileupload = () => {
 
   const uploadFilename = $(UPFILE).prop("files")[0].name;
   const tablename = uploadFilename.split(".")[0];
+  const url = scenario["function-post-fileupload-url"][0];
 
   $.ajax({
-    url: "/postcsvfile",
+    url: url,
     type: "post",
     data: fd,
     cache: false,
@@ -345,19 +354,18 @@ const fileupload = () => {
     }
   }).done(function (result, textStatus, jqXHR) {
     if (checkResult(result)) {
-      // clean up
-      $(UPFILE).val("");
-      $("#upbtn").prop("disabled", false);
-      $(`${MYFORM} label span`).text("Upload CSV File");
-
       //refresh table list 
       cleanupRelatedList(true);
       typingControll(chooseMsg('refreshing-msg', '', ''));
 
       chatKeyDown(scenario["func-show-table-list-cmd"][0]);
     } else {
-      // csv file format error
-      typingControll(chooseMsg('func-csv-format-error-msg', "", ""));
+      if (loginuser.dbtype != "mongodb") {
+        // csv file format error
+        typingControll(chooseMsg('func-csv-format-error-msg', "", ""));
+      } else {
+        typingControll(chooseMsg('function-duplication-erro-msg', "", ""))
+      }
     }
   }).fail(function (result) {
     checkResult(result);
@@ -369,6 +377,11 @@ const fileupload = () => {
     inprogress = false;
     $(FILEUP).removeClass("genelic_panel");
     rejectCancelableCmdList(FILESELECTOROPEN);
+    // always clean up
+    $(UPFILE).val("");
+    $("#upbtn").prop("disabled", false);
+    $(`${MYFORM} label span`).text("Upload CSV File");
+
     return true;
   });
 }
@@ -485,6 +498,7 @@ const listClick = (p) => {
           if ($.inArray(v.textContent, relatedDataList[t]) != -1) {
             if (p.hasClass("activeandrelatedItem")) {
               p.removeClass("activeandrelatedItem");
+              p.addClass("relatedItem");
               p.addClass("activeItem");
             }
 
@@ -509,6 +523,12 @@ const listClick = (p) => {
 
           $(this).removeClass("relatedItem");
         });
+      }
+
+      if (p.hasClass("activeandrelatedItem")) {
+        p.removeClass("activeandrelatedItem");
+        p.addClass("relatedItem");
+        p.addClass("activeItem");
       }
 
       p.toggleClass("activeItem");
@@ -610,48 +630,58 @@ const setApiIF_In = (t, s) => {
     Tips:
       for api test, each json parameter's name are contained in this array.
       pushing is executed in buildJetelinaJsonForm() mostly, except somes e.g. case in redis
+
+      in case of MongoDB, there is a suggestion comment in each 'IN' field, and these are enclosed with '</div><div>',
+      because of preventing send these comments with their post data. i mean '</div><div>' is mandatory.
+
   */
   preferent.apitestparams = [];
 
   if (ta.startsWith("js")) {
-    //select. 'ignore' -> no sub query
-    if (s.subquery != null && 0 < s.subquery.length && s.subquery != IGNORE) {
-      let s_subquery = s.subquery;
-      let subquery_str = "";
-      let isCurry = s_subquery.indexOf('{');
-      while (-1 < isCurry) {
-        if (0 < subquery_str.length) {
-          subquery_str += ',';
-        }
-
-        let sp = s_subquery.indexOf('{');
-        let ep = s_subquery.indexOf('}');
-        if (sp != -1 && ep != -1) {
-          let cd = s_subquery.substring(sp + 1, ep);
-          subquery_str += `'${cd}': `;
-          if (s_subquery[sp - 1] == "\'") {
-            subquery_str += `'{${cd}}'`;
-          } else {
-            subquery_str += `{${cd}}`;
+    if (loginuser.dbtype != "mongodb") {
+      //select. 'ignore' -> no sub query
+      if (s.subquery != null && 0 < s.subquery.length && s.subquery != IGNORE) {
+        let s_subquery = s.subquery;
+        let subquery_str = "";
+        let isCurry = s_subquery.indexOf('{');
+        while (-1 < isCurry) {
+          if (0 < subquery_str.length) {
+            subquery_str += ',';
           }
 
-          preferent.apitestparams.push(cd);
-          s_subquery = s_subquery.substring(ep + 1, s_subquery.length);
+          let sp = s_subquery.indexOf('{');
+          let ep = s_subquery.indexOf('}');
+          if (sp != -1 && ep != -1) {
+            let cd = s_subquery.substring(sp + 1, ep);
+            subquery_str += `'${cd}': `;
+            if (s_subquery[sp - 1] == "\'") {
+              subquery_str += `'{${cd}}'`;
+            } else {
+              subquery_str += `{${cd}}`;
+            }
+
+            preferent.apitestparams.push(cd);
+            s_subquery = s_subquery.substring(ep + 1, s_subquery.length);
+          }
+
+          isCurry = s_subquery.indexOf('{');
         }
 
-        isCurry = s_subquery.indexOf('{');
-      }
-
-      if(subquery_str != ""){
-        ret = `{"apino": \"${t}\","subquery":\"[${subquery_str}]\"}`;
-      }else{
+        if (subquery_str != "") {
+          ret = `{"apino": \"${t}\","subquery":\"[${subquery_str}]\"}`;
+        } else {
+          ret = `{"apino":\"${t}\"}`;
+        }
+      } else {
         ret = `{"apino":\"${t}\"}`;
       }
     } else {
-      ret = `{"apino":\"${t}\"}`;
+      // in case mongodb
+      let s_msg = "<span class='jetelina_suggestion'><p>Attention: this is for fetching this document in this collection.</p></span>";
+      ret = `{"apino":\"${t}\"}</div><div><br>${s_msg}`;
     }
   } else if (ta.startsWith("ji")) {
-    if (loginuser.dbtype != "redis") {
+    if ($.inArray(loginuser.dbtype, ["redis", "mongodb"]) == -1) {
       /*
         insert
           a,b,... in insert into table values(a,b,...) 
@@ -659,14 +689,18 @@ const setApiIF_In = (t, s) => {
       let i_sql = s.sql.split("values(");
       i_sql[1] = i_sql[1].slice(0, i_sql[1].length - 1).replaceAll('\'', '').replaceAll('{', '').replaceAll('}', '');
       ret = buildJetelinaJsonForm(ta, i_sql[1]);
-    } else {
+    } else if (loginuser.dbtype == "redis") {
       let i_sql = s.sql.split(":");
-      ret = `{"apino":\"${t}\","key1":"{your key data}","key2":"{your value data}"}`;
+      ret = `{"apino":\"${t}\","key1":\"{${redis_mongodb_api_ji_key_str}}\","key2":\"{${redis_mongodb_api_ji_val_str}}\"}`;
       preferent.apitestparams.push("your key data");
       preferent.apitestparams.push("your value data");
+    } else if (loginuser.dbtype == "mongodb") {
+      let i_sql = `<span class='jetelina_suggestion'><p>Attention: this is for inserting your new document in this collection. set your own new json form data in '${mongodb_api_ji_json_str}'.</p></span>`;
+      ret = `{"apino":\"${t}\","new document":{${mongodb_api_ji_json_str}}}</div><div><br>${i_sql}`;
+      preferent.apitestparams.push(mongodb_api_ji_json_str);
     }
   } else if (ta.startsWith("ju") || ta.startsWith("jd")) {
-    if (loginuser.dbtype != "redis") {
+    if ($.inArray(loginuser.dbtype, ["redis", "mongodb"]) == -1) {
       /*
         update and delete(the true color is update)
           a=d_a,b=d_b... in update table set a=d_a,b=d_b..... 
@@ -680,10 +714,19 @@ const setApiIF_In = (t, s) => {
       */
       preferent.apitestparams.push("jt_id");
       ret = ret.slice(0, ret.length - 1) + `,\"subquery\":\"{jt_id}\"` + ret.slice(ret.length - 1, ret.length);
-    } else {
-      let u_sql = s.sql.split(":");
+    } else if (loginuser.dbtype == "redis") {
       ret = `{"apino":\"${t}\","key":"{your value data}"}`;
       preferent.apitestparams.push("your value data");
+    } else if (loginuser.dbtype == "mongodb") {
+      if (ta.startsWith("ju")) {
+        let u_msg = "<span class='jetelina_suggestion'><p>Attention: set key:value data you wanna update here</p></span>";
+        ret = `{"apino":\"${t}\",\"{${redis_mongodb_api_ji_key_str}}\":\"{${redis_mongodb_api_ji_val_str}}\"}</div><div><br>${u_msg}`;
+        preferent.apitestparams.push("your key data");
+        preferent.apitestparams.push("your value data");
+      } else if (ta.startsWith("jd")) {
+        let d_msg = "<span class='jetelina_suggestion'><p>Caution: this is for deleting this document in this collection.</p></span>";
+        ret = `{"apino":\"${t}\"}</div><div><br>${d_msg}`;
+      }
     }
   } else {
     // who knows
@@ -705,7 +748,7 @@ const setApiIF_Out = (t, s) => {
   let ta = t.toLowerCase();
 
   if (ta.startsWith("js")) {
-    if (loginuser.dbtype != "redis") {
+    if ($.inArray(loginuser.dbtype, ["redis", "mongodb"]) == -1) {
       let pb = s.sql.split("select");
       let pf = pb[1].split("from");
       // there is the items in pf[0]
@@ -735,7 +778,7 @@ const setApiIF_Out = (t, s) => {
 const setApiIF_Sql = (s) => {
   let ret = "";
 
-  if (loginuser.dbtype != "redis") {
+  if ($.inArray(loginuser.dbtype, ["redis", "mongodb"]) == -1) {
     // possibly s.subquery is null. 'ignore' -> no sub query
     if (s.subquery != null && s.subquery != IGNORE) {
       ret = `${s.sql} ${s.subquery};`;
@@ -748,13 +791,29 @@ const setApiIF_Sql = (s) => {
       ret = ret.replaceAll(`,{${reject_jetelina_delete_flg}}`, '').replaceAll(`,${reject_jetelina_delete_flg}`, '');
     }
   } else {
-    let d = s.sql.split(":");
-    if (s.apino.startsWith("ji")) {
-      ret = `${d[0]} {your key data} {your value data}`;
-    } else if (s.apino.startsWith("ju")) {
-      ret = `${d[0]} ${d[1]} {your value data}`;
-    } else if (s.apino.startsWith("js")) {
-      ret = `${d[0]} ${d[1]}`;
+    if (loginuser.dbtype == "redis") {
+      let d = s.sql.split(":");
+      if (s.apino.startsWith("ji")) {
+        ret = `${d[0]} {${redis_mongodb_api_ji_key_str}} {${redis_mongodb_api_ji_val_str}}`;
+      } else if (s.apino.startsWith("ju")) {
+        ret = `${d[0]} ${d[1]} {${redis_mongodb_api_ji_val_str}}`;
+      } else if (s.apino.startsWith("js")) {
+        ret = `${d[0]} ${d[1]}`;
+      }
+    } else if (loginuser.dbtype == "mongodb") {
+      if (s.apino.startsWith("ji")) {
+        ret = "<span class='jetelina_suggestion'><p>Simply inserting</p></span>";
+      } else if (s.apino.startsWith("ju")) {
+        ret = "<span class='jetelina_suggestion'><p>Find your ordered keys, then update them with your ordered values. Append them to the document if could not find it.</p></span>";
+      } else if (s.apino.startsWith("jd")) {
+        ret = "<span class='jetelina_suggestion'><p>Delete this document permanently.</p></span>";
+      } else if (s.apino.startsWith("js")) {
+        if (-1 < s.sql.indexOf("{find}")) {
+          ret = "<span class='jetelina_suggestion'><p>Find your whole document data</p></span>";
+        } else {
+          ret = "<span class='jetelina_suggestion'><p>Find your ordered values of keys.</p></span>"
+        }
+      }
     }
   }
 
@@ -867,9 +926,10 @@ const getColumn = (tablename) => {
     let pd = {};
     pd["tablename"] = $.trim(tablename);
     let dd = JSON.stringify(pd);
+    url = scenario["function-post-url"][11]
 
     $.ajax({
-      url: "/getcolumns",
+      url: url,
       type: "post",
       data: dd,
       contentType: 'application/json',
@@ -905,7 +965,13 @@ const getColumn = (tablename) => {
  * delete a column from selected item list on the display  
  */
 const removeColumn = (p) => {
-  $(`${COLUMNSPANEL} .item, ${CONTAINERPANEL} .item`).not('.selectedItem').remove(`:contains(${p}_)`);
+  if (p != null) {
+    // selected remove
+    $(`${COLUMNSPANEL} .item, ${CONTAINERPANEL} .item`).not('.selectedItem').remove(`:contains(${p}.)`);
+  } else {
+    // all remove
+    $(`${COLUMNSPANEL} .item, ${CONTAINERPANEL} .item`).not('.selectedItem').remove();
+  }
 }
 /**
  * @function dropThisTable
@@ -949,8 +1015,7 @@ const dropThisTable = (tables) => {
       showGenelicPanel(false);
       rejectCancelableCmdList(TABLEAPIDELETE);
       preferent.cmd = "";
-      refreshApiList();
-      refreshTableList();
+      refreshdisplayTablesAndApis();
       m = chooseMsg('refreshing-msg', '', '');
     } else {
       m = result["message from Jetelina"];
@@ -1033,8 +1098,7 @@ const postSelectedColumns = (mode) => {
           rejectCancelableCmdList(SELECTITEM);
           rejectCancelableCmdList("post");
           cleanUp("items");
-          refreshApiList();
-          refreshTableList();
+          refreshdisplayTablesAndApis();
           m = chooseMsg('refreshing-msg', '', '');
         }
 
@@ -1042,7 +1106,7 @@ const postSelectedColumns = (mode) => {
           $(GENELICPANEL).hide();
         }
 
-        m = chooseMsg('func-newapino-msg',`is ${result.apino}`, 'r');
+        m = chooseMsg('func-newapino-msg', `is ${result.apino}`, 'r');
         $(CHATBOXYOURTELL).text(m);
         $(".yourText").mouseover();
       } else {
@@ -1061,7 +1125,7 @@ const postSelectedColumns = (mode) => {
     } else {
       m = chooseMsg('fail-msg', '', '');
       if (result.resembled != null && 0 < result.resembled.length) {
-        m = chooseMsg('func-duplicateapi-msg',`${result.resembled}`,'a');
+        m = chooseMsg('func-duplicateapi-msg', `${result.resembled}`, 'a');
       }
     }
 
@@ -1187,20 +1251,25 @@ const functionPanelFunctions = (ut) => {
     }
 
     // db switching
-    if (cmd == "" && inScenarioChk(ut, 'func-db-switch-cmd')) {
-      cmd = "switchdb";
-      usedb = "";
-    } else if (cmd == "" && inScenarioChk(ut, 'func-use-postgresql-cmd')) {
-      cmd = "switchdb";
-      usedb = "postgresql";
-    } else if (cmd == "" && inScenarioChk(ut, 'func-use-mysql-cmd')) {
-      cmd = "switchdb";
-      usedb = "mysql";
-    } else if (cmd == "" && inScenarioChk(ut, 'func-use-redis-cmd')) {
-      cmd = "switchdb";
-      usedb = "redis";
-    } else if (cmd == "" && $.inArray("switchdb", cmdCandidates) != -1) {
-      cmd = "switchdb";
+    if (!isVisibleApiAccessNumbersList()) {
+      if (cmd == "" && inScenarioChk(ut, 'func-db-switch-cmd')) {
+        cmd = "switchdb";
+        usedb = "";
+      } else if (cmd == "" && inScenarioChk(ut, 'func-use-postgresql-cmd')) {
+        cmd = "switchdb";
+        usedb = "postgresql";
+      } else if (cmd == "" && inScenarioChk(ut, 'func-use-mysql-cmd')) {
+        cmd = "switchdb";
+        usedb = "mysql";
+      } else if (cmd == "" && inScenarioChk(ut, 'func-use-redis-cmd')) {
+        cmd = "switchdb";
+        usedb = "redis";
+      } else if (cmd == "" && inScenarioChk(ut, 'func-use-mongodb-cmd')) {
+        cmd = "switchdb";
+        usedb = "mongodb";
+      } else if (cmd == "" && $.inArray("switchdb", cmdCandidates) != -1) {
+        cmd = "switchdb";
+      }
     }
 
     if (cmd == "" && inScenarioChk(ut, 'common-post-cmd') ||
@@ -1218,7 +1287,15 @@ const functionPanelFunctions = (ut) => {
         let sanArr = san.split("js");
 
         if (ut.indexOf(san) != -1 || ut.indexOf(sanArr[1]) != -1 || !isSelectedItem()) {
-          preferent.original_apiin_str = $(`${COLUMNSPANEL} [name='apiin']`).text();
+          /*
+            Tips:
+              html() is used in pref..original_apiin_str to fetch the origin,
+              because 'apiin' field has been added '<span class="jetelina_suggestion">' line 
+              in there in MongoDB. And other point, eg. #1368, #2200, were changed too.
+              did not change pref..original_apiout_str, but maybe you can change it to html() as well,
+              if you felt wireeee in it. :P
+          */
+          preferent.original_apiin_str = $(`${COLUMNSPANEL} [name='apiin']`).html();
           preferent.original_apiout_str = $(`${COLUMNSPANEL} [name='apiout']`).text();
           showApiTestPanel(false);
           cmd = "apitest";
@@ -1300,9 +1377,38 @@ const functionPanelFunctions = (ut) => {
 
     if (cmd != "cancel" && inCancelableCmdList(["apitest"])) {
       let p = `{${preferent.apitestparams[preferent.apiparams_count]}}`;
-      let inp = $(`${COLUMNSPANEL} [name='apiin']`).text();
-      let reps = inp.replace(p, original_chatbox_input_text);
-      $(`${COLUMNSPANEL} [name='apiin']`).addClass("attentionapiinout").text(reps);
+      let inp = $(`${COLUMNSPANEL} [name='apiin']`).html();
+      let reps = "";
+      let chatin = original_chatbox_input_text;
+      let jform = true;
+
+      if (loginuser.dbtype == "mongodb") {
+        /*
+          Tips:
+            preferent.jsonokflg is be 'null' in canceling. ref #1799
+        */
+        if (preferent.jsonokflg == null) {
+          preferent.jsonokflg = false;
+        }
+
+        if ($.inArray(ut, scenario["func-api-test-cmd"]) == -1) {
+          if (p == `{${mongodb_api_ji_json_str}}` && !preferent.jsonokflg) {
+            if (!jsonFromCheck(chatin)) {
+              // bad json form
+              jform = false;
+              return "hum, simply it does not fit on json form, or may 'j_table' is not in there";
+            } else {
+              preferent.jsonokflg = true;
+            }
+          }
+        }
+      }
+
+      if (jform) {
+        reps = inp.replace(p, chatin);
+        $(`${COLUMNSPANEL} [name='apiin']`).addClass("attentionapiinout").html(reps);
+      }
+
       cmd = "apitest";
     }
   }
@@ -1320,7 +1426,7 @@ const functionPanelFunctions = (ut) => {
         7.cancel: cancel all selected columns
         8.cleanup: cleanup column/selecteditem field
         9.subquery: open subquery panel
-        10.preapitest: api test before registring
+        10.preapitest: api test before registering
         11.apitest: exist api test mode
         12.switchdb: switchng using database
         default: non
@@ -1367,7 +1473,7 @@ const functionPanelFunctions = (ut) => {
       delete preferent.apilist;
 
       cleanupRelatedList(false);
-      displayTablesAndApis();
+      refreshdisplayTablesAndApis();
 
       m = IGNORE;
       break;
@@ -1404,6 +1510,8 @@ const functionPanelFunctions = (ut) => {
       }
 
       for (let n = 0; n < t.length; n++) {
+        findflg = false;
+
         /*
           Tips:
             at the first, searching in the table list, then the api list if did not hit.
@@ -1566,10 +1674,10 @@ const functionPanelFunctions = (ut) => {
           the secound post is ut!=cmd for execution of postion, maybe.
       */
       let subquerysentence = $(GENELICPANELINPUT).val();
-      if(subquerysentence != null ){
+      if (subquerysentence != null) {
         subquerysentence = $.trim(subquerysentence);
-      }else{
-        m = chooseMsg('starting-4-msg','','');
+      } else {
+        m = chooseMsg('starting-4-msg', '', '');
         break;
       }
 
@@ -1588,7 +1696,7 @@ const functionPanelFunctions = (ut) => {
               m = chooseMsg('func-postcolumn-where-indispensable-msg', "", "");
               let p = subquerysentence.length;
               $(GENELICPANELINPUT).focus().get(0).setSelectionRange(p, p)
-                    }
+            }
           } else {
             postSelectedColumns("");
           }
@@ -1598,14 +1706,14 @@ const functionPanelFunctions = (ut) => {
               Tips:
                 sub..length<6 meaning is 'where' is mandatory in multi tables;
             */
-            if (subquerysentence.length < 6 || subquerysentence.indexOf("where") <0 || subquerysentence == IGNORE) {
+            if (subquerysentence.length < 6 || subquerysentence.indexOf("where") < 0 || subquerysentence == IGNORE) {
               m = chooseMsg('func-postcolumn-where-indispensable-msg', "", "");
               let p = subquerysentence.length;
               $(GENELICPANELINPUT).focus().get(0).setSelectionRange(p, p)
-            }else{
+            } else {
               m = chooseMsg('func-postcolumn-available-msg', "", "");
             }
-          }else{
+          } else {
             m = chooseMsg('func-postcolumn-available-msg', "", "");
           }
         }
@@ -1696,6 +1804,14 @@ const functionPanelFunctions = (ut) => {
         }
 
         preferent.apiparams_count = null;
+        /*
+          Tips:
+            in case mongodb, this .jsonokflg has been set after passing jsonFormChekc()
+            this .jsonokflg should be null by canceling.
+        */
+        if (preferent.jsonokflg != null) {
+          preferent.jsonokflg = null;
+        }
       } else {
         showPreciousPanel(false);
         showConfigPanel(false);
@@ -1707,11 +1823,10 @@ const functionPanelFunctions = (ut) => {
       cleanupItems4Switching();
       deleteSelectedItems();
       cleanupContainers();
-      refreshApiList();
-      refreshTableList();
+      refreshdisplayTablesAndApis();
       showPreciousPanel(false);
       showConfigPanel(false);
-    m = chooseMsg('refreshing-msg', '', '');
+      m = chooseMsg('refreshing-msg', '', '');
       break;
     case 'subquery': //open subquery panel
       showApiTestPanel(false);
@@ -1723,7 +1838,30 @@ const functionPanelFunctions = (ut) => {
         // API test mode before registering
         // before hitting this command, should desplay 'func-api-test-msg' in anywhere.
         if (checkGenelicInput($(GENELICPANELINPUT).val())) {
-          postSelectedColumns("pre");
+          if (loginuser.dbtype != "mongodb") {
+            postSelectedColumns("pre");
+          } else {
+            let apitestsuggestion = "<h3>Hey, inhibt this execution before creating this api</h3>you can do the existing api. now you follow me as <br>　1. create api by typing 'create api'<br>　2. select the new api<br>　3. then type 'test api'";
+            let p = $(`${APICONTAINER} span`);
+            let hasjs = false;
+            $.each(p, function (i, v) {
+              if ($(this).hasClass("relatedItem") || $(this).hasClass("activeandrelatedItem")) { console.log($(this).text());
+                if ($(this).text().startsWith("js")) {
+                  hasjs = true;
+                  return;
+                }
+              }
+            });
+
+            if(hasjs){
+              apitestsuggestion += "<br>but you already have it. look at brinking 'js' api.";
+            }else{
+              apitestsuggestion += "<br>you see";
+            }
+
+            $(SOMETHINGMSGPANELMSG).html(apitestsuggestion);
+            showSomethingMsgPanel(true);
+          }
         } else {
           m = chooseMsg('func-api-subquery-chk-error', '', '');
         }
@@ -1743,7 +1881,18 @@ const functionPanelFunctions = (ut) => {
         }
 
         if (preferent.apiparams_count < preferent.apitestparams.length) {
-          m = chooseMsg('func-api-test-set-params-msg',`${preferent.apitestparams[preferent.apiparams_count]}`,'r');
+          /*
+            Tips:
+              show an attention how to describe JSON data in the chatbox in the message panel.
+              it's a very friendly suggestion by Jetelina. :) 
+          */
+          if ($.inArray(mongodb_api_ji_json_str, preferent.apitestparams) != -1) {
+            let jsonsuggestion = "<h3>this is my suggestion how to set your json data in my chatbox</h3>　1.enclose with '{}'<br>　2.must set an unique document name of 'j_table'<br>then an typical expected form is<br>　{\"j_table\":\"unique name\",......}<br><br>you see?";
+            $(SOMETHINGMSGPANELMSG).html(jsonsuggestion);
+            showSomethingMsgPanel(true);
+          }
+
+          m = chooseMsg('func-api-test-set-params-msg', `${preferent.apitestparams[preferent.apiparams_count]}`, 'r');
         } else if (inScenarioChk(ut, 'func-api-test-execute-cmd')) {
           apiTestAjax();
           m = chooseMsg('inprogress-msg', '', '');
@@ -1821,22 +1970,30 @@ const functionPanelFunctions = (ut) => {
  * Judge demanding 'where sentence' before post to the server
  */
 const containsMultiTables = () => {
-  if (0 < selectedItemsArr.length) {
-    let tables = [];
-    $.each(selectedItemsArr, function (i, v) {
-      if (0 < v.length && v.indexOf('.') != -1) {
-        let p = v.split('.');
-        if ($.inArray(p[0], tables) === -1) {
-          tables.push(p[0]);
+  if (loginuser.dbtype != "mongodb") {
+    if (0 < selectedItemsArr.length) {
+      let tables = [];
+      $.each(selectedItemsArr, function (i, v) {
+        if (0 < v.length && v.indexOf('.') != -1) {
+          let p = v.split('.');
+          if ($.inArray(p[0], tables) === -1) {
+            tables.push(p[0]);
+          }
         }
-      }
-    });
+      });
 
-    if (1 < tables.length) {
-      return true;
-    } else {
-      return false;
+      if (1 < tables.length) {
+        return true;
+      } else {
+        return false;
+      }
     }
+  } else {
+    /*
+      Tips:
+        always false in case mongodb
+    */
+    return false
   }
 }
 /**
@@ -1848,16 +2005,18 @@ const containsMultiTables = () => {
  */
 const showGenelicPanel = (b) => {
   if (b) {
-    /*
-      in the case of showing table list, this field is for expecting 'Sub Query'
-    */
-    $(GENELICPANELTEXT).text("Sub Query:");
+    if (loginuser.dbtype != "mongodb") {
+      /*
+        in the case of showing table list, this field is for expecting 'Sub Query'
+      */
+      $(GENELICPANELTEXT).text("Sub Query:");
 
-    if($.trim($(GENELICPANELINPUT).val())<6){
-      $(GENELICPANELINPUT).val("where ");
+      if ($.trim($(GENELICPANELINPUT).val()) < 6) {
+        $(GENELICPANELINPUT).val("where ");
+      }
+
+      $(GENELICPANEL).show();
     }
-
-    $(GENELICPANEL).show();
   } else {
     $(GENELICPANEL).hide();
     $(GENELICPANELINPUT).val("");
@@ -1969,8 +2128,7 @@ const deleteThisApi = (apis) => {
       showGenelicPanel(false);
       rejectCancelableCmdList(TABLEAPIDELETE);
       preferent.cmd = "";
-      refreshApiList();
-      refreshTableList();
+      refreshdisplayTablesAndApis();
       m = chooseMsg('refreshing-msg', '', '');
     } else {
       m = result["message from Jetelina"];
@@ -2040,12 +2198,12 @@ const cleanupRelatedList = (b) => {
   }
 }
 /**
- * @function displayTablesAndApis
+ * @function refreshdisplayTablesAndApis
  * 
- * display table list and api list
+ * refresh table list and api list
  * 
  */
-const displayTablesAndApis = () => {
+const refreshdisplayTablesAndApis = () => {
   refreshApiList();
   refreshTableList();
 }
@@ -2094,6 +2252,8 @@ const setLeftPanelTitle = () => {
   title = "Table List";
   if (loginuser.dbtype == "redis") {
     title = "Keys List";
+  } else if (loginuser.dbtype == "mongodb") {
+    title = "Document List";
   }
 
   $(LeftPanelTitle).text(title);
@@ -2120,7 +2280,7 @@ const isSelectedItem = () => {
  */
 const resetApiTestProcedure = () => {
   if (inCancelableCmdList(["apitest"])) {
-    $(`${COLUMNSPANEL} [name='apiin']`).removeClass("attentionapiinout").text(preferent.original_apiin_str);
+    $(`${COLUMNSPANEL} [name='apiin']`).removeClass("attentionapiinout").html(preferent.original_apiin_str);
     $(`${COLUMNSPANEL} [name='apiout']`).removeClass("attentionapiinout").text(preferent.original_apiout_str);
     rejectCancelableCmdList("apitest");
   }
@@ -2128,6 +2288,23 @@ const resetApiTestProcedure = () => {
   if (inCancelableCmdList(["preapitest"])) {
     rejectCancelableCmdList("preapitest");
   }
+}
+/**
+ * @function getSelectedApino
+ * @return {string} apino or ""
+ * 
+ * get opened 'apino' in preferent.original_apiin_str
+ * 
+ */
+const getSelectedApino = () => {
+  let ret = "";
+
+  if (preferent.original_apiin_str != null && preferent.original_apiin_str != "") {
+    let p = JSON.parse(preferent.original_apiin_str);
+    ret = p["apino"];
+  }
+
+  return ret;
 }
 
 $(GENELICPANELINPUT).blur(function () {

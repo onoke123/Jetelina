@@ -49,6 +49,8 @@ include("libs/mysql/MyDBController.jl")
 include("libs/mysql/MySQLSentenceManager.jl")
 include("libs/redis/RsDBController.jl")
 include("libs/redis/RsSQLSentenceManager.jl")
+include("libs/mongo/MonDBController.jl")
+include("libs/mongo/MonSQLSentenceManager.jl")
 
 export init_Jetelina_table, createJetelinaDatabaseinMysql,
 	dataInsertFromCSV, getTableList, getSequenceNumber, dropTable, getColumns, doSelect,
@@ -117,6 +119,14 @@ function dataInsertFromCSV(csvfname::String)
 	elseif j_config.JC["dbtype"] == "redis"
 		# Case in Redis
 		return RsDBController.dataInsertFromCSV(csvfname)
+	elseif j_config.JC["dbtype"] == "mongodb"
+		# Case in MongoDB
+		#===
+			Attention:
+				the first argument should be set collection name, but being fixed collection in the conf file
+				because MonDBController is an experimental implementation yet.
+		===#
+		return MonDBController.dataInsertFromJson(string(j_config.JC["mongodb_collection"]), csvfname)
 	end
 end
 """
@@ -146,6 +156,14 @@ function getTableList(s::String)
 				getKeyList() returns the registered keys in redis.
 		===#
 		RsDBController.getKeyList(s)
+	elseif j_config.JC["dbtype"] == "mongodb"
+		# Case in MongoDB
+		#===
+			Attention:
+				the first argument should be set collection name, but being blank so far,
+				because MonDBController is an experimental implementation yet.
+		===#
+		MonDBController.getDocumentList("", s)
 	end
 end
 """
@@ -182,9 +200,16 @@ function dropTable(tableName::Vector, stichwort::String)
 			# Case in MySQL
 			ret = MyDBController.dropTable(tableName)
 		elseif j_config.JC["dbtype"] == "oracle"
+		elseif j_config.JC["dbtype"] == "mongodb"
+			#===
+				Attention:
+					the first argument should be set collection name, but being blank so far,
+					because MonDBController is an experimental implementation yet.
+			===#
+			ret = MonDBController.dropTable("", tableName)
 		end
 
-		if stichret && ret[1]
+		if ret[1]
 			# update SQL list
 			ApiSqlListManager.deleteTableFromlist(tableName)
 		end
@@ -196,10 +221,10 @@ function dropTable(tableName::Vector, stichwort::String)
 				something error happened
 					json(Dict("result" => false, "tablename" => "$tableName", "errmsg" => "$err"))
 		==#
-		return ret[2]	
+		return ret[2]
 	else
 		jmg = "Hum, wrong pass phrase, was it? type 'cancel' then try it again."
-		return json(Dict("result" => false,  "errmsg" => "$jmg"))
+		return json(Dict("result" => false, "errmsg" => "$jmg"))
 	end
 
 end
@@ -226,6 +251,14 @@ function getColumns(tableName::String)
 				redis does not have columns.
 				the keys are getting in getTableList().
 		===#
+	elseif j_config.JC["dbtype"] == "mongodb"
+		# Case in MongoDB
+		#===
+			Caution: 
+				the first argument is for "collection name", but does not be set it in this version.
+				this "tableName" is the "collection name" indeed.
+		===#
+		MonDBController.getKeys("", tableName)
 	end
 end
 """
@@ -263,6 +296,7 @@ function executeApi(json_d)
 function executeApi(json_d::Dict)
 	ret = ""
 	sql_str = ""
+	stats = ""
 	#===
 		Tips:
 			Steps
@@ -287,22 +321,25 @@ function executeApi(json_d::Dict)
 			# Step2:
 			if dbtype == "postgresql"
 				# Case in PostgreSQL
-				ret = PgDBController.executeApi(json_d, target_api)
+				stats = @timed ret = PgDBController.executeApi(json_d, target_api)
 			elseif dbtype == "mysql"
 				# Case in MySQL
-				ret = MyDBController.executeApi(json_d, target_api)
+				stats = @timed ret = MyDBController.executeApi(json_d, target_api)
 			elseif dbtype == "redis"
 				# Case in Redis
-				ret = RsDBController.executeApi(json_d, target_api)
+				stats = @timed ret = RsDBController.executeApi(json_d, target_api)
 			elseif dbtype == "oracle"
+			elseif dbtype == "mongodb"
+				stats = @timed ret = MonDBController.executeApi(json_d, target_api)
 			end
+
+			# write execution sql to log file
+			# maybe Float32 is enough, who knows :p
+			JLog.writetoSQLLogfile(json_d["apino"], Float32(stats.time), dbtype)
 		end
 	else
 		# not found SQL list 
 	end
-
-	# write execution sql to log file
-	JLog.writetoSQLLogfile(json_d["apino"], sql_str)
 
 	return ret
 end
@@ -515,6 +552,17 @@ function createApiSelectSentence(json_d::Dict, mode::String)
 		# Case in MySQL
 		ret = MySQLSentenceManager.createApiSelectSentence(json_d, mode)
 	elseif j_config.JC["dbtype"] == "oracle"
+	elseif j_config.JC["dbtype"] == "mongodb"
+		# Case in MongoDB
+		#===
+			Tips:
+				expect "collection" in it basically, but this early version does not have it. 
+		===#
+		if haskey(json_d, "collection") == false
+			json_d["collection"] = j_config.JC["mongodb_collection"]
+		end
+
+		ret = MonSQLSentenceManager.createApiSelectSentenceByselectedKeys(json_d, mode)
 	end
 
 	if mode == "pre"
@@ -530,6 +578,14 @@ function createApiSelectSentence(json_d::Dict, mode::String)
 			# Case in MySQL
 			ret = MyDBController.doSelect(ret, "pre")
 		elseif j_config.JC["dbtype"] == "oracle"
+		elseif j_config.JC["dbtype"] == "mongodb"
+			# Case in MongoDB
+			#===
+				Caution:
+					doSelect() is not in MongoDBController in ver. 3.0.
+					who knows it will be. i wonder its necessity. :p
+			===#
+			#ret = MonDBController.doSelect(ret, "pre")
 		end
 	end
 
@@ -564,7 +620,7 @@ function prepareDbEnvironment(db::String,mode::String)
 - `mode::String`: 'init' -> initialize, others -> connection check
 - return: success -> true, fail -> false
 """
-function prepareDbEnvironment(db::String,mode::String)
+function prepareDbEnvironment(db::String, mode::String)
 	ret = ""
 
 	if db == "postgresql"
@@ -573,6 +629,8 @@ function prepareDbEnvironment(db::String,mode::String)
 		ret = MyDBController.prepareDbEnvironment(mode)
 	elseif db == "redis"
 		ret = RsDBController.prepareDbEnvironment(mode)
+	elseif db == "mongodb"
+		ret = MonDBController.prepareDbEnvironment(mode)
 	end
 
 	return ret

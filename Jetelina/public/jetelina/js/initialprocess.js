@@ -22,14 +22,14 @@ const FIRSTUSERS = `${INITIALIZEPANEL} [name='firstusers']`;
     Attention:
         indeed, "/getconfigdata" is as same as scenario["function-post-url"][2]
 */
-const initialUrl = ["/initialdb","/initialuser","/deleteuser","/getconfigdata"];
+const initialUrl = ["/initialdb", "/initialuser", "/deleteuser", "/getconfigdata"];
 /**
  * @function jetelinaInitialize
  * 
  * initialize the primary database that is selected by the first user(it's me)
  * 
  */
-const jetelinaInitialize = () =>{
+const jetelinaInitialize = () => {
     /*
         1.display database selection panel
         2.display database connection parameters that is selected database
@@ -38,28 +38,28 @@ const jetelinaInitialize = () =>{
         5.generation '0' user register
         6.switch to the normal login screen 
     */
-        $(`${INITIALIZEPANEL}`).show();
-        let data = `{"param":"jetelinadb"}`;
+    //    $(`${INITIALIZEPANEL}`).show();
+    let data = `{"param":"jetelinadb"}`;
     initialAjax(initialUrl[3], data);
 }
 
-$(`${INITIALIZEPANEL} input[name='primarydb']`).on("click",function(){
+$(`${INITIALIZEPANEL} input[name='primarydb']`).on("click", function () {
     initialparams.db = $(this).val();
     $(`${INITIALIZEPANEL} [name='paramsetbutton']`).show();
 
-    if(initialparams.db == "postgresql"){
+    if (initialparams.db == "postgresql") {
         $(POSTGREINITIALIZE).show();
         $(MYSQLINITIALIZE).hide();
-    }else{
+    } else {
         $(POSTGREINITIALIZE).hide();
         $(MYSQLINITIALIZE).show();
-    }    
+    }
 });
 
-$(`${INITIALIZEPANEL} [name='paramsetbutton']`).on('click',function(){
+$(`${INITIALIZEPANEL} [name='paramsetbutton']`).on('click', function () {
     let data = {};
 
-    if(initialparams.db == "postgresql"){
+    if (initialparams.db == "postgresql") {
         let host = $(`${POSTGREINITIALIZE} input[name='pg_host']`).val();
         let port = $(`${POSTGREINITIALIZE} input[name='pg_port']`).val();
         let user = $(`${POSTGREINITIALIZE} input[name='pg_user']`).val();
@@ -67,7 +67,7 @@ $(`${INITIALIZEPANEL} [name='paramsetbutton']`).on('click',function(){
         let dbname = $(`${POSTGREINITIALIZE} input[name='pg_dbname']`).val();
 
         data = `{"jetelinadb":"${initialparams.db}","dbtype":"${initialparams.db}","pg_work":"true","pg_host":"${host}","pg_port":"${port}","pg_user":"${user}","pg_password":"${pw}","pg_dbname":"${dbname}"}`;
-    }else{
+    } else {
         let host = $(`${MYSQLINITIALIZE} input[name='my_host']`).val();
         let port = $(`${MYSQLINITIALIZE} input[name='my_port']`).val();
         let user = $(`${MYSQLINITIALIZE} input[name='my_user']`).val();
@@ -81,27 +81,27 @@ $(`${INITIALIZEPANEL} [name='paramsetbutton']`).on('click',function(){
     initialAjax(initialUrl[0], data);
 });
 
-$(`${INITIALIZEPANEL} [name='userregbutton']`).on('click',function(){
+$(`${INITIALIZEPANEL} [name='userregbutton']`).on('click', function () {
     let users = [];
     let user = "";
 
-    for(let i=1; i<10; i++){
+    for (let i = 1; i < 10; i++) {
         user = $.trim($(`${FIRSTUSERS} input[name='pu${i}']`).val());
-        if(user != ""){
+        if (user != "") {
             users.push(user);
         }
     }
 
-    if( 0<users.length){
+    if (0 < users.length) {
         let um = JSON.stringify(users);
         let data = `{"users":${um}}`;
         initialAjax(initialUrl[1], data);
-    }else{
+    } else {
         initializeMsg("Hey no users, are you kidding me? (・・?");
     }
 });
 
-$(`${INITIALIZEPANEL} [name='gologinbutton'], ${INITIALIZEPANEL} [name='cancelbutton']`).on('click',function(){
+$(`${INITIALIZEPANEL} [name='gologinbutton'], ${INITIALIZEPANEL} [name='cancelbutton']`).on('click', function () {
     cleanupMyself();
     window.location.href = location.href;
 });
@@ -111,9 +111,9 @@ $(`${INITIALIZEPANEL} [name='gologinbutton'], ${INITIALIZEPANEL} [name='cancelbu
  * delete 'myself' user account from jetelina_user_table
  */
 
-const cleanupMyself = () =>{
+const cleanupMyself = () => {
     let data = `{"uid":0}`;
-    initialAjax(initialUrl[2],data);
+    initialAjax(initialUrl[2], data);
 }
 /**
  * @function initializeMsg
@@ -121,7 +121,7 @@ const cleanupMyself = () =>{
  * 
  * set message order by initialize process
  */
-const initializeMsg = (s) =>{
+const initializeMsg = (s) => {
     $(`${INITIALIZEPANEL} [name='message']`).text(s);
 }
 /**
@@ -130,7 +130,7 @@ const initializeMsg = (s) =>{
  * 
  * set alert message order by initialize process
  */
-const initializeAlertMsg = (s) =>{
+const initializeAlertMsg = (s) => {
     $(`${INITIALIZEPANEL} [name='initialalert']`).text(s);
 }
 
@@ -141,17 +141,17 @@ const initializeAlertMsg = (s) =>{
  * 
  * general ajax function for initialization
  */
-const initialAjax = (url,data) =>{
+const initialAjax = (url, data) => {
     $.ajax({
         url: url,
         type: "post",
         contentType: 'application/json',
         data: data,
-        async:false,
+        async: false,
         dataType: "json",
     }).done(function (result, textStatus, jqXHR) {
-        if(result.result){
-            if(url == initialUrl[0]){
+        if (result.result) {
+            if (url == initialUrl[0]) {
                 // initialize database
                 initializeMsg("Done, congra ＼(^o^)／, next user registration, here we go");
                 $(`${INITIALIZEPANEL} [name='paramsetbutton']`).hide();
@@ -160,34 +160,48 @@ const initialAjax = (url,data) =>{
                 $(POSTGREINITIALIZE).hide();
                 $(MYSQLINITIALIZE).hide();
                 $(FIRSTUSERS).show();
-            }else if(url == initialUrl[1]){
+            } else if (url == initialUrl[1]) {
                 // register users
                 initializeMsg("Great, everything fine. Hit the 'GO..' button to login screen, let's enjoy.");
                 $(`${INITIALIZEPANEL} [name='userregbutton']`).hide();
                 $(`${INITIALIZEPANEL} [name='gologinbutton']`).show();
-            }else if(url == initialUrl[2]){
+            } else if (url == initialUrl[2]) {
                 $(`${INITIALIZEPANEL} [name='userregbutton']`).hide();
                 $(`${INITIALIZEPANEL} [name='gologinbutton']`).hide();
                 $(`${INITIALIZEPANEL} [name='cancelbutton']`).hide();
                 $(POSTGREINITIALIZE).hide();
                 $(MYSQLINITIALIZE).hide();
                 $(FIRSTUSERS).hide();
-                $(`${INITIALIZEPANEL} input[name='primarydb']`).prop("checked",false);
+                $(`${INITIALIZEPANEL} input[name='primarydb']`).prop("checked", false);
 
                 $(INITIALIZEPANEL).hide();
                 $(JETELINAPANEL).show();
-            }else if(url == initialUrl[3]){
+            } else if (url == initialUrl[3]) {
                 $.each(result, function (name, value) {
                     if (name != "result") {
-                        if( $.inArray(value,["postgresql","mysql"]) != -1 ){
-                            initializeAlertMsg(`ATTENTION: Hey, i have already been initialized with ${value}`);
-                            $(`${INITIALIZEPANEL} [name='cancelbutton']`).show();
+                        if ($.inArray(value, ["postgresql", "mysql"]) != -1) {
+                            /*
+                                Tips:
+                                    in the case of trying to initialize me, even I've already been done it,
+                                    showing the attention.
+                                    JETELINAPANEL is hidden before executin' this loop, therefore it's to be showing,
+                                    and also 'stage' must be '1', turn it to '0', means initial for restarting the first greeting.
+
+                                    I mean the initialization is forbidden in V3. Should work it with admin account insted of. 
+                            */
+                            $(JETELINAPANEL).show();
+                            let p = `ATTENTION: Hey, i have already been initialized with ${value}`;
+                            $(SOMETHINGMSGPANELMSG).append(p);
+                            showSomethingMsgPanel(true);
+                            stage = 0;
                             return false;
+                        } else {
+                            $(`${INITIALIZEPANEL}`).show();
                         }
                     }
                 });
             }
-        }else{
+        } else {
             initializeMsg("Fail to connect, review the parameters once more.");
         }
     }).fail(function (result) {

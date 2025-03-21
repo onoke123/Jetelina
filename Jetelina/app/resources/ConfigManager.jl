@@ -127,7 +127,7 @@ function createScenario()
 
 	create scenario.js file from base.jdic and JetelinaConfig.cnf files.
 	this function is mandatory working to realize Jetelina Chatting.
-	'scenario[]' is handling for the function/condition panel.
+	'scenario[]' is handling for the function/stats panel.
 	'config[]' is handling for configuration parameters that are defined in JetelinaConfig.cnf.
 
 # Arguments
