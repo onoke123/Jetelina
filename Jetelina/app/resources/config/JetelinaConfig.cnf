@@ -117,7 +117,7 @@ jetelinadb = postgresql
 #                MongoDB    -> mongodb
 #                Oracle     -> oracle
 @jdic dbtype:"db","database","data base"
-dbtype = postgresql
+dbtype = database
 
 # PostgreSQL setting
 @jdic pg_work:"postgresql run","postgresql availability","start postgresql","postgresql start"
