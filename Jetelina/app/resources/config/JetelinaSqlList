@@ -1,5 +1,6 @@
 apino,sql,subquery,db
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 ji1,"insert into ftest (ftest_name,ftest_sex,ftest_age,ftest_ave,jetelina_delete_flg) values('{ftest_name}','{ftest_sex}',{ftest_age},{ftest_ave},{jetelina_delete_flg})","","postgresql"
 ju2,"update ftest set ftest_name='{ftest_name}',ftest_sex='{ftest_sex}',ftest_age={ftest_age},ftest_ave={ftest_ave}","where ftest_jt_id={jt_id}","postgresql"
@@ -47,3 +48,5 @@ ju110,"{update}","jetelina-collection,newdoc1","mongodb"
 jd111,"{delete}","jetelina-collection,newdoc1","mongodb"
 js112,"{find}","jetelina-collection,newdoc1","mongodb"
 >>>>>>> 98f7016 (v3.0)
+=======
+>>>>>>> 17518eb (initialize)

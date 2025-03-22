@@ -97,6 +97,7 @@ function getConfigData()
 - return: json data including ordered a configuration if there were. ex. {"result":true,"logfile":"log.txt"}
 """
 function getConfigData()
+<<<<<<< HEAD
     d = jsonpayload("param")
 
     if !isnothing(j_config.JC[d])
@@ -104,6 +105,19 @@ function getConfigData()
     else
         return json(Dict("result" => false))
     end
+=======
+#	if !isnothing(JSession.get())
+		d = jsonpayload("param")
+
+		if !isnothing(j_config.JC[d])
+			return json(Dict("result" => true, d => j_config.JC[d]))
+		else
+			return json(Dict("result" => false))
+		end
+#	else
+#		return json(Dict("result" => false))
+#	end
+>>>>>>> 17518eb (initialize)
 end
 
 """
