@@ -7,7 +7,7 @@ Description:
 	all controll for poting data from clients
 
 functions
-	initial() the first database setting to Jetelina. this is the initialize of all. once in a life.
+	initialDb() the first database setting to Jetelina. this is the initialize of all. once in a life.
 	initialUser() register the first users into jetelina_user_table. once in a life.
 	getConfigData()	get a configuration parameter data ordered by posting data.
 	handleApipostdata() execute ordered API by posting data.
@@ -97,7 +97,7 @@ function getConfigData()
 - return: json data including ordered a configuration if there were. ex. {"result":true,"logfile":"log.txt"}
 """
 function getConfigData()
-#	if !isnothing(JSession.get())
+	if !isnothing(JSession.get())
 		d = jsonpayload("param")
 
 		if !isnothing(j_config.JC[d])
@@ -105,9 +105,9 @@ function getConfigData()
 		else
 			return json(Dict("result" => false))
 		end
-#	else
-#		return json(Dict("result" => false))
-#	end
+	else
+		return json(Dict("result" => false))
+	end
 end
 
 """
