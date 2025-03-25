@@ -1,3 +1,1 @@
 apino,sql
-js8,"select ftest2.ftest2_jt_id,ftest2.ftest2_name,ftest2.ftest2_sex from ftest2 as ftest2"
-js4,"select ftest.ftest_jt_id,ftest.ftest_name,ftest.ftest_age,ftest.ftest_ave from ftest as ftest where ftest.ftest_age < {age}"
