@@ -142,7 +142,6 @@ function open_connection()
     nport = parse(Int, j_config.JC["my_port"])
     sock = j_config.JC["my_unix_socket"]
 
-    #	return DBInterface.connect(MySQL.Connection,"localhost","user","userpasswd",db="mysql",port=3306,unix_socket="/var/run/mysqld/mysqld.sock")
     conn = DBInterface.connect(MySQL.Connection, "$host", "$user", "$pwd", db="$db", port=nport, unix_socket="$sock")
     #===
         Tips:
@@ -152,7 +151,8 @@ function open_connection()
             wow, it works fine.＼(^o^)／ 
     ===#
     try
-        DBInterface.execute(conn, "use jetelina")
+#        DBInterface.execute(conn, "use jetelina")
+        DBInterface.execute(conn, "use $db")
     catch err
         JLog.writetoLogfile("MyDBController.open_connection() error: $err")
         return false

@@ -147,6 +147,10 @@ function getTableList(s::String)
 		PgDBController.getTableList(s)
 	elseif j_config.JC["dbtype"] == "mysql"
 		# Case in MySQL
+		if j_config.JC["my_dbname"] == "mysql"
+			createJetelinaDatabaseinMysql()
+		end
+		
 		MyDBController.getTableList(s)
 	elseif j_config.JC["dbtype"] == "oracle"
 	elseif j_config.JC["dbtype"] == "redis"
