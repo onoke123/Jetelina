@@ -1294,6 +1294,7 @@ const chatKeyDown = (cmd) => {
                             the process is defined in initialprocess.js
                             and do not get out by the normal logout because of session data.
                         */
+                       showSomethingMsgPanel(false);
                         stage = 0;
                         $(JETELINAPANEL).hide();
                         jetelinaInitialize();
