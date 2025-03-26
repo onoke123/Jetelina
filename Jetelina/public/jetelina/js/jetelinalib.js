@@ -156,8 +156,10 @@ const checkResult = (o) => {
             }
 
             if (o.preciousmsg != null) {
+                let prwtag = $(`${PRECIOUSWORDPANEL} [name='precious_word']`);
+                prwtag.text("");
                 let prw = o.preciousmsg.replaceAll("<start>", "<ol class=\"jetelina_teach_you_ol\"><li>").replaceAll("<st>", "</li><li>").replaceAll("<end>", "</li></ol>");
-                $(`${PRECIOUSWORDPANEL} [name='precious_word']`).append(prw);
+                prwtag.append(prw);
                 showPreciousPanel(true);
             }
 
