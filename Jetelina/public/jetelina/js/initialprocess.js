@@ -165,6 +165,7 @@ const initialAjax = (url, data) => {
                 initializeMsg("Great, everything fine. Hit the 'GO..' button to login screen, let's enjoy.");
                 $(`${INITIALIZEPANEL} [name='userregbutton']`).hide();
                 $(`${INITIALIZEPANEL} [name='gologinbutton']`).show();
+                $(`${INITIALIZEPANEL} [name='cancelbutton']`).hide();
             } else if (url == initialUrl[2]) {
                 $(`${INITIALIZEPANEL} [name='userregbutton']`).hide();
                 $(`${INITIALIZEPANEL} [name='gologinbutton']`).hide();
