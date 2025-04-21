@@ -105,7 +105,7 @@ file_column_api_execution_time = exectime
 #   defined database should be RDB, therefore postgresql org mysql so far
 #
 @jdic jetelnadb:"default db","default database","original db","original database","user db","user database"
-jetelinadb = database
+jetelinadb = postgresql
 
 #
 #  default database
@@ -117,11 +117,11 @@ jetelinadb = database
 #                MongoDB    -> mongodb
 #                Oracle     -> oracle
 @jdic dbtype:"db","database","data base"
-dbtype = database
+dbtype = postgresql
 
 # PostgreSQL setting
 @jdic pg_work:"postgresql run","postgresql availability","start postgresql","postgresql start"
-pg_work = false
+pg_work = true
 @jdic pg_host:"postgresql host"
 pg_host = localhost
 @jdic pg_port:"postgresql port"
