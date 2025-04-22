@@ -23,6 +23,13 @@ const checkGenelicInput = (ss) => {
     }
   
     if (s != IGNORE) {
+      if (containsMultiTables()) {
+        /*
+          Tips:
+            should check the table names if contain..() were true, meaning using multi tables
+        */
+        console.log("pre..mul:", preferent.multitables);
+      }
       // sub query check
       /*
         Tips:

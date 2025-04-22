@@ -1981,6 +1981,9 @@ const containsMultiTables = () => {
         }
       });
 
+      // use in subquery check
+      preferent.multitables = tables;
+
       if (1 < tables.length) {
         return true;
       } else {
