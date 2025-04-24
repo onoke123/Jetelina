@@ -34,13 +34,33 @@ const checkGenelicInput = (ss) => {
     // sをblanckでsplitし、カラム名と推定されるモノ->arrに類似文字列があるモノ　を特定し、それがpreferent.multitablesにあるtable名を持っているか調べる。
     let c_c = s.split(" ");
     if (0 < c_c.length) {
+      /*
+        Tips:
+          reject unnecessary characters, e.g 'where', '=', ' ' ...
+      */
+      let altc_c = [];
       for (let i in c_c) {
-        if (-1 < $.inArray(c_c[i], arr)) {
-          console.log("chk1: true ", c_c[i]);
-        } else {
-          console.log("chk2: false", c_c[i]);
+        for (let ii in preferent.multitables) {
+          if (c_c[i].indexOf(preferent.multitables[ii]) != -1) {
+            altc_c.push(c_c[i]);
+          }
         }
       }
+      /*
+        Tips:
+          compare the subquery sentence with ordering table names
+      */
+      let passc_c = [];
+      for (let i in altc_c) {
+        for (let ii in preferent.multitables) {
+          let headertablename = preferent.multitables[ii] + ".";
+          if(altc_c[i].startsWith(headertablename)){
+            passc_c.push(altc_c[i]);
+          }
+        }
+      }
+
+      console.log(altc_c, " ---> ", passc_c);
     }
 
     return false;// for checking fast
