@@ -16,7 +16,7 @@
  */
 const checkGenelicInput = (ss) => {
   let ret = true;
-  let s = $.trim(ss);
+  let s = $.trim(ss).replaceAll('(',"( ").replaceAll(')'," )").replaceAll('<',"< ").replaceAll('>',"> ");
 
   if (containsMultiTables()) {
     // collect all column name in showing
