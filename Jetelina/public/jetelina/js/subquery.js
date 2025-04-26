@@ -52,14 +52,26 @@ const checkGenelicInput = (ss) => {
       */
       let passc_c = [];
       for (let i in altc_c) {
+        /*
         for (let ii in preferent.multitables) {
           let headertablename = preferent.multitables[ii] + ".";
           if(altc_c[i].startsWith(headertablename)){
             passc_c.push(altc_c[i]);
           }
+        }*/
+        if( $.inArray(altc_c[i], arr) != -1){
+          passc_c.push(altc_c[i]);
+        }else{
+          console.log("fail ", altc_c[i]);
         }
       }
-
+/*
+      if( altc_c.length == passc_c.length){
+        console.log("all clear");
+      }else{
+        console.log("there are unacceptable parameters");
+      }
+*/
       console.log(altc_c, " ---> ", passc_c);
     }
 
