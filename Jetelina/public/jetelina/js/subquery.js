@@ -16,9 +16,26 @@
  */
 const checkGenelicInput = (ss) => {
   let ret = true;
-  let s = $.trim(ss).replaceAll('(',"( ").replaceAll(')'," )").replaceAll('<',"< ").replaceAll('>',"> ");
+  let s = $.trim(ss);
+  //1. basic
+  s = s.replaceAll('(', " ( ").replaceAll(')', " ) ");
+  //2. arithmetic operators
+  s = s.replaceAll('+'," + ").replaceAll('-'," - ").replaceAll('*'," * ").replaceAll('/'," / ").replaceAll('%'," % ");
+  //3. bitwise operators
+  s = s.replaceAll("|"," | ").replaceAll('&'," & ").replaceAll('^'," ^ ");
+  //4. comparison operators
+  s = s.replaceAll('<', " < ").replaceAll('>', " > ").replaceAll('='," = ").replaceAll(">="," >= ").replaceAll("<="," <= ").replaceAll("<>"," <> ");
+  //5. compound operators
+  s = s.replaceAll("+="," += ").replaceAll("-="," -= ").replaceAll("*="," *= ").replaceAll("/="," /= ").replaceAll("%="," %= ").replaceAll("&="," &= ").replaceAll("^-="," ^-= ").replaceAll("|*="," |*= ");
 
-  if (containsMultiTables()) {
+  if (s == "where" || s == "") {
+    $(GENELICPANELINPUT).val(IGNORE);
+  } else {
+    ret = subqueryforbiddencharchecking(s);
+  }
+
+  if (ret) {
+    //  if (containsMultiTables()) {
     // collect all column name in showing
     let arr = [];
     $(`${COLUMNSPANEL} span, ${CONTAINERPANEL} span`).filter('.item').each(function () {
@@ -29,7 +46,6 @@ const checkGenelicInput = (ss) => {
       Tips:
         should check the table names if contain..() were true, meaning using multi tables
     */
-    console.log("pre..mul:", preferent.multitables);
     // 複数table使用時はwhere文に設定されているハズのカラム名が<table name>.<column name>でなければいけない。
     // sをblanckでsplitし、カラム名と推定されるモノ->arrに類似文字列があるモノ　を特定し、それがpreferent.multitablesにあるtable名を持っているか調べる。
     let c_c = s.split(" ");
@@ -46,48 +62,41 @@ const checkGenelicInput = (ss) => {
           }
         }
       }
+
+      let multitables = containsMultiTables();
       /*
         Tips:
           compare the subquery sentence with ordering table names
       */
       let passc_c = [];
       for (let i in altc_c) {
-        /*
-        for (let ii in preferent.multitables) {
-          let headertablename = preferent.multitables[ii] + ".";
-          if(altc_c[i].startsWith(headertablename)){
+        if (multitables) {
+          if ($.inArray(altc_c[i], arr) != -1) {
             passc_c.push(altc_c[i]);
+          } else {
+            ret = false;
+            break;
           }
-        }*/
-        if( $.inArray(altc_c[i], arr) != -1){
-          passc_c.push(altc_c[i]);
-        }else{
-          console.log("fail ", altc_c[i]);
+        } else {
+          for (let ii in arr) {
+            if (arr[ii].indexOf(altc_c[i]) != -1) {
+              passc_c.push(altc_c[i]);
+            }
+          }
+
+          if (altc_c.length != passc_c.length) {
+            ret = false;
+          }
         }
       }
-/*
-      if( altc_c.length == passc_c.length){
-        console.log("all clear");
-      }else{
-        console.log("there are unacceptable parameters");
-      }
-*/
-      console.log(altc_c, " ---> ", passc_c);
-    }
 
-    return false;// for checking fast
-  } else {
-    if (s == "where" || s == "") {
-      $(GENELICPANELINPUT).val(IGNORE);
-    } else {
-      ret = subquerychecking(s);
     }
-
-    return ret;
   }
+
+  return ret;
 }
 
-const subquerychecking = (s) => {
+const subqueryforbiddencharchecking = (s) => {
   let ret = true;
   /*
     Tips:
