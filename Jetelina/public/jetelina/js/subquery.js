@@ -5,7 +5,7 @@
     This js lib works with functionpanel.js.
 
     Functions:
-      checkGenelicInput() check genelic panel input. caution: will imprement this in V2 if necessary
+      checkGenelicInput() check genelic panel input.
   */
 /**
  * @function checkGenelicInput
@@ -17,125 +17,56 @@
 const checkGenelicInput = (ss) => {
   let ret = true;
   let s = $.trim(ss);
-  //1. basic
-  s = s.replaceAll('(', " ( ").replaceAll(')', " ) ");
-  //2. arithmetic operators
-  s = s.replaceAll('+'," + ").replaceAll('-'," - ").replaceAll('*'," * ").replaceAll('/'," / ").replaceAll('%'," % ");
-  //3. bitwise operators
-  s = s.replaceAll("|"," | ").replaceAll('&'," & ").replaceAll('^'," ^ ");
-  //4. comparison operators
-  s = s.replaceAll('<', " < ").replaceAll('>', " > ").replaceAll('='," = ").replaceAll(">="," >= ").replaceAll("<="," <= ").replaceAll("<>"," <> ");
-  //5. compound operators
-  s = s.replaceAll("+="," += ").replaceAll("-="," -= ").replaceAll("*="," *= ").replaceAll("/="," /= ").replaceAll("%="," %= ").replaceAll("&="," &= ").replaceAll("^-="," ^-= ").replaceAll("|*="," |*= ");
 
   if (s == "where" || s == "") {
-    $(GENELICPANELINPUT).val(IGNORE);
-  } else {
-    ret = subqueryforbiddencharchecking(s);
+    s = IGNORE;
   }
 
-  if (ret) {
-    //  if (containsMultiTables()) {
-    // collect all column name in showing
+  if (s != IGNORE) {
+    // sub query check
+    /*
+      Tips:
+        check this sub query strings with #container->span text is in selected items,
+        check this string is collect,
+        check this string has its post query parameter, like '{parameter}',
+                                                                           etc...
+        well, there are a lot of tasks in here, therefore wanna set them beside now,
+        writing the sub query is on your own responsibility. :)
+    */
     let arr = [];
     $(`${COLUMNSPANEL} span, ${CONTAINERPANEL} span`).filter('.item').each(function () {
       arr.push($(this).text());
     });
 
-    /*
-      Tips:
-        should check the table names if contain..() were true, meaning using multi tables
-    */
-    // 複数table使用時はwhere文に設定されているハズのカラム名が<table name>.<column name>でなければいけない。
-    // sをblanckでsplitし、カラム名と推定されるモノ->arrに類似文字列があるモノ　を特定し、それがpreferent.multitablesにあるtable名を持っているか調べる。
-    let c_c = s.split(" ");
-    if (0 < c_c.length) {
-      /*
-        Tips:
-          reject unnecessary characters, e.g 'where', '=', ' ' ...
-      */
-      let altc_c = [];
-      for (let i in c_c) {
-        for (let ii in preferent.multitables) {
-          if (c_c[i].indexOf(preferent.multitables[ii]) != -1) {
-            altc_c.push(c_c[i]);
-          }
-        }
+    // 1st: "" -> '' because sql does not accept ""
+    let unacceptablemarks = ["\"", "`"];
+    for (let i in unacceptablemarks) {
+      s = s.replaceAll(unacceptablemarks[i], "'");
+    }
+
+    // 2nd: reject unexpected words
+    let unexpectedwords = ["delete", "drop", ";"];
+    for (i in unexpectedwords) {
+      s = s.replaceAll(unexpectedwords[i], "");
+    }
+
+    // 3nd: the number of '{' and '}' is equal
+    let cur_l = s.match(/{/igm)
+    let cur_r = s.match(/}/igm)
+    if (cur_l != null && cur_r != null) {
+      if (cur_l.length != cur_r.length) {
+        ret = false;
       }
+    } else if ((cur_l != null && cur_r == null) || (cur_l == null && cur_r != null)) {
+      ret = false;
+    } else {
+      // both null is available
+    }
 
-      let multitables = containsMultiTables();
-      /*
-        Tips:
-          compare the subquery sentence with ordering table names
-      */
-      let passc_c = [];
-      for (let i in altc_c) {
-        if (multitables) {
-          if ($.inArray(altc_c[i], arr) != -1) {
-            passc_c.push(altc_c[i]);
-          } else {
-            ret = false;
-            break;
-          }
-        } else {
-          for (let ii in arr) {
-            if (arr[ii].indexOf(altc_c[i]) != -1) {
-              passc_c.push(altc_c[i]);
-            }
-          }
-
-          if (altc_c.length != passc_c.length) {
-            ret = false;
-          }
-        }
-      }
-
+    if (ret) {
+      $(GENELICPANELINPUT).val(s);
     }
   }
 
   return ret;
 }
-
-const subqueryforbiddencharchecking = (s) => {
-  let ret = true;
-  /*
-    Tips:
-      check this sub query strings with #container->span text is in selected items,
-      check this string is collect,
-      check this string has its post query parameter, like '{parameter}',
-                                                                         etc...
-      well, there are a lot of tasks in here, therefore wanna set them beside now,
-      writing the sub query is on your own responsibility. :)
-  */
-
-  // 1st: "" -> '' because sql does not accept ""
-  let unacceptablemarks = ["\"", "`"];
-  for (let i in unacceptablemarks) {
-    s = s.replaceAll(unacceptablemarks[i], "'");
-  }
-
-  // 2nd: reject unexpected words
-  let unexpectedwords = ["delete", "drop", ";"];
-  for (i in unexpectedwords) {
-    s = s.replaceAll(unexpectedwords[i], "");
-  }
-
-  // 3nd: the number of '{' and '}' is equal
-  let cur_l = s.match(/{/igm)
-  let cur_r = s.match(/}/igm)
-  if (cur_l != null && cur_r != null) {
-    if (cur_l.length != cur_r.length) {
-      ret = false;
-    }
-  } else if ((cur_l != null && cur_r == null) || (cur_l == null && cur_r != null)) {
-    ret = false;
-  } else {
-    // both null is available
-  }
-
-  if (ret) {
-    $(GENELICPANELINPUT).val(s);
-  }
-
-  return ret;
-}  
