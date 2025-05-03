@@ -46,6 +46,10 @@ function checkIVMExistence()
         PgDBController.close_connection(conn)
     end
 
+    if ret
+        j_config.configParamUpdate(Dict("pg_ivm"=>ret))        
+    end
+
     return ret
 end
 

@@ -190,6 +190,7 @@ config["logfile_rotation_open"]=["rotation start","rotation open"];
 config["pg_work"]=["postgresql run","postgresql availability","start postgresql","postgresql start"];
 config["redis_port"]=["monogodb port"];
 config["mongodb_collection"]=["mongodb collection name","mongodb collection"];
+config["pg_ivm"]=["postgresql ivm"];
 config["my_host"]=["mysql host"];
 config["debug"]=["debug"];
 config["pg_user"]=["postgresql user","postgresql login"];
