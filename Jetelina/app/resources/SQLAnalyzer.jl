@@ -18,7 +18,8 @@ functions
 	tableCopy(df::DataFrame) copy some data from the running db to the test db. the number of copy data are ordered in JC["selectlimit"].
 	stopanalyzer() manual stopper for repeating analyzring
 
-	collectImvCandidateApis() collect apis that is using multiple tables in JC["tableapifile"].
+	executeIVMtest() experimental execution of ivm-tized table 
+	collectIvmCandidateApis() collect apis that is using multiple tables in JC["tableapifile"].
 """
 module SQLAnalyzer
 
@@ -34,13 +35,14 @@ procflg = Ref(true) # analyze process progressable -> true, stop/error -> false
 function __init__()
     @info "=========SQLAnalyzer.jl init==========="
     include("DBDataController.jl")
-    if j_config.JC["dbtype"] == "postgresql"
+#    if j_config.JC["dbtype"] == "postgresql"
         include("libs/postgres/PgDBController.jl")
         include("libs/postgres/PgTestDBController.jl")
         include("libs/postgres/PgDataTypeList.jl")
-    elseif j_config.JC["dbtype"] == "mysql"
-    elseif j_config.JC["dbtype"] == "oracle"
-    end
+		include("libs/postgres/PgIVMController.jl")
+#    elseif j_config.JC["dbtype"] == "mysql"
+#    elseif j_config.JC["dbtype"] == "oracle"
+#    end
 end
 
 """
@@ -778,15 +780,29 @@ function stopanalyzer()
 function stopanalyzer()
     procflg[] = false
 end
+
 """
-function collectImvCandidateApis() 
+function executeIVMtest() 
+	
+	experimental execution of ivm-tized table 
+"""
+function executeIVMtest() 
+	apis::Array = collectIvmCandidateApis()
+
+	for apino in apis
+		@info "apino is " apino
+		PgIVMController.createIVMtable(apino)
+	end
+end
+"""
+function collectIvmCandidateApis() 
 	
 	collect apis that is using multiple tables in JC["tableapifile"].
 
 	Attention:
 		this function is limited in PostgreSQL, because of IMV
 """
-function collectImvCandidateApis()
+function collectIvmCandidateApis()
     tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JC["tableapifile"])
     ret = []
 
@@ -808,7 +824,7 @@ function collectImvCandidateApis()
             end
         end
     catch err
-        JLog.writetoLogfile("SQLAnalyzer.collectImvCandidateApis() error: $err")
+        JLog.writetoLogfile("SQLAnalyzer.collectIvmCandidateApis() error: $err")
         return false
     end
 

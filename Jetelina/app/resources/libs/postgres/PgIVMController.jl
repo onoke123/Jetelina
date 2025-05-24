@@ -7,6 +7,7 @@ Description:
 	pg_ivm: incrementally maintainable materialized view extension controller for PostgreSQL
 
 functions
+    checkIVMExistence() checkin' ivm is availability
 """
 module PgIVMController
 
@@ -52,5 +53,24 @@ function checkIVMExistence()
 
     return ret
 end
+"""
+function createIVMtable(apino::String)
 
+    create ivm table from the apino's sql sentence
+
+# Arguments
+- `apino::String`: apino in Df_JetelinaSqlList
+- return: Boolean: true -> success, false -> couldn't create ivm table 	
+
+"""
+function createIVMtable(apino)
+    target_api = subset(ApiSqlListManager.Df_JetelinaSqlList, :apino => ByRow(==(apino)), skipmissing = true)
+    sql::String = escape_string(string(target_api[!,:sql][1]), "'")
+    subquery::String = escape_string(string(target_api[!,:subquery][1]), "'")
+    executesql::String = """select create_immv('$apino','$sql $subquery');"""
+    
+    @info "ivm sql is " executesql
+
+
+end
 end
