@@ -40,7 +40,7 @@ JMessage.showModuleInCompiling(@__MODULE__)
 
 #===
 	Note: 
-		wanna these include() in init(), but not alll DBData.. is been included(), thus sometimes 'not found method ..' happen.
+		wanna these include() in init(), but not all DBData.. are been included(), thus sometimes 'not found method ..' happen.
 		guess should have a procedure alike JTimer.jl, I mean should include these in a dummy file to kick init(). :P  2024/2/10
 ===#
 include("libs/postgres/PgDBController.jl")

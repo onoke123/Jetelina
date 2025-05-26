@@ -19,7 +19,6 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 JMessage.showModuleInCompiling(@__MODULE__)
 
 include("PgDBController.jl")
-#include("PgSQLSentenceManager.jl")
 
 export checkIVMExistence
 

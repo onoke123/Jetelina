@@ -30,16 +30,27 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
+#===
+	Note:
+		The same reason in DBDataController.jl
+		quote,
+			`wanna these include() in init(), but not all DBData.. are been included(), thus sometimes 'not found method ..' happen.
+			guess should have a procedure alike JTimer.jl, I mean should include these in a dummy file to kick init(). :P  `
+
+===#
+include("libs/postgres/PgDBController.jl")
+include("libs/postgres/PgIVMController.jl")
+
 procflg = Ref(true) # analyze process progressable -> true, stop/error -> false
 
 function __init__()
     @info "=========SQLAnalyzer.jl init==========="
-    include("DBDataController.jl")
+#    include("DBDataController.jl")
 #    if j_config.JC["dbtype"] == "postgresql"
-        include("libs/postgres/PgDBController.jl")
-        include("libs/postgres/PgTestDBController.jl")
-        include("libs/postgres/PgDataTypeList.jl")
-		include("libs/postgres/PgIVMController.jl")
+#        include("libs/postgres/PgDBController.jl")
+#        include("libs/postgres/PgTestDBController.jl")
+#        include("libs/postgres/PgDataTypeList.jl")
+#		include("libs/postgres/PgIVMController.jl")
 #    elseif j_config.JC["dbtype"] == "mysql"
 #    elseif j_config.JC["dbtype"] == "oracle"
 #    end
