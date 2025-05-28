@@ -64,12 +64,29 @@ function createIVMtable(apino::String)
 """
 function createIVMtable(apino)
     target_api = subset(ApiSqlListManager.Df_JetelinaSqlList, :apino => ByRow(==(apino)), skipmissing = true)
-    sql::String = escape_string(string(target_api[!,:sql][1]), "'")
-    subquery::String = escape_string(string(target_api[!,:subquery][1]), "'")
-    executesql::String = """select create_immv('$apino','$sql $subquery');"""
+
+    #===
+        Tips:
+            1. target api name(apino) should be changed to the ivm specail name. eg. js10 -> jv10
+            2. escape "'" in the target sql sentence with "''", because "''" is the way of escaping in sql
+
+            then simply kick execute()
+    ===#
+    ivmapino::String = replace(apino, "js" => "jv")
+    sql::String = replace(string(target_api[!,:sql][1], " ", target_api[!,:subquery][1]), "'" => "''")
+    executesql::String = """select create_immv('$ivmapino','$sql');"""
     
-    @info "ivm sql is " executesql
+    conn = PgDBController.open_connection()
 
-
+    try
+        LibPQ.execute(conn, executesql)
+	catch err
+		println(err)
+		JLog.writetoLogfile("PgTestDBController.doSelect() with $sql error : $err")
+		return false
+	finally
+		# close the connection
+		PgDBController.close_connection(conn)
+    end
 end
 end
