@@ -8,6 +8,8 @@ Description:
 
 functions
     checkIVMExistence() checkin' ivm is availability
+    createIVMtable(apino::String) create ivm table from the apino's sql sentence
+    experimentalRun(conn,ivmapino::String) do experimental execution of target ivm api sql sentence
 """
 module PgIVMController
 
@@ -20,7 +22,7 @@ JMessage.showModuleInCompiling(@__MODULE__)
 
 include("PgDBController.jl")
 
-export checkIVMExistence
+export checkIVMExistence, createIVMtable, experimentalRun
 
 """
 function checkIVMExistence()
@@ -80,13 +82,58 @@ function createIVMtable(apino)
 
     try
         LibPQ.execute(conn, executesql)
+        p = experimentalRun(conn, ivmapino)
+        fno::String = ivmapino
+        fmax::Float64 = p[1][1]
+        fmin::Float64 = p[2][1]
+        fmean::Float64 = p[3]
+        s = """$fno,$fmax,$fmin,$fmean"""
+        @info "experi.. " s
+#        println(f, s)
+
 	catch err
 		println(err)
-		JLog.writetoLogfile("PgTestDBController.doSelect() with $sql error : $err")
+		JLog.writetoLogfile("PgIVMController.createIVMtable() with $ivmapino error : $err")
 		return false
 	finally
 		# close the connection
 		PgDBController.close_connection(conn)
     end
+
+    
+end
+"""
+function experimentalRun(conn,ivmapino::String)
+
+    do experimental execution of target ivm api sql sentence
+    sql sentence in ivm is definitly simple sql. e.g select * from <ivm table name>
+
+# Arguments
+- `conn::LibPQ.Connection`: postgresql connection 
+- `ivmapino::String`: apino as ivm
+- return:  false -> boolean false true -> tubple(max, min, mean) 	
+
+"""
+function experimentalRun(conn, ivmapino::String)
+    sql::String = """select * from $ivmapino"""
+	try
+		#===
+			Tips:
+				acquire data are 'max','best',"mean'.
+		===#
+		exetime = []
+		looptime = 10
+		for loop in 1:looptime
+			stats = @timed z = LibPQ.execute(conn, sql)
+			push!(exetime, stats.time)
+		end
+
+		return findmax(exetime), findmin(exetime), sum(exetime) / looptime
+	catch err
+		println(err)
+		JLog.writetoLogfile("PgIVMController.experimentalRun() with $ivmapino error : $err")
+		return false
+	finally
+	end
 end
 end
