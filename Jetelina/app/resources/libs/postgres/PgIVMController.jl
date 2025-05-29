@@ -8,7 +8,8 @@ Description:
 
 functions
     checkIVMExistence() checkin' ivm is availability
-    createIVMtable(apino::String) create ivm table from the apino's sql sentence
+    createIVMtable(apino::String, mode::Bool) create ivm table from the apino's sql sentence
+    dropIVMtable(conn, table::String) drop ivm table
     experimentalRun(conn,ivmapino::String) do experimental execution of target ivm api sql sentence
 """
 module PgIVMController
@@ -55,16 +56,17 @@ function checkIVMExistence()
     return ret
 end
 """
-function createIVMtable(apino::String)
+function createIVMtable(apino::String, mode::Bool)
 
     create ivm table from the apino's sql sentence
 
 # Arguments
 - `apino::String`: apino in Df_JetelinaSqlList
+- `mode::Bool`: true -> create and keep it  false -> create then drop it
 - return: Boolean: true -> success, false -> couldn't create ivm table 	
 
 """
-function createIVMtable(apino)
+function createIVMtable(apino::String, mode::Bool)
     target_api = subset(ApiSqlListManager.Df_JetelinaSqlList, :apino => ByRow(==(apino)), skipmissing = true)
 
     #===
@@ -82,7 +84,9 @@ function createIVMtable(apino)
 
     try
         LibPQ.execute(conn, executesql)
-        experimentalRun(conn, ivmapino)
+        if !mode
+            experimentalRun(conn, ivmapino)
+        end
 	catch err
 		println(err)
 		JLog.writetoLogfile("PgIVMController.createIVMtable() with $ivmapino error : $err")
@@ -90,9 +94,28 @@ function createIVMtable(apino)
 	finally
 		# close the connection
 		PgDBController.close_connection(conn)
-    end
+    end    
+end
+"""
+function dropIVMtable(conn, table::String)
 
-    
+    drop ivm table
+
+- `conn::LibPQ.Connection`: postgresql connection 
+- `table::String`: apino as ivm
+- return:  false -> boolean false 	
+"""
+function dropIVMtable(conn, table::String)
+    sql::String = """drop table $table;"""
+
+    try
+        LibPQ.execute(conn, sql)
+	catch err
+		println(err)
+		JLog.writetoLogfile("PgIVMController.dropIVMtable() with $table error : $err")
+		return false
+	finally
+    end
 end
 """
 function experimentalRun(conn,ivmapino::String)
@@ -104,7 +127,6 @@ function experimentalRun(conn,ivmapino::String)
 - `conn::LibPQ.Connection`: postgresql connection 
 - `ivmapino::String`: apino as ivm
 - return:  false -> boolean false true -> tubple(max, min, mean) 	
-
 """
 function experimentalRun(conn, ivmapino::String)
 	sqlPerformanceFile = JFiles.getFileNameFromConfigPath(string(j_config.JC["sqlperformancefile"], ".test"))
@@ -144,6 +166,7 @@ function experimentalRun(conn, ivmapino::String)
 		JLog.writetoLogfile("PgIVMController.experimentalRun() with $ivmapino error : $err")
 		return false
 	finally
+        dropIVMtable(conn, ivmapino)
 	end
 end
 end

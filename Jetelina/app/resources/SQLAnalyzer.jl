@@ -799,10 +799,11 @@ function executeIVMtest()
 """
 function executeIVMtest() 
 	apis::Array = collectIvmCandidateApis()
+    mode::Bool = false  # true -> create and keep it  false -> create then drop it
 
 	for apino in apis
 		@info "apino is " apino
-		PgIVMController.createIVMtable(apino)
+		PgIVMController.createIVMtable(string(apino),mode)
 	end
 end
 """
