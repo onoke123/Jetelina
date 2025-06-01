@@ -66,7 +66,8 @@ function createIVMtable(apino::String, mode::Bool)
 - return: Boolean: true -> success, false -> couldn't create ivm table 	
 
 """
-function createIVMtable(apino::String, mode::Bool)
+#function createIVMtable(apino::String, mode::Bool)
+function createIVMtable(apino::String)
     target_api = subset(ApiSqlListManager.Df_JetelinaSqlList, :apino => ByRow(==(apino)), skipmissing = true)
 
     #===
@@ -84,9 +85,9 @@ function createIVMtable(apino::String, mode::Bool)
 
     try
         LibPQ.execute(conn, executesql)
-        if !mode
-            experimentalRun(conn, ivmapino)
-        end
+#        if !mode
+        return experimentalRun(conn, ivmapino)
+#        end
 	catch err
 		println(err)
 		JLog.writetoLogfile("PgIVMController.createIVMtable() with $ivmapino error : $err")
@@ -129,13 +130,13 @@ function experimentalRun(conn,ivmapino::String)
 - return:  false -> boolean false true -> tubple(max, min, mean) 	
 """
 function experimentalRun(conn, ivmapino::String)
-	sqlPerformanceFile = JFiles.getFileNameFromConfigPath(string(j_config.JC["sqlperformancefile"], ".test"))
-    if !isfile(sqlPerformanceFile)
-        @info "is the file?"
-		open(sqlPerformanceFile, "w") do f
-			println(f, string(j_config.JC["file_column_apino"], ',', j_config.JC["file_column_max"], ',', j_config.JC["file_column_min"], ',', j_config.JC["file_column_mean"]))
-        end
-    end
+#	sqlPerformanceFile = JFiles.getFileNameFromConfigPath(string(j_config.JC["sqlperformancefile"], ".test"))
+#    if !isfile(sqlPerformanceFile)
+#        @info "is the file?"
+#		open(sqlPerformanceFile, "w") do f
+#			println(f, string(j_config.JC["file_column_apino"], ',', j_config.JC["file_column_max"], ',', j_config.JC["file_column_min"], ',', j_config.JC["file_column_mean"]))
+ #       end
+#    end
  
     sql::String = """select * from $ivmapino"""
 	
@@ -151,22 +152,24 @@ function experimentalRun(conn, ivmapino::String)
 			push!(exetime, stats.time)
 		end
 
+        return findmax(exetime), findmin(exetime), sum(exetime) / looptime
+#===
         fno::String = ivmapino
         fmax::Float64 = findmax(exetime)[1]
         fmin::Float64 = findmin(exetime)[1]
         fmean::Float64 = sum(exetime) / looptime
         s = """$fno,$fmax,$fmin,$fmean"""
         @info "experi.. " s
-
-        open(sqlPerformanceFile, "a+") do f
-            println(f, s)
-        end
+===#
+#        open(sqlPerformanceFile, "a+") do f
+#            println(f, s)
+#        end
 	catch err
 		println(err)
 		JLog.writetoLogfile("PgIVMController.experimentalRun() with $ivmapino error : $err")
 		return false
 	finally
-        dropIVMtable(conn, ivmapino)
+#        dropIVMtable(conn, ivmapino)
 	end
 end
 end

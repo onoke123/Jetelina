@@ -25,7 +25,7 @@ module SQLAnalyzer
 
 using JSON, LibPQ, Tables, CSV, DataFrames, StatsBase, DelimitedFiles, Dates
 using Genie, Genie.Renderer, Genie.Renderer.Json
-using Jetelina.JLog, Jetelina.JFiles, Jetelina.JMessage
+using Jetelina.JLog, Jetelina.JFiles, Jetelina.JMessage, Jetelina.InitApiSqlListManager.ApiSqlListManager
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
@@ -792,19 +792,67 @@ function stopanalyzer()
     procflg[] = false
 end
 
+function compareJsAndJv()
+	apis::Array = collectIvmCandidateApis()
+    for apino in apis
+        jsspeed = executeJSApi(string(apino))
+        jvspeed = executeIVMtest(string(apino))
+
+        @info "jsspeed: " jsspeed
+        @info "jvspeed: " jvspeed
+    end
+end
+"""
+function executeJSApi(sql::String)
+
+	execute ordered sql(js*) sentence to compare with jv* execution speed
+
+# Arguments
+- `apino::String`: execute target api number e.g js10
+- return: boolean: false in fale.
+"""
+function executeJSApi(apino::String)
+    target_api = subset(ApiSqlListManager.Df_JetelinaSqlList, :apino => ByRow(==(apino)), skipmissing = true)
+    sql::String = string(target_api[!,:sql][1], " ", target_api[!,:subquery][1])
+#    sql::String = replace(string(target_api[!,:sql][1], " ", target_api[!,:subquery][1]), "'" => "''")
+    
+    conn = PgDBController.open_connection()
+	try
+		#===
+			Tips:
+				acquire data are 'max','best',"mean'.
+		===#
+		exetime = []
+		looptime = 10
+		for loop in 1:looptime
+			stats = @timed z = LibPQ.execute(conn, sql)
+			push!(exetime, stats.time)
+		end
+
+		return findmax(exetime), findmin(exetime), sum(exetime) / looptime
+	catch err
+		println(err)
+		JLog.writetoLogfile("PgTestDBController.executeJSApi() with $sql error : $err")
+		return false
+	finally
+		# close the connection
+		PgDBController.close_connection(conn)
+	end
+end
+
 """
 function executeIVMtest() 
 	
 	experimental execution of ivm-tized table 
 """
-function executeIVMtest() 
-	apis::Array = collectIvmCandidateApis()
-    mode::Bool = false  # true -> create and keep it  false -> create then drop it
+function executeIVMtest(apino::String) 
+#    mode::Bool = false  # true -> create and keep it  false -> create then drop it
 
-	for apino in apis
+#	for apino in apis
 		@info "apino is " apino
-		PgIVMController.createIVMtable(string(apino),mode)
-	end
+#		PgIVMController.createIVMtable(string(apino),mode)
+		return PgIVMController.createIVMtable(apino)
+#	end
 end
 """
 function collectIvmCandidateApis() 
