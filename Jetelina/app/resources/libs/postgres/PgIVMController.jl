@@ -8,7 +8,7 @@ Description:
 
 functions
     checkIVMExistence() checkin' ivm is availability
-    createIVMtable(apino::String, mode::Bool) create ivm table from the apino's sql sentence
+    createIVMtable(conn, apino::String) create ivm table from the apino's sql sentence
     dropIVMtable(conn, table::String) drop ivm table
     experimentalRun(conn,ivmapino::String) do experimental execution of target ivm api sql sentence
 """
@@ -23,7 +23,7 @@ JMessage.showModuleInCompiling(@__MODULE__)
 
 include("PgDBController.jl")
 
-export checkIVMExistence, createIVMtable, experimentalRun
+export checkIVMExistence, createIVMtable, experimentalRun, dropIVMtable
 
 """
 function checkIVMExistence()
@@ -56,7 +56,7 @@ function checkIVMExistence()
     return ret
 end
 """
-function createIVMtable(apino::String, mode::Bool)
+function createIVMtable(conn, apino::String)
 
     create ivm table from the apino's sql sentence
 
@@ -67,7 +67,7 @@ function createIVMtable(apino::String, mode::Bool)
 
 """
 #function createIVMtable(apino::String, mode::Bool)
-function createIVMtable(apino::String)
+function createIVMtable(conn, apino::String)
     target_api = subset(ApiSqlListManager.Df_JetelinaSqlList, :apino => ByRow(==(apino)), skipmissing = true)
 
     #===
@@ -81,7 +81,7 @@ function createIVMtable(apino::String)
     sql::String = replace(string(target_api[!,:sql][1], " ", target_api[!,:subquery][1]), "'" => "''")
     executesql::String = """select create_immv('$ivmapino','$sql');"""
     
-    conn = PgDBController.open_connection()
+#    conn = PgDBController.open_connection()
 
     try
         LibPQ.execute(conn, executesql)
@@ -94,7 +94,7 @@ function createIVMtable(apino::String)
 		return false
 	finally
 		# close the connection
-		PgDBController.close_connection(conn)
+#		PgDBController.close_connection(conn)
     end    
 end
 """
