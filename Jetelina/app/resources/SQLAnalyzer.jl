@@ -18,6 +18,7 @@ functions
 	tableCopy(df::DataFrame) copy some data from the running db to the test db. the number of copy data are ordered in JC["selectlimit"].
 	stopanalyzer() manual stopper for repeating analyzring
 
+-- special funcs for ivm in postgresql---
 	collectIvmCandidateApis() collect apis that is using multiple tables in JC["tableapifile"].
     compareJsAndJv() compare max/min/mean execution speed between js* and jv*.
     executeJSApiexecuteJSApi(apino::String) execute ordered sql(js*) sentence to compare with jv* execution speed
@@ -809,7 +810,13 @@ function collectIvmCandidateApis()
 """
 function collectIvmCandidateApis()
     tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JC["tableapifile"])
+    #===
+        Tips:
+            both Df_JsJvList and jsjvFile can use here, but hired jsjvFile.
+            because wanna unify the procedure with tableapiFile, and do not require an execution speed. :)
+    ===#
     jsjvFile = JFiles.getFileNameFromConfigPath(j_config.JC["jsjvmatchingfile"])
+
     ret = []
 
     try
@@ -858,19 +865,25 @@ function compareJsAndJv()
 function compareJsAndJv()
     conn = PgDBController.open_connection()
 	apis::Array = collectIvmCandidateApis()
+
     try
         for apino in apis
             jsspeed = executeJSApi(conn, string(apino))
             jvspeed = executeIVMtest(conn, string(apino))
 
-            @info "jsspeed: " jsspeed
-            @info "jvspeed: " jvspeed
+            if j_config.JC["debug"]
+                @info "jsspeed: " jsspeed
+                @info "jvspeed: " jvspeed
+                @info "speed compare: jv_mean - js_mean " (jvspeed[3] - jsspeed[3])
+            end
 
             if jsspeed[3] < jvspeed[3]
-            else
-                @info "dropped " apino
                 ivmapino::String = replace(apino, "js" => "jv")
-                dropIVMtable(conn, ivmapino)
+                @info "dropped " ivmapino
+                PgIVMController.dropIVMtable(conn, ivmapino)
+            else
+                @info "write to the file " apino
+                ApiSqlListManager.writeToMatchinglist(string(apino))
             end
         end
     catch err
