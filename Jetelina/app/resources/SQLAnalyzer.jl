@@ -7,6 +7,7 @@ Description:
 	Analyze execution speed of all SQL sentences. 
 	
 functions
+-- Attention: these funcs do not work in v3.0. because had become unnecessary. but who knows when they will be resurrected. ---
 	main() this function set as for kicking createAna..() from outer function.
 	createAnalyzedJsonFile() create json file for result of sql execution speed analyze data.
 	extractColumnsFromSql(s::String)  pick up columns data from 's'.
@@ -18,7 +19,7 @@ functions
 	tableCopy(df::DataFrame) copy some data from the running db to the test db. the number of copy data are ordered in JC["selectlimit"].
 	stopanalyzer() manual stopper for repeating analyzring
 
--- special funcs for ivm in postgresql---
+-- these funcs works in v3.1. special funcs for ivm in postgresql---
 	collectIvmCandidateApis() collect apis that is using multiple tables in JC["tableapifile"].
     compareJsAndJv() compare max/min/mean execution speed between js* and jv*.
     executeJSApiexecuteJSApi(apino::String) execute ordered sql(js*) sentence to compare with jv* execution speed
@@ -840,7 +841,7 @@ function collectIvmCandidateApis()
         if isfile(jsjvFile)
             open(jsjvFile, "r") do f
                 for l in eachline(f, keep=false)
-                    p = split(l, ':')
+                    p = split(l, ',')
                     if p[1] ∈ ret 
                         setdiff(ret,[p[1]])
                     end

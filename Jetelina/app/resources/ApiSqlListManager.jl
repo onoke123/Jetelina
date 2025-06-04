@@ -10,7 +10,7 @@ Description:
 functions
 	getApiSequenceNumber()  get api sequence number from apisequencenumber in dataframe then update it +1
 	readSqlList2DataFrame() import registered SQL sentence list in JC["sqllistfile"] to DataFrame.this function set the sql list data in the global variable 'Df_JetelinaSqlList' as DataFrame object.
-	writeTolist(sql::String, tablename_arr::Vector{String}, db::String) create api no and write it to JC["sqllistfile"] order by SQL sentence.
+	writeTolist(sql::String, subquery::String, tablename_arr::Vector{String}, db::String) create api no and write it to JC["sqllistfile"] order by SQL sentence.
 	deleteTableFromlist(tablename::Vector) delete tables name from JC["sqllistfile"] synchronized with dropping table.
 	deleteApiFromList(apis:Vector) delete api by ordering from JC["sqllistfile"] file, then refresh the DataFrame.
 	getRelatedList(searchKey::String,target::String) earch in JetelinaTableApiRelation file to find 'target' due to 'searchKey'
@@ -134,7 +134,7 @@ function readSqlList2DataFrame()
     return false, nothing
 end
 """
-function writeTolist(sql::String, tablename_arr::Vector{String}, db::String)
+function writeTolist(sql::String, subquery::String, tablename_arr::Vector{String}, db::String)
 
 	create api no and write it to JC["sqllistfile"] order by SQL sentence.
 	
@@ -432,12 +432,15 @@ function deleteApiFromList(apis::Vector)
     mv(apiFile_tmp, apiFile, force=true)
     mv(tableapiTmpFile, tableapiFile, force=true)
 
-    # delete apis from js* vs jv* matching file as well 
-    #===
-        Tips:
-            wanted to do this here, because as much as synchrolize with the above
-    ===#
-    deleteJvApiFromMatchingList(pais)
+    # postgresql special
+    if j_config.JC["dbtype"] == "postgresql" 
+        # delete apis from js* vs jv* matching file as well 
+        #===
+            Tips:
+                wanted to do this here, because as much as synchrolize with the above
+        ===#
+        deleteJvApiFromMatchingList(pais)
+    end
 
     # update DataFrame
     readSqlList2DataFrame()

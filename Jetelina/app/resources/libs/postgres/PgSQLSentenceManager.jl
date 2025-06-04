@@ -162,11 +162,14 @@ function createApiSelectSentence(json_d, mode::String)
             # yes this is the new
             ret = ApiSqlListManager.writeTolist(selectSql, subq_d, tablename_arr, "postgresql")
             #===
-                            Tips:
-                                writeTolist() returns tuple({true/false,apino/null}).
-                                return apino in json style if the first in tuple were true.
-                        ===#
+                Tips:
+                    writeTolist() returns tuple({true/false,apino/null}).
+                    return apino in json style if the first in tuple were true.
+            ===#
             if ret[1]
+                if 1 < length(tablename_arr)
+                end
+                
                 return json(Dict("result" => true, "apino" => ret[2]))
             else
                 return ret[1]

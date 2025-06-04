@@ -107,6 +107,8 @@ function dropIVMtable(conn, ivmapino::String)
 - return:  false -> boolean false 	
 """
 function dropIVMtable(conn, ivmapino::String)
+    PgDBController.dropTable(["$ivmapino"])
+    #===
     sql::String = """drop table $ivmapino;"""
 
     try
@@ -117,6 +119,7 @@ function dropIVMtable(conn, ivmapino::String)
 		return false
 	finally
     end
+    ===#
 end
 """
 function experimentalRun(conn,ivmapino::String)
@@ -131,7 +134,9 @@ function experimentalRun(conn,ivmapino::String)
 """
 function experimentalRun(conn, ivmapino::String)
     sql::String = """select * from $ivmapino"""
-	
+
+    return PgDBController.doSelect(sql, "measure")
+    #===
     try
 		#===
 			Tips:
@@ -152,5 +157,83 @@ function experimentalRun(conn, ivmapino::String)
 	finally
 #        dropIVMtable(conn, ivmapino)
 	end
+    ===#
+end
+"""
+function executeJSApi(conn, apino::String)
+
+	execute ordered sql(js*) sentence to compare with jv* execution speed
+
+# Arguments
+- `apino::String`: execute target api number e.g js10
+- return: ((max speed, sample number),(minimum speed, sample number), mean ), fale -> boolean: false. 
+"""
+function executeJSApi(conn, apino::String)
+    target_api = subset(ApiSqlListManager.Df_JetelinaSqlList, :apino => ByRow(==(apino)), skipmissing = true)
+    sql::String = string(target_api[!,:sql][1], " ", target_api[!,:subquery][1])
+
+    return PgDBController.doSelect(sql,"measure")
+#===
+    try
+		#===
+			Tips:
+				acquire data are 'max','best',"mean'.
+		===#
+		exetime = []
+		looptime = 10
+		for loop in 1:looptime
+			stats = @timed z = LibPQ.execute(conn, sql)
+			push!(exetime, stats.time)
+		end
+
+		return findmax(exetime), findmin(exetime), sum(exetime) / looptime
+	catch err
+		println(err)
+		JLog.writetoLogfile("PgTestDBController.executeJSApi() with $sql error : $err")
+		return false
+	finally
+		# close the connection
+#		PgDBController.close_connection(conn)
+	end
+    ===#
+end
+
+"""
+function compareJsAndJv()
+
+    compare max/min/mean execution speed between js* and jv*.
+
+"""
+function compareJsAndJv()
+    conn = PgDBController.open_connection()
+	apis::Array = collectIvmCandidateApis()
+
+    try
+        for apino in apis
+            jsspeed = executeJSApi(conn, string(apino))
+            jvspeed = executeIVMtest(conn, string(apino))
+
+            if j_config.JC["debug"]
+                @info "jsspeed: " jsspeed
+                @info "jvspeed: " jvspeed
+                @info "speed compare: jv_mean - js_mean " (jvspeed[3] - jsspeed[3])
+            end
+
+            if jsspeed[3] < jvspeed[3]
+                ivmapino::String = replace(apino, "js" => "jv")
+                @info "dropped " ivmapino
+                dropIVMtable(conn, ivmapino)
+            else
+                @info "write to the file " apino
+                ApiSqlListManager.writeToMatchinglist(string(apino))
+            end
+        end
+    catch err
+        println(err)
+		JLog.writetoLogfile("PgIVMController.compareJsAndJv() error : $err")
+    finally
+		# close the connection
+		PgDBController.close_connection(conn)
+    end
 end
 end
