@@ -10,7 +10,10 @@ functions
     checkIVMExistence() checkin' ivm is availability
     createIVMtable(conn, apino::String) create ivm table from the apino's sql sentence
     dropIVMtable(conn, ivmapino::String) drop ivm table
-    experimentalRun(conn,ivmapino::String) do experimental execution of target ivm api sql sentence
+    compareJsAndJv() compare max/min/mean execution speed between js* and jv*.
+    collectIvmCandidateApis() collect apis that is using multiple tables in JC["tableapifile"].
+    executeJVApi(conn,ivmapino::String) do experimental execution of target ivm api sql sentence
+    executeJSApi(conn, apino::String) execute ordered sql(js*) sentence to compare with jv* execution speed
 """
 module PgIVMController
 
@@ -21,9 +24,10 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
+# should remove here after finishing all
 include("PgDBController.jl")
 
-export checkIVMExistence, createIVMtable, experimentalRun, dropIVMtable
+export checkIVMExistence, createIVMtable, dropIVMtable, compareJsAndJv, collectIvmCandidateApis, executeJVApi, compareJsAndJv 
 
 """
 function checkIVMExistence()
@@ -66,7 +70,6 @@ function createIVMtable(conn, apino::String)
 - return: Boolean: true -> success, false -> couldn't create ivm table 	
 
 """
-#function createIVMtable(apino::String, mode::Bool)
 function createIVMtable(conn, apino::String)
     target_api = subset(ApiSqlListManager.Df_JetelinaSqlList, :apino => ByRow(==(apino)), skipmissing = true)
 
@@ -79,22 +82,16 @@ function createIVMtable(conn, apino::String)
     ===#
     ivmapino::String = replace(apino, "js" => "jv")
     sql::String = replace(string(target_api[!,:sql][1], " ", target_api[!,:subquery][1]), "'" => "''")
-    executesql::String = """select create_immv('$ivmapino','$sql');"""
-    
-#    conn = PgDBController.open_connection()
+    executesql::String = """select create_immv('$ivmapino','$sql');""" 
 
     try
         LibPQ.execute(conn, executesql)
-#        if !mode
-        return experimentalRun(conn, ivmapino)
-#        end
+        return executeJVApi(conn, ivmapino)
 	catch err
 		println(err)
 		JLog.writetoLogfile("PgIVMController.createIVMtable() with $ivmapino error : $err")
 		return false
 	finally
-		# close the connection
-#		PgDBController.close_connection(conn)
     end    
 end
 """
@@ -122,7 +119,110 @@ function dropIVMtable(conn, ivmapino::String)
     ===#
 end
 """
-function experimentalRun(conn,ivmapino::String)
+function compareJsAndJv()
+
+    compare max/min/mean execution speed between js* and jv*.
+
+"""
+function compareJsAndJv()
+    conn = PgDBController.open_connection()
+	apis::Array = collectIvmCandidateApis()
+
+    try
+        for apino in apis
+            ret = createIVMtable(conn, string(apino))
+            if ret
+                ivmapino::String = replace(apino, "js" => "jv")
+                jsspeed = executeJSApi(conn, string(apino))
+                jvspeed = executeJVApi(conn, ivmapino)
+
+                if j_config.JC["debug"]
+                    @info "jsspeed: " jsspeed
+                    @info "jvspeed: " jvspeed
+                    @info "speed compare: jv_mean - js_mean " (jvspeed[3] - jsspeed[3])
+                end
+
+                if jsspeed[3] < jvspeed[3]
+                    @info "dropped " ivmapino
+                    dropIVMtable(conn, ivmapino)
+                else
+                    @info "write to the file " apino
+                    ApiSqlListManager.writeToMatchinglist(string(apino))
+                end
+            end
+        end
+    catch err
+        println(err)
+		JLog.writetoLogfile("PgIVMController.compareJsAndJv() error : $err")
+    finally
+		# close the connection
+		PgDBController.close_connection(conn)
+    end
+end
+
+"""
+function collectIvmCandidateApis() 
+	
+	collect apis that is using multiple tables in JC["tableapifile"].
+    collected apis are matched with JC["jsjvmatchingfile"], then be removed existense jv* from the collected ones.
+
+	Attention:
+		this function is limited in PostgreSQL, because of IVM
+
+# Arguments
+- return: array of jv* candidates 
+"""
+function collectIvmCandidateApis()
+    tableapiFile = JFiles.getFileNameFromConfigPath(j_config.JC["tableapifile"])
+    #===
+        Tips:
+            both Df_JsJvList and jsjvFile can use here, but hired jsjvFile.
+            because wanna unify the procedure with tableapiFile, and do not require an execution speed. :)
+    ===#
+    jsjvFile = JFiles.getFileNameFromConfigPath(j_config.JC["jsjvmatchingfile"])
+
+    ret = []
+
+    try
+        open(tableapiFile, "r") do f
+            for l in eachline(f, keep=false)
+                p = split(l, ':')
+				if p[3] == "postgresql"
+					#===
+					Tips:
+						p[1] is unique api number.
+						p[2] has possibility multi data. e.g table1,table2
+					===#
+					t = split(p[2], ',')
+					if 1<length(t)
+						push!(ret, p[1])
+					end
+				end
+            end
+        end
+
+        if isfile(jsjvFile)
+            open(jsjvFile, "r") do f
+                for l in eachline(f, keep=false)
+                    p = split(l, ',')
+                    if p[1] ∈ ret 
+                        setdiff(ret,[p[1]])
+                    end
+                end
+            end
+        end
+    catch err
+        println(err)
+        JLog.writetoLogfile("SQLAnalyzer.collectIvmCandidateApis() error: $err")
+        return false
+    end
+
+    return ret
+
+end
+
+"""
+function executeJVApi(conn,ivmapino::String)
 
     do experimental execution of target ivm api sql sentence
     sql sentence in ivm is definitly simple sql. e.g select * from <ivm table name>
@@ -132,32 +232,14 @@ function experimentalRun(conn,ivmapino::String)
 - `ivmapino::String`: apino as ivm
 - return:  false -> boolean false true -> tubple(max, min, mean) 	
 """
-function experimentalRun(conn, ivmapino::String)
+function executeJVApi(conn, ivmapino::String)
+    if startswith(ivmapino, "js")
+        ivmapino = replace(ivmapino,"js" => "jv")
+    end
+
     sql::String = """select * from $ivmapino"""
 
     return PgDBController.doSelect(sql, "measure")
-    #===
-    try
-		#===
-			Tips:
-				acquire data are 'max','best',"mean'.
-		===#
-		exetime = []
-		looptime = 10
-		for loop in 1:looptime
-			stats = @timed z = LibPQ.execute(conn, sql)
-			push!(exetime, stats.time)
-		end
-
-        return findmax(exetime), findmin(exetime), sum(exetime) / looptime
-	catch err
-		println(err)
-		JLog.writetoLogfile("PgIVMController.experimentalRun() with $ivmapino error : $err")
-		return false
-	finally
-#        dropIVMtable(conn, ivmapino)
-	end
-    ===#
 end
 """
 function executeJSApi(conn, apino::String)
@@ -173,67 +255,6 @@ function executeJSApi(conn, apino::String)
     sql::String = string(target_api[!,:sql][1], " ", target_api[!,:subquery][1])
 
     return PgDBController.doSelect(sql,"measure")
-#===
-    try
-		#===
-			Tips:
-				acquire data are 'max','best',"mean'.
-		===#
-		exetime = []
-		looptime = 10
-		for loop in 1:looptime
-			stats = @timed z = LibPQ.execute(conn, sql)
-			push!(exetime, stats.time)
-		end
-
-		return findmax(exetime), findmin(exetime), sum(exetime) / looptime
-	catch err
-		println(err)
-		JLog.writetoLogfile("PgTestDBController.executeJSApi() with $sql error : $err")
-		return false
-	finally
-		# close the connection
-#		PgDBController.close_connection(conn)
-	end
-    ===#
 end
 
-"""
-function compareJsAndJv()
-
-    compare max/min/mean execution speed between js* and jv*.
-
-"""
-function compareJsAndJv()
-    conn = PgDBController.open_connection()
-	apis::Array = collectIvmCandidateApis()
-
-    try
-        for apino in apis
-            jsspeed = executeJSApi(conn, string(apino))
-            jvspeed = executeIVMtest(conn, string(apino))
-
-            if j_config.JC["debug"]
-                @info "jsspeed: " jsspeed
-                @info "jvspeed: " jvspeed
-                @info "speed compare: jv_mean - js_mean " (jvspeed[3] - jsspeed[3])
-            end
-
-            if jsspeed[3] < jvspeed[3]
-                ivmapino::String = replace(apino, "js" => "jv")
-                @info "dropped " ivmapino
-                dropIVMtable(conn, ivmapino)
-            else
-                @info "write to the file " apino
-                ApiSqlListManager.writeToMatchinglist(string(apino))
-            end
-        end
-    catch err
-        println(err)
-		JLog.writetoLogfile("PgIVMController.compareJsAndJv() error : $err")
-    finally
-		# close the connection
-		PgDBController.close_connection(conn)
-    end
-end
 end

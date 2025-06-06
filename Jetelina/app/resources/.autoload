@@ -10,9 +10,9 @@ GetDataController.jl
 PostDataController.jl
 ApiAccessCounter.jl
 JTimer.jl
-SQLAnalyzer.jl
 
 -#'these are neglected in auto loading'
+-SQLAnalyzer.jl
 -ApiAccessCounter.jl
 -ConfigManager.jl
 -ApiSqlListManager.jl

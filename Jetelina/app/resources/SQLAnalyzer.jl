@@ -22,7 +22,7 @@ functions
 -- these funcs works in v3.1. special funcs for ivm in postgresql---
 	collectIvmCandidateApis() collect apis that is using multiple tables in JC["tableapifile"].
     compareJsAndJv() compare max/min/mean execution speed between js* and jv*.
-    executeJSApiexecuteJSApi(apino::String) execute ordered sql(js*) sentence to compare with jv* execution speed
+    executeJSApi(apino::String) execute ordered sql(js*) sentence to compare with jv* execution speed
 	executeIVMtest(apino::String) experimental execution of ivm-tized table 
 """
 module SQLAnalyzer
