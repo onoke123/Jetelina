@@ -35,6 +35,11 @@ functions
 	checkTheRoll(roll::String) check the ordered user's authority in order to 'roll'.
 	refStichWort(stichwort::String)	reference and matching with user_info->stichwort
     prepareDbEnvironment(mode::String) database connection checking, and initializing database if needed
+
+-- special functions for IVM ---
+    checkIVMExistence() checkin' ivm is availability
+    compareJsAndJv() compare max/min/mean execution speed between js* and jv*.
+    deleteIVMApi(apino::String) delete api in ivm, indeed ivm table
 """
 module PgDBController
 
@@ -47,6 +52,7 @@ JMessage.showModuleInCompiling(@__MODULE__)
 
 include("PgDataTypeList.jl")
 include("PgSQLSentenceManager.jl")
+include("PgIVMController.jl")
 
 export create_jetelina_database, create_jetelina_table, create_jetelina_id_sequence, open_connection, close_connection,
     getTableList, getJetelinaSequenceNumber, dataInsertFromCSV, dropTable, getColumns,
@@ -611,7 +617,7 @@ function dropTable(tableName::Vector)
     try
         for i in eachindex(tableName)
             # drop the tableName
-            drop_table_str = string("drop table ", tableName[i],";")
+            drop_table_str = string("drop table if exists ", tableName[i],";")
             execute(conn, drop_table_str)
         end
 
@@ -1545,5 +1551,65 @@ function prepareDbEnvironment(mode::String)
     finally
     end
 end
+"""
+function checkIVMExistence()
 
+	checkin' ivm is availability
+		
+# Arguments
+- return: available -> true, not available -> false error -> Tuple(false, error number)
+"""
+function checkIVMExistence()
+    conn = open_connection()
+    ret::Bool = false
+
+    try
+        return PgIVMController.checkIVMExistence(conn)
+    catch err
+        errnum = JLog.getLogHash()
+        JLog.writetoLogfile("[errnum:$errnum] PgDBController.checkIVMExistence() error : $err")
+        return ret, errnum
+    finally
+        close_connection(conn)
+    end
+end
+"""
+function compareJsAndJv()
+
+    compare max/min/mean execution speed between js* and jv*.
+
+# Arguments
+- return: error -> Tuple(false, error number)
+"""
+function compareJsAndJv()
+    conn = open_connection()
+    ret::Bool = false
+
+    try
+        PgIVMController.compareJsAndJv(conn)
+    catch err
+        errnum = JLog.getLogHash()
+        JLog.writetoLogfile("[errnum:$errnum] PgDBController.compareJsAndJv() error : $err")
+        return ret, errnum
+    finally
+        close_connection(conn)
+    end
+end
+"""
+    function deleteIVMApi(apino::String) 
+        
+    delete api in ivm, indeed ivm table
+    this function is called with synchrolizing delete api
+
+    Attention:
+        this function is calling PgIV..dropIVMtable(), in fact, it is calling PgDBController.dropTable()
+        why hire such a trouble some calling, becaue wanna gather procedures related ivm in PgIVMController
+        
+#Arguments
+-`apino::String`: apino for deleting
+- return: tuple (boolean: true -> success/false -> get fail, JSON)
+"""
+function deleteIVMApi(apino::String) 
+    return PgIVMController.dropIVMtable(apino)
+end
 end

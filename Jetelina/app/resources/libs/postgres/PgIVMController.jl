@@ -7,10 +7,10 @@ Description:
 	pg_ivm: incrementally maintainable materialized view extension controller for PostgreSQL
 
 functions
-    checkIVMExistence() checkin' ivm is availability
+    checkIVMExistence(conn) checkin' ivm is availability
+    compareJsAndJv(conn) compare max/min/mean execution speed between js* and jv*.
     createIVMtable(conn, apino::String) create ivm table from the apino's sql sentence
-    dropIVMtable(conn, ivmapino::String) drop ivm table
-    compareJsAndJv() compare max/min/mean execution speed between js* and jv*.
+    dropIVMtable(ivmapino::String) drop ivm table
     collectIvmCandidateApis() collect apis that is using multiple tables in JC["tableapifile"].
     executeJVApi(conn,ivmapino::String) do experimental execution of target ivm api sql sentence
     executeJSApi(conn, apino::String) execute ordered sql(js*) sentence to compare with jv* execution speed
@@ -25,21 +25,24 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 JMessage.showModuleInCompiling(@__MODULE__)
 
 # should remove here after finishing all
-include("PgDBController.jl")
+#include("PgDBController.jl")
 
 export checkIVMExistence, createIVMtable, dropIVMtable, compareJsAndJv, collectIvmCandidateApis, executeJVApi, compareJsAndJv 
 
 """
-function checkIVMExistence()
+function checkIVMExistence(conn)
 
     checkin' ivm is availability
 	
+# Arguments
+- `conn::LibPQ.Connection`: postgresql connection 
+- return: available -> true, not available -> false
 """
-function checkIVMExistence()
+function checkIVMExistence(conn)
     ret = true # true -> ivm is available false -> not exist
 
     sql_str = """select * from pg_available_extensions where name ='pg_ivm';"""
-    conn = PgDBController.open_connection()
+
     try
         sql_ret = LibPQ.execute(conn, sql_str)
         retnum = LibPQ.num_affected_rows(sql_ret)
@@ -50,7 +53,6 @@ function checkIVMExistence()
         ret = false
         JLog.writetoLogfile("PgIVMController.checkIVMExistence() error: $err")
     finally
-        PgDBController.close_connection(conn)
     end
 
     if ret
@@ -68,7 +70,6 @@ function createIVMtable(conn, apino::String)
 - `apino::String`: apino in Df_JetelinaSqlList
 - `mode::Bool`: true -> create and keep it  false -> create then drop it
 - return: Boolean: true -> success, false -> couldn't create ivm table 	
-
 """
 function createIVMtable(conn, apino::String)
     target_api = subset(ApiSqlListManager.Df_JetelinaSqlList, :apino => ByRow(==(apino)), skipmissing = true)
@@ -95,37 +96,24 @@ function createIVMtable(conn, apino::String)
     end    
 end
 """
-function dropIVMtable(conn, ivmapino::String)
+function dropIVMtable(ivmapino::String)
 
     drop ivm table
 
-- `conn::LibPQ.Connection`: postgresql connection 
-- `table::String`: apino as ivm
-- return:  false -> boolean false 	
+#Arguments
+- `ivmapino::String`: apino as ivm
+- return: tuple (boolean: true -> success/false -> get fail, JSON)
 """
-function dropIVMtable(conn, ivmapino::String)
+function dropIVMtable(ivmapino::String)
     PgDBController.dropTable(["$ivmapino"])
-    #===
-    sql::String = """drop table $ivmapino;"""
-
-    try
-        LibPQ.execute(conn, sql)
-	catch err
-		println(err)
-		JLog.writetoLogfile("PgIVMController.dropIVMtable() with $ivmapino error : $err")
-		return false
-	finally
-    end
-    ===#
 end
 """
-function compareJsAndJv()
+function compareJsAndJv(conn)
 
     compare max/min/mean execution speed between js* and jv*.
 
 """
-function compareJsAndJv()
-    conn = PgDBController.open_connection()
+function compareJsAndJv(conn)
 	apis::Array = collectIvmCandidateApis()
 
     try
@@ -155,8 +143,6 @@ function compareJsAndJv()
         println(err)
 		JLog.writetoLogfile("PgIVMController.compareJsAndJv() error : $err")
     finally
-		# close the connection
-		PgDBController.close_connection(conn)
     end
 end
 
