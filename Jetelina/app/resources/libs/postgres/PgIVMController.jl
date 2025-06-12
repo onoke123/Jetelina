@@ -24,9 +24,6 @@ import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
 
-# should remove here after finishing all
-#include("PgDBController.jl")
-
 export checkIVMExistence, createIVMtable, dropIVMtable, compareJsAndJv, collectIvmCandidateApis, executeJVApi, compareJsAndJv 
 
 """
@@ -130,11 +127,14 @@ function compareJsAndJv(conn)
                     @info "speed compare: jv_mean - js_mean " (jvspeed[3] - jsspeed[3])
                 end
 
+                #===
+                    Tips:
+                        in case js* is faster than jv*, use js* then drop jv* table
+                        in case jv* is marverous, write the apino to js/jv matching file (j_config.JC["jsjvmatchingfile"])
+                ===#
                 if jsspeed[3] < jvspeed[3]
-                    @info "dropped " ivmapino
-                    dropIVMtable(conn, ivmapino)
+                    dropIVMtable(ivmapino)
                 else
-                    @info "write to the file " apino
                     ApiSqlListManager.writeToMatchinglist(string(apino))
                 end
             end
