@@ -690,9 +690,33 @@ function executeApi(json_d::Dict,target_api::DataFrame)
 """
 function executeApi(json_d::Dict, target_api::DataFrame)
     ret = ""
-    sql_str = PgSQLSentenceManager.createExecutionSqlSentence(json_d, target_api)
+    ivmflg::Bool = false
+    #===
+        Tips:
+            at the first, check json_d["apino"] has jv* in Df_JsJvList
+            execute jv* if it exsisted.
+            execute js* if it did not exsisted in the list.
+    ===#
+    apino = string(json_d["apino"])
+    if startswith(apino, "js")
+        jsjv = subset(ApiSqlListManager.Df_JsJvlList, :js => ByRow(==(apino)), skipmissing = true)
+        if 0<nrow(jsjv)
+            # there is jv* in there, let's use ivm
+            apino = replace(apino,"js" => "jv")
+            ivmflg = true
+        end
+    end
+
+    if !ivmflg
+        # in case js*, ji*, ju*, jd*
+        sql_str = PgSQLSentenceManager.createExecutionSqlSentence(json_d, target_api)
+    else
+        # in case only jv*
+        sql_str = PgIVMController.jvSqlSentence(apino)
+    end
+
     if 0 < length(sql_str)
-        ret = _executeApi(json_d["apino"], sql_str)
+        ret = _executeApi(apino, sql_str)
     end
 
     return ret
@@ -717,13 +741,13 @@ function _executeApi(apino::String, sql_str::String)
     try
         sql_ret = LibPQ.execute(conn, sql_str)
         #===
-        			Tips:
-        				case in insert/update/delete, we cannot see if it got success or not by .execute().
-        				using .num_affected_rows() to see the worth.
-        					in insert -> 0: normal end, the fault is caught in 'catch'
-        					in update/delete -> 0: swing and miss
-        									 -> 1: hit the ball
-        		===#
+        	Tips:
+        		case in insert/update/delete, we cannot see if it got success or not by .execute().
+        		using .num_affected_rows() to see the worth.
+        			in insert -> 0: normal end, the fault is caught in 'catch'
+        			in update/delete -> 0: swing and miss
+        							 -> 1: hit the ball
+    	===#
         affected_ret = LibPQ.num_affected_rows(sql_ret)
         jmsg::String = string("compliment me!")
 
@@ -1604,7 +1628,7 @@ end
     Attention:
         this function is calling PgIV..dropIVMtable(), in fact, it is calling PgDBController.dropTable()
         why hire such a trouble some calling, becaue wanna gather procedures related ivm in PgIVMController
-        
+
 #Arguments
 -`apino::String`: apino for deleting
 - return: tuple (boolean: true -> success/false -> get fail, JSON)

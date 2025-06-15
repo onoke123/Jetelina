@@ -13,6 +13,7 @@ functions
     dropIVMtable(ivmapino::String) drop ivm table
     collectIvmCandidateApis() collect apis that is using multiple tables in JC["tableapifile"].
     executeJVApi(conn,ivmapino::String) do experimental execution of target ivm api sql sentence
+    jvSqlSentence(ivmapino::String) create sql sentence for ivm table
     executeJSApi(conn, apino::String) execute ordered sql(js*) sentence to compare with jv* execution speed
 """
 module PgIVMController
@@ -219,13 +220,26 @@ function executeJVApi(conn,ivmapino::String)
 - return:  false -> boolean false true -> tubple(max, min, mean) 	
 """
 function executeJVApi(conn, ivmapino::String)
+    sql::String = jvSqlSentence(ivmapino)
+    return PgDBController.doSelect(sql, "measure")
+end
+"""
+function jvSqlSentence(ivmapino::String)
+
+    create sql sentence for ivm table
+    indeed, this sql is simple, could put in executeJVApi(), but this sql has possible called in PgDBController,
+    therefore made it this func
+
+# Arguments
+- `ivmapino::String`: apino
+- return: sql string
+"""
+function jvSqlSentence(ivmapino::String)
     if startswith(ivmapino, "js")
         ivmapino = replace(ivmapino,"js" => "jv")
     end
 
-    sql::String = """select * from $ivmapino"""
-
-    return PgDBController.doSelect(sql, "measure")
+    return """select * from $ivmapino"""
 end
 """
 function executeJSApi(conn, apino::String)
