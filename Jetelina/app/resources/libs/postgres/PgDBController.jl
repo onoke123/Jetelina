@@ -1633,7 +1633,7 @@ end
 -`apino::String`: apino for deleting
 - return: tuple (boolean: true -> success/false -> get fail, JSON)
 """
-function deleteIVMApi(apino::String) 
-    return PgIVMController.dropIVMtable(apino)
+function deleteIVMApi(apinos::Vector) 
+    return dropTable(apinos)
 end
 end

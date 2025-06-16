@@ -439,7 +439,7 @@ function deleteApiFromList(apis::Vector)
             Tips:
                 wanted to do this here, because as much as synchrolize with the above
         ===#
-        deleteJvApiFromMatchingList(pais)
+        deleteJvApiFromMatchingList(apis)
     end
 
     # update DataFrame
@@ -637,7 +637,7 @@ function deleteJvApiFromMatchingList(apis::Vector)
     end
 
     jsjvFile = JFiles.getFileNameFromConfigPath(j_config.JC["jsjvmatchingfile"])
-    jsjvFile_tmp = string(jsjvFileFile, ".tmp")
+    jsjvFile_tmp = string(jsjvFile, ".tmp")
 
     # take the backup file
     JFiles.fileBackup(jsjvFile)

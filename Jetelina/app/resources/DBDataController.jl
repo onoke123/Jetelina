@@ -28,6 +28,10 @@
 		createApiSelectSentence(json_d::Dict,mode::String) create API and SQL select sentence from posting data.
 		refStichWort(stichwort::String)	reference and matching with user_info->stichwort
 		prepareDbEnvironment(db::String,mode::String) database connection checking, and initializing database if needed
+
+-- special functions for IVM ---
+		dropIVMtable(apis::Vector) special func for PostgreSQL, synchronized droppping ivm table with deleting api
+
 """
 
 module DBDataController
@@ -639,5 +643,17 @@ function prepareDbEnvironment(db::String, mode::String)
 
 	return ret
 end
+"""
+function dropIVMtable(apis::Vector)
 
+	special func for PostgreSQL, synchronized droppping ivm table with deleting api
+
+# Arguments
+- `apis::Vector` deleting apinos
+- return 
+"""
+function dropIVMtable(apis::Vector)
+	ivmapis = replace.(apis,"js"=>"jv")
+	return PgDBController.dropTable(ivmapis)
+end
 end
