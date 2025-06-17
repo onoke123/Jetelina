@@ -221,8 +221,8 @@ function _getTableList()
     table_str = """select tablename from pg_tables where schemaname='public'"""
     try
         df = DataFrame(columntable(LibPQ.execute(conn, table_str)))
-        # do not include usertable in the return
-        DataFrames.filter!(row -> row.tablename != "jetelina_user_table", df)
+        # do not include usertable and ivm table in the return
+        DataFrames.filter!(row -> row.tablename != "jetelina_user_table" && row.tablename ∉ Df_JsJvList[!,:jv] , df)
     catch err
         JLog.writetoLogfile("PgDBController._getTableList() error: $err")
         return DataFrame() # return empty DataFrame if got fail
