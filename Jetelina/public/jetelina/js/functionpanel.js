@@ -574,7 +574,7 @@ const listClick = (p) => {
           $(`${COLUMNSPANEL} span`).filter(".apisql").remove();
           related_api = s.apino;
           // api in/out json
-          $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiin"><bold>IN:</bold><div name="apiin" >${setApiIF_In(t, s)}</div></span>`);
+          $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiin"><bold>IN:</bold><div name="apiin">${setApiIF_In(t, s)}</div></span>`);
           $(`${COLUMNSPANEL} .item_area`).append(`<span class="apisql apiout"><bold>OUT:</bold><div name="apiout" style="height:100px;" class="right_left_panel_scroll">${setApiIF_Out(t, s)}</div></span>`);
           // sample execution sql
           $(CONTAINERPANEL).append(`<span class="apisql"><p>${setApiIF_Sql(s)}</p></span>`);
@@ -816,6 +816,7 @@ const setApiIF_Sql = (s) => {
     }
   }
 
+  ret = ret.replaceAll("<","&lt;").replaceAll(">","&gt;");
   return ret;
 }
 /**

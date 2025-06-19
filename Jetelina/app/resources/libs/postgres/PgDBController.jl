@@ -699,7 +699,7 @@ function executeApi(json_d::Dict, target_api::DataFrame)
     ===#
     apino = string(json_d["apino"])
     if startswith(apino, "js")
-        jsjv = subset(ApiSqlListManager.Df_JsJvlList, :js => ByRow(==(apino)), skipmissing = true)
+        jsjv = subset(ApiSqlListManager.Df_JsJvList, :js => ByRow(==(apino)), skipmissing = true)
         if 0<nrow(jsjv)
             # there is jv* in there, let's use ivm
             apino = replace(apino,"js" => "jv")
