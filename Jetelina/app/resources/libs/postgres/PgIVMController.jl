@@ -20,7 +20,7 @@ module PgIVMController
 
 using Genie, Genie.Renderer, Genie.Renderer.Json
 using CSV, LibPQ, DataFrames, IterTools, Tables, Dates
-using Jetelina.JFiles, Jetelina.JLog, Jetelina.InitApiSqlListManager.ApiSqlListManager, Jetelina.JMessage, Jetelina.JSession
+using Jetelina.JFiles, Jetelina.JLog, Jetelina.InitApiSqlListManager.ApiSqlListManager, Jetelina.JMessage, Jetelina.JSession, Jetelina.DBDataController.PgDBController
 import Jetelina.InitConfigManager.ConfigManager as j_config
 
 JMessage.showModuleInCompiling(@__MODULE__)
@@ -71,27 +71,66 @@ function createIVMtable(conn, apino::String)
 """
 function createIVMtable(conn, apino::String)
     target_api = subset(ApiSqlListManager.Df_JetelinaSqlList, :apino => ByRow(==(apino)), skipmissing = true)
-
+    regulatedclauses::Array = ["having","union","intersect","except","distinct on","tablesample","value","tablesample","for update","share"]
+    allowclauses::Array = ["order by","limit","offset"]
+    ivmsafe::Bool = true
     #===
         Tips:
             1. target api name(apino) should be changed to the ivm specail name. eg. js10 -> jv10
             2. escape "'" in the target sql sentence with "''", because "''" is the way of escaping in sql
+            3. due to pg_ivm regulation, some clauses are band to create ivm table
 
             then simply kick execute()
     ===#
     ivmapino::String = replace(apino, "js" => "jv")
-    sql::String = replace(string(target_api[!,:sql][1], " ", target_api[!,:subquery][1]), "'" => "''")
-    executesql::String = """select create_immv('$ivmapino','$sql');""" 
 
-    try
-        LibPQ.execute(conn, executesql)
-        return executeJVApi(conn, ivmapino)
-	catch err
-		println(err)
-		JLog.writetoLogfile("PgIVMController.createIVMtable() with $ivmapino error : $err")
-		return false
-	finally
-    end    
+    ivmsubquery::Array = []
+    jvsubquery = string(target_api[!,:subquery][1])
+    for ac in allowclauses
+        if contains(jvsubquery,ac)
+            # もしsubにallow..があったら、それはjv*のsqlにも引き継がれる　　　ぞと。さて、どうやって？
+            ss = split(jvsubquery)
+            if 0<length(ss)
+                for i in eachindex(ss)
+                    if ss[i] ∈ allowclauses
+                        # ss[i] が"limit"だったらその次のss[i+1]はその変数である100もしくは{limit}を期待している
+                        if !isnothing(ss[i+1])                            
+                            push!(ivmsubquery, string(ss[i]," ",ss[i+1]))
+                            jvsubquery = replace(jvsubquery, string(ss[i]," ",ss[i+1]) => "")
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    @info "ivmsubquery " ivmsubquery
+    @info "jvsubquery " jvsubquery
+    
+    sql::String = replace(string(target_api[!,:sql][1], " ", jvsubquery), "'" => "''")
+    
+    # regulated...にある句が存在した場合、ivm化はしない
+    for rc in regulatedclauses
+        if contains(sql, rc)
+            ivmsafe = false
+        end
+    end
+
+    if ivmsafe
+        executesql::String = """select create_immv('$ivmapino','$sql');""" 
+
+        try
+            LibPQ.execute(conn, executesql)
+            return true
+        catch err
+            println(err)
+            JLog.writetoLogfile("PgIVMController.createIVMtable() with $ivmapino error : $err")
+            return false
+        finally
+        end
+    else
+        return true
+    end
 end
 """
 function dropIVMtable(ivmapino::String)
