@@ -239,7 +239,7 @@ function collectIvmCandidateApis()
         end
     catch err
         println(err)
-        JLog.writetoLogfile("SQLAnalyzer.collectIvmCandidateApis() error: $err")
+        JLog.writetoLogfile("PgIVMController.collectIvmCandidateApis() error: $err")
         return false
     end
 
