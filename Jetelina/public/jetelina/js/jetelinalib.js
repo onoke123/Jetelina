@@ -1559,6 +1559,8 @@ const chatKeyDown = (cmd) => {
                     resetApiTestProcedure();
                     showConfigPanel(false);
                     showPreciousPanel(false);
+                    changeChatGirlImage("chat");
+
                     typingControll(chooseMsg('general-thanks-msg', loginuser.lastname, "c"));
                 } else {
                     typingControll(chooseMsg('waiting-next-msg', "", ""));
@@ -2392,9 +2394,7 @@ const changeChatGirlImage = (imgtype) => {
 
     if (imgtype == "concern") {
         imgtag.show();
-        //        imgtag.attr('src',concernimg);
     } else if (imgtype == "chat") {
         imgtag.hide();
-        //        imgtag.attr('src',chatimg);
     }
 }
