@@ -1812,12 +1812,18 @@ const functionPanelFunctions = (ut) => {
         if (preferent.jsonokflg != null) {
           preferent.jsonokflg = null;
         }
+      }else if(inCancelableCmdList([USERMANAGE])){
+        rejectCancelableCmdList(USERMANAGE);
+        m = chooseMsg('cancel-msg', "", "");
       } else {
         showPreciousPanel(false);
         showConfigPanel(false);
+        
         cancelableCmdList = [];
       }
 
+      presentaction.cmd = null;
+      
       break;
     case 'cleanup': //clean up the panels
       cleanupItems4Switching();

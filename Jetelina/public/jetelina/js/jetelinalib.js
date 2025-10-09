@@ -1499,7 +1499,10 @@ const chatKeyDown = (cmd) => {
                         */
                     } else {
                         // do not have an authority
-                        if (inScenarioChk(ut, 'user-manage-add-cmd') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-delete') || inScenarioChk(ut, 'config-show-cmd')) {
+                        
+                        // v3.0 6/10/2025 'user-manage-delete' is not existance
+//                        if (inScenarioChk(ut, 'user-manage-add-cmd') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'user-manage-delete') || inScenarioChk(ut, 'config-show-cmd')) {
+                        if (inScenarioChk(ut, 'user-manage-add-cmd') || inScenarioChk(ut, 'user-manage-update') || inScenarioChk(ut, 'config-show-cmd')) {
                             m = chooseMsg("no-authority-js-msg", "", "");
                         } else {
                             // normal reply e.g "next?"
